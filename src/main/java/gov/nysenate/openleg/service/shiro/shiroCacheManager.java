@@ -17,7 +17,7 @@ import java.util.*;
 public class shiroCacheManager extends AbstractCacheManager {
     public static net.sf.ehcache.Cache cache = new net.sf.ehcache.Cache(new CacheConfiguration().name(ContentCache.SHIRO.name())
             .eternal(true)
-            .maxBytesLocalHeap(10, MemoryUnit.MEGABYTES));
+            .maxBytesLocalHeap(2, MemoryUnit.MEGABYTES));
     @Override
     protected Cache createCache(String name) throws CacheException {
 

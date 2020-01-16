@@ -6,6 +6,7 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.statistics.StatisticsGateway;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -37,7 +38,10 @@ public class CacheConfigurationTest extends BaseTests
         net.sf.ehcache.CacheManager cacheManager;
 
         public CacheTester(net.sf.ehcache.CacheManager cacheManager) {
-            cacheManager.addCache("test");
+            Cache testCache = new Cache(new CacheConfiguration()
+                    .name("test")
+                    .maxEntriesLocalHeap(10000));
+            cacheManager.addCache(testCache);
         }
 
         @Cacheable(value = "test", key = "#root.methodName + #s")

@@ -17,9 +17,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SessionMemberIdCache implements CachingService<Integer> {
@@ -35,25 +38,24 @@ public class SessionMemberIdCache implements CachingService<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(SessionMemberIdCache.class);
 
     private EventBus eventBus;
-
     private Cache memberCache;
-
     private CacheManager cacheManager;
-
     private MemberDao memberDao;
+    private long memberCacheSizeMb;
 
     @Autowired
-    public SessionMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
+    public SessionMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager,
+                                @Value("${member.cache.heap.size}") long memberCacheSizeMb) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
         this.cacheManager = cacheManager;
+        this.memberCacheSizeMb = memberCacheSizeMb;
     }
 
     @PostConstruct
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy
@@ -64,7 +66,11 @@ public class SessionMemberIdCache implements CachingService<Integer> {
 
     @Override
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.SESSION_MEMBER.name()).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration()
+                .name(ContentCache.SESSION_MEMBER.name())
+                .eternal(true)
+                .maxBytesLocalHeap(memberCacheSizeMb, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(this.memberCache);
     }
 
@@ -110,18 +116,26 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         }
     }
 
-    //CachedMemberService Methods
-
+    /**
+     * Get a SessionMember by sessionMemberId
+     *
+     * First checks the cache for the session member, if not there they are retrieved from the database and added to the cache.
+     * @param sessionMemberId
+     * @return
+     * @throws MemberNotFoundEx
+     */
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        if (memberCache.isKeyInCache(sessionMemberId)) {
-            return (SessionMember) memberCache.get(sessionMemberId).getObjectValue();
-        }
-        try {
-            SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
-            putMemberInCache(sm);
-            return sm;
-        } catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(sessionMemberId);
+        Optional<Element> smElement = Optional.ofNullable(memberCache.get(new SimpleKey(sessionMemberId)));
+        if (smElement.isPresent()) {
+            return (SessionMember) smElement.get().getObjectValue();
+        } else {
+            try {
+                SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
+                putMemberInCache(sm);
+                return sm;
+            } catch (EmptyResultDataAccessException ex) {
+                throw new MemberNotFoundEx(sessionMemberId);
+            }
         }
     }
 
@@ -130,5 +144,4 @@ public class SessionMemberIdCache implements CachingService<Integer> {
     private void putMemberInCache(SessionMember member) {
         memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
     }
-
 }
