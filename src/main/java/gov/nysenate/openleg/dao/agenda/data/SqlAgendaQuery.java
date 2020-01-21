@@ -89,7 +89,8 @@ public enum SqlAgendaQuery implements BasicSqlQuery
 
     SELECT_AGENDA_INFO_COMM_ITEMS(
         "SELECT * FROM ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE_ITEM + "\n" +
-        "WHERE info_committee_id IN (" + SELECT_AGENDA_INFO_COMMITTEE_ID.sql + ")"
+        "WHERE info_committee_id IN (" + SELECT_AGENDA_INFO_COMMITTEE_ID.sql + ") \n" +
+        "ORDER BY id"
     ),
     INSERT_AGENDA_INFO_COMM_ITEM(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE_ITEM + "\n" +
