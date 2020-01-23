@@ -32,45 +32,39 @@ public class XmlSenAgenProcessorIT extends BaseXmlProcessorTest {
     @Test
     public void processSenAgenda() throws JsonProcessingException {
 
-        AgendaId agendaId = new AgendaId(20,2016);
+        AgendaId agendaId = new AgendaId(20, 2016);
         agendaDao.deleteAgenda(agendaId);
 
-        String xmlPath ="processor/bill/senAgenda/2016-11-21-09.38.03.307472_SENAGEN_00020.XML";
+        String xmlPath = "processor/bill/senAgenda/2016-11-21-09.38.03.307472_SENAGEN_00020.XML";
+        // Parse the XML file and store in the database.
         processXmlFile(xmlPath);
 
-        Agenda actual = agendaDao.getAgenda(new AgendaId(20,2016));
-
+        Agenda actual = agendaDao.getAgenda(agendaId);
         Agenda expected = new Agenda(agendaId);
 
-        LocalDate weekOf = LocalDate.of(2016,6,13);
+        LocalDate weekOf = LocalDate.of(2016, 6, 13);
         LocalDateTime pubDateTime = DateUtils.getLrsDateTime("2016-06-21T10.35.54Z");
 
-        AgendaInfoAddendum agendaInfoAddendum = new AgendaInfoAddendum(agendaId,"",weekOf,pubDateTime);
+        AgendaInfoAddendum agendaInfoAddendum = new AgendaInfoAddendum(agendaId, "", weekOf, pubDateTime);
 
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, "Rules");
         String notes = "\nThis meeting will be called off the floor.\n\nALL BILLS REPORT DIRECT TO THIRD READING\n";
         LocalDateTime meetDateTime = DateUtils.getLrsDateTime("2016-06-14T00.00.00Z");
 
-        AgendaInfoCommittee agendaInfoCommittee = new AgendaInfoCommittee(committeeId,agendaId, Version.of(""),"John J. Flanagan","332 CAP",notes,meetDateTime);
+        AgendaInfoCommittee agendaInfoCommittee = new AgendaInfoCommittee(committeeId, agendaId, Version.of(""), "John J. Flanagan", "332 CAP", notes, meetDateTime);
 
-        BillId billid = new BillId("S01706A",2015);
-        AgendaInfoCommitteeItem agendaInfoCommitteeItem1 = new AgendaInfoCommitteeItem(billid,"");
+        BillId billid1 = new BillId("S01706A", 2015);
+        AgendaInfoCommitteeItem agendaInfoCommitteeItem1 = new AgendaInfoCommitteeItem(billid1, "");
 
-        BillId billid1 = new BillId("S01983A", 2015);
-        AgendaInfoCommitteeItem agendaInfoCommitteeItem2 = new AgendaInfoCommitteeItem(billid1,"");
-
+        BillId billid2 = new BillId("S01983A", 2015);
+        AgendaInfoCommitteeItem agendaInfoCommitteeItem2 = new AgendaInfoCommitteeItem(billid2, "");
 
         agendaInfoCommittee.addCommitteeItem(agendaInfoCommitteeItem1);
         agendaInfoCommittee.addCommitteeItem(agendaInfoCommitteeItem2);
         agendaInfoAddendum.putCommittee(agendaInfoCommittee);
-
         expected.putAgendaInfoAddendum(agendaInfoAddendum);
 
-        agendaInfoAddendum.putCommittee(agendaInfoCommittee);
-
-
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getAgendaVoteAddenda(), actual.getAgendaVoteAddenda());
         assertEquals(OutputUtils.toJson(expected.getAgendaInfoAddenda()), OutputUtils.toJson(actual.getAgendaInfoAddenda()));
         assertEquals(OutputUtils.toJson(expected.getAgendaVoteAddenda()), OutputUtils.toJson(actual.getAgendaVoteAddenda()));
         assertEquals(OutputUtils.toJson(expected.getCommitteeAgendaAddendumIds()), OutputUtils.toJson(actual.getCommitteeAgendaAddendumIds()));
