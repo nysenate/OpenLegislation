@@ -16,6 +16,8 @@ public class TranscriptFile extends BaseSourceData
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
 
+    private Transcript transcript;
+
     /** --- Constructors --- */
 
     public TranscriptFile(File file) throws FileNotFoundException {
@@ -41,6 +43,14 @@ public class TranscriptFile extends BaseSourceData
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public Transcript getTranscript() {
+        return transcript;
+    }
+
+    public void setTranscript(Transcript transcript) {
+        this.transcript = transcript;
     }
 
     public boolean isArchived() {

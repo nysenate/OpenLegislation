@@ -23,6 +23,10 @@ public enum SqlTranscriptFileQuery implements BasicSqlQuery
         "    pending_processing = :pendingProcessing," +
         "    archived = :archived " +
         "WHERE file_name = :fileName"
+    ),
+    GET_OLD_FILES(
+        "SELECT COUNT(file_name) FROM ${schema}." + SqlTable.TRANSCRIPT_FILE + "\n" +
+        "WHERE file_name LIKE ':datetime%'"
     );
 
     private String sql;

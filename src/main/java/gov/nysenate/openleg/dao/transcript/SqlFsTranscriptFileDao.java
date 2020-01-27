@@ -62,12 +62,21 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         }
     }
 
+    private int pastVersions(TranscriptFile transcriptFile) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("datetime", transcriptFile.getTranscript().getDateTime());
+        Integer ret = jdbcNamed.queryForObject(GET_OLD_FILES.getSql(schema()), params, Integer.class);
+        return ret == null ? 0 : ret;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException {
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
-            File archiveFile = new File(archiveTranscriptDir, transcriptFile.getFileName());
+            String currVersion = Integer.toString(pastVersions(transcriptFile)+1);
+            String trueName = transcriptFile.getTranscript().getDateTime().toString() + ".v" + currVersion;
+            File archiveFile = new File(archiveTranscriptDir, trueName);
             FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);
             transcriptFile.setArchived(true);
