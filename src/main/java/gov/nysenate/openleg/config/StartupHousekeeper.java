@@ -12,7 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("prod")
+@Profile({"dev", "prod"})
 public class StartupHousekeeper {
 
     @Autowired private EventBus eventBus;
