@@ -14,8 +14,8 @@ public enum SqlTranscriptQuery implements BasicSqlQuery
     ),
     UPDATE_TRANSCRIPT(
         "UPDATE ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "SET session_type = :sessionType, date_time = :dateTime, location = :location, text = :text,  modified_date_time = :modified_date_time\n" +
-        "WHERE transcript_filename = :transcriptFilename"
+        "SET session_type = :sessionType, transcript_filename = :transcriptFilename, location = :location, text = :text,  modified_date_time = :modified_date_time\n" +
+        "WHERE date_time = :dateTime"
     ),
     INSERT_TRANSCRIPT(
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT + "\n" +

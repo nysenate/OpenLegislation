@@ -64,8 +64,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
 
     private int pastVersions(TranscriptFile transcriptFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("datetime", transcriptFile.getTranscript().getDateTime());
-        Integer ret = jdbcNamed.queryForObject(GET_OLD_FILES.getSql(schema()), params, Integer.class);
+        params.addValue("dateTime", transcriptFile.getDateTime());
+        Integer ret = jdbcNamed.queryForObject(OLD_FILE_COUNT.getSql(schema()), params, Integer.class);
         return ret == null ? 0 : ret;
     }
 
@@ -75,7 +75,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
             String currVersion = Integer.toString(pastVersions(transcriptFile)+1);
-            String trueName = transcriptFile.getTranscript().getDateTime().toString() + ".v" + currVersion;
+            String trueName = transcriptFile.getDateTime().toString() + ".v" + currVersion;
             File archiveFile = new File(archiveTranscriptDir, trueName);
             FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);
@@ -139,6 +139,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         params.addValue("processedCount", transcriptFile.getProcessedCount());
         params.addValue("pendingProcessing", transcriptFile.isPendingProcessing());
         params.addValue("archived", transcriptFile.isArchived());
+        params.addValue("dateTime", transcriptFile.getDateTime());
+        params.addValue("originalFilename", transcriptFile.getOriginalFilename());
         return params;
     }
 
