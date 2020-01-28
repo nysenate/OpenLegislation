@@ -118,6 +118,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
             try {
                 transcriptFile = new TranscriptFile(file);
                 transcriptFile.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
+                transcriptFile.setOriginalFilename(rs.getString("original_filename"));
                 transcriptFile.setProcessedCount(rs.getInt("processed_count"));
                 transcriptFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 transcriptFile.setPendingProcessing(rs.getBoolean("pending_processing"));

@@ -4,6 +4,7 @@ import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Used to uniquely identify transcripts.
@@ -28,9 +29,7 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TranscriptId that = (TranscriptId) o;
-        if (filename != null ? !filename.equals(that.filename) : that.filename != null) return false;
-
-        return true;
+        return Objects.equals(filename, that.filename);
     }
 
     @Override

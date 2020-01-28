@@ -66,6 +66,10 @@ public class TranscriptFile extends BaseSourceData
         return originalFilename;
     }
 
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
     public Transcript getTranscript() {
         return transcript;
     }

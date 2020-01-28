@@ -27,6 +27,7 @@ public class TranscriptParser
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
+        transcriptFile.setTranscript(getTranscriptFromFile(transcriptFile));
         transcriptDataService.saveTranscript(transcriptFile.getTranscript(), transcriptFile, true);
     }
 
