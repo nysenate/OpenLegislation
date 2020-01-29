@@ -12,14 +12,17 @@ public class PublicHearingTitleParser
 {
 
     private static final Pattern TITLE = Pattern.compile(
-            "(?<title>" +
-            "((NEW YORK STATE )?FORUM/TOWN HALL" +
-            "|PUBLIC (HEARING|FORUM)" +
-            "|ROUNDTABLE DISCUSSION" +
-            "|A NEW YORK STATE SENATE HEARING" +
-            "|NEW YORK STATE \\d{4})" +
-            ".+?) " + // Title body
-            "*(?=-{10,})"); // Marks the end of title.
+            ".*(?<prefix>" +
+            "(NEW YORK STATE |PUBLIC )?FORUM/TOWN HALL" +
+            "|PUBLIC (HEARINGS?|FORUM)" +
+            "|(A )?ROUNDTABLE DISCUSSION" +
+            "|(A NEW YORK STATE SENATE|JUDICIAL) HEARING" +
+            "|TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE" +
+            "|.*NOMINATION(S:)?" +
+            "|NEW YORK STATE \\d{4}" +
+            "|-{10,})[ :]*" +
+            "(?<title>.+?) " + // Title body
+            "(-{10,})"); // Marks the end of title.
 
     /**
      * Extracts the PublicHearing title from the first page of the PublicHearingFile.
@@ -29,10 +32,13 @@ public class PublicHearingTitleParser
     public String parse(List<String> firstPage) {
         String pageText = turnPageIntoString(firstPage);
         Matcher matchTitle = TITLE.matcher(pageText);
-        if (!matchTitle.find()) {
+        if (!matchTitle.find())
             return null;
-        }
-        return matchTitle.group("title");
+        String title = matchTitle.group("title").trim();
+        String prefix = matchTitle.group("prefix");
+        if (title.matches("^(TO|ON|FOR|OF).*") && prefix != null)
+            title = prefix + " " + title;
+        return title;
     }
 
     /**
