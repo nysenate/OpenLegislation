@@ -24,6 +24,6 @@ public class StartupHousekeeper {
      */
     @EventListener(ContextRefreshedEvent.class)
     public void onContextRefreshedEvent() {
-        //eventBus.post(new CacheWarmEvent(Sets.newHashSet(ContentCache.values())));
+        eventBus.post(new CacheWarmEvent(Sets.newHashSet(ContentCache.values())));
     }
 }

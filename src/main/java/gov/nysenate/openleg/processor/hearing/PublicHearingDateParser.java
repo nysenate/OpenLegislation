@@ -15,11 +15,13 @@ import java.util.regex.Pattern;
 @Service
 public class PublicHearingDateParser
 {
-    private static Pattern START_TIME = Pattern.compile("\\d+:\\d{2} [ap].m.");
+    private static Pattern TIME = Pattern.compile("\\d+:\\d{2} [ap].m.");
 
     private static Pattern DATE_TIME = Pattern.compile("(?<date>\\w+ \\d{1,2}, \\d{4})(( at)? " +
-                                                       "(?<startTime>\\d{1,2}:\\d{2} [ap].m.)" +
-                                                       "( to (?<endTime>\\d{1,2}:\\d{2} [ap].m.))?)?");
+                                                       "(?<startTime>" + TIME + ")" +
+                                                       "( to (?<endTime>" + TIME + "))?)?");
+
+    private static Pattern END_TIME = Pattern.compile("Whereupon.*(" + TIME +")");
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
 
@@ -38,27 +40,22 @@ public class PublicHearingDateParser
         return LocalDate.parse(matcher.group("date"), dateFormatter);
     }
 
-    public LocalTime parseStartTime(List<String> firstPage) {
+    public LocalTime parseTime(boolean isStartTime, List<String> firstPage) {
         Matcher matcher = getDateTimeMatcher(firstPage);
-        matcher.find();
-
-        String startTime = matcher.group("startTime");
-        if (startTime == null) {
+        if(!matcher.find())
             return null;
-        }
-        startTime = formatAmPm(startTime);
-        return LocalTime.parse(startTime, timeFormatter);
+        String time = matcher.group(isStartTime ? "startTime" : "endTime");
+        if (time == null)
+            return null;
+        return LocalTime.parse(formatAmPm(time), timeFormatter);
     }
 
-    public LocalTime parseEndTime(List<String> firstPage) {
-        Matcher matcher = getDateTimeMatcher(firstPage);
-        matcher.find();
-
-        String endTime = matcher.group("endTime");
-        if (endTime == null) {
+    public LocalTime alternateParseEndTime(List<String> lastPage) {
+        String wholePage = String.join("", lastPage);
+        Matcher matcher = END_TIME.matcher(wholePage);
+        if (!matcher.find())
             return null;
-        }
-        endTime = formatAmPm(endTime);
+        String endTime = formatAmPm(matcher.group(1));
         return LocalTime.parse(endTime, timeFormatter);
     }
 
@@ -97,7 +94,7 @@ public class PublicHearingDateParser
     /** Returns the String containing time information.
      * If no time exists return null.*/
     private String getTimeString(String line) {
-        if (START_TIME.matcher(line).find()) {
+        if (TIME.matcher(line).find()) {
             return line;
         }
         return null;
@@ -141,10 +138,7 @@ public class PublicHearingDateParser
      */
     private boolean containsDateAndTime(String line) {
         String singleLineDate = "(\\w+ \\d+, \\d+)(, at \\d+:\\d+ [apm.]{4})";
-        if (line.matches(singleLineDate)) {
-            return true;
-        }
-        return false;
+        return line.matches(singleLineDate);
     }
 
     /** Removes Line numbers, excess whitespace, new line, and non text characters */

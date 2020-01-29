@@ -52,8 +52,11 @@ public class PublicHearingParser
         String title = titleParser.parse(firstPage);
         String address = addressParser.parse(firstPage);
         LocalDate date = dateTimeParser.parseDate(firstPage);
-        LocalTime startTime = dateTimeParser.parseStartTime(firstPage);
-        LocalTime endTime = dateTimeParser.parseEndTime(firstPage);
+        LocalTime startTime = dateTimeParser.parseTime(true, firstPage);
+        LocalTime endTime = dateTimeParser.parseTime(false, firstPage);
+        if (endTime == null)
+            endTime = dateTimeParser.alternateParseEndTime(pages.get(pages.size()-1));
+
         List<PublicHearingCommittee> committees = committeeParser.parse(firstPage);
         String text = textParser.parse(pages);
 
