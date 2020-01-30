@@ -12,8 +12,7 @@ public class PublicHearingAddressParser
 {
 
     private static final Pattern LAST_ADDRESS_LINE = Pattern.compile(
-            "^(\\w+( \\w+)?, (New York|NY)( +)?(\\d+)?)|(Cattaraugus County Reservation)$");
-
+            "^([\\w ,]+ *(New York|NY) *(\\d+)?)|(Cattaraugus County Reservation)$");
     private static final int INVALID_INDEX = -1;
 
     /**

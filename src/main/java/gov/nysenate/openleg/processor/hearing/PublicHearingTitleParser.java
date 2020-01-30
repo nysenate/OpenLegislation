@@ -13,14 +13,14 @@ public class PublicHearingTitleParser
 
     private static final Pattern TITLE = Pattern.compile(
             ".*(?<prefix>" +
-            "(NEW YORK STATE |PUBLIC )?FORUM/TOWN HALL" +
+            "((NEW YORK STATE |PUBLIC )?FORUM/TOWN HALL" +
             "|PUBLIC (HEARINGS?|FORUM)" +
             "|(A )?ROUNDTABLE DISCUSSION" +
             "|(A NEW YORK STATE SENATE|JUDICIAL) HEARING" +
             "|TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE" +
             "|.*NOMINATION(S:)?" +
             "|NEW YORK STATE \\d{4}" +
-            "|-{10,})[ :]*" +
+            "|-{10,})[ :]*)" +
             "(?<title>.+?) " + // Title body
             "(-{10,})"); // Marks the end of title.
 
@@ -35,8 +35,9 @@ public class PublicHearingTitleParser
         if (!matchTitle.find())
             return null;
         String title = matchTitle.group("title").trim();
-        String prefix = matchTitle.group("prefix");
-        if (title.matches("^(TO|ON|FOR|OF).*") && prefix != null)
+        String prefix = matchTitle.group("prefix").trim();
+        // Uncomment this if you want prefixes to be excluded.
+        //if (title.matches("^(TO|ON|FOR|OF).*") && prefix != null)
             title = prefix + " " + title;
         return title;
     }

@@ -50,7 +50,7 @@ public class PublicHearingTitleParserTest
         List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(
                 "05-18-11 ValeskyAgingCommitteeRoundtableFINAL.txt");
 
-        String expected = "NEW YORK STATE FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
+        String expected = "FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
                           "PROPOSAL TO MERGE THE NYS OFFICE FOR THE AGING WITH THE DEPARTMENT OF HEALTH";
         String actual = titleParser.parse(pages.get(0));
         assertThat(actual, is(expected));
