@@ -148,6 +148,7 @@ public class TranscriptGetCtrl extends BaseCtrl
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
+        // TODO: Doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
     }
 }

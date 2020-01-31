@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
@@ -17,25 +18,37 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
     private static final long serialVersionUID = -6509878885942142022L;
 
     /** The timestamp which corresponds to the transcript. */
-    private Timestamp timestamp;
+    private Timestamp timestamp = null;
+    /** The original string passed in to the constructor. Needed to properly
+     * display error when a time cannot be parsed out.*/
+    private String passedIn = "";
 
     /** --- Constructors --- */
 
     public TranscriptId(Timestamp timestamp) {
-        this.timestamp = timestamp;
+        this(timestamp.toString());
     }
 
     public TranscriptId(LocalDateTime localDateTime) {
-        this.timestamp = DateUtils.toDate(localDateTime);
+        this(localDateTime.toString());
     }
 
     public TranscriptId(String time) {
+        this.passedIn = time;
         try {
             this.timestamp = Timestamp.valueOf(time);
         }
         catch (IllegalArgumentException e) {
-            this.timestamp = DateUtils.toDate(LocalDateTime.parse(time));
+            try {
+                this.timestamp = DateUtils.toDate(LocalDateTime.parse(time));
+            }
+            catch (DateTimeParseException e1) {
+                // The String was not a time at all.
+            }
         }
+        // now() will never match a transcript.
+        if (this.timestamp == null)
+            this.timestamp = Timestamp.valueOf(LocalDateTime.now());
     }
 
     /** --- Overrides --- */
@@ -62,7 +75,7 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
 
     @Override
     public String toString() {
-        return "Transcript: " + timestamp;
+        return "Transcript: " + passedIn;
     }
 
     /** --- Basic Getters/Setters --- */
