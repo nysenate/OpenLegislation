@@ -29,6 +29,10 @@ public enum SqlTranscriptFileQuery implements BasicSqlQuery
     OLD_FILE_COUNT(
         "SELECT COUNT(file_name) FROM ${schema}." + SqlTable.TRANSCRIPT_FILE + "\n" +
         "WHERE date_time = :dateTime"
+    ),
+    GET_RENAMED_FILE(
+        "SELECT MAX(file_name) FROM ${schema}." + SqlTable.TRANSCRIPT_FILE + "\n" +
+        "WHERE original_filename = :originalFilename"
     );
 
     private String sql;

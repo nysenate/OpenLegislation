@@ -90,11 +90,11 @@ public class TranscriptParser
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy hmma");
         LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, dtf);
 
-        TranscriptId transcriptId = new TranscriptId(transcriptFile.getFileName());
-        return new Transcript(transcriptId, sessionType, dateTime, location, transcriptText.toString());
+        TranscriptId transcriptId = new TranscriptId(dateTime);
+        return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
     }
 
     private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {
-        return sessionType != null && location != null && date != null && time !=null;
+        return sessionType != null && location != null && date != null && time != null;
     }
 }

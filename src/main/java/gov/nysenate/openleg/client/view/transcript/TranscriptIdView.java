@@ -5,14 +5,14 @@ import gov.nysenate.openleg.model.transcript.TranscriptId;
 
 public class TranscriptIdView implements ViewObject
 {
-    protected String filename;
+    protected String timestamp;
 
     public TranscriptIdView(TranscriptId transcriptId) {
-        this.filename = transcriptId.getFilename();
+        this.timestamp = transcriptId.getTimestamp().toString();
     }
 
-    public String getFilename() {
-        return filename;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     @Override

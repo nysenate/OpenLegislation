@@ -56,7 +56,7 @@
              total-items="transcriptSearch.paginate.totalItems"
              current-page="transcriptSearch.paginate.currPage"
              pagination-id="tx-paginate"
-             ng-href="${ctxPath}/transcripts/{{transcriptSearch.type}}/{{tx.result.filename}}/"
+             ng-href="${ctxPath}/transcripts/{{transcriptSearch.type}}/{{tx.result.dateTime}}/"
              class="result-link transcript-result-link">
             <div ng-if="transcriptSearch.type == 'session'">
               <h4>

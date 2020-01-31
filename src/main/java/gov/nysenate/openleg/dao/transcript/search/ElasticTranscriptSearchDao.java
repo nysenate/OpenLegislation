@@ -54,26 +54,16 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
         BulkRequest bulkRequest = new BulkRequest();
         transcripts.stream()
                 .map(TranscriptView::new)
-                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getFilename(), t))
+                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getTimestamp(), t))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
-        // If a transcript was updated, old versions of transcripts need to be removed.
-        for (Transcript t : transcripts) {
-            String filename = t.getTranscriptId().getFilename();
-            int version = Integer.parseInt(filename.substring(filename.length()-1));
-            if (version != 1) {
-                String oldVersion = String.valueOf(version-1);
-                String oldFilename = filename.substring(0, filename.length()-1) + oldVersion;
-                deleteTranscriptFromIndex(new TranscriptId(oldFilename));
-            }
-        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteTranscriptFromIndex(TranscriptId transcriptId) {
         if (transcriptId != null) {
-            deleteEntry(transcriptIndexName, transcriptId.getFilename());
+            deleteEntry(transcriptIndexName, transcriptId.getTimestamp().toString());
         }
     }
 

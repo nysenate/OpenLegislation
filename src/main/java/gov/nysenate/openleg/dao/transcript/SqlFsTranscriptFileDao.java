@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.transcript;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +77,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
             String currVersion = Integer.toString(pastVersions(transcriptFile)+1);
-            String trueName = transcriptFile.getDateTime().toString() + ".v" + currVersion;
+            LocalDateTime dateTime = transcriptFile.getDateTime();
+            String trueName = DateUtils.toDate(dateTime).toString() + ".v" + currVersion;
             File archiveFile = new File(archiveTranscriptDir, trueName);
             FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);
@@ -86,6 +89,12 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
             throw new FileNotFoundException(
                     "TranscriptFile " + stagedFile + " must be in the incoming transcripts directory in order to be archived.");
         }
+    }
+
+    protected String getFilenameFromOriginalFilename(String originalFilename) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("originalFilename", originalFilename);
+        return jdbcNamed.queryForObject(GET_RENAMED_FILE.getSql(schema()), params, String.class);
     }
 
     /** {@inheritDoc} */

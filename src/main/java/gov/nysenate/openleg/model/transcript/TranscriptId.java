@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.model.transcript;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,13 +16,26 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
 {
     private static final long serialVersionUID = -6509878885942142022L;
 
-    /** The filename which contains the transcript. */
-    private String filename;
+    /** The timestamp which corresponds to the transcript. */
+    private Timestamp timestamp;
 
     /** --- Constructors --- */
 
-    public TranscriptId(String filename) {
-        this.filename = filename;
+    public TranscriptId(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public TranscriptId(LocalDateTime localDateTime) {
+        this.timestamp = DateUtils.toDate(localDateTime);
+    }
+
+    public TranscriptId(String time) {
+        try {
+            this.timestamp = Timestamp.valueOf(time);
+        }
+        catch (IllegalArgumentException e) {
+            this.timestamp = DateUtils.toDate(LocalDateTime.parse(time));
+        }
     }
 
     /** --- Overrides --- */
@@ -29,29 +45,33 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TranscriptId that = (TranscriptId) o;
-        return Objects.equals(filename, that.filename);
+        return Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return filename != null ? filename.hashCode() : 0;
+        return timestamp != null ? timestamp.hashCode() : 0;
     }
 
     @Override
     public int compareTo(TranscriptId o) {
         return ComparisonChain.start()
-                .compare(this.filename, o.filename)
+                .compare(this.timestamp, o.timestamp)
                 .result();
     }
 
     @Override
     public String toString() {
-        return "Transcript: " + filename;
+        return "Transcript: " + timestamp;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getFilename() {
-        return filename;
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public LocalDateTime getDateTime() {
+        return timestamp.toLocalDateTime();
     }
 }
