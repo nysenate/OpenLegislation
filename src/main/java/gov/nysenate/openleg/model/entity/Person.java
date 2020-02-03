@@ -63,6 +63,23 @@ public class Person implements Comparable<Person>
         this.verified = other.verified;
     }
 
+    /**
+     * Updates a Person's fields to be equal to other.
+     * @param other
+     */
+    public void updateFromOther(Person other) {
+        this.personId = other.getPersonId();
+        this.prefix = other.getPrefix();
+        this.fullName = other.getFullName();
+        this.firstName = other.getFirstName();
+        this.middleName = other.getMiddleName();
+        this.lastName = other.getLastName();
+        this.suffix = other.getSuffix();
+        this.email = other.getEmail();
+        this.imgName = other.getImgName();
+        this.verified = other.isVerified();
+    }
+
     /** --- Overrides --- */
 
     @Override

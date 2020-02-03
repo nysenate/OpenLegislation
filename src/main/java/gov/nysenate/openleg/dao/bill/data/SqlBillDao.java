@@ -367,9 +367,20 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get the votes for the bill id in the params.
      */
     public List<BillVote> getBillVotes(ImmutableParams baseParams) {
-        BillVoteRowHandler voteHandler = new BillVoteRowHandler(memberService);
+        BillVoteRowHandler voteHandler = new BillVoteRowHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES.getSql(schema()), baseParams, voteHandler);
-        return voteHandler.getBillVotes();
+        List<BillVote> billVotes = voteHandler.getBillVotes();
+        for (BillVote billVote : billVotes) {
+            for (SessionMember member : billVote.getMemberVotes().values()) {
+                try {
+                    SessionMember fullMember = memberService.getMemberBySessionId(member.getSessionMemberId());
+                    member.updateFromOther(fullMember);
+                } catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
+                }
+            }
+        }
+        return billVotes;
     }
 
     /**
