@@ -47,7 +47,7 @@ public interface SourceFileRefDao {
      *
      * @return PaginatedList<SobiFile>
      */
-    PaginatedList<SourceFile> getSobiFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByFileName,
-                                                 LimitOffset limOff);
+    PaginatedList<SourceFile> getSourceFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByFileName,
+                                                   LimitOffset limOff);
 
 }

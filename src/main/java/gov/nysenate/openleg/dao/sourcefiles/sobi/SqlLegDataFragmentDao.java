@@ -1,20 +1,21 @@
 package gov.nysenate.openleg.dao.sourcefiles.sobi;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import com.google.common.collect.Maps;
+import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileRowMapper;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -25,29 +26,21 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 @Repository
 public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragmentDao {
 
-    @Autowired private SourceFileRefDao sourceFileRefDao;
+    @Autowired private List<SourceFileFsDao> sourceFileFsDaos;
+    private ImmutableMap<SourceType, SourceFileFsDao> sourceFileDaoMap;
 
-    @Override
-    public List<LegDataFragment> getLegDataFragments(SobiFile sobiFile, LegDataFragmentType fragmentType,
-                                                     SortOrder pubDateOrder) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("legDataFileName", sobiFile.getFileName());
-        params.addValue("fragmentType", fragmentType.name());
-        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
-        return jdbcNamed.query(
-                SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE_AND_TYPE.getSql(schema(), orderBy,
-                        LimitOffset.ALL),
-                params, new LegDataFragmentRowMapper(sobiFile));
+    @PostConstruct
+    protected void init() {
+        sourceFileDaoMap = Maps.uniqueIndex(sourceFileFsDaos, SourceFileFsDao::getSourceType);
     }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public List<LegDataFragment> getPendingLegDataFragments(SortOrder pubDateOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
+        OrderBy orderBy = fragmentOrderBy(pubDateOrder);
         return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS.getSql(schema(), orderBy, limOff),
-                new LegDataFragmentRowMapper());
+                new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
     /**
@@ -57,12 +50,12 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     public List<LegDataFragment> getPendingLegDataFragments(ImmutableSet<LegDataFragmentType> restrict,
                                                             SortOrder pubDateOrder,
                                                             LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
+        OrderBy orderBy = fragmentOrderBy(pubDateOrder);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentTypes",
                 restrict.stream().map(Enum::name).collect(Collectors.toSet()));
         return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE.getSql(schema(), orderBy, limOff),
-                params, new LegDataFragmentRowMapper());
+                params, new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
     /**
@@ -94,22 +87,25 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     public LegDataFragment getLegDataFragment(String fragmentId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentId", fragmentId);
-        return jdbcNamed.queryForObject(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENT_BY_FILE_NAME.getSql(schema()), params,
-                new LegDataFragmentRowMapper());
+        return jdbcNamed.queryForObject(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENT_BY_FRAGMENT_ID.getSql(schema()), params,
+                new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<LegDataFragment> getLegDataFragments(SourceFile sobiFile, SortOrder pubDateOrder) {
-        MapSqlParameterSource params = new MapSqlParameterSource("legDataFileName",
-                sobiFile.getFileName());
-        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
-        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE.getSql(schema(), orderBy, LimitOffset.ALL),
-                params, new LegDataFragmentRowMapper(sobiFile));
+    public List<LegDataFragment> getLegDataFragments(String sourceFileName, SortOrder pubDateOrder) {
+        MapSqlParameterSource params = new MapSqlParameterSource("legDataFileName", sourceFileName);
+        OrderBy orderBy = fragmentOrderBy(pubDateOrder);
+        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_SOURCE_FILE_NAME.getSql(schema(), orderBy, LimitOffset.ALL),
+                params, new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
+    private OrderBy fragmentOrderBy(SortOrder sortOrder) {
+        return new OrderBy(SqlTable.LEG_DATA_FRAGMENT + ".published_date_time", sortOrder,
+                SqlTable.LEG_DATA_FRAGMENT + ".sequence_no", sortOrder);
+    }
     /**
      * Returns a MapSqlParameterSource with columns mapped to LegDataFragment values.
      */
@@ -135,37 +131,20 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
      * Maps rows from the sobi fragment table to LegDataFragment objects.
      */
     protected class LegDataFragmentRowMapper implements RowMapper<LegDataFragment> {
-        private String pfx = "";
-        private Map<String, SourceFile> legDataFileMap = new HashMap<>();
 
-        public LegDataFragmentRowMapper() {
-            this("", Collections.emptyList());
-        }
+        SourceFileRowMapper sourceFileRowMapper;
 
-        public LegDataFragmentRowMapper(SourceFile legDataFile) {
-            this("", Arrays.asList(legDataFile));
-        }
-
-        public LegDataFragmentRowMapper(String pfx, List<SourceFile> legDataFiles) {
-            this.pfx = pfx;
-            for (SourceFile sobiFile : legDataFiles) {
-                legDataFileMap.put(sobiFile.getFileName(), sobiFile);
-            }
+        public LegDataFragmentRowMapper(ImmutableMap<SourceType, SourceFileFsDao> sourceFileDaoMap) {
+            sourceFileRowMapper = new SourceFileRowMapper(sourceFileDaoMap);
         }
 
         @Override
         public LegDataFragment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            String legDataFileName = rs.getString(pfx + "leg_data_file_name");
-            // Passing the sobi file objects in the constructor is a means of caching the objects
-            // so that they don't have to be re-mapped. If not supplied, an extra call will be
-            // made to fetch the sobi file.
-            SourceFile sourceFile = legDataFileMap.get(legDataFileName);
-            if (sourceFile == null) {
-                sourceFile = sourceFileRefDao.getSourceFile(legDataFileName);
-            }
-            LegDataFragmentType type = LegDataFragmentType.valueOf(rs.getString(pfx + "fragment_type").toUpperCase());
-            int sequenceNo = rs.getInt(pfx + "sequence_no");
-            String text = rs.getString(pfx + "text");
+            SourceFile sourceFile = sourceFileRowMapper.mapRow(rs, rowNum);
+
+            LegDataFragmentType type = LegDataFragmentType.valueOf(rs.getString("fragment_type").toUpperCase());
+            int sequenceNo = rs.getInt("sequence_no");
+            String text = rs.getString("text");
 
             LegDataFragment fragment = new LegDataFragment(sourceFile, type, text, sequenceNo);
             fragment.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));

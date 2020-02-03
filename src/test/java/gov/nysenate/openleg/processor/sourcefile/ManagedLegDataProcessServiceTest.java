@@ -91,7 +91,7 @@ public class ManagedLegDataProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new XmlFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile.getFileName(), SortOrder.ASC);
             for (LegDataFragment legDataFragment : legDataFragments) {
                 assertEquals("Ldsumm Collade", LegDataFragmentType.LDSUMM, legDataFragment.getType());
             }
@@ -112,7 +112,7 @@ public class ManagedLegDataProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new SobiFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile.getFileName(), SortOrder.ASC);
             assertEquals("Bill Fragment", LegDataFragmentType.BILL, legDataFragments.get(0).getType());
             assertEquals("AGENDA Fragment", LegDataFragmentType.AGENDA, legDataFragments.get(1).getType());
         } finally {
@@ -132,7 +132,7 @@ public class ManagedLegDataProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new SobiFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile.getFileName(), SortOrder.ASC);
             assertEquals("Calendar Fragment", LegDataFragmentType.CALENDAR_ACTIVE, legDataFragments.get(0).getType());
         } finally {
             cleanUpFiles(stagingFile, expectedArchiveFile);
