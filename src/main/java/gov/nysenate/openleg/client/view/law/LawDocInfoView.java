@@ -3,7 +3,6 @@ package gov.nysenate.openleg.client.view.law;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
-import gov.nysenate.openleg.model.law.LawType;
 
 import java.time.LocalDate;
 
