@@ -5,7 +5,7 @@ import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.updates.UpdateContentType;
 import gov.nysenate.openleg.model.updates.UpdateReturnType;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.util.Map;
 import java.util.Set;
@@ -135,7 +135,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
                 .putAll(getColumnReplaceMap(returnType))
                 .put("dateColumn", updateType == UpdateType.PROCESSED_DATE ? "action_date_time" : "published_date_time")
                 .build();
-        aggregateQuery = StrSubstitutor.replace(aggregateQuery, replaceMap);
+        aggregateQuery = StringSubstitutor.replace(aggregateQuery, replaceMap);
         return aggregateQuery;
     }
 

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedListMultimap;
@@ -21,13 +20,11 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBillVote;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.SenateSiteJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
@@ -36,16 +33,9 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.model.bill.BillVoteCode.*;
 
 @Service
-public class SenateSiteBillJsonParser extends JsonParser {
+public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
 
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillJsonParser.class);
-
-    private final ObjectMapper objectMapper;
-
-    @Autowired
-    public SenateSiteBillJsonParser(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public List<SenateSiteBill> parseBills(SenateSiteDump billDump) throws ParseError {
         return billDump.getDumpFragments().stream()
@@ -76,7 +66,7 @@ public class SenateSiteBillJsonParser extends JsonParser {
 
     /* --- Internal Methods --- */
 
-    private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) throws IOException {
+    private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) {
         SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().getDumpTime());
 
         final String printNo = getValue(billNode, "field_ol_print_no");

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -44,7 +45,8 @@ public class PublicHearingParser
      * @throws IOException
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
-        final List<List<String>> pages = PublicHearingTextUtils.getPages(FileUtils.readFileToString(publicHearingFile.getFile()));
+        final List<List<String>> pages = PublicHearingTextUtils.getPages(
+                FileUtils.readFileToString(publicHearingFile.getFile(), Charset.defaultCharset()));
         final List<String> firstPage = pages.get(0);
 
         String title = titleParser.parse(firstPage);

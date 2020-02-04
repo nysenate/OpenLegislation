@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -90,7 +91,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         try {
             File file = FileIOUtils.getResourceFile(xmlFilePath);
 
-            String contents = FileUtils.readFileToString(file);
+            String contents = FileUtils.readFileToString(file, Charset.defaultCharset());
 
             XmlFile xmlFile = new XmlFile(file);
 

@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -18,16 +19,21 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Component
 public class SessionChamberShortNameCache implements CachingService<String> {
@@ -35,25 +41,24 @@ public class SessionChamberShortNameCache implements CachingService<String> {
     private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
 
     private EventBus eventBus;
-
     private Cache memberCache;
-
     private CacheManager cacheManager;
-
     private MemberDao memberDao;
+    private long shortnameCacheSizeMb;
 
     @Autowired
-    public SessionChamberShortNameCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
+    public SessionChamberShortNameCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager,
+                                        @Value("${shortname.cache.heap.size}") long shortnameCacheSizeMb) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
         this.cacheManager = cacheManager;
+        this.shortnameCacheSizeMb = shortnameCacheSizeMb;
     }
 
     @PostConstruct
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy
@@ -62,15 +67,22 @@ public class SessionChamberShortNameCache implements CachingService<String> {
         cacheManager.removeCache(ContentCache.SESSION_CHAMBER_SHORTNAME.name());
     }
 
+    @Override
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.SESSION_CHAMBER_SHORTNAME.name()).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration()
+                .name(ContentCache.SESSION_CHAMBER_SHORTNAME.name())
+                .eternal(true)
+                .maxBytesLocalHeap(shortnameCacheSizeMb, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(this.memberCache);
     }
 
+    @Override
     public List<Ehcache> getCaches() {
         return Arrays.asList(memberCache);
     }
 
+    @Override
     public void evictContent(String sessionMemberId) {
         memberCache.remove(sessionMemberId);
     }
@@ -95,8 +107,8 @@ public class SessionChamberShortNameCache implements CachingService<String> {
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up Session Chamber ShortName cache");
-        memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-                .forEach(this::createCacheKeyAndPutInCache);
+        memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL)
+                .forEach(this::putMemberInCache);
         logger.info("Done warming up Session Chamber ShortName cache");
     }
 
@@ -108,29 +120,56 @@ public class SessionChamberShortNameCache implements CachingService<String> {
         }
     }
 
-    public boolean isKeyInCache(SimpleKey key) {
-        return memberCache.isKeyInCache(key);
+
+    /**
+     * Gets a member from our cache or else loads it from the database and adds them to the cache.
+     * @param lbdcShortName
+     * @param sessionYear
+     * @param chamber
+     * @return
+     * @throws MemberNotFoundEx
+     */
+    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
+        if (lbdcShortName == null || chamber == null) {
+            throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
+        }
+        Optional<Element> smElement = Optional.ofNullable(memberCache.get(genCacheKey(lbdcShortName, sessionYear, chamber)));
+        if (smElement.isPresent()) {
+            return (SessionMember) smElement.get().getObjectValue();
+        } else {
+            try {
+                SessionMember sm = memberDao.getMemberByShortName(lbdcShortName, sessionYear, chamber);
+                putMemberInCache(sm);
+                return sm;
+            } catch (EmptyResultDataAccessException ex) {
+                throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
+            }
+        }
     }
 
-    public String genCacheKey(SessionMember sessionMember) {
-        return sessionMember.getSessionYear().toString() + "-" +
-                sessionMember.getChamber() + "-" + sessionMember.getLbdcShortName();
+    /* --- Internal Methods --- */
+
+    private SimpleKey genCacheKey(SessionMember sessionMember) {
+        return genCacheKey(
+                sessionMember.getLbdcShortName(),
+                sessionMember.getSessionYear(),
+                sessionMember.getChamber()
+        );
     }
 
-    public String genCacheKey(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
-        return sessionYear.toString() + "-" +
-                chamber + "-" + lbdcShortName;
+    /**
+     * Generate a unique key used to identify an individual session member.
+     *
+     * @param lbdcShortName
+     * @param sessionYear
+     * @param chamber
+     * @return
+     */
+    private SimpleKey genCacheKey(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
+        return new SimpleKey(sessionYear.toString() + "-" + chamber.name() + "-" + lbdcShortName.toUpperCase(Locale.US));
     }
 
-    public void createCacheKeyAndPutInCache(SessionMember sessionMember) {
-        putMemberInCache(genCacheKey(sessionMember), sessionMember);
-    }
-
-    public void putMemberInCache(String key, SessionMember member) {
-        memberCache.put(new Element(new SimpleKey(key), member, true));
-    }
-
-    public Cache getCache() {
-        return memberCache;
+    private void putMemberInCache(SessionMember member) {
+        memberCache.put(new Element(genCacheKey(member), member, true));
     }
 }

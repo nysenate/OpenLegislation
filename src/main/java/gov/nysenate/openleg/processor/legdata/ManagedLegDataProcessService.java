@@ -234,6 +234,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
      * @param sourceFile
      * @throws IOException
      */
+    @SuppressWarnings("unchecked")
     private void collateSourceFile(SourceFile sourceFile) throws IOException {
         // Do some slightly different processing for SOBI and XML files
         DataProcessUnit unit = new DataProcessUnit(

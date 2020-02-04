@@ -2,28 +2,29 @@ package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.dao.spotcheck.AgendaMeetingWeekReportDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
-import gov.nysenate.openleg.model.agenda.*;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaInfoAddendum;
+import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
+import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportService<AgendaMeetingWeekId> {
+public abstract class BaseAgendaCheckReportService implements SpotCheckReportService<AgendaMeetingWeekId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseAgendaCheckReportService.class);
-
-    @Autowired
-    AgendaMeetingWeekReportDao reportDao;
 
     @Autowired
     AgendaSpotCheckService checkService;
@@ -34,18 +35,11 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
     @Autowired
     Environment environment;
 
-    /**
-     * --- Implemented Methods ---
-     */
+    /* --- Implemented Methods --- */
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_AGENDA_ALERT;
-    }
-
-    @Override
-    protected SpotCheckReportDao<AgendaMeetingWeekId> getReportDao() {
-        return reportDao;
     }
 
     /**

@@ -14,7 +14,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     @Autowired private CacheManager cacheManager;
     @Autowired private EventBus eventBus;
 
-    @Value("${law.cache.size}") private long lawTreeCacheHeapSize;
+    @Value("${law.cache.element.size}") private int lawTreeCacheElementSize;
 
     private EhCacheCache lawTreeCache;
 
@@ -76,8 +75,8 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     public void setupCaches() {
         Cache cache = new Cache(new CacheConfiguration().name(ContentCache.LAW.name())
                 .eternal(true)
-                .maxBytesLocalHeap(lawTreeCacheHeapSize, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(defaultSizeOfPolicy()));
+                .maxEntriesLocalHeap(lawTreeCacheElementSize)
+                .sizeOfPolicy(elementSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.lawTreeCache = new EhCacheCache(cache);
     }

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.spotcheck.billscrape;
 
 import com.google.common.collect.SortedSetMultimap;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 import java.time.LocalDate;
 import java.util.Objects;

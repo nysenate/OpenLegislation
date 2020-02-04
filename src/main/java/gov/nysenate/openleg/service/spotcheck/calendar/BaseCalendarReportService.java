@@ -1,15 +1,11 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public abstract class BaseCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
+public abstract class BaseCalendarReportService implements SpotCheckReportService<CalendarEntryListId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseCalendarReportService.class);
-
-    @Autowired
-    private CalendarEntryListIdSpotCheckReportDao reportDao;
 
     @Autowired
     private CalendarCheckService checkService;
@@ -50,11 +43,6 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_CALENDAR_ALERT;
-    }
-
-    @Override
-    protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
-        return reportDao;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.transcript;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

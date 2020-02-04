@@ -1,6 +1,8 @@
 
 <%-- Intended for use within SpotcheckReportCtrl --%>
-<md-tab ng-cloak label="{{title}} ({{mismatchContentTypeSummary.summary.items[type]}})"
+<md-tab ng-cloak
+        ng-show="hasContentType(datasource.selected.value, type)"
+        label="{{title}} ({{mismatchContentTypeSummary.summary.items[type]}})"
         md-on-deselect="onTabChange()">
 
   <div class="spotcheck-report-control-bar spotcheck-report-inner-controls">
@@ -24,18 +26,30 @@
 
   <md-content>
     <div class="spotcheck-table-header">
-      <div class="spotcheck-col-state">State</div>
+      <div class="spotcheck-table-column spotcheck-col-state">State</div>
 
       <!-- Id column headers -->
       <div ng-repeat="col in getIdColumns(type, datasource.selected.value)"
            ng-click="updateOrder(col.orderId, $event)"
-           class="{{col.class}}"
+           class="spotcheck-table-column {{col.class}}"
            ng-bind="col.name"></div>
 
-      <div ng-click="updateOrder('MISMATCH_TYPE',$event)" class="spotcheck-col-type">Error</div>
-      <div ng-click="updateOrder('OBSERVED_DATE',$event)"  class="spotcheck-col-date">Date</div>
-      <div ng-click="updateOrder('ISSUE',$event)" class="spotcheck-col-issue">Issue</div>
-      <div ng-click="updateOrder('REFERENCE_TYPE',$event)" class="spotcheck-col-source">Source</div>
+      <div ng-click="updateOrder('MISMATCH_TYPE',$event)"
+           class="spotcheck-table-column spotcheck-col-type">
+        Error
+      </div>
+      <div ng-click="updateOrder('OBSERVED_DATE',$event)"
+           class="spotcheck-table-column spotcheck-col-date">
+        Date
+      </div>
+      <div ng-click="updateOrder('ISSUE',$event)"
+           class="spotcheck-table-column spotcheck-col-issue">
+        Issue
+      </div>
+      <div ng-click="updateOrder('REFERENCE_TYPE',$event)"
+           class="spotcheck-table-column spotcheck-col-source">
+        Source
+      </div>
     </div>
     <md-divider></md-divider>
     <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -52,17 +66,19 @@
          ng-show="loading === false"
          class="spotcheck-table-row">
       <div class="spotcheck-table-mismatch-row">
-        <div class="spotcheck-col-state">{{mismatch.status}}</div>
+        <div class="spotcheck-table-column spotcheck-col-state">{{mismatch.status}}</div>
 
         <!-- Id column data -->
         <div ng-repeat="col in getIdColumns(type, datasource.selected.value)"
-             class="{{col.class}}"
+             class="spotcheck-table-column {{col.class}}"
              ng-bind="mismatch[col.field]">
         </div>
 
-        <div class="spotcheck-col-type">{{mismatch.mismatchType | mismatchType:mismatch.datasource}}</div>
-        <div class="spotcheck-col-date">{{mismatch.observedDate}}</div>
-        <div class="spotcheck-col-issue">
+        <div class="spotcheck-table-column spotcheck-col-type">
+          {{mismatch.mismatchType | mismatchType:mismatch.datasource}}
+        </div>
+        <div class="spotcheck-table-column spotcheck-col-date">{{mismatch.observedDate}}</div>
+        <div class="spotcheck-table-column spotcheck-col-issue">
           <md-input-container class="md-block">
             <input type="text"
                    title="Assign an issue id to this mismatch"
@@ -73,7 +89,7 @@
             <div class="report-page-toast" ng-class="{'saved': mismatch.issueSaved}">Saved</div>
           </md-input-container>
         </div>
-        <div class="spotcheck-col-source">{{mismatch.refTypeLabel}}</div>
+        <div class="spotcheck-table-column spotcheck-col-source">{{mismatch.refTypeLabel}}</div>
       </div>
       <div class="spotcheck-table-buttons">
         <md-button class="md-raised rounded-corner-button"

@@ -2,12 +2,8 @@ package gov.nysenate.openleg.client.view.updates;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
-import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 

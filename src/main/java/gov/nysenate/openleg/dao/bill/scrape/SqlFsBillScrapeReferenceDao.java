@@ -12,7 +12,7 @@ import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     }
 
     private File createScrapeFile(File stagingDir, BaseBillId baseBillId) {
-        String file = StrSubstitutor.replace(FILE_TEMPLATE, ImmutableMap.<String, String>builder()
+        String file = StringSubstitutor.replace(FILE_TEMPLATE, ImmutableMap.<String, String>builder()
                 .put("sessionYear", Integer.toString(baseBillId.getSession().getYear()))
                 .put("printNo", baseBillId.getPrintNo())
                 .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))

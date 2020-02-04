@@ -23,7 +23,6 @@ public class XmlFile extends BaseSourceFile {
 
     private static final Pattern fileNamePattern = Pattern.compile(
             "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML", Pattern.CASE_INSENSITIVE);
-    private final String stagingDir="/data/openleg/staging/xmls/";
 
     /**
      * --- Constructors ---
@@ -31,12 +30,10 @@ public class XmlFile extends BaseSourceFile {
 
     public XmlFile(File xmlFile) throws IOException {
         super(xmlFile);
-        standingDir=new File(stagingDir);
     }
 
     public XmlFile(File file, String encoding) throws IOException {
         super(file, encoding);
-        standingDir=new File(stagingDir);
     }
 
     /** --- Overrides --- */

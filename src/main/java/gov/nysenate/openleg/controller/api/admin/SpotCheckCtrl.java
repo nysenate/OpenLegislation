@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.controller.api.admin;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
@@ -18,21 +17,18 @@ import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
+import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
@@ -44,16 +40,12 @@ public class SpotCheckCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
 
-    @Autowired private List<SpotCheckReportService<?>> reportServices;
-    @Autowired private SpotcheckRunService spotcheckRunService;
+    private final SpotcheckRunService spotcheckRunService;
+    private final SpotCheckReportDao spotCheckReportDao;
 
-    private ImmutableMap<SpotCheckRefType, SpotCheckReportService<?>> reportServiceMap;
-
-    @PostConstruct
-    public void init() {
-        reportServiceMap = ImmutableMap.copyOf(
-                reportServices.stream()
-                        .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),(a, b) -> b)));
+    public SpotCheckCtrl(SpotcheckRunService spotcheckRunService, SpotCheckReportDao spotCheckReportDao) {
+        this.spotcheckRunService = spotcheckRunService;
+        this.spotCheckReportDao = spotCheckReportDao;
     }
 
     /**
@@ -98,14 +90,12 @@ public class SpotCheckCtrl extends BaseCtrl
         OrderBy order = getOrderBy(orderBy, sort);
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
-        MismatchQuery query = new MismatchQuery<>(rDate, ds, status, Collections.singleton(ct))
+        MismatchQuery query = new MismatchQuery(rDate, ds, status, Collections.singleton(ct))
                 .withIgnoredStatuses(igs)
                 .withOrderBy(order)
                 .withMismatchTypes(type);
 
-        // Get any ref type for this datasource and contentType.
-        SpotCheckRefType refType = SpotCheckRefType.get(ds, ct).get(0);
-        PaginatedList<DeNormSpotCheckMismatch> mismatches = reportServiceMap.get(refType).getMismatches(query, limitOffset);
+        PaginatedList<DeNormSpotCheckMismatch> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
         List<MismatchView> mismatchViews = new ArrayList<>();
         for (DeNormSpotCheckMismatch mm : mismatches.getResults()) {
             mismatchViews.add(new MismatchView(mm));
@@ -135,7 +125,7 @@ public class SpotCheckCtrl extends BaseCtrl
         SpotCheckContentType ct = getContentType(contentType);
         LocalDate rDate = getReportDate(reportDate);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(rDate, ds, ct, igs);
+        MismatchStatusSummary summary = spotCheckReportDao.getMismatchStatusSummary(rDate, ds, ct, igs);
         return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
     }
 
@@ -165,7 +155,7 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDate rDate = getReportDate(reportDate);
         MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getMismatchStatus(mismatchStatus);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(rDate, ds, ct, status, igs);
+        MismatchTypeSummary summary = spotCheckReportDao.getMismatchTypeSummary(rDate, ds, ct, status, igs);
         return new ViewObjectResponse<>(new MismatchTypeSummaryView(summary));
     }
 
@@ -193,7 +183,7 @@ public class SpotCheckCtrl extends BaseCtrl
         SpotCheckDataSource ds = getDatasource(datasource);
         LocalDate rDate = getReportDate(reportDate);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(rDate, ds, igs);
+        MismatchContentTypeSummary summary = spotCheckReportDao.getMismatchContentTypeSummary(rDate, ds, igs);
         return new ViewObjectResponse<>(new MismatchContentTypeSummaryView(summary));
     }
 
@@ -212,7 +202,7 @@ public class SpotCheckCtrl extends BaseCtrl
         SpotCheckMismatchIgnore ignoreStatus = ignoreLevel == null
                 ? SpotCheckMismatchIgnore.NOT_IGNORED
                 : getEnumParameter("ignoreLevel", ignoreLevel, SpotCheckMismatchIgnore.class);
-        getAnyReportService().setMismatchIgnoreStatus(mismatchId, ignoreStatus);
+        spotCheckReportDao.setMismatchIgnoreStatus(mismatchId, ignoreStatus);
         return new SimpleResponse(true, "ignore level set", "ignore-level-set");
     }
 
@@ -226,7 +216,7 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.GET)
     public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-        getAnyReportService().addIssueId(mismatchId, issueId);
+        spotCheckReportDao.addIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id added", "issue-id-added");
     }
 
@@ -240,7 +230,7 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
     public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-        getAnyReportService().updateIssueId(mismatchId, issueId);
+        spotCheckReportDao.updateIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id updated", "issue-id-updated");
     }
 
@@ -253,7 +243,7 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.DELETE)
     public BaseResponse deleteMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-        getAnyReportService().deleteIssueId(mismatchId, issueId);
+        spotCheckReportDao.deleteIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
 
@@ -266,7 +256,7 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/delete", method = RequestMethod.DELETE)
     public BaseResponse deleteMismatchIssueId(@PathVariable int mismatchId) {
-        getAnyReportService().deleteAllIssueId(mismatchId);
+        spotCheckReportDao.deleteAllIssueId(mismatchId);
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
     /**
@@ -349,7 +339,7 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/run/interval/calendar")
     public BaseResponse runCalendarWeeklyReports(@RequestParam(required = false) Integer year) {
         int yr = year == null ? LocalDate.now().getYear() : year;
-        spotcheckRunService.runCalendarIntervalReports(yr);
+        spotcheckRunService.runIntervalReports(yr, SpotCheckRefType.LBDC_CALENDAR_ALERT);
         return new SimpleResponse(true, "Calendar Interval Reports for " + yr + " have been run.", "report report");
     }
 
@@ -367,7 +357,7 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/run/interval/agenda")
     public BaseResponse runAgendaWeeklyReports(@RequestParam(required = false) Integer year) {
         int yr = year == null ? LocalDate.now().getYear() : year;
-        spotcheckRunService.runAgendaIntervalReports(yr);
+        spotcheckRunService.runIntervalReports(yr, SpotCheckRefType.LBDC_AGENDA_ALERT);
         return new SimpleResponse(true, "Agenda Interval Reports for " + yr + " have been run.", "report report");
     }
 
@@ -429,11 +419,6 @@ public class SpotCheckCtrl extends BaseCtrl
                                MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
         }
         return new OrderBy(orderBy.getColumnName(), sortOrder);
-    }
-
-    private SpotCheckReportService<?> getAnyReportService() {
-        return reportServices.stream().findAny()
-                             .orElseThrow(() -> new IllegalStateException("No spotcheck report services found"));
     }
 
     private SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {

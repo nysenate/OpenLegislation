@@ -2,7 +2,12 @@ package gov.nysenate.openleg.service.mail;
 
 import org.springframework.mail.SimpleMailMessage;
 
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.util.Collection;
 
 public interface SendMailService {
 
@@ -30,4 +35,28 @@ public interface SendMailService {
      * @param messages
      */
     public void sendMessage(SimpleMailMessage... messages);
+
+    /**
+     * Sends each of the given MIME Messages
+     * @param messages {@link Collection<MimeMessage>} - the messages to send
+     */
+    public void sendMessages(Collection<MimeMessage> messages);
+
+    /**
+     * Creates and returns a MIME message
+     * @return MimeMessage
+     */
+    public MimeMessage createMessage();
+
+    /**
+     * Creates and returns a MimeMultiPart
+     * @return MimeMultiPart
+     */
+    public MimeMultipart createMimeMultipart();
+
+    /**
+     * Creates and returns an empty BodyPart
+     * @return BodyPart
+     */
+    public MimeBodyPart getMimeBodyPart();
 }

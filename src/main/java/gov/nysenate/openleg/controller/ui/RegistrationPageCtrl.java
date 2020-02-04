@@ -2,8 +2,10 @@ package gov.nysenate.openleg.controller.ui;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.client.view.entity.NewUserView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.auth.UsernameExistsException;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/register")
@@ -44,9 +48,14 @@ public class RegistrationPageCtrl extends BaseCtrl
 
     @ResponseBody
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public BaseResponse signup(WebRequest webRequest, @RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String name =  body.get("name");
+    public BaseResponse signup(WebRequest webRequest, @RequestBody NewUserView body) {
+        String email = body.getEmail();
+        String name =  body.getName();
+        Set<String> subscriptions = body.getSubscriptions();
+        Set<ApiUserSubscriptionType> subs = new HashSet<>();
+        for(String sub:subscriptions) {
+            subs.add(getEnumParameter("Subscriptions", sub, ApiUserSubscriptionType.class));
+        }
         logger.info("{} with email {} is registering for an API key.", name, email);
         if (StringUtils.isBlank(email)) {
             return new SimpleResponse(false, "Email must be valid.", "api-signup");
@@ -55,7 +64,7 @@ public class RegistrationPageCtrl extends BaseCtrl
             return new SimpleResponse(false, "Name must not be empty.", "api-signup");
         }
         try {
-            ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
+            ApiUser apiUser = apiUserService.registerNewUser(email, name, "", subs);
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
         }
         catch (UsernameExistsException ex) {

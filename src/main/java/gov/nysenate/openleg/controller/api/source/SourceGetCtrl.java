@@ -63,7 +63,7 @@ public class SourceGetCtrl extends BaseCtrl {
         SortOrder order = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 10);
         Range<LocalDateTime> dateTimeRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
-        PaginatedList<SourceFile> sourceFiles = sourceFileDao.getSobiFilesDuring(dateTimeRange, order, limOff);
+        PaginatedList<SourceFile> sourceFiles = sourceFileDao.getSourceFilesDuring(dateTimeRange, order, limOff);
         return ListViewResponse.of(
                 sourceFiles.getResults().stream()
                         .map(sourceFile -> new SourceIdView(sourceFile.getSourceType().name(),
@@ -81,9 +81,9 @@ public class SourceGetCtrl extends BaseCtrl {
      * Expected Output: List of SourceFileView containing the fragments
      */
     @RequestMapping("/{sourceFileName:.+}")
-    public BaseResponse getSourceFile(@PathVariable String sourceFileName) {
-        SourceFile sobiFile = sourceFileDao.getSourceFile(sourceFileName);
-        List<SourceFileView> fragList = legDataFragmentDao.getLegDataFragments(sobiFile, SortOrder.ASC).stream()
+    public BaseResponse getSourceFile(@PathVariable String sourceFileName, WebRequest request) {
+        LimitOffset limOff = getLimitOffset(request, 10);
+        List<SourceFileView> fragList = legDataFragmentDao.getLegDataFragments(sourceFileName, SortOrder.ASC).stream()
                 .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
                         sf.getPublishedDateTime(), sf.getText()))
                 .collect(Collectors.toList());

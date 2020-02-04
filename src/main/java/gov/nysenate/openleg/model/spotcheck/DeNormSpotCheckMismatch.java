@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,8 +64,8 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
-    public DeNormSpotCheckMismatch copy() {
-        DeNormSpotCheckMismatch copy = new DeNormSpotCheckMismatch(key, type, dataSource);
+    public DeNormSpotCheckMismatch<ContentKey> copy() {
+        DeNormSpotCheckMismatch<ContentKey> copy = new DeNormSpotCheckMismatch<>(key, type, dataSource);
         copy.setReportId(reportId);
         copy.setState(state);
         copy.setContentType(contentType);
@@ -87,7 +88,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeNormSpotCheckMismatch<?> that = (DeNormSpotCheckMismatch<?>) o;
-        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (!Objects.equals(key, that.key)) return false;
         if (type != that.type) return false;
         if (dataSource != that.dataSource) return false;
         return contentType == that.contentType;
@@ -125,15 +126,12 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
     }
 
-    public void addIssueId(String issueId) {
-        if (issueId == null || issueId == "") {
-            return;
-        }
-        this.issueIds.add(issueId);
+    public void copyIgnoreStatus(DeNormSpotCheckMismatch other) {
+        setIgnoreStatus(other.getIgnoreStatus());
     }
 
-    public void deleteIssueId(String issueId) {
-        this.issueIds.remove(issueId);
+    public SpotCheckMismatchKey<ContentKey> getMismatchKey() {
+        return new SpotCheckMismatchKey<>(key, type);
     }
 
     /* --- Getters / Setters --- */

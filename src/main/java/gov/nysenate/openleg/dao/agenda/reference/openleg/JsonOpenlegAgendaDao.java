@@ -8,7 +8,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
     public List<AgendaView> getAgendaViews(int year) {
 
         final String agendasForYearUri =
-                StrSubstitutor.replace(agendasForYearUriTemplate, ImmutableMap.of("year", year));
+                StringSubstitutor.replace(agendasForYearUriTemplate, ImmutableMap.of("year", year));
         PaginatedList<AgendaSummaryView> agendaSummaries =
                 jsonOpenlegDaoUtils.queryForViewObjects(AgendaSummaryView.class, agendasForYearUri, LimitOffset.ALL);
 
@@ -54,7 +54,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
                 "year", agendaId.getYear(),
                 "agendaNo", agendaId.getNumber()
         );
-        final String agendaUri = StrSubstitutor.replace(getAgendaUriTemplate, subMap);
+        final String agendaUri = StringSubstitutor.replace(getAgendaUriTemplate, subMap);
         return jsonOpenlegDaoUtils.queryForViewObject(AgendaView.class, agendaUri);
     }
 }

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ public abstract class SqlQueryUtils
     public static String getSqlWithSchema(String sql, String schema) {
         Map<String, String> replaceMap = new HashMap<>();
         replaceMap.put("schema", schema);
-        return new StrSubstitutor(replaceMap).replace(sql);
+        return new StringSubstitutor(replaceMap).replace(sql);
     }
 
     /**
@@ -35,7 +35,7 @@ public abstract class SqlQueryUtils
         Map<String, String> replaceMap = new HashMap<>();
         replaceMap.put("schema", dataSchema);
         replaceMap.put("search_schema", searchSchema);
-        return new StrSubstitutor(replaceMap).replace(sql);
+        return new StringSubstitutor(replaceMap).replace(sql);
     }
 
     /**

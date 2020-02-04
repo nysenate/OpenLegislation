@@ -175,7 +175,7 @@ public class FileIOUtils
      * @throws IOException
      */
     public static void write(File file, CharSequence data) throws IOException {
-        FileUtils.write(file, data);
+        FileUtils.write(file, data, Charset.defaultCharset());
         setCommonFilePermissions(file);
     }
 
@@ -202,7 +202,7 @@ public class FileIOUtils
      * @throws IOException
      */
     public static void writeStringToFile(File file, String data) throws IOException {
-        FileUtils.writeStringToFile(file, data);
+        FileUtils.writeStringToFile(file, data, Charset.defaultCharset());
         setCommonFilePermissions(file);
     }
 
@@ -282,7 +282,7 @@ public class FileIOUtils
      * @throws IOException
      */
     public static String getResourceFileContents(String relativePath) throws IOException {
-        return FileUtils.readFileToString(getResourceFile(relativePath));
+        return FileUtils.readFileToString(getResourceFile(relativePath), Charset.defaultCharset());
     }
 
     /* --- Internal Methods --- */

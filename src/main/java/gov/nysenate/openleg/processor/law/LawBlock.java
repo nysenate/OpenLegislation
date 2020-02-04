@@ -31,6 +31,20 @@ public class LawBlock
     /** String builder used to construct the text body of the block. */
     private StringBuilder text = new StringBuilder();
 
+    public LawBlock(){}
+
+    protected LawBlock(LawBlock toCopy, boolean resetText) {
+        this.header = toCopy.header;
+        this.method = toCopy.method;
+        this.documentId = toCopy.documentId;
+        this.lawId = toCopy.lawId;
+        this.publishedDate = toCopy.publishedDate;
+        this.locationId = toCopy.locationId;
+        this.consolidated = toCopy.consolidated;
+        if (!resetText)
+            this.text = toCopy.text;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public String getHeader() {

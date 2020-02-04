@@ -18,25 +18,28 @@ import java.util.Properties;
 @Service
 public class MailUtils {
 
-    @Autowired private Environment environment;
+    private final Environment environment;
 
-    @Value("${mail.smtp.host}") private String host;
-    @Value("${mail.smtp.port}") private String port;
-    @Value("${mail.smtp.auth:false}") private boolean auth;
-    @Value("${mail.smtp.user:}") private String smtpUser;
-    @Value("${mail.smtp.password:}") private String smtpPass;
-    @Value("${mail.debug:false}") private boolean debug;
-    @Value("${mail.smtp.starttls.enable:false}") private boolean stlsEnable;
-    @Value("${mail.smtp.ssl.enable:true}") private boolean sslEnable;
-    @Value("${mail.smtp.ssl.protocols:TLSv1.2}") private String sslProtocol;
+    private final String storeProtocol;
+    private final String smtpUser;
+    private final String smtpPass;
 
-    @Value("${mail.store.protocol:imaps}") private String storeProtocol;
-    @Value("${mail.imaps.ssl.protocols:SSLv3}") private String imapsSSLProtocol;
+    private final Properties mailProperties;
 
-    private Properties mailProperties;
-
-    @PostConstruct
-    public void init() {
+    public MailUtils(@Value("${mail.smtp.host}") String host,
+                     @Value("${mail.smtp.port}") String port,
+                     @Value("${mail.smtp.auth:false}") boolean auth,
+                     @Value("${mail.smtp.user:}") String smtpUser,
+                     @Value("${mail.smtp.password:}") String smtpPass,
+                     @Value("${mail.debug:false}") boolean debug,
+                     @Value("${mail.smtp.starttls.enable:false}") boolean stlsEnable,
+                     @Value("${mail.smtp.ssl.enable:true}") boolean sslEnable,
+                     @Value("${mail.smtp.ssl.protocols:TLSv1.2}") String sslProtocol,
+                     @Value("${mail.store.protocol:imaps}") String storeProtocol,
+                     @Value("${mail.imaps.ssl.protocols:SSLv3}") String imapsSSLProtocol, Environment environment) {
+        this.storeProtocol = storeProtocol;
+        this.smtpUser = smtpUser;
+        this.smtpPass = smtpPass;
         mailProperties = new Properties();
         mailProperties.put("mail.smtp.host", host);
         mailProperties.put("mail.smtp.port", port);
@@ -57,14 +60,13 @@ public class MailUtils {
 
         mailProperties.put("mail.store.protocol", storeProtocol);
         mailProperties.put("mail.imaps.ssl.protocols", imapsSSLProtocol);
+        this.environment = environment;
     }
-    @PreDestroy
-    public void destroy() {
-        mailProperties = null;
-    }
+
 
     /**
      * Gets an authenticated smtp mail session
+     *
      * @return Session
      */
     public Session getSmtpSession() {
@@ -73,6 +75,7 @@ public class MailUtils {
 
     /**
      * Gets a mail session for use with imaps
+     *
      * @return
      */
     public Session getImapsSession() {
@@ -87,8 +90,8 @@ public class MailUtils {
      * Establishes a connection to a mail server and returns the resulting connection object
      * The store must be closed on its own.
      *
-     * @param host the mail host
-     * @param user the username of the mail account
+     * @param host     the mail host
+     * @param user     the username of the mail account
      * @param password the password for the username
      * @return Store
      * @throws MessagingException if a connection cannot be established
@@ -98,8 +101,7 @@ public class MailUtils {
         Store store = getImapsSession().getStore(storeProtocol);
         try {
             store.connect(host, user, password);
-        }
-        catch (MessagingException ex) {
+        } catch (MessagingException ex) {
             store.close();
             throw ex;
         }
@@ -113,7 +115,7 @@ public class MailUtils {
     /**
      * Navigates through the given mail store to get the folder specified by the given path
      *
-     * @param path The path to navigate to
+     * @param path  The path to navigate to
      * @param store The mail store to navigate through
      * @return Folder - the resulting folder
      * @throws MessagingException If the folder cannot be found
@@ -121,7 +123,7 @@ public class MailUtils {
     public Folder navigateToFolder(String path, Store store) throws MessagingException {
         String[] splitPath = path.split("/");
         Folder folder = store.getFolder(splitPath[0]);
-        for(int i=1; i<splitPath.length; i++) {
+        for (int i = 1; i < splitPath.length; i++) {
             folder = folder.getFolder(splitPath[i]);
         }
         return folder;
@@ -134,12 +136,13 @@ public class MailUtils {
      */
     private Authenticator getSmtpAuthenticator() {
         return new Authenticator() {
-                private PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return pa;
-                }
-            };
+            private PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return pa;
+            }
+        };
     }
 
 }

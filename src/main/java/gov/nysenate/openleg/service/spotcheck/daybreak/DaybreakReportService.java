@@ -4,7 +4,6 @@ import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -14,7 +13,7 @@ import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ import static java.util.stream.Collectors.toSet;
  * and save reports for bill data.
  */
 @Service("daybreakReport")
-public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId>
+public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakReportService.class);
 
@@ -46,9 +45,6 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
     private DaybreakDao daybreakDao;
 
     @Autowired
-    private SpotCheckReportDao<BaseBillId> reportDao;
-
-    @Autowired
     private BillDataService billDataService;
 
     /** --- Implemented Methods --- */
@@ -56,11 +52,6 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_DAYBREAK;
-    }
-
-    @Override
-    protected SpotCheckReportDao<BaseBillId> getReportDao() {
-        return reportDao;
     }
 
     /** {@inheritDoc} */

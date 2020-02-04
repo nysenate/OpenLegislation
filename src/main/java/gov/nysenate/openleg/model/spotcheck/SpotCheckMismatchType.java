@@ -98,6 +98,33 @@ public enum SpotCheckMismatchType {
     ACTIVE_LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
     ACTIVE_LIST_NOTES("Active List Notes", OPENLEG_CAL),
 
+    /* --- Law Mismatches --- */
+
+    LAW_TREE("Law Tree", SENATE_SITE_LAW),
+    LAW_IDS("Law Ids", SENATE_SITE_LAW),
+    LAW_TREE_NODE_NOT_FOUND("Tree Node Not Found", SENATE_SITE_LAW),
+
+    // Tree Node Mismatches
+    LAW_DOC_NEXT_SIBLING_URL("Next Sibling Url", SENATE_SITE_LAW),
+    LAW_DOC_PREV_SIBLING_URL("Prev Sibling Url", SENATE_SITE_LAW),
+    LAW_DOC_PARENT_LOC_IDS("Parent Location Ids", SENATE_SITE_LAW),
+    LAW_DOC_PARENT_ID("Parent Id", SENATE_SITE_LAW),
+    LAW_DOC_REPEALED("Is Repealed", SENATE_SITE_LAW),
+    LAW_DOC_REPEALED_DATE("Repealed Date", SENATE_SITE_LAW),
+    LAW_DOC_SEQUENCE_NO("Sequence No.", SENATE_SITE_LAW),
+    LAW_DOC_FROM_SECTION("From Section", SENATE_SITE_LAW),
+    LAW_DOC_TO_SECTION("To Section", SENATE_SITE_LAW),
+
+    // Document Mismatches
+    LAW_DOC_TITLE("Title", SENATE_SITE_LAW),
+    LAW_DOC_ACTIVE_DATE("Active Date", SENATE_SITE_LAW),
+    LAW_DOC_DOC_LEVEL_ID("Doc Level Id", SENATE_SITE_LAW),
+    LAW_DOC_DOC_TYPE("Doc Type", SENATE_SITE_LAW),
+    LAW_DOC_LAW_ID("Law Id", SENATE_SITE_LAW),
+    LAW_DOC_LAW_NAME("Law Name", SENATE_SITE_LAW),
+    LAW_DOC_LAW_TYPE("Law Type", SENATE_SITE_LAW),
+    LAW_DOC_LOCATION_ID("Location Id", SENATE_SITE_LAW),
+    LAW_DOC_TEXT("Text", SENATE_SITE_LAW),
     ;
 
     private String displayName;

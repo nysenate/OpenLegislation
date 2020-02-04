@@ -5,6 +5,7 @@ import com.google.common.collect.LinkedListMultimap;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,8 @@ public class SpotCheckObservation<ContentKey>
         this.key = key;
         this.observedDateTime = LocalDateTime.now();
     }
+
+    /* --- Methods --- */
 
     /**
      * Generates an observation with a reference data missing observation
@@ -137,6 +140,15 @@ public class SpotCheckObservation<ContentKey>
     }
 
     /**
+     * Get a set of mismatch keys for this observation.
+     */
+    public Set<SpotCheckMismatchKey<ContentKey>> getMismatchKeys() {
+        return mismatches.values().stream()
+                .map(mm -> new SpotCheckMismatchKey<>(key, mm.getMismatchType()))
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Check to make sure the given mismatch type can be reported by this observation
      * @param type {@link SpotCheckMismatchType}
      * @throws IllegalArgumentException if it cannot.
@@ -149,6 +161,24 @@ public class SpotCheckObservation<ContentKey>
             throw new IllegalArgumentException(
                     type + " mismatches cannot be reported in " + referenceType + " observations.");
         }
+    }
+
+    /**
+     * Merge another observation of the same content in the same report into this observation..
+     *
+     * todo: add check for report id.
+     *  - Didn't add initially because reportDateTime isn't properly set and would require major refactor.
+     *
+     * @param other {@link SpotCheckObservation}
+     * @throws IllegalArgumentException if the given observation has a different content key or report id.
+     */
+    public void merge(SpotCheckObservation<ContentKey> other) {
+        if (!Objects.equals(this.key, other.key)) {
+            throw new IllegalArgumentException("Attempt to merge two observations with different keys: " +
+                    this.key + " and " + other.key);
+        }
+        this.mismatches.putAll(other.mismatches);
+        this.priorMismatches.putAll(other.priorMismatches);
     }
 
     /* --- Basic Getters/Setters --- */

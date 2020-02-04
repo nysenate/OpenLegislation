@@ -11,7 +11,7 @@ import gov.nysenate.openleg.util.FileIOUtils;
 import gov.nysenate.openleg.util.SenateSiteDumpFragParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +112,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
      * @return String - the prefix that is used for all dump fragments of the designated dump
      */
     private static String getDumpFragFilenamePrefix(SenateSiteDumpFragment fragment) {
-        return StrSubstitutor.replace(dumpFragFilenamePrefix(fragment.getDumpId().getRefType()), getDumpIdSubMap(fragment.getDumpId()));
+        return StringSubstitutor.replace(dumpFragFilenamePrefix(fragment.getDumpId().getRefType()), getDumpIdSubMap(fragment.getDumpId()));
     }
 
     /**
@@ -120,7 +120,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
      * @return String - the filename that is used for the designated dump fragment
      */
     private static String getDumpFragFilename(SenateSiteDumpFragment fragment) {
-        return StrSubstitutor.replace(dumpFragFilename(fragment.getDumpId().getRefType()), getDumpFragSubMap(fragment));
+        return StringSubstitutor.replace(dumpFragFilename(fragment.getDumpId().getRefType()), getDumpFragSubMap(fragment));
     }
 
     private static ImmutableMap<String, String> getDumpIdSubMap(SenateSiteDumpId dumpId) {
@@ -159,7 +159,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
     /** Regex to match SenateSiteDumpFragments of the given refType. */
     private static Pattern dumpFragFilenameRegex(SpotCheckRefType refType) {
         String reTemplate = "^" + dumpFragFilename(refType);
-        String regex = StrSubstitutor.replace(reTemplate, ImmutableMap.of(
+        String regex = StringSubstitutor.replace(reTemplate, ImmutableMap.of(
                 "year", "(\\d{4})",
                 "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
                 "seqNo", "(\\d+)"));

@@ -20,7 +20,7 @@ import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1063,6 +1063,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .map(field -> ", " + field)
                 .collect(Collectors.joining());
         final ImmutableMap<String, String> subMap = ImmutableMap.of("fullTextFields", fullTextFields);
-        return StrSubstitutor.replace(queryTemplate, subMap);
+        return StringSubstitutor.replace(queryTemplate, subMap);
     }
 }

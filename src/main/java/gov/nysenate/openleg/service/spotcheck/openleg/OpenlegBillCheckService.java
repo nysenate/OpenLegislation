@@ -15,8 +15,10 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,7 +36,9 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  * It requires to pass in an API key to enable the comparision.
  */
 @Service("openlegBillCheck")
-public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, BillView, BillView> {
+public class OpenlegBillCheckService implements SpotCheckService<BaseBillId, BillView, BillView> {
+
+    @Autowired private SpotCheckUtils spotCheckUtils;
 
     /**
      * Check the mismatch between openleg sobi-processing and xml-data-processing Bills
@@ -72,18 +76,18 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillTitle(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(
+        spotCheckUtils.checkString(
                 StringUtils.normalizeSpace(content.getTitle()),
                 StringUtils.normalizeSpace(reference.getTitle()),
                 obsrv, BILL_TITLE);
     }
 
     protected void checkActiveVersion(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(content.getActiveVersion(), reference.getActiveVersion(), obsrv, BILL_ACTIVE_AMENDMENT);
+        spotCheckUtils.checkString(content.getActiveVersion(), reference.getActiveVersion(), obsrv, BILL_ACTIVE_AMENDMENT);
     }
 
     protected void checkBillSummary(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(
+        spotCheckUtils.checkString(
                 StringUtils.normalizeSpace(content.getSummary()),
                 StringUtils.normalizeSpace(reference.getSummary()),
                 obsrv, BILL_SUMMARY);
@@ -98,7 +102,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkLawCode(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obs) {
-        checkString(getLawCode(content), getLawCode(reference), obs, BILL_LAW_CODE);
+        spotCheckUtils.checkString(getLawCode(content), getLawCode(reference), obs, BILL_LAW_CODE);
     }
 
     private String formatLawSection(BillView billView) {
@@ -111,7 +115,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillLawSection(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(formatLawSection(content), formatLawSection(reference), obsrv, BILL_LAW_SECTION);
+        spotCheckUtils.checkString(formatLawSection(content), formatLawSection(reference), obsrv, BILL_LAW_SECTION);
     }
 
     private String getActionStr(BillActionView actionView) {
@@ -126,7 +130,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillActions(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractListValue(content.getActions()),
                 extractListValue(reference.getActions()),
                 obsrv, BILL_ACTION, this::getActionStr, "\n");
@@ -140,11 +144,11 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillSponsor(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(getSponsorString(content), getSponsorString(reference), obsrv, BILL_SPONSOR);
+        spotCheckUtils.checkString(getSponsorString(content), getSponsorString(reference), obsrv, BILL_SPONSOR);
     }
 
     protected void checkAdditionalSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractListValue(content.getAdditionalSponsors()),
                 extractListValue(reference.getAdditionalSponsors()),
                 obsrv, BILL_ADDITIONAL_SPONSOR, MemberView::getShortName, "\n");
@@ -159,7 +163,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkCoSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractActiveAmendSponsors(content, BillAmendmentView::getCoSponsors),
                 extractActiveAmendSponsors(reference, BillAmendmentView::getCoSponsors),
                 obsrv, BILL_COSPONSOR, MemberView::getShortName, "\n"
@@ -167,7 +171,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkMultisponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractActiveAmendSponsors(content, BillAmendmentView::getMultiSponsors),
                 extractActiveAmendSponsors(reference, BillAmendmentView::getMultiSponsors),
                 obsrv, BILL_MULTISPONSOR, MemberView::getShortName, "\n"
@@ -175,7 +179,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillYear(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkObject(content.getSession(), reference.getSession(), obsrv, BILL_SESSION_YEAR);
+        spotCheckUtils.checkObject(content.getSession(), reference.getSession(), obsrv, BILL_SESSION_YEAR);
     }
 
     private String getStatusString(BillView billView) {
@@ -190,7 +194,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillStatus(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(getStatusString(content), getStatusString(reference), obsrv, BILL_LAST_STATUS);
+        spotCheckUtils.checkString(getStatusString(content), getStatusString(reference), obsrv, BILL_LAST_STATUS);
     }
 
     private String getApprovalMessage(BillView billView) {
@@ -202,7 +206,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillApproveMessage(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(getApprovalMessage(content), getApprovalMessage(reference), obsrv, BILL_APPROVAL_MESSAGE);
+        spotCheckUtils.checkString(getApprovalMessage(content), getApprovalMessage(reference), obsrv, BILL_APPROVAL_MESSAGE);
     }
 
     private StringBuilder getVoteInfoStr(BillVoteView vote) {
@@ -235,15 +239,15 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     protected void checkVotes(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         List<BillVoteView> contentVotes = extractListValue(content.getVotes());
         List<BillVoteView> refVotes = extractListValue(reference.getVotes());
-        checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_INFO, this::getVoteInfoStr, "\n");
+        spotCheckUtils.checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_INFO, this::getVoteInfoStr, "\n");
         // Only check for vote roll if there is no vote info mismatch.
         if (!obsrv.hasMismatch(BILL_VOTE_INFO)) {
-            checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_ROLL, this::getVoteRollStr, "\n\n");
+            spotCheckUtils.checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_ROLL, this::getVoteRollStr, "\n\n");
         }
     }
 
     protected void checkCalendars(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractListValue(content.getCalendars()),
                 extractListValue(reference.getCalendars()),
                 obsrv, BILL_CALENDARS,
@@ -264,7 +268,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillCommitteeAgendas(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractListValue(content.getCommitteeAgendas()),
                 extractListValue(reference.getCommitteeAgendas()),
                 obsrv, BILL_COMMITTEE_AGENDAS, this::getCommAgendaIdStr, "\n", true
@@ -276,7 +280,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillPastCommmittee(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
+        spotCheckUtils.checkCollection(
                 extractListValue(content.getPastCommittees()),
                 extractListValue(reference.getPastCommittees()),
                 obsrv, BILL_PAST_COMMITTEES, this::getCommVerIdStr, "\n"

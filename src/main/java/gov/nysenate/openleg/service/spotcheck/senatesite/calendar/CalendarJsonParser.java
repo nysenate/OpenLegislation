@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -11,9 +10,8 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.SenateSiteJsonParser;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,9 +25,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class CalendarJsonParser extends JsonParser {
-    @Autowired
-    ObjectMapper objectMapper;
+public class CalendarJsonParser extends SenateSiteJsonParser {
 
     public List<SenateSiteCalendar> parseCalendars(SenateSiteDump calendarDump) throws ParseError {
         return calendarDump.getDumpFragments().stream()

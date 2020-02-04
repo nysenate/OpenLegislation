@@ -42,7 +42,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
 
     @Override
     public Optional<RegisteredNotification> getNotification(long notificationId) {
-        return getRequest(notificationIndex, defaultType, Long.toString(notificationId),
+        return getRequest(notificationIndex, Long.toString(notificationId),
                 getResponse -> getNotificationFromSourceMap(getResponse.getSource()));
     }
 

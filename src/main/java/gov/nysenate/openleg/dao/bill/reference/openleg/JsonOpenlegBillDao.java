@@ -7,7 +7,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +38,6 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
     }
 
     private String getSessionUri(SessionYear sessionYear) {
-        return StrSubstitutor.replace(getBillsForSessionUriTemplate, ImmutableMap.of("session", sessionYear));
+        return StringSubstitutor.replace(getBillsForSessionUriTemplate, ImmutableMap.of("session", sessionYear));
     }
 }

@@ -1,40 +1,24 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.service.spotcheck.agenda.AgendaReportService;
-import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService;
-import gov.nysenate.openleg.service.spotcheck.scrape.BillScrapeReportService;
-import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
-import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
-import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
-import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegAgendaReportService;
-import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
-import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegCalendarReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.SenSiteAgendaReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.SenateSiteCalendarReportService;
+import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
-
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
+import java.time.Year;
+import java.util.List;
 
 /**
  * Runs spotcheck reports based on scheduling and events
@@ -44,62 +28,52 @@ public class SpotcheckRunService {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckRunService.class);
 
-    @Autowired private Environment env;
+    private final EventBus eventBus;
+    private final Environment env;
+    private final SpotCheckNotificationService spotCheckNotificationService;
+    private final SpotCheckReportDao reportDao;
 
-    @Autowired private EventBus eventBus;
+    /**
+     * A multimap of reports that run whenever pertinent references are generated
+     */
+    private final ImmutableSetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
 
-    @Autowired private SpotCheckNotificationService spotCheckNotificationService;
+    /**
+     * A set of reports are automatically ran based on the scheduler.spotcheck.interval.cron
+     */
+    private final ImmutableSet<SpotCheckReportService> intervalReports;
 
-    /** A multimap of reports that run whenever pertinent references are generated */
-    SetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
+    public SpotcheckRunService(Environment env,
+                               EventBus eventBus,
+                               SpotCheckNotificationService spotCheckNotificationService,
+                               SpotCheckReportDao reportDao,
+                               List<SpotCheckReportService> reportServices) {
+        this.env = env;
+        this.spotCheckNotificationService = spotCheckNotificationService;
+        this.reportDao = reportDao;
+        this.eventBus = eventBus;
 
-    /** A set of reports are automatically ran based on the scheduler.spotcheck.interval.cron */
-    Set<SpotCheckReportService> intervalReports;
+        ImmutableSetMultimap.Builder<SpotCheckRefType, SpotCheckReportService> eventReportsBuilder =
+                ImmutableSetMultimap.builder();
+        ImmutableSet.Builder<SpotCheckReportService> intervalReportsBuilder = ImmutableSet.builder();
+        // Sort report services into periodic and event driven collections
+        for (SpotCheckReportService reportService : reportServices) {
+            switch (reportService.getRunMode()) {
+                case EVENT_DRIVEN:
+                    eventReportsBuilder.put(reportService.getSpotcheckRefType(), reportService);
+                    break;
+                case PERIODIC:
+                    intervalReportsBuilder.add(reportService);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown run mode: " + reportService.getRunMode());
+            }
+        }
 
-    /** --- Report Services --- */
+        this.eventTriggeredReports = eventReportsBuilder.build();
+        this.intervalReports = intervalReportsBuilder.build();
 
-    /** Agenda Report Services */
-    @Autowired private AgendaReportService agendaReportService;
-    @Autowired private IntervalAgendaReportService intervalAgendaReportService;
-
-    /** Bill Report Services */
-    @Autowired private DaybreakReportService daybreakReportService;
-    @Autowired private BillScrapeReportService billScrapeReportService;
-
-    /** Calendar Report Services */
-    @Autowired private CalendarReportService calendarReportService;
-    @Autowired private IntervalCalendarReportService intervalCalendarReportService;
-
-    /** Nysenate.gov Report Services */
-    @Autowired private BillReportService senSiteBillReportService;
-    @Autowired private SenateSiteCalendarReportService senSiteCalReportService;
-    @Autowired private SenSiteAgendaReportService senSiteAgendaReportService;
-
-    /** Openleg Check Report Service*/
-
-    @Autowired private OpenlegBillReportService openlegBillReportService;
-    @Autowired private OpenlegCalendarReportService openlegCalendarReportService;
-    @Autowired private OpenlegAgendaReportService openlegAgendaReportService;
-
-    @PostConstruct
-    public void init() {
         eventBus.register(this);
-        eventTriggeredReports = ImmutableSetMultimap.<SpotCheckRefType, SpotCheckReportService>builder()
-                .put(LBDC_AGENDA_ALERT, agendaReportService)
-                .put(LBDC_DAYBREAK, daybreakReportService)
-                .put(LBDC_SCRAPED_BILL, billScrapeReportService)
-                .put(LBDC_CALENDAR_ALERT, calendarReportService)
-                .put(SENATE_SITE_BILLS, senSiteBillReportService)
-                .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
-                .put(SENATE_SITE_AGENDA,senSiteAgendaReportService)
-                .put(OPENLEG_BILL,openlegBillReportService)
-                .put(OPENLEG_CAL,openlegCalendarReportService)
-                .put(OPENLEG_AGENDA, openlegAgendaReportService)
-                .build();
-        intervalReports = ImmutableSet.<SpotCheckReportService>builder()
-                .add(intervalAgendaReportService)
-                .add(intervalCalendarReportService)
-                .build();
     }
 
     /**
@@ -115,34 +89,30 @@ public class SpotcheckRunService {
 
     /**
      * Runs all interval reports, checking all data in the specified year.
-     * @param year
+     *
+     * @param year year to run reports for
+     * @param refType run interval reports only of this type if not null
+     */
+    public synchronized void runIntervalReports(int year, SpotCheckRefType refType) {
+        LocalDateTime startOfYear = Year.of(year).atDay(1).atStartOfDay();
+        Range<LocalDateTime> yearRange = Range.closedOpen(startOfYear, startOfYear.plusYears(1));
+        intervalReports.stream()
+                .filter(rs -> refType == null || rs.getSpotcheckRefType() == refType)
+                .forEach(reportService -> runReport(reportService, yearRange));
+    }
+
+    /**
+     * Overload of {@link #runIntervalReports(int, SpotCheckRefType)} that doesn't filter by ref type.
+     *
+     * @param year year
      */
     public synchronized void runIntervalReports(int year) {
-        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
-        intervalReports.forEach(reportService -> runReport(reportService, yearRange));
+        runIntervalReports(year, null);
     }
-
-    /**
-     * Runs Calendar reports, checking all data in the specified year.
-     * @param year
-     */
-    public synchronized void runCalendarIntervalReports(int year) {
-        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
-        runReport(intervalCalendarReportService, yearRange);
-    }
-
-    /**
-     * Runs Agenda reports, checking all data in the specified year.
-     * @param year
-     */
-    public synchronized void runAgendaIntervalReports(int year) {
-        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
-        runReport(intervalAgendaReportService, yearRange);
-    }
-
 
     /**
      * Given a spotcheck reference event, runs all reports that use the event's spotcheck reference type
+     *
      * @param referenceEvent SpotCheckReferenceEvent
      */
     @Subscribe
@@ -153,7 +123,7 @@ public class SpotcheckRunService {
     /**
      * Run all reports that use the give reference type for the given date time range
      *
-     * @param refType SpotCheckRefType
+     * @param refType     SpotCheckRefType
      * @param reportRange Range<LocalDateTime>
      */
     public synchronized void runReports(SpotCheckRefType refType, Range<LocalDateTime> reportRange) {
@@ -170,24 +140,41 @@ public class SpotcheckRunService {
         runReports(refType, DateUtils.ALL_DATE_TIMES);
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
 
-    private <T> void runReport(SpotCheckReportService<T> reportService, Range<LocalDateTime> reportRange) {
+    private void runReport(SpotCheckReportService<?> reportService, Range<LocalDateTime> reportRange) {
         logger.info("Attempting to run a {} report..", reportService.getSpotcheckRefType());
         try {
-            SpotCheckReport<T> report = reportService.generateReport(
+            SpotCheckReport<?> report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
             int notesCutoff = 140;
             logger.info("Saving {} report. obs: {} mm: {}({}ig.) notes: {}",
                     report.getReferenceType(), report.getObservedCount(),
                     report.getOpenMismatchCount(false), report.getOpenMismatchCount(true),
                     StringUtils.abbreviate(report.getNotes(), notesCutoff));
-            reportService.saveReport(report);
+            sendMismatchEvents(report);
+            reportDao.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
         } catch (ReferenceDataNotFoundEx ex) {
             logger.info("No report generated: no {} references could be found. Message: " + ex.getMessage(), reportService.getSpotcheckRefType());
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, true);
+        }
+    }
+
+    /**
+     * Generate and post {@link SpotcheckMismatchEvent} for all generated mismatches
+     *
+     * @param report {@link SpotCheckReport}
+     */
+    private void sendMismatchEvents(SpotCheckReport<?> report) {
+        for (SpotCheckObservation<?> observation : report.getObservationMap().values()) {
+            for (SpotCheckMismatch mismatch : observation.getMismatches().values()) {
+                eventBus.post(new SpotcheckMismatchEvent<>(
+                        LocalDateTime.now(),
+                        observation.getKey(),
+                        mismatch));
+            }
         }
     }
 }

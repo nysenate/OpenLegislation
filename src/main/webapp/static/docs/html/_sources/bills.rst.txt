@@ -547,6 +547,9 @@ Bills that were updated between February 13, 2019 8:00:00AM and February 13, 201
                 ... (truncated)
     }
 
+
+.. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example
+
 .. _`update filters`:
 
 You can filter the results of the API by specifying a specific type of update you are interested in. For example you
@@ -666,3 +669,5 @@ Sample response:
             }
         },
         ... (truncated)
+
+.. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

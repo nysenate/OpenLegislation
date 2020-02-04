@@ -2,7 +2,7 @@ package gov.nysenate.openleg.client.view.committee;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 public class CommitteeIdView implements ViewObject {
 

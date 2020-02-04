@@ -134,7 +134,6 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     private DeleteRequest getCommitteeVersionDeleteRequest(CommitteeVersionId committeeVersionId) {
         return new DeleteRequest(
                 committeeSearchIndexName,
-                defaultType,
                 generateCommitteeVersionSearchId(committeeVersionId)
         );
     }

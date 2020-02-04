@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.transcript;
 
 import gov.nysenate.openleg.annotation.UnitTest;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

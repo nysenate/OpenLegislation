@@ -90,13 +90,9 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements LegData
                             }
                         }
 
-                        // Check for uni-bill and sync
+                        // Check for uni-bill
                         if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
                             amendment.setUniBill(true);
-                            if (!baseBill.getBillType().isResolution()) {
-                                syncUniBillText(amendment, fragment);
-                            }
-
                         }
                     }
                 }

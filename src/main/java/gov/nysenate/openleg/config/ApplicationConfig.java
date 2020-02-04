@@ -58,15 +58,13 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     /** --- Eh Cache Spring Configuration --- */
 
-    @Value("${cache.max.size}") private String cacheMaxHeapSize;
-
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
         // Set the upper limit when computing heap size for objects. Once it reaches the limit
-        // it stops computing further. Some objects can contain many references so we set the limit
-        // fairly high.
+        // a warning message will be logged. We should evaluate all heap based caches with
+        // a large object dept for performance issues and convert it to an element size cache if necessary.
         SizeOfPolicyConfiguration sizeOfConfig = new SizeOfPolicyConfiguration();
-        sizeOfConfig.setMaxDepth(100000);
+        sizeOfConfig.setMaxDepth(5000);
         sizeOfConfig.setMaxDepthExceededBehavior("continue");
 
         // Configure the default cache to be used as a template for actual caches.
@@ -76,7 +74,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
         // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
-        config.setMaxBytesLocalHeap(cacheMaxHeapSize + "M");
         config.addDefaultCache(cacheConfiguration);
         config.setUpdateCheck(false);
 

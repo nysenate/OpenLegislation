@@ -5,7 +5,6 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.bill.reference.openleg.OpenlegBillDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
@@ -15,7 +14,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,35 +29,27 @@ import java.util.Set;
  * This service is used to report the difference of two openleg branches.
  */
 @Service("openlegBillReport")
-public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
+public class OpenlegBillReportService implements SpotCheckReportService<BaseBillId> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
     /** Throttles the number of bills retrieved at once from the ref. api to reduce memory footprint. */
     private static final int billRetrievalLimit = 100;
 
-    private final SpotCheckReportDao<BaseBillId> reportDao;
     private final OpenlegBillDao openlegBillDao;
     private final BillDataService billDataService;
     private final OpenlegBillCheckService checkService;
     private final Environment env;
 
     @Autowired
-    public OpenlegBillReportService(SpotCheckReportDao<BaseBillId> reportDao,
-                                    OpenlegBillDao openlegBillDao,
+    public OpenlegBillReportService(OpenlegBillDao openlegBillDao,
                                     BillDataService billDataService,
                                     OpenlegBillCheckService checkService,
                                     Environment env) {
-        this.reportDao = reportDao;
         this.openlegBillDao = openlegBillDao;
         this.billDataService = billDataService;
         this.checkService = checkService;
         this.env = env;
-    }
-
-    @Override
-    protected SpotCheckReportDao<BaseBillId> getReportDao() {
-        return reportDao;
     }
 
     @Override
@@ -125,7 +116,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
 
         // Set any remaining unchecked local bill ids as ref. missing mismatches
         for (BaseBillId id : localBillIds) {
-            if (report.getObservations().containsKey(id)) {
+            if (report.getObservationMap().containsKey(id)) {
                 throw new IllegalStateException(id + " is supposedly not checked, but an observation for it exists");
             }
             BillInfo billInfo = billDataService.getBillInfo(id);

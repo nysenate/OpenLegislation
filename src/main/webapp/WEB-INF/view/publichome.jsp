@@ -66,7 +66,7 @@
           a name and a valid email and we'll send over the credentials.</p>
           <div ng-hide="signedup">
             <form method="post">
-              <div layout="row" layout-sm="column" layout-align="center center">
+              <div layout="row" layout-sm="column" layout-wrap layout-align="center center">
                 <md-input-container class="margin-right-20">
                   <label>Name</label>
                   <input type="text" name="name" ng-required ng-trim ng-model="name"/>
@@ -75,7 +75,20 @@
                   <label>Email</label>
                   <input ng-required ng-trim type="email" name="email" ng-model="email"/>
                 </md-input-container>
-                <md-button ng-click="signup()" style="width: 160px;" class="bold md-primary md-raised">Get API Key</md-button>
+              </div>
+              <div class="checkbox-container" layout-align="center center">
+                <md-list class="checkbox-list" layout="column" layout-sm="row" layout-wrap>
+                  <md-list-item  ng-repeat="sub in subscriptionsAvailable">
+                    <div>
+                      <md-checkbox class="md-primary" ng-model="sub.checked" aria-label="sub.desc" ng-init="sub.checked">
+                                   {{sub.desc}}
+                      </md-checkbox>
+                    </div>
+                  </md-list-item>
+                </md-list>
+              </div>
+              <div class="register-button">
+                <md-button ng-click="signup()" class="bold md-primary md-raised">Get API Key</md-button>
               </div>
               <div class="signup-err" ng-if="errmsg">
                 <h4><i class="icon-warning prefix-icon"></i> {{errmsg}}</h4>

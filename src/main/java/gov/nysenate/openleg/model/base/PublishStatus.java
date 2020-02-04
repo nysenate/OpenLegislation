@@ -70,8 +70,8 @@ public class PublishStatus implements Serializable, Comparable<PublishStatus>
     public int compareTo(PublishStatus o) {
         return ComparisonChain.start()
             .compare(this.effectDateTime, o.effectDateTime)
-            .compare(this.override, o.override)
-            .compare(this.published, o.published)
+            .compareFalseFirst(this.override, o.override)
+            .compareFalseFirst(this.published, o.published)
             .result();
     }
 

@@ -17,6 +17,7 @@ import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -52,7 +53,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
 
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
-        Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+        Pattern.compile("^RULES (?:COM)? *\\(?([A-Z-_']+(?: [A-Z]+)?)\\)?", Pattern.CASE_INSENSITIVE);
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
@@ -103,12 +104,11 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         // Check for RULES sponsors
         if (sponsorLine.startsWith("RULES")) {
             billSponsor.setRules(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (sponsorLine.contains("RULES") && rules.matches() && ( !sponsorLine.trim().equals("RULES COM") || !sponsorLine.trim().equals("RULES")) ) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+            Matcher sposorMatch = rulesSponsorPattern.matcher(sponsorLine);
+            if (sposorMatch.matches() && !"RULES COM".equals(sponsorLine)) {
+                sponsorLine = sposorMatch.group(1);
                 billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-            }
-            else {
+            } else {
                 billSponsor.setMember(null);
             }
         }
@@ -241,10 +241,24 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     protected void parseActions(String data,
                                 Bill bill,
                                 BillAmendment specifiedAmendment,
-                                LegDataFragment fragment)
+                                LegDataFragment fragment,
+                                Node xmlActions)
             throws ParseError {
-        // Use the BillActionParser to convert the actions string into objects.
-        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        List<BillAction> billActions;
+        if (xmlActions != null) {
+            try {
+                // try XML parsing the actions
+                billActions = BillActionParser.parseActionsListXML(specifiedAmendment.getBillId(), xmlActions);
+            } catch (ParseError e) {
+                // Fallback to old behavior and use the BillActionParser to convert the actions string into objects.
+                billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+            }
+        }
+        else {
+            // Fallback to old behavior and use the BillActionParser to convert the actions string into objects.
+            billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        }
+
         bill.setActions(billActions);
         // Use the BillActionAnalyzer to derive other data from the actions list.
         Optional<PublishStatus> defaultPubStatus = bill.getPublishStatus(Version.ORIGINAL);

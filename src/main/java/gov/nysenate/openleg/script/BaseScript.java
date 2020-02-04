@@ -52,7 +52,7 @@ abstract public class BaseScript
      * @throws ParseException
      */
     public static CommandLine getCommandLine(Options opts, String[] args) throws ParseException {
-        return new PosixParser().parse(opts, args);
+        return new DefaultParser().parse(opts, args);
     }
 
     /**

@@ -3,7 +3,7 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.3</version>
+  <version>3.4</version>
 
   <!-- NY Senate Maven Repository -->
 
@@ -43,7 +43,7 @@
       <!-- Failsafe Plugin -->
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20</version>
+        <version>2.19</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
@@ -83,9 +83,11 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>5.2.4</version>
+        <version>6.0.1</version>
         <configuration>
-          <configFile>src/main/resources/flyway.conf</configFile>
+          <configFiles>
+            <configFile>src/main/resources/flyway.conf</configFile>
+          </configFiles>
         </configuration>
         <executions>
           <execution>
@@ -101,29 +103,33 @@
   </build>
 
   <properties>
-    <c3p0.version>0.9.5.3</c3p0.version>
-    <commons-cli.version>1.2</commons-cli.version>
-    <commons-io.version>2.4</commons-io.version>
-    <commons-lang.version>3.3.2</commons-lang.version>
-    <eh-cache.version>2.8.3</eh-cache.version>
-    <elasticsearch.version>6.4.0</elasticsearch.version>
-    <flying-saucer.version>9.1.16</flying-saucer.version>
-    <guava.version>27.0.1-jre</guava.version>
-    <guava.jackson.version>2.4.0</guava.jackson.version>
-    <http-client.version>4.5.6</http-client.version>
-    <jackson.version>2.9.9</jackson.version>
-    <jbcrypt.version>0.3m</jbcrypt.version>
-    <jsoup.version>1.8.1</jsoup.version>
+    <c3p0.version>0.9.5.4</c3p0.version>
+    <commons-cli.version>1.4</commons-cli.version>
+    <commons-io.version>2.6</commons-io.version>
+    <commons-lang.version>3.9</commons-lang.version>
+    <commons-text.version>1.8</commons-text.version>
+    <commons-validator.version>1.6</commons-validator.version>
+    <eh-cache.version>2.10.6</eh-cache.version>
+    <elasticsearch.version>7.3.2</elasticsearch.version>
+    <flying-saucer.version>9.1.18</flying-saucer.version>
+    <guava.version>28.1-jre</guava.version>
+    <guava.jackson.version>2.9.10</guava.jackson.version>
+    <http-client.version>4.5.10</http-client.version>
+    <jackson.version>2.10.1</jackson.version>
+    <jbcrypt.version>0.4</jbcrypt.version>
+    <jsoup.version>1.11.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.12</junit.version>
-    <log4j.version>2.11.1</log4j.version>
+    <log4j.version>2.12.1</log4j.version>
+    <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>1.8.16</pdfbox.version>
-    <postgres-jdbc.version>42.2.5</postgres-jdbc.version>
-    <shiro.version>1.2.3</shiro.version>
-    <slf4j.version>1.7.25</slf4j.version>
-    <spring.version>5.1.3.RELEASE</spring.version>
-    <tomcat.servlet.version>8.0.29</tomcat.servlet.version>
-    <woodstox.version>4.2.0</woodstox.version>
+    <postgres-jdbc.version>42.2.8</postgres-jdbc.version>
+    <shiro.version>1.4.1</shiro.version>
+    <slf4j.version>1.7.28</slf4j.version>
+    <spring.version>5.1.9.RELEASE</spring.version>
+    <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
+    <woodstox.version>4.4.1</woodstox.version>
+    <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
   </properties>
 
   <dependencies>
@@ -270,12 +276,6 @@
     <!-- Elastic Search -->
 
     <dependency>
-      <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch</artifactId>
-      <version>${elasticsearch.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>elasticsearch-rest-high-level-client</artifactId>
       <version>${elasticsearch.version}</version>
@@ -313,6 +313,12 @@
       <version>${woodstox.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${javax.xml.bind.version}</version>
+    </dependency>
+
     <!-- Apache commons -->
 
     <dependency>
@@ -337,6 +343,18 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>${commons-validator.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text.version}</version>
     </dependency>
 
     <!-- Unit Testing -->
@@ -451,6 +469,13 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

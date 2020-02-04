@@ -156,7 +156,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
         billactions = reformatBillActions(billactions);
         Node xmlActions = xmlHelper.getNode("actions", billStatusNode);
 
-        parseActions(billactions, bill, billAmendment, fragment);
+        parseActions(billactions, bill, billAmendment, fragment, xmlActions);
         bill.setYear(BillActionParser.getCalendarYear(xmlActions, xmlHelper));
     }
 
