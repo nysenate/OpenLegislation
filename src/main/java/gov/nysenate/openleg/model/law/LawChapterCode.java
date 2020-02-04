@@ -173,12 +173,12 @@ public enum LawChapterCode
     public static Map<String, LawChapterCode> citationMap = new HashMap<>();
     static {
         Arrays.stream(values())
-            .forEach(law -> law.getCitations()
-                .forEach(citation -> {
-                    if (citation != null && !citation.trim().isEmpty()) {
-                        citationMap.put(citation.toUpperCase().trim(), law);
-                    }
-                }));
+                .forEach(law -> law.getCitations()
+                        .forEach(citation -> {
+                            if (citation != null && !citation.trim().isEmpty()) {
+                                citationMap.put(citation.toUpperCase().trim(), law);
+                            }
+                        }));
     }
 
     /** --- Constructor --- */
@@ -202,6 +202,15 @@ public enum LawChapterCode
         }
         LawChapterCode type = citationMap.get(citation.toUpperCase().trim().replaceAll("(\\s{2,})", " "));
         return Optional.ofNullable(type);
+    }
+
+    /**
+     * For use in LawTitleParser.
+     * @param lawId to check
+     * @return if the law chapter is unconsolidated.
+     */
+    public static boolean isUnconsolidated(String lawId) {
+        return LawChapterCode.valueOf(lawId).type == UNCONSOLIDATED;
     }
 
     /** --- Basic Getters --- */

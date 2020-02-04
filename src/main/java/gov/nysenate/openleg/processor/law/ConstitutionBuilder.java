@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
  */
 public class ConstitutionBuilder extends AbstractLawBuilder {
     private static final String CONS_CHAPTER = CONS_STR + "AS";
-    private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
-    private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
+    private static final Pattern TITLE_MATCHER = Pattern.compile("(?<docId>" + CONS_STR + "A\\d+)S.*");
+    private static final Pattern FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
     private static final String BAD_TITLE_IDENTIFIER = "accounts; obligations";
 
     // Maps locationIDs to titles.
@@ -81,7 +81,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
             Matcher m = TITLE_MATCHER.matcher(docId);
             // Adds in article titles.
             if (m.find())
-                articleSet.add(m.group(1) + "\\n");
+                articleSet.add(m.group("docId") + "\\n");
         }
         // Always start with the chapter.
         StringBuilder masterBuilder = new StringBuilder(CONS_CHAPTER + "\\n");
@@ -109,11 +109,11 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
             Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
             if (!articleMatch.find())
                 continue;
-            String articleTitle = articleMatch.group(2);
-            titles.put("A" + i, articleTitle);
+            String articleTitle = articleMatch.group("title");
+            titles.put("A" + i, articleTitle.trim());
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
                     CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
-                    articleMatch.group(1), rootDoc.getPublishedDate(), false);
+                    articleMatch.group("numerals"), rootDoc.getPublishedDate(), false);
             LawDocument currDoc = new LawDocument(articleInfo,
                     LawDocumentType.ARTICLE.name() + " " + articles[i]);
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());
@@ -127,12 +127,12 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
                 super.addDocument(currDoc, isNewDoc);
 
             // Section info.
-            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\)?\\\\n");
+            String[] sectionTitlesArray = articleMatch.group("text").split("\\.\\)?\\\\n");
             for (String sectionTitle : sectionTitlesArray) {
                 String[] parts = sectionTitle.split("\\. ", 2);
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
                 String title = parts[1];
-                titles.put(locId, title);
+                titles.put(locId, title.trim());
                 // If the document was already processed, update its title.
                 Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
                 if (existingNode.isPresent() && !title.equals(existingNode.get().getLawDocInfo().getTitle())) {
