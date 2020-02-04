@@ -31,7 +31,7 @@ public class LawTitleParser
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
-    private static final String docTypeString = ".*%s *(%s).*";
+    private static final String docTypeString = ".*?%s *(%s).*";
     /** Pattern to match a full docTypeId, and and parse out the starting number. */
     private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
     private final static int MAX_WIDTH = 140;
@@ -257,7 +257,6 @@ public class LawTitleParser
             int num = Integer.parseInt(idMatch.group(1));
             String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
             Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
-            //String textToMatch = bodyText.replaceFirst("\\\\n", " ").split("\\\\n", 2)[0].toUpperCase();
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches()) {
                 return docTypeMatcher.group(1) + idMatch.group(2);
