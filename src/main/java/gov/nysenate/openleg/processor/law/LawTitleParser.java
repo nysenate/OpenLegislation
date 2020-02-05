@@ -42,11 +42,6 @@ public class LawTitleParser
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     private final static String NO_TITLE = "No title";
-    // TODO: this is just for testing. Remove it and the Set import.
-    private final static Set<String> NOTED = new HashSet<>(Arrays.asList("CPL340.40", "CPLA530",
-            "EXCA17-B", "TAX171-L", "TRA14-L", "ENVA21T5", "ENVA27T29",
-            "PBAA10-BT4", "PBG445", "PBH265-F", "PAR27.09", "GMU119-OOO", "YTSA9",
-            "PABT1", "ENV71-1721", "PBGA13T111"));
 
     /** For use in Roman numeral conversion. */
     private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
@@ -158,13 +153,11 @@ public class LawTitleParser
         if (sectionMatcher.matches())
             title = sectionMatcher.group("title");
         else {
-            if (!NOTED.contains(docInfo.getDocumentId()))
-                logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
+            logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
             sectionMatcher = sectionPattern(docInfo.getLawId(), DUMMY_ID).matcher(text);
             if (sectionMatcher.matches()) {
                 title = sectionMatcher.group("title");
-                if (!NOTED.contains(docInfo.getDocumentId()))
-                    logger.warn("Title was able to be guessed.");
+                logger.warn("Title was able to be guessed.");
             }
             else
                 logger.warn("Unable to guess section title.");
@@ -262,8 +255,7 @@ public class LawTitleParser
                 return docTypeMatcher.group(1) + idMatch.group(2);
             }
             else {
-                if (!NOTED.contains(lawDocInfo.getDocumentId()))
-                    logger.warn("Could not find matching signifier for doc {}", lawDocInfo.getDocumentId());
+                logger.warn("Could not find matching signifier for doc {}", lawDocInfo.getDocumentId());
             }
         }
         return lawDocInfo.getDocTypeId();
@@ -276,7 +268,7 @@ public class LawTitleParser
      * @return the usable text.
      */
     private static String textAdjustment(LawDocInfo docInfo, String text) {
-        text = text.replaceFirst("^[ *]*", "").split("\\*")[0];
+        text = text.replaceFirst("^[ *]*", "");
         // UCC docs have 2 dashes in the text while the section name only has one.
         if (docInfo.getLawId().equals(LawChapterCode.UCC.name()))
             text = text.replaceFirst("--", "-").replaceFirst("\\\\n {2}", " ");
