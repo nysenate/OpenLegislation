@@ -19,10 +19,10 @@ target/
 
 !.idea/codeStyleSettings.xml
 
-src/main/resources/flyway.conf
-src/main/resources/log4j2.xml
-src/main/resources/log4j2-cli.xml
-src/main/resources/test.log4j2.xml
+flyway.conf
+log4j2.xml
+log4j2-cli.xml
+test.log4j2.xml
 
 grunt.properties.json
 legislation.ipr
