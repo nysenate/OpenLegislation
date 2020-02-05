@@ -92,6 +92,19 @@ public class SessionMember extends Member implements Serializable
         return member;
     }
 
+    /**
+     * Updates a session member with the fields of other.
+     */
+    public void updateFromOther(SessionMember other) {
+        super.updateFromOther(other);
+        this.sessionMemberId = other.getSessionMemberId();
+        this.lbdcShortName = other.getLbdcShortName();
+        this.alternate = other.isAlternate();
+        this.sessionYear = other.getSessionYear();
+        this.incumbent = other.isIncumbent();
+        this.districtCode = other.getDistrictCode();
+    }
+
     /** --- Overrides --- */
 
     /**

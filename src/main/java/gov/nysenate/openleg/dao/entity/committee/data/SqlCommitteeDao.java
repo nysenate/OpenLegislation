@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.entity.committee.data;
 
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.entity.member.data.SqlMemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
@@ -38,11 +39,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 {
     public static final Logger logger = LoggerFactory.getLogger(SqlCommitteeDao.class);
 
-    private final MemberService memberService;
-
     @Autowired
-    public SqlCommitteeDao(MemberService memberService) {
-        this.memberService = memberService;
+    public SqlCommitteeDao() {
     }
 
     /**
@@ -299,11 +297,11 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         public CommitteeMember mapRow(ResultSet rs, int i) throws SQLException {
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
+            SqlMemberDao.MemberRowMapper memberRowMapper = new SqlMemberDao.MemberRowMapper();
             int sessionMemberId = rs.getInt("session_member_id");
-            try {
-                committeeMember.setMember(memberService.getMemberBySessionId(sessionMemberId));
-            } catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.error("Could not retrieve session member " + sessionMemberId, memberNotFoundEx);
+            committeeMember.setMember(memberRowMapper.mapRow(rs, i));
+            if (committeeMember.getMember().getMemberId() == 0) {
+                logger.error("Could not retrieve session member " + sessionMemberId);
             }
             committeeMember.setTitle(CommitteeMemberTitle.valueOfSqlEnum(rs.getString("title")));
             committeeMember.setMajority(rs.getBoolean("majority"));

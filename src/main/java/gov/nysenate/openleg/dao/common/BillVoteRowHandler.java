@@ -26,11 +26,6 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
 
     private static final BillVoteIdRowMapper voteIdRowMapper = new BillVoteIdRowMapper();
     private final TreeMap<BillVoteId, BillVote> billVoteMap = new TreeMap<>();
-    private final MemberService memberService;
-
-    public BillVoteRowHandler(MemberService memberService) {
-        this.memberService = memberService;
-    }
 
     public TreeMap<BillVoteId, BillVote> getBillVoteMap() {
         return billVoteMap;
@@ -50,13 +45,9 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
             billVoteMap.put(billVote.getVoteId(), billVote);
         }
         BillVote billVote = billVoteMap.get(billVoteId);
-        try {
-            SessionMember voter = memberService.getMemberBySessionId(rs.getInt("session_member_id"));
-            BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
-            billVote.addMemberVote(voteCode, voter);
-        }
-        catch (MemberNotFoundEx memberNotFoundEx) {
-            logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
-        }
+        SessionMember voter = new SessionMember();
+        voter.setSessionMemberId(rs.getInt("session_member_id"));
+        BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
+        billVote.addMemberVote(voteCode, voter);
     }
 }

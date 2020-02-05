@@ -25,6 +25,16 @@ public class Member extends Person {
         this.chamber = member.chamber;
     }
 
+    /**
+     * Updates a Members fields to be equal to other.
+     * @param other
+     */
+    public void updateFromOther(Member other) {
+        super.updateFromOther(other);
+        this.memberId = other.getMemberId();
+        this.chamber = other.getChamber();
+    }
+
     /** --- Overrides --- */
 
     @Override
