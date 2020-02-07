@@ -18,6 +18,8 @@ public class BillLawCodeParser {
     private static final Logger logger = LoggerFactory.getLogger(BillLawCodeParser.class);
 
     private final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
+    // We don't have the NYC administrative code or NYC charter
+    private final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
 
     /**
      * --- Output ---
@@ -30,8 +32,7 @@ public class BillLawCodeParser {
      * --- Constructor ---
      */
 
-    public BillLawCodeParser() {
-    }
+    public BillLawCodeParser() {}
 
     /* --- Methods --- */
 
@@ -43,12 +44,12 @@ public class BillLawCodeParser {
      */
     public String parse(String lawCode) {
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
-        //  qualifiers, but these are more detail than we need anyway
-        lawCode = lawCode.replaceAll("\\s*\\([^\\)]*\\)\\s*", "");
+        // qualifiers, but these are more detail than we need anyway
+        lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
         // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add
         lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
         // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
-        //  action. This makes it easy to link to the new names if we want to, but currently we ignore them.
+        // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
         lawCode = lawCode.replaceAll("(?i)to be", ", rento");
 
         // Law codes are usually delimited by semi-colons for each affected volume
@@ -96,8 +97,7 @@ public class BillLawCodeParser {
             chapter = chapter.replaceAll(chapterName, "");
             parseChapterAffects(chapter, currChapter, currAction);
         }
-        Gson gson = new Gson();
-        json = gson.toJson(mapping);
+        json = new Gson().toJson(mapping);
         return json;
     }
 
@@ -220,10 +220,7 @@ public class BillLawCodeParser {
         // the section has no more relevant information
         boolean unnecessary = !divisionIndicators.contains(tokenList.get(i+1).toLowerCase()) &&
                 !isSectionNumber(tokenList.get(i+1));
-        if (range || unnecessary && !tokenList.get(i+1).equalsIgnoreCase("various")) {
-            return true;
-        }
-        return false;
+        return range || unnecessary && !tokenList.get(i + 1).equalsIgnoreCase("various");
     }
 
     private void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context) {
@@ -251,8 +248,6 @@ public class BillLawCodeParser {
 
     private void putLawEffect(LawActionType action, String section) {
         // Add a new value to one of the actions in this.mapping
-        // The next line can be removed once we can parse the constitution/NYC charter/NYC charter
-        Set<String> unlinkable = Sets.newHashSet("CNS", "ADC", "NYC");
         // Ignore the new names of renamed laws
         if (!unlinkable.contains(section.substring(0, 3)) && action != LawActionType.REN_TO) {
             mapping.putIfAbsent(action, new HashSet<>());
@@ -289,7 +284,7 @@ public class BillLawCodeParser {
 
     private String romanNumeralValue(String s) {
         // Converts a Roman Numeral string to the equivalent Arabic value string (eg romanNumeralValue("XIV") = "14")
-        //  Only works for uppercase strings with characters up to 'C'
+        // Only works for uppercase strings with characters up to 'C'
         int val = 0;
         for (int i = 0; i < s.length() - 1; i++) {
             if (romanCharValue(s.charAt(i)) < romanCharValue(s.charAt(i + 1))) {

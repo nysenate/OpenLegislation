@@ -210,7 +210,6 @@ public class LawTitleParser
     /**
      * Quickly converts a number to a Roman numeral. Used to display Articles
      * as Roman numerals, as they are in the Constitution text.
-     *
      * @param number to convert.
      * @return a Roman numeral.
      */
