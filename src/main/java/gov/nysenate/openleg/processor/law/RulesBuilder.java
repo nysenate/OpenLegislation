@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RulesBuilder extends IdBasedLawBuilder {
-    private static final String JOINT_SPLIT = "PERMANENT JOINT RULES OF THE SENATE AND ASSEMBLY";
     private static final String RULE_PATTERN = "((?:JOINT )?RULE [IVX]+\\\\n)";
 
     public RulesBuilder(LawVersionId lawVersionId, LawTree previousTree) {

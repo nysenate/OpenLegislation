@@ -1,8 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
-import com.google.common.base.Objects;
-
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class LawDocId
 {
@@ -52,15 +51,15 @@ public class LawDocId
         if (this == o) return true;
         if (!(o instanceof LawDocId)) return false;
         LawDocId lawDocId = (LawDocId) o;
-        return Objects.equal(documentId, lawDocId.documentId) &&
-                Objects.equal(publishedDate, lawDocId.publishedDate) &&
-                Objects.equal(locationId, lawDocId.locationId) &&
-                Objects.equal(lawId, lawDocId.lawId);
+        return Objects.equals(documentId, lawDocId.documentId) &&
+                Objects.equals(publishedDate, lawDocId.publishedDate) &&
+                Objects.equals(locationId, lawDocId.locationId) &&
+                Objects.equals(lawId, lawDocId.lawId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(documentId, publishedDate, locationId, lawId);
+        return Objects.hash(documentId, publishedDate, locationId, lawId);
     }
 
     /* --- Basic Getters/Setters --- */
