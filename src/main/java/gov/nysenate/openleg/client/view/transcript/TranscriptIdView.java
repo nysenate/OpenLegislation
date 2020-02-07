@@ -5,14 +5,14 @@ import gov.nysenate.openleg.model.transcript.TranscriptId;
 
 public class TranscriptIdView implements ViewObject
 {
-    protected String timestamp;
+    protected String localDateTime;
 
     public TranscriptIdView(TranscriptId transcriptId) {
-        this.timestamp = transcriptId.getTimestamp().toString();
+        this.localDateTime = transcriptId.getLocalDateTime().toString();
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getLocalDateTime() {
+        return localDateTime;
     }
 
     @Override

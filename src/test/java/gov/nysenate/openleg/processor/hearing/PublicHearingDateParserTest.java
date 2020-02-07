@@ -32,12 +32,12 @@ public class PublicHearingDateParserTest {
                 "06-04-14 NYsenate Heroin-Opioid Addiction Special Task Force_Seneca Nation_FINAL.txt");
 
         LocalDate expectedDate = LocalDate.of(2014, 6, 4);
-        LocalTime expectedStartTime = LocalTime.of(13, 00);
-        LocalTime expectedEndTime = LocalTime.of(15, 00);
+        LocalTime expectedStartTime = LocalTime.of(13, 0);
+        LocalTime expectedEndTime = LocalTime.of(15, 0);
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -51,12 +51,12 @@ public class PublicHearingDateParserTest {
                 "06-02-14 NYsenate_Labor_Savino_FINAL.txt");
 
         LocalDate expectedDate = LocalDate.of(2014, 6, 2);
-        LocalTime expectedStartTime = LocalTime.of(10, 00);
-        LocalTime expectedEndTime = LocalTime.of(12, 00);
+        LocalTime expectedStartTime = LocalTime.of(10, 0);
+        LocalTime expectedEndTime = LocalTime.of(12, 0);
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -74,8 +74,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = null;
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -93,8 +93,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = null;
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -113,8 +113,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = null;
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -133,8 +133,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = LocalTime.of(16, 00);
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -152,8 +152,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = LocalTime.of(17, 30);
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));
@@ -170,8 +170,8 @@ public class PublicHearingDateParserTest {
         LocalTime expectedEndTime = null;
 
         LocalDate actualDate = dateParser.parseDate(pages.get(0));
-        LocalTime actualStartTime = dateParser.parseTime(true, pages.get(0));
-        LocalTime actualEndTime = dateParser.parseTime(false, pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0), pages.get(pages.size()-1));
 
         assertThat(actualDate, is(expectedDate));
         assertThat(actualStartTime, is(expectedStartTime));

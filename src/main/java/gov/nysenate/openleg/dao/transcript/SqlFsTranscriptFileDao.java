@@ -80,7 +80,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
             String currVersion = Integer.toString(pastVersions(transcriptFile)+1);
             LocalDateTime dateTime = transcriptFile.getDateTime();
-            String trueName = DateUtils.toDate(dateTime).toString().replaceAll(":", ";") + ".v" + currVersion;
+            // Since Windows has issues dealing with filenames with : in it, we'll replace it with ; to archive it.
+            String trueName = dateTime.toString().replaceAll(":", ";") + ".v" + currVersion;
             File archiveFile = new File(archiveTranscriptDir, trueName);
             FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);

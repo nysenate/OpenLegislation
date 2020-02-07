@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("dateTime", transcriptId.getTimestamp());
+        params.addValue("dateTime", DateUtils.toDate(transcriptId.getLocalDateTime()));
         return params;
     }
 

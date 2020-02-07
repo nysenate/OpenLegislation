@@ -40,7 +40,16 @@ public class PublicHearingDateParser
         return LocalDate.parse(matcher.group("date"), dateFormatter);
     }
 
-    public LocalTime parseTime(boolean isStartTime, List<String> firstPage) {
+    public LocalTime parseStartTime(List<String> firstPage) {
+        return parseTime(true, firstPage);
+    }
+
+    public LocalTime parseEndTime(List<String> firstPage, List<String> lastPage) {
+        LocalTime t = parseTime(false, firstPage);
+        return t == null ? alternateParseEndTime(lastPage):t;
+    }
+
+    private LocalTime parseTime(boolean isStartTime, List<String> firstPage) {
         Matcher matcher = getDateTimeMatcher(firstPage);
         if(!matcher.find())
             return null;
@@ -50,7 +59,7 @@ public class PublicHearingDateParser
         return LocalTime.parse(formatAmPm(time), timeFormatter);
     }
 
-    public LocalTime alternateParseEndTime(List<String> lastPage) {
+    private LocalTime alternateParseEndTime(List<String> lastPage) {
         String wholePage = String.join("", lastPage);
         Matcher matcher = END_TIME.matcher(wholePage);
         if (!matcher.find())

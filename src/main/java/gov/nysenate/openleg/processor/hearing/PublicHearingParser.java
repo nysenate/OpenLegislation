@@ -48,14 +48,13 @@ public class PublicHearingParser
         final List<List<String>> pages = PublicHearingTextUtils.getPages(
                 FileUtils.readFileToString(publicHearingFile.getFile(), Charset.defaultCharset()));
         final List<String> firstPage = pages.get(0);
+        final List<String> lastPage = pages.get(pages.size()-1);
 
         String title = titleParser.parse(firstPage);
         String address = addressParser.parse(firstPage);
         LocalDate date = dateTimeParser.parseDate(firstPage);
-        LocalTime startTime = dateTimeParser.parseTime(true, firstPage);
-        LocalTime endTime = dateTimeParser.parseTime(false, firstPage);
-        if (endTime == null)
-            endTime = dateTimeParser.alternateParseEndTime(pages.get(pages.size()-1));
+        LocalTime startTime = dateTimeParser.parseStartTime(firstPage);
+        LocalTime endTime = dateTimeParser.parseEndTime(firstPage, lastPage);
 
         List<PublicHearingCommittee> committees = committeeParser.parse(firstPage);
         String text = textParser.parse(pages);
