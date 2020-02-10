@@ -171,7 +171,7 @@ public class LawTitleParserTest {
                 "  * Notwithstanding that Chapter 851 of the Laws of 1983 adds\\n" +
                 "subdivision 10 to Section 672 to the Executive Law, it is the";
         // TODO Cant find this on the LRS website to confirm the title.
-        String expectedTitle = "";
+        String expectedTitle = "ATTENTION";
         assertTitle(expectedTitle, text, "", "ACAATTN");
     }
 

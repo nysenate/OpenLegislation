@@ -15,19 +15,24 @@ import java.util.regex.Pattern;
 @Service
 public class PublicHearingDateParser
 {
-    private static Pattern TIME = Pattern.compile("\\d+:\\d{2} [ap].m.");
+    private final static String AM_PM =  "(a.m.|p.m.)";
 
-    private static Pattern DATE_TIME = Pattern.compile("(?<date>\\w+ \\d{1,2}, \\d{4})(( at)? " +
+    private final static Pattern TIME = Pattern.compile("\\d+:\\d{2} " + AM_PM);
+
+    private final static Pattern DATE_TIME = Pattern.compile("(?<date>\\w+ \\d{1,2}, \\d{4})(( at)? " +
                                                        "(?<startTime>" + TIME + ")" +
                                                        "( to (?<endTime>" + TIME + "))?)?");
 
-    private static Pattern END_TIME = Pattern.compile("Whereupon.*(" + TIME +")");
+    private final static Pattern END_TIME = Pattern.compile("Whereupon[^\\d]+(" + TIME +")");
 
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+    private final static String DATE_FORMATTER = "MMMM d, yyyy";
 
-    private DateTimeFormatter dayOfWeekDateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+    private final static DateTimeFormatter DAY_OF_WEEK_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE, " + DATE_FORMATTER);
 
-    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+    private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
+
+
+    private final static String SINGLE_LINE_DATE = "(\\w+ \\d+, \\d+)(, at \\d+:\\d+ " + AM_PM + ")";
 
     /**
      * Extract a LocalDate from the first page of a PublicHearing.
@@ -36,8 +41,9 @@ public class PublicHearingDateParser
      */
     public LocalDate parseDate(List<String> firstPage) {
         Matcher matcher = getDateTimeMatcher(firstPage);
-        matcher.find();
-        return LocalDate.parse(matcher.group("date"), dateFormatter);
+        if (!matcher.find())
+            return null;
+        return LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern(DATE_FORMATTER));
     }
 
     public LocalTime parseStartTime(List<String> firstPage) {
@@ -53,10 +59,10 @@ public class PublicHearingDateParser
         Matcher matcher = getDateTimeMatcher(firstPage);
         if(!matcher.find())
             return null;
-        String time = matcher.group(isStartTime ? "startTime" : "endTime");
+        String time = formatAmPm(matcher.group(isStartTime ? "startTime" : "endTime"));
         if (time == null)
             return null;
-        return LocalTime.parse(formatAmPm(time), timeFormatter);
+        return LocalTime.parse(time, TIME_FORMATTER);
     }
 
     private LocalTime alternateParseEndTime(List<String> lastPage) {
@@ -65,7 +71,9 @@ public class PublicHearingDateParser
         if (!matcher.find())
             return null;
         String endTime = formatAmPm(matcher.group(1));
-        return LocalTime.parse(endTime, timeFormatter);
+        if (endTime == null)
+            return null;
+        return LocalTime.parse(endTime, TIME_FORMATTER);
     }
 
     private Matcher getDateTimeMatcher(List<String> firstPage) {
@@ -77,7 +85,7 @@ public class PublicHearingDateParser
      * Finds the Strings containing date and time information.
      * Concatenates these Strings into
      * a "<code>MMMM d, yyyy h:mm a to h:mm a</code>" formatted single String.
-     * @param firstPage
+     * @param firstPage of the hearing.
      * @return A String containing date time information.
      */
     private String getDateTimeString(List<String> firstPage) {
@@ -112,18 +120,17 @@ public class PublicHearingDateParser
     /**
      * Determines if the given String contains date time information.
      * Matches date Strings like: April 5, 2014.
-     * @param line
-     * @return
+     * @param line to check.
+     * @return if it contians a date.
      */
     private boolean containsDate(String line) {
         try {
-            dateFormatter.parse(line);
+            DateTimeFormatter.ofPattern(DATE_FORMATTER).parse(line);
             return true;
         }
         catch (DateTimeParseException ex) {
-            // Ignore
+            return false;
         }
-        return false;
     }
 
     /**
@@ -132,13 +139,12 @@ public class PublicHearingDateParser
      */
     private boolean containsDayOfWeekAndDate(String line) {
         try {
-            dayOfWeekDateFormatter.parse(line);
+            DAY_OF_WEEK_DATE_FORMATTER.parse(line);
             return true;
         }
         catch (DateTimeParseException ex) {
-            // Ignore
+            return false;
         }
-        return false;
     }
 
     /**
@@ -146,8 +152,7 @@ public class PublicHearingDateParser
      * Matches date Strings like: March 12, 2014, at 10:00 a.m.
      */
     private boolean containsDateAndTime(String line) {
-        String singleLineDate = "(\\w+ \\d+, \\d+)(, at \\d+:\\d+ [apm.]{4})";
-        return line.matches(singleLineDate);
+        return line.matches(SINGLE_LINE_DATE);
     }
 
     /** Removes Line numbers, excess whitespace, new line, and non text characters */
@@ -186,9 +191,11 @@ public class PublicHearingDateParser
 
     /** Capitalize a.m./p.m and remove the all '.' characters. */
     private String formatAmPm(String dateTime) {
-        final Pattern AM_PM = Pattern.compile("(a.m.|p.m.)");
-        Matcher matcher = AM_PM.matcher(dateTime);
-        matcher.find();
+        if (dateTime == null)
+            return null;
+        Matcher matcher = Pattern.compile(AM_PM).matcher(dateTime);
+        if (!matcher.find())
+            return null;
         String capitalized = matcher.group(1).toUpperCase();
         return matcher.replaceFirst(capitalized).replaceAll("\\.", "");
     }
