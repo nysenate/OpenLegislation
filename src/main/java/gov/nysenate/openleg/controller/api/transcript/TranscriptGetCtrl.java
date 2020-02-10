@@ -151,4 +151,11 @@ public class TranscriptGetCtrl extends BaseCtrl
         // TODO: Doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentEx(IllegalArgumentException ex) {
+        // TODO: Doesn't display anything on the webpage, even though the response is received.
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
+    }
 }
