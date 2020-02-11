@@ -74,7 +74,7 @@ public class LawTitleParser
 
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
-        if (lawDocInfo == null || lawDocInfo.getDocType() == null)
+        if (lawDocInfo == null || lawDocInfo.getDocType() == null || bodyText == null || bodyText.isEmpty())
             return "";
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
@@ -144,8 +144,6 @@ public class LawTitleParser
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
         if (NO_TITLES.contains(docInfo.getLawId()))
             return NO_TITLE;
-        if (text == null || text.isEmpty())
-            return "";
         String id = idAdjustment(docInfo);
         text = textAdjustment(docInfo, text);
         Matcher sectionMatcher = sectionPattern(docInfo.getLawId(), id).matcher(text);
@@ -162,7 +160,8 @@ public class LawTitleParser
             else
                 logger.warn("Unable to guess section title.");
         }
-        title = title.replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");
+        title = title.replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ")
+                .replaceAll("\\s{2,}", " ");
 
         // If the section starts with labelling a section or subsection, there's no title.
         if (title.trim().matches("^" + SUBSECTION + ".*"))

@@ -242,6 +242,42 @@ public class LawTitleParserTest {
         testSectionTitle(text, expectedTitle,"EPT1-1.1");
     }
 
+    @Test
+    public void UCCsection() {
+        String text = "Section 9--601. Rights after Default; Judicial Enforcement; Consignor or" +
+                "\\n                  Buyer of Accounts, Chattel Paper, Payment Intangibles,\\n" +
+                "                  or Promissory Notes.\\n  (a) Rights of secured party after " +
+                "default.";
+        String expectedTitle = "Rights after Default; Judicial Enforcement; Consignor or Buyer " +
+                "of Accounts, Chattel Paper, Payment Intangibles, or Promissory Notes";
+        testSectionTitle(text, expectedTitle, "UCC9-601");
+    }
+
+    @Test
+    public void abbreviatedTitle() {
+        String text = "  § 8602. Practice of clinical laboratory technology and cytotechnology" +
+                "\\nand use of the titles \"licensed clinical laboratory technologist\" and\\n\"" +
+                "licensed cytotechnologist\". No person shall practice clinical\\nlaboratory " +
+                "technology or hold himself or herself out as a clinical\\nlaboratory " +
+                "technologist or a cytotechnologist in this state unless he or\\nshe is licensed" +
+                " or exempt pursuant to this article.\\n";
+        String expectedTitle = "Practice of clinical laboratory technology and cytotechnology a" +
+                "nd use of the titles \"licensed clinical laboratory technologist\" and \"lice...";
+        testSectionTitle(text, expectedTitle, "EDN8602");
+    }
+
+    @Test
+    public void guessSectionTitle() {
+        String text = "  § 235-f. Severability. If any clause, sentence, paragraph, section or" +
+                "\\npart of this title shall be adjudged by any court of competent\\n" +
+                "jurisdiction to be invalid, such judgment shall not affect, impair or\\n" +
+                "invalidate the remainder thereof, but shall be confined in its operation\\nto " +
+                "the clause, sentence, paragraph, section or part thereof, directly\\ninvolved " +
+                "in the controversy in which such judgment shall have been\\nrendered.\\n";
+        String expectedTitle = "Severability";
+        testSectionTitle(text, expectedTitle, "PBH265-F");
+    }
+
     // No title tests
     @Test
     public void jointRule() {
