@@ -27,7 +27,7 @@ public class LawTitleParser
     private final static String beforeTitlePattern = "(?i).*?(?<docId>%s)" + IRRELEVANT_CHARS;
     // The title is just everything before the first period.
     private final static String titlePattern = "(?<title>[^.]+)";
-    private final static String SUBSECTION_START = "^(1|[(]a[)]|a).*";
+    private final static String SUBSECTION = "(1|[(]a[)]|a)";
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
@@ -41,7 +41,7 @@ public class LawTitleParser
             LawChapterCode.LSA.name(), LawChapterCode.POA.name(),
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
-    private final static String NO_TITLE = "No title";
+    protected final static String NO_TITLE = "No title";
 
     /** For use in Roman numeral conversion. */
     private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
@@ -123,12 +123,12 @@ public class LawTitleParser
             realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
         String typeLabel = lawDocInfo.getDocType().name();
         String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
-        String title = bodyText.replaceFirst(".*" + label, "")
+        String title = bodyText.replaceFirst(".*?" + label, "")
                 // Removes division names that might come after, and converts
                 // whitespace into single spaces.
                 .replaceFirst(TYPES + "\\s+(1|I|A|ONE)?\\W.*", "")
                 .replaceFirst(SECTION_SIGNIFIER + ".*", "").replaceAll("\\\\n", " ")
-                .replaceAll("\\s{2,}", " ").replaceAll(" \\.", "");
+                .replaceAll("\\s{2,}", " ").replaceAll(" *\\.", "");
         if (!lawDocInfo.getDocTypeId().contains("*"))
             title = title.replaceAll("^\\s*\\*+", "").replaceAll("\\*.*", "");
         if (title.trim().isEmpty())
@@ -165,7 +165,7 @@ public class LawTitleParser
         title = title.replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");
 
         // If the section starts with labelling a section or subsection, there's no title.
-        if (title.trim().matches(SUBSECTION_START))
+        if (title.trim().matches("^" + SUBSECTION + ".*"))
             return NO_TITLE;
         if (!docInfo.getDocTypeId().contains("*"))
             title = title.replaceAll("^\\s*\\*", "").replaceAll("\\*.*", "");
@@ -251,12 +251,9 @@ public class LawTitleParser
             String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
             Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
-            if (docTypeMatcher.matches()) {
+            if (docTypeMatcher.matches())
                 return docTypeMatcher.group(1) + idMatch.group(2);
-            }
-            else {
-                logger.warn("Could not find matching signifier for doc {}", lawDocInfo.getDocumentId());
-            }
+            logger.warn("Could not find matching signifier for doc {}", lawDocInfo.getDocumentId());
         }
         return lawDocInfo.getDocTypeId();
     }
@@ -272,9 +269,9 @@ public class LawTitleParser
         // UCC docs have 2 dashes in the text while the section name only has one.
         if (docInfo.getLawId().equals(LawChapterCode.UCC.name()))
             text = text.replaceFirst("--", "-").replaceFirst("\\\\n {2}", " ");
-        // The first section of unconsolidated laws have an introduction to the chapter.
+        // The first section of unconsolidated laws may have an introduction to the chapter.
         if (docInfo.getDocTypeId().equals("1") && LawChapterCode.isUnconsolidated(docInfo.getLawId()))
-            text = text.replaceFirst(".*(Section|§)", "Section");
+            text = text.replaceFirst(".*?(Section|§) 1", "Section 1");
         return text;
     }
 
@@ -301,8 +298,8 @@ public class LawTitleParser
      * @return a Pattern for matching use.
      */
     private static Pattern sectionPattern(String lawId, String id) {
-        // A non-unconsolidated law may have "#." before the title.
-        String trueBeforeTitlePattern = beforeTitlePattern + (LawChapterCode.isUnconsolidated(lawId) ? "" : "(?:\\d[.])?");
+        // A non-unconsolidated law may have "#." or "a." or "(a)" before the title.
+        String trueBeforeTitlePattern = beforeTitlePattern + (LawChapterCode.isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
         // EPT laws end their titles with a newline (\n).
         String trueTitlePattern = titlePattern.replace(".", lawId.equals(LawChapterCode.EPT.name()) ? "\\\\" : ".");
         String fullPattern = String.format(trueBeforeTitlePattern, id) + trueTitlePattern + ".*";

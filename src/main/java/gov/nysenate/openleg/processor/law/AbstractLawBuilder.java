@@ -198,7 +198,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 addDocument(lawDoc, isNewDoc);
             }
         }
-        if (!lawDoc.getText().isEmpty() || lawDoc.getDocType() == JOINT_RULE)
+        if (!lawDoc.getText().isEmpty())
             setLawDocTitle(lawDoc, isNewDoc);
     }
 
