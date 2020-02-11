@@ -11,7 +11,7 @@
     <repository>
       <id>gov.nysenate</id>
       <name>NY Senate Maven Repository</name>
-      <url>http://dev.nysenate.gov/maven/repo</url>
+      <url>https://dev.nysenate.gov/maven/repo</url>
     </repository>
   </repositories>
 
@@ -485,7 +485,7 @@
     <pluginRepository>
       <id>ossrh</id>
       <name>Sonatype OSS Repository</name>
-      <url>http://oss.sonatype.org/content/groups/public</url>
+      <url>https://oss.sonatype.org/content/groups/public</url>
       <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
