@@ -160,6 +160,16 @@ public class LawTitleParserTest {
         testTitleTitle(text, expectedTitle,"2", "TWNA3-AT2");
     }
 
+    @Test
+    public void numeralTitle() {
+        String text = "                                TITLE XI\\n                 REGISTRATION " +
+                "OF SNOWMOBILES, MOTORBOATS\\n                        AND LIMITED USE VEHICLES" +
+                "\\nArticle  47.   Registration of snowmobiles.\\n         48.   Registration of" +
+                " vessels.\\n";
+        String expectedTitle = "Registration of Snowmobiles, Motorboats and Limited Use Vehicles";
+        testTitleTitle(text, expectedTitle, "11", "VATT11");
+    }
+
     // Part tests
     @Test
     public void partAndTitleSameLineNoSeparator() {
@@ -472,6 +482,36 @@ public class LawTitleParserTest {
         testTitle(text, expectedTitle, "E-K", "CNSINDEXE-K", LawDocumentType.INDEX);
     }
 
+    @Test
+    public void CUBITTest() {
+        String text = "                 CITY UNINCORPORATED BUSINESS INCOME TAX\\nSection 101." +
+                "   Imposition of tax.\\n";
+        String expectedTitle = "City Unincorporated Business Income Tax";
+        testTitle(text, expectedTitle, "CUBIT", "GCMCUBIT", LawDocumentType.MISC);
+    }
+
+    @Test
+    public void emptyStringTest() {
+        // Doc ID doesn't matter.
+        String dummyDocID = "AAA123";
+        testSectionTitle(null, "", dummyDocID);
+        testTitle("It's a title", "", "123", dummyDocID, LawDocumentType.PARAGRAPH);
+    }
+
+    @Test
+    public void chapterTest() {
+        String text = "                               CHAPTER 712\\nAN ACT relating to " +
+                "cooperative corporations, constituting chapter\\nseventy-seven of the " +
+                "consolidated laws\\nBecame a law April 11, 1951, with the approval of the " +
+                "Governor.  Passed\\nby a majority vote, three-fifths being present.\\n  The " +
+                "People of the State of New York, represented in Senate and\\nAssembly, do enact" +
+                " as follows:\\n                   CHAPTER 77 OF THE CONSOLIDATED LAWS\\n       " +
+                "               COOPERATIVE CORPORATIONS LAW\\nArticle 1.   Short title; policy;" +
+                " definitions. (§§ 1-5.)\\n";
+        String expectedTitle = "Cooperative Corporations";
+        testTitle(text, expectedTitle, "77", "CCO-CH77", LawDocumentType.CHAPTER);
+    }
+
     @Ignore
     @Test
     public void unconsolidatedWithSubsection() {
@@ -484,7 +524,7 @@ public class LawTitleParserTest {
                 " the local finance law, of the city of Troy and\\nmaking recommendations " +
                 "regarding the city's budget. ";
         String expectedTitle = "Supervisory board; created.";
-        testTitle(text, expectedTitle,"10", "TRY10", LawDocumentType.SECTION);
+        testSectionTitle(text, expectedTitle,"TRY10");
     }
 
     @Ignore

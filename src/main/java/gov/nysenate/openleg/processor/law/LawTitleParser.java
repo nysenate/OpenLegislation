@@ -79,7 +79,7 @@ public class LawTitleParser
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
                 return extractTitleFromChapter(lawDocInfo);
-            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE:
+            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE: case MISC:
                 return extractTitleFromNonSection(lawDocInfo, bodyText);
             case SECTION:
                 return extractTitleFromSection(lawDocInfo, bodyText);
@@ -89,13 +89,6 @@ public class LawTitleParser
                 return "Preamble";
             case JOINT_RULE:
                 return NO_TITLE;
-            case MISC:
-                // Special city tax code.
-                if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CUBIT))
-                    return "City Unincorporated Business Income Tax";
-                // Special list of notwithstanding clauses.
-                if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.ATTN))
-                    return "ATTENTION";
         }
         return "";
     }

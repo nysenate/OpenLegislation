@@ -28,10 +28,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
     protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
 
     /** Document ID for special document that's just a list of notwithstanding clauses. */
-    protected static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
+    private static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
 
     /** Document ID for special tax law. */
-    protected static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
+    private static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
 
     /** Special law IDs. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
