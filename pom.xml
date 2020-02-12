@@ -11,7 +11,7 @@
     <repository>
       <id>gov.nysenate</id>
       <name>NY Senate Maven Repository</name>
-      <url>http://dev.nysenate.gov/maven/repo</url>
+      <url>https://dev.nysenate.gov/maven/repo</url>
     </repository>
   </repositories>
 
@@ -124,7 +124,7 @@
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>1.8.16</pdfbox.version>
     <postgres-jdbc.version>42.2.8</postgres-jdbc.version>
-    <shiro.version>1.4.1</shiro.version>
+    <shiro.version>1.5.0</shiro.version>
     <slf4j.version>1.7.28</slf4j.version>
     <spring.version>5.2.3.RELEASE</spring.version>
     <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
@@ -485,7 +485,7 @@
     <pluginRepository>
       <id>ossrh</id>
       <name>Sonatype OSS Repository</name>
-      <url>http://oss.sonatype.org/content/groups/public</url>
+      <url>https://oss.sonatype.org/content/groups/public</url>
       <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
