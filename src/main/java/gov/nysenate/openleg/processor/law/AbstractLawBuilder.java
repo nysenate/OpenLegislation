@@ -22,6 +22,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
+    private static final String ROOT = "ROOT";
+
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
 
@@ -144,7 +146,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
             Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
             if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
-                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst(specialChapter.matches() ? specialChapter.group(1) : "-CH", ""));
+                String docTypeId = (specialChapter.matches() ? ROOT : lawDoc.getLocationId().replace("-CH", ""));
+                lawDoc.setDocTypeId(docTypeId);
                 chapterDoc = lawDoc;
                 isRootDoc = true;
             }
@@ -178,7 +181,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
                 if (specificLocId.equals("AA1")) {
                     lawDoc.setDocType(PREAMBLE);
-                    lawDoc.setDocTypeId("1");
+                    lawDoc.setDocTypeId("");
                 }
                 else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
                     LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
@@ -414,10 +417,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
         LawDocument dummyParent = new LawDocument();
         dummyParent.setDummy(true);
         dummyParent.setLawId(block.getLawId());
-        dummyParent.setDocumentId(block.getLawId() + "-ROOT");
-        dummyParent.setLocationId("-ROOT");
+        dummyParent.setDocumentId(block.getLawId() + "-" + ROOT);
+        dummyParent.setLocationId("-" + ROOT);
         dummyParent.setDocType(LawDocumentType.CHAPTER);
-        dummyParent.setDocTypeId("ROOT");
+        dummyParent.setDocTypeId(ROOT);
         dummyParent.setPublishedDate(block.getPublishedDate());
         dummyParent.setText("");
         setLawDocTitle(dummyParent, true);

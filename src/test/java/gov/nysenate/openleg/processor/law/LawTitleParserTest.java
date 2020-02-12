@@ -143,6 +143,63 @@ public class LawTitleParserTest {
         testArticleTitle(text, expectedTitle,"31-A-2*2", "TAXA31-A-2*2");
     }
 
+    //Title tests
+    @Test
+    public void oneHundredWordInText() {
+        String text = "                     TITLE ONE HUNDRED FOUR-F\\n                  TOWN OF" +
+                " ERWIN HOUSING AUTHORITY\\nSection 509-d*2. Town of Erwin Housing Authority.\\n";
+        String expectedTitle = "Town of Erwin Housing Authority";
+        testTitleTitle(text, expectedTitle, "104-F", "PBGA13T104-F");
+    }
+
+    @Test
+    public void onlyCapTitle() {
+        String text = "                                 Title 2\\n" +
+                "                               TOWN BOARD\\n";
+        String expectedTitle = "Town Board";
+        testTitleTitle(text, expectedTitle,"2", "TWNA3-AT2");
+    }
+
+    // Part tests
+    @Test
+    public void partAndTitleSameLineNoSeparator() {
+        String text = "                     PART 8. HONORARY TRUSTS FOR PETS\\n" +
+                "  7-8.1 Trusts for pets";
+        String expectedTitle = "Honorary Trusts For Pets";
+        testPartTitle(text, expectedTitle,"8", "EPTA7P8");
+    }
+
+    @Test
+    public void weirdGCTPart() {
+        String text = "                  CITY PERSONAL INCOME TAX ON RESIDENTS\\n               " +
+                "                  PART I\\n                                 GENERAL\\nSection  " +
+                " 1.   Meaning of terms.\\n          2.   Persons subject to tax.\\n";
+        String expectedTitle = "City Personal Income Tax On Residents";
+        testPartTitle(text, expectedTitle, "1-6", "GCT25-AP1-6");
+    }
+
+    @Test
+    public void subWeirdGCTPart() {
+        String text = "                  CITY PERSONAL INCOME TAX ON RESIDENTS\\n               " +
+                "                  PART I\\n                                 GENERAL\\n";
+        String expectedTitle = "General";
+        testPartTitle(text, expectedTitle, "1", "GCT25-AP1");
+    }
+
+    @Test
+    public void numberWordinText() {
+        String text = "                     PART ONE -- GENERAL PROVISIONS\\n";
+        String expectedTitle = "General Provisions";
+        testPartTitle(text, expectedTitle, "1", "CPLP1");
+    }
+
+    @Test
+    public void weirdFCTPartTest(){
+        String text = "  Part 2.C. Reconciliation of multiple orders.\\n";
+        String expectedTitle = "Reconciliation of Multiple Orders";
+        testPartTitle(text, expectedTitle, "2C", "FCTA5-BP2C");
+    }
+
     // Section tests
     @Test
     public void reluctantMatching() {
@@ -278,6 +335,18 @@ public class LawTitleParserTest {
         testSectionTitle(text, expectedTitle, "PBH265-F");
     }
 
+    @Test
+    public void weirdGCTSection() {
+        String text = "  § 2. Persons subject to tax.--(a) Imposition of tax.--A tax determined" +
+                "\\nin accordance with the rates set forth in this local law is hereby\\nimposed" +
+                " for each taxable year, ending on or after July first, nineteen\\nhundred " +
+                "sixty-six, but commencing prior to January first, nineteen\\nhundred " +
+                "seventy-six, on the city taxable income of every resident\\nindividual, " +
+                "resident estate and trust.\\n";
+        String expectedTitle = "Persons subject to tax";
+        testTitle(text, expectedTitle, "2", "GCT25-A-2", LawDocumentType.SECTION);
+    }
+
     // No title tests
     @Test
     public void jointRule() {
@@ -355,19 +424,10 @@ public class LawTitleParserTest {
 
     // Miscellaneous tests
     @Test
-    public void onlyCapTitle() {
-        String text = "                                 Title 2\\n" +
-                "                               TOWN BOARD\\n";
-        String expectedTitle = "Town Board";
-        testTitle(text, expectedTitle,"2", "TWNA3-AT2", LawDocumentType.TITLE);
-    }
-
-    @Test
-    public void partAndTitleSameLineNoSeparator() {
-        String text = "                     PART 8. HONORARY TRUSTS FOR PETS\\n" +
-                "  7-8.1 Trusts for pets";
-        String expectedTitle = "Honorary Trusts For Pets";
-        testTitle(text, expectedTitle,"8", "EPTA7P8", LawDocumentType.PART);
+    public void preambleTest() {
+        String text = "                            THE CONSTITUTION\\n  We The People of the State of New York, grateful to Almighty God for\\nour Freedom, in order to secure its blessings, DO ESTABLISH THIS\\nCONSTITUTION.\\n";
+        String expectedTitle = "Preamble";
+        testTitle(text, expectedTitle, "1", "CNSAA1", LawDocumentType.PREAMBLE);
     }
 
     @Test
@@ -375,6 +435,41 @@ public class LawTitleParserTest {
         String text = "                    Subarticle 2.  State management.\\n";
         String expectedTitle = "State Management";
         testTitle(text, expectedTitle,"2", "EDNA130*SA2", LawDocumentType.SUBARTICLE);
+    }
+
+    @Test
+    public void subTitleTest() {
+        String text = "                               SUBTITLE II\\n              FINANCIAL " +
+                "ASSISTANCE FROM SPECIAL PURPOSE FUNDS\\nSection 1811. Application of subtitle." +
+                "\\n        1812. Special purpose bonds and notes.\\n        1813. Guaranty by " +
+                "the state.\\n        1814. Loans and loan guarantees for machinery and " +
+                "equipment.\\n        1815. Special purpose funds.\\n        1816. Rate of " +
+                "interest.\\n";
+        String expectedTitle = "Financial Assistance From Special Purpose Funds";
+        testTitle(text, expectedTitle, "2", "PBAA8T8ST2", LawDocumentType.SUBTITLE);
+    }
+
+    @Test
+    public void ruleTest() {
+        String text = "RULE X\\n                       TELEVISING ASSEMBLY SESSION\\n  ";
+        String expectedTitle = "Televising Assembly Session";
+        testTitle(text, expectedTitle, "10", "CMAR10", LawDocumentType.RULE);
+    }
+
+    @Test
+    public void subPartTest() {
+        String text = "          SUBPART B--TAXES ADMINISTERED BY STATE TAX COMMISSION\\n";
+        String expectedTitle = "Taxes Administered By State Tax Commission";
+        testTitle(text, expectedTitle, "B", "TAXA29P1SPB", LawDocumentType.SUBPART);
+    }
+
+    @Test
+    public void indexTest() {
+        String text = "                                 INDEX\\n                                " +
+                "           Art.            Sec.\\nEDUCATION (see also \"Schools\"):\\n  Blind, " +
+                "power of legislature to provide...  7";
+        String expectedTitle = "Index range: E-K";
+        testTitle(text, expectedTitle, "E-K", "CNSINDEXE-K", LawDocumentType.INDEX);
     }
 
     @Ignore
@@ -395,7 +490,6 @@ public class LawTitleParserTest {
     @Ignore
     @Test
     public void noTitleStarStarting() {
-        // ACAATTN
         String text = "  * Notwithstanding that Chapter 73 of the Laws of 1983 amends\\n" +
                 "subdivision (b) of Section 219 of the General Business Law, it is the\\n" +
                 "determination of the Legislative Bill Drafting Commission, pursuant to\\n" +
@@ -413,7 +507,6 @@ public class LawTitleParserTest {
     @Ignore
     @Test
     public void BNKA13E() {
-        // BNKA13-E
         String text = "                             ARTICLE XIII-E\\n" +
                 "          JOINT DEPOSITS AND SHARES; Unauthorized Withdrawals;\\n" +
                 "                  Withdrawals From Decedents' Accounts\\n" +
@@ -426,6 +519,14 @@ public class LawTitleParserTest {
 
     private void testArticleTitle(String text, String expectedTitle, String docTypeID, String docID) {
         testTitle(text, expectedTitle, docTypeID, docID, LawDocumentType.ARTICLE);
+    }
+
+    private void testTitleTitle(String text, String expectedTitle, String docTypeID, String docID) {
+        testTitle(text, expectedTitle, docTypeID, docID, LawDocumentType.TITLE);
+    }
+
+    private void testPartTitle(String text, String expectedTitle, String docTypeID, String docID) {
+        testTitle(text, expectedTitle, docTypeID, docID, LawDocumentType.PART);
     }
 
     private void testSectionTitle(String text, String expectedTitle, String docID) {

@@ -116,11 +116,7 @@ public class LawTitleParser
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
     private static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
-        String docTypeInText = getTextLabel(lawDocInfo, bodyText);
-        String realID = docTypeInText.replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
-        // A couple documents separate the number and letter of a Part like 2A.
-        if (lawDocInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
-            realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
+        String realID = getRealID(lawDocInfo, bodyText);
         String typeLabel = lawDocInfo.getDocType().name();
         String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
         String title = bodyText.replaceFirst(".*?" + label, "")
@@ -138,8 +134,7 @@ public class LawTitleParser
     }
 
     /**
-     * Extract the title from the section document using a common pattern if applicable or just getting the
-     * first line or so.
+     * Extract the title from the section document.
      */
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
         if (NO_TITLES.contains(docInfo.getLawId()))
@@ -230,6 +225,21 @@ public class LawTitleParser
     }
 
     /**
+     * Various modifications may need to be done to get the ID that is in the text.
+     * @param lawDocInfo to pull data from.
+     * @param bodyText to check against.
+     * @return the proper ID for title matching.
+     */
+    private static String getRealID(LawDocInfo lawDocInfo, String bodyText) {
+        String docTypeInText = getTextLabel(lawDocInfo, bodyText);
+        String realID = docTypeInText.replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
+        // A couple documents separate the number and letter of a Part like 2A.
+        if (lawDocInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
+            realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
+        return realID;
+    }
+
+    /**
      * Numbers may be displayed as a number (like 6), a Roman numeral
      * (like VI), or as a word (like SIX). This method finds and returns
      * whichever one is applicable.
@@ -238,13 +248,14 @@ public class LawTitleParser
      * @return the label ID.
      */
     private static String getTextLabel(LawDocInfo lawDocInfo, String bodyText) {
+        String docTypeId = lawDocInfo.getDocTypeId();
         // Manual handling of strange GCT parts.
-        if (lawDocInfo.getDocTypeId().equals("1-6"))
-            return lawDocInfo.getDocTypeId();
+        if (docTypeId.equals("1-6"))
+            return docTypeId;
         if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CITY_TAX_STR + "P1"))
             return "I";
 
-        Matcher idMatch = idNumPattern.matcher(lawDocInfo.getDocTypeId());
+        Matcher idMatch = idNumPattern.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
             int num = Integer.parseInt(idMatch.group(1));
             String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
@@ -254,7 +265,7 @@ public class LawTitleParser
                 return docTypeMatcher.group(1) + idMatch.group(2);
             logger.warn("Could not find matching signifier for doc {}", lawDocInfo.getDocumentId());
         }
-        return lawDocInfo.getDocTypeId();
+        return docTypeId;
     }
 
     /**
@@ -304,5 +315,4 @@ public class LawTitleParser
         String fullPattern = String.format(trueBeforeTitlePattern, id) + trueTitlePattern + ".*";
         return Pattern.compile(fullPattern);
     }
-
 }
