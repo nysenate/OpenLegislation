@@ -355,6 +355,18 @@ public class LawTitleParserTest {
     }
 
     @Test
+    public void titleStartsWithA() {
+        String text = "  § 100-a. Access highway. Any highway providing access between a\\n" +
+                "qualifying highway, as defined in section one hundred thirty-four-a of\\nthis " +
+                "article, and terminals, facilities for food, fuel, repairs, and\\nrest and, in " +
+                "addition, for points of loading and unloading for household\\ngoods carriers as" +
+                " such highways are designated by the commissioner of\\ntransportation pursuant " +
+                "to section sixteen hundred twenty-seven of this\\nchapter.\\n";
+        String expectedTitle = "Access highway";
+        testSectionTitle(text, expectedTitle, "VAT100-A");
+    }
+
+    @Test
     public void weirdGCTSection() {
         String text = "  § 2. Persons subject to tax.--(a) Imposition of tax.--A tax determined" +
                 "\\nin accordance with the rates set forth in this local law is hereby\\nimposed" +
