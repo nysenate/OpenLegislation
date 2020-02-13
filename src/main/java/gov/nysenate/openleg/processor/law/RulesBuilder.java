@@ -30,7 +30,7 @@ public class RulesBuilder extends IdBasedLawBuilder {
      * Basically creates divisions in the Rules document to process properly.
      * @param block of rules.
      * @param isNewDoc used in calls to superclass.
-     * @param priorRoot
+     * @param priorRoot to pass to addInitialBlock.
      */
     private void processRules(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         // Process the Chapter alone.
