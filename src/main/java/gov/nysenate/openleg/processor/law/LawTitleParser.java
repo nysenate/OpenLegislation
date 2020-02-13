@@ -27,7 +27,7 @@ public class LawTitleParser
     private final static String beforeTitlePattern = "(?i).*?(?<docId>%s)" + IRRELEVANT_CHARS;
     // The title is just everything before the first period.
     private final static String titlePattern = "(?<title>[^.]+)";
-    private final static String SUBSECTION = "(1|[(]a[)]|a)";
+    private final static String SUBSECTION = "(1\\.|[(]a[)]|a\\.)";
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
@@ -154,7 +154,7 @@ public class LawTitleParser
                 .replaceAll("\\s{2,}", " ");
 
         // If the section starts with labelling a section or subsection, there's no title.
-        if (title.trim().matches("^" + SUBSECTION + ".*"))
+        if (Pattern.compile("^" + SUBSECTION).matcher(title + ".").find())
             return NO_TITLE;
         if (!docInfo.getDocTypeId().contains("*"))
             title = title.replaceAll("^\\s*\\*", "").replaceAll("\\*.*", "");
