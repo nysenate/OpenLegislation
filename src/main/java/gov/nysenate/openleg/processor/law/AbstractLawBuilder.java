@@ -146,7 +146,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
             if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
-                String docTypeId = (specialChapter.matches() ? ROOT : lawDoc.getLocationId().replace("-CH", ""));
+                String docTypeId = (specialChapter.matches() ? "" : lawDoc.getLocationId().replace("-CH", ""));
                 lawDoc.setDocTypeId(docTypeId);
                 chapterDoc = lawDoc;
                 isRootDoc = true;

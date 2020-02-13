@@ -74,7 +74,7 @@ public class LawTitleParser
 
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
-        if (lawDocInfo == null || lawDocInfo.getDocType() == null || bodyText == null || bodyText.isEmpty())
+        if (lawDocInfo == null  || bodyText == null)
             return "";
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
@@ -130,6 +130,8 @@ public class LawTitleParser
      * Extract the title from the section document.
      */
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
+        if (text.isEmpty())
+            return "";
         if (NO_TITLES.contains(docInfo.getLawId()))
             return NO_TITLE;
         String id = idAdjustment(docInfo);
@@ -274,7 +276,7 @@ public class LawTitleParser
             text = text.replaceFirst("--", "-").replaceFirst("\\\\n {2}", " ");
         // The first section of unconsolidated laws may have an introduction to the chapter.
         if (docInfo.getDocTypeId().equals("1") && LawChapterCode.isUnconsolidated(docInfo.getLawId()))
-            text = text.replaceFirst(".*?(Section|§) 1", "Section 1");
+            text = text.replaceFirst(".*?(Section|§) +1", "Section 1");
         return text;
     }
 

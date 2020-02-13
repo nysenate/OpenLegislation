@@ -346,6 +346,15 @@ public class LawTitleParserTest {
     }
 
     @Test
+    public void spaceAfterSection() {
+        String text = "  * Section  1.   Short title. This act shall be known and may be cited" +
+                "\\nas the \"New York State Financial Emergency Act for The City of New\\nYork\"" +
+                ".\\n  * Terminates July 1, 2008 or ... see § 13\\n";
+        String expectedTitle = "Short title";
+        testSectionTitle(text, expectedTitle, "FEA1");
+    }
+
+    @Test
     public void weirdGCTSection() {
         String text = "  § 2. Persons subject to tax.--(a) Imposition of tax.--A tax determined" +
                 "\\nin accordance with the rates set forth in this local law is hereby\\nimposed" +
@@ -495,6 +504,7 @@ public class LawTitleParserTest {
         // Doc ID doesn't matter.
         String dummyDocID = "AAA123";
         testSectionTitle(null, "", dummyDocID);
+        testSectionTitle("", "", dummyDocID);
         testTitle("It's a title", "", "123", dummyDocID, LawDocumentType.PARAGRAPH);
     }
 
