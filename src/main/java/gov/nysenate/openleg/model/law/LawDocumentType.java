@@ -10,6 +10,7 @@ public enum LawDocumentType
     // E.g. some laws will group articles into titles whereas others may
     // group titles into articles.
 
+    PREAMBLE,
     ARTICLE,
     SUBARTICLE,
     TITLE,
@@ -36,6 +37,5 @@ public enum LawDocumentType
     PARAGRAPH,
     SUB_PARAGRAPH,
     CLAUSE,
-    ITEM,
-    PREAMBLE
+    ITEM
 }
