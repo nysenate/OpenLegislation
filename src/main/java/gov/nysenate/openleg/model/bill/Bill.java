@@ -527,9 +527,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.chapterYear = chapterYear;
     }
 
-    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
+    public void setReprintOf(BillId reprintOf) {
+        this.reprintOf = reprintOf;
+    }
 
-    public BillId getReprintOf() {return reprintOf;}
+    public BillId getReprintOf() {
+        return reprintOf;
+    }
 
     public boolean hasValidLaws(Version version)  {
         // Indicates whether the laws referenced by this bill version exist in our database.
@@ -538,8 +542,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         }
         LocalDateTime publishDate = amendPublishStatusMap.get(version).getEffectDateTime();
         LocalDateTime lawStartDate = Year.of(2014).atDay(1).atStartOfDay();
-//        System.out.println(publishDate);
-//        System.out.println(publishDate != null && publishDate.isAfter(lawStartDate));
         return publishDate != null && publishDate.isAfter(lawStartDate);
     }
 }
