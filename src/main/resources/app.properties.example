@@ -109,28 +109,42 @@ elastic.search.connection_retries = 30
 
 # --- Eh Cache Configuration --------------------------------------------------
 
-# The amount of memory to allocate to Eh Cache for all heap based caches (in MB).
-# This value cannot exceed the maximum jvm heap size or the application will fail
-# to startup. (Recommended: 600)
-cache.max.size = 600
+# -- Element based cache config --
 
-# Agenda Cache Size (in MB) (Recommended: 25)
-agenda.cache.size = 25
+# Bill Cache Element Size (Recommended: 21000. Uses about 300MB heap space)
+bill.cache.element.size = 21000
 
-# Bill Cache Size (in MB) (Recommended: 300)
-bill.cache.size = 300
+# Bill Info Cache Element Size (Recommended: 40000. Uses about 100MB heap space)
+bill-info.cache.element.size = 40000
 
-# Bill Info Cache Size (in MB) (Recommended: 100)
-bill-info.cache.size = 100
+# Law Cache Element Size (Recommended: 150. Uses about 30MB heap space)
+law.cache.element.size = 150
 
-# Calendar Cache Size (in MB) (Recommended: 40)
-calendar.cache.size = 40
+# Agenda Cache Element Size (Recommended: 100. Uses about 25MB heap space)
+agenda.cache.element.size = 100
 
-# Law Cache Size (in MB) (Recommended: 10)
-law.cache.size = 10
+# -- Heap based cache config --
 
-# Committee Cache Size (in MB) (Recommended: 10)
-committee.cache.size = 10
+# Calendar Cache Size (in MB) (Recommended: 10)
+calendar.cache.heap.size = 10
+
+# Committee Cache Size (in MB) (Recommended: 2)
+committee.cache.heap.size = 2
+
+# Notification Cache Size (in MB) (Recommended: 2)
+notification.cache.heap.size = 2
+
+# API User Cache Size (in MB) (Recommended: 2)
+api_user.cache.heap.size = 2
+
+# Full Member Cache Size (in MB) (Recommended: 5)
+full_member.cache.heap.size = 5
+
+# Shortname Cache Size (in MB) (Recommended: 5)
+shortname.cache.heap.size = 5
+
+# Member Cache Size (in MB) (Recommended: 5)
+member.cache.heap.size = 5
 
 # --- Postgres Database Configuration -----------------------------------------
 
@@ -155,6 +169,11 @@ postgresdb.user =
 
 # And the password..
 postgresdb.pass =
+
+# c3p0 connection pool size configuration
+c3p0.pool.size.initial = 15
+c3p0.pool.size.min = 8
+c3p0.pool.size.max = 15
 
 # --- Scheduling Configuration ------------------------------------------------
 

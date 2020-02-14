@@ -170,7 +170,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** --- Helper classes --- */
 
-    private static class MemberRowMapper implements RowMapper<SessionMember>
+    public static class MemberRowMapper implements RowMapper<SessionMember>
     {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -81,7 +81,7 @@ public class BillAction implements Serializable, Comparable<BillAction>
 
     @Override
     public int hashCode() {
-        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, chamber, text);
+        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, chamber, text.toLowerCase());
     }
 
     @Override

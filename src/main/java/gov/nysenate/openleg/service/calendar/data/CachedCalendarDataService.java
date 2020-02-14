@@ -45,7 +45,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     @Autowired private CalendarDao calendarDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${calendar.cache.size}") private long calendarCacheSizeMb;
+    @Value("${calendar.cache.heap.size}") private long calendarCacheSizeMb;
 
     private Cache calendarCache;
 
@@ -75,7 +75,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         calendarCache = new Cache(new CacheConfiguration().name(ContentCache.CALENDAR.name())
                 .eternal(true)
                 .maxBytesLocalHeap(calendarCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(defaultSizeOfPolicy()));
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(calendarCache);
     }
 

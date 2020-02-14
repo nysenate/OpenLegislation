@@ -5,16 +5,20 @@ import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PublicHearingInfoView extends PublicHearingIdView
 {
+    /** Time format to match our Elasticsearch mappings.*/
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
+
     private String title;
     protected LocalDate date;
     protected List<PublicHearingCommittee> committees;
     private String address;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String startTime;
+    private String endTime;
 
     public PublicHearingInfoView(PublicHearing publicHearing) {
         super(publicHearing.getId());
@@ -22,8 +26,8 @@ public class PublicHearingInfoView extends PublicHearingIdView
         this.date = publicHearing.getDate();
         this.committees = publicHearing.getCommittees();
         this.address = publicHearing.getAddress();
-        this.startTime = publicHearing.getStartTime();
-        this.endTime = publicHearing.getEndTime();
+        this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);
+        this.endTime = publicHearing.getEndTime() == null ? null : publicHearing.getEndTime().format(TIME_FORMAT);
     }
 
     @Override
@@ -47,11 +51,11 @@ public class PublicHearingInfoView extends PublicHearingIdView
         return address;
     }
 
-    public LocalTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public LocalTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 }

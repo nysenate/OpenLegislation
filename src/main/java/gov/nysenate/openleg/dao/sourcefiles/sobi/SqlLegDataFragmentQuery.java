@@ -12,24 +12,30 @@ public enum SqlLegDataFragmentQuery implements BasicSqlQuery
         "SELECT 1 FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE fragment_id = :fragmentId"
     ),
-    GET_LEG_DATA_FRAGMENT_BY_FILE_NAME(
-        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
-        "WHERE fragment_id = :fragmentId"
-    ),
-    GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE(
-        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
-        "WHERE leg_data_file_name = :legDataFileName"
-    ),
     GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE_AND_TYPE(
         "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE leg_data_file_name = :legDataFileName AND fragment_type = :fragmentType"
     ),
+    GET_LEG_DATA_FRAGMENTS(
+        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + " \n" +
+        "INNER JOIN ${schema}." + SqlTable.LEG_DATA_FILE +
+                " ON " + SqlTable.LEG_DATA_FRAGMENT + ".leg_data_file_name = " + SqlTable.LEG_DATA_FILE + ".file_name "
+    ),
     GET_PENDING_LEG_DATA_FRAGMENTS(
-        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
-        "WHERE pending_processing = true"
+        GET_LEG_DATA_FRAGMENTS.getSql() + "\n" +
+        "WHERE " + SqlTable.LEG_DATA_FRAGMENT + ".pending_processing = true"
     ),
     GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE(
-        GET_PENDING_LEG_DATA_FRAGMENTS.sql + " AND fragment_type IN (:fragmentTypes)"
+        GET_PENDING_LEG_DATA_FRAGMENTS.sql +
+                " AND " + SqlTable.LEG_DATA_FRAGMENT + ".fragment_type IN (:fragmentTypes)"
+    ),
+    GET_LEG_DATA_FRAGMENT_BY_FRAGMENT_ID(
+        GET_LEG_DATA_FRAGMENTS.getSql() + "\n" +
+        "WHERE " + SqlTable.LEG_DATA_FRAGMENT + ".fragment_id = :fragmentId"
+    ),
+    GET_LEG_DATA_FRAGMENTS_BY_SOURCE_FILE_NAME(
+        GET_LEG_DATA_FRAGMENTS.getSql() + "\n" +
+        "WHERE " + SqlTable.LEG_DATA_FRAGMENT + ".leg_data_file_name = :legDataFileName"
     ),
     UPDATE_LEG_DATA_FRAGMENT(
         "UPDATE ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +

@@ -6,23 +6,14 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import gov.nysenate.openleg.model.sourcefiles.SourceType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
-import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +45,7 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
                 Collections.singletonList(fileName));
         return jdbcNamed.queryForObject(
                 SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(schema()), params,
-                new SourceFileRowMapper());
+                new SourceFileRowMapper(sourceFileDaoMap));
     }
 
     /**
@@ -77,7 +68,7 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
         Map<String, SourceFile> sourceFileMap = new HashMap<>();
         List<SourceFile> sourceList = jdbcNamed.query(
                 SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(schema()),
-                params, new SourceFileRowMapper());
+                params, new SourceFileRowMapper(sourceFileDaoMap));
         for (SourceFile sourceFile : sourceList) {
             sourceFileMap.put(sourceFile.getFileName(), sourceFile);
         }
@@ -85,13 +76,13 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
     }
 
     @Override
-    public PaginatedList<SourceFile> getSobiFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByPubDate, LimitOffset limOff) {
+    public PaginatedList<SourceFile> getSourceFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByPubDate, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", toDate(DateUtils.startOfDateTimeRange(dateTimeRange)));
         params.addValue("endDate", toDate(DateUtils.endOfDateTimeRange(dateTimeRange)));
         OrderBy orderBy = new OrderBy("published_date_time", sortByPubDate);
         PaginatedRowHandler<SourceFile> handler = new PaginatedRowHandler<>(limOff,
-                "total_count", new SourceFileRowMapper());
+                "total_count", new SourceFileRowMapper(sourceFileDaoMap));
         final String query = SqlSourceFileQuery.GET_LEG_DATA_FILES_DURING.getSql(schema(), orderBy, limOff);
         jdbcNamed.query(query, params, handler);
         return handler.getList();
@@ -107,53 +98,5 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
         params.addValue("stagedDateTime", toDate(sourceFile.getStagedDateTime()));
         params.addValue("archived", sourceFile.isArchived());
         return params;
-    }
-
-    private class SourceFileRowMapper implements RowMapper<SourceFile> {
-        @Override
-        public SourceFile mapRow(ResultSet rs, int rowNum) throws SQLException {
-            String fileName = rs.getString("file_name");
-            LocalDateTime publishedDateTime = getLocalDateTimeFromRs(rs, "published_date_time");
-            boolean archived = rs.getBoolean("archived");
-            String extension = FilenameUtils.getExtension(fileName);
-            File file;
-
-            SourceType sourceType = SourceType.ofFile(fileName);
-
-            if (sourceType == null) {
-                throw new IllegalStateException(
-                        "Could not determine " + SourceType.class.getSimpleName() +
-                        " for filename: " + fileName);
-            }
-
-            SourceFileFsDao fsDao = sourceFileDaoMap.get(sourceType);
-
-            file = archived
-                    ? fsDao.getFileInArchiveDir(fileName, publishedDateTime)
-                    : fsDao.getFileInIncomingDir(fileName);
-
-            String encoding = rs.getString("encoding");
-            try {
-
-                SourceFile sourceFile;
-                if (extension.toLowerCase().equals("xml")) {
-                    sourceFile = new XmlFile(file, encoding);
-                } else {
-                    sourceFile = new SobiFile(file, encoding);
-                }
-                sourceFile.setArchived(archived);
-                sourceFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
-                return sourceFile;
-            } catch (FileNotFoundException ex) {
-                logger.error(
-                        "Source File " + rs.getString("file_name") +
-                                " was not found in the expected location! \n" +
-                                "This could be a result of modifications to the source file directory that were not synced with " +
-                                "the database.", ex);
-            } catch (IOException ex) {
-                logger.error("{}", ex);
-            }
-            return null;
-        }
     }
 }

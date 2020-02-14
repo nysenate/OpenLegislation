@@ -3,9 +3,12 @@ package gov.nysenate.openleg.client.view.committee;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.model.entity.Committee;
 
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 public class CommitteeView extends CommitteeVersionIdView{
+    /** Time format to match our Elasticsearch mappings.*/
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     protected String reformed;
     protected String location;
@@ -21,7 +24,7 @@ public class CommitteeView extends CommitteeVersionIdView{
             this.reformed = committee.getReformed() != null ? committee.getReformed().toString() : null;
             this.location = committee.getLocation();
             this.meetDay = committee.getMeetDay() != null ? committee.getMeetDay().toString() : null;
-            this.meetTime = committee.getMeetTime() != null ? committee.getMeetTime().toString() : null;
+            this.meetTime = committee.getMeetTime() != null ? committee.getMeetTime().format(TIME_FORMAT) : null;
             this.meetAltWeek = committee.isMeetAltWeek();
             this.meetAltWeekText = committee.getMeetAltWeekText();
             this.committeeMembers = ListView.of(committee.getMembers().stream()

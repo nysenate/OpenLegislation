@@ -18,7 +18,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     @Autowired private AgendaDao agendaDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${agenda.cache.size}") private long agendaCacheSizeMb;
+    @Value("${agenda.cache.element.size}") private int agendaCacheElementSize;
 
     private EhCacheCache agendaCache;
 
@@ -71,8 +70,8 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     public void setupCaches() {
         Cache cache = new Cache(new CacheConfiguration().name(ContentCache.AGENDA.name())
             .eternal(true)
-            .maxBytesLocalHeap(agendaCacheSizeMb, MemoryUnit.MEGABYTES)
-            .sizeOfPolicy(defaultSizeOfPolicy()));
+            .maxEntriesLocalHeap(agendaCacheElementSize)
+            .sizeOfPolicy(elementSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.agendaCache = new EhCacheCache(cache);
     }

@@ -21,6 +21,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     protected final SendMailService sendMailService;
 
     private final String domainUrl;
+    private long apiUserCacheSizeMb;
 
     private final EventBus eventBus;
     private final CacheManager cacheManager;
@@ -57,12 +59,14 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
 
     public CachedSqlApiUserService(ApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
-                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl) {
+                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl,
+                                   @Value("${api_user.cache.heap.size}") long apiUserCacheSizeMb) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
         this.cacheManager = cacheManager;
         this.environment = environment;
         this.eventBus = eventBus;
+        this.apiUserCacheSizeMb = apiUserCacheSizeMb;
         eventBus.register(this);
         setupCaches();
         this.domainUrl = domainUrl;
@@ -79,8 +83,9 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     @Override
     public void setupCaches() {
         Cache cache = new Cache(new CacheConfiguration().name(ContentCache.APIUSER.name())
-            .eternal(true)
-            .sizeOfPolicy(defaultSizeOfPolicy()));
+                .eternal(true)
+                .maxBytesLocalHeap(apiUserCacheSizeMb, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.apiUserCache = new EhCacheCache(cache);
     }
@@ -241,8 +246,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         apiUserDao.removeSubscription(apiKey, subscription);
         getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.removeSubscription(subscription));
     }
-
-
 
 
     /**

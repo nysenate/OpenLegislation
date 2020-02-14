@@ -22,14 +22,16 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
+    private static final String ROOT = "ROOT";
+
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
 
     /** Document ID for special document that's just a list of notwithstanding clauses. */
-    protected static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
+    private static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
 
     /** Document ID for special tax law. */
-    protected static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
+    private static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
 
     /** Special law IDs. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
@@ -39,7 +41,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
     static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
+        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
         expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
     }
 
@@ -51,7 +53,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("T", TITLE);
         lawLevelCodes.put("ST", SUBTITLE);
         lawLevelCodes.put("P", PART);
-        lawLevelCodes.put("SP", SUB_PART);
+        lawLevelCodes.put("SP", SUBPART);
         lawLevelCodes.put("S", SECTION);
         lawLevelCodes.put("INDEX", INDEX);
         lawLevelCodes.put("R", RULE);
@@ -95,7 +97,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      */
     public static LawBuilder makeLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         String lawID = lawVersionId.getLawId();
-        if (lawID.equals(ConstitutionBuilder.CONS_STR))
+        if (lawID.equals(CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
         if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return new RulesBuilder(lawVersionId, previousTree);
@@ -134,16 +136,18 @@ public abstract class AbstractLawBuilder implements LawBuilder
     public void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
+        String lawId = lawDoc.getLawId();
 
         // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
         if (rootNode == null) {
-            logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
+            logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawId);
             LawDocument chapterDoc;
             // If the block seems to be a chapter node, we'll treat this document as the root.
             Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
             if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
-                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst(specialChapter.matches() ? specialChapter.group(1) : "-CH", ""));
+                String docTypeId = (specialChapter.matches() ? "" : lawDoc.getLocationId().replace("-CH", ""));
+                lawDoc.setDocTypeId(docTypeId);
                 chapterDoc = lawDoc;
                 isRootDoc = true;
             }
@@ -164,8 +168,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
                 String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR.substring(3) + "-", "");
-                if (lawDoc.getLawId().equals(ConstitutionBuilder.CONS_STR))
-                    docTypeId = docTypeId.replaceAll("A\\d+S", "");
+                if (lawId.equals(CONS_STR) || lawId.equals(A_RULES) || lawId.equals(S_RULES))
+                    docTypeId = docTypeId.replaceAll("[AR]\\d+S", "");
                 lawDoc.setDocTypeId(docTypeId);
                 if (isNewDoc)
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
@@ -177,13 +181,13 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
                 if (specificLocId.equals("AA1")) {
                     lawDoc.setDocType(PREAMBLE);
-                    lawDoc.setDocTypeId("1");
+                    lawDoc.setDocTypeId("");
                 }
                 else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
                     LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
                     // GCM has some Subparts labeled with an S.
-                    if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
-                        type = SUB_PART;
+                    if (lawId.equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
+                        type = SUBPART;
                     lawDoc.setDocType(type);
                     String docTypeId = locMatcher.group(2);
                     lawDoc.setDocTypeId(docTypeId);
@@ -197,8 +201,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 addDocument(lawDoc, isNewDoc);
             }
         }
-        if (!lawDoc.getText().isEmpty() || lawDoc.getDocType() == JOINT_RULE)
-            setLawDocTitle(lawDoc, isNewDoc);
+        setLawDocTitle(lawDoc, isNewDoc);
     }
 
     /**
@@ -285,7 +288,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     publishedDate = existingDocInfo.get().getPublishedDate();
                     isNewDoc = false;
                     logger.debug("Found existing law with doc id {} with published date {}",
-                        resolvedDocId, block.getPublishedDate());
+                            resolvedDocId, block.getPublishedDate());
                 }
             }
             if (isNewDoc)
@@ -414,10 +417,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
         LawDocument dummyParent = new LawDocument();
         dummyParent.setDummy(true);
         dummyParent.setLawId(block.getLawId());
-        dummyParent.setDocumentId(block.getLawId() + "-ROOT");
-        dummyParent.setLocationId("-ROOT");
+        dummyParent.setDocumentId(block.getLawId() + "-" + ROOT);
+        dummyParent.setLocationId("-" + ROOT);
         dummyParent.setDocType(LawDocumentType.CHAPTER);
-        dummyParent.setDocTypeId("ROOT");
+        dummyParent.setDocTypeId(ROOT);
         dummyParent.setPublishedDate(block.getPublishedDate());
         dummyParent.setText("");
         setLawDocTitle(dummyParent, true);

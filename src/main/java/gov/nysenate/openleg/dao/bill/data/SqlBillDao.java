@@ -20,6 +20,7 @@ import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,25 +296,45 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get the bill sponsor for the bill id in the params. Return null if the sponsor has not been set yet.
      */
     public BillSponsor getBillSponsor(ImmutableParams baseParams) {
+        BillSponsor sponsor;
         try {
-            return jdbcNamed.queryForObject(
-                    SqlBillQuery.SELECT_BILL_SPONSOR.getSql(schema()), baseParams, new BillSponsorRowMapper(memberService));
+            Pair<BillSponsor, Integer> pair = jdbcNamed.queryForObject(
+                    SqlBillQuery.SELECT_BILL_SPONSOR.getSql(schema()), baseParams, new BillSponsorRowMapper());
+            sponsor = pair.getLeft();
+            int sessionMemberId = pair.getRight();
+            if (sessionMemberId > 0) {
+                try {
+                    sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
+                } catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
+                }
+            }
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
+        return sponsor;
     }
 
     /**
      * Get any additional sponsors that were manually entered into the database.
      */
     public List<SessionMember> getAdditionalSponsors(ImmutableParams baseParams) {
+        List<SessionMember> sessionMembers = new ArrayList<>();
         try {
             OrderBy orderBy = new OrderBy("sequence_no", ASC);
-            return jdbcNamed.query(SqlBillQuery.SELECT_ADDTL_BILL_SPONSORS.getSql(schema(), orderBy, LimitOffset.ALL),
-                    baseParams, new BillMemberRowMapper(memberService));
+            List<Integer> sessionMemberIds = jdbcNamed.queryForList(SqlBillQuery.SELECT_ADDTL_BILL_SPONSORS.getSql(schema(), orderBy, LimitOffset.ALL),
+                    baseParams, Integer.class);
+            for (int id : sessionMemberIds) {
+                try {
+                    sessionMembers.add(memberService.getMemberBySessionId(id));
+                } catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
+                }
+            }
         } catch (EmptyResultDataAccessException ex) {
             return new ArrayList<>();
         }
+        return sessionMembers;
     }
 
     /**
@@ -353,23 +374,52 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get the co sponsors listing for the bill id in the params.
      */
     public List<SessionMember> getCoSponsors(ImmutableParams amendParams) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_COSPONSORS.getSql(schema()), amendParams, new BillMemberRowMapper(memberService));
+        List<Integer> sessionMemberIds = getCoSponsorIds(amendParams);
+        List<SessionMember> sessionMembers = new ArrayList<>();
+        for (int id : sessionMemberIds) {
+            try {
+                sessionMembers.add(memberService.getMemberBySessionId(id));
+            } catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
+            }
+        }
+        return sessionMembers;
     }
 
     /**
      * Get the multi sponsors listing for the bill id in the params.
      */
     public List<SessionMember> getMultiSponsors(ImmutableParams amendParams) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS.getSql(schema()), amendParams, new BillMemberRowMapper(memberService));
+        List<Integer> sessionMemberIds = getMultiSponsorIds(amendParams);
+        List<SessionMember> sessionMembers = new ArrayList<>();
+        for (int id : sessionMemberIds) {
+            try {
+                sessionMembers.add(memberService.getMemberBySessionId(id));
+            } catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
+            }
+        }
+        return sessionMembers;
     }
 
     /**
      * Get the votes for the bill id in the params.
      */
     public List<BillVote> getBillVotes(ImmutableParams baseParams) {
-        BillVoteRowHandler voteHandler = new BillVoteRowHandler(memberService);
+        BillVoteRowHandler voteHandler = new BillVoteRowHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES.getSql(schema()), baseParams, voteHandler);
-        return voteHandler.getBillVotes();
+        List<BillVote> billVotes = voteHandler.getBillVotes();
+        for (BillVote billVote : billVotes) {
+            for (SessionMember member : billVote.getMemberVotes().values()) {
+                try {
+                    SessionMember fullMember = memberService.getMemberBySessionId(member.getSessionMemberId());
+                    member.updateFromOther(fullMember);
+                } catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
+                }
+            }
+        }
+        return billVotes;
     }
 
     /**
@@ -787,46 +837,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
-    private static class BillSponsorRowMapper implements RowMapper<BillSponsor> {
-        MemberService memberService;
-
-        private BillSponsorRowMapper(MemberService memberService) {
-            this.memberService = memberService;
-        }
+    /**
+     * Returns a Pair of two objects, a BillSponsor on the left and the session member id of the
+     * bill sponsor on the right.
+     */
+    private static class BillSponsorRowMapper implements RowMapper<Pair<BillSponsor, Integer>> {
 
         @Override
-        public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Pair<BillSponsor, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillSponsor sponsor = new BillSponsor();
             int sessionMemberId = rs.getInt("session_member_id");
             sponsor.setBudget(rs.getBoolean("budget_bill"));
             sponsor.setRules(rs.getBoolean("rules_sponsor"));
-            if (sessionMemberId > 0) {
-                try {
-                    sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
-                } catch (MemberNotFoundEx memberNotFoundEx) {
-                    logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
-                }
-            }
-            return sponsor;
-        }
-    }
-
-    private static class BillMemberRowMapper implements RowMapper<SessionMember> {
-        private MemberService memberService;
-
-        private BillMemberRowMapper(MemberService memberService) {
-            this.memberService = memberService;
-        }
-
-        @Override
-        public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
-            int sessionMemberId = rs.getInt("session_member_id");
-            try {
-                return memberService.getMemberBySessionId(sessionMemberId);
-            } catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
-            }
-            return null;
+            return Pair.of(sponsor, sessionMemberId);
         }
     }
 

@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseSourceFile implements SourceFile {
-    @Autowired
-    SqlBaseDao sqlBaseDao;
+
     /**
      * SOBI and XML files are (mostly) in a CP850 or similar encoding. This was determined from the
      * byte mapping of
@@ -39,8 +38,6 @@ public abstract class BaseSourceFile implements SourceFile {
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
 
-    protected File standingDir;
-    
     /** --- Constructors --- */
     
     public BaseSourceFile(File sobiFile) throws IOException, LegDataFileNotFoundEx {

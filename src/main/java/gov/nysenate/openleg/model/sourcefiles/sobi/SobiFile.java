@@ -28,8 +28,6 @@ public class SobiFile extends BaseSourceFile {
      */
     private static final String sobiDateNoSecsPattern = "'SOBI.D'yyMMdd'.T'HHmm'.TXT'";
 
-    private final String stagingDir = "/data/openleg/staging/sobis/";
-
     /**
      * --- Constructors ---
      */
