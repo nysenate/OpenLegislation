@@ -78,8 +78,6 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
     @Autowired
     private ProcessConfig processConfig;
 
-    @Autowired
-    private BillLawCodeParser billLawCodeParser;
     /** --- Constructors --- */
 
     public BillSobiProcessor() {}
@@ -479,7 +477,8 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
         }
         else {
             specifiedAmendment.setLawCode(data.replace("\n", " ").trim());
-            setRelatedLaws(billLawCodeParser, baseBill, version, specifiedAmendment.getLawCode(), specifiedAmendment);
+            String json = BillLawCodeParser.parse(specifiedAmendment.getLawCode(), baseBill.hasValidLaws(version));
+            specifiedAmendment.setRelatedLawsJson(json);
         }
         baseBill.setModifiedDateTime(date);
     }

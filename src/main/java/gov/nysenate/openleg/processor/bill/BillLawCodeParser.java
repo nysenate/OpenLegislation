@@ -5,34 +5,14 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
-
-@Component
 public class BillLawCodeParser {
-    private static final Logger logger = LoggerFactory.getLogger(BillLawCodeParser.class);
-
-    private final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
+    private static final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
     // We don't have the NYC administrative code or NYC charter
-    private final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
-
-    /**
-     * --- Output ---
-     */
-
-    private Map<LawActionType, HashSet<String>> mapping = new HashMap<>();
-    private String json = "";
-
-    /**
-     * --- Constructor ---
-     */
-
-    public BillLawCodeParser() {}
+    private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
 
     /* --- Methods --- */
 
@@ -42,11 +22,10 @@ public class BillLawCodeParser {
      *
      * @param lawCode the law code citation of a Bill Amendment, eg (Amd §3635, Ed L)
      */
-    public String parse(String lawCode, boolean hasValidLaws) {
-        if (!hasValidLaws) {
-            json = new Gson().toJson(mapping);
-            return json;
-        }
+    public static String parse(String lawCode, boolean hasValidLaws) {
+        Map<LawActionType, Set<String>> mapping = new EnumMap<>(LawActionType.class);
+        if (!hasValidLaws)
+            return new Gson().toJson(mapping);
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
         // qualifiers, but these are more detail than we need anyway
         lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
@@ -95,17 +74,16 @@ public class BillLawCodeParser {
                 continue;
             }
             if (general) {
-                putLawEffect(currAction, currChapter.toString() + " (generally)");
+                putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
                 continue;
             }
             chapter = chapter.replaceAll(chapterName, "");
-            parseChapterAffects(chapter, currChapter, currAction);
+            parseChapterAffects(chapter, currChapter, currAction, mapping);
         }
-        json = new Gson().toJson(mapping);
-        return json;
+        return new Gson().toJson(mapping);
     }
 
-    private void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction) {
+    private static void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction, Map<LawActionType, Set<String>> mapping) {
         // This function processes all the effects on a single volume of the law code
         // Sections/Articles of the specified chapter are separated by "," and "&"
         LinkedList<String> articleList = new LinkedList<>(
@@ -140,7 +118,7 @@ public class BillLawCodeParser {
                     newDivision = false;
                 }
                 else if (token.equalsIgnoreCase("various")) {
-                    putLawEffect(currAction, currChapter.toString() + " (generally)");
+                    putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
                     break;
                 }
                 else if (LawActionType.lookupAction(token).isPresent()) {
@@ -151,7 +129,7 @@ public class BillLawCodeParser {
                 // ( a "-" character after the next section name means we'll link to the parent law doc, not the sections)
                 if (finished(tokenList, i)) {
                     if (context.size() > 0){
-                        addLawEffect(currAction, currChapter, context);
+                        addLawEffect(currAction, currChapter, context, mapping);
                     }
                     // anything beyond this level of detail is extraneous
                     break;
@@ -160,7 +138,7 @@ public class BillLawCodeParser {
         }
     }
 
-    private String processQualifier(String token, LawChapterCode chapter, List<String> context) {
+    private static String processQualifier(String token, LawChapterCode chapter, List<String> context) {
         // Rules start with R and sections with §, but we don't need these characters
         if (token.charAt(0) == 'R' && (token.length() > 1 && Character.isDigit(token.charAt(1)))) {
             // If the token starts with an R followed by a number, then it is a rule
@@ -183,7 +161,7 @@ public class BillLawCodeParser {
         return token;
     }
 
-    private boolean isNewDivisionIndicator(List<String> context, List<String> tokens, int idx) {
+    private static boolean isNewDivisionIndicator(List<String> context, List<String> tokens, int idx) {
         // Returns true if a string indicates a level of division (eg Art, Title) and that level of division has not yet
         //  been encountered in this section
         // For example, in the citation Amd Art 39-F Art Head, the first instance of "Art" is relevant, but not the second
@@ -201,19 +179,19 @@ public class BillLawCodeParser {
         return true;
     }
 
-    private boolean isSectionNumber(String s) {
+    private static boolean isSectionNumber(String s) {
         // Returns true if the string is a number, a number with a decimal, a Roman Numeral, a number with 'R'/'§' in
         // front of it, or an uppercase letter. This covers all possible quantifiers in the law code.
         return s != null && (s.matches("R?§*\\d*\\.?\\d+-?.*") || isRomanNumeral(s) || s.matches("[A-Z]"));
     }
 
-    private boolean isRomanNumeral(String s) {
+    private static boolean isRomanNumeral(String s) {
         // Returns true if the string is a well-formed Roman Numeral with values<50, or a Roman Numeral followed by a dash
         return s != null && (s.matches("(L?X{0,3}|IX)|(IV|V?I{0,3})") ||
                 (s.split("-").length > 1 && isRomanNumeral(s.split("-")[0])));
     }
 
-    private boolean finished(List<String> tokenList, int i) {
+    private static boolean finished(List<String> tokenList, int i) {
         // Indicates whether tokenList[i] is the last token necessary to fully qualify a LawDocId within a citation
         if (i == tokenList.size() - 1) {
             // there are no more tokens left
@@ -227,19 +205,12 @@ public class BillLawCodeParser {
         return range || unnecessary && !tokenList.get(i + 1).equalsIgnoreCase("various");
     }
 
-    private void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context) {
+    private static void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context, Map<LawActionType, Set<String>> mapping) {
         // Adds the proposed change described by "action" onto the law described by "context" and "chapter"
         // If the latest item in context doesn't begin with a letter, then we are at the lowest level of the law tree (section)
         boolean leaf = Character.isDigit(context.get(context.size()-1).charAt(0));
-        if (leaf) {
-            // link to only the section number
-            putLawEffect(action, chapter.toString() + context.get(context.size()-1));
-        }
-        else {
-            // link to the entire path through the law tree
-            String hierarchy = String.join("", context.subList(0, context.size()));
-            putLawEffect(action, chapter.toString() + hierarchy);
-        }
+        String section = chapter.toString() + (leaf ? context.get(context.size()-1) : String.join("", context.subList(0, context.size())));
+        putLawEffect(action, section, mapping);
         // The last added level of context will be replaced by a new one for the next law section
         if (context.size() > 1 || leaf) {
             context.remove(context.size()-1);
@@ -250,7 +221,7 @@ public class BillLawCodeParser {
         }
     }
 
-    private void putLawEffect(LawActionType action, String section) {
+    private static void putLawEffect(LawActionType action, String section, Map<LawActionType, Set<String>> mapping) {
         // Add a new value to one of the actions in this.mapping
         // Ignore the new names of renamed laws
         if (!unlinkable.contains(section.substring(0, 3)) && action != LawActionType.REN_TO) {
@@ -259,19 +230,7 @@ public class BillLawCodeParser {
         }
     }
 
-    public Map<LawActionType, HashSet<String>> getMapping() {
-        return mapping;
-    }
-
-    public String getJson() {
-        return json;
-    }
-
-    public void clearMapping() {
-        mapping.clear();
-    }
-
-    private int romanCharValue(char letter) {
+    private static int romanCharValue(char letter) {
         switch (letter) {
             case 'L':
                 return 50;
@@ -286,7 +245,7 @@ public class BillLawCodeParser {
         }
     }
 
-    private String romanNumeralValue(String s) {
+    private static String romanNumeralValue(String s) {
         // Converts a Roman Numeral string to the equivalent Arabic value string (eg romanNumeralValue("XIV") = "14")
         // Only works for uppercase strings with characters up to 'C'
         int val = 0;

@@ -34,9 +34,6 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
     @Autowired
     private XmlHelper xmlHelper;
 
-    @Autowired
-    private BillLawCodeParser billLawCodeParser;
-
     public XmlLDSummProcessor() {}
 
     @Override
@@ -63,8 +60,8 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             baseBill.setSummary(summary);
             BillAmendment amendment = baseBill.getAmendment(version);
             amendment.setLawCode(lawCode);
-            AbstractBillProcessor.setRelatedLaws(billLawCodeParser, baseBill, version, lawCode, amendment);
-
+            String json = BillLawCodeParser.parse(amendment.getLawCode(), baseBill.hasValidLaws(version));
+            amendment.setRelatedLawsJson(json);
 
             if (action.equals("replace")) { //replace bill
                 /**
