@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
@@ -23,11 +22,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
@@ -43,8 +37,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
     @Autowired
     private BillLawCodeParser billLawCodeParser;
 
-    public XmlLDSummProcessor() {
-    }
+    public XmlLDSummProcessor() {}
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -65,12 +58,13 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("º","§").replaceAll("\n"," ").trim();
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
-            final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
+            final String lawCode = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("([\n\t])"," ").replaceAll(" +"," ").trim();
             final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), legDataFragment);
             baseBill.setSummary(summary);
             BillAmendment amendment = baseBill.getAmendment(version);
-            amendment.setLaw(law);
-            setRelatedLaws(billLawCodeParser, baseBill, version, law, amendment);
+            amendment.setLawCode(lawCode);
+            AbstractBillProcessor.setRelatedLaws(billLawCodeParser, baseBill, version, lawCode, amendment);
+
 
             if (action.equals("replace")) { //replace bill
                 /**

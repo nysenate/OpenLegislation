@@ -2,14 +2,10 @@ package gov.nysenate.openleg.processor.bill.digest;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.annotation.SillyTest;
-import gov.nysenate.openleg.client.view.bill.BillAmendmentView;
-import gov.nysenate.openleg.dao.bill.data.SqlBillDao;
-import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.law.LawActionType;
-import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.BillLawCodeParser;
 import gov.nysenate.openleg.processor.bill.XmlLDSummProcessor;
@@ -18,7 +14,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -43,7 +38,7 @@ public class LawCodeParserTest extends BaseXmlProcessorTest {
 
     private void compareMaps(BillAmendment amd, Map<LawActionType, HashSet<String>> expected) {
         BillLawCodeParser parser = new BillLawCodeParser();
-        parser.parse(amd.getLaw());
+        parser.parse(amd.getLawCode(), true);
 
         Map<LawActionType, HashSet<String>> actual = parser.getMapping();
         assertEquals(expected, actual);
@@ -131,7 +126,6 @@ public class LawCodeParserTest extends BaseXmlProcessorTest {
     @Test
     public void multiLevelTest() {
         // Test to make sure both Article 27 and Title 28 are put in the lawDocId
-
         // Add Art 27 Title 28 §§27-2801 - 27-2805, En Con L
         final BaseBillId baseBillId = new BaseBillId("A04398", 2019);
         BillAmendment amd = getFirstAmendment(baseBillId);

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -42,7 +41,7 @@ public class BillAmendment implements Serializable, Cloneable
     private String relatedLawsJson;
 
     /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
-    protected String law = "";
+    protected String lawCode = "";
 
     /** The AN ACT TO... clause which describes the bill's intent. */
     protected String actClause = "";
@@ -262,17 +261,19 @@ public class BillAmendment implements Serializable, Cloneable
         this.lawSection = lawSection;
     }
 
-    public String getLaw() {
-        return law;
+    public String getLawCode() {
+        return lawCode;
     }
 
     public String getRelatedLawsJson() { return relatedLawsJson;}
 
-    public void setLaw(String law) {
-        this.law = law;
+    public void setLawCode(String lawCode) {
+        this.lawCode = lawCode;
     }
 
-    public void setRelatedLawsJson(String json) { relatedLawsJson = json; }
+    public void setRelatedLawsJson(String json) {
+        relatedLawsJson = json;
+    }
 
     public Map<String, List<String>> getRelatedLawsMap() {
         Map<String, List<String>> mapping = new HashMap<>();

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -474,13 +473,13 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
-            specifiedAmendment.setLaw("");
+            specifiedAmendment.setLawCode("");
             baseBill.setSummary("");
             baseBill.setModifiedDateTime(date);
         }
         else {
-            specifiedAmendment.setLaw(data.replace("\n", " ").trim());
-            setRelatedLaws(billLawCodeParser, baseBill, version, specifiedAmendment.getLaw(), specifiedAmendment);
+            specifiedAmendment.setLawCode(data.replace("\n", " ").trim());
+            setRelatedLaws(billLawCodeParser, baseBill, version, specifiedAmendment.getLawCode(), specifiedAmendment);
         }
         baseBill.setModifiedDateTime(date);
     }

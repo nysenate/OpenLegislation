@@ -788,7 +788,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
-            amend.setLaw(rs.getString("law_code"));
+            amend.setLawCode(rs.getString("law_code"));
             amend.setRelatedLawsJson(rs.getString("related_laws"));
             return amend;
         }
@@ -926,7 +926,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("fullTextHtml", amendment.getFullText(HTML))
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
-                .addValue("lawCode", amendment.getLaw())
+                .addValue("lawCode", amendment.getLawCode())
                 .addValue("uniBill", amendment.isUniBill())
                 .addValue("relatedLawsJson", amendment.getRelatedLawsJson());
         addLastFragmentParam(fragment, params);

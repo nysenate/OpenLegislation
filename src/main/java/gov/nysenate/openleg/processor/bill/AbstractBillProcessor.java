@@ -414,4 +414,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
             destAmend.setFullText(format, sourceAmend.getFullText(format));
         }
     }
+
+    protected static void setRelatedLaws(BillLawCodeParser parser, Bill bill, Version version, String law, BillAmendment amd) {
+        amd.setRelatedLawsJson(parser.parse(law, bill.hasValidLaws(version)));
+        parser.clearMapping();
+    }
 }

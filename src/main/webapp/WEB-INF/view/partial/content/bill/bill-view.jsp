@@ -162,7 +162,7 @@
               <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
               <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
               <%-- Related Laws --%>
-              <p class="text-medium">Related Laws -  {{(bill.amendments.items[curr.amdVersion].relatedLawUrls.size > 0) &&
+              <p class="text-medium">Related Laws - {{(bill.amendments.items[curr.amdVersion].relatedLawUrls.size > 0) &&
                 !bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')? '' : 'N/A'}} </p>
               <div ng-show="!bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')">
                 <md-list ng-repeat="(action, names) in bill.amendments.items[curr.amdVersion].relatedLaws.items">

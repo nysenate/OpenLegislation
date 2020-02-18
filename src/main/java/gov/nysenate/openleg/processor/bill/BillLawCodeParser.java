@@ -42,7 +42,11 @@ public class BillLawCodeParser {
      *
      * @param lawCode the law code citation of a Bill Amendment, eg (Amd §3635, Ed L)
      */
-    public String parse(String lawCode) {
+    public String parse(String lawCode, boolean hasValidLaws) {
+        if (!hasValidLaws) {
+            json = new Gson().toJson(mapping);
+            return json;
+        }
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
         // qualifiers, but these are more detail than we need anyway
         lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");

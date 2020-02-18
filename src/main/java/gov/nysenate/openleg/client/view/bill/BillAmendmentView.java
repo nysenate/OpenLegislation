@@ -6,6 +6,7 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
@@ -43,7 +44,7 @@ public class BillAmendmentView extends BillIdView
                 .collect(Collectors.toList()));
             this.memo = billAmendment.getMemo();
             this.lawSection = billAmendment.getLawSection();
-            this.lawCode = billAmendment.getLaw();
+            this.lawCode = billAmendment.getLawCode();
             this.actClause = billAmendment.getActClause();
             this.fullTextFormats = new ArrayList<>(billAmendment.getFullTextFormats());
             this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
@@ -61,7 +62,7 @@ public class BillAmendmentView extends BillIdView
             billAmendment.getRelatedLawsMap().forEach((k,v) ->
                     relatedLawNames.put(k, ListView.ofStringList(v)));
             this.relatedLaws = MapView.of(relatedLawNames);
-            this.relatedLawUrls = getRelatedLawUrls(bill, billAmendment, publishStatus);
+            this.relatedLawUrls = makeRelatedLawUrls(bill, billAmendment, publishStatus);
         }
     }
 
@@ -134,8 +135,7 @@ public class BillAmendmentView extends BillIdView
         return relatedLaws;
     }
 
-
-    private static MapView<String, ListView<String>> getRelatedLawUrls(Bill bill, BillAmendment amd, PublishStatus publishStatus) {
+    private static MapView<String, ListView<String>> makeRelatedLawUrls(Bill bill, BillAmendment amd, PublishStatus publishStatus) {
         // Converts the map of LawActionType->{LawDocId} to a view of LawActionType->{Valid law url}
         Map<String, List<String>> relatedLaws = amd.getRelatedLawsMap();
         Map<String, ListView<String>> view = new HashMap<>();
@@ -147,10 +147,10 @@ public class BillAmendmentView extends BillIdView
             // The date for most law links will be when the bill was proposed
             String date = publishStatus.getEffectDateTime().toString().substring(0,10);
             // If the bill introduced a new law, then we have to link to the law when the bill was passed
-            if (passed && lawAction.equals("ADD")) {
+            if (passed && LawActionType.ADD.compareToString(lawAction)) {
                 date = bill.getStatus().getActionDate().toString();
             }
-            boolean amdExists = !(lawAction.equals("ADD") && !passed);
+            boolean amdExists = !(LawActionType.ADD.compareToString(lawAction) && !passed);
             for (String lawDoc : relatedLaws.get(lawAction)) {
                 urls.add(getLawUrl(date, lawDoc, amdExists));
             }

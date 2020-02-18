@@ -170,7 +170,7 @@ public enum LawChapterCode
     private Set<String> citations;
     private LawType type;
 
-    public static Map<String, LawChapterCode> citationMap = new HashMap<>();
+    private static Map<String, LawChapterCode> citationMap = new HashMap<>();
     static {
         Arrays.stream(values())
                 .forEach(law -> law.getCitations()

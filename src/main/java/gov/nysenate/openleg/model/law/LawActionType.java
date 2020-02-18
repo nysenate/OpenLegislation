@@ -16,7 +16,7 @@ public enum LawActionType
     REPEAL_ADD(Sets.newHashSet("RPLDADD")),
     REN_TO(Sets.newHashSet("RENTO"));
 
-    public static Map<String, LawActionType> lookupMap = new HashMap<>();
+    private static Map<String, LawActionType> lookupMap = new HashMap<>();
     static {
         Arrays.stream(values())
                 .forEach(action -> action.getTokens()
@@ -40,5 +40,15 @@ public enum LawActionType
             throw new IllegalArgumentException("Supplied string cannot be null!");
         }
         return Optional.ofNullable(lookupMap.get(action.trim().toUpperCase()));
+    }
+
+    /**
+     * Compares the current enum to another LawAction in String form.
+     * @param other to compare.
+     * @return if they are equal.
+     */
+    public boolean compareToString(String other) {
+        Optional<LawActionType> o = lookupAction(other);
+        return o.isPresent() && o.get() == this;
     }
 }
