@@ -23,7 +23,7 @@ public class BillLawCodeParser {
      * @param lawCode the law code citation of a Bill Amendment, eg (Amd §3635, Ed L)
      */
     public static String parse(String lawCode, boolean hasValidLaws) {
-        Map<LawActionType, Set<String>> mapping = new EnumMap<>(LawActionType.class);
+        Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
         if (!hasValidLaws)
             return new Gson().toJson(mapping);
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
@@ -83,7 +83,7 @@ public class BillLawCodeParser {
         return new Gson().toJson(mapping);
     }
 
-    private static void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction, Map<LawActionType, Set<String>> mapping) {
+    private static void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction, Map<LawActionType, TreeSet<String>> mapping) {
         // This function processes all the effects on a single volume of the law code
         // Sections/Articles of the specified chapter are separated by "," and "&"
         LinkedList<String> articleList = new LinkedList<>(
@@ -205,7 +205,7 @@ public class BillLawCodeParser {
         return range || unnecessary && !tokenList.get(i + 1).equalsIgnoreCase("various");
     }
 
-    private static void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context, Map<LawActionType, Set<String>> mapping) {
+    private static void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context, Map<LawActionType, TreeSet<String>> mapping) {
         // Adds the proposed change described by "action" onto the law described by "context" and "chapter"
         // If the latest item in context doesn't begin with a letter, then we are at the lowest level of the law tree (section)
         boolean leaf = Character.isDigit(context.get(context.size()-1).charAt(0));
@@ -221,11 +221,11 @@ public class BillLawCodeParser {
         }
     }
 
-    private static void putLawEffect(LawActionType action, String section, Map<LawActionType, Set<String>> mapping) {
+    private static void putLawEffect(LawActionType action, String section, Map<LawActionType, TreeSet<String>> mapping) {
         // Add a new value to one of the actions in this.mapping
         // Ignore the new names of renamed laws
         if (!unlinkable.contains(section.substring(0, 3)) && action != LawActionType.REN_TO) {
-            mapping.putIfAbsent(action, new HashSet<>());
+            mapping.putIfAbsent(action, new TreeSet<>());
             mapping.get(action).add(section);
         }
     }
