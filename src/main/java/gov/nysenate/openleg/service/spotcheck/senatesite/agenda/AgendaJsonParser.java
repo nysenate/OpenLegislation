@@ -87,7 +87,7 @@ public class AgendaJsonParser extends SenateSiteJsonParser {
         ssAgendaBill.setNayCount(getIntValue(node,"field_ol_nay_count"));
         ssAgendaBill.setAbsentCount(getIntValue(node, "field_ol_absent_count"));
         TypeReference<AgendaItemView> type = new TypeReference<AgendaItemView>() {};
-        ssAgendaBill.setBillName(deserializeValue(node,"field_ol_bill_name",type).get());
+        ssAgendaBill.setBillName(deserializeValue(node,"field_ol_bill_name",type).orElse(null));
         return ssAgendaBill;
     }
 }
