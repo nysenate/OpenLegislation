@@ -11,6 +11,7 @@ import gov.nysenate.openleg.client.view.transcript.TranscriptInfoView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -31,6 +32,8 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -108,8 +111,9 @@ public class TranscriptGetCtrl extends BaseCtrl
      */
     @RequestMapping("/{dateTime:.*}")
     public BaseResponse getTranscript(@PathVariable String dateTime) {
+        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
-            new TranscriptView(transcriptData.getTranscript(new TranscriptId(dateTime))),
+            new TranscriptView(transcriptData.getTranscript(new TranscriptId(localDateTime))),
                 "Data for transcript " + dateTime);
     }
 
@@ -126,7 +130,8 @@ public class TranscriptGetCtrl extends BaseCtrl
     @RequestMapping("/{dateTime}.pdf")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException, COSVisitorException {
-        TranscriptId transcriptId = new TranscriptId(dateTime);
+        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
+        TranscriptId transcriptId = new TranscriptId(localDateTime);
         Transcript transcript = transcriptData.getTranscript(transcriptId);
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
         TranscriptPdfView.writeTranscriptPdf(transcript, pdfBytes);
@@ -148,14 +153,7 @@ public class TranscriptGetCtrl extends BaseCtrl
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
-        // TODO: Doesn't display anything on the webpage, even though the response is received.
+        // TODO: Openleg UI doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalArgumentEx(IllegalArgumentException ex) {
-        // TODO: Doesn't display anything on the webpage, even though the response is received.
-        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
     }
 }

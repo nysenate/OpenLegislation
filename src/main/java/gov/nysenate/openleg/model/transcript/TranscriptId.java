@@ -3,7 +3,6 @@ package gov.nysenate.openleg.model.transcript;
 import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
@@ -16,22 +15,21 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
     private static final long serialVersionUID = -6509878885942142022L;
 
     /** The timestamp which corresponds to the transcript. */
-    private LocalDateTime localDateTime;
+    private LocalDateTime sessionDateTime;
 
     /** --- Constructors --- */
 
-    public TranscriptId(LocalDateTime localDateTime) {
-        this(localDateTime.toString());
+    public TranscriptId(LocalDateTime sessionDateTime) {
+        this.sessionDateTime = sessionDateTime;
     }
 
-    public TranscriptId(String time) {
-        try {
-            this.localDateTime = LocalDateTime.parse(time);
-        }
-        catch (DateTimeParseException e) {
-            // The time may be the String format of a Timestamp.
-            this.localDateTime = Timestamp.valueOf(time).toLocalDateTime();
-        }
+    /**
+     * Creates a TranscriptId from a string representation of an ISO date time.
+     * @param dateTime String in the format of 'yyyy-mm-ddThh:mm:ss'
+     * @throws DateTimeParseException if <code>datetime</code> is in an invalid format.
+     */
+    public TranscriptId(String dateTime) {
+        this(LocalDateTime.parse(dateTime));
     }
 
     /** --- Overrides --- */
@@ -41,33 +39,33 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TranscriptId that = (TranscriptId) o;
-        return Objects.equals(localDateTime, that.localDateTime);
+        return Objects.equals(sessionDateTime, that.sessionDateTime);
     }
 
     @Override
     public int hashCode() {
-        return localDateTime != null ? localDateTime.hashCode() : 0;
+        return sessionDateTime != null ? sessionDateTime.hashCode() : 0;
     }
 
     @Override
     public int compareTo(TranscriptId o) {
         return ComparisonChain.start()
-                .compare(this.localDateTime, o.localDateTime)
+                .compare(this.sessionDateTime, o.sessionDateTime)
                 .result();
     }
 
     @Override
     public String toString() {
-        return "Transcript " + localDateTime;
+        return "Transcript " + sessionDateTime;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getSessionDateTime() {
+        return sessionDateTime;
     }
 
     public LocalDateTime getDateTime() {
-        return localDateTime;
+        return sessionDateTime;
     }
 }

@@ -70,7 +70,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("dateTime", DateUtils.toDate(transcriptId.getLocalDateTime()));
+        params.addValue("dateTime", DateUtils.toDate(transcriptId.getSessionDateTime()));
         return params;
     }
 
@@ -87,10 +87,10 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     };
 
     static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(rs.getString("date_time"));
+        new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"));
 
 
     private static RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
-            new TranscriptUpdateToken(new TranscriptId(rs.getString("date_time")),
+            new TranscriptUpdateToken(new TranscriptId(getLocalDateTimeFromRs(rs, "date_time")),
                     getLocalDateTimeFromRs(rs, "modified_date_time"));
 }
