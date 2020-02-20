@@ -14,6 +14,7 @@ public enum LawActionType
     REDESIGNATE(Sets.newHashSet("REDESIG", "REDES")),
     RENUMERATE(Sets.newHashSet("RENUM")),
     REPEAL_ADD(Sets.newHashSet("RPLDADD")),
+    // rename §126 to be §127 -> RENAME 126, REN_TO 127
     REN_TO(Sets.newHashSet("RENTO"));
 
     private static Map<String, LawActionType> lookupMap = new HashMap<>();

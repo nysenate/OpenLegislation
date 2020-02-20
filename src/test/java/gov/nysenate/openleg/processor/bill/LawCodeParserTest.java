@@ -1,11 +1,9 @@
-package gov.nysenate.openleg.processor.bill.digest;
+package gov.nysenate.openleg.processor.bill;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
-import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.BillLawCodeParser;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -17,7 +15,7 @@ import static gov.nysenate.openleg.model.law.LawActionType.*;
 
 
 @Category(UnitTest.class)
-public class LawCodeParserTest extends BaseXmlProcessorTest {
+public class LawCodeParserTest {
     private Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
 
     // HELPERS
@@ -179,7 +177,6 @@ public class LawCodeParserTest extends BaseXmlProcessorTest {
         compareToLawCode("Ren §465 to be §466, add §465, Lab L");
     }
 
-    @Ignore
     @Test
     // Tests that the new context created by "Art 10" is ignored
     public void renameTest() {
@@ -245,7 +242,51 @@ public class LawCodeParserTest extends BaseXmlProcessorTest {
         put(REPEAL, "CPL440.50");
         put(ADD, "CPLP3TVA740");
         put(AMEND, "EXC259-I", "EXC646-A");
-        compareToLawCode("Add Part III Title V Art 740 §§740.10 - 740.25, rpld §440.50, CP L; amd §§259-i & 646-a, Exec L");
+        compareToLawCode("Add Part III Title V Art 740 §§740.10 - 740.25, rpld §440.50, CP L; " +
+                "amd §§259-i & 646-a, Exec L");
+    }
+
+    @Test
+    // Tests parsing of lawcodes with "various" that should be ignored.
+    public void variousUnlinkableTest() {
+        // A8867, 2009
+        put(AMEND, "BSC1004", "BSC1007", "NPC1004", "NPC1007");
+        compareToLawCode("Rpld various provisions, amd NYC Ad Cd, generally; amd §§1004 & 1007, " +
+                "BC L; amd §§1004 & 1007, N-PC L");
+    }
+
+    @Test
+    // Tests lawcode with "various" that refers to a linkable chapter
+    public void variousLinkableTest() {
+        // A7583, 2011
+        put(REPEAL, "GMU (generally)", "PBA (generally)");
+        compareToLawCode("Rpld various Titles, Gen Muni L; rpld various Titles, Pub Auth L");
+    }
+
+    @Ignore
+    @Test
+    public void variousSectionTest() {
+        // S5598, 2009
+        put(AMEND, "GMU959");
+        put(REPEAL, "TAX (generally)");
+        compareToLawCode("Amd §959, Gen Muni L; rpld various §§ of the Tax L");
+    }
+
+    @Test
+    public void variousLawsTest() {
+        //S4610, 2015
+        compareToLawCode("Amd Various Laws, generally");
+    }
+
+    @Test
+    public void complexTest() {
+        compareToLawCode("Amd Various Laws, generally; rpld §§165.74 & 420.00, Pen L; rpld §341 " +
+                "sub 5, Soc Serv L; rpld §27-a sub 1 ¶e, Lab L; rpld §27 sub 5, Munic Home Rule " +
+                "L; rpld §207-m, Gen Muni L; rpld §702 sub 6, County L; rpld §423 sub 5, Soc " +
+                "Serv L; rpld §1950 sub 17, Ed L; rpld §1210 op¶, sub (a) ¶3 sub¶ (iii), sub (b)" +
+                " ¶3 sub¶ (iii), §§1210-D & 1210-E, §1224 subs (d) - (r), (t) - (z), (z-1), (aa)" +
+                " - (gg), §1262-o, Tax L; rpld §1 sub 2, Emerg Hous Rent Cont L; rpld §46 sub 6," +
+                " Chap 116 of 1997");
     }
 }
 

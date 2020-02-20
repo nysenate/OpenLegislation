@@ -40,7 +40,7 @@ public class BillAmendment implements Serializable, Cloneable
     /** The JSON version of the parsed law code */
     private String relatedLawsJson;
 
-    /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
+    /** The law code of the bill. e.g (Amd §1373, Pub Health L) pulled directly from the file. */
     protected String lawCode = "";
 
     /** The AN ACT TO... clause which describes the bill's intent. */

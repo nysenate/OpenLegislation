@@ -24,7 +24,7 @@ public enum LawChapterCode
     BSC("Business Corporation", Sets.newHashSet("BC L"), CONSOLIDATED),
     CAL("Canal", Sets.newHashSet("Can L"), CONSOLIDATED),
     CVP("Civil Practice Law & Rules", Sets.newHashSet("CPLR", "CPLR L", "CPLR & Department of Law"), CONSOLIDATED),
-    CVR("Civil Rights", Sets.newHashSet("Civ Rts L"), CONSOLIDATED),
+    CVR("Civil Rights", Sets.newHashSet("Civ Rts L", "Civ Rts"), CONSOLIDATED),
     CVS("Civil Service", Sets.newHashSet("Civ Serv L"), CONSOLIDATED),
     CCO("Cooperative Corporations", Sets.newHashSet("Coop Corps L"), CONSOLIDATED),
     COR("Correction", Sets.newHashSet("Cor L"), CONSOLIDATED),

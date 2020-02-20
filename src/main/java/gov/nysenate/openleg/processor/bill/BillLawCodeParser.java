@@ -13,6 +13,7 @@ public class BillLawCodeParser {
     private static final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
     // We don't have the NYC administrative code or NYC charter
     private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
+    private static final String variousLaws = "(?i)Amd Various Law.*generally";
 
     /* --- Methods --- */
 
