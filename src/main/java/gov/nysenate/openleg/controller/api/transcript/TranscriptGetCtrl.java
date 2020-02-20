@@ -100,33 +100,33 @@ public class TranscriptGetCtrl extends BaseCtrl
      * Single Transcript Retrieval API
      * -------------------------------
      *
-     * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{filename}
+     * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{dateTime}
      *
      * <p>Request Parameters: None.</p>
      *
      * Expected Output: TranscriptView
      */
-    @RequestMapping("/{filename:.*}")
-    public BaseResponse getTranscript(@PathVariable String filename) {
+    @RequestMapping("/{dateTime:.*}")
+    public BaseResponse getTranscript(@PathVariable String dateTime) {
         return new ViewObjectResponse<>(
-            new TranscriptView(transcriptData.getTranscript(new TranscriptId(filename))),
-                "Data for transcript " + filename);
+            new TranscriptView(transcriptData.getTranscript(new TranscriptId(dateTime))),
+                "Data for transcript " + dateTime);
     }
 
     /**
      * Single Transcript PDF retrieval API
      * -----------------------------------
      *
-     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{filename}.pdf
+     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}.pdf
      *
      * Request Parameters: None.
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping("/{filename}.pdf")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String filename)
+    @RequestMapping("/{dateTime}.pdf")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException, COSVisitorException {
-        TranscriptId transcriptId = new TranscriptId(filename);
+        TranscriptId transcriptId = new TranscriptId(dateTime);
         Transcript transcript = transcriptData.getTranscript(transcriptId);
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
         TranscriptPdfView.writeTranscriptPdf(transcript, pdfBytes);
@@ -148,6 +148,14 @@ public class TranscriptGetCtrl extends BaseCtrl
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
+        // TODO: Doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentEx(IllegalArgumentException ex) {
+        // TODO: Doesn't display anything on the webpage, even though the response is received.
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
     }
 }

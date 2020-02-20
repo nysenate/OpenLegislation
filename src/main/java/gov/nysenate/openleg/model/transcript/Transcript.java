@@ -25,12 +25,16 @@ public class Transcript extends BaseLegislativeContent
     /** The raw text of the transcript. */
     private String text;
 
+    /** The filename of this transcript. */
+    private String filename;
+
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId transcriptId, String sessionType, LocalDateTime dateTime, String location, String text) {
+    public Transcript(TranscriptId transcriptId, String filename, String sessionType, String location, String text) {
         this.transcriptId = transcriptId;
+        this.filename = filename;
         this.sessionType = sessionType;
-        this.dateTime = dateTime;
+        this.dateTime = transcriptId.getDateTime();
         this.location = location;
         this.text =  text;
         this.year = this.dateTime.getYear();
@@ -55,5 +59,9 @@ public class Transcript extends BaseLegislativeContent
 
     public String getText() {
         return text;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }

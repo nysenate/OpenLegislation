@@ -12,42 +12,61 @@ public class PublicHearingTitleParser
 {
 
     private static final Pattern TITLE = Pattern.compile(
-            "(?<title>" +
-            "((NEW YORK STATE )?FORUM/TOWN HALL" +
-            "|PUBLIC (HEARING|FORUM)" +
-            "|ROUNDTABLE DISCUSSION" +
-            "|A NEW YORK STATE SENATE HEARING" +
-            "|NEW YORK STATE \\d{4})" +
-            ".+?) " + // Title body
-            "*(?=-{10,})"); // Marks the end of title.
+            ".*(?<prefix>" +
+            "((NEW YORK STATE |PUBLIC )?FORUM/TOWN HALL" +
+            "|PUBLIC (HEARINGS?|FORUM)" +
+            "|(A )?ROUNDTABLE DISCUSSION" +
+            "|(A NEW YORK STATE SENATE|JUDICIAL) HEARING" +
+            "|TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE" +
+            "|.*NOMINATION(S:)?" +
+            "|NEW YORK STATE \\d{4}" +
+            "|-{10,})[ :]*)" +
+            "(?<title>.+?) " + // Title body
+            "(-{10,})"); // Marks the end of title.
+
+
+
+static final Pattern oold_title = Pattern.compile("(?<title>" +
+        "((NEW YORK STATE )?FORUM/TOWN HALL" +
+        "|PUBLIC (HEARING|FORUM)" +
+        "|ROUNDTABLE DISCUSSION" +
+        "|A NEW YORK STATE SENATE HEARING" +
+        "|NEW YORK STATE \\d{4})" +
+        ".+?) " + // Title body
+        "*(?=-{10,})"); // Marks the end of title.)
 
     /**
      * Extracts the PublicHearing title from the first page of the PublicHearingFile.
-     * @param firstPage
-     * @return
+     * @param firstPage of the hearing.
+     * @return the title.
      */
     public String parse(List<String> firstPage) {
         String pageText = turnPageIntoString(firstPage);
         Matcher matchTitle = TITLE.matcher(pageText);
-        if (!matchTitle.find()) {
+        if (!matchTitle.find())
             return null;
-        }
-        return matchTitle.group("title");
+
+        String title = matchTitle.group("title").trim();
+        String prefix = matchTitle.group("prefix").trim();
+        // Uncomment this if you want prefixes to be excluded.
+        //if (title.matches("^(TO|ON|FOR|OF).*") && prefix != null)
+            title = prefix + " " + title;
+        return title;
     }
 
     /**
      * Turns a list of String's into a single String with
      * whitespace and line numbers removed.
-     * @param firstPage
-     * @return
+     * @param firstPage of the hearing.
+     * @return a single string of the first page.
      */
     private String turnPageIntoString(List<String> firstPage) {
-        String pageText = "";
+        StringBuilder pageText = new StringBuilder();
         for (String line : firstPage) {
             if (PublicHearingTextUtils.hasContent(line)) {
-                pageText += " " + PublicHearingTextUtils.stripLineNumber(line);
+                pageText.append(" ").append(PublicHearingTextUtils.stripLineNumber(line));
             }
         }
-        return pageText;
+        return pageText.toString();
     }
 }

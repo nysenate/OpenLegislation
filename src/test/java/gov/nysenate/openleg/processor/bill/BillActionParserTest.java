@@ -1,17 +1,12 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.mchange.v2.cfg.PropertiesConfigSource;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Node;
 
@@ -22,9 +17,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 @Category(UnitTest.class)
 public class BillActionParserTest
@@ -40,12 +32,9 @@ public class BillActionParserTest
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(BillActionParserTest.class);
-
     @Test
     public void billActionParser() {
         List<BillAction> actions = BillActionParser.parseActionsList(new BillId("S3664B", 2013), actionsList1);
-        logger.info("{}", actions);
 
         // counts items
         assertEquals(actions.size(), actionsList1.split("\n").length);
@@ -58,14 +47,12 @@ public class BillActionParserTest
     public void testBillActionParserXML() throws IOException, SAXException, XPathExpressionException {
         Node actionsNode = xmlHelper.getNode("actions", xmlHelper.parse(actionsXml1));
         List<BillAction> actions = BillActionParser.parseActionsListXML(new BillId("S3664B", 2013), actionsNode);
-        logger.info("{}", actions);
 
         // first two items are different
         assertNotEquals(actions.get(0), actions.get(1));
 
         // compare to the old method of parsing
         List<BillAction> actionsOldMethod = BillActionParser.parseActionsList(new BillId("S3664B", 2013), actionsList2);
-        logger.info("{}", actions);
 
         // counts items
         assertEquals(actionsOldMethod.size(), actions.size());
@@ -78,14 +65,12 @@ public class BillActionParserTest
     public void billActionParserXMLMissingData() throws IOException, SAXException, XPathExpressionException {
         Node actionsNode = xmlHelper.getNode("actions", xmlHelper.parse(actionsXml2));
         List<BillAction> actions = BillActionParser.parseActionsListXML(new BillId("S3664B", 2013), actionsNode);// throws here
-        logger.info("{}", actions);
     }
 
     @Test (expected = Exception.class)
     public void billActionParserXMLCorrupted() throws IOException, SAXException, XPathExpressionException {
         Node actionsNode = xmlHelper.getNode("actions", xmlHelper.parse(actionsXml3));// throws here
         List<BillAction> actions = BillActionParser.parseActionsListXML(new BillId("S3664B", 2013), actionsNode);
-        logger.info("{}", actions);
     }
 
     @Test
@@ -336,7 +321,7 @@ public class BillActionParserTest
             "<action no=\"2\">" +
             "<actionbillamd></actionbillamd>" +
             "<actionhouse>S</actionhouse>" +
-            "<actioncode>9<actioncode>" +
+            "<actioncode>9</actioncode>" +
             "<actiontype>S</actiontype>" +
             "<actiondata>27</actiondata>" +
             "<actiondataamd></actiondataamd>" +
@@ -352,7 +337,7 @@ public class BillActionParserTest
             "<actionhouse>S</actionhouse>" +
             "<actioncode>17</actioncode>" +
             "<actiontype>F</actiontype>" +
-            "<actiondata>2008<actiondata>" +
+            "<actiondata>2008</actiondata>" +
             "<actiondataamd></actiondataamd>" +
             "<actiondate>2018-06-19</actiondate>" +
             "<actiondesc>" +

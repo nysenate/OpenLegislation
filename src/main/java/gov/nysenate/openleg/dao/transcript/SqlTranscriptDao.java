@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
+import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,7 +24,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     /** {@inheritDoc} */
     @Override
     public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("transcript_filename", sortOrder);
+        OrderBy orderBy = new OrderBy("date_time", sortOrder);
         return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), transcriptIdRowMapper);
     }
 
@@ -69,15 +70,16 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("transcriptFilename", transcriptId.getFilename());
+        params.addValue("dateTime", DateUtils.toDate(transcriptId.getLocalDateTime()));
         return params;
     }
 
     /** --- Row Mapper Instances --- */
 
     static RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
-        TranscriptId id = new TranscriptId(rs.getString("transcript_filename"));
-        Transcript transcript = new Transcript(id, rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"),
+        LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
+        TranscriptId id = new TranscriptId(dateTime);
+        Transcript transcript = new Transcript(id, rs.getString("transcript_filename"), rs.getString("session_type"),
                 rs.getString("location"), rs.getString("text"));
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
@@ -85,10 +87,10 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     };
 
     static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(rs.getString("transcript_filename"));
+        new TranscriptId(rs.getString("date_time"));
 
 
     private static RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
-            new TranscriptUpdateToken(new TranscriptId(rs.getString("transcript_filename")),
+            new TranscriptUpdateToken(new TranscriptId(rs.getString("date_time")),
                     getLocalDateTimeFromRs(rs, "modified_date_time"));
 }

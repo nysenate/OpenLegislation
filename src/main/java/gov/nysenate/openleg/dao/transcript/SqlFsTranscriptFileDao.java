@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.transcript;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static gov.nysenate.openleg.dao.transcript.SqlTranscriptFileQuery.*;
@@ -51,6 +54,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         for (File file : files) {
             transcriptFiles.add(new TranscriptFile(file));
         }
+        transcriptFiles.sort(Comparator.comparing(TranscriptFile::getFileName));
         return transcriptFiles;
     }
 
@@ -62,12 +66,23 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         }
     }
 
+    private int pastVersions(TranscriptFile transcriptFile) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("dateTime", transcriptFile.getDateTime());
+        Integer ret = jdbcNamed.queryForObject(OLD_FILE_COUNT.getSql(schema()), params, Integer.class);
+        return ret == null ? 0 : ret;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException {
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
-            File archiveFile = new File(archiveTranscriptDir, transcriptFile.getFileName());
+            String currVersion = Integer.toString(pastVersions(transcriptFile)+1);
+            LocalDateTime dateTime = transcriptFile.getDateTime();
+            // Since Windows has issues dealing with filenames with : in it, we'll replace it with ; to archive it.
+            String trueName = dateTime.toString().replaceAll(":", ";") + ".v" + currVersion;
+            File archiveFile = new File(archiveTranscriptDir, trueName);
             FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);
             transcriptFile.setArchived(true);
@@ -109,6 +124,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
             try {
                 transcriptFile = new TranscriptFile(file);
                 transcriptFile.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
+                transcriptFile.setOriginalFilename(rs.getString("original_filename"));
                 transcriptFile.setProcessedCount(rs.getInt("processed_count"));
                 transcriptFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 transcriptFile.setPendingProcessing(rs.getBoolean("pending_processing"));
@@ -130,6 +146,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         params.addValue("processedCount", transcriptFile.getProcessedCount());
         params.addValue("pendingProcessing", transcriptFile.isPendingProcessing());
         params.addValue("archived", transcriptFile.isArchived());
+        params.addValue("dateTime", transcriptFile.getDateTime());
+        params.addValue("originalFilename", transcriptFile.getOriginalFilename());
         return params;
     }
 

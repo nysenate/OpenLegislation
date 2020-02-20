@@ -27,6 +27,11 @@ public class TranscriptParser
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
+        transcriptFile.setTranscript(getTranscriptFromFile(transcriptFile));
+        transcriptDataService.saveTranscript(transcriptFile.getTranscript(), transcriptFile, true);
+    }
+
+    public Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
         String sessionType = null;
         String location = null;
         String date = null;
@@ -41,7 +46,7 @@ public class TranscriptParser
 
         String lineText;
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-            new FileInputStream(transcriptFile.getFile()), TRANSCRIPT_ENCODING));
+                new FileInputStream(transcriptFile.getFile()), TRANSCRIPT_ENCODING));
 
         while ((lineText = reader.readLine()) != null) {
             TranscriptLine line = new TranscriptLine(lineText);
@@ -85,13 +90,11 @@ public class TranscriptParser
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy hmma");
         LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, dtf);
 
-        TranscriptId transcriptId = new TranscriptId(transcriptFile.getFileName());
-        Transcript transcript = new Transcript(transcriptId, sessionType, dateTime, location, transcriptText.toString());
-
-        transcriptDataService.saveTranscript(transcript, transcriptFile, true);
+        TranscriptId transcriptId = new TranscriptId(dateTime);
+        return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
     }
 
     private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {
-        return sessionType != null && location != null && date != null && time !=null;
+        return sessionType != null && location != null && date != null && time != null;
     }
 }

@@ -34,16 +34,16 @@ public class TranscriptPdfCtrl
      * Single Transcript PDF retrieval
      * -------------------------------
      *
-     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{filename}/
+     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{dateTime}/
      *
      * Request Parameters: None.
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping("/{filename}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String filename, HttpServletResponse response)
+    @RequestMapping("/{dateTime}")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, HttpServletResponse response)
             throws IOException {
-        TranscriptId transcriptId = new TranscriptId(filename);
+        TranscriptId transcriptId = new TranscriptId(dateTime);
         try {
             Transcript transcript = transcriptData.getTranscript(transcriptId);
             ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
