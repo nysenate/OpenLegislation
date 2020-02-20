@@ -4,10 +4,15 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 import static gov.nysenate.openleg.model.law.LawActionType.*;
@@ -156,7 +161,7 @@ public class LawCodeParserTest {
 
 
     @Test
-    // Tests to make sure extraneous qualifiers like "sub" are ignored
+    // Tests to make sure extraneous qualifiers like are ignored
     public void subTest() {
         // A270, 2019
         put(AMEND, "ENV27-2709", "ENV27-2707", "ENVA27T27", "ENV27-2703", "ENV27-2701");
@@ -165,6 +170,14 @@ public class LawCodeParserTest {
         compareToLawCode("Add §13.32, Pks & Rec L; add §1105-D, Tax L; add §92-ii, St Fin L; amd Art " +
                 "27 Title 27 Head, §§27-2701, 27-2703, 27-2707 & 27-2709, rpld §§27-2701 sub 4, " +
                 "27-2711 & 27-2713, add §27-2706, En Con L");
+
+        put(AMEND, "EDN2588");
+        compareToLawCode("Amd §2588, rpld subs 3, 4 & 7, Ed L");
+
+        // S3812, 2013
+        put(AMEND, "TAX (generally)");
+        put(REPEAL, "TAX1210", "TAX1210-E", "TAX1224");
+        compareToLawCode("Rpld §1210 op¶ sub¶¶ (i), (ii) & (iii), §1210-E, §1224 subs (d) - (r), (t) - (gg), amd Tax L, generally");
     }
 
     @Test
@@ -279,7 +292,8 @@ public class LawCodeParserTest {
     @Test
     public void complexTest() {
         // S5758, 2011
-        put(REPEAL, "PEN165.74", "PEN420.00", "SOS341"); // ...
+        put(REPEAL, "PEN165.74", "PEN420.00", "SOS341", "LAB27-A", "MHR27", "GMU207-M", "CNT702",
+                "SOS423", "EDN1950", "TAX1210", "TAX1210-D", "TAX1210-E", "TAX1224", "TAX1262-O", "ERL1");
         compareToLawCode("Amd Various Laws, generally; rpld §§165.74 & 420.00, Pen L; rpld §341 " +
                 "sub 5, Soc Serv L; rpld §27-a sub 1 ¶e, Lab L; rpld §27 sub 5, Munic Home Rule " +
                 "L; rpld §207-m, Gen Muni L; rpld §702 sub 6, County L; rpld §423 sub 5, Soc " +
@@ -287,6 +301,28 @@ public class LawCodeParserTest {
                 " ¶3 sub¶ (iii), §§1210-D & 1210-E, §1224 subs (d) - (r), (t) - (z), (z-1), (aa)" +
                 " - (gg), §1262-o, Tax L; rpld §1 sub 2, Emerg Hous Rent Cont L; rpld §46 sub 6," +
                 " Chap 116 of 1997");
+    }
+
+    @Test
+    public void UJCAtest() {
+        // A5338, 2013, partial
+        put(REPEAL, "UJCA22", "UJC106", "UJC1306", "UJC2012");
+        put(AMEND, "UJC (generally)");
+        compareToLawCode("Rpld Art 22, §106 subs 6, 8 & 9, §§1306 & 2012, amd UJCA, generally");
+    }
+
+    @Ignore
+    @Test
+    public void testAll() throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("/home/jacob/IdeaProjects/OpenLegislation/src/test/resources/lawCodes.txt"));
+        Pattern lawCodePattern = Pattern.compile("\"(.*)\"");
+        while (scanner.hasNextLine()) {
+            Matcher matcher = lawCodePattern.matcher(scanner.nextLine());
+            if (!matcher.matches())
+                System.out.println("AHHHHH" + matcher);
+            else
+                BillLawCodeParser.parse(matcher.group(1), true);
+        }
     }
 }
 

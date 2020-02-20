@@ -28,63 +28,67 @@ public class BillLawCodeParser {
         if (!hasValidLaws)
             return new Gson().toJson(mapping);
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
-        // qualifiers, but these are more detail than we need anyway
+        // qualifiers, but these are more detail than we need anyway.
         lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
-        // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add
+        // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add.
         lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
         // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
         // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
         lawCode = lawCode.replaceAll("(?i)to be", ", rento");
 
         // Law codes are usually delimited by semi-colons for each affected volume
-        List<String> chapterList = Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode);
+        List<String> chapterList = new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
 
         // Each iteration handles all the effects on one volume of the law
-        for (String chapter : chapterList) {
-
+        for (int i = 0; i < chapterList.size(); i++) {
+            String chapter = chapterList.get(i);
             // Handle volumes that are changed "generally" separately
             boolean general = false;
 
             // The action (eg Amd, Add) appears as the first word in the string
             LawActionType currAction;
             String actionString = chapter.split(" ")[0];
-            if (LawActionType.lookupAction(actionString).isPresent()) {
+            if (LawActionType.lookupAction(actionString).isPresent())
                 currAction = LawActionType.lookupAction(actionString).get();
-            }
-            else { // we can't parse this action, so we'll go to the next chapter
+            else // We can't parse this action, so we'll go to the next chapter.
                 continue;
-            }
 
             String[] tokens = chapter.split("(,| of the) ");
-            // The chapter title is the last item in the list delimited by a comma (when notes at the end are removed)
+            // The chapter title is usually the last item in the list delimited by a comma (when notes at the end are removed).
             String chapterName = tokens[tokens.length - 1];
             if (chapterName.equalsIgnoreCase("generally")) {
-                general = true;
-                chapterName = tokens[tokens.length - 2].replaceFirst(actionString, "");
-                if (chapterName.toLowerCase().contains("various laws")) {
-                    break; // no need to list "various laws"
+                chapterName = tokens[tokens.length - 2];
+                if (chapterName.contains(actionString)) {
+                    general = true;
+                    chapterName = chapterName.replaceFirst(actionString, "");
                 }
+                // Sometimes, the chapter name comes with a separate action. For example, Rpld §101, amd UJCA, generally;
+                else {
+                    chapterList.add(chapterName + ", generally");
+                    chapter = chapter.replaceAll(", " + chapterName + ".*", "");
+                    chapterName = chapterName.replaceFirst(".*? ", "");
+                }
+                if (chapterName.toLowerCase().contains("various laws"))
+                    continue; // No need to list "various laws".
             }
             LawChapterCode currChapter;
-            if (LawChapterCode.lookupCitation(chapterName).isPresent()) {
+            if (LawChapterCode.lookupCitation(chapterName).isPresent())
                 currChapter = LawChapterCode.lookupCitation(chapterName).get();
-            }
             // If the law chapter is not recognized, or is part of the unconsolidated laws of a recent year
-            // (eg Chap 408 of 1999), we cannot link to it. (Some older unconsolidated laws like Chap 912 of 1920 can be linked)
-            else {
+            // (eg Chap 408 of 1999), we cannot link to it. Some older unconsolidated laws like Chap 912 of 1920 can be linked.
+            else
                 continue;
-            }
-            if (general) {
+            if (general)
                 putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
-                continue;
-            }
-            chapter = chapter.replaceAll(chapterName, "");
-            parseChapterAffects(chapter, currChapter, currAction, mapping);
+            else
+                parseChapterAffects(chapter.replaceAll(chapterName, ""), currChapter, currAction, mapping);
         }
         return new Gson().toJson(mapping);
     }
 
     private static void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction, Map<LawActionType, TreeSet<String>> mapping) {
+        // Listing subsections gives us some trouble, so we'll manually remove them.
+        chapter = chapter.replaceAll(" subs .*? & .*?,", ",");
         // This function processes all the effects on a single volume of the law code
         // Sections/Articles of the specified chapter are separated by "," and "&"
         LinkedList<String> articleList = new LinkedList<>(
@@ -110,28 +114,24 @@ public class BillLawCodeParser {
                 else if (isSectionNumber(token)) {
                     // Parse the possible Roman Numerals in the current token
                     token = processQualifier(token, currChapter, context);
-                    if (newDivision) {
+                    if (newDivision)
                         context.add(context.remove(context.size()-1) + token);
-                    }
-                    else {
+                    else
                         context.add(token);
-                    }
                     newDivision = false;
                 }
                 else if (token.equalsIgnoreCase("various")) {
                     putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
                     break;
                 }
-                else if (LawActionType.lookupAction(token).isPresent()) {
+                else if (LawActionType.lookupAction(token).isPresent())
                     currAction = LawActionType.lookupAction(token).get();
-                }
                 // If the next token is not a "Title/Part/Art" qualifier or 2 tokens ahead is a -, then we have
                 // finished with that code
                 // ( a "-" character after the next section name means we'll link to the parent law doc, not the sections)
                 if (finished(tokenList, i)) {
-                    if (context.size() > 0){
+                    if (context.size() > 0)
                         addLawEffect(currAction, currChapter, context, mapping);
-                    }
                     // anything beyond this level of detail is extraneous
                     break;
                 }
