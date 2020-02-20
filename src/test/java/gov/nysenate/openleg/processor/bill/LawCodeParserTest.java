@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -263,7 +262,6 @@ public class LawCodeParserTest {
         compareToLawCode("Rpld various Titles, Gen Muni L; rpld various Titles, Pub Auth L");
     }
 
-    @Ignore
     @Test
     public void variousSectionTest() {
         // S5598, 2009
@@ -280,6 +278,8 @@ public class LawCodeParserTest {
 
     @Test
     public void complexTest() {
+        // S5758, 2011
+        put(REPEAL, "PEN165.74", "PEN420.00", "SOS341"); // ...
         compareToLawCode("Amd Various Laws, generally; rpld §§165.74 & 420.00, Pen L; rpld §341 " +
                 "sub 5, Soc Serv L; rpld §27-a sub 1 ¶e, Lab L; rpld §27 sub 5, Munic Home Rule " +
                 "L; rpld §207-m, Gen Muni L; rpld §702 sub 6, County L; rpld §423 sub 5, Soc " +

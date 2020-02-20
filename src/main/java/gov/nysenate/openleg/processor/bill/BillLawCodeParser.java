@@ -55,7 +55,7 @@ public class BillLawCodeParser {
                 continue;
             }
 
-            String[] tokens = chapter.split(", ");
+            String[] tokens = chapter.split("(,| of the) ");
             // The chapter title is the last item in the list delimited by a comma (when notes at the end are removed)
             String chapterName = tokens[tokens.length - 1];
             if (chapterName.equalsIgnoreCase("generally")) {
