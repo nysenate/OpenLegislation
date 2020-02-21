@@ -13,7 +13,7 @@ public class BillLawCodeParser {
     private static final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
     // We don't have the NYC administrative code or NYC charter
     private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
-    private static final String variousLaws = "(?i)Amd Various Law.*generally";
+    private static final String altGenPattern = "(?i)(Chap \\d+ of \\d+)";
 
     /* --- Methods --- */
 
@@ -34,7 +34,7 @@ public class BillLawCodeParser {
         lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
         // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
         // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
-        lawCode = lawCode.replaceAll("(?i)to be", ", rento");
+        lawCode = lawCode.replaceAll("(?i) to be", ", rento");
 
         // Law codes are usually delimited by semi-colons for each affected volume
         List<String> chapterList = new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
@@ -51,16 +51,23 @@ public class BillLawCodeParser {
             if (LawActionType.lookupAction(actionString).isPresent())
                 currAction = LawActionType.lookupAction(actionString).get();
             else // We can't parse this action, so we'll go to the next chapter.
+            {
+                // TODO: remove after testing
+                System.out.println("Bad action: " + actionString + " with chapter " + chapter);
                 continue;
+            }
+
+            if (chapter.matches(actionString + " " + altGenPattern))
+                chapter += ", generally";
 
             String[] tokens = chapter.split("(,| of the) ");
             // The chapter title is usually the last item in the list delimited by a comma (when notes at the end are removed).
-            String chapterName = tokens[tokens.length - 1];
+            String chapterName = tokens[tokens.length - 1].trim();
             if (chapterName.equalsIgnoreCase("generally")) {
                 chapterName = tokens[tokens.length - 2];
                 if (chapterName.contains(actionString)) {
                     general = true;
-                    chapterName = chapterName.replaceFirst(actionString, "");
+                    chapterName = chapterName.replaceFirst(actionString, "").trim();
                 }
                 // Sometimes, the chapter name comes with a separate action. For example, Rpld §101, amd UJCA, generally;
                 else {
@@ -68,20 +75,22 @@ public class BillLawCodeParser {
                     chapter = chapter.replaceAll(", " + chapterName + ".*", "");
                     chapterName = chapterName.replaceFirst(".*? ", "");
                 }
-                if (chapterName.toLowerCase().contains("various laws"))
+                if (chapterName.toLowerCase().matches(".*various (laws|chapters).*"))
                     continue; // No need to list "various laws".
             }
-            LawChapterCode currChapter;
-            if (LawChapterCode.lookupCitation(chapterName).isPresent())
-                currChapter = LawChapterCode.lookupCitation(chapterName).get();
+            LawChapterCode currChapter = getLawChapter(chapterName);
             // If the law chapter is not recognized, or is part of the unconsolidated laws of a recent year
             // (eg Chap 408 of 1999), we cannot link to it. Some older unconsolidated laws like Chap 912 of 1920 can be linked.
-            else
+            if (currChapter == null) {
+                // TODO: remove after testing
+                if (!chapterName.startsWith("Chap"))
+                    System.out.println("Bad chapter: " + chapterName);
                 continue;
+            }
             if (general)
                 putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
             else
-                parseChapterAffects(chapter.replaceAll(chapterName, ""), currChapter, currAction, mapping);
+                parseChapterAffects(chapter.replaceAll(chapterName, "").trim(), currChapter, currAction, mapping);
         }
         return new Gson().toJson(mapping);
     }
@@ -164,12 +173,11 @@ public class BillLawCodeParser {
 
     private static boolean isNewDivisionIndicator(List<String> context, List<String> tokens, int idx) {
         // Returns true if a string indicates a level of division (eg Art, Title) and that level of division has not yet
-        //  been encountered in this section
+        // been encountered in this section
         // For example, in the citation Amd Art 39-F Art Head, the first instance of "Art" is relevant, but not the second
         String s = tokens.get(idx);
-        if (!divisionIndicators.contains(s.toLowerCase()) || tokens.subList(0, idx).contains(s)){
+        if (!divisionIndicators.contains(s.toLowerCase()) || tokens.subList(0, idx).contains(s))
             return false;
-        }
         for (int i=0; i<context.size(); i++){
             // If the division indicator has been seen before, the first letter will already be in context
             if (context.get(i).charAt(0) == s.toUpperCase().charAt(0)){
@@ -251,13 +259,34 @@ public class BillLawCodeParser {
         // Only works for uppercase strings with characters up to 'C'
         int val = 0;
         for (int i = 0; i < s.length() - 1; i++) {
-            if (romanCharValue(s.charAt(i)) < romanCharValue(s.charAt(i + 1))) {
+            if (romanCharValue(s.charAt(i)) < romanCharValue(s.charAt(i + 1)))
                 val -= romanCharValue(s.charAt(i));
-            } else {
+            else
                 val += romanCharValue(s.charAt(i));
-            }
         }
         val += romanCharValue(s.charAt(s.length() - 1));
         return Integer.toString(val);
+    }
+
+    /**
+     * Attempts to retrieve a LawChapterCode from the processed chapter name. Commas are supposed
+     * to delineate the list of codes from the law citation, but they are sometimes missing. So,
+     * we need to try various words in the string.
+     * @param chapterName to lookup.
+     * @return the corresponding LawChapterCode.
+     */
+    private static LawChapterCode getLawChapter(String chapterName) {
+        Optional<LawChapterCode> ret = LawChapterCode.lookupCitation(chapterName);
+        if (ret.isPresent())
+            return ret.get();
+        String[] split = chapterName.split(" ");
+        String curr = "";
+        for (int i = 1; i <= split.length; i++) {
+            curr = split[split.length-i] + (i == 1 ? "" : " ") + curr;
+            ret = LawChapterCode.lookupCitation(curr);
+            if (ret.isPresent())
+                return ret.get();
+        }
+        return null;
     }
 }

@@ -47,7 +47,7 @@ public enum LawChapterCode
     GBS("General Business", Sets.newHashSet("Gen Bus L"), CONSOLIDATED),
     GCT("General City", Sets.newHashSet("Gen City L"), CONSOLIDATED),
     GCN("General Construction", Sets.newHashSet("Gen Con L"), CONSOLIDATED),
-    GMU("General Municipal", Sets.newHashSet("Gen Mun L", "Gen Muni L"), CONSOLIDATED),
+    GMU("General Municipal", Sets.newHashSet("Gen Mun L", "Gen Muni L", "Gen Mini L"), CONSOLIDATED),
     GOB("General Obligations", Sets.newHashSet("Gen Ob L"), CONSOLIDATED),
     HAY("Highway", Sets.newHashSet("Hway L"), CONSOLIDATED),
     IND("Indian", Sets.newHashSet("Indian L"), CONSOLIDATED),
@@ -58,7 +58,7 @@ public enum LawChapterCode
     LIE("Lien", Sets.newHashSet("Lien L"), CONSOLIDATED),
     LLC("Limited Liability Company Law", Sets.newHashSet("Lim Lil L"), CONSOLIDATED),
     LFN("Local Finance", Sets.newHashSet("Loc Fin L"), CONSOLIDATED),
-    MHY("Mental Hygiene", Sets.newHashSet("Ment Hgy L", "Ment Hyg L"), CONSOLIDATED),
+    MHY("Mental Hygiene", Sets.newHashSet("Ment Hgy L", "Ment Hyg L", "Mental Health L", "Ment Health L"), CONSOLIDATED),
     MIL("Military", Sets.newHashSet("Mil L"), CONSOLIDATED),
     MDW("Multiple Dwelling", Sets.newHashSet("Mult Dwell L"), CONSOLIDATED),
     MRE("Multiple Residence", Sets.newHashSet("Mult Res L"), CONSOLIDATED),
@@ -67,13 +67,13 @@ public enum LawChapterCode
     NAV("Navigation", Sets.newHashSet("Nav L"), CONSOLIDATED),
     PPD("New York State Printing and Public Documents", Sets.newHashSet("NYS Print L"), CONSOLIDATED),
     NPC("Not-For-Profit Corporation", Sets.newHashSet("N-PC L"), CONSOLIDATED),
-    PAR("Parks, recreation and historic preservation", Sets.newHashSet("Pk & Rec L", "Pks & Rec L"), CONSOLIDATED),
-    PTR("Partnership", Sets.newHashSet(""), CONSOLIDATED),
+    PAR("Parks, recreation and historic preservation", Sets.newHashSet("Pk & Rec L", "Pks & Rec L", "Rec & Pks L"), CONSOLIDATED),
+    PTR("Partnership", Sets.newHashSet("Partn L"), CONSOLIDATED),
     PEN("Penal", Sets.newHashSet("Pen L"), CONSOLIDATED),
-    PEP("Personal Property", Sets.newHashSet("Pers Prop L"), CONSOLIDATED),
+    PEP("Personal Property", Sets.newHashSet("Pers Prop L", "Per Prop L"), CONSOLIDATED),
     PVH("Private Housing Finance", Sets.newHashSet("Priv Hous Fin L", "Pr Hous Fin L"), CONSOLIDATED),
     PBA("Public Authorities", Sets.newHashSet("Pub Auth L"), CONSOLIDATED),
-    PBB("Public Buildings", Sets.newHashSet("Pub Bldg L"), CONSOLIDATED),
+    PBB("Public Buildings", Sets.newHashSet("Pub Bldg L", "Pub Bldgs L"), CONSOLIDATED),
     PBH("Public Health", Sets.newHashSet("Pub Health L"), CONSOLIDATED),
     PBG("Public Housing", Sets.newHashSet("Pub Hous L"), CONSOLIDATED),
     PBL("Public Lands", Sets.newHashSet("Pub Lds L"), CONSOLIDATED),
@@ -83,7 +83,7 @@ public enum LawChapterCode
     RRD("Railroad", Sets.newHashSet("Rail L"), CONSOLIDATED),
     RAT("Rapid Transit", Sets.newHashSet(""), CONSOLIDATED),
     RPP("Real Property", Sets.newHashSet("RP L"), CONSOLIDATED),
-    RPA("Real Property Actions & Proceedings", Sets.newHashSet("RPAP L"), CONSOLIDATED),
+    RPA("Real Property Actions & Proceedings", Sets.newHashSet("RPAP L", "RPAP"), CONSOLIDATED),
     RPT("Real Property Tax", Sets.newHashSet("RPT L"), CONSOLIDATED),
     RCO("Religious Corporations", Sets.newHashSet("Rel Corp L"), CONSOLIDATED),
     RSS("Retirement & Social Security", Sets.newHashSet("R & SS L"), CONSOLIDATED),
@@ -93,7 +93,7 @@ public enum LawChapterCode
     SWC("Soil & Water Conservation Districts", Sets.newHashSet("Cons Dists L"), CONSOLIDATED),
     STL("State", Sets.newHashSet("St L", " State L"), CONSOLIDATED),
     SAP("State Administrative Procedure Act", Sets.newHashSet("St Ad Proc Act", "St Ad Proc L"), CONSOLIDATED),
-    STF("State Finance", Sets.newHashSet("St Fin L", "St. Fin L", "St Fi", "St Fin"), CONSOLIDATED),
+    STF("State Finance", Sets.newHashSet("St Fin L", "St. Fin L", "St Fi", "St Fin", "St Fin L."), CONSOLIDATED),
     STT("State Technology", Sets.newHashSet("St Tech L", "St Te"), CONSOLIDATED),
     SLG("Statute of Local Governments", Sets.newHashSet(""), CONSOLIDATED),
     TAX("Tax", Sets.newHashSet("Tax L", " Tax Law"), CONSOLIDATED),
@@ -126,7 +126,7 @@ public enum LawChapterCode
     LEH("Local Emergency Housing Rent Control Act 21/62", Sets.newHashSet("Chap 21 of 1962"), UNCONSOLIDATED),
     ERL("Emergency Housing Rent Control Law 274/46 337/61", Sets.newHashSet("Emerg Hous Rent Cont L", "Chap 274 of 1946"), UNCONSOLIDATED),
     LSA("Lost and Strayed Animals 115/1894", Sets.newHashSet("Chap 115 of 1894"), UNCONSOLIDATED),
-    MCF("Medical Care Facilities Finance Agency 392/73", Sets.newHashSet("Chap 392 of 1973"), UNCONSOLIDATED),
+    MCF("Medical Care Facilities Finance Agency 392/73", Sets.newHashSet("Chap 392 of 1973", "NYS Med Care Fac Fin Ag Act"), UNCONSOLIDATED),
     NYW("N. Y. wine/grape 80/85", Sets.newHashSet("Chap 80 of 1985"), UNCONSOLIDATED),
     HHC("New York City health and hospitals corporation act 1016/69", Sets.newHashSet("NYC Health & Hosp Corp Act", "Chap 1016 of 1969"), UNCONSOLIDATED),
     PCM("Police Certain Municipalities 360/11", Sets.newHashSet("Chap 360 of 1911"), UNCONSOLIDATED),
@@ -147,7 +147,7 @@ public enum LawChapterCode
     CTC("Court of Claims", Sets.newHashSet("Ct Claims Act"), COURT_ACTS),
     FCT("Family Court", Sets.newHashSet("Fam Ct Act"), COURT_ACTS),
     CCA("New York City Civil Court", Sets.newHashSet("NYC Civ Ct Act"), COURT_ACTS),
-    CRC("New York City Criminal Court", Sets.newHashSet(""), COURT_ACTS),
+    CRC("New York City Criminal Court", Sets.newHashSet("NYC Crim Ct Act"), COURT_ACTS),
     SCP("Surrogate's Court Procedure", Sets.newHashSet("SCPA"), COURT_ACTS),
     UCT("Uniform City Court", Sets.newHashSet("UCCA"), COURT_ACTS),
     UDC("Uniform District Court", Sets.newHashSet(""), COURT_ACTS),
@@ -197,10 +197,17 @@ public enum LawChapterCode
      * @throws java.lang.IllegalArgumentException - If the citation provided is null.
      */
     public static Optional<LawChapterCode> lookupCitation(String citation) {
-        if (citation == null) {
+        if (citation == null)
             throw new IllegalArgumentException("Null citation supplied.");
+        citation = citation.toUpperCase().trim().replaceAll("(\\s{2,})", " ");
+        LawChapterCode type = citationMap.get(citation);
+        // Try varations of the code with or without the L.
+        if (type == null) {
+            if (citation.endsWith(" L"))
+                type = citationMap.get(citation.substring(0, citation.length() - 2));
+            else
+                type = citationMap.get(citation + " L");
         }
-        LawChapterCode type = citationMap.get(citation.toUpperCase().trim().replaceAll("(\\s{2,})", " "));
         return Optional.ofNullable(type);
     }
 

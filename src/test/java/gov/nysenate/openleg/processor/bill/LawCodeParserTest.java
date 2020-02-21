@@ -213,10 +213,11 @@ public class LawCodeParserTest {
     // Make sure parenthesis are matched reluctantly, not greedily
     public void parenthesisTest() {
         // S3361, 2019
-        put(AMEND, "LLC1101", "LLC209", "LLC1203", "LLC1006", "LLC802", "LLC1306");
+        put(AMEND, "LLC1006", "LLC209", "LLC802", "LLC1203", "LLC1306", "LLC1101", "PTR121-201",
+                "PTR121-902", "PTR121-1500", "PTR121-1502", "PTR121-1300");
         put(ADD, "STF89-J");
         put(REPEAL, "ACA23.03", "LLC1101", "LLC1203", "LLC802",
-                "LLC1306", "LLC206", "LLC102");
+                "LLC1306", "LLC206", "LLC102", "PTR121-1500", "PTR121-201", "PTR121-902", "PTR121-1300", "PTR121-1502", "PTR121-101");
         compareToLawCode("Amd §§1006, 209, 802, 1203, 1306 & 1101, rpld §206, §1101 sub (s), §802 sub" +
                 " (b), §1203 sub (c) ¶2, §1306 sub (d), §102 subs (a-1) & (e-1), Lim Lil L; rpld" +
                 " §121-201 sub (c), §121-902 sub (d), §121-1500 sub (a) ¶(II), §121-1502 sub (f)" +
