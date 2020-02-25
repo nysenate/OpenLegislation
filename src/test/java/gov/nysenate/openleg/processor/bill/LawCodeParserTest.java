@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
+import gov.nysenate.openleg.model.law.LawChapterCode;
+import gov.nysenate.openleg.model.law.LawType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -324,6 +326,23 @@ public class LawCodeParserTest {
             else
                 BillLawCodeParser.parse(matcher.group(1), true);
         }
+    }
+
+    @Ignore
+    @Test
+    public void citationsMapTest() {
+        for (Map.Entry<String, LawChapterCode> en : LawChapterCode.citationMap.entrySet()) {
+            LawChapterCode actual = LawChapterCode.altLookupCitation(en.getKey()).orElse(null);
+            if (en.getValue() != actual)
+                System.out.println("Mismatch on " + en.getKey());
+        }
+    }
+
+    @Ignore
+    @Test
+    public void lookupTest() {
+        String citation = "RWB";
+        assertEquals(LawChapterCode.lookupCitation(citation), LawChapterCode.altLookupCitation(citation));
     }
 }
 

@@ -9,7 +9,7 @@ public enum LawActionType
     ADD(Sets.newHashSet("ADD")),
     AMEND(Sets.newHashSet("AMD")),
     REPEAL(Sets.newHashSet("RPLD")),
-    RENAME(Sets.newHashSet("REN", "REL")),
+    RENAME(Sets.newHashSet("REN", "REL", "RELET")),
     DESIGNATE(Sets.newHashSet("DESIG")),
     REDESIGNATE(Sets.newHashSet("REDESIG", "REDES")),
     RENUMERATE(Sets.newHashSet("RENUM")),

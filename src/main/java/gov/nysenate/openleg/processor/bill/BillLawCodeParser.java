@@ -27,17 +27,7 @@ public class BillLawCodeParser {
         Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
         if (!hasValidLaws)
             return new Gson().toJson(mapping);
-        // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
-        // qualifiers, but these are more detail than we need anyway.
-        lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
-        // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add.
-        lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
-        // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
-        // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
-        lawCode = lawCode.replaceAll("(?i) to be", ", rento");
-
-        // Law codes are usually delimited by semi-colons for each affected volume
-        List<String> chapterList = new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
+        List<String> chapterList = getChapterList(lawCode);
 
         // Each iteration handles all the effects on one volume of the law
         for (int i = 0; i < chapterList.size(); i++) {
@@ -59,11 +49,22 @@ public class BillLawCodeParser {
 
             if (chapter.matches(actionString + " " + altGenPattern))
                 chapter += ", generally";
+            // Can't match a list of unconsolidated chapters.
+            if (chapter.contains(" Chaps "))
+                continue;
+            // Sometimes, there isn't a comma to separate the law chapter from the "generally" clause.
+            chapter = chapter.replaceAll(",? generally$", ", generally");
+            // Sometimes, there is an unecessary comma seperating the law chapter from an "L".
+            chapter = chapter.replaceAll(", L$", " L");
 
             String[] tokens = chapter.split("(,| of the) ");
+            if (tokens.length == 1)
+                tokens = chapter.split("&");
             // The chapter title is usually the last item in the list delimited by a comma (when notes at the end are removed).
             String chapterName = tokens[tokens.length - 1].trim();
             if (chapterName.equalsIgnoreCase("generally")) {
+                if (tokens.length == 1)
+                    continue;
                 chapterName = tokens[tokens.length - 2];
                 if (chapterName.contains(actionString)) {
                     general = true;
@@ -71,7 +72,7 @@ public class BillLawCodeParser {
                 }
                 // Sometimes, the chapter name comes with a separate action. For example, Rpld §101, amd UJCA, generally;
                 else {
-                    chapterList.add(chapterName + ", generally");
+                    chapterList.add(chapterName + ", generally".trim());
                     chapter = chapter.replaceAll(", " + chapterName + ".*", "");
                     chapterName = chapterName.replaceFirst(".*? ", "");
                 }
@@ -79,12 +80,14 @@ public class BillLawCodeParser {
                     continue; // No need to list "various laws".
             }
             LawChapterCode currChapter = getLawChapter(chapterName);
+            if (currChapter != altGetLawChapter(chapterName))
+                System.out.println("Mismatch on " + chapterName);
             // If the law chapter is not recognized, or is part of the unconsolidated laws of a recent year
             // (eg Chap 408 of 1999), we cannot link to it. Some older unconsolidated laws like Chap 912 of 1920 can be linked.
             if (currChapter == null) {
                 // TODO: remove after testing
-                if (!chapterName.startsWith("Chap"))
-                    System.out.println("Bad chapter: " + chapterName);
+//                if (!chapterName.toLowerCase().startsWith("chap"))
+//                    System.out.println("Bad chapter: " + chapterName);
                 continue;
             }
             if (general)
@@ -288,5 +291,34 @@ public class BillLawCodeParser {
                 return ret.get();
         }
         return null;
+    }
+
+    private static LawChapterCode altGetLawChapter(String chapterName) {
+        Optional<LawChapterCode> ret = LawChapterCode.altLookupCitation(chapterName);
+        if (ret.isPresent())
+            return ret.get();
+        String[] split = chapterName.split(" ");
+        String curr = "";
+        for (int i = 1; i <= split.length; i++) {
+            curr = split[split.length-i] + (i == 1 ? "" : " ") + curr;
+            ret = LawChapterCode.altLookupCitation(curr);
+            if (ret.isPresent())
+                return ret.get();
+        }
+        return null;
+    }
+
+    private static List<String> getChapterList(String lawCode) {
+        // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
+        // qualifiers, but these are more detail than we need anyway.
+        lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
+        // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add.
+        lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
+        // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
+        // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
+        lawCode = lawCode.replaceAll("(?i) to be", ", rento");
+
+        // Law codes are usually delimited by semi-colons for each affected volume
+        return new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
     }
 }
