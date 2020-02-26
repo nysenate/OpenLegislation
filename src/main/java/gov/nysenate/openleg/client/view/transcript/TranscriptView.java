@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.client.view.transcript;
 
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.model.transcript.TranscriptId;
-
-import java.time.LocalDateTime;
 
 public class TranscriptView extends TranscriptInfoView
 {

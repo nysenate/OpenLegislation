@@ -17,6 +17,7 @@ import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -240,10 +241,24 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     protected void parseActions(String data,
                                 Bill bill,
                                 BillAmendment specifiedAmendment,
-                                LegDataFragment fragment)
+                                LegDataFragment fragment,
+                                Node xmlActions)
             throws ParseError {
-        // Use the BillActionParser to convert the actions string into objects.
-        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        List<BillAction> billActions;
+        if (xmlActions != null) {
+            try {
+                // try XML parsing the actions
+                billActions = BillActionParser.parseActionsListXML(specifiedAmendment.getBillId(), xmlActions);
+            } catch (ParseError e) {
+                // Fallback to old behavior and use the BillActionParser to convert the actions string into objects.
+                billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+            }
+        }
+        else {
+            // Fallback to old behavior and use the BillActionParser to convert the actions string into objects.
+            billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        }
+
         bill.setActions(billActions);
         // Use the BillActionAnalyzer to derive other data from the actions list.
         Optional<PublishStatus> defaultPubStatus = bill.getPublishStatus(Version.ORIGINAL);

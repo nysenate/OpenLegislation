@@ -17,7 +17,6 @@ import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import net.sf.ehcache.*;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +43,8 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @Autowired private BillDao billDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${bill.cache.size}") private long billCacheSizeMb;
-    @Value("${bill-info.cache.size}") private long billInfoCacheSizeMb;
+    @Value("${bill.cache.element.size}") private int billCacheElementSize;
+    @Value("${bill-info.cache.element.size}") private int billInfoCacheElementSize;
 
     private Cache billCache;
     private Cache billInfoCache;
@@ -77,8 +76,8 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
         // Partial bill cache will store Bill instances with the full text fields stripped to save space.
         this.billCache = new Cache(new CacheConfiguration().name(ContentCache.BILL.name())
             .eternal(true)
-            .maxBytesLocalHeap(billCacheSizeMb, MemoryUnit.MEGABYTES)
-            .sizeOfPolicy(defaultSizeOfPolicy()));
+            .maxEntriesLocalHeap(billCacheElementSize)
+            .sizeOfPolicy(elementSizeOfPolicy()));
         cacheManager.addCache(this.billCache);
         // This can only be called after the cache is added to the cache manager.
         this.billCache.setMemoryStoreEvictionPolicy(new BillCacheEvictionPolicy());
@@ -87,8 +86,8 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
         // If a bill is already stored in the billCache, it's BillInfo does not need to be stored here.
         this.billInfoCache = new Cache(new CacheConfiguration().name(ContentCache.BILL_INFO.name())
             .eternal(true)
-            .maxBytesLocalHeap(billInfoCacheSizeMb, MemoryUnit.MEGABYTES)
-            .sizeOfPolicy(defaultSizeOfPolicy()));
+            .maxEntriesLocalHeap(billInfoCacheElementSize)
+            .sizeOfPolicy(elementSizeOfPolicy()));
         cacheManager.addCache(this.billInfoCache);
     }
 

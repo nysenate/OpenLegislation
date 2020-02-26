@@ -44,7 +44,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     @Autowired private CommitteeDao committeeDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${committee.cache.size}") private long committeeCacheSizeMb;
+    @Value("${committee.cache.heap.size}") private long committeeCacheSizeMb;
 
     private Cache committeeCache;
 
@@ -76,7 +76,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         committeeCache = new Cache(new CacheConfiguration().name(ContentCache.COMMITTEE.name())
                 .eternal(true)
                 .maxBytesLocalHeap(committeeCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(defaultSizeOfPolicy()));
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(committeeCache);
         committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
     }
@@ -112,10 +112,12 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         logger.info("Warming up committee cache.");
         getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
         getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);
+        logger.info("Done warming up committee cache.");
     }
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.COMMITTEE)) {
             warmCaches();
@@ -250,8 +252,13 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         if(committee==null) {
             throw new IllegalArgumentException("Committee cannot be null.");
         }
+        // Update the database.
         committeeDao.updateCommittee(committee, legDataFragment);
-        committeeCache.remove(committee.getSessionId());
+
+        // Update the cache.
+        List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
+        committeeCache.put(new Element(committee.getSessionId(), committeeHistory));
+
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 

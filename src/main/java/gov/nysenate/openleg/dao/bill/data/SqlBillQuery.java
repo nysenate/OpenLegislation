@@ -70,7 +70,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Addtional Bill Sponsors --- */
 
     SELECT_ADDTL_BILL_SPONSORS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_ADDITIONAL_SPONSOR + "\n" +
+        "SELECT session_member_id FROM ${schema}." + SqlTable.BILL_ADDITIONAL_SPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
@@ -151,7 +151,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Bill Amendment Cosponsors --- */
 
     SELECT_BILL_COSPONSORS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
+        "SELECT session_member_id FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "ORDER BY sequence_no ASC"
     ),

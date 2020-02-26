@@ -86,6 +86,7 @@ public class DataProcessor
                 asyncUtils.run(this::doRun);
             } else {
                 doRun();
+                logger.info("Data processor has completed.");
             }
 
             return currentRun;
@@ -151,12 +152,14 @@ public class DataProcessor
         Map<String, Integer> collatedCounts = new LinkedHashMap<>();
         for (ProcessService processor : processServices) {
             if (env.isProcessingEnabled()) {
+                logger.info("Collating " + processor.getCollateType());
                 int collatedCount = processor.collate();
                 if (collatedCount > 0) {
                     collatedCounts.put(processor.getCollateType(), collatedCount);
                 }
+            } else {
+                logger.info("Not collating data, processing is disabled.");
             }
-
         }
         if (collatedCounts.size() > 0) {
             logger.debug("Completed collations:");
@@ -168,14 +171,17 @@ public class DataProcessor
     }
 
     public synchronized void ingest() throws IOException {
-        logger.debug("Begin ingesting data");
+        logger.info("Begin ingesting data");
         Map<String, Integer> ingestedCounts = new LinkedHashMap<>();
         for (ProcessService processor : processServices) {
             if (env.isProcessingEnabled()) {
+                logger.info("Ingesting " + processor.getIngestType());
                 int ingestedCount = processor.ingest();
                 if (ingestedCount > 0) {
                     ingestedCounts.put(processor.getIngestType(), ingestedCount);
                 }
+            } else {
+                logger.info("Not ingesting data, processing is disabled.");
             }
         }
         if (ingestedCounts.size() > 0) {

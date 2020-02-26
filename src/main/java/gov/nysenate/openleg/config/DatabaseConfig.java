@@ -12,8 +12,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
 @EnableTransactionManagement
@@ -29,6 +27,9 @@ public class DatabaseConfig
     @Value("${postgresdb.name}")  private String dbName;
     @Value("${postgresdb.user}")  private String dbUser;
     @Value("${postgresdb.pass}")  private String dbPass;
+    @Value("${c3p0.pool.size.initial:15}") private int poolInitialSize;
+    @Value("${c3p0.pool.size.min:8}") private int poolMinSize;
+    @Value("${c3p0.pool.size.max:15}") private int poolMaxSize;
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
@@ -44,8 +45,8 @@ public class DatabaseConfig
      * Configures the sql data source using a connection pool.
      * @return DataSource
      */
-    @Bean
-    public DataSource postgresDataSource() {
+    @Bean(destroyMethod = "close")
+    public ComboPooledDataSource postgresDataSource() {
         final String jdbcUrlTemplate = "jdbc:%s//%s/%s";
         ComboPooledDataSource pool = new ComboPooledDataSource();
         try {
@@ -58,13 +59,19 @@ public class DatabaseConfig
         logger.info("Connecting to Postgres: " + pool.getJdbcUrl());
         pool.setUser(dbUser);
         pool.setPassword(dbPass);
-        pool.setMinPoolSize(3);
-        pool.setMaxPoolSize(10);
+        pool.setInitialPoolSize(poolInitialSize);
+        pool.setMinPoolSize(poolMinSize);
+        pool.setMaxPoolSize(poolMaxSize);
+        // Release connections above minimum if idle for 3 min (180 seconds).
+        pool.setMaxIdleTimeExcessConnections(180);
+        pool.setAcquireIncrement(4);
 
-        // Test each connection every 30 sec after first check-in
+        // Test each connection every 60 sec after first check-in
         pool.setTestConnectionOnCheckout(false);
         pool.setTestConnectionOnCheckin(true);
-        pool.setIdleConnectionTestPeriod(30);
+        pool.setIdleConnectionTestPeriod(60);
+        // Fast query to execute when testing connections
+        pool.setPreferredTestQuery("SELECT 1");
         return pool;
     }
 

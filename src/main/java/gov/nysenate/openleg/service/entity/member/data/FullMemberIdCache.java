@@ -18,9 +18,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,7 @@ import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -37,25 +40,24 @@ public class FullMemberIdCache implements CachingService<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
 
     private EventBus eventBus;
-
     private Cache memberCache;
-
     private CacheManager cacheManager;
-
     private MemberDao memberDao;
+    private long fullMemberCacheSizeMb;
 
     @Autowired
-    public FullMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
+    public FullMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager,
+                             @Value("${full_member.cache.heap.size}") long fullMemberCacheSizeMb) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
         this.cacheManager = cacheManager;
+        this.fullMemberCacheSizeMb = fullMemberCacheSizeMb;
     }
 
     @PostConstruct
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy
@@ -66,7 +68,10 @@ public class FullMemberIdCache implements CachingService<Integer> {
 
     @Override
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name()).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name())
+                .eternal(true)
+                .maxBytesLocalHeap(fullMemberCacheSizeMb, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(this.memberCache);
     }
 
@@ -132,15 +137,23 @@ public class FullMemberIdCache implements CachingService<Integer> {
     }
 
 
-    //CachedMemberService Methods
-
+    /**
+     * Get a FullMember.
+     *
+     * Checks the cache first, if not there the member is loaded from the database and saved to the cache.
+     * @param memberId
+     * @return
+     * @throws MemberNotFoundEx
+     */
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-        if (memberCache.isKeyInCache(memberId)) {
-            return (FullMember) memberCache.get(memberId).getObjectValue();
+        Optional<Element> fmElement = Optional.ofNullable(memberCache.get(new SimpleKey(memberId)));
+        if (fmElement.isPresent()) {
+            return (FullMember) fmElement.get().getObjectValue();
+        } else {
+            FullMember member = memberDao.getMemberById(memberId);
+            putMemberInCache(member);
+            return member;
         }
-        FullMember member = memberDao.getMemberById(memberId);
-        putMemberInCache(member);
-        return member;
     }
 
     /* --- Internal Methods --- */

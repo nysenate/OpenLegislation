@@ -73,13 +73,31 @@ public interface CachingService<ContentId>
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent);
 
     /**
-     * (Default Method)
-     * Default 'size of' configuration which sets the maximum limit for how many nodes are traversed
-     * when computing the heap size of an object before raising a warning.
+     * The default side of configuration to use with caches sized by bytes on heap.
+     * Sets the maximum limit for how many nodes are traversed when computing the heap
+     * size of an object before raising a warning.
+     *
+     * Keep this low so we get warning messages when a cache's performance may be impacted
+     * by the size of its object graph.
      *
      * @return SizeOfPolicyConfiguration
      */
-    public default SizeOfPolicyConfiguration defaultSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(50000).maxDepthExceededBehavior(CONTINUE);
+    public default SizeOfPolicyConfiguration byteSizeOfPolicy() {
+        return new SizeOfPolicyConfiguration().maxDepth(5000).maxDepthExceededBehavior(CONTINUE);
+    }
+
+    /**
+     * An alternative size of configuration to be used only with caches sized by element count.
+     * This uses a very high maxDepth to avoid warning messages as this heap size calculation is
+     * only done when hitting the cache stats admin API.
+     *
+     * Some caches are sized by element count instead of bytes on heap because their object graphs are
+     * large and calculating the heap size will effect its performance. These caches should be configured
+     * with this policy so that erroneous warning messages are not received when we load the cache stats
+     * ctrl or the cache stats UI.
+     * @return
+     */
+    public default SizeOfPolicyConfiguration elementSizeOfPolicy() {
+        return new SizeOfPolicyConfiguration().maxDepth(100000).maxDepthExceededBehavior(CONTINUE);
     }
 }

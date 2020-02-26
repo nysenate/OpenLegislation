@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * The LegDataFragment class represents a portion of a SobiFile file that contains data pertaining
+ * The LegDataFragment class represents a portion of a Source file that contains data pertaining
  * to a certain entity type (Bill, Calendar, etc).
  *
  * For example if a SOBI file contains bill data and agenda data, the file can be broken down
@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 public class LegDataFragment extends BaseSourceData
 {
     /** Reference to the original SobiFile object that created this fragment. */
-    private SourceFile parentSobiFile;
+    private SourceFile parentSourceFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
     private LegDataFragmentType type;
@@ -42,14 +42,14 @@ public class LegDataFragment extends BaseSourceData
 
     /** --- Constructors --- */
 
-    public LegDataFragment(SourceFile parentSobiFile, LegDataFragmentType type, String text, int sequenceNo) {
-        this(generateFragmentId(parentSobiFile, type, sequenceNo),
-             parentSobiFile, type, text, sequenceNo);
+    public LegDataFragment(SourceFile parentSourceFile, LegDataFragmentType type, String text, int sequenceNo) {
+        this(generateFragmentId(parentSourceFile, type, sequenceNo),
+                parentSourceFile, type, text, sequenceNo);
     }
 
-    public LegDataFragment(String fragmentId, SourceFile parentSobiFile, LegDataFragmentType type, String text, int sequenceNo) {
+    public LegDataFragment(String fragmentId, SourceFile parentSourceFile, LegDataFragmentType type, String text, int sequenceNo) {
         this.fragmentId = fragmentId;
-        this.parentSobiFile = parentSobiFile;
+        this.parentSourceFile = parentSourceFile;
         this.type = type;
         this.text = text;
         this.sequenceNo = sequenceNo;
@@ -132,13 +132,13 @@ public class LegDataFragment extends BaseSourceData
     @Override
     public String toString() {
         return "LegDataFragment{" + "fragmentType=" + type + ", fileName='" + fragmentId + '\'' +
-                ", parentSobiFile=" + parentSobiFile + '}';
+                ", parentSobiFile=" + parentSourceFile + '}';
     }
 
     /** --- Functional Getters/Setters --- */
 
     public LocalDateTime getPublishedDateTime() {
-        return parentSobiFile.getPublishedDateTime();
+        return parentSourceFile.getPublishedDateTime();
     }
 
     public void startProcessing() {
@@ -148,7 +148,7 @@ public class LegDataFragment extends BaseSourceData
     /** --- Basic Getters/Setters --- */
 
     public SourceFile getParentLegDataFile() {
-        return parentSobiFile;
+        return parentSourceFile;
     }
 
     public LegDataFragmentType getType() {

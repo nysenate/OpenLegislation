@@ -29,26 +29,15 @@ public interface LegDataFragmentDao {
     LegDataFragment getLegDataFragment(String fileName) throws DataAccessException;
     
     /**
-     * Retrieve the SobiFragments associated with a given SobiFile.
+     * Retrieve the LegDataFragments associated with a given Source file.
      *
-     * @param sobiFile SobiFile - The SobiFile instance to get fragments for.
+     * @param sourceFileName String - The file name of the source file.
      * @param pubDateOrder SortOrder - Sort order for the fragment's published date time
      *
      * @return List<LegDataFragment>
      */
-    List<LegDataFragment> getLegDataFragments(SourceFile sobiFile, SortOrder pubDateOrder);
-    
-    /**
-     * Retrieve the SobiFragments of a specific type associated with a given SobiFile.
-     *
-     * @param sobiFile     SobiFile - The SobiFile instance to get fragments for.
-     * @param fragmentType LegDataFragmentType - Get fragments of this type.
-     * @param pubDateOrder SortOrder - Sort order for the fragment's published date time
-     *
-     * @return List<LegDataFragment>
-     */
-    List<LegDataFragment> getLegDataFragments(SobiFile sobiFile, LegDataFragmentType fragmentType, SortOrder pubDateOrder);
-    
+    List<LegDataFragment> getLegDataFragments(String sourceFileName, SortOrder pubDateOrder);
+
     /**
      * Retrieves all SobiFragments that are awaiting processing.
      *
