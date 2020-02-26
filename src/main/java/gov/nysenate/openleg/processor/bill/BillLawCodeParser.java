@@ -7,19 +7,31 @@ import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BillLawCodeParser {
     private static final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
-    // We don't have the NYC administrative code or NYC charter
+    // We don't have these law chapters.
     private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
     private static final String altGenPattern = "(?i)(Chap \\d+ of \\d+)";
 
     /* --- Methods --- */
 
+    private static List<String> getChapterList(String lawCode) {
+        // Eliminates extraneous remarks.
+        lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
+        // Compressing this action into one word simplifies parsing.
+        lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
+        // Each new name of renamed laws will be parsed separately under the REN_TO law action.
+        lawCode = lawCode.replaceAll("(?i) to be", ", rento");
+        // Law codes are usually delimited by semi-colons for each affected volume.
+        return new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
+    }
+
     /**
-     * This method splits the law code string into a mapping of action->{LawDocId String} (see LawDocId) and stores it
-     * in this.mapping, it also sets this.json to a JSON encoding of the map
+     * Processes a full law code, and returns the JSON of a map from LawActionType's to law
+     * document ID's.
      *
      * @param lawCode the law code citation of a Bill Amendment, eg (Amd §3635, Ed L)
      */
@@ -29,21 +41,22 @@ public class BillLawCodeParser {
             return new Gson().toJson(mapping);
         List<String> chapterList = getChapterList(lawCode);
 
-        // Each iteration handles all the effects on one volume of the law
-        for (int i = 0; i < chapterList.size(); i++) {
-            String chapter = chapterList.get(i);
+        for (int i = 0; i < chapterList.size() && i < lawCode.length()/2; i++) {
+            String chapter = chapterList.get(i).trim();
+            if (chapter.equals("generally"))
+                continue;
             // Handle volumes that are changed "generally" separately
             boolean general = false;
-
-            // The action (eg Amd, Add) appears as the first word in the string
             LawActionType currAction;
-            String actionString = chapter.split(" ")[0];
+            String actionString = chapter.split(" ")[0].replaceAll(",", "");
             if (LawActionType.lookupAction(actionString).isPresent())
                 currAction = LawActionType.lookupAction(actionString).get();
-            else // We can't parse this action, so we'll go to the next chapter.
+            // We can't parse this action, so we'll go to the next chapter.
+            else
             {
                 // TODO: remove after testing
-                System.out.println("Bad action: " + actionString + " with chapter " + chapter);
+                if (!actionString.equals("Amc") && !actionString.contains("Acc"))
+                    System.out.println("Bad action: " + actionString);
                 continue;
             }
 
@@ -52,15 +65,12 @@ public class BillLawCodeParser {
             // Can't match a list of unconsolidated chapters.
             if (chapter.contains(" Chaps "))
                 continue;
-            // Sometimes, there isn't a comma to separate the law chapter from the "generally" clause.
-            chapter = chapter.replaceAll(",? generally$", ", generally");
-            // Sometimes, there is an unecessary comma seperating the law chapter from an "L".
-            chapter = chapter.replaceAll(", L$", " L");
+            chapter = chapter.replaceAll(",? generally$", ", generally").replaceAll(", L$", " L");
 
             String[] tokens = chapter.split("(,| of the) ");
             if (tokens.length == 1)
                 tokens = chapter.split("&");
-            // The chapter title is usually the last item in the list delimited by a comma (when notes at the end are removed).
+            // The chapter title is usually the last item in the list delimited by commas.
             String chapterName = tokens[tokens.length - 1].trim();
             if (chapterName.equalsIgnoreCase("generally")) {
                 if (tokens.length == 1)
@@ -76,24 +86,49 @@ public class BillLawCodeParser {
                     chapter = chapter.replaceAll(", " + chapterName + ".*", "");
                     chapterName = chapterName.replaceFirst(".*? ", "");
                 }
-                if (chapterName.toLowerCase().matches(".*various (laws|chapters).*"))
-                    continue; // No need to list "various laws".
             }
-            LawChapterCode currChapter = getLawChapter(chapterName);
-            if (currChapter != altGetLawChapter(chapterName))
-                System.out.println("Mismatch on " + chapterName);
-            // If the law chapter is not recognized, or is part of the unconsolidated laws of a recent year
-            // (eg Chap 408 of 1999), we cannot link to it. Some older unconsolidated laws like Chap 912 of 1920 can be linked.
-            if (currChapter == null) {
-                // TODO: remove after testing
-//                if (!chapterName.toLowerCase().startsWith("chap"))
-//                    System.out.println("Bad chapter: " + chapterName);
+            if (chapterName.toLowerCase().matches(".*various (law|chapter)s?.*"))
+                continue;
+
+            String firstWord = chapterName.split(" ", 2)[0];
+            Optional<LawActionType> misplacedAction = LawActionType.lookupAction(firstWord);
+            if (misplacedAction.isPresent()) {
+                Matcher beforeChapterName = Pattern.compile(firstWord + " §+[-.\\w]+", Pattern.CASE_INSENSITIVE).matcher(chapter);
+                if (beforeChapterName.find()) {
+                    int commaIndex = beforeChapterName.end();
+                    // If there is nothing after the section label, then there is no law chapter
+                    // here, and it's probably in the next String in the list.
+                    if (commaIndex == chapter.length() && i != chapterList.size()-1)
+                        chapterList.set(i+1, chapter + ", " + chapterList.get(i+1));
+                    // If a comma is already present, then a space was missing after it.
+                    else if (chapter.codePointAt(commaIndex) == ',')
+                        chapterList.add(chapter.substring(0, commaIndex+1) + " " + chapter.substring(commaIndex+1));
+                    else
+                        chapterList.add(chapter.substring(0, commaIndex) + "," + chapter.substring(commaIndex));
+                    continue;
+                }
+                if (chapter.endsWith(" L")) {
+                    chapterName = chapter.replaceFirst(actionString, "").trim();
+                    general = true;
+                }
+            }
+
+            if (chapterName.contains("§")) {
+                // If what should be the chapter name has section labels, then the chapter name was
+                // not properly found, and is probably in the next String.
+                if (i != chapterList.size() - 1) {
+                    chapterList.set(i + 1, chapter + ", " + chapterList.get(i + 1));
+                    continue;
+                }
+            }
+            Optional<LawChapterCode> currChapter = LawChapterCode.altLookupCitation(chapterName);
+            if (!currChapter.isPresent()) {
                 continue;
             }
             if (general)
                 putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
             else
-                parseChapterAffects(chapter.replaceAll(chapterName, "").trim(), currChapter, currAction, mapping);
+                parseChapterAffects(chapter.replaceAll(chapterName, "").trim(), currChapter.get(), currAction, mapping);
         }
         return new Gson().toJson(mapping);
     }
@@ -112,7 +147,7 @@ public class BillLawCodeParser {
         for (String article : articleList) {
             // Parse each section word-by-word
             LinkedList<String> tokenList = new LinkedList<>(
-                Splitter.on(Pattern.compile("[ ]+")).trimResults().omitEmptyStrings().splitToList(article));
+                Splitter.on(Pattern.compile(" +")).trimResults().omitEmptyStrings().splitToList(article));
             // Indicates whether we just parsed a new division title (Art, Part, or Title)
             boolean newDivision = false;
             for (int i = 0; i < tokenList.size(); i++) {
@@ -192,13 +227,10 @@ public class BillLawCodeParser {
     }
 
     private static boolean isSectionNumber(String s) {
-        // Returns true if the string is a number, a number with a decimal, a Roman Numeral, a number with 'R'/'§' in
-        // front of it, or an uppercase letter. This covers all possible quantifiers in the law code.
         return s != null && (s.matches("R?§*\\d*\\.?\\d+-?.*") || isRomanNumeral(s) || s.matches("[A-Z]"));
     }
 
     private static boolean isRomanNumeral(String s) {
-        // Returns true if the string is a well-formed Roman Numeral with values<50, or a Roman Numeral followed by a dash
         return s != null && (s.matches("(L?X{0,3}|IX)|(IV|V?I{0,3})") ||
                 (s.split("-").length > 1 && isRomanNumeral(s.split("-")[0])));
     }
@@ -269,56 +301,5 @@ public class BillLawCodeParser {
         }
         val += romanCharValue(s.charAt(s.length() - 1));
         return Integer.toString(val);
-    }
-
-    /**
-     * Attempts to retrieve a LawChapterCode from the processed chapter name. Commas are supposed
-     * to delineate the list of codes from the law citation, but they are sometimes missing. So,
-     * we need to try various words in the string.
-     * @param chapterName to lookup.
-     * @return the corresponding LawChapterCode.
-     */
-    private static LawChapterCode getLawChapter(String chapterName) {
-        Optional<LawChapterCode> ret = LawChapterCode.lookupCitation(chapterName);
-        if (ret.isPresent())
-            return ret.get();
-        String[] split = chapterName.split(" ");
-        String curr = "";
-        for (int i = 1; i <= split.length; i++) {
-            curr = split[split.length-i] + (i == 1 ? "" : " ") + curr;
-            ret = LawChapterCode.lookupCitation(curr);
-            if (ret.isPresent())
-                return ret.get();
-        }
-        return null;
-    }
-
-    private static LawChapterCode altGetLawChapter(String chapterName) {
-        Optional<LawChapterCode> ret = LawChapterCode.altLookupCitation(chapterName);
-        if (ret.isPresent())
-            return ret.get();
-        String[] split = chapterName.split(" ");
-        String curr = "";
-        for (int i = 1; i <= split.length; i++) {
-            curr = split[split.length-i] + (i == 1 ? "" : " ") + curr;
-            ret = LawChapterCode.altLookupCitation(curr);
-            if (ret.isPresent())
-                return ret.get();
-        }
-        return null;
-    }
-
-    private static List<String> getChapterList(String lawCode) {
-        // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
-        // qualifiers, but these are more detail than we need anyway.
-        lawCode = lawCode.replaceAll("\\s*\\([^)]*\\)\\s*", "");
-        // Rpldadd refers to the REPEAL_ADD action, and will not cause the same parsing problems as Rpld & add.
-        lawCode = lawCode.replaceAll("(?i)Rpld & add", "Rpldadd");
-        // For every rename/renumerate clause, we'll parse the new names of each article separately under the REN_TO law
-        // action. This makes it easy to link to the new names if we want to, but currently we ignore them.
-        lawCode = lawCode.replaceAll("(?i) to be", ", rento");
-
-        // Law codes are usually delimited by semi-colons for each affected volume
-        return new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
     }
 }

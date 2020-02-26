@@ -7,8 +7,8 @@ import java.util.*;
 public enum LawActionType
 {
     ADD(Sets.newHashSet("ADD")),
-    AMEND(Sets.newHashSet("AMD")),
-    REPEAL(Sets.newHashSet("RPLD")),
+    AMEND(Sets.newHashSet("AMD", "AMDS")),
+    REPEAL(Sets.newHashSet("RPLD", "RPL")),
     RENAME(Sets.newHashSet("REN", "REL", "RELET")),
     DESIGNATE(Sets.newHashSet("DESIG")),
     REDESIGNATE(Sets.newHashSet("REDESIG", "REDES")),
@@ -37,9 +37,8 @@ public enum LawActionType
     }
 
     public static Optional<LawActionType> lookupAction(String action) {
-        if (action == null) {
+        if (action == null)
             throw new IllegalArgumentException("Supplied string cannot be null!");
-        }
         return Optional.ofNullable(lookupMap.get(action.trim().toUpperCase()));
     }
 

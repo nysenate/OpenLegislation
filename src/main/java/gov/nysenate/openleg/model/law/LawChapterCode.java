@@ -24,7 +24,7 @@ public enum LawChapterCode
     BNK("Banking", Sets.newHashSet("Bank L"),  CONSOLIDATED),
     BVO("Benevolent Orders", Sets.newHashSet("Ben Ord L"), CONSOLIDATED),
     BSC("Business Corporation", Sets.newHashSet("BC L", "Bus Corp"), CONSOLIDATED),
-    CAL("Canal", Sets.newHashSet("Can L"), CONSOLIDATED),
+    CAL("Canal", Sets.newHashSet("Can L", "Canal"), CONSOLIDATED),
     CVP("Civil Practice Law & Rules", Sets.newHashSet("CPLR", "CPLR L", "CPLR & Department of Law"), CONSOLIDATED),
     CVR("Civil Rights", Sets.newHashSet("Civ Rts L", "Civ Rts"), CONSOLIDATED),
     CVS("Civil Service", Sets.newHashSet("Civ Serv L"), CONSOLIDATED),
@@ -68,12 +68,12 @@ public enum LawChapterCode
     MHR("Municipal Home Rule", Sets.newHashSet("Munic Home R L", "Munic Home Rule L"), CONSOLIDATED),
     NAV("Navigation", Sets.newHashSet("Nav L"), CONSOLIDATED),
     PPD("New York State Printing and Public Documents", Sets.newHashSet("NYS Print L"), CONSOLIDATED),
-    NPC("Not-For-Profit Corporation", Sets.newHashSet("N-PC L"), CONSOLIDATED),
+    NPC("Not-For-Profit Corporation", Sets.newHashSet("N-PC L", "N-CP"), CONSOLIDATED),
     PAR("Parks, Recreation and Historic Preservation", Sets.newHashSet("Pk & Rec L", "Pks & Rec L", "Rec & Pks L"), CONSOLIDATED),
     PTR("Partnership", Sets.newHashSet("Partn L"), CONSOLIDATED),
     PEN("Penal", Sets.newHashSet("Pen L"), CONSOLIDATED),
     PEP("Personal Property", Sets.newHashSet("Pers Prop L", "Per Prop L"), CONSOLIDATED),
-    PVH("Private Housing Finance", Sets.newHashSet("Priv Hous Fin L", "Pr Hous Fin L"), CONSOLIDATED),
+    PVH("Private Housing Finance", Sets.newHashSet("Priv Hous Fin L", "Pr Hous Fin L", "Pri House Fin", "Priv Hous Fin Act"), CONSOLIDATED),
     PBA("Public Authorities", Sets.newHashSet("Pub Auth L"), CONSOLIDATED),
     PBB("Public Buildings", Sets.newHashSet("Pub Bldg L", "Pub Bldgs L"), CONSOLIDATED),
     PBH("Public Health", Sets.newHashSet("Pub Health L", "Health L"), CONSOLIDATED),
@@ -91,7 +91,7 @@ public enum LawChapterCode
     RSS("Retirement & Social Security", Sets.newHashSet("R & SS L"), CONSOLIDATED),
     REL("Rural Electric Cooperative", Sets.newHashSet("Rur Elec Coop L"), CONSOLIDATED),
     SCC("Second Class Cities", Sets.newHashSet("Sec Cl Cit L"), CONSOLIDATED),
-    SOS("Social Services", Sets.newHashSet("Soc Serv L"), CONSOLIDATED),
+    SOS("Social Services", Sets.newHashSet("Soc Serv L", "Soc Ser"), CONSOLIDATED),
     SWC("Soil & Water Conservation Districts", Sets.newHashSet("Cons Dists L"), CONSOLIDATED),
     STL("State", Sets.newHashSet("St L", " State L"), CONSOLIDATED),
     SAP("State Administrative Procedure Act", Sets.newHashSet("St Ad Proc Act", "St Ad Proc L"), CONSOLIDATED),
@@ -140,7 +140,7 @@ public enum LawChapterCode
     SCT("Suffolk County Tax Act", Sets.newHashSet(""), UNCONSOLIDATED),
     TSF("Tobacco Settlement Financing Corporation Act", Sets.newHashSet(""), UNCONSOLIDATED),
     UDG("Urban development Guarantee Fund of New York 175/68", Sets.newHashSet("Chap 175 of 1968"), UNCONSOLIDATED),
-    UDA("Urban Development Corporation Act 174/68", Sets.newHashSet("UDC Act", "UDCA"), UNCONSOLIDATED),
+    UDA("Urban Development Corporation Act 174/68", Sets.newHashSet("UDC Act", "UDCA", "Chap 174 of 1968"), UNCONSOLIDATED),
     UDR("Urban development Research Corporation act 173/68", Sets.newHashSet("Chap 173 of 1968"), UNCONSOLIDATED),
     NNY("New, New York Bond Act 649/92", Sets.newHashSet("Chap 649 of 1992"), UNCONSOLIDATED),
 
@@ -183,14 +183,13 @@ public enum LawChapterCode
                         }));
     }
 
-    private static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
+    public static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
     public static Map<String, LawChapterCode> uniqueCitations = new HashMap<>();
     static {
         uniqueCitations.put("Rec & Pks", PAR);
         uniqueCitations.put("El", ELN);
         uniqueCitations.put("NYS Med Care Fac Fin Ag Act", MCF);
         uniqueCitations.put("Fin", STF);
-        uniqueCitations.put("RWB", PML);
     }
 
     /**
@@ -201,37 +200,14 @@ public enum LawChapterCode
     public static Optional<LawChapterCode> altLookupCitation(String citation) {
         if (citation == null)
             throw new IllegalArgumentException("Null citation supplied.");
-        if (citation.isEmpty())
+        if (citation.length() < 2)
             return Optional.empty();
         // Many citations end in " L", which doesn't belong.
         citation = citation.replaceFirst("[ ]?L(aw)?[.]?$", "").trim().replaceAll("(\\s{2,})", " ");
         if (uniqueCitations.containsKey(citation))
             return Optional.of(uniqueCitations.get(citation));
         citation = citation.replaceAll(" (and|&) ", " ");
-
-        Pattern lawChapterNamePattern;
-        Matcher chapterNumberMatcher = NUMBERED_CHAPTER.matcher(citation);
-        if (chapterNumberMatcher.matches()) {
-            String year = chapterNumberMatcher.group(2);
-            // Laws in the 1900's are simply referred to by their last 2 digits.
-            if (year.startsWith("19"))
-                year = year.substring(2);
-            lawChapterNamePattern = Pattern.compile(".*" + chapterNumberMatcher.group(1) + "/" + year + ".*");
-        }
-        else {
-            // The letters in a citation are usually in the same order in the law code name.
-            StringBuilder toMatch = new StringBuilder();
-            char[] ar = citation.toCharArray();
-            for (int i = 0; i < ar.length; i++) {
-                toMatch.append("[^ ]*");
-                // If this and the last character are uppercase, then we are dealing with an abbreviation.
-                if (ar[i] == ' ' || (Character.isUpperCase(ar[i]) && i != 0 && Character.isUpperCase(ar[i - 1])))
-                    toMatch.append("(,| |&|\\.|and|of)+");
-                if (ar[i] != ' ')
-                    toMatch.append(ar[i]);
-            }
-            lawChapterNamePattern = Pattern.compile(".*?" + toMatch.append(".*").toString());
-        }
+        Pattern lawChapterNamePattern = makePatternFromCitation(citation);
 
         LawChapterCode ret = null;
         for (LawChapterCode code : values()) {
@@ -239,10 +215,37 @@ public enum LawChapterCode
             if (lawChapterNamePattern.matcher(name).matches())
                 ret = chooseCode(ret, code, citation);
         }
-        // If no result is found, try dropping a letter
-        if (ret == null)
+        // If no result is found, try dropping a letter. But if it starts with "Chap", it's an
+        // unconsolidated law we don't have. If it starts or ends with digits, it's a malformed citation.
+        if (ret == null && !citation.matches("^(Chap|\\d+).*"))
             return altLookupCitation(citation.replaceFirst(".$", ""));
-        return Optional.of(ret);
+        return Optional.ofNullable(ret);
+    }
+
+    private static Pattern makePatternFromCitation(String citation) {
+        Matcher chapterNumberMatcher = NUMBERED_CHAPTER.matcher(citation);
+        if (chapterNumberMatcher.matches()) {
+            String year = chapterNumberMatcher.group(2);
+            // Laws in the 1900's are simply referred to by their last 2 digits.
+            if (year.startsWith("19"))
+                year = year.substring(2);
+            return Pattern.compile(".*" + chapterNumberMatcher.group(1) + "/" + year + ".*");
+        }
+        // The letters in a citation are usually in the same order in the law code name.
+        StringBuilder toMatch = new StringBuilder();
+        char[] ar = citation.toCharArray();
+        for (int i = 0; i < ar.length; i++) {
+            toMatch.append("[^ ]*");
+            // If this and the last character are uppercase, then we are dealing with an abbreviation.
+            if (Character.isUpperCase(ar[i]) && i != 0 && Character.isUpperCase(ar[i - 1]))
+                toMatch.append(".*?");
+            if (ar[i] != ' ')
+                toMatch.append(ar[i]);
+            else
+                toMatch.append("(,| |&|\\.|and|of)+");
+
+        }
+        return Pattern.compile(".*?" + toMatch.append(".*").toString());
     }
 
     private static LawChapterCode chooseCode(LawChapterCode curr, LawChapterCode next, String citation) {

@@ -314,6 +314,33 @@ public class LawCodeParserTest {
         compareToLawCode("Rpld Art 22, §106 subs 6, 8 & 9, §§1306 & 2012, amd UJCA, generally");
     }
 
+    @Test
+    public void missingCommaTests() {
+        put(ADD, "EDN6507-A");
+        compareToLawCode("Add §6507-a Ed L");
+
+        put(ADD, "INS (generally)");
+        compareToLawCode("Amd Isc L");
+    }
+
+    @Test
+    public void incorrectSemicolonPlacement() {
+//        put(ADD, "ELN5-212-A");
+//        put(AMEND, "ELN5-212-A");
+//        compareToLawCode("Add §5-212-a; amd §5-212-a, El L;");
+//
+//        put(ADD, "RSSA23");
+//        compareToLawCode("add Art 23 §§1300 - 1304; R & SS L");
+
+        compareToLawCode("Amd §§666, 200, 645 & 648, rpld §668, add §201-a; NYC Chart;");
+    }
+
+    @Test
+    public void missingSpaceTest() {
+        put(ADD, "UDA45");
+        compareToLawCode("Add §45,UDC Act");
+    }
+
     @Ignore
     @Test
     public void testAll() throws FileNotFoundException {
@@ -323,8 +350,10 @@ public class LawCodeParserTest {
             Matcher matcher = lawCodePattern.matcher(scanner.nextLine());
             if (!matcher.matches())
                 System.out.println("AHHHHH" + matcher);
-            else
+            else {
+                //System.out.println(matcher.group(1));
                 BillLawCodeParser.parse(matcher.group(1), true);
+            }
         }
     }
 
@@ -341,7 +370,7 @@ public class LawCodeParserTest {
     @Ignore
     @Test
     public void lookupTest() {
-        String citation = "RWB";
+        String citation = "Chap 147 of 2001";
         assertEquals(LawChapterCode.lookupCitation(citation), LawChapterCode.altLookupCitation(citation));
     }
 }
