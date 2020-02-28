@@ -55,8 +55,8 @@ public class BillLawCodeParser {
             else
             {
                 // TODO: remove after testing
-                if (!actionString.equals("Amc") && !actionString.contains("Acc"))
-                    System.out.println("Bad action: " + actionString);
+//                if (!actionString.equals("Amc") && !actionString.contains("Acc"))
+//                    System.out.println("Bad action: " + actionString);
                 continue;
             }
 
@@ -121,12 +121,12 @@ public class BillLawCodeParser {
                     continue;
                 }
             }
-            Optional<LawChapterCode> currChapter = LawChapterCode.altLookupCitation(chapterName);
+            Optional<LawChapterCode> currChapter = LawChapterCode.lookupCitation(chapterName);
             if (!currChapter.isPresent()) {
                 continue;
             }
             if (general)
-                putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
+                putLawEffect(currAction, currChapter.get().toString() + " (generally)", mapping);
             else
                 parseChapterAffects(chapter.replaceAll(chapterName, "").trim(), currChapter.get(), currAction, mapping);
         }

@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
-import gov.nysenate.openleg.model.law.LawType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -319,18 +318,18 @@ public class LawCodeParserTest {
         put(ADD, "EDN6507-A");
         compareToLawCode("Add §6507-a Ed L");
 
-        put(ADD, "INS (generally)");
+        put(AMEND, "ISC (generally)");
         compareToLawCode("Amd Isc L");
     }
 
     @Test
     public void incorrectSemicolonPlacement() {
-//        put(ADD, "ELN5-212-A");
-//        put(AMEND, "ELN5-212-A");
-//        compareToLawCode("Add §5-212-a; amd §5-212-a, El L;");
-//
-//        put(ADD, "RSSA23");
-//        compareToLawCode("add Art 23 §§1300 - 1304; R & SS L");
+        put(ADD, "ELN5-212-A");
+        put(AMEND, "ELN5-212-A");
+        compareToLawCode("Add §5-212-a; amd §5-212-a, El L;");
+
+        put(ADD, "RSSA23");
+        compareToLawCode("add Art 23 §§1300 - 1304; R & SS L");
 
         compareToLawCode("Amd §§666, 200, 645 & 648, rpld §668, add §201-a; NYC Chart;");
     }
@@ -350,28 +349,9 @@ public class LawCodeParserTest {
             Matcher matcher = lawCodePattern.matcher(scanner.nextLine());
             if (!matcher.matches())
                 System.out.println("AHHHHH" + matcher);
-            else {
-                //System.out.println(matcher.group(1));
+            else
                 BillLawCodeParser.parse(matcher.group(1), true);
-            }
         }
-    }
-
-    @Ignore
-    @Test
-    public void citationsMapTest() {
-        for (Map.Entry<String, LawChapterCode> en : LawChapterCode.citationMap.entrySet()) {
-            LawChapterCode actual = LawChapterCode.altLookupCitation(en.getKey()).orElse(null);
-            if (en.getValue() != actual)
-                System.out.println("Mismatch on " + en.getKey());
-        }
-    }
-
-    @Ignore
-    @Test
-    public void lookupTest() {
-        String citation = "Chap 147 of 2001";
-        assertEquals(LawChapterCode.lookupCitation(citation), LawChapterCode.altLookupCitation(citation));
     }
 }
 
