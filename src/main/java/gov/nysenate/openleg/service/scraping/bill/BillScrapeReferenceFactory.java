@@ -32,7 +32,7 @@ public class BillScrapeReferenceFactory {
         BillId billId = new BillId(htmlParser.parsePrintNo(doc), btrFile.getBaseBillId().getSession());
         Elements billTextElements = htmlParser.getBillTextElements(doc);
         String htmlText = billTextElements.outerHtml();
-        String plain = formatText(BillTextUtils.parseHTMLText(billTextElements), billId.getBillType());
+        String plain = formatText(BillTextUtils.convertHtmlToPlainText(billTextElements), billId.getBillType());
         // Only parse memo's for non resolutions.
         String memo = billId.getBillType().isResolution() ? "" : htmlParser.parseMemo(doc);
         BillScrapeReference reference = new BillScrapeReference(billId, btrFile.getReferenceDateTime(), plain, htmlText, memo);

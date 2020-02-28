@@ -209,7 +209,7 @@ public class BillTextUtilsTest {
         ArrayList<BillTextUtils.TextDiff> changes = BillTextUtils.toChanges(bill);
         //for (int i = 0; i < changes.size(); ++i) System.out.println(changes.get(i));
         assertEquals(7, changes.size());
-        String plain = BillTextUtils.parseHTMLtext(bill).trim();
+        String plain = BillTextUtils.convertHtmlToPlainText(bill).trim();
         String alsoPlain = BillTextUtils.changesToFinalText(changes).trim();
         assertNotEquals(plain, alsoPlain);//they're not supposed to be the same
         assertEquals(-1, alsoPlain.indexOf("removed text"));

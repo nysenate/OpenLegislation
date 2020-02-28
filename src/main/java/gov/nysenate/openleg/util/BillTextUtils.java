@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,21 +142,21 @@ public class BillTextUtils
      *  @see #formatHtmlExtractedBillText(String)
      *  @see #formatHtmlExtractedResoText(String)
      */
-    public static String parseHTMLtext(String htmlText)    {
+    public static String convertHtmlToPlainText(String htmlText)    {
 
         Document doc = Jsoup.parse(htmlText);
         if (doc.select("pre").size() == 0) {
             return htmlText;
         }
         Elements preTags = doc.select("pre");
-        return parseHTMLText(preTags);
+        return convertHtmlToPlainText(preTags);
     }
 
-    public static String parseHTMLText(Element element) {
-        return parseHTMLText(new Elements(element));
+    public static String convertHtmlToPlainText(Element element) {
+        return convertHtmlToPlainText(new Elements(element));
     }
 
-    public static String parseHTMLText(Collection<Element> elements) {
+    public static String convertHtmlToPlainText(Collection<Element> elements) {
         StringBuilder textBuilder = new StringBuilder();
 
         elements.forEach(element -> processTextNode(element, textBuilder));
@@ -336,6 +337,21 @@ public class BillTextUtils
         public String toString() {//meant for debug
             return type + ": " + text + "\n" + html;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TextDiff textDiff = (TextDiff) o;
+            return type == textDiff.type &&
+                    Objects.equals(text, textDiff.text) &&
+                    Objects.equals(html, textDiff.html);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, text, html);
+        }
     }
 
     /**
@@ -376,9 +392,12 @@ public class BillTextUtils
      * @return ArrayList&lt;TextDiff&gt;
      */
     public static ArrayList<TextDiff> toChanges(final String rawHTML) {
-        ArrayList<TextDiff> ans = new ArrayList<TextDiff>();
+        ArrayList<TextDiff> textDiff = new ArrayList<TextDiff>();
         String unformatted = rawHTML;
-        if (unformatted.contains("</STYLE>")) unformatted = unformatted.substring(unformatted.indexOf("</STYLE>") + 8);
+        if (unformatted.contains("</STYLE>")) {
+            // TODO Implement more accurate way of remove <STYLE> element.
+            unformatted = unformatted.substring(unformatted.indexOf("</STYLE>") + 8);
+        }
         //unformatted = unformatted.trim();
         int lastLength;
         while (unformatted.length() > 0) {
@@ -387,41 +406,42 @@ public class BillTextUtils
             int[] toRemove = removeIndex(unformatted);
             int action = -1;//1 = add, 0 = remove
             if (toAdd[0] == -1 && toRemove[0] == -1) {//no more text added or removed
-                ans.add(new TextDiff(0, unformatted, unformatted));
+                textDiff.add(new TextDiff(0, unformatted, unformatted));
                 unformatted = "";
             }
             else {
                 if (toAdd[0] != -1 && toRemove[0] != -1) {
+                    // If add tag comes before remove tag
                     if (toAdd[0] < toRemove[0]) action = 1;
                     else action = 0;
                 }
+                // No remove tag present
                 else if (toAdd[0] != -1) action = 1;
+                // No tags present
                 else action = 0;
             }
             if (action == 1) {
-                ans.add(new TextDiff(0, unformatted.substring(0, toAdd[0]), unformatted.substring(0, toAdd[0])));
-                ans.add(new TextDiff(1, unformatted.substring(toAdd[1], toAdd[2]), unformatted.substring(toAdd[1], toAdd[2])));
+                textDiff.add(new TextDiff(0, unformatted.substring(0, toAdd[0]), unformatted.substring(0, toAdd[0])));
+                textDiff.add(new TextDiff(1, unformatted.substring(toAdd[1], toAdd[2]), unformatted.substring(toAdd[1], toAdd[2])));
                 unformatted = unformatted.substring(toAdd[3]);
             }
             else if (action == 0) {
-                ans.add(new TextDiff(0, unformatted.substring(0, toRemove[0]), unformatted.substring(0, toRemove[0])));
-                ans.add(new TextDiff(-1, unformatted.substring(toRemove[1], toRemove[2]), unformatted.substring(toRemove[1], toRemove[2])));
+                textDiff.add(new TextDiff(0, unformatted.substring(0, toRemove[0]), unformatted.substring(0, toRemove[0])));
+                textDiff.add(new TextDiff(-1, unformatted.substring(toRemove[1], toRemove[2]), unformatted.substring(toRemove[1], toRemove[2])));
                 unformatted = unformatted.substring(toRemove[3]);
             }
             if (lastLength == unformatted.length()) {//unformatted remained the same 2 loop iterations in a row
-                //throw new RuntimeException("Unexpected loop break");//for testing purposes only
-                //expect to just append type 0 and continue on with execution instead of throwing exception
-                ans.add(new TextDiff(0, unformatted, unformatted));
+                textDiff.add(new TextDiff(0, unformatted, unformatted));
                 unformatted = "";
             }
         }
-        for (int i = 0; i < ans.size(); ++i) {
-            ans.get(i).text = jsoupParsePreserveNewline(ans.get(i).text);
-            if (ans.get(i).text.equals("") && ans.get(i).html.equals("")) {
-                ans.remove(i--);
+        for (int i = 0; i < textDiff.size(); ++i) {
+            textDiff.get(i).text = jsoupParsePreserveNewline(textDiff.get(i).text);
+            if (textDiff.get(i).text.equals("") && textDiff.get(i).html.equals("")) {
+                textDiff.remove(i--);
             }
         }
-        return ans;
+        return textDiff;
     }
 
     /**
@@ -471,6 +491,7 @@ public class BillTextUtils
 
     private static final String ADDTAGOPEN = "<B><U>";
     private static final String ADDTAGCLOSE = "</U></B>";
+
     /**
      * Detects HTML text marked as an addition.
      *

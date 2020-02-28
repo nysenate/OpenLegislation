@@ -81,9 +81,9 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
             final String billText = "remove".equals(action)
                     ? ""
                     : billTextNode.getTextContent();
-            String strippedBillText = BillTextUtils.parseHTMLtext(billText);
+            String strippedBillText = BillTextUtils.convertHtmlToPlainText(billText);
             String billTextHtml5 = BillTextUtils.toHTML5WithTags(billText);
-            String billTextDiff = BillTextUtils.changesToJSONString(BillTextUtils.toChanges(billText));//
+            String billTextDiff = BillTextUtils.changesToJSONString(BillTextUtils.toChanges(billText));
 
             Set<BillId> updatedBills = new HashSet<>();
 
