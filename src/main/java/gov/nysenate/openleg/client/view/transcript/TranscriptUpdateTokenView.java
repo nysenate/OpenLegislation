@@ -8,19 +8,19 @@ import java.time.LocalDateTime;
 public class TranscriptUpdateTokenView implements ViewObject
 {
     private TranscriptIdView transcriptId;
-    private LocalDateTime dateTime;
+    private LocalDateTime updateDateTime;
 
     public TranscriptUpdateTokenView(TranscriptUpdateToken token) {
         this.transcriptId = new TranscriptIdView(token.getTranscriptId());
-        this.dateTime = token.getUpdateDateTime();
+        this.updateDateTime = token.getUpdateDateTime();
     }
 
     public TranscriptIdView getTranscriptId() {
         return transcriptId;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getUpdateDateTime() {
+        return updateDateTime;
     }
 
     @Override

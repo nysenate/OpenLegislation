@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.controller.pdf;
 
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
@@ -20,10 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "/pdf/transcripts")
-public class TranscriptPdfCtrl
+public class TranscriptPdfCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptPdfCtrl.class);
 
@@ -34,16 +36,17 @@ public class TranscriptPdfCtrl
      * Single Transcript PDF retrieval
      * -------------------------------
      *
-     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{filename}/
+     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{dateTime}/
      *
      * Request Parameters: None.
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping("/{filename}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String filename, HttpServletResponse response)
+    @RequestMapping("/{dateTime}")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, HttpServletResponse response)
             throws IOException {
-        TranscriptId transcriptId = new TranscriptId(filename);
+        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
+        TranscriptId transcriptId = new TranscriptId(localDateTime);
         try {
             Transcript transcript = transcriptData.getTranscript(transcriptId);
             ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();

@@ -4,8 +4,6 @@ import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.base.Version;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,22 +14,20 @@ import static org.junit.Assert.assertEquals;
 @Category(UnitTest.class)
 public class BillVersionTest
 {
-    private static final Logger logger = LoggerFactory.getLogger(BillVersionTest.class);
-
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         assertEquals("", Version.of(" ").toString());
         assertEquals("A", Version.of("A ").toString());
     }
 
     @Test
-    public void testName() throws Exception {
+    public void testName() {
         assertEquals("ORIGINAL", Version.of(" ").name());
         assertEquals("A", Version.of("A").name());
     }
 
     @Test
-    public void testOf_WhitespaceReturnsDefault() throws Exception {
+    public void testOf_WhitespaceReturnsDefault() {
         String s1 = "";
         String s2 = " ";
         String s3 = "      ";
@@ -43,7 +39,7 @@ public class BillVersionTest
     }
 
     @Test
-    public void testGetValue_Succeeds() throws Exception {
+    public void testGetValue_Succeeds() {
         String s1 = "a";
         String s2 = "A   ";
         String s3 = " z";
@@ -55,13 +51,13 @@ public class BillVersionTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetValue_Fails() throws Exception {
+    public void testGetValue_Fails() {
         String invalid = "z1";
         Version.of(invalid);
     }
 
     @Test
-    public void testComparable() throws Exception {
+    public void testComparable() {
         List<Version> versions = Arrays.asList(Version.Z, Version.B, Version.ORIGINAL, Version.D);
         Collections.sort(versions);
         List<Version> sorted = Arrays.asList(Version.ORIGINAL, Version.B, Version.D, Version.Z);
@@ -69,7 +65,7 @@ public class BillVersionTest
     }
 
     @Test
-    public void testGetVersionsBefore() throws Exception {
-        logger.info("{}", Version.before(Version.A).get(0).name());
+    public void testGetVersionsBefore() {
+        assertEquals(Version.before(Version.A).get(0), Version.ORIGINAL);
     }
 }
