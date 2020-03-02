@@ -51,12 +51,9 @@ public class BillLawCodeParser {
             String actionString = chapter.split(" ")[0].replaceAll(",", "");
             if (LawActionType.lookupAction(actionString).isPresent())
                 currAction = LawActionType.lookupAction(actionString).get();
-            // We can't parse this action, so we'll go to the next chapter.
-            else
-            {
-                // TODO: remove after testing
-//                if (!actionString.equals("Amc") && !actionString.contains("Acc"))
-//                    System.out.println("Bad action: " + actionString);
+            // We can't parse this action, so we'll skip it.
+            else {
+                chapterList.add(chapter.split(",", 2)[1]);
                 continue;
             }
 
@@ -65,17 +62,16 @@ public class BillLawCodeParser {
             // Can't match a list of unconsolidated chapters.
             if (chapter.contains(" Chaps "))
                 continue;
-            chapter = chapter.replaceAll(",? generally$", ", generally").replaceAll(", L$", " L");
+            chapter = chapter.replaceAll(",? generally$", ", generally").replaceAll(" L,", ",").replaceAll(" L( |$)", " ").trim();
 
             String[] tokens = chapter.split("(,| of the) ");
             if (tokens.length == 1)
                 tokens = chapter.split("&");
             // The chapter title is usually the last item in the list delimited by commas.
             String chapterName = tokens[tokens.length - 1].trim();
-            if (chapterName.equalsIgnoreCase("generally")) {
-                if (tokens.length == 1)
-                    continue;
-                chapterName = tokens[tokens.length - 2];
+            if (chapterName.equalsIgnoreCase("generally") || (tokens.length == 1 && !chapterName.contains("§"))) {
+                if (tokens.length != 1)
+                    chapterName = tokens[tokens.length - 2];
                 if (chapterName.contains(actionString)) {
                     general = true;
                     chapterName = chapterName.replaceFirst(actionString, "").trim();
@@ -89,6 +85,15 @@ public class BillLawCodeParser {
             }
             if (chapterName.toLowerCase().matches(".*various (law|chapter)s?.*"))
                 continue;
+
+            if (chapterName.contains("§")) {
+                // If what should be the chapter name has section labels, then the chapter name was
+                // not properly found, and is probably in the next String.
+                if (i != chapterList.size()-1) {
+                    chapterList.set(i+1, chapter + ", " + chapterList.get(i+1));
+                    continue;
+                }
+            }
 
             String firstWord = chapterName.split(" ", 2)[0];
             Optional<LawActionType> misplacedAction = LawActionType.lookupAction(firstWord);
@@ -107,24 +112,11 @@ public class BillLawCodeParser {
                         chapterList.add(chapter.substring(0, commaIndex) + "," + chapter.substring(commaIndex));
                     continue;
                 }
-                if (chapter.endsWith(" L")) {
-                    chapterName = chapter.replaceFirst(actionString, "").trim();
-                    general = true;
-                }
             }
 
-            if (chapterName.contains("§")) {
-                // If what should be the chapter name has section labels, then the chapter name was
-                // not properly found, and is probably in the next String.
-                if (i != chapterList.size() - 1) {
-                    chapterList.set(i + 1, chapter + ", " + chapterList.get(i + 1));
-                    continue;
-                }
-            }
             Optional<LawChapterCode> currChapter = LawChapterCode.lookupCitation(chapterName);
-            if (!currChapter.isPresent()) {
+            if (!currChapter.isPresent())
                 continue;
-            }
             if (general)
                 putLawEffect(currAction, currChapter.get().toString() + " (generally)", mapping);
             else
@@ -182,29 +174,27 @@ public class BillLawCodeParser {
                     // anything beyond this level of detail is extraneous
                     break;
                 }
+                if (i == tokenList.size()-1)
+                    System.out.println();
             }
         }
     }
 
     private static String processQualifier(String token, LawChapterCode chapter, List<String> context) {
         // Rules start with R and sections with §, but we don't need these characters
-        if (token.charAt(0) == 'R' && (token.length() > 1 && Character.isDigit(token.charAt(1)))) {
+        if (token.charAt(0) == 'R' && (token.length() > 1 && Character.isDigit(token.charAt(1))))
             // If the token starts with an R followed by a number, then it is a rule
             token = token.substring(1);
-        }
         token = token.toUpperCase().replaceAll("§", "");
         // Sometimes the article/title names have Roman Numerals in only the first half
         String[] splitToken = token.split("-");
-        if (splitToken.length > 0) {
-            boolean nonNumerical = false;
-            if (context.size() > 0) {
-                nonNumerical = !chapter.hasNumericalTitles() && context.get(context.size()-1).equals("T");
-            }
-            // Only convert Roman Numerals to numbers when the names of the levels are numerical (eg Title 5 not Title E)
-            if (isRomanNumeral(splitToken[0]) && !nonNumerical && splitToken[0].length() > 0){
-                splitToken[0] = romanNumeralValue(splitToken[0]);
-                token = String.join("-", splitToken);
-            }
+        boolean nonNumerical = false;
+        if (context.size() > 0)
+            nonNumerical = !chapter.hasNumericalTitles() && context.get(context.size()-1).equals("T");
+        // Only convert Roman Numerals to numbers when the names of the levels are numerical (eg Title 5 not Title E)
+        if (isRomanNumeral(splitToken[0]) && !nonNumerical){
+            splitToken[0] = romanNumeralValue(splitToken[0]);
+            token = String.join("-", splitToken);
         }
         return token;
     }
@@ -227,22 +217,23 @@ public class BillLawCodeParser {
     }
 
     private static boolean isSectionNumber(String s) {
-        return s != null && (s.matches("R?§*\\d*\\.?\\d+-?.*") || isRomanNumeral(s) || s.matches("[A-Z]"));
+        return s.matches("R?§*\\d*\\.?\\d+-?.*") || isRomanNumeral(s) || s.matches("[A-Z]");
     }
 
     private static boolean isRomanNumeral(String s) {
-        return s != null && (s.matches("(L?X{0,3}|IX)|(IV|V?I{0,3})") ||
-                (s.split("-").length > 1 && isRomanNumeral(s.split("-")[0])));
+        boolean first = s.matches("[IVXL]+");
+        boolean second = s.split("-").length > 1;
+        //boolean third = isRomanNumeral(s.split("-")[0]);
+        return s.matches("[IVXL]+") ||
+                (s.split("-").length > 1 && isRomanNumeral(s.split("-")[0]));
     }
 
     private static boolean finished(List<String> tokenList, int i) {
         // Indicates whether tokenList[i] is the last token necessary to fully qualify a LawDocId within a citation
-        if (i == tokenList.size() - 1) {
-            // there are no more tokens left
+        if (i == tokenList.size() - 1)
             return true;
-        }
         // the section ends with a range of subsections
-        boolean range = (i < tokenList.size() - 2 && tokenList.get(i+2).equals("-"));
+        boolean range = (i < tokenList.size() - 2 && tokenList.get(i+2).startsWith("-"));
         // the section has no more relevant information
         boolean unnecessary = !divisionIndicators.contains(tokenList.get(i+1).toLowerCase()) &&
                 !isSectionNumber(tokenList.get(i+1));
@@ -256,13 +247,11 @@ public class BillLawCodeParser {
         String section = chapter.toString() + (leaf ? context.get(context.size()-1) : String.join("", context.subList(0, context.size())));
         putLawEffect(action, section, mapping);
         // The last added level of context will be replaced by a new one for the next law section
-        if (context.size() > 1 || leaf) {
+        if (context.size() > 1 || leaf)
             context.remove(context.size()-1);
-        }
         // The context created by the new names of laws needs to be reset because their locations are irrelevant
-        if (action == LawActionType.REN_TO) {
+        if (action == LawActionType.REN_TO)
             context.clear();
-        }
     }
 
     private static void putLawEffect(LawActionType action, String section, Map<LawActionType, TreeSet<String>> mapping) {
@@ -299,7 +288,7 @@ public class BillLawCodeParser {
             else
                 val += romanCharValue(s.charAt(i));
         }
-        val += romanCharValue(s.charAt(s.length() - 1));
+            val += romanCharValue(s.charAt(s.length() - 1));
         return Integer.toString(val);
     }
 }

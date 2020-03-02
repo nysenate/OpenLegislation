@@ -108,19 +108,16 @@ public class LawCodeParserTest {
 
     @Test
     // Tests to make sure law volumes that are amended generally are handled properly
-    public void generallyTest() {
+    public void generallyTests() {
         // A486, 2019
         put(AMEND, "BSC630", "LLC609", "LAB199-A", "LLC1102", "LAB663", "CVP6212", "BSC624",
                 "CVP6201", "CVP6223", "CVP6210", "CVP6211", "LIE (generally)");
         compareToLawCode("Amd Lien L, generally; amd §§199-a & 663, Lab L; amd §§6201, 6210, 6211, " +
                 "6223 & R6212, CPLR; amd §§624 & 630, BC L; amd §§609 & 1102, Lim Lil L");
-    }
-
-    @Test
-    public void variousGenerallyTest() {
         // S1527, 2019
         put(AMEND, "PBH (generally)");
         compareToLawCode("Amd Pub Health L, generally");
+
     }
 
     @Test
@@ -144,6 +141,13 @@ public class LawCodeParserTest {
         // A616, 2019
         put(REPEAL, "LAB590");
         compareToLawCode("Rpld §590 sub 11, Lab L");
+
+        put(AMEND, "RCO12");
+        compareToLawCode("Amd §12, Rel Corp L");
+
+        put(AMEND, "PBO1-104", "PBO14-100", "PBO14-114", "PBO30");
+        put(ADD, "PBO2-128", "PBO6-125", "PBO18-100");
+        compareToLawCode("Amd §§1-104, 14-100 & 14-114, add §§2-128 & 6-125 & Art 18 §18-100; amd §30, Pub Off L");
     }
 
     @Test
@@ -158,6 +162,9 @@ public class LawCodeParserTest {
         put(AMEND, "AGM71-Z", "AGM71-Y", "AGMA4-D");
         put(ADD, "STF97-YYYY", "AGMA4-D");
         compareToLawCode("Amd Art 4-D Head, §§71-y & 71-z, add §§71-aa - 71-dd, Ag & Mkts L; add §97-yyyy, St Fin");
+
+        put(ADD, "LABA20-D");
+        compareToLawCode("Add Art 20-D §§760 -765, Lab L");
     }
 
 
@@ -182,17 +189,13 @@ public class LawCodeParserTest {
     }
 
     @Test
-    // Tests that only the old name of renamed articles are included
-    public void renameSimpleTest() {
+    // Tests that the new context created by "Art 10" is ignored
+    public void renameTests() {
         // A270, 2015
         put(ADD, "LAB465");
         put(RENAME, "LAB465");
         compareToLawCode("Ren §465 to be §466, add §465, Lab L");
-    }
 
-    @Test
-    // Tests that the new context created by "Art 10" is ignored
-    public void renameTest() {
         // S405, 2017
         put(ADD, "CVRA9");
         put(RENAME, "CVR90", "CVR91");
@@ -233,11 +236,10 @@ public class LawCodeParserTest {
         // S6742, 2009
         put(ADD, "PBHA2T6");
         compareToLawCode("Add Art 2 Title VI §§266 - 266-c, Pub Health L");
-    }
 
-    @Test
-    // Test Roman Numeral Parsing and make sure that Title 2, 3, 4, and 5 are all under Article 10
-    public void romanNumeralTest2() {
+        put(ADD, "PBGA9");
+        compareToLawCode("Add Art IX §§170 - 176, Pub Hous L");
+
         // A8217, 2009
         put(AMEND, "CVP1311-A", "TAX1825", "CVP1313", "EXC21",
                 "CPL (generally)", "CVP1310", "PEN (generally)");
@@ -318,6 +320,9 @@ public class LawCodeParserTest {
         put(ADD, "EDN6507-A");
         compareToLawCode("Add §6507-a Ed L");
 
+        put(AMEND, "PBO87");
+        compareToLawCode("amd §87 Pub Off L");
+
         put(AMEND, "ISC (generally)");
         compareToLawCode("Amd Isc L");
     }
@@ -331,6 +336,9 @@ public class LawCodeParserTest {
         put(ADD, "RSSA23");
         compareToLawCode("add Art 23 §§1300 - 1304; R & SS L");
 
+        put(AMEND, "ISC (generally)", "PBH4406-D", "PBH4406-C", "PBH4901", "PBH4902", "PBH4905");
+        compareToLawCode("Amd Ins L; generally; amd §§4406-d, 4406-c, 4901, 4902 & 4905, Pub Health L");
+
         compareToLawCode("Amd §§666, 200, 645 & 648, rpld §668, add §201-a; NYC Chart;");
     }
 
@@ -338,6 +346,19 @@ public class LawCodeParserTest {
     public void missingSpaceTest() {
         put(ADD, "UDA45");
         compareToLawCode("Add §45,UDC Act");
+    }
+
+    @Test
+    public void emptyMapping() {
+        compareToLawCode("Amd Chap 899 of 1984");
+        compareToLawCode("Amd Chaps 50, 53, 54 & 55 of 2008");
+        assertEquals("{}", BillLawCodeParser.parse("N/A", false));
+    }
+
+    @Test
+    public void badActionTest() {
+        put(REPEAL, "SOS384-B");
+        compareToLawCode("Amc §384-b, rpld §384-b sub 6, Soc Serv L");
     }
 
     @Ignore

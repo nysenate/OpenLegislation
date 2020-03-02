@@ -537,9 +537,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public boolean hasValidLaws(Version version)  {
         // Indicates whether the laws referenced by this bill version exist in our database.
-        if (version == null || !hasAmendment(version) || amendPublishStatusMap.get(version) == null) {
+        if (version == null || !hasAmendment(version) || amendPublishStatusMap.get(version) == null)
             return false;
-        }
         LocalDateTime publishDate = amendPublishStatusMap.get(version).getEffectDateTime();
         LocalDateTime lawStartDate = Year.of(2014).atDay(1).atStartOfDay();
         return publishDate != null && publishDate.isAfter(lawStartDate);
