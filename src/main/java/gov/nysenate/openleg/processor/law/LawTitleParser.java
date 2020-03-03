@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
+import gov.nysenate.openleg.processor.bill.RomanNumerals;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
@@ -42,18 +43,6 @@ public class LawTitleParser
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     protected final static String NO_TITLE = "No title";
-
-    /** For use in Roman numeral conversion. */
-    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
-    static {
-        NUMERALS.put(50, "L");
-        NUMERALS.put(40, "XL");
-        NUMERALS.put(10, "X");
-        NUMERALS.put(9, "IX");
-        NUMERALS.put(5, "V");
-        NUMERALS.put(4, "IV");
-        NUMERALS.put(1, "I");
-    }
 
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
@@ -197,19 +186,6 @@ public class LawTitleParser
     }
 
     /**
-     * Quickly converts a number to a Roman numeral. Used to display Articles
-     * as Roman numerals, as they are in the Constitution text.
-     * @param number to convert.
-     * @return a Roman numeral.
-     */
-    private static String toNumeral(int number) {
-        if (number == 0)
-            return "";
-        int next = NUMERALS.floorKey(number);
-        return NUMERALS.get(next) + toNumeral(number-next);
-    }
-
-    /**
      * Quickly converts a number 1-12 or 101-112 to a word.
      * @param number to convert.
      * @return a word/phrase.
@@ -252,7 +228,7 @@ public class LawTitleParser
         Matcher idMatch = idNumPattern.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
             int num = Integer.parseInt(idMatch.group(1));
-            String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
+            String options = idMatch.group(1) + "|" + RomanNumerals.intToNumeral(num) + "|" + toWord(num);
             Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())

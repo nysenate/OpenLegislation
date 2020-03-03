@@ -359,6 +359,8 @@ public class LawCodeParserTest {
     public void badActionTest() {
         put(REPEAL, "SOS384-B");
         compareToLawCode("Amc §384-b, rpld §384-b sub 6, Soc Serv L");
+
+        compareToLawCode("amd§454, Bank L");
     }
 
     @Ignore

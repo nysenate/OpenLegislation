@@ -53,7 +53,8 @@ public class BillLawCodeParser {
                 currAction = LawActionType.lookupAction(actionString).get();
             // We can't parse this action, so we'll skip it.
             else {
-                chapterList.add(chapter.split(",", 2)[1]);
+                if (chapter.contains(","))
+                    chapterList.add(chapter.split(",", 2)[1]);
                 continue;
             }
 
@@ -78,7 +79,7 @@ public class BillLawCodeParser {
                 }
                 // Sometimes, the chapter name comes with a separate action. For example, Rpld §101, amd UJCA, generally;
                 else {
-                    chapterList.add(chapterName + ", generally".trim());
+                    chapterList.add((chapterName + ", generally").trim());
                     chapter = chapter.replaceAll(", " + chapterName + ".*", "");
                     chapterName = chapterName.replaceFirst(".*? ", "");
                 }
@@ -128,24 +129,24 @@ public class BillLawCodeParser {
     private static void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction, Map<LawActionType, TreeSet<String>> mapping) {
         // Listing subsections gives us some trouble, so we'll manually remove them.
         chapter = chapter.replaceAll(" subs .*? & .*?,", ",");
-        // This function processes all the effects on a single volume of the law code
-        // Sections/Articles of the specified chapter are separated by "," and "&"
         LinkedList<String> articleList = new LinkedList<>(
             Splitter.on(Pattern.compile("[&,]+")).trimResults().omitEmptyStrings().splitToList(chapter));
 
         // The list "context" will specify the full path to a law document, eg Art 27 Title 27 §§27-2701 will have
         //  context=[A27, T27, 27-2701] when it is ready to be added to the map
-        List<String> context = new LinkedList<>();
+        LinkedList<String> context = new LinkedList<>();
         for (String article : articleList) {
             // Parse each section word-by-word
             LinkedList<String> tokenList = new LinkedList<>(
                 Splitter.on(Pattern.compile(" +")).trimResults().omitEmptyStrings().splitToList(article));
             // Indicates whether we just parsed a new division title (Art, Part, or Title)
             boolean newDivision = false;
-            for (int i = 0; i < tokenList.size(); i++) {
+            for (int i = 0; ; i++) {
                 String token = tokenList.get(i);
-                // If token indicates a new level of division, then we add the first letter of the division to the context
-                // also adjust the context list if we enter a new part/article/title
+                if (token.equalsIgnoreCase("various")) {
+                    putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
+                    break;
+                }
                 if (isNewDivisionIndicator(context, tokenList, i)) {
                     context.add(token.toUpperCase().substring(0,1));
                     newDivision = true;
@@ -153,47 +154,28 @@ public class BillLawCodeParser {
                 else if (isSectionNumber(token)) {
                     // Parse the possible Roman Numerals in the current token
                     token = processQualifier(token, currChapter, context);
-                    if (newDivision)
-                        context.add(context.remove(context.size()-1) + token);
-                    else
-                        context.add(token);
+                    context.add((newDivision ? context.pollLast() : "") + token);
                     newDivision = false;
                 }
-                else if (token.equalsIgnoreCase("various")) {
-                    putLawEffect(currAction, currChapter.toString() + " (generally)", mapping);
+                currAction = LawActionType.lookupAction(token).orElse(currAction);
+                if (finished(tokenList, i))
                     break;
-                }
-                else if (LawActionType.lookupAction(token).isPresent())
-                    currAction = LawActionType.lookupAction(token).get();
-                // If the next token is not a "Title/Part/Art" qualifier or 2 tokens ahead is a -, then we have
-                // finished with that code
-                // ( a "-" character after the next section name means we'll link to the parent law doc, not the sections)
-                if (finished(tokenList, i)) {
-                    if (context.size() > 0)
-                        addLawEffect(currAction, currChapter, context, mapping);
-                    // anything beyond this level of detail is extraneous
-                    break;
-                }
-                if (i == tokenList.size()-1)
-                    System.out.println();
             }
+            addLawEffect(currAction, currChapter, context, mapping);
         }
     }
 
-    private static String processQualifier(String token, LawChapterCode chapter, List<String> context) {
+    private static String processQualifier(String token, LawChapterCode chapter, LinkedList<String> context) {
         // Rules start with R and sections with §, but we don't need these characters
-        if (token.charAt(0) == 'R' && (token.length() > 1 && Character.isDigit(token.charAt(1))))
-            // If the token starts with an R followed by a number, then it is a rule
-            token = token.substring(1);
-        token = token.toUpperCase().replaceAll("§", "");
+        token = token.toUpperCase().replaceAll("(^R)|§", "");
         // Sometimes the article/title names have Roman Numerals in only the first half
-        String[] splitToken = token.split("-");
+        String[] splitToken = token.split("-", 2);
         boolean nonNumerical = false;
         if (context.size() > 0)
-            nonNumerical = !chapter.hasNumericalTitles() && context.get(context.size()-1).equals("T");
+            nonNumerical = !chapter.hasNumericalTitles() && context.peekLast().equals("T");
         // Only convert Roman Numerals to numbers when the names of the levels are numerical (eg Title 5 not Title E)
         if (isRomanNumeral(splitToken[0]) && !nonNumerical){
-            splitToken[0] = romanNumeralValue(splitToken[0]);
+            splitToken[0] = Integer.toString(RomanNumerals.numeralToInt(splitToken[0]));
             token = String.join("-", splitToken);
         }
         return token;
@@ -206,7 +188,7 @@ public class BillLawCodeParser {
         String s = tokens.get(idx);
         if (!divisionIndicators.contains(s.toLowerCase()) || tokens.subList(0, idx).contains(s))
             return false;
-        for (int i=0; i<context.size(); i++){
+        for (int i = 0; i < context.size(); i++){
             // If the division indicator has been seen before, the first letter will already be in context
             if (context.get(i).charAt(0) == s.toUpperCase().charAt(0)){
                 context.remove(i);
@@ -217,15 +199,11 @@ public class BillLawCodeParser {
     }
 
     private static boolean isSectionNumber(String s) {
-        return s.matches("R?§*\\d*\\.?\\d+-?.*") || isRomanNumeral(s) || s.matches("[A-Z]");
+        return s.matches("R?§*\\d*[.-]?\\d+.*") || isRomanNumeral(s);
     }
 
     private static boolean isRomanNumeral(String s) {
-        boolean first = s.matches("[IVXL]+");
-        boolean second = s.split("-").length > 1;
-        //boolean third = isRomanNumeral(s.split("-")[0]);
-        return s.matches("[IVXL]+") ||
-                (s.split("-").length > 1 && isRomanNumeral(s.split("-")[0]));
+        return s.matches("[IVXL]+(-[IVXL]+)?");
     }
 
     private static boolean finished(List<String> tokenList, int i) {
@@ -237,18 +215,20 @@ public class BillLawCodeParser {
         // the section has no more relevant information
         boolean unnecessary = !divisionIndicators.contains(tokenList.get(i+1).toLowerCase()) &&
                 !isSectionNumber(tokenList.get(i+1));
-        return range || unnecessary && !tokenList.get(i + 1).equalsIgnoreCase("various");
+        return range || unnecessary && !tokenList.get(i+1).equalsIgnoreCase("various");
     }
 
-    private static void addLawEffect(LawActionType action, LawChapterCode chapter, List<String> context, Map<LawActionType, TreeSet<String>> mapping) {
+    private static void addLawEffect(LawActionType action, LawChapterCode chapter, LinkedList<String> context, Map<LawActionType, TreeSet<String>> mapping) {
+        if (context.isEmpty())
+            return;
         // Adds the proposed change described by "action" onto the law described by "context" and "chapter"
         // If the latest item in context doesn't begin with a letter, then we are at the lowest level of the law tree (section)
-        boolean leaf = Character.isDigit(context.get(context.size()-1).charAt(0));
-        String section = chapter.toString() + (leaf ? context.get(context.size()-1) : String.join("", context.subList(0, context.size())));
+        boolean leaf = Character.isDigit(context.peekLast().charAt(0));
+        String section = chapter.toString() + (leaf ? context.peekLast() : String.join("", context.subList(0, context.size())));
         putLawEffect(action, section, mapping);
         // The last added level of context will be replaced by a new one for the next law section
         if (context.size() > 1 || leaf)
-            context.remove(context.size()-1);
+            context.pollLast();
         // The context created by the new names of laws needs to be reset because their locations are irrelevant
         if (action == LawActionType.REN_TO)
             context.clear();
@@ -261,34 +241,5 @@ public class BillLawCodeParser {
             mapping.putIfAbsent(action, new TreeSet<>());
             mapping.get(action).add(section);
         }
-    }
-
-    private static int romanCharValue(char letter) {
-        switch (letter) {
-            case 'L':
-                return 50;
-            case 'X':
-                return 10;
-            case 'V':
-                return 5;
-            case 'I':
-                return 1;
-            default:
-                return 0;
-        }
-    }
-
-    private static String romanNumeralValue(String s) {
-        // Converts a Roman Numeral string to the equivalent Arabic value string (eg romanNumeralValue("XIV") = "14")
-        // Only works for uppercase strings with characters up to 'C'
-        int val = 0;
-        for (int i = 0; i < s.length() - 1; i++) {
-            if (romanCharValue(s.charAt(i)) < romanCharValue(s.charAt(i + 1)))
-                val -= romanCharValue(s.charAt(i));
-            else
-                val += romanCharValue(s.charAt(i));
-        }
-            val += romanCharValue(s.charAt(s.length() - 1));
-        return Integer.toString(val);
     }
 }
