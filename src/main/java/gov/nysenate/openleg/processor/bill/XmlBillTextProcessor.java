@@ -82,8 +82,8 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
                     ? ""
                     : billTextNode.getTextContent();
             String strippedBillText = BillTextUtils.convertHtmlToPlainText(billText);
-            String billTextHtml5 = BillTextUtils.toHTML5WithTags(billText);
-            String billTextDiff = BillTextUtils.changesToJSONString(BillTextUtils.toChanges(billText));
+//            String billTextHtml5 = BillTextUtils.toHTML5WithTags(billText);
+//            String billTextDiff = BillTextUtils.changesToJSONString(BillTextUtils.toChanges(billText));
 
             Set<BillId> updatedBills = new HashSet<>();
 
@@ -91,7 +91,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
 
             // For Resolutions only apply to the bill from the filename
             if (filenamePrintNo.getBillType().isResolution()) {
-                applyBillText(filenamePrintNo, billText, strippedBillText, billTextHtml5, billTextDiff, legDataFragment);
+                applyBillText(filenamePrintNo, billText, strippedBillText, null, null, legDataFragment);
                 updatedBills.add(filenamePrintNo);
             } else {
                 // Apply special formatting for bill text
@@ -99,12 +99,12 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
                 // Apply to senate and/or assembly versions if referenced
                 if (!StringUtils.isBlank(senhse)) {
                     BillId senateId = new BillId(senhse + senno, sessionYear, senamd);
-                    applyBillText(senateId, billText, strippedBillText, billTextHtml5, billTextDiff, legDataFragment);
+                    applyBillText(senateId, billText, strippedBillText, null, null, legDataFragment);
                     updatedBills.add(senateId);
                 }
                 if (!StringUtils.isBlank(asmhse)) {
                     BillId assemblyId = new BillId(asmhse + asmno, sessionYear, asmamd);
-                    applyBillText(assemblyId, billText, strippedBillText, billTextHtml5, billTextDiff, legDataFragment);
+                    applyBillText(assemblyId, billText, strippedBillText, null, null, legDataFragment);
                     updatedBills.add(assemblyId);
                 }
             }

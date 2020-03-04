@@ -45,6 +45,9 @@ public class BillAmendment implements Serializable, Cloneable
     /** The full bill text in various formats.  Not all formats are always loaded to save space */
     protected Map<BillTextFormat, String> fullTextMap = new HashMap<>();
 
+    /** The bill text **/
+    private BillText billText;
+
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
 

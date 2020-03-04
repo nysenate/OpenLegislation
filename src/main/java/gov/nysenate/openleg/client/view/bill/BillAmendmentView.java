@@ -7,6 +7,7 @@ import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillTextFormat;
+import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class BillAmendmentView extends BillIdView
     protected String fullText;
     protected String fullTextHtml;
     protected String fullTextHtml5;
-    protected List<BillTextUtils.TextDiff> fullTextDiff;
+    protected List<TextDiff> fullTextDiff;
     protected ListView<MemberView> coSponsors;
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
@@ -54,7 +55,7 @@ public class BillAmendmentView extends BillIdView
             this.fullTextHtml = billAmendment.getFullText(HTML);
             this.fullTextHtml5 = billAmendment.getFullText(HTML5);
             try {
-                BillTextUtils.TextDiff[] textDiffArray = new ObjectMapper().readValue(billAmendment.getFullText(DIFF), BillTextUtils.TextDiff[].class);
+                TextDiff[] textDiffArray = new ObjectMapper().readValue(billAmendment.getFullText(DIFF), TextDiff[].class);
                 this.fullTextDiff = Arrays.asList(textDiffArray);
             }
             catch (Exception e) {
@@ -137,7 +138,7 @@ public class BillAmendmentView extends BillIdView
         return fullTextHtml5;
     }
 
-    public List<BillTextUtils.TextDiff> getFullTextDiff() {
+    public List<TextDiff> getFullTextDiff() {
         return fullTextDiff;
     }
 }
