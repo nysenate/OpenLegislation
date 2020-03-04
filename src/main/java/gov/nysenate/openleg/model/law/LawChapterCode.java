@@ -9,8 +9,7 @@ import java.util.regex.Pattern;
 import static gov.nysenate.openleg.model.law.LawType.*;
 
 /**
- * Current enumeration of all law chapters. It is possible that new laws chapters may come
- * in as part of an update so this listing should be maintained accordingly.
+ * Current enumeration of all law chapters.
  */
 public enum LawChapterCode
 {
@@ -68,7 +67,7 @@ public enum LawChapterCode
     MHR("Municipal Home Rule", CONSOLIDATED),
     NAV("Navigation", CONSOLIDATED),
     PPD("New York State Printing and Public Documents", CONSOLIDATED),
-    NPC("Not-For-Profit Corporation", CONSOLIDATED),
+    NPC("Not-for-Profit Corporation", CONSOLIDATED),
     PAR("Parks, Recreation and Historic Preservation", CONSOLIDATED),
     PTR("Partnership", CONSOLIDATED),
     PEN("Penal", CONSOLIDATED),
@@ -192,7 +191,6 @@ public enum LawChapterCode
      * @return an Optional of the matching code, or an empty one if a code was not found.
      */
     public static Optional<LawChapterCode> lookupCitation(String citation) {
-        String original = citation;
         if (citation == null)
             throw new IllegalArgumentException("Null citation supplied.");
         if (citation.trim().length() < 2 || citation.startsWith("NYC LL"))

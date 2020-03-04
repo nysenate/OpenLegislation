@@ -83,7 +83,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amendment.setMultiSponsors(getMultiSponsors(amendParams));
             // Get the votes
             amendment.setVotesMap(getBillVotes(amendParams));
-
         }
         // Set the amendments
         bill.addAmendments(billAmendments);
@@ -460,11 +459,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     public List<CalendarId> getCalendars(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("cs.calendar_year", ASC, "cs.calendar_no", ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_CALENDAR_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
-                (rs, rowNum) -> {
-                    return new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
-                });
+                (rs, rowNum) -> new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
     }
-
 
     /**
      * Updates the bill's same as set.
@@ -485,7 +481,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             });
         }
     }
-
 
     /**
      * Updates the bill's action list into the database.

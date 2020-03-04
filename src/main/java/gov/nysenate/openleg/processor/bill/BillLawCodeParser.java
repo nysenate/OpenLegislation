@@ -5,13 +5,19 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
+import gov.nysenate.openleg.model.law.LawDocumentType;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BillLawCodeParser {
-    private static final Set<String> divisionIndicators = Sets.newHashSet("title", "part", "art");
+    private static final Set<String> divisionIndicators = Sets.newHashSet();
+    static {
+        for (LawDocumentType t : LawDocumentType.values())
+            divisionIndicators.add(t.name().toLowerCase());
+        divisionIndicators.add("art");
+    }
     // We don't have these law chapters.
     private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
     private static final String altGenPattern = "(?i)(Chap \\d+ of \\d+)";

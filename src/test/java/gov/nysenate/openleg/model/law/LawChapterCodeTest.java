@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.law;
 import gov.nysenate.openleg.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 import static org.junit.Assert.*;
 import static gov.nysenate.openleg.model.law.LawChapterCode.*;
 
@@ -82,7 +83,7 @@ public class LawChapterCodeTest {
     }
 
     /**
-     * Tests citations where muliple matching chapters are found.
+     * Tests citations where multiple matching chapters are found.
      */
     @Test
     public void multipleMatchesTest() {

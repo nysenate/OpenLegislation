@@ -40,8 +40,7 @@ public class BillAmendmentView extends BillIdView
         if (billAmendment != null) {
             this.publishDate = publishStatus.getEffectDateTime().toLocalDate();
             this.sameAs = ListView.of(billAmendment.getSameAs().stream()
-                .map(BillIdView::new)
-                .collect(Collectors.toList()));
+                .map(BillIdView::new).collect(Collectors.toList()));
             this.memo = billAmendment.getMemo();
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLawCode();
@@ -50,11 +49,9 @@ public class BillAmendmentView extends BillIdView
             this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
             this.fullTextHtml = billAmendment.getFullText(HTML);
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
-                .map(MemberView::new)
-                .collect(Collectors.toList()));
+                .map(MemberView::new).collect(Collectors.toList()));
             this.multiSponsors = ListView.of(billAmendment.getMultiSponsors().stream()
-                .map(MemberView::new)
-                .collect(Collectors.toList()));
+                .map(MemberView::new).collect(Collectors.toList()));
             this.uniBill = billAmendment.isUniBill();
             this.isStricken = billAmendment.isStricken();
 
@@ -140,20 +137,18 @@ public class BillAmendmentView extends BillIdView
         Map<String, List<String>> relatedLaws = amd.getRelatedLawsMap();
         Map<String, ListView<String>> view = new HashMap<>();
         BillStatusType status = bill.getStatus().getStatusType();
-        boolean passed = (status.equals(BillStatusType.SIGNED_BY_GOV) || status.equals(BillStatusType.ADOPTED));
+        boolean passed = status.equals(BillStatusType.SIGNED_BY_GOV) || status.equals(BillStatusType.ADOPTED);
 
         for (String lawAction : relatedLaws.keySet()) {
-            List<String> urls = new LinkedList<>();
             // The date for most law links will be when the bill was proposed
             String date = publishStatus.getEffectDateTime().toString().substring(0,10);
             // If the bill introduced a new law, then we have to link to the law when the bill was passed
-            if (passed && LawActionType.ADD.compareToString(lawAction)) {
+            if (passed && LawActionType.ADD.compareToString(lawAction))
                 date = bill.getStatus().getActionDate().toString();
-            }
-            boolean amdExists = !(LawActionType.ADD.compareToString(lawAction) && !passed);
-            for (String lawDoc : relatedLaws.get(lawAction)) {
+            boolean amdExists = !LawActionType.ADD.compareToString(lawAction) || passed;
+            List<String> urls = new LinkedList<>();
+            for (String lawDoc : relatedLaws.get(lawAction))
                 urls.add(getLawUrl(date, lawDoc, amdExists));
-            }
             view.put(lawAction, ListView.ofStringList(urls));
         }
         return MapView.of(view);
@@ -162,11 +157,9 @@ public class BillAmendmentView extends BillIdView
     private static String getLawUrl(String date, String lawDoc, boolean exists) {
         // Form a URL from the yyyy-dd-mm date, the lawDocId, and an indicator whether the specific law can be linked
         String url =  "/laws/" + lawDoc.substring(0, 3) + "?date=" + date;
-        if (lawDoc.toLowerCase().contains("generally") || !exists) {
+        if (lawDoc.toLowerCase().contains("generally") || !exists)
             return url;
-        }
-        else {
+        else
             return url + "&location=" + lawDoc.substring(3);
-        }
     }
 }

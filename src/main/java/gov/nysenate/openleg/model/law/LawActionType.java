@@ -22,9 +22,8 @@ public enum LawActionType
         Arrays.stream(values())
                 .forEach(action -> action.getTokens()
                         .forEach(token -> {
-                            if (token != null && !token.trim().isEmpty()) {
+                            if (token != null && !token.trim().isEmpty())
                                 lookupMap.put(token.toUpperCase().trim(), action);
-                            }
                         }));
     }
     private Set<String> tokens;

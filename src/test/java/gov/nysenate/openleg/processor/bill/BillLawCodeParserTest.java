@@ -4,23 +4,17 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.law.LawActionType;
-import gov.nysenate.openleg.model.law.LawChapterCode;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 import static gov.nysenate.openleg.model.law.LawActionType.*;
 
 
 @Category(UnitTest.class)
-public class LawCodeParserTest {
+public class BillLawCodeParserTest {
     private Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
 
     // HELPERS
@@ -77,6 +71,9 @@ public class LawCodeParserTest {
         put(AMEND, "ELN4-117", "ELN8-504", "ELN17-108", "ELN8-502",
             "ELN8-510", "ELN8-508");
         compareToLawCode("Amd §§4-117, 8-502, 8-504, 8-508, 8-510 & 17-108, add §8-503, El L");
+
+        put(REPEAL, "EXC353", "EDN4402");
+        compareToLawCode("Rpld §353 sub 15, Exec L; rpld §4402 sub 1 ¶b sub¶ 3 clause (h), Ed L");
     }
 
     @Test
@@ -362,21 +359,4 @@ public class LawCodeParserTest {
 
         compareToLawCode("amd§454, Bank L");
     }
-
-    @Ignore
-    @Test
-    public void testAll() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("/home/jacob/IdeaProjects/OpenLegislation/src/test/resources/lawCodes.txt"));
-        Pattern lawCodePattern = Pattern.compile("\"(.*)\"");
-        while (scanner.hasNextLine()) {
-            Matcher matcher = lawCodePattern.matcher(scanner.nextLine());
-            if (!matcher.matches())
-                System.out.println("AHHHHH" + matcher);
-            else
-                BillLawCodeParser.parse(matcher.group(1), true);
-        }
-    }
 }
-
-
-
