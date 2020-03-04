@@ -160,30 +160,19 @@
             <md-subheader>Affected Law</md-subheader>
             <md-content>
               <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
-              <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
               <%-- Related Laws --%>
-              <p class="text-medium">Related Laws - {{(bill.amendments.items[curr.amdVersion].relatedLawUrls.size > 0) &&
-                !bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')? '' : 'N/A'}} </p>
-              <div ng-show="!bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')">
-                <md-list ng-repeat="(action, names) in bill.amendments.items[curr.amdVersion].relatedLaws.items">
-                  <md-list-item ng-click="expanded = !expanded">
-                    <p class="text-medium"> {{action.charAt(0) + action.slice(1).toLowerCase().replace('_', 's and ') + 's'}} </p>
-                    <span ng-class="expanded? 'icon-chevron-up' : 'icon-chevron-down'"></span>
-                  </md-list-item>
-                  <md-list-item ng-repeat="name in names.items" ng-show="expanded">
+              <p class="text-medium">Related Laws: {{(bill.amendments.items[curr.amdVersion].relatedLaws.size > 0) ? '' : 'N/A'}} </p>
+              <md-list ng-repeat="(action, names) in bill.amendments.items[curr.amdVersion].relatedLaws.items">
+                <md-list-item ng-click="expanded = !expanded">
+                  <p class="text-medium"> {{action.charAt(0) + action.slice(1).toLowerCase().replace('_', 's and ') + 's'}} </p>
+                  <span ng-class="expanded? 'icon-chevron-up' : 'icon-chevron-down'"></span>
+                </md-list-item>
+                <md-list-item ng-repeat="name in names.items" ng-show="expanded">
                   <span flex-offset="5">
-                  <%-- law URL:  <chapter>?date=<date>&location=<location> (eg EDN?date=2017-01-01&location=3303)
-                  1. If the law volume is amended generally or the new law section has not been added yet,
-                     then we can just link to the entire volume
-                  2. If the bill added a new law section, we have to change the date to when the bill was passed,
-                     not when it was introduced. Otherwise, we'll always link to the law when the bill was introduced--%>
-                  <a class="gray-2-blue" ng-href="${ctxPath}{{bill.amendments.items[curr.amdVersion].relatedLawUrls.items[action].items[$index]}}">
-                    {{name}}
-                  </a>
+                    <p class="gray-2-blue"> {{name}} </p>
                   </span>
-                  </md-list-item>
-                </md-list>
-              </div>
+                </md-list-item>
+              </md-list>
             </md-content>
           </md-card>
           <%-- Identical Previous Legislation --%>
