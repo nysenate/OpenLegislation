@@ -207,7 +207,7 @@ Once running you should be able to view the application at: http://localhost:808
 
 Now we can process the xml data we downloaded in our local Open Legislation environment. This process can take a long time so be prepared to leave it running for up to a day or two.
 
-`curl -XPOST -v -u '<<admin.user>>:<<admin.password>>' localhost:8080/api/3/admin/process/run`
+`curl -XPOST -v -u '<<default.admin.user>>:<<default.admin.password>>' localhost:8080/api/3/admin/process/run`
 
 **NOTE**
 * Do not attempt this on a system with 4GB of ram without changing the cache limits in app.properties
