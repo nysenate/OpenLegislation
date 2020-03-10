@@ -10,7 +10,7 @@ public enum Chamber
 
     private char abbreviation;
 
-    private Chamber(char abbreviation){
+    Chamber(char abbreviation){
         this.abbreviation = abbreviation;
     }
 

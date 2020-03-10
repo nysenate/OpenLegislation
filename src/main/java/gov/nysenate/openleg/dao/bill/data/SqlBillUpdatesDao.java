@@ -180,7 +180,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
                 if (updateTable != null && !updateTable.columns.isEmpty()) {
                     Set<String> columnSet = new HashSet<>(updateTable.columns);
                     data.keySet().retainAll(
-                        data.keySet().stream().filter(col -> columnSet.contains(col)).collect(Collectors.toSet()));
+                        data.keySet().stream().filter(columnSet::contains).collect(Collectors.toSet()));
                 }
             }
             digest.setAction(rs.getString("action"));

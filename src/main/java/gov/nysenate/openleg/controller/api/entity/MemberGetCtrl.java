@@ -71,7 +71,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      */
-    @RequestMapping(value = "/{sessionYear:\\d+}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}}")
     public BaseResponse getMembersByYear(@PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,
                                          @RequestParam(defaultValue = "false") boolean full,
@@ -88,11 +88,11 @@ public class MemberGetCtrl extends BaseCtrl
      * Retrieve information for a member from a session year: (GET) /api/3/members/{sessionYear}/{id}
      * Request Parameters : full - If true, the full member view will be returned.
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{id:\\d+}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{id:\\d+}")
     public BaseResponse getMembersByYear(@PathVariable int id,
                                          @PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "true") boolean full,
-                                         WebRequest request) throws SearchException, MemberNotFoundEx {
+                                         WebRequest request) throws MemberNotFoundEx {
         return new ViewObjectResponse<>(
                 (full) ? new ExtendedMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
                         : new SimpleMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
@@ -127,7 +127,6 @@ public class MemberGetCtrl extends BaseCtrl
                 .map(memberData::getMemberById)
                 .map(member -> full ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()))
                 .collect(Collectors.toList());
-
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
     }
 

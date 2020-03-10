@@ -23,17 +23,14 @@ public class SessionMember extends Member implements Serializable
      *  This shortName is only unique to the scope of a (2 year) session */
     protected String lbdcShortName;
 
-    /** True if the shortname on this member is an alternate shortname */
-    protected boolean alternate;
-
     /** The session year the member is active in. */
     protected SessionYear sessionYear;
 
-    /** Indicates if the member is currently an incumbent. */
-    protected boolean incumbent;
-
     /** The district number the member is serving in during the given session year. */
     protected Integer districtCode;
+
+    /** True if the shortname on this member is an alternate shortname */
+    protected boolean alternate;
 
     /** --- Constructors --- */
 
@@ -49,7 +46,6 @@ public class SessionMember extends Member implements Serializable
         this.sessionMemberId = other.sessionMemberId;
         this.lbdcShortName = other.lbdcShortName;
         this.sessionYear = other.sessionYear;
-        this.incumbent = other.incumbent;
         this.districtCode = other.districtCode;
         this.alternate = other.alternate;
     }
@@ -101,7 +97,6 @@ public class SessionMember extends Member implements Serializable
         this.lbdcShortName = other.getLbdcShortName();
         this.alternate = other.isAlternate();
         this.sessionYear = other.getSessionYear();
-        this.incumbent = other.isIncumbent();
         this.districtCode = other.getDistrictCode();
     }
 
@@ -123,7 +118,7 @@ public class SessionMember extends Member implements Serializable
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + Objects.hash(memberId, sessionYear, chamber, incumbent, districtCode);
+        return 31 * super.hashCode() + Objects.hash(memberId, sessionYear, districtCode);
     }
 
     @Override
@@ -153,14 +148,6 @@ public class SessionMember extends Member implements Serializable
 
     public void setSessionMemberId(int sessionMemberId) {
         this.sessionMemberId = sessionMemberId;
-    }
-
-    public boolean isIncumbent() {
-        return incumbent;
-    }
-
-    public void setIncumbent(boolean incumbent) {
-        this.incumbent = incumbent;
     }
 
     public String getLbdcShortName() {

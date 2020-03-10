@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.entity;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.SessionMember;
