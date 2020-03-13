@@ -145,7 +145,6 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
                     "WHERE mismatch_id = :mismatchId\n"
     )
     ;
-    ;
 
     private String sql;
 

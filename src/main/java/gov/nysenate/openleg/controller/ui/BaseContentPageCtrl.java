@@ -54,7 +54,7 @@ public abstract class BaseContentPageCtrl
      */
     private void initializeMembers() {
         List<Member> allMembers = memberData.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-            .map(m -> new Member(m))
+            .map(m -> new Member(m.getMember()))
             .distinct()
             .collect(Collectors.toList());
         senatorsList = allMembers.stream()

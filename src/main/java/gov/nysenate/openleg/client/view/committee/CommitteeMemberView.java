@@ -9,7 +9,7 @@ public class CommitteeMemberView extends MemberView {
     protected String title;
 
     public CommitteeMemberView(CommitteeMember committeeMember) {
-        super(committeeMember != null ? committeeMember.getMember() : null);
+        super(committeeMember != null ? committeeMember.getSessionMember() : null);
         if (committeeMember != null) {
             this.sequenceNo = committeeMember.getSequenceNo();
             this.title = committeeMember.getTitle() != null ? committeeMember.getTitle().name() : null;

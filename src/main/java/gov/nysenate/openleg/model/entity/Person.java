@@ -47,7 +47,7 @@ public class Person implements Comparable<Person>
     }
 
     public Person (String fullName) {
-        this.fullName = fullName;
+        this.fullName = fullName.trim();
     }
 
     public Person(Person other) {

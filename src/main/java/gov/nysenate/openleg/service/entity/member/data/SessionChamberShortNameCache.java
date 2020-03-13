@@ -153,7 +153,7 @@ public class SessionChamberShortNameCache implements CachingService<String> {
         return genCacheKey(
                 sessionMember.getLbdcShortName(),
                 sessionMember.getSessionYear(),
-                sessionMember.getChamber()
+                sessionMember.getMember().getChamber()
         );
     }
 

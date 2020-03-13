@@ -97,8 +97,8 @@ public class CachedMemberService implements MemberService
         }
         catch (MemberNotFoundEx ex) {
             SessionMember member = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
-            memberDao.updatePerson(member);
-            memberDao.updateMember(member);
+            memberDao.updatePerson(member.getMember());
+            memberDao.updateMember(member.getMember());
             memberDao.updateSessionMember(member);
             eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
             return member;
@@ -121,11 +121,11 @@ public class CachedMemberService implements MemberService
     @Override
     public void updateMembers(List<SessionMember> sessionMembers) {
         Collection<? extends Person> persons = sessionMembers.stream()
-                .collect(Collectors.toMap(Person::getPersonId, Function.identity(), (a,b) -> b))
+                .collect(Collectors.toMap((a -> a.getMember().getPersonId()), SessionMember::getMember, (a, b) -> b))
                 .values();
 
-        Collection<SessionMember> members = sessionMembers.stream()
-                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity(), (a,b) -> b))
+        Collection<Member> members = sessionMembers.stream()
+                .collect(Collectors.toMap(a -> a.getMember().getMemberId(), SessionMember::getMember, (a,b) -> b))
                 .values();
 
         persons.forEach(memberDao::updatePerson);

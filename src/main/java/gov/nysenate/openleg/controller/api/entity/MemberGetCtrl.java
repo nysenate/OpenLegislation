@@ -6,9 +6,9 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -71,7 +71,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      */
-    @RequestMapping(value = "/{sessionYear:\\d{4}}}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}")
     public BaseResponse getMembersByYear(@PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,
                                          @RequestParam(defaultValue = "false") boolean full,
@@ -88,14 +88,14 @@ public class MemberGetCtrl extends BaseCtrl
      * Retrieve information for a member from a session year: (GET) /api/3/members/{sessionYear}/{id}
      * Request Parameters : full - If true, the full member view will be returned.
      */
-    @RequestMapping(value = "/{sessionYear:\\d{4}}/{id:\\d+}")
-    public BaseResponse getMembersByYear(@PathVariable int id,
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{memberId:\\d+}")
+    public BaseResponse getMembersByYear(@PathVariable int memberId,
                                          @PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "true") boolean full,
                                          WebRequest request) throws MemberNotFoundEx {
         return new ViewObjectResponse<>(
-                (full) ? new ExtendedMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
-                        : new SimpleMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
+                (full) ? new FullMemberView(memberData.getMemberById(memberId, SessionYear.of(sessionYear)))
+                        : new SessionMemberView(memberData.getMemberById(memberId, SessionYear.of(sessionYear)))
         );
     }
 
@@ -109,7 +109,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      */
-    @RequestMapping(value = "/{sessionYear}/{chamber:\\D*}")
+    @RequestMapping(value = "/{sessionYear}/{chamber:\\D+}")
     public BaseResponse getMembersByYear(@PathVariable int sessionYear,
                                          @PathVariable String chamber,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,
@@ -125,7 +125,7 @@ public class MemberGetCtrl extends BaseCtrl
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {
         List<ViewObject> memberList = results.getRawResults().stream()
                 .map(memberData::getMemberById)
-                .map(member -> full ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()))
+                .map(member -> full ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()))
                 .collect(Collectors.toList());
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
     }

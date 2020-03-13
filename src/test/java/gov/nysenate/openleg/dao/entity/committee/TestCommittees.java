@@ -33,9 +33,9 @@ public class TestCommittees {
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
             CommitteeMember cm = new CommitteeMember();
-            SessionMember m = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
-            cm.setMember(m);
-            cm.setMajority(m.getMemberId()%2==0);
+            SessionMember sm = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
+            cm.setSessionMember(sm);
+            cm.setMajority(sm.getMember().getMemberId()%2==0);
             cm.setTitle(CommitteeMemberTitle.MEMBER);
             return cm;
         } catch (MemberNotFoundEx memberNotFoundEx) {

@@ -3,8 +3,8 @@ package gov.nysenate.openleg.controller.api.admin;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
-import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
+import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.entity.FullMember;
@@ -31,15 +31,15 @@ public class MemberManageCtrl extends BaseCtrl {
 
     @Autowired MemberService memberService;
 
-    private static class MemberViewList extends ArrayList<ExtendedMemberView>{}
+    private static class MemberViewList extends ArrayList<SessionMemberView>{}
 
     @RequiresPermissions("admin:member:get")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getExtendedMembers(@RequestParam(defaultValue = "false") boolean unverifiedOnly) {
-        Map<Boolean, List<FullMember>> poopTition = memberService.getAllFullMembers().stream()
+        Map<Boolean, List<FullMember>> partition = memberService.getAllFullMembers().stream()
                 .collect(Collectors.partitioningBy(FullMember::isVerified));
-        logger.info("true: {}, false: {}", Optional.ofNullable(poopTition.get(true)).map(List::size).orElse(0),
-                Optional.ofNullable(poopTition.get(false)).map(List::size).orElse(0));
+        logger.info("true: {}, false: {}", Optional.ofNullable(partition.get(true)).map(List::size).orElse(0),
+                Optional.ofNullable(partition.get(false)).map(List::size).orElse(0));
         List<FullMemberView> fullMembers = memberService.getAllFullMembers().stream()
                 .filter(member -> !unverifiedOnly || !member.isVerified())
                 .map(FullMemberView::new)
@@ -51,7 +51,7 @@ public class MemberManageCtrl extends BaseCtrl {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public BaseResponse updateMembers(@RequestBody MemberViewList memberViewList) {
         memberService.updateMembers(memberViewList.stream()
-                .map(ExtendedMemberView::toMember)
+                .map(SessionMemberView::toSessionMember)
                 .collect(Collectors.toList()));
         return new SimpleResponse(true, "members updated", "member-update-success");
     }

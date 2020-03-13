@@ -4,7 +4,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
+import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -84,7 +84,7 @@ public class MemberSearchCtrl extends BaseCtrl
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()));
+            viewtypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
         }
         return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
     }

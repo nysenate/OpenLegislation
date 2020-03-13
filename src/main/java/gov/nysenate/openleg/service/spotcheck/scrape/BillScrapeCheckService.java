@@ -161,7 +161,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
                 for (SessionMember member : vote.getMembersByVote(code)) {
-                    voteMultiList.put(code, member.getLastName());
+                    voteMultiList.put(code, member.getMember().getLastName());
                 }
             }
             BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);

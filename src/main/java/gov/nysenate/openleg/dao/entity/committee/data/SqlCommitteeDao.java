@@ -6,7 +6,6 @@ import gov.nysenate.openleg.dao.entity.member.data.SqlMemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
-import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -273,7 +272,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
-    protected class CommitteeRowMapper implements RowMapper<Committee> {
+    protected static class CommitteeRowMapper implements RowMapper<Committee> {
         @Override
         public Committee mapRow(ResultSet rs, int i) throws SQLException {
             Committee committee = new Committee();
@@ -292,15 +291,15 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
-    protected class CommitteeMemberRowMapper implements RowMapper<CommitteeMember> {
+    protected static class CommitteeMemberRowMapper implements RowMapper<CommitteeMember> {
         @Override
         public CommitteeMember mapRow(ResultSet rs, int i) throws SQLException {
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
             SqlMemberDao.MemberRowMapper memberRowMapper = new SqlMemberDao.MemberRowMapper();
             int sessionMemberId = rs.getInt("session_member_id");
-            committeeMember.setMember(memberRowMapper.mapRow(rs, i));
-            if (committeeMember.getMember().getMemberId() == 0) {
+            committeeMember.setSessionMember(memberRowMapper.mapRow(rs, i));
+            if (committeeMember.getSessionMember().getMember().getMemberId() == 0) {
                 logger.error("Could not retrieve session member " + sessionMemberId);
             }
             committeeMember.setTitle(CommitteeMemberTitle.valueOfSqlEnum(rs.getString("title")));
@@ -379,7 +378,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     private MapSqlParameterSource getCommitteeMemberParams(CommitteeMember committeeMember, CommitteeVersionId cvid) {
         MapSqlParameterSource params = getCommitteeVersionIdParams(cvid);
-        params.addValue("session_member_id", committeeMember.getMember().getSessionMemberId());
+        params.addValue("session_member_id", committeeMember.getSessionMember().getSessionMemberId());
         params.addValue("sequence_no", committeeMember.getSequenceNo());
         params.addValue("title", committeeMember.getTitle().asSqlEnum());
         params.addValue("majority", committeeMember.isMajority());

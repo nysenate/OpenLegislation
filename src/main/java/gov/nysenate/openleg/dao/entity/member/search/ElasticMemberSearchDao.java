@@ -46,7 +46,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
         BulkRequest bulkRequest = new BulkRequest();
         members.stream()
                 .map(FullMemberView::new)
-                .map(mv -> getJsonIndexRequest(memberIndexName, String.valueOf(mv.getMemberId()), mv))
+                .map(fmv -> getJsonIndexRequest(memberIndexName, String.valueOf(fmv.getMemberId()), fmv))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
     }
