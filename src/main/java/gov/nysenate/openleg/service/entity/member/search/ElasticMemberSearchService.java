@@ -188,4 +188,3 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
     }
 }
-

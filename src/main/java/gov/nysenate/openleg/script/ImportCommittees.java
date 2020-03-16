@@ -59,7 +59,7 @@ public class ImportCommittees extends BaseScript {
         File committeeDir = new File(opts.getOptionValue("committeeDir"));
         if (committeeDir.isDirectory()) {
             List<File> yearDirs = Arrays.asList(committeeDir.listFiles(intFileNameFilter));
-            yearDirs.sort((File f1, File f2 ) -> ((Integer) Integer.parseInt(f1.getName())).compareTo(Integer.parseInt(f2.getName())));
+            yearDirs.sort(Comparator.comparingInt((File f) -> Integer.parseInt(f.getName())));
             for (File yearDir : committeeDir.listFiles(intFileNameFilter)) {
                 int year = Integer.parseInt(yearDir.getName());
                 if (yearDir.isDirectory()) {
@@ -144,6 +144,4 @@ public class ImportCommittees extends BaseScript {
         committeeMember.setSessionMember(member);
         return committeeMember;
     }
-
-
 }

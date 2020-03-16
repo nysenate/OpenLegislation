@@ -30,10 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class SessionChamberShortNameCache implements CachingService<String> {
@@ -79,7 +76,7 @@ public class SessionChamberShortNameCache implements CachingService<String> {
 
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(memberCache);
+        return Collections.singletonList(memberCache);
     }
 
     @Override

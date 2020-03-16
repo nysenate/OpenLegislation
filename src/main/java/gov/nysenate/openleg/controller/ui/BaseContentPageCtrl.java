@@ -6,7 +6,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
 import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
@@ -54,7 +53,7 @@ public abstract class BaseContentPageCtrl
      */
     private void initializeMembers() {
         List<Member> allMembers = memberData.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-            .map(m -> new Member(m.getMember()))
+            .map(sm -> new Member(sm.getMember()))
             .distinct()
             .collect(Collectors.toList());
         senatorsList = allMembers.stream()

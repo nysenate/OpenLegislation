@@ -110,7 +110,7 @@ public class TestCommittees {
         return createdCommittees.get(name);
     }
     public List<Committee> getCommittees(){
-        return new ArrayList<Committee>(createdCommittees.values());
+        return new ArrayList<>(createdCommittees.values());
     }
     public void putCommittee(String name, Committee committee){
         createdCommittees.put(name, committee);

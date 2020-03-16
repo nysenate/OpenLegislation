@@ -7,7 +7,6 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
-import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;

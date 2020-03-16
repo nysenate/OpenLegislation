@@ -122,7 +122,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + Objects.hash(member.memberId, sessionYear, districtCode);
+        return Objects.hash(member, sessionYear, districtCode);
     }
 
     @Override

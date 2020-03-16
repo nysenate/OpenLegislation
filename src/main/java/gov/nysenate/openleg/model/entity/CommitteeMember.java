@@ -65,7 +65,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
     /** --- Functional Getters/Setters --- */
 
     public static Comparator<CommitteeMember> getComparator() {
-        return (l,r) -> l.compareTo(r);
+        return CommitteeMember::compareTo;
     }
 
     /** --- Basic Getters/Setters --- */

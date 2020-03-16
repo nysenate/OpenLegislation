@@ -156,5 +156,4 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     public String getSql() {
         return this.sql;
     }
-
 }

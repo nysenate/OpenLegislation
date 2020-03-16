@@ -96,12 +96,12 @@ public class CachedMemberService implements MemberService
             return getMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (MemberNotFoundEx ex) {
-            SessionMember member = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
-            memberDao.updatePerson(member.getMember());
-            memberDao.updateMember(member.getMember());
-            memberDao.updateSessionMember(member);
-            eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
-            return member;
+            SessionMember sessionMember = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
+            memberDao.updatePerson(sessionMember.getMember());
+            memberDao.updateMember(sessionMember.getMember());
+            memberDao.updateSessionMember(sessionMember);
+            eventBus.post(new UnverifiedMemberEvent(sessionMember, LocalDateTime.now()));
+            return sessionMember;
         }
     }
 

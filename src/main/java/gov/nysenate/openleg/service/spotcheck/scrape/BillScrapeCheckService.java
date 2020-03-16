@@ -44,7 +44,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), bill.getBaseBillId());
 
-        //Add mismatches to observation
+        // Add mismatches to observation
 
         // If not found on LRS and not published in openleg, don't create mismatch. LRS removes bills when unpublished.
         Optional<PublishStatus> publishStatus = bill.getPublishStatus(bill.getActiveVersion());
@@ -160,8 +160,8 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             SortedSetMultimap<BillVoteCode, String> voteMultiList = TreeMultimap.create();
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
-                for (SessionMember member : vote.getMembersByVote(code)) {
-                    voteMultiList.put(code, member.getMember().getLastName());
+                for (SessionMember sessionMember : vote.getMembersByVote(code)) {
+                    voteMultiList.put(code, sessionMember.getMember().getLastName());
                 }
             }
             BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);

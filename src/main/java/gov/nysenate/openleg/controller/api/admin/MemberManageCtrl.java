@@ -55,6 +55,4 @@ public class MemberManageCtrl extends BaseCtrl {
                 .collect(Collectors.toList()));
         return new SimpleResponse(true, "members updated", "member-update-success");
     }
-
-
 }

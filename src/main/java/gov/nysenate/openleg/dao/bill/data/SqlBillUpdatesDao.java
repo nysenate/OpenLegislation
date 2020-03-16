@@ -24,6 +24,7 @@ import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILL
 import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_TOKENS;
 import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL;
 import static gov.nysenate.openleg.model.bill.BillUpdateField.*;
+import static gov.nysenate.openleg.dao.base.SqlTable.*;
 
 @Repository
 public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
@@ -46,24 +47,24 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     private final static Map<BillUpdateField, BillUpdateTable> updateMappings = new HashMap<>();
     static {
-        updateMappings.put(PUBLISHED_BILL, new BillUpdateTable(SqlTable.BILL, "published_date_time"));
-        updateMappings.put(ACT_CLAUSE, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "act_clause"));
-        updateMappings.put(ACTION, new BillUpdateTable(SqlTable.BILL_AMENDMENT_ACTION));
-        updateMappings.put(ACTIVE_VERSION, new BillUpdateTable(SqlTable.BILL, "active_version"));
-        updateMappings.put(APPROVAL, new BillUpdateTable(SqlTable.BILL_APPROVAL));
-        updateMappings.put(COSPONSOR, new BillUpdateTable(SqlTable.BILL_AMENDMENT_COSPONSOR));
-        updateMappings.put(FULLTEXT, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "full_text"));
-        updateMappings.put(LAW, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "law_code", "law_section"));
-        updateMappings.put(MEMO, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "sponsor_memo"));
-        updateMappings.put(MULTISPONSOR, new BillUpdateTable(SqlTable.BILL_AMENDMENT_MULTISPONSOR));
-        updateMappings.put(SPONSOR, new BillUpdateTable(SqlTable.BILL_SPONSOR));
-        updateMappings.put(STATUS, new BillUpdateTable(SqlTable.BILL, "status", "status_date", "bill_cal_no",
+        updateMappings.put(PUBLISHED_BILL, new BillUpdateTable(BILL, "published_date_time"));
+        updateMappings.put(ACT_CLAUSE, new BillUpdateTable(BILL_AMENDMENT, "act_clause"));
+        updateMappings.put(ACTION, new BillUpdateTable(BILL_AMENDMENT_ACTION));
+        updateMappings.put(ACTIVE_VERSION, new BillUpdateTable(BILL, "active_version"));
+        updateMappings.put(APPROVAL, new BillUpdateTable(BILL_APPROVAL));
+        updateMappings.put(COSPONSOR, new BillUpdateTable(BILL_AMENDMENT_COSPONSOR));
+        updateMappings.put(FULLTEXT, new BillUpdateTable(BILL_AMENDMENT, "full_text"));
+        updateMappings.put(LAW, new BillUpdateTable(BILL_AMENDMENT, "law_code", "law_section"));
+        updateMappings.put(MEMO, new BillUpdateTable(BILL_AMENDMENT, "sponsor_memo"));
+        updateMappings.put(MULTISPONSOR, new BillUpdateTable(BILL_AMENDMENT_MULTISPONSOR));
+        updateMappings.put(SPONSOR, new BillUpdateTable(BILL_SPONSOR));
+        updateMappings.put(STATUS, new BillUpdateTable(BILL, "status", "status_date", "bill_cal_no",
                                                                       "committee_name", "committee_chamber"));
-        updateMappings.put(STATUS_CODE, new BillUpdateTable(SqlTable.BILL, "status"));
-        updateMappings.put(SUMMARY, new BillUpdateTable(SqlTable.BILL, "summary"));
-        updateMappings.put(TITLE, new BillUpdateTable(SqlTable.BILL, "title"));
-        updateMappings.put(VETO, new BillUpdateTable(SqlTable.BILL_VETO));
-        updateMappings.put(VOTE, new BillUpdateTable(SqlTable.BILL_AMENDMENT_VOTE_INFO));
+        updateMappings.put(STATUS_CODE, new BillUpdateTable(BILL, "status"));
+        updateMappings.put(SUMMARY, new BillUpdateTable(BILL, "summary"));
+        updateMappings.put(TITLE, new BillUpdateTable(BILL, "title"));
+        updateMappings.put(VETO, new BillUpdateTable(BILL_VETO));
+        updateMappings.put(VOTE, new BillUpdateTable(BILL_AMENDMENT_VOTE_INFO));
     }
 
     /** {@inheritDoc} */
