@@ -190,7 +190,7 @@ public class SpotCheckUtils {
      */
     public String getPrimaryShortname(SessionYear sessionYear, int memberId) {
         try {
-            SessionMember sessionMember = memberService.getMemberById(memberId, sessionYear);
+            SessionMember sessionMember = memberService.getSessionMemberById(memberId, sessionYear);
             return sessionMember.getLbdcShortName();
         } catch (MemberNotFoundEx ex) {
             return "<invalid session/memberId: " + sessionYear + "/" + memberId + ">";

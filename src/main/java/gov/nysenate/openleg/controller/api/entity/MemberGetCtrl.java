@@ -52,7 +52,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      offset - Start results from an offset.
      */
     @RequestMapping(value = "")
-    public BaseResponse getMembersByYear(@RequestParam(defaultValue = "shortName:asc") String sort,
+    public BaseResponse getAllMembers(@RequestParam(defaultValue = "shortName:asc") String sort,
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
@@ -88,13 +88,13 @@ public class MemberGetCtrl extends BaseCtrl
      * Request Parameters : full - If true, the full member view will be returned.
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{memberId:\\d+}")
-    public BaseResponse getMembersByYear(@PathVariable int memberId,
+    public BaseResponse getMembersByYearAndId(@PathVariable int memberId,
                                          @PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "true") boolean full,
                                          WebRequest request) throws MemberNotFoundEx {
         return new ViewObjectResponse<>(
-                (full) ? new FullMemberView(memberData.getMemberById(memberId, SessionYear.of(sessionYear)))
-                        : new SessionMemberView(memberData.getMemberById(memberId, SessionYear.of(sessionYear)))
+                (full) ? new FullMemberView(memberData.getFullMemberById(memberId))
+                        : new SessionMemberView(memberData.getSessionMemberById(memberId, SessionYear.of(sessionYear)))
         );
     }
 
@@ -109,7 +109,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      offset - Start results from an offset.
      */
     @RequestMapping(value = "/{sessionYear}/{chamber:\\D+}")
-    public BaseResponse getMembersByYear(@PathVariable int sessionYear,
+    public BaseResponse getMembersByYearAndChamber(@PathVariable int sessionYear,
                                          @PathVariable String chamber,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,
                                          @RequestParam(defaultValue = "false") boolean full,
@@ -123,7 +123,7 @@ public class MemberGetCtrl extends BaseCtrl
 
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {
         List<ViewObject> memberList = results.getRawResults().stream()
-                .map(memberData::getMemberById)
+                .map(memberData::getFullMemberById)
                 .map(member -> full ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()))
                 .collect(Collectors.toList());
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);

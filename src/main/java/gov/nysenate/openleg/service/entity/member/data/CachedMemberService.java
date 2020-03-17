@@ -61,7 +61,7 @@ public class CachedMemberService implements MemberService
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         try {
             FullMember member = fullMemberIdCache.getMemberById(memberId);
             Optional<SessionMember> sessionMembOpt = member.getSessionMemberForYear(sessionYear);
@@ -73,7 +73,7 @@ public class CachedMemberService implements MemberService
     }
 
     @Override
-    public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
+    public FullMember getFullMemberById(int memberId) throws MemberNotFoundEx {
         return fullMemberIdCache.getMemberById(memberId);
     }
 

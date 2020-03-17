@@ -29,18 +29,39 @@ Get member with id 371 during 2013 session year.
 
 .. code-block:: javascript
     {
-        "success" : true,
-        "message" : "",
-        "responseType" : "member",
-        "result" : {
-            "memberId" : 371,                   // The member id.
-            "shortName" : "SEWARD",             // The members short name, uniquely identifies each member during a session.
-            "sessionYear" : 2013,               // The session year.
-            "chamber" : "SENATE",               // The chamber
-            "fullName" : "James L. Seward",     // Members full name.
-            "districtCode" : 51                 // Members district.
-      }
+  "success" : true,
+  "message" : "",
+  "responseType" : "member-sessions",
+  "result" : {
+    "memberId" : 371,
+    "chamber" : "SENATE",
+    "incumbent" : true,
+    "fullName" : "James L. Seward",
+    "shortName" : "SEWARD",
+    "sessionShortNameMap" : {
+      "2013" : [ {
+        "sessionMemberId" : 127,
+        "shortName" : "SEWARD",
+        "sessionYear" : 2013,
+        "districtCode" : 51,
+        "alternate" : false,
+        "memberId" : 371
+      } ]
+    },
+    "person" : {
+      "personId" : 190,
+      "fullName" : "James L. Seward",
+      "firstName" : "James",
+      "middleName" : "L.",
+      "lastName" : "Seward",
+      "email" : "seward@senate.state.ny.us",
+      "prefix" : "Senator",
+      "suffix" : null,
+      "verified" : true,
+      "imgName" : "371_james_l._seward.jpg"
     }
+  }
+}
 
 
 Get a list of members
@@ -95,6 +116,9 @@ Search within a session year
 ::
     (GET) /api/3/members/{sessionYear}/search?term=YOUR_TERM
 
+Note: given a sessionMemberId = #### in a session year yyyy, you can get the member that sessionMemberId is used by with:
+::
+    (GET) /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####
 
 **Required Params**
 

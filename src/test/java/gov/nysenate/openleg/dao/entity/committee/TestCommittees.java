@@ -33,7 +33,7 @@ public class TestCommittees {
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
             CommitteeMember cm = new CommitteeMember();
-            SessionMember sm = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
+            SessionMember sm = memberService.getSessionMemberById((int)triple[1], new SessionYear((int)triple[2]));
             cm.setSessionMember(sm);
             cm.setMajority(sm.getMember().getMemberId()%2==0);
             cm.setTitle(CommitteeMemberTitle.MEMBER);

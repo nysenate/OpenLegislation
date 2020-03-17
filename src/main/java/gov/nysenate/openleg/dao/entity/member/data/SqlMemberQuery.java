@@ -21,7 +21,7 @@ public enum SqlMemberQuery implements BasicSqlQuery
         SELECT_MEMBER_SELECT_FRAGMENT.sql + "\n" + SELECT_MEMBER_TABLE_FRAGMENT.sql
     ),
     SELECT_MEMBER_BY_ID_SQL(
-        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId AND sm.alternate = FALSE"
+        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId"
     ),
     SELECT_MEMBER_BY_ID_SESSION_SQL(
         SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear AND sm.alternate = FALSE"

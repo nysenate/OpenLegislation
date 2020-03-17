@@ -80,7 +80,7 @@ public class MemberSearchCtrl extends BaseCtrl
         for (SearchResult<Integer> result : results.getResults()) {
             FullMember member;
             try {
-                member = memberData.getMemberById(result.getResult());
+                member = memberData.getFullMemberById(result.getResult());
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }

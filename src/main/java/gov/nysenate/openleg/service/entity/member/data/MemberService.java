@@ -21,7 +21,7 @@ public interface MemberService
      * @return Member
      * @throws MemberNotFoundEx If no matching member was found.
      */
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx;
+    public SessionMember getSessionMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx;
 
     /**
      * Retrieves map of session year -> Member for a given member id.
@@ -29,7 +29,7 @@ public interface MemberService
      * @param id int
      * @return Map<Integer, Member>
      */
-    public FullMember getMemberById(int id) throws MemberNotFoundEx;
+    public FullMember getFullMemberById(int id) throws MemberNotFoundEx;
 
     /**
      * Retrieve a member by session member id
