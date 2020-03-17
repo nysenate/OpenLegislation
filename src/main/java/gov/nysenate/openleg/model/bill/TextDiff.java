@@ -9,6 +9,7 @@ import java.util.Objects;
  * TextDiff.html is the escaped html (contains HTML escape sequences)
  */
 public class TextDiff {
+
     /**
      * The type of text relative to the previous amendment's text.
      *
@@ -39,11 +40,26 @@ public class TextDiff {
         this.cssClasses = cssClasses;
     }
 
+    protected String getPlainText() {
+        String text = "";
+        switch(this.type) {
+            case 0:
+                text = rawText();
+                break;
+            case 1:
+                text = rawText().toUpperCase();
+                break;
+            case -1:
+                text = "[" + rawText() + "]";
+                break;
+        }
+        return text;
+    }
+
     public String rawText() {
         return rawText;
     }
 
-    // TODO Try to remove this.
     public void setRawText(String rawText) {
         this.rawText = rawText;
     }

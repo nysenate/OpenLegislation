@@ -11,6 +11,13 @@ public class BillText {
         this.diffs = diffs;
     }
 
+    public String getPlainText() {
+        StringBuilder plainText = new StringBuilder();
+        for (TextDiff diff : this.diffs) {
+            plainText.append(diff.getPlainText());
+        }
+        return plainText.toString();
+    }
 
     // TODO toPlainText, toHtmlText, to...
 
