@@ -110,10 +110,12 @@ public class BillLawCodeParser {
                     int commaIndex = beforeChapterName.end();
                     // If there is nothing after the section label, then there is no law chapter
                     // here, and it's probably in the next String in the list.
-                    if (commaIndex == chapter.length() && i != chapterList.size()-1)
-                        chapterList.set(i+1, chapter + ", " + chapterList.get(i+1));
+                    if (commaIndex == chapter.length()) {
+                        if (i != chapterList.size() - 1)
+                            chapterList.set(i + 1, chapter + ", " + chapterList.get(i + 1));
+                    }
                     // If a comma is already present, then a space was missing after it.
-                    else if (chapter.codePointAt(commaIndex) == ',')
+                    else if (chapter.charAt(commaIndex) == ',')
                         chapterList.add(chapter.substring(0, commaIndex+1) + " " + chapter.substring(commaIndex+1));
                     else
                         chapterList.add(chapter.substring(0, commaIndex) + "," + chapter.substring(commaIndex));
