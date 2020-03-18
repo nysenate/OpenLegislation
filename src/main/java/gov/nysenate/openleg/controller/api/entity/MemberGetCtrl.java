@@ -108,7 +108,7 @@ public class MemberGetCtrl extends BaseCtrl
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      */
-    @RequestMapping(value = "/{sessionYear}/{chamber:\\D+}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamber:\\D+}")
     public BaseResponse getMembersByYearAndChamber(@PathVariable int sessionYear,
                                          @PathVariable String chamber,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,

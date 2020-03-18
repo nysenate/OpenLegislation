@@ -22,6 +22,13 @@ public class Member extends Person {
         this.memberId = memberId;
     }
 
+    public Member(Person person, int memberId, Chamber chamber, boolean incumbent) {
+        super(person);
+        this.memberId = memberId;
+        this.chamber = chamber;
+        this.incumbent = incumbent;
+    }
+
     public Member(Member member) {
         super(member);
         this.memberId = member.memberId;

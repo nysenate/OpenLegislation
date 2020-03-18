@@ -52,7 +52,7 @@ public abstract class BaseContentPageCtrl
      * static..
      */
     private void initializeMembers() {
-        List<Member> allMembers = memberData.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        List<Member> allMembers = memberData.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
             .map(sm -> new Member(sm.getMember()))
             .distinct()
             .collect(Collectors.toList());

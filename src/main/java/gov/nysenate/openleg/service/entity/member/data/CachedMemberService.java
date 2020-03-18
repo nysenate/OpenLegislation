@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,21 +78,21 @@ public class CachedMemberService implements MemberService
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
         return sessionMemberIdCache.getMemberBySessionId(sessionMemberId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
         return sessionChamberShortNameCache.getMemberByShortName(lbdcShortName, sessionYear, chamber);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
+    public SessionMember getSessionMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         try {
-            return getMemberByShortName(lbdcShortName, sessionYear, chamber);
+            return getSessionMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (MemberNotFoundEx ex) {
             SessionMember sessionMember = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
@@ -107,7 +106,7 @@ public class CachedMemberService implements MemberService
 
     /** {@inheritDoc} */
     @Override
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+    public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         return fullMemberIdCache.getAllMembers(sortOrder, limOff);
     }
 

@@ -140,7 +140,7 @@ public class ImportCommittees extends BaseScript {
 
     private CommitteeMember getCommitteeMemberFromJson(JsonNode memberNode, int year, Chamber chamber) throws MemberNotFoundEx{
         CommitteeMember committeeMember = new CommitteeMember();
-        SessionMember member = memberService.getMemberByShortName(memberNode.get("shortName").textValue(), SessionYear.of(year), chamber);
+        SessionMember member = memberService.getSessionMemberByShortName(memberNode.get("shortName").textValue(), SessionYear.of(year), chamber);
         committeeMember.setSessionMember(member);
         return committeeMember;
     }

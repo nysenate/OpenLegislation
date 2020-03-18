@@ -178,7 +178,7 @@ public class SpotCheckUtils {
             return null;
         }
         try {
-            SessionMember sessionMember = memberService.getMemberByShortName(shortname, sessionYear, chamber);
+            SessionMember sessionMember = memberService.getSessionMemberByShortName(shortname, sessionYear, chamber);
             return getPrimaryShortname(sessionYear, sessionMember.getMember().getMemberId());
         } catch (MemberNotFoundEx ex) {
             return "<unknown shortname: " + sessionYear + " " + chamber + " " + shortname + ">";

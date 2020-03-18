@@ -44,6 +44,15 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         this.sessionYear = sessionYear;
     }
 
+    public SessionMember(int sessionMemberId, Member member, String lbdcShortName, SessionYear sessionYear, Integer districtCode, boolean alternate) {
+        this.sessionMemberId = sessionMemberId;
+        this.member = member;
+        this.lbdcShortName = lbdcShortName;
+        this.sessionYear = sessionYear;
+        this.districtCode = districtCode;
+        this.alternate = alternate;
+    }
+
     public SessionMember(SessionMember other) {
         this.member = other.member;
         this.sessionMemberId = other.sessionMemberId;
@@ -104,6 +113,13 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         this.districtCode = other.getDistrictCode();
     }
 
+    public boolean exactEquals(SessionMember sessionMember) {
+        return this.equals(sessionMember) &&
+                Objects.equals(this.sessionMemberId, sessionMember.sessionMemberId) &&
+                Objects.equals(this.lbdcShortName, sessionMember.lbdcShortName) &&
+                Objects.equals(this.alternate, sessionMember.alternate);
+    }
+
     /** --- Overrides --- */
 
     /**
@@ -113,11 +129,10 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
         final SessionMember other = (SessionMember) obj;
         return Objects.equals(this.sessionYear, other.sessionYear) &&
-               Objects.equals(this.member.incumbent, other.member.incumbent) &&
-               Objects.equals(this.districtCode, other.districtCode);
+               Objects.equals(this.districtCode, other.districtCode) &&
+               Objects.equals(this.member, other.member);
     }
 
     @Override
@@ -135,7 +150,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         return ComparisonChain.start()
                 .compare(this.member, o.member)
                 .compare(this.sessionYear, o.sessionYear)
-                .compareFalseFirst(this.alternate, o.alternate)
+                .compareTrueFirst(this.alternate, o.alternate)
                 .compare(this.lbdcShortName, o.lbdcShortName)
                 .result();
     }

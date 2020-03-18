@@ -50,6 +50,20 @@ public class Person implements Comparable<Person>
         this.fullName = fullName.trim();
     }
 
+    public Person(Integer personId, String fullName, String firstName, String middleName, String
+            lastName, String email, String pref, String suffix, boolean verified, String imgName) {
+        this.personId = personId;
+        this.fullName = fullName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.prefix = pref;
+        this.suffix = suffix;
+        this.verified = verified;
+        this.imgName = imgName;
+    }
+
     public Person(Person other) {
         this.personId = other.personId;
         this.prefix = other.prefix;

@@ -42,6 +42,25 @@ public class FullMemberView extends MemberView {
         return sessionShortNameMap;
     }
 
+    public boolean exactEquals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FullMemberView that = (FullMemberView) o;
+        if (!Objects.equals(sessionShortNameMap.keySet(), that.sessionShortNameMap.keySet()))
+            return false;
+        for (Integer key : sessionShortNameMap.keySet()) {
+            List<SessionMemberView> thisSms = sessionShortNameMap.get(key);
+            List<SessionMemberView> thatSms = that.sessionShortNameMap.get(key);
+            if (thisSms.size() != thatSms.size())
+                return false;
+            for (int i = 0; i < thisSms.size(); i++) {
+                if (!thisSms.get(i).toSessionMember().exactEquals(thatSms.get(i).toSessionMember()))
+                    return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String getViewType() {
         return "member-sessions";

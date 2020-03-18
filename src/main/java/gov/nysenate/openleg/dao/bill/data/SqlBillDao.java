@@ -304,7 +304,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             int sessionMemberId = pair.getRight();
             if (sessionMemberId > 0) {
                 try {
-                    sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
+                    sponsor.setMember(memberService.getSessionMemberBySessionId(sessionMemberId));
                 } catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
                 }
@@ -326,7 +326,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                     baseParams, Integer.class);
             for (int id : sessionMemberIds) {
                 try {
-                    sessionMembers.add(memberService.getMemberBySessionId(id));
+                    sessionMembers.add(memberService.getSessionMemberBySessionId(id));
                 } catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
                 }
@@ -378,7 +378,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<SessionMember> sessionMembers = new ArrayList<>();
         for (int id : sessionMemberIds) {
             try {
-                sessionMembers.add(memberService.getMemberBySessionId(id));
+                sessionMembers.add(memberService.getSessionMemberBySessionId(id));
             } catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
             }
@@ -394,7 +394,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<SessionMember> sessionMembers = new ArrayList<>();
         for (int id : sessionMemberIds) {
             try {
-                sessionMembers.add(memberService.getMemberBySessionId(id));
+                sessionMembers.add(memberService.getSessionMemberBySessionId(id));
             } catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
             }
@@ -412,7 +412,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         for (BillVote billVote : billVotes) {
             for (SessionMember member : billVote.getMemberVotes().values()) {
                 try {
-                    SessionMember fullMember = memberService.getMemberBySessionId(member.getSessionMemberId());
+                    SessionMember fullMember = memberService.getSessionMemberBySessionId(member.getSessionMemberId());
                     member.updateFromOther(fullMember);
                 } catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);

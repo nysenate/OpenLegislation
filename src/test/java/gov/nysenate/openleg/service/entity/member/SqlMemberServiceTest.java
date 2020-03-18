@@ -22,7 +22,7 @@ public class SqlMemberServiceTest extends BaseTests
 
     @Test
     public void testGetMemberByShortName_UsesCache() {
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberBySessionId(667)));
+        logger.info(OutputUtils.toJson(sqlMemberService.getSessionMemberBySessionId(667)));
     }
 
     @Test(expected = MemberNotFoundEx.class)
