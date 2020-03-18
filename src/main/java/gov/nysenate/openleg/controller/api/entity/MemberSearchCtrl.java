@@ -44,7 +44,7 @@ public class MemberSearchCtrl extends BaseCtrl
      *                      offset - Start results from offset
      */
     @RequestMapping(value = "/search")
-    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+    public BaseResponse globalSearch(@RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
@@ -64,9 +64,9 @@ public class MemberSearchCtrl extends BaseCtrl
      *                      limit - Limit the number of results (default 50)
      *                      offset - Start results from offset
      */
-    @RequestMapping(value = "/{sessionYear}/search")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/search")
     public BaseResponse globalSearch(@PathVariable int sessionYear,
-                                     @RequestParam(required = true) String term,
+                                     @RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
@@ -84,7 +84,7 @@ public class MemberSearchCtrl extends BaseCtrl
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
+            viewtypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().orElse(null)));
         }
         return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
     }

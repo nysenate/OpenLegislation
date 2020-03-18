@@ -27,17 +27,23 @@ public class MemberGetCtrlTest extends ApiTest {
     @Autowired
     private MemberGetCtrl testCtrl;
 
+    /**
+     * Basically just ensures the MemberGetCtrl has been properly injected.
+     */
     @Test
     public void getAllMembersTest() throws SearchException, MemberNotFoundEx {
         testCtrl.getAllMembers("shortName:asc", true, testRequest);
     }
 
+    /**
+     * Tests that all members of a certain year are correctly retrieved.
+     */
     @Test
     public void getMembersByYearTest() throws SearchException, MemberNotFoundEx {
         BaseResponse baseResponse = testCtrl.getMembersByYear(2015, "shortName:asc", false, testRequest);
         ListViewResponse<?> listResponse = (ListViewResponse<?>) baseResponse;
         assertEquals(listResponse.getTotal(), 224);
-
+        // If just SessionMemberViews are returned, there should be no alternates.
         long numAlternates = listResponse.getResult().getItems().stream().filter(sm ->
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
         assertEquals(numAlternates, 0);
