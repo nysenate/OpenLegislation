@@ -5,10 +5,12 @@ import gov.nysenate.openleg.model.bill.TextDiff;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
+@Service
 public class BillTextDiffProcessor {
 
     /**
@@ -17,15 +19,20 @@ public class BillTextDiffProcessor {
      * @param rawHTML String
      * @return ArrayList&lt;TextDiff&gt;
      */
-    public BillText processBillText(final String rawHTML) {
+    public BillText processBillText(String rawHTML) {
         if (rawHTML == null) {
             return new BillText(new ArrayList<>());
         }
 
+        // Remove any empty lines at the end of the text.
+        rawHTML = rawHTML.trim();
+
         ArrayList<TextDiff> textDiffs = new ArrayList<>();
         String billText = rawHTML;
-        if (billText.contains("</STYLE>")) {
-            billText = billText.substring(billText.indexOf("</STYLE>") + 8);
+
+        // Remove STYLE and BASEFONT element before starting.
+        if (billText.contains("<PRE")) {
+            billText = billText.substring(billText.indexOf("<PRE"));
         }
 
         // Create TextDiffSearch obj for each type of diff we want to search for.
@@ -99,12 +106,12 @@ public class BillTextDiffProcessor {
      * @return String
      */
     private static String jsoupParsePreserveNewline(String html) {
+        // Remove lines containing only a single space.
+        html = html.replaceAll("(?<=\n|^) ?(?=\n)", "");
         final String leadingNewlines = leadingWhitespace(html);
         html = html.substring(leadingNewlines.length());
         Document document = Jsoup.parse(html);
         document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
-        document.select("br").append("\\n");
-        document.select("p").prepend("\\n\\n");
         String s = document.html().replaceAll("\\\\n", "\n");
         return leadingNewlines + Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
     }

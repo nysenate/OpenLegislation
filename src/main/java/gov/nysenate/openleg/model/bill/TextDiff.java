@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * TextDiff.text is the plain text
- * TextDiff.html is the escaped html (contains HTML escape sequences)
- */
 public class TextDiff {
 
     /**
      * The type of text relative to the previous amendment's text.
-     *
+     * <p>
      * if 0: This text is unchanged.
      * if 1: This text has been added.
      * if -1: This text was removed.
@@ -26,12 +22,11 @@ public class TextDiff {
 
     /**
      * List of css classes that describe how this text should be styled.
-     * // TODO Use enum for this instead of string?
      */
     private List<String> cssClasses;
 
     public TextDiff(int type, String rawText) {
-       this(type, rawText, new ArrayList<>());
+        this(type, rawText, new ArrayList<>());
     }
 
     public TextDiff(int type, String rawText, List<String> cssClasses) {
@@ -40,9 +35,14 @@ public class TextDiff {
         this.cssClasses = cssClasses;
     }
 
+    /**
+     * Converts this text diff into the plain text format.
+     *
+     * @return
+     */
     protected String getPlainText() {
         String text = "";
-        switch(this.type) {
+        switch (this.type) {
             case 0:
                 text = rawText();
                 break;
@@ -50,10 +50,35 @@ public class TextDiff {
                 text = rawText().toUpperCase();
                 break;
             case -1:
-                text = "[" + rawText() + "]";
+                text = rawText();
                 break;
         }
         return text;
+    }
+
+    /**
+     * Converts this text diff into the html format.
+     *
+     * @return
+     */
+    protected String getHtmlText() {
+        if (cssClasses.isEmpty()) {
+            return rawText();
+        }
+
+        StringBuilder text = new StringBuilder();
+        text.append("<span class=\"");
+        for (int i = 0; i < cssClasses.size(); i++) {
+            if (i != 0) {
+                text.append(" ");
+            }
+            text.append(cssClasses.get(i));
+        }
+
+        text.append("\">")
+                .append(rawText())
+                .append("</span>");
+        return text.toString();
     }
 
     public String rawText() {

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillText;
 import gov.nysenate.openleg.model.bill.TextDiff;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,7 +49,6 @@ public class BillTextDiffProcessorTest {
         assertEquals(expected, actual);
     }
 
-    // TODO XML should be validated and throw an exception if not valid.
     @Ignore
     @Test
     public void invalidXml() {
@@ -119,7 +119,7 @@ public class BillTextDiffProcessorTest {
 
     @Test
     public void whitespaceIsPreserved() {
-        String text = "     Commends      the <B><U>     Albany fire department</U></B>";
+        String text = "<PRE>     Commends      the <B><U>     Albany fire department</U></B></PRE>";
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
@@ -144,9 +144,11 @@ public class BillTextDiffProcessorTest {
     }
 
     @Test
-    public void styleElementIsRemoved() {
+    public void styleAndBaseFontElementIsRemoved() {
         String text = "\n<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n" +
                 "        P.brk {page-break-before:always}--></STYLE>\n" +
+                "<BASEFONT SIZE=3>\n" +
+                "<PRE WIDTH=\"127\">\n" +
                 "            STATE OF NEW YORK";
         BillText actual = textProcessor.processBillText(text);
 
@@ -165,24 +167,27 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\n\nSTATE OF NEW YORK\nCommends the city of Albany"));
+        diffs.add(new TextDiff(0, "\nSTATE OF NEW YORK\nCommends the city of Albany"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
 
     @Test
     public void fullTest() {
-        String text = "\n<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n" +
-                "        P.brk {page-break-before:always}--></STYLE>\n" +
-                "<FONT SIZE=5><B>     STATE OF NEW YORK</B></FONT>\n" +
+        String text = "<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n" +
+                "P.brk {page-break-before:always}--></STYLE>\n" +
+                "<BASEFONT SIZE=3>\n" +
+                "<PRE WIDTH=\"127\">\n" +
+                "\n" +
+                "<FONT SIZE=5><B>                STATE OF NEW YORK</B></FONT>\n" +
                 "\n" +
                 "<B>Commends</B> the city of <B><S>albany</S></B><B><U>Albany</U></B> New York\n" +
                 "on <B><S>there</S></B><B><U>their</U></B> work.";
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\n"));
-        diffs.add(new TextDiff(0, "     STATE OF NEW YORK", HEADER_CLASSES));
+        diffs.add(new TextDiff(0, "\n\n"));
+        diffs.add(new TextDiff(0, "                STATE OF NEW YORK", HEADER_CLASSES));
         diffs.add(new TextDiff(0, "\n\n"));
         diffs.add(new TextDiff(0, "Commends", BOLD_CLASSES));
         diffs.add(new TextDiff(0, " the city of "));
@@ -192,6 +197,34 @@ public class BillTextDiffProcessorTest {
         diffs.add(new TextDiff(-1, "there", REMOVED_CLASSES));
         diffs.add(new TextDiff(1, "their", ADDED_CLASSES));
         diffs.add(new TextDiff(0, " work."));
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void onlyOneEmptyLineBetweenPages() {
+        String text = "<PRE>\n" +
+                "         EXPLANATION--Matter in <B><U>italics</U></B> (underscored) is new; matter in brackets\n" +
+                "                              [<B><S> </S></B>] is old law to be omitted.\n" +
+                "                                                                   LBD03867-09-9\n" +
+                "</PRE><P CLASS=\"brk\"><PRE WIDTH=\"127\">\n" + // This should be a single empty line.
+                "A. 1133--D                          2\n" +
+                "\n" +
+                "1  provision  in  any section contained within a Part, including the effec-";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(0, "\n         EXPLANATION--Matter in "));
+        diffs.add(new TextDiff(1, "italics", ADDED_CLASSES));
+        diffs.add(new TextDiff(0, " (underscored) is new; matter in brackets\n                              ["));
+        diffs.add(new TextDiff(-1, " ", REMOVED_CLASSES));
+        diffs.add(new TextDiff(0, "] is old law to be omitted.\n" +
+                "                                                                   LBD03867-09-9\n" +
+                "\n" +
+                "A. 1133--D                          2\n" +
+                "\n" +
+                "1  provision  in  any section contained within a Part, including the effec-"));
+
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
