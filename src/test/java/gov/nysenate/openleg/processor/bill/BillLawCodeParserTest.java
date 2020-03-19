@@ -359,4 +359,10 @@ public class BillLawCodeParserTest {
 
         compareToLawCode("amd§454, Bank L");
     }
+
+    @Test
+    public void testNoOutOfBoundsException() {
+        put(ADD, "PEN145.75") ;
+        compareToLawCode("Add §145.75, Pen L; amd §510.10");
+    }
 }
