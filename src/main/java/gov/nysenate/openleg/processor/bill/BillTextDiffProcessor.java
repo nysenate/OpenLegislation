@@ -56,17 +56,24 @@ public class BillTextDiffProcessor {
                 0,
                 Arrays.asList("ol-header"),
                 billText);
+        TextDiffSearch pageBreakSearch = new TextDiffSearch(
+                Pattern.compile("<P CLASS=\"brk\">"),
+                0,
+                Arrays.asList("ol-page-break"),
+                billText);
 
         // Find the first match for all diff types.
         addedSearch.findNext();
         removedSearch.findNext();
         boldSearch.findNext();
         headerSearch.findNext();
+        pageBreakSearch.findNext();
 
-        List<TextDiffSearch> results = Arrays.asList(addedSearch, removedSearch, boldSearch, headerSearch);
+        // Loop through the bill text, creating diffs for all matches and text in between.
+        List<TextDiffSearch> results = Arrays.asList(addedSearch, removedSearch, boldSearch, headerSearch, pageBreakSearch);
         int currentIndex = 0;
 
-        while(currentIndex < billText.length()) {
+        while (currentIndex < billText.length()) {
             // Find which search result is next in the bill text.
             Optional<TextDiffSearch> result = results.stream()
                     .filter(r -> r.getStartingIndex() >= 0)
@@ -74,12 +81,18 @@ public class BillTextDiffProcessor {
 
             if (!result.isPresent()) {
                 // No more diffs found, add the final text and break out of loop.
-                textDiffs.add(new TextDiff(0, billText.substring(currentIndex, billText.length())));
+                String text = billText.substring(currentIndex, billText.length());
+                if (text.length() > 0) {
+                    textDiffs.add(new TextDiff(0, text));
+                }
                 break;
             }
             if (result.get().getStartingIndex() > currentIndex) {
                 // Add a diff containing the unchanged text from before the text of this result.
-                textDiffs.add(new TextDiff(0, billText.substring(currentIndex, result.get().getStartingIndex())));
+                String text = billText.substring(currentIndex, result.get().getStartingIndex());
+                if (text.length() > 0) {
+                    textDiffs.add(new TextDiff(0, text));
+                }
             }
 
             textDiffs.add(result.get().createDiff());
@@ -90,8 +103,8 @@ public class BillTextDiffProcessor {
 
         // Remove erroneous xml elements and empty text diffs.
         for (int i = 0; i < textDiffs.size(); ++i) {
-            textDiffs.get(i).setRawText(jsoupParsePreserveNewline(textDiffs.get(i).rawText()));
-            if (textDiffs.get(i).rawText().equals("")) {
+            textDiffs.get(i).setRawText(jsoupParsePreserveNewline(textDiffs.get(i).getRawText()));
+            if (textDiffs.get(i).getRawText().equals("") && textDiffs.get(i).getCssClasses().size() == 0) {
                 textDiffs.remove(i--);
             }
         }

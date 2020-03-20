@@ -32,7 +32,13 @@ public class TextDiffSearch {
         if (matcher.find()) {
             this.startingIndex = matcher.start();
             this.endingIndex = matcher.end();
-            this.matchingText = matcher.group(1);
+            if (matcher.groupCount() > 0) {
+                this.matchingText = matcher.group(1);
+            }
+            else {
+                // If there is no group to match, its always an empty string.
+                this.matchingText = "";
+            }
         }
         else {
             this.startingIndex = -1;

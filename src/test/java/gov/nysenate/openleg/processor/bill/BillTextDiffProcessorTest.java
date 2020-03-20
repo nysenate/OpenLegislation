@@ -25,6 +25,7 @@ public class BillTextDiffProcessorTest {
     private static final List<String> REMOVED_CLASSES = Arrays.asList("ol-changed", "ol-removed");
     private static final List<String> BOLD_CLASSES = Arrays.asList("ol-bold");
     private static final List<String> HEADER_CLASSES = Arrays.asList("ol-header");
+    private static final List<String> PAGE_BREAK_CLASSES = Arrays.asList("ol-page-break");
 
     @Before
     public void before() {
@@ -113,6 +114,32 @@ public class BillTextDiffProcessorTest {
         List<TextDiff> diffs = new ArrayList<>();
         diffs.add(new TextDiff(0, "Commends", BOLD_CLASSES));
         diffs.add(new TextDiff(0, " the Albany fire department"));
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void recognizesHeaderText() {
+        String text = "<FONT SIZE=5><B>                STATE OF NEW YORK</B></FONT>";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(0, "                STATE OF NEW YORK", HEADER_CLASSES));
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void recognizesPageBreak() {
+        String text = "page one text\n" +
+                "<P CLASS=\"brk\">\n" +
+                "page two text";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(0, "page one text\n"));
+        diffs.add(new TextDiff(0, "", PAGE_BREAK_CLASSES));
+        diffs.add(new TextDiff(0, "\npage two text"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -219,8 +246,9 @@ public class BillTextDiffProcessorTest {
         diffs.add(new TextDiff(0, " (underscored) is new; matter in brackets\n                              ["));
         diffs.add(new TextDiff(-1, " ", REMOVED_CLASSES));
         diffs.add(new TextDiff(0, "] is old law to be omitted.\n" +
-                "                                                                   LBD03867-09-9\n" +
-                "\n" +
+                "                                                                   LBD03867-09-9\n"));
+        diffs.add(new TextDiff(0, "", PAGE_BREAK_CLASSES));
+        diffs.add(new TextDiff(0, "\n" +
                 "A. 1133--D                          2\n" +
                 "\n" +
                 "1  provision  in  any section contained within a Part, including the effec-"));

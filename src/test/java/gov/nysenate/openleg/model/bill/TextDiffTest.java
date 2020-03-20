@@ -18,6 +18,10 @@ public class TextDiffTest {
     private static final List<String> BOLD_CLASSES = Arrays.asList("ol-bold");
     private static final List<String> HEADER_CLASSES = Arrays.asList("ol-header");
 
+    /**
+     * Plain text format tests
+     */
+
     @Test
     public void givenUnchangedText_plainFormatIsUnchanged() {
         TextDiff diff = new TextDiff(0, "Some unchanged basic\n text.");
@@ -41,6 +45,10 @@ public class TextDiffTest {
         String expected = "THIS TEXT HAS BEEN\nADDED.";
         assertEquals(expected, actual);
     }
+
+    /**
+     * Html text format tests
+     */
 
     @Test
     public void givenUnchangedText_htmlFormatUnchanged() {
