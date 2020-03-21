@@ -32,8 +32,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberGetCtrl extends BaseCtrl
 {
-    private final MemberService memberData;
-    private final MemberSearchService memberSearch;
+    protected final MemberService memberData;
+    protected final MemberSearchService memberSearch;
 
     @Autowired
     public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch) {

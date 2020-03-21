@@ -29,8 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberSearchCtrl extends BaseCtrl
 {
-    @Autowired private MemberService memberData;
-    @Autowired private MemberSearchService memberSearch;
+    @Autowired protected MemberService memberData;
+    @Autowired protected MemberSearchService memberSearch;
 
     /**
      * Member Search API
@@ -76,7 +76,7 @@ public class MemberSearchCtrl extends BaseCtrl
     }
 
     private BaseResponse getSearchResponse(SearchResults<Integer> results, boolean full, LimitOffset limOff) throws SearchException {
-        List<ViewObject> viewtypes = new ArrayList<>();
+        List<ViewObject> viewTypes = new ArrayList<>();
         for (SearchResult<Integer> result : results.getResults()) {
             FullMember member;
             try {
@@ -84,8 +84,8 @@ public class MemberSearchCtrl extends BaseCtrl
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().orElse(null)));
+            viewTypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
         }
-        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
+        return ListViewResponse.of(viewTypes, results.getTotalResults(), limOff);
     }
 }

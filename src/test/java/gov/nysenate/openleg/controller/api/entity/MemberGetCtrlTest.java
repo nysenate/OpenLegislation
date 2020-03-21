@@ -13,6 +13,7 @@ import gov.nysenate.openleg.controller.api.ApiTest;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,16 @@ public class MemberGetCtrlTest extends ApiTest {
     @Autowired
     private MemberGetCtrl testCtrl;
 
+    @Override
+    protected IndexedSearchService<?> getIndex() {
+        return ((IndexedSearchService<?>) testCtrl.memberSearch);
+    }
+
     /**
-     * Basically just ensures the MemberGetCtrl has been properly injected.
+     * Ensures the MemberGetCtrl has been properly injected. Importantly is run before other tests.
      */
     @Test
-    public void getAllMembersTest() throws SearchException, MemberNotFoundEx {
+    public void getAllMembersTest() throws SearchException, MemberNotFoundEx, InterruptedException {
         testCtrl.getAllMembers("shortName:asc", true, testRequest);
     }
 
@@ -40,22 +46,23 @@ public class MemberGetCtrlTest extends ApiTest {
      */
     @Test
     public void getMembersByYearTest() throws SearchException, MemberNotFoundEx {
-        BaseResponse baseResponse = testCtrl.getMembersByYear(2015, "shortName:asc", false, testRequest);
-        ListViewResponse<?> listResponse = (ListViewResponse<?>) baseResponse;
-        assertEquals(listResponse.getTotal(), 224);
+        ListViewResponse<?> listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", false, testRequest);
+        assertEquals(223, listResponse.getTotal());
         // If just SessionMemberViews are returned, there should be no alternates.
         long numAlternates = listResponse.getResult().getItems().stream().filter(sm ->
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
-        assertEquals(numAlternates, 0);
+        assertEquals(0, numAlternates);
 
         addParam("limit", "all");
-        baseResponse = testCtrl.getMembersByYear(2015, "shortName:asc", true, testRequest);
-        listResponse = (ListViewResponse<?>) baseResponse;
+        listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);;
         FullMemberView testFmv = (FullMemberView) listResponse.getResult().getItems().stream().filter(fm ->
                 fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).collect(Collectors.toList()).get(0);
-        assertEquals(2, testFmv.getSessionShortNameMap().get(2015).size());
+        assertEquals(2, testFmv.getSessionShortNameMap().get(2013).size());
     }
 
+    /**
+     * Tests many session members of a particular member.
+     */
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
@@ -103,14 +110,20 @@ public class MemberGetCtrlTest extends ApiTest {
         assertTrue(testFmv.exactEquals(actualFmv));
     }
 
+    /**
+     * Tests that the correct number of members are in each chamber.
+     */
     @Test
     public void getMembersByYearAndChamberTest() throws SearchException, MemberNotFoundEx {
-        BaseResponse baseResponse = testCtrl.getMembersByYearAndChamber(2017, "senate", "shortName:asc", false, testRequest);
-        assertEquals(((PaginationResponse) baseResponse).getTotal(), 67);
-        baseResponse = testCtrl.getMembersByYearAndChamber(2017, "assembly", "shortName:asc", false, testRequest);
-        assertEquals(((PaginationResponse) baseResponse).getTotal(), 163);
+        BaseResponse baseResponse = testCtrl.getMembersByYearAndChamber(2009, "senate", "shortName:asc", false, testRequest);
+        assertEquals(63, ((PaginationResponse) baseResponse).getTotal());
+        baseResponse = testCtrl.getMembersByYearAndChamber(2009, "assembly", "shortName:asc", false, testRequest);
+        assertEquals(160, ((PaginationResponse) baseResponse).getTotal(), 160);
     }
 
+    /**
+     * Just to round out coverage.
+     */
     @Test
     public void handleMemberNotFoundExTest() {
         ErrorResponse resp = testCtrl.handleMemberNotFoundEx(null);
