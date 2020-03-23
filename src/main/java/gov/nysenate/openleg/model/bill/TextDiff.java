@@ -1,38 +1,21 @@
 package gov.nysenate.openleg.model.bill;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TextDiff {
 
-    /**
-     * The type of text relative to the previous amendment's text.
-     * <p>
-     * if 0: This text is unchanged.
-     * if 1: This text has been added.
-     * if -1: This text was removed.
-     */
-    private int type;
+    private TextDiffType type;
 
     /**
      * The raw text data.
      */
     private String rawText;
 
-    /**
-     * List of css classes that describe how this text should be styled.
-     */
-    private List<String> cssClasses;
 
-    public TextDiff(int type, String rawText) {
-        this(type, rawText, new ArrayList<>());
-    }
-
-    public TextDiff(int type, String rawText, List<String> cssClasses) {
+    public TextDiff(TextDiffType type, String rawText) {
         this.type = type;
         this.rawText = rawText;
-        this.cssClasses = cssClasses;
     }
 
     /**
@@ -40,9 +23,9 @@ public class TextDiff {
      *
      * @return
      */
-    protected String getPlainText() {
+    protected String getPlainFormatText() {
         String text = "";
-        switch (this.type) {
+        switch (this.type.getType()) {
             case 0:
                 text = getRawText();
                 break;
@@ -57,22 +40,22 @@ public class TextDiff {
     }
 
     /**
-     * Converts this text diff into the html format.
+     * Converts this text diff into the template format.
      *
      * @return
      */
-    protected String getHtmlText() {
-        if (cssClasses.isEmpty()) {
+    protected String getTemplateFormatText() {
+        if (type.getTemplateCssClass().isEmpty()) {
             return getRawText();
         }
 
         StringBuilder text = new StringBuilder();
         text.append("<span class=\"");
-        for (int i = 0; i < cssClasses.size(); i++) {
+        for (int i = 0; i < type.getTemplateCssClass().size(); i++) {
             if (i != 0) {
                 text.append(" ");
             }
-            text.append(cssClasses.get(i));
+            text.append(type.getTemplateCssClass().get(i));
         }
 
         text.append("\">")
@@ -90,15 +73,14 @@ public class TextDiff {
     }
 
     public List<String> getCssClasses() {
-        return cssClasses;
+        return type.getTemplateCssClass();
     }
 
     @Override
     public String toString() {
         return "TextDiff{" +
                 "type=" + type +
-                ", text='" + rawText + '\'' +
-                ", cssClasses=" + cssClasses +
+                ", rawText='" + rawText + '\'' +
                 '}';
     }
 
@@ -108,12 +90,12 @@ public class TextDiff {
         if (o == null || getClass() != o.getClass()) return false;
         TextDiff textDiff = (TextDiff) o;
         return type == textDiff.type &&
-                Objects.equals(rawText, textDiff.rawText) &&
-                Objects.equals(cssClasses, textDiff.cssClasses);
+                Objects.equals(rawText, textDiff.rawText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, rawText, cssClasses);
+
+        return Objects.hash(type, rawText);
     }
 }

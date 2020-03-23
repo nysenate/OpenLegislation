@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.bill.BillText;
 import gov.nysenate.openleg.model.bill.TextDiff;
+import gov.nysenate.openleg.model.bill.TextDiffType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -38,28 +39,23 @@ public class BillTextDiffProcessor {
         // Create TextDiffSearch obj for each type of diff we want to search for.
         TextDiffSearch addedSearch = new TextDiffSearch(
                 Pattern.compile("<B><U>([\\S|\\s]*?)</U></B>"),
-                1,
-                Arrays.asList("ol-changed", "ol-added"),
+                TextDiffType.ADDED,
                 billText);
         TextDiffSearch removedSearch = new TextDiffSearch(
                 Pattern.compile("<B><S>([\\S|\\s]*?)</S></B>"),
-                -1,
-                Arrays.asList("ol-changed", "ol-removed"),
+                TextDiffType.REMOVED,
                 billText);
         TextDiffSearch boldSearch = new TextDiffSearch(
                 Pattern.compile("(?<!<FONT SIZE=5>)<B>(?!<U>)(?!<S>)([\\S|\\s]*?)</B>"),
-                0,
-                Arrays.asList("ol-bold"),
+                TextDiffType.BOLD,
                 billText);
         TextDiffSearch headerSearch = new TextDiffSearch(
                 Pattern.compile("<FONT SIZE=5><B>([\\S|\\s]*?)</B></FONT>"),
-                0,
-                Arrays.asList("ol-header"),
+                TextDiffType.HEADER,
                 billText);
         TextDiffSearch pageBreakSearch = new TextDiffSearch(
                 Pattern.compile("<P CLASS=\"brk\">"),
-                0,
-                Arrays.asList("ol-page-break"),
+                TextDiffType.PAGE_BREAK,
                 billText);
 
         // Find the first match for all diff types.
@@ -83,7 +79,7 @@ public class BillTextDiffProcessor {
                 // No more diffs found, add the final text and break out of loop.
                 String text = billText.substring(currentIndex, billText.length());
                 if (text.length() > 0) {
-                    textDiffs.add(new TextDiff(0, text));
+                    textDiffs.add(new TextDiff(TextDiffType.UNCHANGED, text));
                 }
                 break;
             }
@@ -91,7 +87,7 @@ public class BillTextDiffProcessor {
                 // Add a diff containing the unchanged text from before the text of this result.
                 String text = billText.substring(currentIndex, result.get().getStartingIndex());
                 if (text.length() > 0) {
-                    textDiffs.add(new TextDiff(0, text));
+                    textDiffs.add(new TextDiff(TextDiffType.UNCHANGED, text));
                 }
             }
 

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillText;
 import gov.nysenate.openleg.model.bill.TextDiff;
+import gov.nysenate.openleg.model.bill.TextDiffType;
 import org.checkerframework.checker.units.qual.A;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,13 +20,6 @@ import static org.junit.Assert.assertEquals;
 public class BillTextDiffProcessorTest {
 
     private BillTextDiffProcessor textProcessor;
-
-    // TODO These should all be defined somewhere...
-    private static final List<String> ADDED_CLASSES = Arrays.asList("ol-changed", "ol-added");
-    private static final List<String> REMOVED_CLASSES = Arrays.asList("ol-changed", "ol-removed");
-    private static final List<String> BOLD_CLASSES = Arrays.asList("ol-bold");
-    private static final List<String> HEADER_CLASSES = Arrays.asList("ol-header");
-    private static final List<String> PAGE_BREAK_CLASSES = Arrays.asList("ol-page-break");
 
     @Before
     public void before() {
@@ -63,7 +57,7 @@ public class BillTextDiffProcessorTest {
         String text = "THE NEW YORK STATE SENATE";
         BillText actual = textProcessor.processBillText(text);
 
-        TextDiff diff = new TextDiff(0, text);
+        TextDiff diff = new TextDiff(TextDiffType.UNCHANGED, text);
         BillText expected = new BillText(Arrays.asList(diff));
         assertEquals(expected, actual);
     }
@@ -74,8 +68,8 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "Commends the "));
-        diffs.add(new TextDiff(1, "Albany fire department", ADDED_CLASSES));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "Commends the "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "Albany fire department"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -86,8 +80,8 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "Commends the "));
-        diffs.add(new TextDiff(-1, "Alb fire department", REMOVED_CLASSES));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "Commends the "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "Alb fire department"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -98,10 +92,10 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "Commends the "));
-        diffs.add(new TextDiff(-1, "Alb", REMOVED_CLASSES));
-        diffs.add(new TextDiff(1, "Albany", ADDED_CLASSES));
-        diffs.add(new TextDiff(0, " fire department"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "Commends the "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "Alb"));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "Albany"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " fire department"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -112,8 +106,8 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "Commends", BOLD_CLASSES));
-        diffs.add(new TextDiff(0, " the Albany fire department"));
+        diffs.add(new TextDiff(TextDiffType.BOLD, "Commends"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " the Albany fire department"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -124,7 +118,7 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "                STATE OF NEW YORK", HEADER_CLASSES));
+        diffs.add(new TextDiff(TextDiffType.HEADER, "                STATE OF NEW YORK"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -137,9 +131,9 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "page one text\n"));
-        diffs.add(new TextDiff(0, "", PAGE_BREAK_CLASSES));
-        diffs.add(new TextDiff(0, "\npage two text"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "page one text\n"));
+        diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\npage two text"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -150,8 +144,8 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "     Commends      the "));
-        diffs.add(new TextDiff(1, "     Albany fire department", ADDED_CLASSES));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "     Commends      the "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "     Albany fire department"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -164,8 +158,8 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "Commends \nthe "));
-        diffs.add(new TextDiff(1, "Albany fire \ndepartment", ADDED_CLASSES));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "Commends \nthe "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "Albany fire \ndepartment"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -180,7 +174,7 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\n            STATE OF NEW YORK"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n            STATE OF NEW YORK"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -194,7 +188,7 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\nSTATE OF NEW YORK\nCommends the city of Albany"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\nSTATE OF NEW YORK\nCommends the city of Albany"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -213,17 +207,17 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\n\n"));
-        diffs.add(new TextDiff(0, "                STATE OF NEW YORK", HEADER_CLASSES));
-        diffs.add(new TextDiff(0, "\n\n"));
-        diffs.add(new TextDiff(0, "Commends", BOLD_CLASSES));
-        diffs.add(new TextDiff(0, " the city of "));
-        diffs.add(new TextDiff(-1, "albany", REMOVED_CLASSES));
-        diffs.add(new TextDiff(1, "Albany", ADDED_CLASSES));
-        diffs.add(new TextDiff(0, " New York\non "));
-        diffs.add(new TextDiff(-1, "there", REMOVED_CLASSES));
-        diffs.add(new TextDiff(1, "their", ADDED_CLASSES));
-        diffs.add(new TextDiff(0, " work."));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n\n"));
+        diffs.add(new TextDiff(TextDiffType.HEADER, "                STATE OF NEW YORK"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n\n"));
+        diffs.add(new TextDiff(TextDiffType.BOLD, "Commends"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " the city of "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "albany"));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "Albany"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " New York\non "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "there"));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "their"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " work."));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -241,14 +235,14 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(0, "\n         EXPLANATION--Matter in "));
-        diffs.add(new TextDiff(1, "italics", ADDED_CLASSES));
-        diffs.add(new TextDiff(0, " (underscored) is new; matter in brackets\n                              ["));
-        diffs.add(new TextDiff(-1, " ", REMOVED_CLASSES));
-        diffs.add(new TextDiff(0, "] is old law to be omitted.\n" +
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n         EXPLANATION--Matter in "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "italics"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " (underscored) is new; matter in brackets\n                              ["));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, " "));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "] is old law to be omitted.\n" +
                 "                                                                   LBD03867-09-9\n"));
-        diffs.add(new TextDiff(0, "", PAGE_BREAK_CLASSES));
-        diffs.add(new TextDiff(0, "\n" +
+        diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n" +
                 "A. 1133--D                          2\n" +
                 "\n" +
                 "1  provision  in  any section contained within a Part, including the effec-"));

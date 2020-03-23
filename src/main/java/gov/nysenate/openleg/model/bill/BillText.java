@@ -14,12 +14,12 @@ public class BillText {
     public String getPlainText() {
         StringBuilder plainText = new StringBuilder();
         for (TextDiff diff : this.diffs) {
-            plainText.append(diff.getPlainText());
+            plainText.append(diff.getPlainFormatText());
         }
         return plainText.toString();
     }
 
-    // TODO toPlainText, toHtmlText, to...
+    // TODO toPlainText, toTemplateText, to...
 
 
     @Override
