@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.entity;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.entity.SessionMember;
 
 public class MemberView implements ViewObject
@@ -11,6 +12,8 @@ public class MemberView implements ViewObject
     protected boolean incumbent;
     protected String fullName;
     protected String shortName;
+    protected String imgName;
+    private SessionMember relatedSessionMember;
 
     public MemberView(){}
 
@@ -22,6 +25,9 @@ public class MemberView implements ViewObject
             this.incumbent = member.isIncumbent();
             this.fullName = member.getFullName();
             this.shortName = sessionMember.getLbdcShortName();
+            // This is actually associated with a person, not a member.
+            this.imgName = member.getImgName();
+            this.relatedSessionMember = sessionMember;
         }
     }
 
@@ -43,6 +49,26 @@ public class MemberView implements ViewObject
 
     public String getShortName() {
         return shortName;
+    }
+
+    public String getImgName() {
+        return imgName;
+    }
+
+    public int getSessionMemberId() {
+        return relatedSessionMember.getSessionMemberId();
+    }
+
+    public int getSessionYear() {
+        return relatedSessionMember.getSessionYear().getYear();
+    }
+
+    public int getDistrictCode() {
+        return relatedSessionMember.getDistrictCode();
+    }
+
+    public boolean getAlternate() {
+        return relatedSessionMember.isAlternate();
     }
 
     @Override

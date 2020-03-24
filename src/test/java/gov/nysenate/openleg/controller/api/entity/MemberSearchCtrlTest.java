@@ -5,10 +5,10 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.ApiTest;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,11 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class MemberSearchCtrlTest extends ApiTest {
+    static {
+        indicesToTest.add(SearchIndex.MEMBER);
+    }
     @Autowired
     private MemberSearchCtrl testCtrl;
-
-    @Override
-    protected IndexedSearchService<?> getIndex() {
-        return ((IndexedSearchService<?>) testCtrl.memberSearch);
-    }
 
     @Test
     public void aSimpleTest() throws SearchException {
@@ -42,7 +40,7 @@ public class MemberSearchCtrlTest extends ApiTest {
 
     @Test
     public void searchBySessionMemberId() throws SearchException {
-        Person testP = new Person(499, "Edward Hennessey", "Edward", "", "Hennessey", "", "", "", true, "no_image.jpg");
+        Person testP = new Person(499, "Edward Hennessey", "Edward", null, "Hennessey", null, null, null, true, "no_image.jpg");
         Member testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
         SessionMember testSm = new SessionMember(666, testM, "HENNESSEY", new SessionYear(2013), 3, false);
         SessionMember testSmAlt = new SessionMember(testSm);

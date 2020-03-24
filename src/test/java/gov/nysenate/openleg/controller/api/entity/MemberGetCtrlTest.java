@@ -10,10 +10,10 @@ import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.ApiTest;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +25,17 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class MemberGetCtrlTest extends ApiTest {
+    static {
+        indicesToTest.add(SearchIndex.MEMBER);
+    }
     @Autowired
     private MemberGetCtrl testCtrl;
-
-    @Override
-    protected IndexedSearchService<?> getIndex() {
-        return ((IndexedSearchService<?>) testCtrl.memberSearch);
-    }
 
     /**
      * Ensures the MemberGetCtrl has been properly injected. Importantly is run before other tests.
      */
     @Test
-    public void getAllMembersTest() throws SearchException, MemberNotFoundEx, InterruptedException {
+    public void getAllMembersTest() throws SearchException, MemberNotFoundEx {
         testCtrl.getAllMembers("shortName:asc", true, testRequest);
     }
 

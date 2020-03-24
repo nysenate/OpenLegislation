@@ -1,22 +1,28 @@
 package gov.nysenate.openleg.controller.api;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.dao.base.SearchIndex;
+import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import org.junit.Before;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.WebRequest;
 
-public abstract class ApiTest extends BaseTests {
-    protected WebRequest testRequest = Mockito.mock(WebRequest.class);
-    private static boolean dataLoaded = false;
+import java.util.EnumSet;
 
-    protected abstract IndexedSearchService<?> getIndex();
+public abstract class ApiTest extends BaseTests {
+    protected static EnumSet<SearchIndex> indicesToTest = EnumSet.noneOf(SearchIndex.class);
+    private static boolean dataLoaded;
+    protected WebRequest testRequest = Mockito.mock(WebRequest.class);
+    @Autowired
+    private EventBus eventBus;
 
     @Before
     public void setup() throws InterruptedException {
         if (!dataLoaded) {
-            getIndex().rebuildIndex();
-            Thread.sleep(500);
+            eventBus.post(new RebuildIndexEvent(indicesToTest));
+            Thread.sleep(1000);
             dataLoaded = true;
         }
         testRequest = Mockito.mock(WebRequest.class);

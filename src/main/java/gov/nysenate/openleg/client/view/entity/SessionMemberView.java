@@ -66,6 +66,6 @@ public class SessionMemberView implements ViewObject
 
     @Override
     public String getViewType() {
-        return "session-member";
+        return "member-session";
     }
 }
