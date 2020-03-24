@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import gov.nysenate.openleg.model.bill.BillText;
-import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.model.entity.Chamber;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -13,7 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;

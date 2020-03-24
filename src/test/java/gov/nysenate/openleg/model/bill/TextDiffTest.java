@@ -4,18 +4,11 @@ import gov.nysenate.openleg.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
 public class TextDiffTest {
-
-    private static final List<String> ADDED_CLASSES = Arrays.asList("ol-changed", "ol-added");
-    private static final List<String> REMOVED_CLASSES = Arrays.asList("ol-changed", "ol-removed");
-    private static final List<String> BOLD_CLASSES = Arrays.asList("ol-bold");
-    private static final List<String> HEADER_CLASSES = Arrays.asList("ol-header");
 
     /**
      * Plain text format tests
@@ -30,6 +23,14 @@ public class TextDiffTest {
     }
 
     @Test
+    public void givenAddedText_plainFormatIsUppercase() {
+        TextDiff diff = new TextDiff(TextDiffType.ADDED, "This text has been\nadded.");
+        String actual = diff.getPlainFormatText();
+        String expected = "THIS TEXT HAS BEEN\nADDED.";
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void givenRemovedText_plainFormatIsUnchanged() {
         TextDiff diff = new TextDiff(TextDiffType.REMOVED, "[This text has been\nremoved.]");
         String actual = diff.getPlainFormatText();
@@ -37,13 +38,50 @@ public class TextDiffTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Html text format tests
+     */
+
     @Test
-    public void givenAddedText_plainFormatIsUppercase() {
-        TextDiff diff = new TextDiff(TextDiffType.ADDED, "This text has been\nadded.");
-        String actual = diff.getPlainFormatText();
-        String expected = "THIS TEXT HAS BEEN\nADDED.";
+    public void givenUnchangedText_htmlFormatIsUnchanged() {
+        TextDiff diff = new TextDiff(TextDiffType.UNCHANGED, "Some unchanged basic\n text.");
+        String actual = diff.getHtmlFormatText();
+        String expected = "Some unchanged basic\n text.";
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void givenAddedText_htmlTextIsInAddedElement() {
+        TextDiff diff = new TextDiff(TextDiffType.ADDED, "This text has been\nadded.");
+        String actual = diff.getHtmlFormatText();
+        String expected = "<B><U>This text has been\nadded.</U></B>";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenRemovedText_htmlTextIsInRemovedElement(){
+        TextDiff diff = new TextDiff(TextDiffType.REMOVED, "This text has been removed.");
+        String actual = diff.getHtmlFormatText();
+        String expected = "<B><S>This text has been removed.</S></B>";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenHeaderText_htmlTextIsInHeaderElement() {
+        TextDiff diff = new TextDiff(TextDiffType.HEADER, "Some title");
+        String actual = diff.getHtmlFormatText();
+        String expected = "<FONT SIZE=5><B>Some title</B></FONT>";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenBoldText_htmlTextIsInBoldElement() {
+        TextDiff diff = new TextDiff(TextDiffType.BOLD, "bold text");
+        String actual = diff.getHtmlFormatText();
+        String expected = "<B>bold text</B>";
+        assertEquals(expected, actual);
+    }
+
 
     /**
      * Template text format tests
@@ -54,22 +92,6 @@ public class TextDiffTest {
         TextDiff diff = new TextDiff(TextDiffType.UNCHANGED, "Some unchanged basic\n text.");
         String actual = diff.getTemplateFormatText();
         String expected = "Some unchanged basic\n text.";
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void givenHeaderText_templateFormatHasHeaderClass() {
-        TextDiff diff = new TextDiff(TextDiffType.HEADER, "Some basic\n text.");
-        String actual = diff.getTemplateFormatText();
-        String expected = "<span class=\"ol-header\">Some basic\n text.</span>";
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void givenBoldText_templateFormatHasBoldClass() {
-        TextDiff diff = new TextDiff(TextDiffType.BOLD, "Some basic\n text.");
-        String actual = diff.getTemplateFormatText();
-        String expected = "<span class=\"ol-bold\">Some basic\n text.</span>";
         assertEquals(expected, actual);
     }
 
@@ -86,6 +108,22 @@ public class TextDiffTest {
         TextDiff diff = new TextDiff(TextDiffType.REMOVED, "This text has been\nremoved.");
         String actual = diff.getTemplateFormatText();
         String expected = "<span class=\"ol-changed ol-removed\">This text has been\nremoved.</span>";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenHeaderText_templateFormatHasHeaderClass() {
+        TextDiff diff = new TextDiff(TextDiffType.HEADER, "Some basic\n text.");
+        String actual = diff.getTemplateFormatText();
+        String expected = "<span class=\"ol-header\">Some basic\n text.</span>";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenBoldText_templateFormatHasBoldClass() {
+        TextDiff diff = new TextDiff(TextDiffType.BOLD, "Some basic\n text.");
+        String actual = diff.getTemplateFormatText();
+        String expected = "<span class=\"ol-bold\">Some basic\n text.</span>";
         assertEquals(expected, actual);
     }
 }

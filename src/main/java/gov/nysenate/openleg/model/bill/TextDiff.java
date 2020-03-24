@@ -40,6 +40,14 @@ public class TextDiff {
     }
 
     /**
+     * Converts this text diff into html format.
+     * @return
+     */
+    protected String getHtmlFormatText() {
+        return type.getHtmlOpeningTags() + getRawText() + type.getHtmlClosingTags();
+    }
+
+    /**
      * Converts this text diff into the template format.
      *
      * @return

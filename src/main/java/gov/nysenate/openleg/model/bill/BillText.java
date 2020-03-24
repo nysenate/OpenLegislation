@@ -5,6 +5,9 @@ import java.util.Objects;
 
 public class BillText {
 
+    private static final String HTML_STYLE = "<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n"+
+            "P.brk {page-break-before:always}--></STYLE>\n";
+
     private List<TextDiff> diffs;
 
     public BillText(List<TextDiff> diffs) {
@@ -17,6 +20,17 @@ public class BillText {
             plainText.append(diff.getPlainFormatText());
         }
         return plainText.toString();
+    }
+
+    public String getHtmlText() {
+        StringBuilder htmlText = new StringBuilder();
+        htmlText.append(HTML_STYLE);
+        htmlText.append("<PRE>");
+        for (TextDiff diff : this.diffs) {
+            htmlText.append(diff.getHtmlFormatText());
+        }
+        htmlText.append("</PRE>");
+        return htmlText.toString();
     }
 
     // TODO toPlainText, toTemplateText, to...
