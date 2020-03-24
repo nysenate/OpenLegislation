@@ -99,8 +99,8 @@ public class BillTextDiffProcessor {
 
         // Remove erroneous xml elements and empty text diffs.
         for (int i = 0; i < textDiffs.size(); ++i) {
-            textDiffs.get(i).setRawText(jsoupParsePreserveNewline(textDiffs.get(i).getRawText()));
-            if (textDiffs.get(i).getRawText().equals("") && textDiffs.get(i).getCssClasses().size() == 0) {
+            textDiffs.get(i).setText(jsoupParsePreserveNewline(textDiffs.get(i).getText()));
+            if (textDiffs.get(i).getText().equals("") && textDiffs.get(i).getCssClasses().size() == 0) {
                 textDiffs.remove(i--);
             }
         }

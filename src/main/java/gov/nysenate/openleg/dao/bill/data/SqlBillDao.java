@@ -21,7 +21,6 @@ import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         // Retrieve base Bill object
         Bill bill = getBaseBill(baseParams);
         // Fetch the amendments
-        List<BillAmendment> billAmendments = getBillAmendments(baseParams, textFormats);
+        List<BillAmendment> billAmendments = getBillAmendments(baseParams);
         for (BillAmendment amendment : billAmendments) {
             final ImmutableParams amendParams = baseParams.add(
                 new MapSqlParameterSource("version", amendment.getVersion().toString()));
@@ -87,6 +86,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amendment.setMultiSponsors(getMultiSponsors(amendParams));
             // Get the votes
             amendment.setVotesMap(getBillVotes(amendParams));
+            // Get BillText
+            amendment.setBillText(getBillText(amendParams));
         }
         // Set the amendments
         bill.addAmendments(billAmendments);
@@ -133,21 +134,24 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException {
+    public void applyTextAndMemo(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException {
+        // TODO does strippedBill have all amendments set on it?
         if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");
         }
-        MapSqlParameterSource billParams = new MapSqlParameterSource();
-        addBillIdParams(strippedBill, billParams);
-        final String queryTemplate = SELECT_BILL_TEXT_TEMPLATE.getSql(schema());
-        final String query = applyFullTextFields(queryTemplate, fullTextFormats);
-        jdbcNamed.query(query, billParams, (ResultSet rs) -> {
-            BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
-            ba.setMemo(rs.getString("sponsor_memo"));
-            for (BillTextFormat format : fullTextFormats) {
-                ba.setFullText(format, rs.getString(fullTextFields.get(format)));
-            }
-        });
+
+        for (Version version : strippedBill.getAmendmentMap().keySet()) {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            addBillIdParams(strippedBill.getAmendment(version), params);
+
+            // Set memo
+            jdbcNamed.query(SELECT_BILL_AMEND_MEMO.getSql(schema()), params, (ResultSet rs) -> {
+                strippedBill.getAmendment(version).setMemo(rs.getString("sponsor_memo"));
+            });
+            // Set Text
+            BillText text = getBillText(params);
+            strippedBill.getAmendment(version).setBillText(text);
+        }
     }
 
     /**
@@ -180,6 +184,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             updateBillMultiSponsor(amendment, legDataFragment, amendParams);
             // Update votes
             updateBillVotes(amendment, legDataFragment, amendParams);
+            // Update bill text diffs
+            updateBillTextDiff(amendment, amendParams);
         }
         // Update the publish statuses of the amendments
         updateBillAmendPublishStatus(bill, legDataFragment, billParams);
@@ -359,10 +365,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /**
      * Fetch the collection of bill amendment references for the base bill id in the params.
      */
-    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams, Set<BillTextFormat> fullTextFormats) {
-        final String queryTemplate = SELECT_BILL_AMENDMENTS_TEMPLATE.getSql(schema());
-        final String fullQuery = applyFullTextFields(queryTemplate, fullTextFormats);
-        return jdbcNamed.query(fullQuery, baseParams, new BillAmendmentRowMapper(fullTextFormats));
+    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams) {
+        final String query = SELECT_BILL_AMENDMENTS.getSql(schema());
+        return jdbcNamed.query(query, baseParams, new BillAmendmentRowMapper());
     }
 
     /**
@@ -424,6 +429,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             }
         }
         return billVotes;
+    }
+
+    private BillText getBillText(SqlParameterSource params) {
+        String plainText = "";
+        List<TextDiff> diffs = jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMEND_TEXT_DIFFS.getSql(schema()), params, new BillTextRowMapper());
+        if (diffs.isEmpty()) {
+            plainText = jdbcNamed.queryForObject(SqlBillQuery.SELECT_BILL_AMEND_PLAIN_TEXT.getSql(schema()), params, String.class);
+        }
+        return new BillText(plainText, diffs);
     }
 
     /**
@@ -709,6 +723,29 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
+    private void updateBillTextDiff(BillAmendment billAmendment, ImmutableParams amendParams) {
+        // Delete old text
+        jdbcNamed.update(SqlBillQuery.DELETE_BILL_AMEND_TEXT_DIFFS.getSql(schema()), amendParams);
+
+        // Insert new diffs
+        List<TextDiff> diffs = billAmendment.getBillText().getTextDiffs();
+        List<ImmutableParams> params = new ArrayList<>();
+        for (TextDiff diff : diffs) {
+            params.add(amendParams.add(new MapSqlParameterSource()
+                    .addValue("type", diff.getType().name())
+                    .addValue("text", diff.getText())));
+        }
+
+        String sql = SqlBillQuery.INSERT_BILL_AMEND_TEXT_DIFFS.getSql(schema());
+        ImmutableParams[] batchParams = new ImmutableParams[params.size()];
+        batchParams = params.toArray(batchParams);
+        jdbcNamed.batchUpdate(sql, batchParams);
+
+        // Update the plain text
+        amendParams = amendParams.add(new MapSqlParameterSource("plainText", billAmendment.getBillText().getFullText(BillTextFormat.PLAIN)));
+        jdbcNamed.update(SqlBillQuery.UPDATE_BILL_AMEND_PLAIN_TEXT.getSql(schema()), amendParams);
+    }
+
     public List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear) {
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         billParams.addValue("sessionYear", sessionYear.getYear());
@@ -771,10 +808,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     }
 
     private static class BillAmendmentRowMapper implements RowMapper<BillAmendment> {
-        private final Set<BillTextFormat> textFormats;
 
-        public BillAmendmentRowMapper(Set<BillTextFormat> textFormats) {
-            this.textFormats = textFormats;
+        public BillAmendmentRowMapper() {
         }
 
         @Override
@@ -783,9 +818,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("bill_amend_version")));
             amend.setMemo(rs.getString("sponsor_memo"));
             amend.setActClause(rs.getString("act_clause"));
-            for (BillTextFormat format : textFormats) {
-                amend.setFullText(format, rs.getString(fullTextFields.get(format)));
-            }
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
@@ -868,6 +900,16 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
+    private static class BillTextRowMapper implements RowMapper<TextDiff> {
+
+        @Override
+        public TextDiff mapRow(ResultSet rs, int i) throws SQLException {
+            TextDiffType type = TextDiffType.valueOf(rs.getString("type"));
+            String text = rs.getString("text");
+            return new TextDiff(type, text);
+        }
+    }
+
     /**
      * --- Param Source Methods ---
      */
@@ -922,10 +964,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(amendment, params);
         params.addValue("sponsorMemo", amendment.getMemo())
                 .addValue("actClause", amendment.getActClause())
-                .addValue("fullText", amendment.getFullText(PLAIN))
-                .addValue("fullTextHtml", amendment.getFullText(HTML))
-                .addValue("fullTextHtml5", amendment.getFullText(HTML5))
-                .addValue("fullTextDiff", amendment.getFullText(DIFF))
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())
@@ -1073,20 +1111,5 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             return new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name"));
         }
         return null;
-    }
-
-    /**
-     * Apply the correct full text fields to a query template given a set of formats.
-     *
-     * Assumes that "fullTextFields" token is at the end of the column list WITHOUT a leading comma
-     * e.g. ... bill_amend_version, sponsor_memo ${fullTextFields}
-     */
-    private String applyFullTextFields(String queryTemplate, Set<BillTextFormat> fullTextFormats) {
-        final String fullTextFields = fullTextFormats.stream()
-                .map(SqlBillDao.fullTextFields::get)
-                .map(field -> ", " + field)
-                .collect(Collectors.joining());
-        final ImmutableMap<String, String> subMap = ImmutableMap.of("fullTextFields", fullTextFields);
-        return StringSubstitutor.replace(queryTemplate, subMap);
     }
 }

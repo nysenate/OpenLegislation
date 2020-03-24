@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,13 +9,47 @@ public class BillText {
     private static final String HTML_STYLE = "<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n"+
             "P.brk {page-break-before:always}--></STYLE>\n";
 
+    private String sobiPlainText;
     private List<TextDiff> diffs;
 
+    public BillText(String sobiPlainText) {
+        this(sobiPlainText, new ArrayList<>());
+    }
+
     public BillText(List<TextDiff> diffs) {
+        this("", diffs);
+    }
+
+    public BillText(String sobiPlainText, List<TextDiff> diffs) {
+        this.sobiPlainText = sobiPlainText;
         this.diffs = diffs;
     }
 
-    public String getPlainText() {
+    public String getFullText(BillTextFormat format) {
+        String text = "";
+        switch (format) {
+            case PLAIN:
+                text = getPlainText();
+                break;
+            case HTML:
+                text = getHtmlText();
+                break;
+            case TEMPLATE:
+                // TODO
+                break;
+            case DIFF:
+                // TODO
+                break;
+        }
+
+        return text;
+    }
+
+    public List<TextDiff> getTextDiffs() {
+        return this.diffs;
+    }
+
+    private String getPlainText() {
         StringBuilder plainText = new StringBuilder();
         for (TextDiff diff : this.diffs) {
             plainText.append(diff.getPlainFormatText());
@@ -22,7 +57,7 @@ public class BillText {
         return plainText.toString();
     }
 
-    public String getHtmlText() {
+    private String getHtmlText() {
         StringBuilder htmlText = new StringBuilder();
         htmlText.append(HTML_STYLE);
         htmlText.append("<PRE>");

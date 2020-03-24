@@ -25,7 +25,8 @@ public class BillTextTest {
 
         BillTextDiffProcessor diffProcessor = new BillTextDiffProcessor();
         BillText billText =  diffProcessor.processBillText(text);
-        String actual = billText.getPlainText();
+        String actual = billText.getFullText(BillTextFormat.PLAIN);
+//        String expected = BillTextUtils.formatHtmlExtractedBillText(BillTextUtils.convertHtmlToPlainText(text));
         String expected = BillTextUtils.convertHtmlToPlainText(text);
         assertEquals(expected, actual);
     }

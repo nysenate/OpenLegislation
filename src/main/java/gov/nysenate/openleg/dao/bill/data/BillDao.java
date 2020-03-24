@@ -48,7 +48,7 @@ public interface BillDao
      * @param fullTextFormats {@link Set<BillTextFormat>} will apply texts for these formats.
      * @throws DataAccessException
      */
-    void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException;
+    void applyTextAndMemo(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException;
 
     /**
      * Gets a List of BaseBillIds for the given session year with options to order and limit the results.

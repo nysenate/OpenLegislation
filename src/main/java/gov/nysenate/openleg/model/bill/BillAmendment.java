@@ -46,7 +46,7 @@ public class BillAmendment implements Serializable, Cloneable
     protected Map<BillTextFormat, String> fullTextMap = new HashMap<>();
 
     /** The bill text **/
-    private BillText billText;
+    private BillText billText = new BillText("");
 
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
@@ -102,9 +102,18 @@ public class BillAmendment implements Serializable, Cloneable
     }
 
     public String getFullText(BillTextFormat format) {
-        return fullTextMap.get(format);
+        return billText.getFullText(format);
     }
 
+    public BillText getBillText() {
+        return this.billText;
+    }
+
+    public void setBillText(BillText billText) {
+        this.billText = billText;
+    }
+
+    // TODO remove this
     public void setFullText(BillTextFormat format, String fullText) {
         fullTextMap.put(format, fullText);
     }

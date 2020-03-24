@@ -30,8 +30,6 @@ public class BillAmendmentView extends BillIdView
     protected List<BillTextFormat> fullTextFormats;
     protected String fullText;
     protected String fullTextHtml;
-    protected String fullTextHtml5;
-    protected List<TextDiff> fullTextDiff;
     protected ListView<MemberView> coSponsors;
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
@@ -51,17 +49,10 @@ public class BillAmendmentView extends BillIdView
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
             this.fullTextFormats = new ArrayList<>(billAmendment.getFullTextFormats());
-            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
-            this.fullTextHtml = billAmendment.getFullText(HTML);
-            this.fullTextHtml5 = billAmendment.getFullText(HTML5);
-            try {
-                TextDiff[] textDiffArray = new ObjectMapper().readValue(billAmendment.getFullText(DIFF), TextDiff[].class);
-                this.fullTextDiff = Arrays.asList(textDiffArray);
-            }
-            catch (Exception e) {
-                //System.out.println(e);
-                this.fullTextDiff = null;
-            }
+//            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
+            this.fullText = billAmendment.getBillText().getFullText(BillTextFormat.PLAIN);
+//            this.fullTextHtml = billAmendment.getFullText(HTML);
+            this.fullTextHtml = billAmendment.getBillText().getFullText(BillTextFormat.HTML);
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));
@@ -132,13 +123,5 @@ public class BillAmendmentView extends BillIdView
 
     public String getFullTextHtml() {
         return fullTextHtml;
-    }
-
-    public String getFullTextHtml5() {
-        return fullTextHtml5;
-    }
-
-    public List<TextDiff> getFullTextDiff() {
-        return fullTextDiff;
     }
 }

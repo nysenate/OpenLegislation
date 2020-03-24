@@ -511,7 +511,8 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
                 billAmendment.setMemo(fullText);
             }
             else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT) {
-                billAmendment.setFullText(PLAIN, fullText);
+                BillText billText = new BillText(fullText);
+                billAmendment.setBillText(billText);
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }

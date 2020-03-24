@@ -287,7 +287,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     private Bill constructBillFromCache(BaseBillId billId, Set<BillTextFormat> billTextFormats) throws CloneNotSupportedException {
         Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
         cachedBill = cachedBill.shallowClone();
-        billDao.applyText(cachedBill, billTextFormats);
+        billDao.applyTextAndMemo(cachedBill, billTextFormats);
         return cachedBill;
     }
 

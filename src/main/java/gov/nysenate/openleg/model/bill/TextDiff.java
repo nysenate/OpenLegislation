@@ -27,13 +27,13 @@ public class TextDiff {
         String text = "";
         switch (this.type.getType()) {
             case 0:
-                text = getRawText();
+                text = getText();
                 break;
             case 1:
-                text = getRawText().toUpperCase();
+                text = getText().toUpperCase();
                 break;
             case -1:
-                text = getRawText();
+                text = getText();
                 break;
         }
         return text;
@@ -44,7 +44,7 @@ public class TextDiff {
      * @return
      */
     protected String getHtmlFormatText() {
-        return type.getHtmlOpeningTags() + getRawText() + type.getHtmlClosingTags();
+        return type.getHtmlOpeningTags() + getText() + type.getHtmlClosingTags();
     }
 
     /**
@@ -54,7 +54,7 @@ public class TextDiff {
      */
     protected String getTemplateFormatText() {
         if (type.getTemplateCssClass().isEmpty()) {
-            return getRawText();
+            return getText();
         }
 
         StringBuilder text = new StringBuilder();
@@ -67,21 +67,25 @@ public class TextDiff {
         }
 
         text.append("\">")
-                .append(getRawText())
+                .append(getText())
                 .append("</span>");
         return text.toString();
     }
 
-    public String getRawText() {
+    public String getText() {
         return rawText;
     }
 
-    public void setRawText(String rawText) {
-        this.rawText = rawText;
+    public void setText(String text) {
+        this.rawText = text;
     }
 
     public List<String> getCssClasses() {
         return type.getTemplateCssClass();
+    }
+
+    public TextDiffType getType() {
+        return this.type;
     }
 
     @Override
