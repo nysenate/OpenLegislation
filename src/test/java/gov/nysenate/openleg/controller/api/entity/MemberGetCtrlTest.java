@@ -25,18 +25,17 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class MemberGetCtrlTest extends ApiTest {
-    static {
-        indicesToTest.add(SearchIndex.MEMBER);
-    }
     @Autowired
     private MemberGetCtrl testCtrl;
 
-    /**
-     * Ensures the MemberGetCtrl has been properly injected. Importantly is run before other tests.
-     */
-    @Test
-    public void getAllMembersTest() throws SearchException, MemberNotFoundEx {
-        testCtrl.getAllMembers("shortName:asc", true, testRequest);
+    @Override
+    protected SearchIndex getIndex() {
+        return SearchIndex.MEMBER;
+    }
+
+    @Override
+    protected int allItemsInIndex() throws SearchException {
+        return ((ListViewResponse<?>)testCtrl.getAllMembers("shortName:asc", true, testRequest)).getTotal();
     }
 
     /**

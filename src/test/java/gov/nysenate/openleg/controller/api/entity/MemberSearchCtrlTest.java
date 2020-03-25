@@ -19,12 +19,23 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class MemberSearchCtrlTest extends ApiTest {
-    static {
-        indicesToTest.add(SearchIndex.MEMBER);
-    }
+
     @Autowired
     private MemberSearchCtrl testCtrl;
 
+    @Override
+    protected SearchIndex getIndex() {
+        return SearchIndex.MEMBER;
+    }
+
+    @Override
+    protected int allItemsInIndex() throws SearchException {
+        return ((ListViewResponse<?>) testCtrl.globalSearch("*", "", false, testRequest)).getTotal();
+    }
+
+    /**
+     * Tests that a Member is retrieved correctly.
+     */
     @Test
     public void aSimpleTest() throws SearchException {
         Person testP = new Person(498, "Greene", "", "", "", "", "", "", false, "no_image.jpg");
@@ -38,6 +49,9 @@ public class MemberSearchCtrlTest extends ApiTest {
         assertTrue(actualSm.exactEquals(testSm));
     }
 
+    /**
+     * Tests that session members are retrieved correctly.
+     */
     @Test
     public void searchBySessionMemberId() throws SearchException {
         Person testP = new Person(499, "Edward Hennessey", "Edward", null, "Hennessey", null, null, null, true, "no_image.jpg");
