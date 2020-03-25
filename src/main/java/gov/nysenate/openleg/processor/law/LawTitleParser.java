@@ -2,7 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
-import gov.nysenate.openleg.processor.bill.RomanNumerals;
+import gov.nysenate.openleg.util.RomanNumerals;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;

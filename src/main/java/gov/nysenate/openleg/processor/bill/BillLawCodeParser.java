@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocumentType;
+import gov.nysenate.openleg.util.RomanNumerals;
 
 import java.util.*;
 import java.util.regex.Matcher;

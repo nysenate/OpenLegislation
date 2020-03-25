@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.bill;
+package gov.nysenate.openleg.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -12,6 +12,8 @@ public class RomanNumerals {
     private static final BiMap<Integer, String> mapping;
     static {
         TreeMap<Integer, String> temp = new TreeMap<>((t0, t1) -> t1-t0);
+        temp.put(100, "C");
+        temp.put(90, "XC");
         temp.put(50, "L");
         temp.put(40, "XL");
         temp.put(10, "X");
@@ -23,15 +25,15 @@ public class RomanNumerals {
     }
 
     /**
-     * Converts a numberal to an int.
+     * Converts a numeral to an int.
      * @param numeral to be converted.
      * @return the proper integer.
      */
     public static int numeralToInt(String numeral) {
         if (numeral.isEmpty())
             return 0;
-        int numeralLength = numeral.length() != 1 && mapping.inverse().containsKey(numeral.
-                substring(0, 2)) ? 2 : 1;
+        int numeralLength = (numeral.length() != 1 && mapping.inverse().containsKey(numeral.
+                substring(0, 2))) ? 2 : 1;
         return mapping.inverse().get(numeral.substring(0, numeralLength)) + numeralToInt(numeral.
                 substring(numeralLength));
     }

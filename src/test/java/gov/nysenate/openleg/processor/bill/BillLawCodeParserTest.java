@@ -29,7 +29,6 @@ public class BillLawCodeParserTest {
         mapping.put(action, Sets.newTreeSet(Arrays.asList(elements)));
     }
 
-
     // TESTS
     @Test
     // Simple test to make sure the scope of amd extends to §§110-b, 64, 64-a and 64-c
@@ -63,7 +62,6 @@ public class BillLawCodeParserTest {
         compareToLawCode("Amd Art 8 Title VI §§8-600, 8-602, 8-604 & 8-606, El L");
     }
 
-
     @Test
     public void subsectionTest() {
         // S2301, 2019
@@ -72,6 +70,7 @@ public class BillLawCodeParserTest {
             "ELN8-510", "ELN8-508");
         compareToLawCode("Amd §§4-117, 8-502, 8-504, 8-508, 8-510 & 17-108, add §8-503, El L");
 
+        // A7121, 2019
         put(REPEAL, "EXC353", "EDN4402");
         compareToLawCode("Rpld §353 sub 15, Exec L; rpld §4402 sub 1 ¶b sub¶ 3 clause (h), Ed L");
     }
@@ -111,6 +110,7 @@ public class BillLawCodeParserTest {
                 "CVP6201", "CVP6223", "CVP6210", "CVP6211", "LIE (generally)");
         compareToLawCode("Amd Lien L, generally; amd §§199-a & 663, Lab L; amd §§6201, 6210, 6211, " +
                 "6223 & R6212, CPLR; amd §§624 & 630, BC L; amd §§609 & 1102, Lim Lil L");
+
         // S1527, 2019
         put(AMEND, "PBH (generally)");
         compareToLawCode("Amd Pub Health L, generally");
@@ -135,13 +135,16 @@ public class BillLawCodeParserTest {
         compareToLawCode("Amd Pub Health L, generally; amd §§6540, 6542, 6731, 6741, 6807, 6909, 6957" +
                 " & 7901, add §6545-a, Ed L; amd §461-c, Soc Serv L; amd §§13-b & 13-c, Work " +
                 "Comp L; amd §33.04, Ment Hyg L; amd §406, Gen Bus L");
+
         // A616, 2019
         put(REPEAL, "LAB590");
         compareToLawCode("Rpld §590 sub 11, Lab L");
 
+        // S4163, 2009
         put(AMEND, "RCO12");
         compareToLawCode("Amd §12, Rel Corp L");
 
+        // S6156, 2009
         put(AMEND, "PBO1-104", "PBO14-100", "PBO14-114", "PBO30");
         put(ADD, "PBO2-128", "PBO6-125", "PBO18-100");
         compareToLawCode("Amd §§1-104, 14-100 & 14-114, add §§2-128 & 6-125 & Art 18 §18-100; amd §30, Pub Off L");
@@ -160,13 +163,14 @@ public class BillLawCodeParserTest {
         put(ADD, "STF97-YYYY", "AGMA4-D");
         compareToLawCode("Amd Art 4-D Head, §§71-y & 71-z, add §§71-aa - 71-dd, Ag & Mkts L; add §97-yyyy, St Fin");
 
+        // A1168, 2009
         put(ADD, "LABA20-D");
         compareToLawCode("Add Art 20-D §§760 -765, Lab L");
     }
 
 
     @Test
-    // Tests to make sure extraneous qualifiers like are ignored
+    // Tests to make sure extraneous qualifiers are ignored
     public void subTest() {
         // A270, 2019
         put(AMEND, "ENV27-2709", "ENV27-2707", "ENVA27T27", "ENV27-2703", "ENV27-2701");
@@ -176,6 +180,7 @@ public class BillLawCodeParserTest {
                 "27 Title 27 Head, §§27-2701, 27-2703, 27-2707 & 27-2709, rpld §§27-2701 sub 4, " +
                 "27-2711 & 27-2713, add §27-2706, En Con L");
 
+        // S3501, 2011
         put(AMEND, "EDN2588");
         compareToLawCode("Amd §2588, rpld subs 3, 4 & 7, Ed L");
 
@@ -234,6 +239,7 @@ public class BillLawCodeParserTest {
         put(ADD, "PBHA2T6");
         compareToLawCode("Add Art 2 Title VI §§266 - 266-c, Pub Health L");
 
+        // A3982, 2015
         put(ADD, "PBGA9");
         compareToLawCode("Add Art IX §§170 - 176, Pub Hous L");
 
@@ -260,7 +266,7 @@ public class BillLawCodeParserTest {
     }
 
     @Test
-    // Tests parsing of lawcodes with "various" that should be ignored.
+    // Tests parsing of law codes with "various" that should be ignored.
     public void variousUnlinkableTest() {
         // A8867, 2009
         put(AMEND, "BSC1004", "BSC1007", "NPC1004", "NPC1007");
@@ -269,7 +275,7 @@ public class BillLawCodeParserTest {
     }
 
     @Test
-    // Tests lawcode with "various" that refers to a linkable chapter
+    // Tests law code with "various" that refers to a linkable chapter
     public void variousLinkableTest() {
         // A7583, 2011
         put(REPEAL, "GMU (generally)", "PBA (generally)");
@@ -314,54 +320,70 @@ public class BillLawCodeParserTest {
 
     @Test
     public void missingCommaTests() {
+        // A8219, 2009
         put(ADD, "EDN6507-A");
         compareToLawCode("Add §6507-a Ed L");
 
+        // A7329, 2009
         put(AMEND, "PBO87");
         compareToLawCode("amd §87 Pub Off L");
 
+        // Can't find in database
         put(AMEND, "ISC (generally)");
         compareToLawCode("Amd Isc L");
     }
 
     @Test
     public void incorrectSemicolonPlacement() {
+        // A5265, 2009
         put(ADD, "ELN5-212-A");
         put(AMEND, "ELN5-212-A");
         compareToLawCode("Add §5-212-a; amd §5-212-a, El L;");
 
+        // S2333, 2011
         put(ADD, "RSSA23");
         compareToLawCode("add Art 23 §§1300 - 1304; R & SS L");
 
+        // A6351, 2013
         put(AMEND, "ISC (generally)", "PBH4406-D", "PBH4406-C", "PBH4901", "PBH4902", "PBH4905");
         compareToLawCode("Amd Ins L; generally; amd §§4406-d, 4406-c, 4901, 4902 & 4905, Pub Health L");
 
+        // S685, 2013
         compareToLawCode("Amd §§666, 200, 645 & 648, rpld §668, add §201-a; NYC Chart;");
     }
 
     @Test
     public void missingSpaceTest() {
+        // S4483, 2011
         put(ADD, "UDA45");
         compareToLawCode("Add §45,UDC Act");
     }
 
     @Test
     public void emptyMapping() {
+        // S922, 2015
         compareToLawCode("Amd Chap 899 of 1984");
+
+        // S250, 2009
         compareToLawCode("Amd Chaps 50, 53, 54 & 55 of 2008");
+
+        // If there are no valid laws, the mapping should be empty.
         assertEquals("{}", BillLawCodeParser.parse("N/A", false));
     }
 
     @Test
     public void badActionTest() {
+        // A6668, 2009
         put(REPEAL, "SOS384-B");
         compareToLawCode("Amc §384-b, rpld §384-b sub 6, Soc Serv L");
 
+        // A9406, 2011
         compareToLawCode("amd§454, Bank L");
     }
 
     @Test
     public void testNoOutOfBoundsException() {
+        // Can't find in database
         put(ADD, "PEN145.75") ;
         compareToLawCode("Add §145.75, Pen L; amd §510.10");
     }
