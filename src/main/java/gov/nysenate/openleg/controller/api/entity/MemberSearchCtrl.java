@@ -4,7 +4,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
+import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -29,8 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberSearchCtrl extends BaseCtrl
 {
-    @Autowired private MemberService memberData;
-    @Autowired private MemberSearchService memberSearch;
+    @Autowired protected MemberService memberData;
+    @Autowired protected MemberSearchService memberSearch;
 
     /**
      * Member Search API
@@ -44,7 +44,7 @@ public class MemberSearchCtrl extends BaseCtrl
      *                      offset - Start results from offset
      */
     @RequestMapping(value = "/search")
-    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+    public BaseResponse globalSearch(@RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
@@ -64,9 +64,9 @@ public class MemberSearchCtrl extends BaseCtrl
      *                      limit - Limit the number of results (default 50)
      *                      offset - Start results from offset
      */
-    @RequestMapping(value = "/{sessionYear}/search")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/search")
     public BaseResponse globalSearch(@PathVariable int sessionYear,
-                                     @RequestParam(required = true) String term,
+                                     @RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
@@ -76,16 +76,16 @@ public class MemberSearchCtrl extends BaseCtrl
     }
 
     private BaseResponse getSearchResponse(SearchResults<Integer> results, boolean full, LimitOffset limOff) throws SearchException {
-        List<ViewObject> viewtypes = new ArrayList<>();
+        List<ViewObject> viewTypes = new ArrayList<>();
         for (SearchResult<Integer> result : results.getResults()) {
             FullMember member;
             try {
-                member = memberData.getMemberById(result.getResult());
+                member = memberData.getFullMemberById(result.getResult());
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()));
+            viewTypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
         }
-        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
+        return ListViewResponse.of(viewTypes, results.getTotalResults(), limOff);
     }
 }

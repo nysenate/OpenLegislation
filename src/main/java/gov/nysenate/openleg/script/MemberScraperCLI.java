@@ -23,9 +23,9 @@ public class MemberScraperCLI extends BaseScript
     @Override
     protected void execute(CommandLine opts) throws Exception {
         List<SessionMember> assemblyMembers = MemberScraperUtils.getAssemblyMembers();
-        assemblyMembers.stream().forEach(m -> {
+        assemblyMembers.stream().forEach(sm -> {
             try {
-                InputStream in = new UrlResource(m.getImgName()).getInputStream();
+                InputStream in = new UrlResource(sm.getMember().getImgName()).getInputStream();
                 FileIOUtils.writeToFile(in, "/tmp/assembly/" + RandomUtils.getRandomString(10) + ".jpg");
             } catch (IOException e) {
                 logger.error("Failed to ", e);

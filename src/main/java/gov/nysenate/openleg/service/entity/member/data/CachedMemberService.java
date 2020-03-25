@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +60,7 @@ public class CachedMemberService implements MemberService
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         try {
             FullMember member = fullMemberIdCache.getMemberById(memberId);
             Optional<SessionMember> sessionMembOpt = member.getSessionMemberForYear(sessionYear);
@@ -73,41 +72,41 @@ public class CachedMemberService implements MemberService
     }
 
     @Override
-    public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
+    public FullMember getFullMemberById(int memberId) throws MemberNotFoundEx {
         return fullMemberIdCache.getMemberById(memberId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
         return sessionMemberIdCache.getMemberBySessionId(sessionMemberId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
+    public SessionMember getSessionMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
         return sessionChamberShortNameCache.getMemberByShortName(lbdcShortName, sessionYear, chamber);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SessionMember getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
+    public SessionMember getSessionMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         try {
-            return getMemberByShortName(lbdcShortName, sessionYear, chamber);
+            return getSessionMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (MemberNotFoundEx ex) {
-            SessionMember member = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
-            memberDao.updatePerson(member);
-            memberDao.updateMember(member);
-            memberDao.updateSessionMember(member);
-            eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
-            return member;
+            SessionMember sessionMember = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
+            memberDao.updatePerson(sessionMember.getMember());
+            memberDao.updateMember(sessionMember.getMember());
+            memberDao.updateSessionMember(sessionMember);
+            eventBus.post(new UnverifiedMemberEvent(sessionMember, LocalDateTime.now()));
+            return sessionMember;
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+    public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         return fullMemberIdCache.getAllMembers(sortOrder, limOff);
     }
 
@@ -121,11 +120,11 @@ public class CachedMemberService implements MemberService
     @Override
     public void updateMembers(List<SessionMember> sessionMembers) {
         Collection<? extends Person> persons = sessionMembers.stream()
-                .collect(Collectors.toMap(Person::getPersonId, Function.identity(), (a,b) -> b))
+                .collect(Collectors.toMap((a -> a.getMember().getPersonId()), SessionMember::getMember, (a, b) -> b))
                 .values();
 
-        Collection<SessionMember> members = sessionMembers.stream()
-                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity(), (a,b) -> b))
+        Collection<Member> members = sessionMembers.stream()
+                .collect(Collectors.toMap(a -> a.getMember().getMemberId(), SessionMember::getMember, (a,b) -> b))
                 .values();
 
         persons.forEach(memberDao::updatePerson);

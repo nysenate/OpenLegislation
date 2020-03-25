@@ -11,9 +11,6 @@ public class Person implements Comparable<Person>
      *  This value should only be set after retrieval from the persistence layer. */
     private Integer personId;
 
-    /** The prefix (Mr, Mrs, Senator, etc) */
-    private String prefix = "";
-
     /** The full name of the person. */
     private String fullName = "";
 
@@ -26,17 +23,20 @@ public class Person implements Comparable<Person>
     /** The last name of the person. */
     private String lastName = "";
 
-    /** The suffix of the person (Jr, Sr, etc) */
-    private String suffix = "";
-
     /** The email address of the person. */
     private String email = "";
 
-    /** The name of the image for this person. */
-    private String imgName = "";
+    /** The prefix (Mr, Mrs, Senator, etc) */
+    private String prefix = "";
+
+    /** The suffix of the person (Jr, Sr, etc) */
+    private String suffix = "";
 
     /** True if this person has been manually verified */
-    protected boolean verified;
+    private boolean verified;
+
+    /** The name of the image for this person. */
+    private String imgName = "";
 
     /** --- Constructors --- */
 
@@ -47,7 +47,21 @@ public class Person implements Comparable<Person>
     }
 
     public Person (String fullName) {
+        this.fullName = fullName.trim();
+    }
+
+    public Person(Integer personId, String fullName, String firstName, String middleName, String
+            lastName, String email, String pref, String suffix, boolean verified, String imgName) {
+        this.personId = personId;
         this.fullName = fullName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.prefix = pref;
+        this.suffix = suffix;
+        this.verified = verified;
+        this.imgName = imgName;
     }
 
     public Person(Person other) {
@@ -65,7 +79,7 @@ public class Person implements Comparable<Person>
 
     /**
      * Updates a Person's fields to be equal to other.
-     * @param other
+     * @param other to copy from.
      */
     public void updateFromOther(Person other) {
         this.personId = other.getPersonId();

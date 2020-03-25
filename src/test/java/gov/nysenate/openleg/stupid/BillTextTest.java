@@ -33,10 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +82,7 @@ public class BillTextTest extends BaseTests {
 
     @Test
     public void queueTest() {
-        List<BaseBillId> billIds = Arrays.asList(
+        List<BaseBillId> billIds = Collections.singletonList(
                 new BaseBillId("S5513", 2015));
         billIds.forEach(billId -> dao.addBillToScrapeQueue(billId, ScrapeQueuePriority.MANUAL_ENTRY.getPriority()));
         logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC).getResults().stream()

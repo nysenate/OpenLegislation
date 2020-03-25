@@ -115,7 +115,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public void updatePerson(Person person) {
         ImmutableParams params = ImmutableParams.from(getPersonParams(person));
         if (jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON_SQL.getSql(schema()), params) == 0) {
-            int personId = jdbcNamed.queryForObject(
+            Integer personId = jdbcNamed.queryForObject(
                     SqlMemberQuery.INSERT_PERSON_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
             person.setPersonId(personId);
         }
@@ -123,10 +123,10 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public void updateMember(SessionMember member) {
+    public void updateMember(Member member) {
         ImmutableParams params = ImmutableParams.from(getMemberParams(member));
         if (jdbcNamed.update(SqlMemberQuery.UPDATE_MEMBER_SQL.getSql(schema()), params) == 0) {
-            int memberId = jdbcNamed.queryForObject(
+            Integer memberId = jdbcNamed.queryForObject(
                     SqlMemberQuery.INSERT_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
             member.setMemberId(memberId);
         }
@@ -134,12 +134,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public void updateSessionMember(SessionMember member) {
-        ImmutableParams params = ImmutableParams.from(getMemberParams(member));
+    public void updateSessionMember(SessionMember sessionMember) {
+        ImmutableParams params = ImmutableParams.from(getSessionMemberParams(sessionMember));
         if (jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER_SQL.getSql(schema()), params) == 0) {
-            int sessionMemberId = jdbcNamed.queryForObject(
+            Integer sessionMemberId = jdbcNamed.queryForObject(
                     SqlMemberQuery.INSERT_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            member.setSessionMemberId(sessionMemberId);
+            sessionMember.setSessionMemberId(sessionMemberId);
         }
     }
 
@@ -174,12 +174,15 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
-            SessionMember member = new SessionMember();
-            member.setMemberId(rs.getInt("member_id"));
-            member.setSessionMemberId(rs.getInt("session_member_id"));
-            member.setLbdcShortName(rs.getString("lbdc_short_name"));
-            member.setSessionYear(getSessionYearFromRs(rs, "session_year"));
-            member.setDistrictCode(rs.getInt("district_code"));
+            SessionMember sessionMember = new SessionMember();
+
+            sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
+            sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
+            sessionMember.setSessionYear(getSessionYearFromRs(rs, "session_year"));
+            sessionMember.setDistrictCode(rs.getInt("district_code"));
+            sessionMember.setAlternate(rs.getBoolean("alternate"));
+
+            Member member = new Member(rs.getInt("member_id"));
             member.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
@@ -190,10 +193,11 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setLastName(rs.getString("last_name"));
             member.setSuffix(rs.getString("suffix"));
             member.setImgName(rs.getString("img_name"));
-            member.setAlternate(rs.getBoolean("alternate"));
             member.setVerified(rs.getBoolean("verified"));
             member.setEmail(rs.getString("email"));
-            return member;
+
+            sessionMember.setMember(member);
+            return sessionMember;
         }
     }
 
@@ -213,17 +217,21 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("verified", person.isVerified());
     }
 
-    private MapSqlParameterSource getMemberParams(SessionMember member) {
+    private MapSqlParameterSource getMemberParams(Member member) {
         return getPersonParams(member)
                 .addValue("memberId", member.getMemberId())
-                .addValue("sessionMemberId", member.getSessionMemberId())
                 .addValue("chamber", Optional.ofNullable(member.getChamber()).map(Chamber::asSqlEnum).orElse(null))
                 .addValue("incumbent", member.isIncumbent())
-                .addValue("fullName", member.getFullName())
-                .addValue("lbdcShortName", member.getLbdcShortName())
-                .addValue("sessionYear", Optional.ofNullable(member.getSessionYear()).map(SessionYear::getYear).orElse(null))
-                .addValue("districtCode", member.getDistrictCode())
-                .addValue("alternate", member.isAlternate());
+                .addValue("fullName", member.getFullName());
+    }
+
+    private MapSqlParameterSource getSessionMemberParams(SessionMember sessionMember) {
+        return getMemberParams(sessionMember.getMember())
+                .addValue("sessionMemberId", sessionMember.getSessionMemberId())
+                .addValue("lbdcShortName", sessionMember.getLbdcShortName())
+                .addValue("sessionYear", Optional.ofNullable(sessionMember.getSessionYear()).map(SessionYear::getYear).orElse(null))
+                .addValue("districtCode", sessionMember.getDistrictCode())
+                .addValue("alternate", sessionMember.isAlternate());
     }
 
     /**
