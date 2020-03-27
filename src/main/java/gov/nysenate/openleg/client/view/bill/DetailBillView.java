@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A BillView with some extra details.
@@ -27,8 +29,8 @@ public class DetailBillView extends BillView implements ViewObject
 
     /** --- Constructors --- */
 
-    public DetailBillView(Bill bill, BillDataService billDataService) {
-        super(bill);
+    public DetailBillView(Bill bill, BillDataService billDataService, Set<BillTextFormat> fullTextFormats) {
+        super(bill, fullTextFormats);
 
         Map<String, BillInfoView> refs = new HashMap<>();
         // Previous version refs

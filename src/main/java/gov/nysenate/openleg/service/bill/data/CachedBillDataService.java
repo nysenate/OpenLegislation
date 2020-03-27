@@ -106,7 +106,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
                 if (sessionYear.equals(SessionYear.current())) {
                     logger.info("Caching Bill instances for current session year: {}", sessionYear);
                     // Don't load any text because that is not cached.
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id, Collections.emptySet()));
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id));
                 }
                 else {
                     logger.info("Caching Bill Info instances for session year: {}", sessionYear);
@@ -156,19 +156,19 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public Bill getBill(BaseBillId billId, Set<BillTextFormat> fullTextFormats) throws BillNotFoundEx {
+    public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
         try {
             Bill bill;
             if (billCache.get(billId) != null) {
-                bill = constructBillFromCache(billId, fullTextFormats);
+                bill = constructBillFromCache(billId);
                 logger.debug("Cache hit for bill {}", bill);
             }
             else {
                 logger.debug("Fetching bill {}..", billId);
-                bill = billDao.getBill(billId, fullTextFormats);
+                bill = billDao.getBill(billId);
                 putStrippedBillInCache(bill);
             }
             return bill;
@@ -280,14 +280,13 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
      * method. The fulltext and memo are put back into a copy of the cached bill.
      *
      * @param billId BaseBillId
-     * @param billTextFormats {@link Set<BillTextFormat>}
      * @return Bill
      * @throws CloneNotSupportedException
      */
-    private Bill constructBillFromCache(BaseBillId billId, Set<BillTextFormat> billTextFormats) throws CloneNotSupportedException {
+    private Bill constructBillFromCache(BaseBillId billId) throws CloneNotSupportedException {
         Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
         cachedBill = cachedBill.shallowClone();
-        billDao.applyTextAndMemo(cachedBill, billTextFormats);
+        billDao.applyTextAndMemo(cachedBill);
         return cachedBill;
     }
 

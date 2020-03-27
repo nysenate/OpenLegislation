@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.bill.data;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
@@ -41,24 +40,12 @@ import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.base.SortOrder.ASC;
 import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
-import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
-import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
-import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML5;
-import static gov.nysenate.openleg.model.bill.BillTextFormat.DIFF;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
-
-    private static final ImmutableMap<BillTextFormat, String> fullTextFields =
-            ImmutableMap.<BillTextFormat, String>builder()
-                    .put(PLAIN, "full_text")
-                    .put(HTML, "full_text_html")
-                    .put(HTML5, "full_text_html5")
-                    .put(DIFF, "full_text_diff")
-                    .build();
 
     @Autowired private MemberService memberService;
     @Autowired private VetoDataService vetoDataService;
@@ -68,7 +55,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public Bill getBill(BillId billId, Set<BillTextFormat> textFormats) {
+    public Bill getBill(BillId billId) {
         logger.trace("Fetching Bill {} from database...", billId);
         final ImmutableParams baseParams = getBaseParams(billId);
         // Retrieve base Bill object
@@ -134,7 +121,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public void applyTextAndMemo(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException {
+    public void applyTextAndMemo(Bill strippedBill) throws DataAccessException {
         // TODO does strippedBill have all amendments set on it?
         if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");

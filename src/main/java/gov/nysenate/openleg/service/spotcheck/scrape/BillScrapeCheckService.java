@@ -102,7 +102,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      */
     private void checkHtmlBillText(BillAmendment amend, BillScrapeReference reference,
                                    SpotCheckObservation<BaseBillId> obs) {
-        ensureTextFormatExists(amend, HTML);
+        ensureTextLoaded(amend);
         String contentHtmlText = cleanHtml(Optional.ofNullable(amend.getFullText(HTML)).orElse(""));
         String refHtmlText = cleanHtml(reference.getHtmlText());
         spotCheckUtils.checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
@@ -113,7 +113,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        ensureTextFormatExists(billAmendment, PLAIN);
+        ensureTextLoaded(billAmendment);
         String dataText = Optional.ofNullable(billAmendment.getFullText(PLAIN)).orElse("");
         String refText = reference.getText();
         String strippedDataText = basicNormalize(dataText);
@@ -220,10 +220,9 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         return basicNormalize(stripped);
     }
 
-    private void ensureTextFormatExists(BillAmendment billAmendment, BillTextFormat format) {
-        if (!billAmendment.isTextFormatLoaded(format)) {
-            throw new IllegalStateException("Bill text format " + format +
-                    " is not represented in bill reference for " + billAmendment.getBillId());
+    private void ensureTextLoaded(BillAmendment billAmendment) {
+        if (!billAmendment.isTextLoaded()) {
+            throw new IllegalStateException("Bill text is missing for bill: " + billAmendment.getBillId());
         }
     }
 }

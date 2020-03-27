@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
@@ -37,7 +38,7 @@ public class BillAmendmentView extends BillIdView
 
     protected BillAmendmentView(){}
 
-    public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
+    public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus, Set<BillTextFormat> fullTextFormats) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
         if (billAmendment != null) {
             this.publishDate = publishStatus.getEffectDateTime().toLocalDate();
@@ -48,11 +49,13 @@ public class BillAmendmentView extends BillIdView
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
-            this.fullTextFormats = new ArrayList<>(billAmendment.getFullTextFormats());
-//            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
-            this.fullText = billAmendment.getBillText().getFullText(BillTextFormat.PLAIN);
-//            this.fullTextHtml = billAmendment.getFullText(HTML);
-            this.fullTextHtml = billAmendment.getBillText().getFullText(BillTextFormat.HTML);
+            this.fullTextFormats = new ArrayList<>(fullTextFormats);
+            if (this.fullTextFormats.contains(BillTextFormat.PLAIN)) {
+                this.fullText = billAmendment.getFullText(BillTextFormat.PLAIN);
+            }
+            if (this.fullTextFormats.contains(BillTextFormat.HTML)) {
+                this.fullText = billAmendment.getFullText(BillTextFormat.HTML);
+            }
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));

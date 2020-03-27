@@ -92,7 +92,7 @@ public class BillSearchCtrl extends BaseCtrl
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> new SearchResultView((full)
-                        ? new BillView(billData.getBill(r.getResult(), fullTextFormats))
+                        ? new BillView(billData.getBill(r.getResult()), fullTextFormats)
                         : (idOnly)
                             ? new BillIdView(r.getResult())
                             : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
