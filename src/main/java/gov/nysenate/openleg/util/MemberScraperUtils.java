@@ -2,9 +2,11 @@ package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,7 @@ public class MemberScraperUtils
         Elements districtElements = listingPage.select(".email2");
         Elements picElements = directoryPage.select(".mem-pic a img");
         Elements fullNameElements = directoryPage.select(".leader-info strong a");
-        List<String> fullNames = fullNameElements.stream().map(e -> e.text()).collect(toList());
+        List<String> fullNames = fullNameElements.stream().map(Element::text).collect(toList());
         Pattern districtPattern = Pattern.compile("(\\d+)\\w+");
         List<Integer> districts = districtElements.stream().map(e -> {
             Matcher m = districtPattern.matcher(e.text());
@@ -44,19 +46,23 @@ public class MemberScraperUtils
         }).collect(toList());
         List<String> lastNames = csvNameElements.stream().map(e -> e.text().split(",")[0]).collect(toList());
         List<String> imageNames = picElements.stream().map(i -> i.attr("src")).collect(toList());
-        List<SessionMember> members = new ArrayList<>();
+        List<SessionMember> sessionMembers = new ArrayList<>();
         for (int i = 0; i < lastNames.size(); i++) {
-            SessionMember m = new SessionMember();
+            Member m = new Member();
             m.setLastName(lastNames.get(i));
             m.setFullName(fullNames.get(i));
             m.setImgName(imageNames.get(i));
-            m.setDistrictCode(districts.get(i));
-            m.setSessionYear(SessionYear.current());
             m.setChamber(Chamber.ASSEMBLY);
-            members.add(m);
+
+            SessionMember sm = new SessionMember();
+            sm.setDistrictCode(districts.get(i));
+            sm.setSessionYear(SessionYear.current());
+            sm.setMember(m);
+
+            sessionMembers.add(sm);
         }
 
-        return members;
+        return sessionMembers;
     }
 
     public static List<SessionMember> getSenateMembers() throws IOException {
@@ -67,7 +73,7 @@ public class MemberScraperUtils
         Elements districtElems = nodes.select(".views-field-field-senators-district-nid span");
         List<String> imageUrls = imageElems.stream()
             .map(i -> i.attr("src")).collect(toList());
-        List<String> names = nameElems.stream().map(n -> n.text()).collect(toList());
+        List<String> names = nameElems.stream().map(Element::text).collect(toList());
         Pattern districtPattern = Pattern.compile("District (\\d+)");
         List<Integer> districts = districtElems.stream().map(d -> {
             Matcher m = districtPattern.matcher(d.text());
@@ -76,15 +82,19 @@ public class MemberScraperUtils
         }).collect(toList());
         List<SessionMember> senators = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
-            SessionMember m = new SessionMember();
             String[] splitName = names.get(i).split(",");
+            Member m = new Member();
             m.setLastName(splitName[0]);
             m.setFullName(splitName[1] + " " + splitName[0]);
             m.setImgName(imageUrls.get(i));
-            m.setDistrictCode(districts.get(i));
-            m.setSessionYear(SessionYear.current());
             m.setChamber(Chamber.SENATE);
-            senators.add(m);
+
+            SessionMember sm = new SessionMember();
+            sm.setDistrictCode(districts.get(i));
+            sm.setSessionYear(SessionYear.current());
+            sm.setMember(m);
+
+            senators.add(sm);
         }
         return senators;
     }

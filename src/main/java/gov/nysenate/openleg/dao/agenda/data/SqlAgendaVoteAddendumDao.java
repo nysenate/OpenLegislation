@@ -90,7 +90,7 @@ public class SqlAgendaVoteAddendumDao extends SqlBaseDao {
         // Set full session member information
         for (AgendaVoteAttendance va : voteAttendances) {
             try {
-                va.setMember(memberService.getMemberBySessionId(va.getMember().getSessionMemberId()));
+                va.setMember(memberService.getSessionMemberBySessionId(va.getMember().getSessionMemberId()));
             } catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.info("Failed to map member for attendance listing.");
             }
@@ -106,7 +106,7 @@ public class SqlAgendaVoteAddendumDao extends SqlBaseDao {
         for (AgendaVoteBill agendaVoteBill : billVotes.values()) {
             for (SessionMember member: agendaVoteBill.getBillVote().getMemberVotes().values()) {
                 try {
-                    SessionMember fullMember = memberService.getMemberBySessionId(member.getSessionMemberId());
+                    SessionMember fullMember = memberService.getSessionMemberBySessionId(member.getSessionMemberId());
                     member.updateFromOther(fullMember);
                 } catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);

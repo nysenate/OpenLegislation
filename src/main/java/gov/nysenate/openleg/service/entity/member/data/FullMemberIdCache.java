@@ -130,7 +130,7 @@ public class FullMemberIdCache implements CachingService<Integer> {
      */
     public List<FullMember> getAllFullMembers() {
         return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-                .collect(Collectors.groupingBy(SessionMember::getMemberId, LinkedHashMap::new, Collectors.toList()))
+                .collect(Collectors.groupingBy(sm -> sm.getMember().getMemberId(), LinkedHashMap::new, Collectors.toList()))
                 .values().stream()
                 .map(FullMember::new)
                 .collect(Collectors.toList());

@@ -18,20 +18,20 @@ public class SqlMemberServiceTest extends BaseTests
     private static final Logger logger = LoggerFactory.getLogger(SqlMemberServiceTest.class);
 
     @Autowired
-    private MemberService sqlMemberService;
+    public MemberService sqlMemberService;
 
     @Test
-    public void testGetMemberByShortName_UsesCache() throws Exception {
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberBySessionId(667)));
+    public void testGetMemberByShortName_UsesCache() {
+        logger.info(OutputUtils.toJson(sqlMemberService.getSessionMemberBySessionId(667)));
     }
 
     @Test(expected = MemberNotFoundEx.class)
-    public void testGetMemberBySessionNegativeId() throws Exception {
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberById(-1, SessionYear.current())));
+    public void testGetMemberBySessionNegativeId() {
+        logger.info(OutputUtils.toJson(sqlMemberService.getSessionMemberById(-1, SessionYear.current())));
     }
 
     @Test(expected = MemberNotFoundEx.class)
-    public void testGetMemberByNegativeId() throws Exception {
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberById(-1)));
+    public void testGetMemberByNegativeId() {
+        logger.info(OutputUtils.toJson(sqlMemberService.getFullMemberById(-1)));
     }
 }

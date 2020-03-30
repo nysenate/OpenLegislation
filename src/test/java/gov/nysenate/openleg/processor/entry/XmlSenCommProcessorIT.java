@@ -46,19 +46,24 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         expected.setMeetTime(LocalTime.of(9, 0));
         expected.setLocation("Room 412 LOB");
         expected.setSession(SessionYear.of(2017));
-        CommitteeMember committeeMember = new CommitteeMember();
+
+        Member member = new Member();
+        member.setIncumbent(true);
+        member.setPersonId(1237);
+        member.setFullName("RITCHIE");
+        member.setMemberId(1415);
+        member.setVerified(false);
+
         SessionMember sessionMember = new SessionMember();
+        sessionMember.setMember(member);
         sessionMember.setAlternate(false);
-        sessionMember.setIncumbent(true);
         sessionMember.setDistrictCode(0);
         sessionMember.setLbdcShortName("RITCHIE");
         sessionMember.setSessionMemberId(1413);
         sessionMember.setSessionYear(SessionYear.of(2017));
-        sessionMember.setPersonId(1237);
-        sessionMember.setFullName("RITCHIE");
-        sessionMember.setMemberId(1415);
-        sessionMember.setVerified(false);
-        committeeMember.setMember(sessionMember);
+
+        CommitteeMember committeeMember = new CommitteeMember();
+        committeeMember.setSessionMember(sessionMember);
         committeeMember.setMajority(true);
         committeeMember.setTitle(CommitteeMemberTitle.CHAIR_PERSON);
         expected.addMember(committeeMember);

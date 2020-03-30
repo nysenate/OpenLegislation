@@ -66,15 +66,15 @@ public class DataProcessNotificationService {
         eventBus.post(notification);
     }
 
-    public void unverifiedMemberNotification(SessionMember member) {
+    public void unverifiedMemberNotification(SessionMember sessionMember) {
         Optional<DataProcessRun> run = dataProcessor.getCurrentRun();
         LocalDateTime occurred = LocalDateTime.now();
-        String summary = "New unverified session member: " + member.getLbdcShortName();
+        String summary = "New unverified session member: " + sessionMember.getLbdcShortName();
         String message = "A new unverified session member has been created" + (run.isPresent() ? " during data processing" : "") + "\n" +
-                (run.isPresent() ? getDataProcessRunUrl(run.get().getProcessId()) + "\n" : "") +
-                "shortname: " + member.getLbdcShortName() + "\n" +
-                "chamber: " + member.getChamber()+ "\n" +
-                "session: " + member.getSessionYear();
+                (run.map(dataProcessRun -> getDataProcessRunUrl(dataProcessRun.getProcessId()) + "\n").orElse("")) +
+                "shortname: " + sessionMember.getLbdcShortName() + "\n" +
+                "chamber: " + sessionMember.getMember().getChamber()+ "\n" +
+                "session: " + sessionMember.getSessionYear();
         Notification notification = new Notification(UNVERIFIED_MEMBER, occurred, summary, message);
         eventBus.post(notification);
     }

@@ -370,7 +370,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
             for (int memberId : vote.getVoteRoll().get(code)) {
                 String shortName;
                 try {
-                    FullMember member = memberService.getMemberById(memberId);
+                    FullMember member = memberService.getFullMemberById(memberId);
                     shortName = member.getLatestSessionMember()
                             .orElseThrow(MemberNotFoundEx::new)
                             .getLbdcShortName();
