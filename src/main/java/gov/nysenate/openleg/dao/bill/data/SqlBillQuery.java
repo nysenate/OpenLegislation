@@ -105,7 +105,8 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     UPDATE_BILL_AMEND_PLAIN_TEXT(
             "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-                    "SET full_text = :plainText"
+                    "SET full_text = :plainText\n" +
+                    "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
 
     /** --- Bill Amendment --- */
