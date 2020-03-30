@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.controller.api.entity;
 
-import gov.nysenate.openleg.annotation.UnitTest;
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
+@Category(IntegrationTest.class)
 public class MemberSearchCtrlTest extends ApiTest {
 
     @Autowired
