@@ -1,8 +1,9 @@
 CREATE TABLE master.bill_amendment_text_diff (
-  bill_amendment_text_diff_id SERIAL PRIMARY KEY,
+  bill_amendment_text_diff_id BIGSERIAL PRIMARY KEY,
   bill_print_no text NOT NULL,
   bill_session_year smallint NOT NULL,
   bill_amend_version character(1) NOT NULL,
+  index int NOT NULL,
   type text NOT NULL,
   text text NOT NULL
 );

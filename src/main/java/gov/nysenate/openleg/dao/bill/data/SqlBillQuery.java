@@ -85,7 +85,8 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_BILL_AMEND_TEXT_DIFFS(
             "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_TEXT_DIFF + "\n" +
-                    "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+                    "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+                    "ORDER BY index asc"
     ),
 
     DELETE_BILL_AMEND_TEXT_DIFFS(
@@ -94,8 +95,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_AMEND_TEXT_DIFFS(
             "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_TEXT_DIFF + "\n" +
-                    "(bill_print_no, bill_session_year, bill_amend_version, type, text)\n" +
-                    "VALUES (:printNo, :sessionYear, :version, :type, :text)"
+                    "(bill_print_no, bill_session_year, bill_amend_version, index, type, text)\n" +
+                    "VALUES (:printNo, :sessionYear, :version, :index, :type, :text)"
     ),
 
     SELECT_BILL_AMEND_PLAIN_TEXT(

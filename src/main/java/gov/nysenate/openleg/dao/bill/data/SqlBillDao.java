@@ -717,10 +717,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         // Insert new diffs
         List<TextDiff> diffs = billAmendment.getBillText().getTextDiffs();
         List<ImmutableParams> params = new ArrayList<>();
+        int index = 1;
         for (TextDiff diff : diffs) {
             params.add(amendParams.add(new MapSqlParameterSource()
+                    .addValue("index", index)
                     .addValue("type", diff.getType().name())
                     .addValue("text", diff.getText())));
+            index++;
         }
 
         String sql = SqlBillQuery.INSERT_BILL_AMEND_TEXT_DIFFS.getSql(schema());
