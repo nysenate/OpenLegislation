@@ -36,7 +36,7 @@ public class BillAmendmentView extends BillIdView
     protected boolean uniBill;
     protected boolean isStricken;
 
-    protected BillAmendmentView(){}
+    public BillAmendmentView(){}
 
     public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus, Set<BillTextFormat> fullTextFormats) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
