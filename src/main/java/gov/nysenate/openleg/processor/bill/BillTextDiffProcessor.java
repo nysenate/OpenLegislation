@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.model.bill.TextDiffType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.jsoup.safety.Whitelist;
 import org.springframework.stereotype.Service;
 
@@ -121,9 +122,14 @@ public class BillTextDiffProcessor {
         html = html.substring(leadingNewlines.length());
         Document document = Jsoup.parse(html);
         document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
-        String s = document.html().replaceAll("\\\\n", "\n");
-        return leadingNewlines + Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+        String text = document.html().replaceAll("\\\\n", "\n");
+        text = leadingNewlines + Jsoup.clean(text, "", Whitelist.none(),
+                new Document.OutputSettings().escapeMode(Entities.EscapeMode.xhtml).prettyPrint(false));
+        // Remove the html escaping done by jsoup.
+        text = text.replaceAll("&amp;", "&");
+        return text;
     }
+
 
     /**
      * Returns the leading whitespace characters of a String.

@@ -250,4 +250,14 @@ public class BillTextDiffProcessorTest {
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void doNotEscapeAmpersand() {
+        String text = "THE NEW YORK & STATE SENATE";
+        BillText actual = textProcessor.processBillText(text);
+
+        TextDiff diff = new TextDiff(TextDiffType.UNCHANGED, text);
+        BillText expected = new BillText(Arrays.asList(diff));
+        assertEquals(expected, actual);
+    }
 }
