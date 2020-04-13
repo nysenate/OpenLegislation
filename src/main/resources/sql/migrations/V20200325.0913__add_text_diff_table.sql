@@ -9,6 +9,10 @@ CREATE TABLE master.bill_amendment_text_diff (
 );
 
 ALTER TABLE master.bill_amendment_text_diff
-ADD CONSTRAINT bill_amendment_text_diff_bill_amend_fkey
-FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version)
-REFERENCES master.bill_amendment(bill_print_no, bill_session_year, bill_amend_version);
+  ADD CONSTRAINT bill_amendment_text_diff_bill_amend_fkey
+  FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version)
+  REFERENCES master.bill_amendment(bill_print_no, bill_session_year, bill_amend_version);
+
+CREATE INDEX bill_amendment_text_diff_print_no_session_year_amend_version
+  ON master.bill_amendment_text_diff USING btree (bill_print_no, bill_session_year, bill_amend_version);
+
