@@ -252,12 +252,59 @@ public class BillTextDiffProcessorTest {
     }
 
     @Test
-    public void doNotEscapeAmpersand() {
-        String text = "THE NEW YORK & STATE SENATE";
+    public void doesNotEscapeHtmlEntities() {
+        String text = "<B><U>THE & NEW < YORK > STATE \" SENATE</U></B>";
         BillText actual = textProcessor.processBillText(text);
 
-        TextDiff diff = new TextDiff(TextDiffType.UNCHANGED, text);
+        TextDiff diff = new TextDiff(TextDiffType.ADDED, "THE & NEW < YORK > STATE \" SENATE");
         BillText expected = new BillText(Arrays.asList(diff));
         assertEquals(expected, actual);
     }
+
+    /**
+     * Nested added/removed element tests.
+     *
+     * Normally bill text contains brackets and removed elements around text which has been removed
+     * from the previous version. i.e. [<B><S>text that was removed</S></B>]
+     *
+     * However there is a bug in their code and the <B><S></S></B> elements are being added even in
+     * situations where brackets are used in the bill text itself.
+     *
+     * This can cause issues with our parser because it makes no sense for these tags to be nested in each other.
+     *
+     * To keep our raw text accurate, we remove the <B><S></S></B> element in these instances.
+     *
+     * Examples of this:
+     * - 2019-01-15-18.16.27.610484_BILLTEXT_S01533.XML page 1 line 2-4
+     * - 2020-03-12-11.04.18.634283_BILLTEXT_S01527C.XML page 76 line 4-8
+     * - 2019-04-03-14.56.51.698683_BILLTEXT_S04984.XML page 12 line 49
+     */
+
+    @Test
+    public void givenRemovedElementInsideAddedElement_removedElementIgnored() {
+        String text = "Foo <B><U>Record & Return by [<B><S></S></B>] Mail [<B><S></S></B>] Pickup to:</U></B> bar.";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "Foo "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "Record & Return by [] Mail [] Pickup to:"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " bar."));
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void givenAddedElementInsideRemovedElement_removeElementIgnored() {
+        String text = "the [<B><S>new york <B><U>state</U></B> senate</S></B>] in albany.";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "the [new york "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "state"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " senate] in albany."));
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    
 }

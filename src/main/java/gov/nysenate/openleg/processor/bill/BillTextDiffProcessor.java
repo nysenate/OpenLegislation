@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.bill.BillText;
 import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.model.bill.TextDiffType;
@@ -26,38 +27,29 @@ public class BillTextDiffProcessor {
             return new BillText(new ArrayList<>());
         }
 
-        // Remove any empty lines at the end of the text.
-        rawHTML = rawHTML.trim();
-
-        ArrayList<TextDiff> textDiffs = new ArrayList<>();
-        String billText = rawHTML;
-
-        // Remove STYLE and BASEFONT element before starting.
-        if (billText.contains("<PRE")) {
-            billText = billText.substring(billText.indexOf("<PRE"));
-        }
+        String rawHtml = cleanupRawHtml(rawHTML);
 
         // Create TextDiffSearch obj for each type of diff we want to search for.
         TextDiffSearch addedSearch = new TextDiffSearch(
                 Pattern.compile("<B><U>([\\S|\\s]*?)</U></B>"),
                 TextDiffType.ADDED,
-                billText);
+                rawHtml);
         TextDiffSearch removedSearch = new TextDiffSearch(
                 Pattern.compile("<B><S>([\\S|\\s]*?)</S></B>"),
                 TextDiffType.REMOVED,
-                billText);
+                rawHtml);
         TextDiffSearch boldSearch = new TextDiffSearch(
                 Pattern.compile("(?<!<FONT SIZE=5>)<B>(?!<U>)(?!<S>)([\\S|\\s]*?)</B>"),
                 TextDiffType.BOLD,
-                billText);
+                rawHtml);
         TextDiffSearch headerSearch = new TextDiffSearch(
                 Pattern.compile("<FONT SIZE=5><B>([\\S|\\s]*?)</B></FONT>"),
                 TextDiffType.HEADER,
-                billText);
+                rawHtml);
         TextDiffSearch pageBreakSearch = new TextDiffSearch(
                 Pattern.compile("<P CLASS=\"brk\">"),
                 TextDiffType.PAGE_BREAK,
-                billText);
+                rawHtml);
 
         // Find the first match for all diff types.
         addedSearch.findNext();
@@ -66,10 +58,27 @@ public class BillTextDiffProcessor {
         headerSearch.findNext();
         pageBreakSearch.findNext();
 
-        // Loop through the bill text, creating diffs for all matches and text in between.
+        List<TextDiff> textDiffs = createTextDiffs(rawHtml, addedSearch, removedSearch, boldSearch, headerSearch, pageBreakSearch);
+        postProcessingCleanup(textDiffs);
+        return new BillText(textDiffs);
+    }
+
+    private String cleanupRawHtml(String rawHTML) {
+        // Remove any empty lines at the end of the text.
+        rawHTML = rawHTML.trim();
+
+        // Remove STYLE and BASEFONT element before starting.
+        if (rawHTML.contains("<PRE")) {
+            rawHTML = rawHTML.substring(rawHTML.indexOf("<PRE"));
+        }
+        return rawHTML;
+    }
+
+    private List<TextDiff> createTextDiffs(String billText, TextDiffSearch addedSearch, TextDiffSearch removedSearch,
+                                           TextDiffSearch boldSearch, TextDiffSearch headerSearch, TextDiffSearch pageBreakSearch) {
+        ArrayList<TextDiff> textDiffs = new ArrayList<>();
         List<TextDiffSearch> results = Arrays.asList(addedSearch, removedSearch, boldSearch, headerSearch, pageBreakSearch);
         int currentIndex = 0;
-
         while (currentIndex < billText.length()) {
             // Find which search result is next in the bill text.
             Optional<TextDiffSearch> result = results.stream()
@@ -77,13 +86,37 @@ public class BillTextDiffProcessor {
                     .min(Comparator.comparingInt(TextDiffSearch::getStartingIndex));
 
             if (!result.isPresent()) {
-                // No more diffs found, add the final text and break out of loop.
+                // No more diffs found, we are at the end of the text, add the final text and break out of loop.
                 String text = billText.substring(currentIndex, billText.length());
                 if (text.length() > 0) {
                     textDiffs.add(new TextDiff(TextDiffType.UNCHANGED, text));
                 }
                 break;
             }
+
+            // Check if added or removed search results are nested in each other.
+            // See BillTextDiffProcessorTest for more details and examples.
+            TextDiffType resultDiffType = result.get().getDiffType();
+            Range<Integer> resultIndexRange = Range.open(result.get().getStartingIndex(), result.get().getEndingIndex());
+            if (resultDiffType == TextDiffType.REMOVED) {
+                if (resultIndexRange.contains(addedSearch.getStartingIndex())) {
+                    // addedSearch result found inside the current removedSearch result.
+
+                    // This nested removedResult is a bug so skip over it. See tests for more info.
+                    result.get().findNext();
+                    continue;
+                }
+            }
+            else if (resultDiffType == TextDiffType.ADDED) {
+                while (resultIndexRange.contains(removedSearch.getStartingIndex())) {
+                    // The removedSearch found a match inside this addedSearch.
+
+                    // Ignore this removedSearch result. Its due to a bracket in bill text which is incorrectly
+                    // represented as a removal in the XML text. See tests for more info.
+                    removedSearch.findNext();
+                }
+            }
+
             if (result.get().getStartingIndex() > currentIndex) {
                 // Add a diff containing the unchanged text from before the text of this result.
                 String text = billText.substring(currentIndex, result.get().getStartingIndex());
@@ -97,20 +130,24 @@ public class BillTextDiffProcessor {
             // Find the next match for this result
             result.get().findNext();
         }
+        return textDiffs;
+    }
 
-        // Remove erroneous xml elements and empty text diffs.
+    /**
+     * Remove remaining erroneous xml elements and empty text diffs.
+     */
+    private void postProcessingCleanup(List<TextDiff> textDiffs) {
         for (int i = 0; i < textDiffs.size(); ++i) {
             textDiffs.get(i).setText(jsoupParsePreserveNewline(textDiffs.get(i).getText()));
             if (textDiffs.get(i).getText().equals("") && textDiffs.get(i).getCssClasses().size() == 0) {
                 textDiffs.remove(i--);
             }
         }
-
-        return new BillText(textDiffs);
     }
 
     /**
      * Converts html to plaintext while attempting to preserve all line breaks.
+     * This also converts section symbol alt codes into the section symbol.
      *
      * @param html String
      * @return String
@@ -123,10 +160,13 @@ public class BillTextDiffProcessor {
         Document document = Jsoup.parse(html);
         document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
         String text = document.html().replaceAll("\\\\n", "\n");
+        // EscapeMode.xhtml only escapes less than, greater than, ampersand, and quote. We minimize this so we have less escaping to remove.
         text = leadingNewlines + Jsoup.clean(text, "", Whitelist.none(),
                 new Document.OutputSettings().escapeMode(Entities.EscapeMode.xhtml).prettyPrint(false));
-        // Remove the html escaping done by jsoup.
+        // Remove the html escaping added by jsoup.
         text = text.replaceAll("&amp;", "&");
+        text = text.replaceAll("&lt;", "<");
+        text = text.replaceAll("&gt;", ">");
         return text;
     }
 
