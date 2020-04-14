@@ -188,7 +188,7 @@ The response here is straight-forward.
     {
         "success": true,
         "message": "Law document for location A2 in EDN law ",
-        "responseType": "law-document",
+        "responseType": "law-doc-info-detail",
         "result": {
             "lawId": "EDN",
             "locationId": "A2",
