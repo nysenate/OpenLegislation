@@ -186,18 +186,55 @@ The response here is straight-forward.
 .. code-block:: javascript
 
     {
-        "success": true,
-        "message": "Law document for location A2 in EDN law ",
-        "responseType": "law-doc-info-detail",
-        "result": {
-            "lawId": "EDN",
-            "locationId": "A2",
-            "title": "DIGNITY FOR ALL STUDENTS",
-            "docType": "ARTICLE",
-            "docLevelId": "2",
-            "activeDate": "2014-09-22",
-            "text": "  ARTICLE 2 (text truncated for brevity)"  // The text body of the law will be here
-        }
+        "success" : true,
+        "message" : "Law document for location A2 in EDN law ",
+        "responseType" : "law-doc-info-detail",
+        "result" : {
+            "lawId" : "EDN",
+            "lawName" : "Education",
+            "locationId" : "A2",
+            "title" : "Dignity For All Students",
+            "docType" : "ARTICLE",
+            "docLevelId" : "2",
+            "activeDate" : "2019-05-03",
+            "text" : "ARTICLE 2 (text truncated for brevity)"  // The text body of the law will be here,
+            "parentLocationIds" : [ "-CH16", "T1" ],
+            "parents" : [ {
+              "lawId" : "EDN",
+              "lawName" : "Education",
+              "locationId" : "-CH16",
+              "title" : "Education",
+              "docType" : "CHAPTER",
+              "docLevelId" : "16",
+              "activeDate" : "2019-11-01"
+            }, {
+              "lawId" : "EDN",
+              "lawName" : "Education",
+              "locationId" : "T1",
+              "title" : "General Provisions Article 1 Short Title and Definitions (§§",
+              "docType" : "TITLE",
+              "docLevelId" : "1",
+              "activeDate" : "2019-04-19"
+            } ],
+            "prevSibling" : {
+              "lawId" : "EDN",
+              "lawName" : "Education",
+              "locationId" : "A1",
+              "title" : "Short Title and Definitions",
+              "docType" : "ARTICLE",
+              "docLevelId" : "1",
+              "activeDate" : "2014-09-22"
+            },
+            "nextSibling" : {
+              "lawId" : "EDN",
+              "lawName" : "Education",
+              "locationId" : "A3",
+              "title" : "Education Department",
+              "docType" : "ARTICLE",
+              "docLevelId" : "3",
+              "activeDate" : "2014-09-22"
+            }
+          }
     }
 
 If the law document was not found you will receive an error response
