@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillText;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.model.bill.TextDiffType;
 import org.checkerframework.checker.units.qual.A;
@@ -252,6 +253,34 @@ public class BillTextDiffProcessorTest {
     }
 
     @Test
+    public void formatsPageBreaksCorrectly() {
+        String text =
+                "<PRE>    54  license and record database established pursuant to  section  400.02  of\n" +
+                "    55  this chapter.\n" +
+                "</PRE><P CLASS=\"brk\"><PRE WIDTH=\"99\">\n" +
+                "        S. 2143--A                          3\n" +
+                " \n" +
+                "     1    (3)  Any  gunsmith  who  fails  to  comply with the provisions of this\n" +
+                "     2  section shall be guilty of a class C felony.";
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "    54  license and record database established pursuant to  section  400.02  of\n" +
+                "    55  this chapter.\n"));
+        diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "\n" +
+                "        S. 2143--A                          3\n" +
+                "\n" +
+                "     1    (3)  Any  gunsmith  who  fails  to  comply with the provisions of this\n" +
+                "     2  section shall be guilty of a class C felony."));
+
+        BillText expected = new BillText(diffs);
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void doesNotEscapeHtmlEntities() {
         String text = "<B><U>THE & NEW < YORK > STATE \" SENATE</U></B>";
         BillText actual = textProcessor.processBillText(text);
@@ -306,5 +335,62 @@ public class BillTextDiffProcessorTest {
         assertEquals(expected, actual);
     }
 
-    
+    @Test
+    public void correctlyFormatsChangesSpanningPageBreak() {
+        String text =
+                "<PRE>    46      New York. Upon request of the commissioner of the office  of  [<B><S>alco-</S></B>\n" +
+                "</PRE><P CLASS=\"brk\"><PRE WIDTH=\"136\">\n" +
+                "                                           449                        12654-09-0\n" +
+                "</S></B>\n" +
+                "                              <B><S>DEPARTMENT OF MENTAL HYGIENE</S></B>\n" +
+                "</S></B>\n" +
+                "                  <B><S>OFFICE OF [ALCOHOLISM AND SUBSTANCE ABUSE</S></B>] <B><U>ADDICTION</U></B>\n" +
+                "                                  SERVICES <B><U>AND SUPPORTS</U></B>\n" +
+                " \n" +
+                "                      CAPITAL PROJECTS - REAPPROPRIATIONS   2020-21\n" +
+                " \n" +
+                "     1      holism  and  substance  abuse]  <B><U>addiction</U></B>  services <B><U>and supports</U></B> and";
+
+        BillText actual = textProcessor.processBillText(text);
+
+        List<TextDiff> diffs = new ArrayList<>();
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "    46      New York. Upon request of the commissioner of the office  of  ["));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "alco-"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n"));
+        diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "                                          \n" +
+                "                                           449                        12654-09-0\n" +
+                "\n                              "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "DEPARTMENT OF MENTAL HYGIENE"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "\n" +
+                "\n" +
+                "                  "));
+        diffs.add(new TextDiff(TextDiffType.REMOVED, "OFFICE OF [ALCOHOLISM AND SUBSTANCE ABUSE"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "] "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "ADDICTION"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "\n" +
+                "                                  SERVICES "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "AND SUPPORTS"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
+                "\n" +
+                "\n" +
+                "                      CAPITAL PROJECTS - REAPPROPRIATIONS   2020-21\n" +
+                "\n" +
+                "     1      holism  and  substance  abuse]  "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "addiction"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "  services "));
+        diffs.add(new TextDiff(TextDiffType.ADDED, "and supports"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, " and"));
+
+        BillText expected = new BillText(diffs);
+
+        System.out.println(expected.getFullText(BillTextFormat.PLAIN));
+        System.out.println("-----------------------------------------");
+        System.out.println(actual.getFullText(BillTextFormat.PLAIN));
+        assertEquals(expected, actual);
+    }
 }
