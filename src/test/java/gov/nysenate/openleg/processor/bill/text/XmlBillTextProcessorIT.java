@@ -100,20 +100,6 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
         assertTrue("Post processed text is blank", StringUtils.isBlank(getPlainText(asmBillId)));
     }
 
-    @Test
-    public void htmlTextTest() throws IOException {
-        final String path = resourceDir + "/2017-01-01-00.00.00.000000_BILLTEXT_S09999.XML";
-        final BillId billId = new BillId("S9999", 2017);
-        final String expectedHtml = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.html");
-        final String expectedPlain = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.txt");
-
-        assertNotEquals("Preprocessed html is not set", expectedHtml, getHtmlTextSafe(billId));
-        assertNotEquals("Preprocessed plaintext is not set", expectedPlain, getPlainTextSafe(billId));
-        processXmlFile(path);
-        assertEquals("post processed html is set", expectedHtml, getHtmlText(billId));
-        assertEquals("post processed plaintext is set", expectedPlain, getPlainText(billId));
-    }
-
     /* --- Internal Methods --- */
 
     /**
