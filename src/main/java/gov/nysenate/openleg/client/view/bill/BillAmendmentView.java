@@ -1,23 +1,18 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillTextFormat;
-import gov.nysenate.openleg.model.bill.TextDiff;
 import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BillAmendmentView extends BillIdView
@@ -51,7 +46,7 @@ public class BillAmendmentView extends BillIdView
             this.actClause = billAmendment.getActClause();
             this.fullTextFormats = new ArrayList<>(fullTextFormats);
             if (this.fullTextFormats.contains(BillTextFormat.PLAIN)) {
-                this.fullText = billAmendment.getFullText(BillTextFormat.PLAIN);
+                this.fullText = BillTextUtils.getPlainTextWithoutLineNumbers(billAmendment);
             }
             if (this.fullTextFormats.contains(BillTextFormat.HTML)) {
                 this.fullTextHtml = billAmendment.getFullText(BillTextFormat.HTML);

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.util.BillTextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +44,7 @@ public class BillText implements Cloneable {
         switch (format) {
             case PLAIN:
                 text = getPlainText();
+                text = BillTextUtils.formatHtmlExtractedBillText(text);
                 break;
             case HTML:
                 text = getHtmlText();
