@@ -8,8 +8,8 @@ import java.util.Objects;
 
 public class BillText implements Cloneable {
 
-    private static final String HTML_STYLE = "<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n"+
-            "P.brk {page-break-before:always}--></STYLE>\n";
+    private static final String HTML_STYLE = "<STYLE><!--u  {color: Green}s  {color: RED} i  {color: DARKBLUE; background-color:yellow}\n"+
+            "p.brk {page-break-before:always}--></STYLE>\n";
 
     private String sobiPlainText;
     private List<TextDiff> diffs;
@@ -43,17 +43,14 @@ public class BillText implements Cloneable {
         String text = "";
         switch (format) {
             case PLAIN:
-                text = getPlainText();
+                text = createPlainText();
                 text = BillTextUtils.formatHtmlExtractedBillText(text);
                 break;
             case HTML:
-                text = getHtmlText();
+                text = createHtmlText();
                 break;
             case TEMPLATE:
-                // TODO
-                break;
-            case DIFF:
-                // TODO
+                text = createTemplateText();
                 break;
         }
 
@@ -64,7 +61,7 @@ public class BillText implements Cloneable {
         return this.diffs;
     }
 
-    private String getPlainText() {
+    private String createPlainText() {
         StringBuilder plainText = new StringBuilder();
         if (diffs.isEmpty() && !sobiPlainText.isEmpty()) {
             plainText.append(sobiPlainText);
@@ -77,15 +74,25 @@ public class BillText implements Cloneable {
         return plainText.toString();
     }
 
-    private String getHtmlText() {
+    private String createHtmlText() {
         StringBuilder htmlText = new StringBuilder();
         htmlText.append(HTML_STYLE);
-        htmlText.append("<PRE>");
+        htmlText.append("<pre>");
         for (TextDiff diff : this.diffs) {
             htmlText.append(diff.getHtmlFormatText());
         }
-        htmlText.append("</PRE>");
+        htmlText.append("</pre>");
         return htmlText.toString();
+    }
+
+    private String createTemplateText() {
+        StringBuilder templateText = new StringBuilder();
+        templateText.append("<pre class=\"ol-bill-text\">");
+        for (TextDiff diff : this.diffs) {
+            templateText.append(diff.getTemplateFormatText());
+        }
+        templateText.append("</pre>");
+        return templateText.toString();
     }
 
     public BillText shallowClone() {

@@ -7,6 +7,5 @@ public enum BillTextFormat {
     PLAIN,
     HTML,
     TEMPLATE,
-    DIFF,
     ;
 }

@@ -6,11 +6,11 @@ import java.util.List;
 public enum TextDiffType {
 
     UNCHANGED(0, Arrays.asList(), "", ""),
-    ADDED(1, Arrays.asList("ol-changed", "ol-added"), "<B><U>", "</U></B>"),
-    REMOVED(-1, Arrays.asList("ol-changed", "ol-removed"), "<B><S>", "</S></B>"),
-    HEADER(0, Arrays.asList("ol-header"), "<FONT SIZE=5><B>", "</B></FONT>"),
-    BOLD(0, Arrays.asList("ol-bold"), "<B>", "</B>"),
-    PAGE_BREAK(0, Arrays.asList("ol-page-break"), "<P CLASS=\"brk\">", "");
+    ADDED(1, Arrays.asList("ol-changed", "ol-added"), "<b><u>", "</u></b>"),
+    REMOVED(-1, Arrays.asList("ol-changed", "ol-removed"), "<b><s>", "</s></b>"),
+    HEADER(0, Arrays.asList("ol-header"), "<font size=5><b>", "</b></font>"),
+    BOLD(0, Arrays.asList("ol-bold"), "<b>", "</b>"),
+    PAGE_BREAK(0, Arrays.asList("ol-page-break"), "<p class=\"brk\">", "");
 
     /**
      * The type of text relative to the previous amendment's text.

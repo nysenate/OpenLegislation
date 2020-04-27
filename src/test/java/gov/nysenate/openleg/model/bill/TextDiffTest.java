@@ -54,7 +54,7 @@ public class TextDiffTest {
     public void givenAddedText_htmlTextIsInAddedElement() {
         TextDiff diff = new TextDiff(TextDiffType.ADDED, "This text has been\nadded.");
         String actual = diff.getHtmlFormatText();
-        String expected = "<B><U>This text has been\nadded.</U></B>";
+        String expected = "<b><u>This text has been\nadded.</u></b>";
         assertEquals(expected, actual);
     }
 
@@ -62,7 +62,7 @@ public class TextDiffTest {
     public void givenRemovedText_htmlTextIsInRemovedElement(){
         TextDiff diff = new TextDiff(TextDiffType.REMOVED, "This text has been removed.");
         String actual = diff.getHtmlFormatText();
-        String expected = "<B><S>This text has been removed.</S></B>";
+        String expected = "<b><s>This text has been removed.</s></b>";
         assertEquals(expected, actual);
     }
 
@@ -70,7 +70,7 @@ public class TextDiffTest {
     public void givenHeaderText_htmlTextIsInHeaderElement() {
         TextDiff diff = new TextDiff(TextDiffType.HEADER, "Some title");
         String actual = diff.getHtmlFormatText();
-        String expected = "<FONT SIZE=5><B>Some title</B></FONT>";
+        String expected = "<font size=5><b>Some title</b></font>";
         assertEquals(expected, actual);
     }
 
@@ -78,7 +78,7 @@ public class TextDiffTest {
     public void givenBoldText_htmlTextIsInBoldElement() {
         TextDiff diff = new TextDiff(TextDiffType.BOLD, "bold text");
         String actual = diff.getHtmlFormatText();
-        String expected = "<B>bold text</B>";
+        String expected = "<b>bold text</b>";
         assertEquals(expected, actual);
     }
 

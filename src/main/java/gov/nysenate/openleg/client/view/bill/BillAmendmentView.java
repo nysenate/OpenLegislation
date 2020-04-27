@@ -26,6 +26,7 @@ public class BillAmendmentView extends BillIdView
     protected List<BillTextFormat> fullTextFormats;
     protected String fullText = "";
     protected String fullTextHtml = "";
+    protected String fullTextTemplate = "";
     protected ListView<MemberView> coSponsors;
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
@@ -50,6 +51,9 @@ public class BillAmendmentView extends BillIdView
             }
             if (this.fullTextFormats.contains(BillTextFormat.HTML)) {
                 this.fullTextHtml = billAmendment.getFullText(BillTextFormat.HTML);
+            }
+            if (this.fullTextFormats.contains(BillTextFormat.TEMPLATE)) {
+                this.fullTextTemplate = billAmendment.getFullText(BillTextFormat.TEMPLATE);
             }
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
@@ -121,5 +125,9 @@ public class BillAmendmentView extends BillIdView
 
     public String getFullTextHtml() {
         return fullTextHtml;
+    }
+
+    public String getFullTextTemplate() {
+        return fullTextTemplate;
     }
 }
