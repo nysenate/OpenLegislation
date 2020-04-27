@@ -55,7 +55,6 @@ public enum SpotCheckMismatchType {
     BILL_VOTE_INFO("Bill Vote Info", SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_VOTE_ROLL("Bill Vote Roll", SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_SCRAPE_VOTE("Bill Scrape Vote", LBDC_SCRAPED_BILL),
-    BILL_HTML_TEXT("HTML Full Text", LBDC_SCRAPED_BILL),
 
     BILL_APPROVAL_MESSAGE("Bill Approve Message", OPENLEG_BILL),
     BILL_COMMITTEE_AGENDAS("Bill Committee Agendas", OPENLEG_BILL),
