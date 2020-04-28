@@ -17,42 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
-        <link rel="next" title="Senate Floor Transcripts API" href="transcripts_floor.html"/>
-        <link rel="prev" title="Senate Committee API" href="committees.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Senate Floor Transcripts API" href="transcripts_floor.html" />
+    <link rel="prev" title="Senate Committee API" href="committees.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -122,7 +116,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -130,9 +124,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -177,55 +172,55 @@
   <div class="section" id="nys-laws-api">
 <h1><strong>NYS Laws API</strong><a class="headerlink" href="#nys-laws-api" title="Permalink to this headline">¶</a></h1>
 <p>In order to utilize the Laws API we’ll go over some quick terminology:</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Law Id:</th><td class="field-body">A three letter code that identifies the law, e.g. EDN for Education Law.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Document Id:</th><td class="field-body">A string that identifies a particular document within a body of law. Contains the three letter law id
-so it can uniquely identify a document.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Location Id:</th><td class="field-body">This is simply the document id without the three letter law id prefix.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Published Date:</th><td class="field-body">Since the nature of laws are fairly temporal we keep track of changes to the laws using the published date.
-It’s possible to retrieve law documents roughly as they were represented during any week since October 2014.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Law Id</dt>
+<dd class="field-odd"><p>A three letter code that identifies the law, e.g. EDN for Education Law.</p>
+</dd>
+<dt class="field-even">Document Id</dt>
+<dd class="field-even"><p>A string that identifies a particular document within a body of law. Contains the three letter law id
+so it can uniquely identify a document.</p>
+</dd>
+<dt class="field-odd">Location Id</dt>
+<dd class="field-odd"><p>This is simply the document id without the three letter law id prefix.</p>
+</dd>
+<dt class="field-even">Published Date</dt>
+<dd class="field-even"><p>Since the nature of laws are fairly temporal we keep track of changes to the laws using the published date.
+It’s possible to retrieve law documents roughly as they were represented during any week since October 2014.</p>
+</dd>
+</dl>
 <hr class="docutils" />
 <div class="section" id="get-a-list-of-law-ids">
 <h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col style="width: 13%" />
+<col style="width: 23%" />
+<col style="width: 64%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>limit</td>
-<td>1 - 1000</td>
-<td>Number of results to return</td>
+<tbody>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return</p></td>
 </tr>
-<tr class="row-odd"><td>offset</td>
-<td>&gt;= 1</td>
-<td>Result number to start from</td>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Listing of consolidated and unconsolidated NYS Laws&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-info list&quot;</span><span class="p">,</span>
@@ -257,41 +252,41 @@ It’s possible to retrieve law documents roughly as they were represented durin
 <p>Laws are represented as a collection of sub documents, each of which is structured within a hierarchy.
 The following call will provide the structure of the law.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="22%" />
-<col width="67%" />
+<col style="width: 12%" />
+<col style="width: 22%" />
+<col style="width: 67%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>date</td>
-<td>ISO date</td>
-<td>Fetch law structure as it appeared prior to or on this date.</td>
+<tbody>
+<tr class="row-even"><td><p>date</p></td>
+<td><p>ISO date</p></td>
+<td><p>Fetch law structure as it appeared prior to or on this date.</p></td>
 </tr>
-<tr class="row-odd"><td>full</td>
-<td>boolean</td>
-<td>If set to true, all the law text will also be returned.</td>
+<tr class="row-odd"><td><p>full</p></td>
+<td><p>boolean</p></td>
+<td><p>If set to true, all the law text will also be returned.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/laws/ABC                  // Get latest law structure for ABC law
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/ABC                  // Get latest law structure for ABC law
 /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
 /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="c1">// /api/3/laws/RPT</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// /api/3/laws/RPT</span>
 <span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The document structure for RPT law&quot;</span><span class="p">,</span>
@@ -362,41 +357,78 @@ the text body. Note that response can be rather large (several MB) for certain l
 <div class="section" id="get-a-law-sub-document">
 <h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
 You can discover the locationId when you make an API request for the law structure (see above section). See the
 ‘locationId’ field for that response.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">TAX</span><span class="o">/</span><span class="mi">8</span><span class="o">/</span>     <span class="o">//</span> <span class="n">Get</span> <span class="n">section</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">Tax</span> <span class="n">law</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">TAX</span><span class="o">/</span><span class="mi">8</span><span class="o">/</span>     <span class="o">//</span> <span class="n">Get</span> <span class="n">section</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">Tax</span> <span class="n">law</span>
 <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">EDN</span><span class="o">/</span><span class="n">A2</span><span class="o">/</span>    <span class="o">//</span> <span class="n">Get</span> <span class="n">article</span> <span class="mi">2</span> <span class="n">of</span> <span class="n">Education</span> <span class="n">law</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">A trailing slash is important for this API call because the locationId may have periods which would otherwise be interpreted as an extension of sorts. When in doubt, try adding the trailing slash.</p>
+<p class="admonition-title">Note</p>
+<p>A trailing slash is important for this API call because the locationId may have periods which would otherwise be interpreted as an extension of sorts. When in doubt, try adding the trailing slash.</p>
 </div>
 <p><strong>Response</strong></p>
 <p>The response here is straight-forward.</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Law document for location A2 in EDN law &quot;</span><span class="p">,</span>
-    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-document&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;locationId&quot;</span><span class="o">:</span> <span class="s2">&quot;A2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;DIGNITY FOR ALL STUDENTS&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;  ARTICLE 2 (text truncated for brevity)&quot;</span>  <span class="c1">// The text body of the law will be here</span>
-    <span class="p">}</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Law document for location A2 in EDN law &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;law-doc-info-detail&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;A2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Dignity For All Students&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-05-03&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;ARTICLE 2 (text truncated for brevity)&quot;</span>  <span class="c1">// The text body of the law will be here,</span>
+        <span class="s2">&quot;parentLocationIds&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="s2">&quot;-CH16&quot;</span><span class="p">,</span> <span class="s2">&quot;T1&quot;</span> <span class="p">],</span>
+        <span class="s2">&quot;parents&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+          <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;-CH16&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;CHAPTER&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;16&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-11-01&quot;</span>
+        <span class="p">},</span> <span class="p">{</span>
+          <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;T1&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;General Provisions Article 1 Short Title and Definitions (§§&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;TITLE&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-04-19&quot;</span>
+        <span class="p">}</span> <span class="p">],</span>
+        <span class="s2">&quot;prevSibling&quot;</span> <span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;A1&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Short Title and Definitions&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;nextSibling&quot;</span> <span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;A3&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education Department&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>If the law document was not found you will receive an error response</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The requested law document was not found&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
@@ -413,60 +445,60 @@ You can discover the locationId when you make an API request for the law structu
 <div class="section" id="search-for-law-documents">
 <h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(GET) /api/3/laws/search?term=           // Search across all law volumes
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/laws/search?term=           // Search across all law volumes
 (GET) /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="22%" />
-<col width="67%" />
+<col style="width: 12%" />
+<col style="width: 22%" />
+<col style="width: 67%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>term</td>
-<td>string</td>
-<td>The full text search term.</td>
+<tbody>
+<tr class="row-even"><td><p>term</p></td>
+<td><p>string</p></td>
+<td><p>The full text search term.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="22%" />
-<col width="67%" />
+<col style="width: 12%" />
+<col style="width: 22%" />
+<col style="width: 67%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>sort</td>
-<td>string</td>
-<td>Sort using any field from the result object, e.g. lawId:ASC</td>
+<tbody>
+<tr class="row-even"><td><p>sort</p></td>
+<td><p>string</p></td>
+<td><p>Sort using any field from the result object, e.g. lawId:ASC</p></td>
 </tr>
-<tr class="row-odd"><td>limit</td>
-<td>1 - 1000</td>
-<td>Number of results to return (high limits take longer)</td>
+<tr class="row-odd"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return (high limits take longer)</p></td>
 </tr>
-<tr class="row-even"><td>offset</td>
-<td>&gt;= 1</td>
-<td>Result number to start from</td>
+<tr class="row-even"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/laws/search?term=chickens                            // Search all law volumes for the word &#39;chickens&#39;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/search?term=chickens                            // Search all law volumes for the word &#39;chickens&#39;
 </pre></div>
 </div>
 </div>
@@ -475,71 +507,71 @@ You can discover the locationId when you make an API request for the law structu
 <p>To identify which documents have been modified or added to a body of law, use the law updates API.</p>
 <p>To detect updates to the structure of the law document tree, see <a class="reference internal" href="#get-law-tree-updates">Get law tree updates</a>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.</p>
+<p class="admonition-title">Note</p>
+<p>Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.</p>
 </div>
 <p><strong>Usage</strong></p>
 <p>List of laws updated during the given date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
+<p class="admonition-title">Note</p>
+<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
 </div>
 <p>All updates made on a specific body of law</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
 
 <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
      <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">VAT</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>All updates made on a specific body of law during a date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="25%" />
-<col width="63%" />
+<col style="width: 12%" />
+<col style="width: 25%" />
+<col style="width: 63%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>type</td>
-<td>(processed|published)</td>
-<td>The type of law update</td>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>(processed|published)</p></td>
+<td><p>The type of law update</p></td>
 </tr>
-<tr class="row-odd"><td>detail</td>
-<td>boolean</td>
-<td>Set to true for updates to individual law documents.</td>
+<tr class="row-odd"><td><p>detail</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true for updates to individual law documents.</p></td>
 </tr>
-<tr class="row-even"><td>order</td>
-<td>string (asc|desc)</td>
-<td>Order the results by update date/time</td>
+<tr class="row-even"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time</p></td>
 </tr>
-<tr class="row-odd"><td>limit</td>
-<td>1 - 1000</td>
-<td>Number of results to return (high limits take longer)</td>
+<tr class="row-odd"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return (high limits take longer)</p></td>
 </tr>
-<tr class="row-even"><td>offset</td>
-<td>&gt;= 1</td>
-<td>Result number to start from</td>
+<tr class="row-even"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Response</strong></p>
 <p>Global law updates</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
 </pre></div>
 </div>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -562,11 +594,11 @@ You can discover the locationId when you make an API request for the law structu
 </pre></div>
 </div>
 <p>Detailed law doc updates</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&amp;type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&amp;type=published
      /api/3/laws/ABC/updates/
 </pre></div>
 </div>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
@@ -600,7 +632,7 @@ You can discover the locationId when you make an API request for the law structu
 <p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws with tree updates during the given date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/laws/tree/updates
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/tree/updates
 /api/3/laws/tree/updates/{fromDateTime}?type=published
 /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
 </pre></div>
@@ -610,43 +642,43 @@ For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30
 The fromDateTime and toDateTime range is exclusive.
 If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime</p>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="25%" />
-<col width="63%" />
+<col style="width: 12%" />
+<col style="width: 25%" />
+<col style="width: 63%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>type</td>
-<td>(processed|published)</td>
-<td>The type of law update</td>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>(processed|published)</p></td>
+<td><p>The type of law update</p></td>
 </tr>
-<tr class="row-odd"><td>order</td>
-<td>string (asc|desc)</td>
-<td>Order the results by update date/time</td>
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time</p></td>
 </tr>
-<tr class="row-even"><td>limit</td>
-<td>1 - 1000</td>
-<td>Number of results to return (high limits take longer)</td>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return (high limits take longer)</p></td>
 </tr>
-<tr class="row-odd"><td>offset</td>
-<td>&gt;= 1</td>
-<td>Result number to start from</td>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Response</strong></p>
 <p>Get law tree updates by published date</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
 </pre></div>
 </div>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -676,30 +708,30 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 The date/time range applies to the processed date of the law document, not the official repeal date.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws repealed during the given date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="20%" />
-<col width="68%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 68%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>fromDateTime</td>
-<td>ISO 8601 datetime</td>
-<td>default 1970-01-01 - The inclusive start time of the specified time range</td>
+<tbody>
+<tr class="row-even"><td><p>fromDateTime</p></td>
+<td><p>ISO 8601 datetime</p></td>
+<td><p>default 1970-01-01 - The inclusive start time of the specified time range</p></td>
 </tr>
-<tr class="row-odd"><td>toDateTime</td>
-<td>ISO 8601 datetime</td>
-<td>default now - The inclusive end time of the specified time period</td>
+<tr class="row-odd"><td><p>toDateTime</p></td>
+<td><p>ISO 8601 datetime</p></td>
+<td><p>default now - The inclusive end time of the specified time period</p></td>
 </tr>
 </tbody>
 </table>
@@ -708,9 +740,7 @@ The date/time range applies to the processed date of the law document, not the o
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -719,7 +749,7 @@ The date/time range applies to the processed date of the law document, not the o
         <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="committees.html" class="btn btn-neutral" title="Senate Committee API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="committees.html" class="btn btn-neutral float-left" title="Senate Committee API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -728,11 +758,11 @@ The date/time range applies to the processed date of the law document, not the o
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services.
+        &copy; Copyright 2014, NY State Senate Technology Services
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -745,36 +775,15 @@ The date/time range applies to the processed date of the law document, not the o
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0-alpha',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
