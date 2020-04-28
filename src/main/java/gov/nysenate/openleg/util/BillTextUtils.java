@@ -190,20 +190,20 @@ public class BillTextUtils
         if (matcher.find()) {
             StringBuilder replacement = new StringBuilder()
                     .append(matcher.group("startingNewlines"))
-                    .append(StringUtils.repeat(' ', 14))
+                    .append(StringUtils.repeat(' ', 15))
                     .append("S T A T E   O F   N E W   Y O R K\n")
                     .append(matcher.group("divider"));
             switch (matcher.group("chamber")) {
                 case inSenate:
-                    replacement.append(StringUtils.repeat(' ', 35))
+                    replacement.append(StringUtils.repeat(' ', 36))
                             .append("I N  S E N A T E");
                     break;
                 case inAssembly:
-                    replacement.append(StringUtils.repeat(' ', 33))
+                    replacement.append(StringUtils.repeat(' ', 34))
                             .append("I N  A S S E M B L Y");
                     break;
                 case inBoth:
-                    replacement.append(StringUtils.repeat(' ', 29))
+                    replacement.append(StringUtils.repeat(' ', 30))
                             .append("S E N A T E - A S S E M B L Y");
                     break;
                 default:

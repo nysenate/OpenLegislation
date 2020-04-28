@@ -48,25 +48,25 @@ public class BillTextUtilsTest {
                 "          printed to be committed to the Committee  on  Consumer  Protection  --\n" +
                 "          recommitted to the Committee on Consumer Protection in accordance with\n" +
                 "          Senate  Rule  6, sec. 8 -- committee discharged, bill amended, ordered";
-        String expectedResult = "\n" +
-                "                           S T A T E   O F   N E W   Y O R K\n" +
-                "       ________________________________________________________________________\n" +
-                "\n" +
-                "                                        100--A\n" +
-                "\n" +
-                "                              2017-2018 Regular Sessions\n" +
-                "\n" +
-                "                                   I N  S E N A T E\n" +
-                "\n" +
-                "                                      (PREFILED)\n" +
-                "\n" +
-                "                                    January 4, 2017\n" +
-                "                                      ___________\n" +
-                "\n" +
-                "       Introduced  by  Sen. HOYLMAN -- read twice and ordered printed, and when\n" +
-                "         printed to be committed to the Committee  on  Consumer  Protection  --\n" +
-                "         recommitted to the Committee on Consumer Protection in accordance with\n" +
-                "         Senate  Rule  6, sec. 8 -- committee discharged, bill amended, ordered";
+        String expectedResult = " \n" +
+                "                            S T A T E   O F   N E W   Y O R K\n" +
+                "        ________________________________________________________________________\n" +
+                " \n" +
+                "                                         100--A\n" +
+                " \n" +
+                "                               2017-2018 Regular Sessions\n" +
+                " \n" +
+                "                                    I N  S E N A T E\n" +
+                " \n" +
+                "                                       (PREFILED)\n" +
+                " \n" +
+                "                                     January 4, 2017\n" +
+                "                                       ___________\n" +
+                " \n" +
+                "        Introduced  by  Sen. HOYLMAN -- read twice and ordered printed, and when\n" +
+                "          printed to be committed to the Committee  on  Consumer  Protection  --\n" +
+                "          recommitted to the Committee on Consumer Protection in accordance with\n" +
+                "          Senate  Rule  6, sec. 8 -- committee discharged, bill amended, ordered";
         assertEquals(expectedResult, BillTextUtils.formatHtmlExtractedBillText(inputText));
     }
 
@@ -87,21 +87,21 @@ public class BillTextUtilsTest {
                 "                                       ___________\n" +
                 " \n" +
                 "        Introduced  by  M.  of  A.  SIMON,  ARROYO,  BLAKE, BARRETT, BRAUNSTEIN,";
-        String expectedResult = "\n" +
-                "                           S T A T E   O F   N E W   Y O R K\n" +
-                "       ________________________________________________________________________\n" +
-                "\n" +
-                "                                        1051--A\n" +
-                "                                                                Cal. No. 17\n" +
-                "\n" +
-                "                              2017-2018 Regular Sessions\n" +
-                "\n" +
-                "                                 I N  A S S E M B L Y\n" +
-                "\n" +
-                "                                   January 10, 2017\n" +
-                "                                      ___________\n" +
-                "\n" +
-                "       Introduced  by  M.  of  A.  SIMON,  ARROYO,  BLAKE, BARRETT, BRAUNSTEIN,";
+        String expectedResult = " \n" +
+                "                            S T A T E   O F   N E W   Y O R K\n" +
+                "        ________________________________________________________________________\n" +
+                " \n" +
+                "                                         1051--A\n" +
+                "                                                                 Cal. No. 17\n" +
+                " \n" +
+                "                               2017-2018 Regular Sessions\n" +
+                " \n" +
+                "                                  I N  A S S E M B L Y\n" +
+                " \n" +
+                "                                    January 10, 2017\n" +
+                "                                       ___________\n" +
+                " \n" +
+                "        Introduced  by  M.  of  A.  SIMON,  ARROYO,  BLAKE, BARRETT, BRAUNSTEIN,";
         assertEquals(expectedResult, BillTextUtils.formatHtmlExtractedBillText(inputText));
     }
 
@@ -119,18 +119,18 @@ public class BillTextUtilsTest {
                 "                                       ___________\n" +
                 " \n" +
                 "        IN  SENATE -- A BUDGET BILL, submitted by the Governor pursuant to arti-";
-        String expectedResult = "\n" +
-                "                           S T A T E   O F   N E W   Y O R K\n" +
-                "       ________________________________________________________________________\n" +
-                "\n" +
-                "           S. 2005--C                                            A. 3005--C\n" +
-                "\n" +
-                "                             S E N A T E - A S S E M B L Y\n" +
-                "\n" +
-                "                                   January 23, 2017\n" +
-                "                                      ___________\n" +
-                "\n" +
-                "       IN  SENATE -- A BUDGET BILL, submitted by the Governor pursuant to arti-";
+        String expectedResult = " \n" +
+                "                            S T A T E   O F   N E W   Y O R K\n" +
+                "        ________________________________________________________________________\n" +
+                " \n" +
+                "            S. 2005--C                                            A. 3005--C\n" +
+                " \n" +
+                "                              S E N A T E - A S S E M B L Y\n" +
+                " \n" +
+                "                                    January 23, 2017\n" +
+                "                                       ___________\n" +
+                " \n" +
+                "        IN  SENATE -- A BUDGET BILL, submitted by the Governor pursuant to arti-";
         assertEquals(expectedResult, BillTextUtils.formatHtmlExtractedBillText(inputText));
     }
 

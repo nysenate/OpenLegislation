@@ -39,6 +39,18 @@ public class BillText implements Cloneable {
         return !(diffs.isEmpty() && sobiPlainText.isEmpty());
     }
 
+    /**
+     * Get the full bill text in the specified format.
+     * <p>
+     * PLAIN format slightly alters the bill headers adding space between characters and centering. (See {@link BillTextUtils#formatHtmlExtractedBillText(String)});
+     * <p>
+     * TextDiffs are required to create the HTML and TEMPLATE formats. TextDiffs are also used
+     * to create the PLAIN format when they are available. If TextDiffs are not available (i.e. SOBI data),
+     * the PLAIN format is taken straight from the SOBI text processor.
+     *
+     * @param format
+     * @return
+     */
     public String getFullText(BillTextFormat format) {
         String text = "";
         switch (format) {
@@ -76,23 +88,31 @@ public class BillText implements Cloneable {
 
     private String createHtmlText() {
         StringBuilder htmlText = new StringBuilder();
-        htmlText.append(HTML_STYLE);
-        htmlText.append("<pre>");
-        for (TextDiff diff : this.diffs) {
-            htmlText.append(diff.getHtmlFormatText());
+        if (hasDiffs()) {
+            htmlText.append(HTML_STYLE);
+            htmlText.append("<pre>");
+            for (TextDiff diff : this.diffs) {
+                htmlText.append(diff.getHtmlFormatText());
+            }
+            htmlText.append("</pre>");
         }
-        htmlText.append("</pre>");
         return htmlText.toString();
     }
 
     private String createTemplateText() {
         StringBuilder templateText = new StringBuilder();
-        templateText.append("<pre class=\"ol-bill-text\">");
-        for (TextDiff diff : this.diffs) {
-            templateText.append(diff.getTemplateFormatText());
+        if (hasDiffs()) {
+            templateText.append("<pre class=\"ol-bill-text\">");
+            for (TextDiff diff : this.diffs) {
+                templateText.append(diff.getTemplateFormatText());
+            }
+            templateText.append("</pre>");
         }
-        templateText.append("</pre>");
         return templateText.toString();
+    }
+
+    private boolean hasDiffs() {
+        return !diffs.isEmpty();
     }
 
     public BillText shallowClone() {

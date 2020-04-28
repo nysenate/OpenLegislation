@@ -122,7 +122,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /** {@inheritDoc} */
     @Override
     public void applyTextAndMemo(Bill strippedBill) throws DataAccessException {
-        // TODO does strippedBill have all amendments set on it?
         if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");
         }

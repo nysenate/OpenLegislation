@@ -5,16 +5,12 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.IOException;
-
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
-import static gov.nysenate.openleg.model.bill.BillTextFormat.DIFF;
 import static org.junit.Assert.*;
 
 /**
