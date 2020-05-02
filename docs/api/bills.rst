@@ -28,21 +28,21 @@ Retrieve bill by session year and print no
 
 View options
 
-+------------------+----------------------------------------------------------------------------------+
-| View type        | Description                                                                      |
-+==================+==================================================================================+
-| default          | If the view param is omitted, the default response will be as documented below.  |
-+------------------+----------------------------------------------------------------------------------+
-| info             | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
-+------------------+----------------------------------------------------------------------------------+
-| no_fulltext      | Identical to the default response except the full text will be omitted.          |
-+------------------+----------------------------------------------------------------------------------+
-| only_fulltext    | If you only need the full text for a bill. Use the version param if needed.      |
-+------------------+----------------------------------------------------------------------------------+
-| with_refs        | If you need basic info views included for any related bills (e.g. same as bills).|
-+------------------+----------------------------------------------------------------------------------+
-|                  | with_refs_no_fulltext is the same as above, just without any full text.          |
-+------------------+----------------------------------------------------------------------------------+
++-----------------------+----------------------------------------------------------------------------------+
+| View type             | Description                                                                      |
++=======================+==================================================================================+
+| default               | If the view param is omitted, the default response will be as documented below.  |
++-----------------------+----------------------------------------------------------------------------------+
+| info                  | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
++-----------------------+----------------------------------------------------------------------------------+
+| no_fulltext           | Identical to the default response except the full text will be omitted.          |
++-----------------------+----------------------------------------------------------------------------------+
+| only_fulltext         | If you only need the full text for a bill. Use the version param if needed.      |
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs             | If you need basic info views included for any related bills (e.g. same as bills).|
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs_no_fulltext | Same as above, just without any full text.                                       |
++-----------------------+----------------------------------------------------------------------------------+
 
 .. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
