@@ -650,23 +650,23 @@ Sample response:
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
             "sourceDateTime": "2012-12-20T16:05:35",        // The date of the source file
             "processedDateTime": "2014-12-13T13:40:08.564879",
-            "action": "INSERT",                              // Database operation
+            "action": "Insert",                              // Database operation
             "scope": "Bill",                                 // Type of data modified
             "fields": {                                      // Database fields that were updated
-                "summary": "",
-                "statusDate": "2013-01-09",
-                "publishedDateTime": "2012-12-20 16:05:35",
-                "committeeChamber": "senate",
-                "programInfo": null,
-                "subBillPrintNo": null,
-                "createdDateTime": "2014-12-13 13:40:08.564879",
-                "title": "Creates the office of the taxpayer advocate",
-                "programInfoNum": null,
-                "billCalNo": null,
-                "activeYear": "2013",
-                "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                "activeVersion": " ",
-                "status": "IN_SENATE_COMM"
+                "Summary": "",
+                "Status Date": "2013-01-09",
+                "Published Date Time": "2012-12-20 16:05:35",
+                "Committee Chamber": "senate",
+                "Program Info": null,
+                "Sub Bill Print No": null,
+                "Created Date Time": "2014-12-13 13:40:08.564879",
+                "Title": "Creates the office of the taxpayer advocate",
+                "Program Info Num": null,
+                "Bill Cal No": null,
+                "Active Year": "2013",
+                "Committee Name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
+                "Active Version": " ",
+                "Status": "IN_SENATE_COMM"
             }
             "fieldCount" : 14
         },
