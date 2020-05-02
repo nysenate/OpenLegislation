@@ -646,6 +646,7 @@ Sample response:
                 "basePrintNo": "S1234",
                 "session": 2013
             },
+            "contentType" : "BILL",
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
             "sourceDateTime": "2012-12-20T16:05:35",        // The date of the source file
             "processedDateTime": "2014-12-13T13:40:08.564879",
@@ -667,6 +668,7 @@ Sample response:
                 "activeVersion": " ",
                 "status": "IN_SENATE_COMM"
             }
+            "fieldCount" : 14
         },
         ... (truncated)
 
