@@ -28,21 +28,21 @@ Retrieve bill by session year and print no
 
 View options
 
-+------------------+----------------------------------------------------------------------------------+
-| View type        | Description                                                                      |
-+==================+==================================================================================+
-| default          | If the view param is omitted, the default response will be as documented below.  |
-+------------------+----------------------------------------------------------------------------------+
-| info             | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
-+------------------+----------------------------------------------------------------------------------+
-| no_fulltext      | Identical to the default response except the full text will be omitted.          |
-+------------------+----------------------------------------------------------------------------------+
-| only_fulltext    | If you only need the full text for a bill. Use the version param if needed.      |
-+------------------+----------------------------------------------------------------------------------+
-| with_refs        | If you need basic info views included for any related bills (e.g. same as bills).|
-+------------------+----------------------------------------------------------------------------------+
-|                  | with_refs_no_fulltext is the same as above, just without any full text.          |
-+------------------+----------------------------------------------------------------------------------+
++-----------------------+----------------------------------------------------------------------------------+
+| View type             | Description                                                                      |
++=======================+==================================================================================+
+| default               | If the view param is omitted, the default response will be as documented below.  |
++-----------------------+----------------------------------------------------------------------------------+
+| info                  | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
++-----------------------+----------------------------------------------------------------------------------+
+| no_fulltext           | Identical to the default response except the full text will be omitted.          |
++-----------------------+----------------------------------------------------------------------------------+
+| only_fulltext         | If you only need the full text for a bill. Use the version param if needed.      |
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs             | If you need basic info views included for any related bills (e.g. same as bills).|
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs_no_fulltext | Same as above, just without any full text.                                       |
++-----------------------+----------------------------------------------------------------------------------+
 
 .. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
@@ -648,27 +648,29 @@ Sample response:
                 "basePrintNo": "S1234",
                 "session": 2013
             },
+            "contentType" : "BILL",
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
             "sourceDateTime": "2012-12-20T16:05:35",        // The date of the source file
             "processedDateTime": "2014-12-13T13:40:08.564879",
-            "action": "INSERT",                              // Database operation
+            "action": "Insert",                              // Database operation
             "scope": "Bill",                                 // Type of data modified
             "fields": {                                      // Database fields that were updated
-                "summary": "",
-                "statusDate": "2013-01-09",
-                "publishedDateTime": "2012-12-20 16:05:35",
-                "committeeChamber": "senate",
-                "programInfo": null,
-                "subBillPrintNo": null,
-                "createdDateTime": "2014-12-13 13:40:08.564879",
-                "title": "Creates the office of the taxpayer advocate",
-                "programInfoNum": null,
-                "billCalNo": null,
-                "activeYear": "2013",
-                "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                "activeVersion": " ",
-                "status": "IN_SENATE_COMM"
+                "Summary": "",
+                "Status Date": "2013-01-09",
+                "Published Date Time": "2012-12-20 16:05:35",
+                "Committee Chamber": "senate",
+                "Program Info": null,
+                "Sub Bill Print No": null,
+                "Created Date Time": "2014-12-13 13:40:08.564879",
+                "Title": "Creates the office of the taxpayer advocate",
+                "Program Info Num": null,
+                "Bill Cal No": null,
+                "Active Year": "2013",
+                "Committee Name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
+                "Active Version": " ",
+                "Status": "IN_SENATE_COMM"
             }
+            "fieldCount" : 14
         },
         ... (truncated)
 
