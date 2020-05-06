@@ -27,8 +27,8 @@ public class BillText implements Cloneable {
     }
 
     public BillText(String sobiPlainText, List<TextDiff> diffs) {
-        this.sobiPlainText = sobiPlainText;
-        this.diffs = diffs;
+        this.sobiPlainText = sobiPlainText == null ? "" : sobiPlainText;
+        this.diffs = diffs == null ? new ArrayList<>() : diffs;
     }
 
     /**
