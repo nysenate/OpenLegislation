@@ -23,7 +23,7 @@ Retrieve bill by session year and print no
 +----------------+----------------------------------------------------------------------------------------------+
 | version        | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A       |
 +----------------+----------------------------------------------------------------------------------------------+
-| fullTextFormat | (PLAIN, HTML, HTML5, DIFF) Which bill text formats will be included.                         |
+| fullTextFormat | (PLAIN, HTML, TEMPLATE) Which bill text formats will be included.                            |
 |                | Multiple formats can be requested.                                                           |
 +----------------+----------------------------------------------------------------------------------------------+
 
@@ -150,8 +150,7 @@ Default Bill Response
             "fullTextFormats": [ "PLAIN" ],
             "fullText": "...",                    // Full text of the bill amendment
             "fullTextHtml": null,
-            "fullTextHtml5": null,
-            "fullTextDiff": null,
+            "fullTextTemplate": null,
             "coSponsors": {                       // List of co sponsors
               "items": [
                {
@@ -348,23 +347,23 @@ List bills within a session year
 
 **Optional Params**
 
-+----------------+--------------------+--------------------------------------------------------+
-| Parameter      | Values             | Description                                            |
-+================+====================+========================================================+
-| limit          | 1 - 1000           | Number of results to return                            |
-+----------------+--------------------+--------------------------------------------------------+
-| offset         | >= 1               | Result number to start from                            |
-+----------------+--------------------+--------------------------------------------------------+
-| full           | boolean            | Set to true to see the full bill responses.            |
-+----------------+--------------------+--------------------------------------------------------+
-| idsOnly        | boolean            | Set to true to see only the printNo and session        |
-|                |                    | for each bill.  (overrides 'full' parameter)           |
-+----------------+--------------------+--------------------------------------------------------+
-| sort           | string             | Sort by any field from the response.                   |
-+----------------+--------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML)    | Which bill text formats will be included.              |
-|                |                    | Multiple formats can be requested.                     |
-+----------------+--------------------+--------------------------------------------------------+
++----------------+------------------------------+--------------------------------------------------------+
+| Parameter      | Values                       | Description                                            |
++================+==============================+========================================================+
+| limit          | 1 - 1000                     | Number of results to return                            |
++----------------+------------------------------+--------------------------------------------------------+
+| offset         | >= 1                         | Result number to start from                            |
++----------------+------------------------------+--------------------------------------------------------+
+| full           | boolean                      | Set to true to see the full bill responses.            |
++----------------+------------------------------+--------------------------------------------------------+
+| idsOnly        | boolean                      | Set to true to see only the printNo and session        |
+|                |                              | for each bill.  (overrides 'full' parameter)           |
++----------------+------------------------------+--------------------------------------------------------+
+| sort           | string                       | Sort by any field from the response.                   |
++----------------+------------------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included.              |
+|                |                              | Multiple formats can be requested.                     |
++----------------+------------------------------+--------------------------------------------------------+
 
 **Default Sort Order**
 
@@ -495,25 +494,25 @@ List of bills updated since the given date/time
 
 **Optional Params**
 
-+----------------+----------------------+--------------------------------------------------------+
-| Parameter      | Values               | Description                                            |
-+================+======================+========================================================+
-| type           | (processed|published)| The type of bill update (see below for explanation)    |
-+----------------+----------------------+--------------------------------------------------------+
-| detail         | boolean              | Set to true to see `detailed update digests`_          |
-+----------------+----------------------+--------------------------------------------------------+
-| filter         | string               | Filter by update type. See `update filters`_           |
-+----------------+----------------------+--------------------------------------------------------+
-| order          | string (asc|desc)    | Order the results by update date/time                  |
-+----------------+----------------------+--------------------------------------------------------+
-| summary        | boolean              | Include a bill info response per item                  |
-+----------------+----------------------+--------------------------------------------------------+
-| fullBill       | boolean              | Include a bill info response per item                  |
-+----------------+----------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN, HTML, HTML5, | Which bill text formats will be included               |
-|                |  DIFF)               | if full bills are requested.                           |
-|                |                      | Multiple formats can be requested.                     |
-+----------------+----------------------+--------------------------------------------------------+
++----------------+---------------------------+--------------------------------------------------------+
+| Parameter      | Values                    | Description                                            |
++================+===========================+========================================================+
+| type           | (processed|published)     | The type of bill update (see below for explanation)    |
++----------------+---------------------------+--------------------------------------------------------+
+| detail         | boolean                   | Set to true to see `detailed update digests`_          |
++----------------+---------------------------+--------------------------------------------------------+
+| filter         | string                    | Filter by update type. See `update filters`_           |
++----------------+---------------------------+--------------------------------------------------------+
+| order          | string (asc|desc)         | Order the results by update date/time                  |
++----------------+---------------------------+--------------------------------------------------------+
+| summary        | boolean                   | Include a bill info response per item                  |
++----------------+---------------------------+--------------------------------------------------------+
+| fullBill       | boolean                   | Include a bill info response per item                  |
++----------------+---------------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN, HTML or TEMPLATE) | Which bill text formats will be included               |
+|                |                           | if full bills are requested.                           |
+|                |                           | Multiple formats can be requested.                     |
++----------------+---------------------------+--------------------------------------------------------+
 
 .. warning:: By default the type is set to 'processed'. Ensure you have the right type in the api request so you receive the results you are looking for
 
