@@ -87,7 +87,7 @@ public class BillScrapeReferenceHtmlParser {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
         String memoText = "";
         if (memoElement != null) {
-            memoText = BillTextUtils.parseHTMLText(memoElement);
+            memoText = BillTextUtils.convertHtmlToPlainText(memoElement);
         }
         return memoText;
     }

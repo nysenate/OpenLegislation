@@ -70,11 +70,8 @@ public class BillPdfView {
             throw new BillAmendNotFoundEx(bill.getBaseBillId().withVersion(version));
         }
         BillAmendment ba = bill.getAmendment(version);
-        Set<BillTextFormat> availableFormats = ba.getFullTextFormats();
-        BillTextFormat format = PLAIN;
-        if (availableFormats.contains(HTML) && StringUtils.isNotBlank(ba.getFullText(HTML))) {
-            format = HTML;
-        }
+
+        BillTextFormat format = ba.getFullText(HTML).length() > 0 ? HTML : PLAIN;
         String fullText = ba.getFullText(format);
         switch (format) {
             case HTML:

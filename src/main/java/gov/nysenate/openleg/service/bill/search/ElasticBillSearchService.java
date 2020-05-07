@@ -10,6 +10,7 @@ import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
@@ -277,7 +278,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
                     billIdQueue.drainTo(billIdBatch, billReindexBatchSize);
 
                     List<Bill> bills = billIdBatch.stream()
-                            .map((billId) -> billDataService.getBill(billId, Collections.singleton(PLAIN)))
+                            .map((billId) -> billDataService.getBill(billId))
                             .collect(Collectors.toCollection(() -> new ArrayList<>(billReindexBatchSize)));
 
                     updateIndex(bills);
@@ -294,11 +295,11 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
      * Returns a version of the given bill that is guaranteed to contain plaintext versions of full text for all amendments
      */
     private Bill ensurePlainTextPresent(Bill bill) {
-        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(a -> a.isTextFormatLoaded(PLAIN));
+        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(BillAmendment::isTextLoaded);
         if (!allContainPlain) {
             // If the bill doesn't have plain text for any amendments, reload bill with plain text
             logger.warn("Bill passed in for indexing does not contain plain text: {}", bill.getBaseBillId());
-            bill = billDataService.getBill(bill.getBaseBillId(), Collections.singleton(PLAIN));
+            bill = billDataService.getBill(bill.getBaseBillId());
         }
         return bill;
     }

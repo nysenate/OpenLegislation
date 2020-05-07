@@ -56,8 +56,7 @@ public class BillPdfCtrl extends BaseCtrl
                 }
                 response.sendRedirect(urlString);
             } else {
-                Set<BillTextFormat> fullTextFormats = EnumSet.of(PLAIN, HTML);
-                Bill bill = billData.getBill(BaseBillId.of(billId), fullTextFormats);
+                Bill bill = billData.getBill(BaseBillId.of(billId));
                 ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
                 BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
                 HttpHeaders headers = new HttpHeaders();

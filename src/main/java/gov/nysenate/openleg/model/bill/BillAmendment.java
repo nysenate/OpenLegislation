@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.bill;
 
-import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -42,8 +41,8 @@ public class BillAmendment implements Serializable, Cloneable
     /** The AN ACT TO... clause which describes the bill's intent. */
     protected String actClause = "";
 
-    /** The full bill text in various formats.  Not all formats are always loaded to save space */
-    protected Map<BillTextFormat, String> fullTextMap = new HashMap<>();
+    /** The bill text **/
+    private BillText billText = new BillText("");
 
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
@@ -84,30 +83,24 @@ public class BillAmendment implements Serializable, Cloneable
 
     /* --- Functional Getters --- */
 
-    public ImmutableSet<BillTextFormat> getFullTextFormats() {
-        return ImmutableSet.copyOf(fullTextMap.keySet());
-    }
-
-    /**
-     * Checks that a {@link BillTextFormat} has been loaded for this amendment.
-     *
-     * When loading amendments from the DAO we can specify what formats we want loaded.
-     * This method allows us to verify a particular format has been loaded.
-     */
-    public boolean isTextFormatLoaded(BillTextFormat format) {
-        return fullTextMap.containsKey(format);
+    public boolean isTextLoaded() {
+        return billText.isLoaded();
     }
 
     public String getFullText(BillTextFormat format) {
-        return fullTextMap.get(format);
+        return billText.getFullText(format);
     }
 
-    public void setFullText(BillTextFormat format, String fullText) {
-        fullTextMap.put(format, fullText);
+    public BillText getBillText() {
+        return this.billText;
+    }
+
+    public void setBillText(BillText billText) {
+        this.billText = billText;
     }
 
     public void clearFullTexts() {
-        fullTextMap.clear();
+        this.billText = new BillText();
     }
 
     /**
@@ -117,7 +110,7 @@ public class BillAmendment implements Serializable, Cloneable
     public BillAmendment shallowClone() {
         try {
             BillAmendment clone = (BillAmendment) this.clone();
-            clone.fullTextMap = new HashMap<>(this.fullTextMap);
+            clone.billText = billText.shallowClone();
             return clone;
         }
         catch (CloneNotSupportedException e) {

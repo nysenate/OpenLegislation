@@ -138,14 +138,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * Get a bill amendment from the db
      */
     protected BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
-        return getAmendment(billId, BillTextFormat.PLAIN);
-    }
-
-    /**
-     * Get a bill amendment from the db
-     */
-    protected BillAmendment getAmendment(BillId billId, BillTextFormat htmlText) throws BillNotFoundEx, BillAmendNotFoundEx {
-        Bill bill = billDataService.getBill(BaseBillId.of(billId), Collections.singleton(htmlText));
+        Bill bill = billDataService.getBill(BaseBillId.of(billId));
         return bill.getAmendment(billId.getVersion());
     }
 

@@ -1,12 +1,14 @@
 package gov.nysenate.openleg.dao.bill.search;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.common.settings.Settings;
@@ -76,8 +78,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     public void updateBillIndex(Collection<Bill> bills) {
         BulkRequest bulkRequest = new BulkRequest();
         bills.stream()
-                .map(this::stripNonPlainText)
-                .map(BillView::new)
+                .map(b -> new BillView(b, Sets.newHashSet(BillTextFormat.PLAIN)))
                 .map(bv -> getJsonIndexRequest(billIndexName, toElasticId(bv.toBaseBillId()), bv))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
@@ -184,34 +185,5 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     private String toElasticId(BaseBillId baseBillId) {
         return baseBillId.getSession() + "-" +
                 baseBillId.getBasePrintNo();
-    }
-
-    /**
-     * Ensure the passed in bill only contains plain text.
-     */
-    private Bill stripNonPlainText(Bill bill) {
-        boolean allPlain = bill.getAmendmentList().stream().allMatch(a -> {
-            // If no plain text is present, throw exception.
-            if (!a.isTextFormatLoaded(PLAIN)) {
-                throw new IllegalArgumentException("Bills must have plain text loaded to index");
-            }
-            return Collections.singleton(PLAIN).equals(a.getFullTextFormats());
-        });
-        if (allPlain) {
-            // Bill is good as is
-            return bill;
-        }
-        try {
-            // Create a clone with only plain text
-            Bill strippedBill = bill.shallowClone();
-            strippedBill.getAmendmentList().forEach(amend -> {
-                String plainText = amend.getFullText(PLAIN);
-                amend.clearFullTexts();
-                amend.setFullText(PLAIN, plainText);
-            });
-            return strippedBill;
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }

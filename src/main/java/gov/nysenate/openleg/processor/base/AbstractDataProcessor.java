@@ -131,7 +131,7 @@ public abstract class AbstractDataProcessor
         }
         else {
             try {
-                baseBill = billDataService.getBill(baseBillId, EnumSet.allOf(BillTextFormat.class));
+                baseBill = billDataService.getBill(baseBillId);
             }
             catch (BillNotFoundEx ex) {
                 // Create the bill since it does not exist and add it to the ingest cache.

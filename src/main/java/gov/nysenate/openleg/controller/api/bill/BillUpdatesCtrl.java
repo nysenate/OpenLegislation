@@ -160,7 +160,7 @@ public class BillUpdatesCtrl extends BaseCtrl
                         if (fullBill) {
                             Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
                             return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
-                                    new BillView(billData.getBill(token.getId(), fullTextFormats)));
+                                    new BillView(billData.getBill(token.getId()), fullTextFormats));
                         }
                         if (summary) {
                             return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),

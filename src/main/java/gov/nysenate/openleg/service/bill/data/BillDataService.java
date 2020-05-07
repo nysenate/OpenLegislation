@@ -19,16 +19,6 @@ import java.util.Set;
  */
 public interface BillDataService
 {
-    /**
-     * Default overload of {@link #getBill(BaseBillId, Set)} that always applies plain bill text.
-     *
-     * @param billId BaseBillId
-     * @return Bill
-     * @throws BillNotFoundEx - If no Bill matching the BillId was found.
-     */
-    default Bill getBill(BaseBillId billId) throws BillNotFoundEx {
-        return getBill(billId, Collections.singleton(BillTextFormat.PLAIN));
-    }
 
     /**
      * Retrieve a Bill instance for the matching BillId.
@@ -36,11 +26,10 @@ public interface BillDataService
      * Will only include bill texts for the given formats.
      *
      * @param billId BaseBillId
-     * @param fullTextFormats {@link Set<BillTextFormat>} formats to include on bill
      * @return Bill
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    Bill getBill(BaseBillId billId, Set<BillTextFormat> fullTextFormats) throws BillNotFoundEx;
+    Bill getBill(BaseBillId billId) throws BillNotFoundEx;
 
     /**
      * Retrieve a BillInfo instance for the matching BillId. This contains

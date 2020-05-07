@@ -58,7 +58,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
 
         SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), billId);
 
-        BillView contentBillView = new BillView(content);
+        BillView contentBillView = new BillView(content, Sets.newHashSet(BillTextFormat.PLAIN));
         BillAmendmentView amendment;
         try {
             Version refVersion = reference.getBillId().getVersion();
