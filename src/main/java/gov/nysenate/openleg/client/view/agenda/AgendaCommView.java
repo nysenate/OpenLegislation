@@ -37,7 +37,7 @@ public class AgendaCommView implements ViewObject
                         agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().containsKey(committeeId)) {
                     voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
                 }
-                if (infoComm != null || voteComm != null) {
+                if (infoComm != null) {
                     addendaList.add(new AgendaCommAddendumView(id, modifiedDateTime, infoComm, voteComm, billDataService));
                 }
             }

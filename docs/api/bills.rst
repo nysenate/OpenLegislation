@@ -463,6 +463,8 @@ Search for bills that were published between a certain date range, ordered by in
 ::
     (GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
 
+.. note:: The `[` and `]` characters in the previous example must be url encoded to `%5B` and `%5D` respectively.
+
 -------
 
 Get bill updates

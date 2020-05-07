@@ -147,10 +147,15 @@ public enum SqlBillQuery implements BasicSqlQuery
                     "  ON a.bill_print_no = p.bill_print_no\n" +
                     "  AND a.bill_session_year = p.bill_session_year\n" +
                     "  AND a.bill_amend_version = p.bill_amend_version\n" +
+                    "LEFT JOIN ${schema}." + SqlTable.BILL_AMENDMENT_PUBLISH_STATUS + " ps \n" +
+                    "  ON a.bill_print_no = ps.bill_print_no\n" +
+                    "  AND a.bill_session_year = ps.bill_session_year\n" +
+                    "  AND a.bill_amend_version = ps.bill_amend_version\n" +
                     "WHERE s.bill_session_year = :sessionYear\n" +
                     "  AND (a.full_text IS NULL OR a.full_text = '')\n" +
                     "  AND s.budget_bill = 'TRUE'\n" +
-                    "  AND p.bill_print_no IS NULL"
+                    "  AND p.bill_print_no IS NULL\n" +
+                    "  AND ps.published = true"
     ),
 
     /** --- Bill Amendment Publish Status --- */

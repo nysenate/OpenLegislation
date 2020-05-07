@@ -17,42 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
-        <link rel="next" title="Senate Agenda API" href="agendas.html"/>
-        <link rel="prev" title="Bills and Resolutions API" href="bills.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Senate Agenda API" href="agendas.html" />
+    <link rel="prev" title="Bills and Resolutions API" href="bills.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -120,7 +114,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -128,9 +122,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -175,13 +170,13 @@
   <div class="section" id="senate-calendar-api">
 <h1><strong>Senate Calendar API</strong><a class="headerlink" href="#senate-calendar-api" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Assembly calendar data is currently not sent to us at this time. chamber must be ‘senate’.</p>
+<p class="admonition-title">Note</p>
+<p>Assembly calendar data is currently not sent to us at this time. chamber must be ‘senate’.</p>
 </div>
 <div class="section" id="get-a-single-calendar">
 <h2>Get a single calendar<a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Full</span> <span class="n">calendar</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Full</span> <span class="n">calendar</span><span class="p">:</span>
    <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span>
 <span class="n">Floor</span> <span class="n">calendar</span><span class="p">:</span>
    <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">floor</span>
@@ -192,27 +187,27 @@
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="8%" />
-<col width="82%" />
+<col style="width: 10%" />
+<col style="width: 8%" />
+<col style="width: 82%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>full</td>
-<td>boolean</td>
-<td>(default true) Set to true to get a full calendar response instead of a summary.</td>
+<tbody>
+<tr class="row-even"><td><p>full</p></td>
+<td><p>boolean</p></td>
+<td><p>(default true) Set to true to get a full calendar response instead of a summary.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
 /api/3/calendars/2014/54?&amp;full=false   (Get a summary of calendar 54)
 /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
 /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
@@ -221,7 +216,7 @@
 </div>
 <p><strong>Sample Responses</strong></p>
 <p>Full calendar:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar&quot;</span><span class="p">,</span>
@@ -244,7 +239,7 @@
 </pre></div>
 </div>
 <p>Supplemental/Floor calendar:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-floor&quot;</span><span class="p">,</span>   <span class="c1">// &quot;calendar-supplemental&quot; if the response is a supplemental</span>
@@ -335,7 +330,7 @@
 </pre></div>
 </div>
 <p>Active List:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-activelist&quot;</span><span class="p">,</span>
@@ -391,7 +386,7 @@
 <div class="section" id="get-a-listing-of-calendars">
 <h2>Get a listing of calendars<a class="headerlink" href="#get-a-listing-of-calendars" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Full</span> <span class="n">calendars</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Full</span> <span class="n">calendars</span><span class="p">:</span>
    <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 <span class="n">Supplemental</span><span class="o">/</span><span class="n">Floor</span> <span class="n">calendars</span><span class="p">:</span>
    <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">supplemental</span>
@@ -400,41 +395,41 @@
 </pre></div>
 </div>
 <p id="cal-list-params"><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="8%" />
-<col width="82%" />
+<col style="width: 10%" />
+<col style="width: 8%" />
+<col style="width: 82%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>full</td>
-<td>boolean</td>
-<td>(default false) Set to true to see the full calendar responses instead of the summaries.</td>
+<tbody>
+<tr class="row-even"><td><p>full</p></td>
+<td><p>boolean</p></td>
+<td><p>(default false) Set to true to see the full calendar responses instead of the summaries.</p></td>
 </tr>
-<tr class="row-odd"><td>limit</td>
-<td>string</td>
-<td>(default 100) Limit the number of results</td>
+<tr class="row-odd"><td><p>limit</p></td>
+<td><p>string</p></td>
+<td><p>(default 100) Limit the number of results</p></td>
 </tr>
-<tr class="row-even"><td>offset</td>
-<td>number</td>
-<td>(default 1) Start results from offset</td>
+<tr class="row-even"><td><p>offset</p></td>
+<td><p>number</p></td>
+<td><p>(default 1) Start results from offset</p></td>
 </tr>
-<tr class="row-odd"><td>order</td>
-<td>string</td>
-<td>(default ‘ASC’) Determines the order the calendar responses.  Responses are ordered by
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>string</p></td>
+<td><p>(default ‘ASC’) Determines the order the calendar responses.  Responses are ordered by
 calendar number and then either sequenceNumber or version if they are active lists or
-supplementals respectively.</td>
+supplementals respectively.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
 /api/3/calendars/2014?limit=1&amp;order=DESC              (Get the latest calendar from 2014)
 /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
 /api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)
@@ -449,50 +444,50 @@ The calendar search index is comprised of full calendar responses
 structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(GET) /api/3/calendars/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/calendars/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p>Search within a year</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(GET) /api/3/calendars/{year}/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/calendars/{year}/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col style="width: 13%" />
+<col style="width: 23%" />
+<col style="width: 64%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>term</td>
-<td>string</td>
-<td><a class="reference internal" href="search_api.html#search-term"><span class="std std-ref">ElasticSearch query string</span></a></td>
+<tbody>
+<tr class="row-even"><td><p>term</p></td>
+<td><p>string</p></td>
+<td><p><a class="reference internal" href="search_api.html#search-term"><span class="std std-ref">ElasticSearch query string</span></a></p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="17%" />
-<col width="70%" />
+<col style="width: 12%" />
+<col style="width: 17%" />
+<col style="width: 70%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>sort</td>
-<td>string</td>
-<td><a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">ElasticSearch sort string</span></a></td>
+<tbody>
+<tr class="row-even"><td><p>sort</p></td>
+<td><p>string</p></td>
+<td><p><a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">ElasticSearch sort string</span></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -503,54 +498,54 @@ structure.</p>
 <p>To identify which calendars have received updates within a given time period you can use the calendar updates api.</p>
 <p><strong>Usage</strong></p>
 <p>List of calendars updated within the past seven days</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p>List of calendars updated after the given date/time</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>List of calendars updated during the given date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The ‘fromDateTime’ and ‘toDateTime’ parameters should be formatted as the ISO 8601 Date Time format.
+<p class="admonition-title">Note</p>
+<p>The ‘fromDateTime’ and ‘toDateTime’ parameters should be formatted as the ISO 8601 Date Time format.
 For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
 The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col style="width: 13%" />
+<col style="width: 23%" />
+<col style="width: 64%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>detail</td>
-<td>boolean</td>
-<td>Set to true to see <a class="reference internal" href="#detailed-update-digests">detailed update digests</a></td>
+<tbody>
+<tr class="row-even"><td><p>detail</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true to see <a class="reference internal" href="#detailed-update-digests">detailed update digests</a></p></td>
 </tr>
-<tr class="row-odd"><td>order</td>
-<td>string (asc|desc)</td>
-<td>Order the results by update date/time</td>
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
 <p>Calendars that were updated between January 1st and January 20th of 2019</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 <p id="calendar-update-token-response"><strong>Response (detail=false)</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -584,52 +579,52 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 <h2>Get specific calendar updates<a class="headerlink" href="#get-specific-calendar-updates" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Get updates for a calendar within a datetime range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Get all updates for a calendar</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="23%" />
-<col width="66%" />
+<col style="width: 11%" />
+<col style="width: 23%" />
+<col style="width: 66%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>type</td>
-<td>(processed|published)</td>
-<td>The type of bill update (see below for explanation)</td>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>(processed|published)</p></td>
+<td><p>The type of bill update (see below for explanation)</p></td>
 </tr>
-<tr class="row-odd"><td>order</td>
-<td>string (asc|desc)</td>
-<td>Order the results by update date/time</td>
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time</p></td>
 </tr>
-<tr class="row-even"><td>limit</td>
-<td>string</td>
-<td>(default 100) Limit the number of results</td>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>string</p></td>
+<td><p>(default 100) Limit the number of results</p></td>
 </tr>
-<tr class="row-odd"><td>offset</td>
-<td>number</td>
-<td>(default 1) Start results from offset</td>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>number</p></td>
+<td><p>(default 1) Start results from offset</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
 <p>Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="mi">2014</span><span class="o">/</span><span class="mi">54</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">20</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">20</span><span class="n">T17</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="mi">2014</span><span class="o">/</span><span class="mi">54</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">20</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">20</span><span class="n">T17</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 <p id="calendar-update-digest-response"><strong>Response (type=published)</strong></p>
-<div class="highlight-javascript" id="detailed-update-digests"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript notranslate" id="detailed-update-digests"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
@@ -667,17 +662,15 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 </pre></div>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">By default the type is set to ‘processed’. As we reprocess our data periodically, it’s possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example</p>
+<p class="admonition-title">Warning</p>
+<p>By default the type is set to ‘processed’. As we reprocess our data periodically, it’s possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example</p>
 </div>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -686,7 +679,7 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
         <a href="agendas.html" class="btn btn-neutral float-right" title="Senate Agenda API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="bills.html" class="btn btn-neutral" title="Bills and Resolutions API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="bills.html" class="btn btn-neutral float-left" title="Bills and Resolutions API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -695,11 +688,11 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services.
+        &copy; Copyright 2014, NY State Senate Technology Services
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -712,36 +705,15 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0-alpha',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

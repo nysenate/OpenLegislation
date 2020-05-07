@@ -36,7 +36,11 @@ public class MailUtils {
                      @Value("${mail.smtp.ssl.enable:true}") boolean sslEnable,
                      @Value("${mail.smtp.ssl.protocols:TLSv1.2}") String sslProtocol,
                      @Value("${mail.store.protocol:imaps}") String storeProtocol,
-                     @Value("${mail.imaps.ssl.protocols:SSLv3}") String imapsSSLProtocol, Environment environment) {
+                     @Value("${mail.imaps.ssl.protocols:SSLv3}") String imapsSSLProtocol,
+                     @Value("${mail.smtp.connectiontimeout:5000}") String connTimeout,
+                     @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
+                     @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
+                     Environment environment) {
         this.storeProtocol = storeProtocol;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
@@ -60,6 +64,9 @@ public class MailUtils {
 
         mailProperties.put("mail.store.protocol", storeProtocol);
         mailProperties.put("mail.imaps.ssl.protocols", imapsSSLProtocol);
+        mailProperties.put("mail.smtp.connectiontimeout", connTimeout);
+        mailProperties.put("mail.smtp.timeout", smtpTimeout);
+        mailProperties.put("mail.smtp.writetimeout", writeTimeout);
         this.environment = environment;
     }
 
