@@ -70,7 +70,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("dateTime", DateUtils.toDate(transcriptId.getSessionDateTime()));
+        params.addValue("dateTime", DateUtils.toDate(transcriptId.getDateTime()));
         return params;
     }
 

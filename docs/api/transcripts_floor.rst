@@ -29,9 +29,8 @@ Full Transcript Response
       "message" : "Data for transcript 2014-09-03T09:00:00",    // Response description.
       "responseType" : "transcript",                            // Response data type.
       "result" : {
-        "sessionDateTime" : "2014-09-03T09:00",                 // Filename of transcript.
+        "dateTime" : "2014-09-03T09:00",                        // The date and time of the session.
         "sessionType" : "REGULAR SESSION",                      // Session type
-        "dateTime" : "2014-09-03T09:00:00                       // Date Time of senate session.
         "location" : "ALBANY, NEW YORK",                        // Location of senate session.
         "text" : "5100\n\n 1     NEW YORK STATE SE.."           // The text of the transcript.
         }

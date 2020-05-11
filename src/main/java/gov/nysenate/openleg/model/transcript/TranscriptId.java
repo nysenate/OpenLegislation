@@ -15,12 +15,12 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
     private static final long serialVersionUID = -6509878885942142022L;
 
     /** The timestamp which corresponds to the transcript. */
-    private LocalDateTime sessionDateTime;
+    private LocalDateTime dateTime;
 
     /** --- Constructors --- */
 
-    public TranscriptId(LocalDateTime sessionDateTime) {
-        this.sessionDateTime = sessionDateTime;
+    public TranscriptId(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     /**
@@ -39,33 +39,30 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TranscriptId that = (TranscriptId) o;
-        return Objects.equals(sessionDateTime, that.sessionDateTime);
+        return Objects.equals(dateTime, that.dateTime);
     }
 
     @Override
     public int hashCode() {
-        return sessionDateTime != null ? sessionDateTime.hashCode() : 0;
+        return dateTime != null ? dateTime.hashCode() : 0;
     }
 
     @Override
     public int compareTo(TranscriptId o) {
         return ComparisonChain.start()
-                .compare(this.sessionDateTime, o.sessionDateTime)
+                .compare(this.dateTime, o.dateTime)
                 .result();
     }
 
     @Override
     public String toString() {
-        return "Transcript " + sessionDateTime;
+        return "Transcript " + dateTime;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public LocalDateTime getSessionDateTime() {
-        return sessionDateTime;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public LocalDateTime getDateTime() {
-        return sessionDateTime;
-    }
 }
