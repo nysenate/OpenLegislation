@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.entity;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.SessionMember;
@@ -8,16 +7,19 @@ import gov.nysenate.openleg.model.entity.SessionMember;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FullMemberView extends ExtendedMemberView {
+public class FullMemberView extends MemberView {
 
-    protected Map<Integer, List<SimpleMemberView>> sessionShortNameMap;
+    protected PersonView personView;
+    protected Map<Integer, List<SessionMemberView>> sessionShortNameMap;
 
     public FullMemberView(FullMember member) {
         super(member.getLatestSessionMember().orElse(null));
+        this.personView = new PersonView(member);
         this.sessionShortNameMap = member.getSessionMemberMap().keySet().stream()
                 .collect(Collectors.toMap(SessionYear::getYear,
                         session -> member.getSessionMemberMap().get(session).stream()
-                                .map(SimpleMemberView::new)
+                                .map(SessionMemberView::new)
+                                .sorted((sm1, sm2) -> Boolean.compare(sm1.alternate, sm2.alternate))
                                 .collect(Collectors.toList())));
     }
 
@@ -26,24 +28,38 @@ public class FullMemberView extends ExtendedMemberView {
      * @param member Member
      */
     public FullMemberView(SessionMember member) {
-        super(member);
-        this.sessionShortNameMap = new HashMap<>();
-        if (member != null && member.getSessionYear() != null) {
-            this.sessionShortNameMap.put(member.getSessionYear().getYear(),
-                    Collections.singletonList(new SimpleMemberView(member)));
-        }
+        this(new FullMember(Collections.singletonList(member)));
     }
 
-    public FullMemberView(Collection<SessionMember> members) {
-        super(members.stream().max(SessionMember::compareTo).orElse(null));
-        this.sessionShortNameMap = members.stream()
-                .sorted()
-                .map(SimpleMemberView::new)
-                .collect(Collectors.groupingBy(SimpleMemberView::getSessionYear));
+    public FullMemberView(Collection<SessionMember> sessionMembers) {
+        this(new FullMember(sessionMembers));
     }
 
-    public Map<Integer, List<SimpleMemberView>> getSessionShortNameMap() {
+    public PersonView getPerson() {
+        return personView;
+    }
+
+    public Map<Integer, List<SessionMemberView>> getSessionShortNameMap() {
         return sessionShortNameMap;
+    }
+
+    public boolean exactEquals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FullMemberView that = (FullMemberView) o;
+        if (!Objects.equals(sessionShortNameMap.keySet(), that.sessionShortNameMap.keySet()))
+            return false;
+        for (Integer key : sessionShortNameMap.keySet()) {
+            List<SessionMemberView> thisSms = sessionShortNameMap.get(key);
+            List<SessionMemberView> thatSms = that.sessionShortNameMap.get(key);
+            if (thisSms.size() != thatSms.size())
+                return false;
+            for (int i = 0; i < thisSms.size(); i++) {
+                if (!thisSms.get(i).toSessionMember().exactEquals(thatSms.get(i).toSessionMember()))
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override

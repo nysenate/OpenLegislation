@@ -12,14 +12,13 @@ public class PublicHearingAddressParser
 {
 
     private static final Pattern LAST_ADDRESS_LINE = Pattern.compile(
-            "^(\\w+( \\w+)?, (New York|NY)( +)?(\\d+)?)|(Cattaraugus County Reservation)$");
-
+            "^([\\w ,-]+ +(New York(, )?|NY){1,2}[\\d -]*)$|(Cattaraugus County Reservation)$");
     private static final int INVALID_INDEX = -1;
 
     /**
      * Extract the Address information from the first page of a PublicHearing.
-     * @param firstPage
-     * @return
+     * @param firstPage of the hearing.
+     * @return the address where the hearing took place.
      */
     public String parse(List<String> firstPage) {
         String address = null;
@@ -38,15 +37,15 @@ public class PublicHearingAddressParser
             return null;
         }
 
-        String address = "";
+        StringBuilder address = new StringBuilder();
         for (int i = firstLineOfAddress; i <= lastLineOfAddress; i++) {
-            address += PublicHearingTextUtils.stripLineNumber(firstPage.get(i));
+            address.append(PublicHearingTextUtils.stripLineNumber(firstPage.get(i)));
             // Keep address multiline format.
             if (i != lastLineOfAddress) {
-                address += "\n";
+                address.append("\n");
             }
         }
-        return address;
+        return address.toString();
     }
 
     /** Always a blank line before address info */

@@ -181,7 +181,7 @@ public class DataProcessor
                     ingestedCounts.put(processor.getIngestType(), ingestedCount);
                 }
             } else {
-                logger.info("Not injesting data, processing is disabled.");
+                logger.info("Not ingesting data, processing is disabled.");
             }
         }
         if (ingestedCounts.size() > 0) {

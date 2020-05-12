@@ -6,44 +6,44 @@ General installation instructions for Ubuntu.
 
 ### Java 8
 1. `sudo apt-get install openjdk-8-jdk`
-1. Set `$JAVA_HOME` environment variable
+2. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
 
 ### Git
 1. `sudo apt-get install git`
-1. Configuration
+2. Configuration
     1. `git config --global user.name "<<Name>>"`
-    1. `git config --global user.email <<Email>>`
+    2. `git config --global user.email <<Email>>`
 
 ### IntelliJ
 
 1. Download the Ultimate Edition from https://www.jetbrains.com/idea/download/#section=linux
-1. Extract: `sudo tar -xzvf <<downloaded_file_name>> -C /usr/share/`
-1. Run: `bin/idea.sh` which will be located in the directory extracted in the previous step.
+2. Extract: `sudo tar -xzvf <<downloaded_file_name>> -C /usr/share/`
+3. Run: `bin/idea.sh` which will be located in the directory extracted in the previous step.
 
 ### Tomcat
 
 1. Download the latest version of Tomcat from https://tomcat.apache.org/download-90.cgi
     * You want the Core tar.gz distribution.
-1. `mkdir ~/tomcat8`
-1. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
-1. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
+2. `mkdir ~/tomcat8`
+3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+4. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
 Make sure the contents of the tomcat directory are readable an executable for all users.
 e.g. `chmod -R +rx ~/tomcat8`
 
 ### Elasticsearch
 
-1. `wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.5.4.deb`
-1. `sudo dpkg -i elasticsearch-6.5.4.deb`
-1. `sudo systemctl enable elasticsearch.service`
+1. `wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.5.1-amd64.deb`
+2. `sudo dpkg -i elasticsearch-7.5.1-amd64.deb`
+3. `sudo systemctl enable elasticsearch.service`
 
 ### Postgresql, Maven, Nodejs
 
-1. `sudo apt-get install postgresql postgresql-contrib maven nodejs`
+`sudo apt-get install postgresql postgresql-contrib maven nodejs`
 
 ### Bower and Grunt
 
-1. `sudo npm install -g bower grunt`
+`sudo npm install -g bower grunt`
 
 ## Source Code Setup
 
@@ -52,21 +52,21 @@ e.g. `chmod -R +rx ~/tomcat8`
 Clone the Open Legislation codebase to your computer.
 
 1. `cd <<dev directory>>` Move into the directory where you want to keep the source code.
-1. `git clone https://github.com/nysenate/OpenLegislation `
+2. `git clone https://github.com/nysenate/OpenLegislation `
 
 ### Open Code in Intellij
 
 1. From the start screen, click Import project
     * If you are already in an open project, go to File->New->Project from Existing Sources
-1. Select the Open Legislation directory that was cloned from GitHub
-1. In the Import Project screen, select "Import project from external model" and choose Maven from the list of models
-1. The next screen will be a bunch of checkbox options. Ensure the following are checked:
+2. Select the Open Legislation directory that was cloned from GitHub
+3. In the Import Project screen, select "Import project from external model" and choose Maven from the list of models
+4. The next screen will be a bunch of checkbox options. Ensure the following are checked:
     * Search for projects recursively
     * Import Maven projects automatically
     * Automatically download
         * Sources
         * Documentation
-1. Be sure to use Java 8 on this project
+5. Be sure to use Java 8 on this project
 
 ## Database Setup
 
@@ -74,19 +74,20 @@ Clone the Open Legislation codebase to your computer.
 
 Log into psql as the postgres user.
 
-1.`sudo su - postgres`
-1.`psql -U postgres`
+`sudo su - postgres`
+
+`psql -U postgres`
 
 In psql, create a user with the same name as you linux user.
 
 1. Create a new role in postgres. 
-   `CREATE USER <<username>> WITH LOGIN SUPERUSER PASSWORD '<<password>>';`
+   `CREATE USER <<linux_username>> WITH LOGIN SUPERUSER PASSWORD '<<password>>';`
 
 ### Create Open Legislation Database
 
-1. Enter psql in a terminal with the database user you created in the previous step: `psql -U openleg postgres`
-1. Create a database for Open Legislation: `CREATE DATABSE openleg;`
-1. Exit psql with `\q`
+1. Enter psql in a terminal with the database user you created in the previous step: `psql -U openleg <<linux_username>>`
+2. Create a database for Open Legislation: `CREATE DATABSE openleg;`
+3. Exit psql with `\q`
 
 ## Elasticsearch setup
 
@@ -181,11 +182,11 @@ Run `mvn compile flyway:migrate` to generate a build that is deployable by tomca
 We typically run Open Legislation in Tomcat through IntelliJ.
 
 1. Open Intellij and go to menu: Run -> Edit Configurations
-1. Click the plus sign in the top left corner
-1. Scroll down until you find Tomcat Server. Select local server
-1. In the Server tab -> application server link your download of tomcat from before
-1. In the Deployment tab -> hit the plus sign again and select legislation:war exploded. Set the Application Context to `/`.
-1. Apply these changes
+2. Click the plus sign in the top left corner
+3. Scroll down until you find Tomcat Server. Select local server
+4. In the Server tab -> application server link your download of tomcat from before
+5. In the Deployment tab -> hit the plus sign again and select legislation:war exploded. Set the Application Context to `/`.
+6. Apply these changes
 
 Now you can run Tomcat by selecting it and pressing the green play button towards the top right of the Intellij UI.
 Once running you should be able to view the application at: http://localhost:8080
@@ -195,18 +196,18 @@ Once running you should be able to view the application at: http://localhost:808
 ### Setup Open Legislation Environment Directories
 
 1. `sudo mkdir /data`
-1. `sudo chown -R $USER:$USER /data`
-1. `mkdir /data/openleg /data/openleg/archive /data/openleg/staging /data/openleg/staging/xmls`
+2. `sudo chown -R $USER:$USER /data`
+3. `mkdir /data/openleg /data/openleg/archive /data/openleg/staging /data/openleg/staging/xmls`
 
 ### Rsync Legislative Data
 
-1. `rsync -a --info=progress2 '<<username>>@tyrol.nysenate.gov:/data/2017-18_xml_files' /data/openleg/staging/xmls`
+`rsync -a --info=progress2 '<<senate_username>>@tyrol.nysenate.gov:/data/2017-18_xml_files' /data/openleg/staging/xmls`
 
 ### Process Data
 
 Now we can process the xml data we downloaded in our local Open Legislation environment. This process can take a long time so be prepared to leave it running for up to a day or two.
 
-1. `curl -XPOST -v -u '<<username>>:<<password>>' localhost:8080/api/3/admin/process/run`
+`curl -XPOST -v -u '<<default.admin.user>>:<<default.admin.password>>' localhost:8080/api/3/admin/process/run`
 
 **NOTE**
 * Do not attempt this on a system with 4GB of ram without changing the cache limits in app.properties

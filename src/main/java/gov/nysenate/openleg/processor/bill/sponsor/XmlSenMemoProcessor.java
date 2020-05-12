@@ -97,7 +97,7 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements LegDat
             Node temp = childNodes.item(i);
             if (temp.getNodeType() == temp.CDATA_SECTION_NODE) {
                 String htmlMemoText = temp.getTextContent();
-                return BillTextUtils.parseHTMLtext(htmlMemoText);
+                return BillTextUtils.convertHtmlToPlainText(htmlMemoText);
             }
         }
         return "";

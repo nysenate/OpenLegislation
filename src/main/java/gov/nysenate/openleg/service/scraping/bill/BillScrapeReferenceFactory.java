@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.service.scraping.bill;
 
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillText;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.bill.BillType;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
+import gov.nysenate.openleg.processor.bill.BillTextDiffProcessor;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -18,21 +21,29 @@ import java.nio.charset.Charset;
 public class BillScrapeReferenceFactory {
 
     private BillScrapeReferenceHtmlParser htmlParser;
+    private BillTextDiffProcessor textDiffProcessor;
 
     @Autowired
-    public BillScrapeReferenceFactory(BillScrapeReferenceHtmlParser htmlParser) {
+    public BillScrapeReferenceFactory(BillScrapeReferenceHtmlParser htmlParser, BillTextDiffProcessor textDiffProcessor) {
         this.htmlParser = htmlParser;
+        this.textDiffProcessor = textDiffProcessor;
     }
 
     public BillScrapeReference createFromFile(BillScrapeFile btrFile) throws IOException {
         Document doc = Jsoup.parse(btrFile.getFile(), "UTF-8");
+        doc.outputSettings(new Document.OutputSettings().prettyPrint(false)); // Preserve whitespace.
+
         if (htmlParser.isBillMissing(doc)) {
             return errorBillScrapeReference(btrFile);
         }
         BillId billId = new BillId(htmlParser.parsePrintNo(doc), btrFile.getBaseBillId().getSession());
         Elements billTextElements = htmlParser.getBillTextElements(doc);
         String htmlText = billTextElements.outerHtml();
-        String plain = formatText(BillTextUtils.parseHTMLText(billTextElements), billId.getBillType());
+
+        BillText billText = textDiffProcessor.processBillText(htmlText);
+        String plain = billText.getFullText(BillTextFormat.PLAIN);
+        htmlText = billText.getFullText(BillTextFormat.HTML);
+
         // Only parse memo's for non resolutions.
         String memo = billId.getBillType().isResolution() ? "" : htmlParser.parseMemo(doc);
         BillScrapeReference reference = new BillScrapeReference(billId, btrFile.getReferenceDateTime(), plain, htmlText, memo);

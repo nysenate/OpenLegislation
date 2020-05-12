@@ -139,12 +139,12 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
             Node memberNode = committeeMembersNodes.item(i);
             if (memberNode.getNodeName().equals("member")) {
                 String shortName = xml.getString("name/text()", memberNode);
-                SessionMember sessionMember = memberService.getMemberByShortNameEnsured(
+                SessionMember sessionMember = memberService.getSessionMemberByShortNameEnsured(
                         shortName, committee.getSession(), committee.getChamber());
 
                 CommitteeMember committeeMember = new CommitteeMember();
                 committeeMember.setSequenceNo(Integer.parseInt(xml.getString("@seqno", memberNode)));
-                committeeMember.setMember(sessionMember);
+                committeeMember.setSessionMember(sessionMember);
                 committeeMember.setMajority(
                         xml.getString("memberlist/text()", memberNode)
                                 .trim()

@@ -174,7 +174,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     /* --- Internal Methods --- */
 
     private void updateSessionMember(SessionMember sessionMember) {
-        FullMember member = memberDataService.getMemberById(sessionMember.getMemberId());
+        FullMember member = memberDataService.getFullMemberById(sessionMember.getMember().getMemberId());
         updateIndex(member);
     }
 
@@ -188,4 +188,3 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
     }
 }
-

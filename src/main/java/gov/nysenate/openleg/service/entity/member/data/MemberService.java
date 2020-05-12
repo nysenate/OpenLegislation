@@ -21,7 +21,7 @@ public interface MemberService
      * @return Member
      * @throws MemberNotFoundEx If no matching member was found.
      */
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx;
+    SessionMember getSessionMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx;
 
     /**
      * Retrieves map of session year -> Member for a given member id.
@@ -29,7 +29,7 @@ public interface MemberService
      * @param id int
      * @return Map<Integer, Member>
      */
-    public FullMember getMemberById(int id) throws MemberNotFoundEx;
+    FullMember getFullMemberById(int id) throws MemberNotFoundEx;
 
     /**
      * Retrieve a member by session member id
@@ -37,10 +37,10 @@ public interface MemberService
      *  then the primary session member will be returned instead
      *
      * @param sessionMemberId
-     * @return Member
+     * @return SessionMember
      * @throws MemberNotFoundEx if no session member exists with sessionMemberId
      */
-    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx;
+    SessionMember getSessionMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx;
 
     /**
      * Retrieve Member (which can represent either a senator or assemblymember) using the LBDC shortname,
@@ -49,13 +49,13 @@ public interface MemberService
      * @param lbdcShortName String - The short name of the member as represented in the source data.
      * @param sessionYear SessionYear - The session year in which this member was active.
      * @param chamber Chamber
-     * @return Member
+     * @return SessionMember
      * @throws MemberNotFoundEx If no matching member was found.
      */
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx;
+    SessionMember getSessionMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx;
 
     /**
-     * This functions in the same way as {@link #getMemberByShortName(String, gov.nysenate.openleg.model.base.SessionYear, gov.nysenate.openleg.model.entity.Chamber)}
+     * This functions in the same way as {@link #getSessionMemberByShortName(String, gov.nysenate.openleg.model.base.SessionYear, gov.nysenate.openleg.model.entity.Chamber)}
      * with the exception that, instead of throwing an exception when a member is not found,
      * this method creates a new Member in storage and returns that
      * This should only be used in the processor layer
@@ -63,22 +63,22 @@ public interface MemberService
      * @param lbdcShortName String - The short name of the member as represented in the source data.
      * @param sessionYear SessionYear - The session year in which this member was active.
      * @param chamber Chamber
-     * @return Member
+     * @return SessionMember
      * @throws ParseError - if the provided short name does not match specification
      */
-    public SessionMember getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError;
+    SessionMember getSessionMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError;
 
     /**
-     * Retrieves all members from all years and both chambers.
+     * Retrieves all session members from all years and both chambers.
      * Useful for rebuilding the search index.
      * @return
      */
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
+    List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff);
 
     /**
      * @return List<FullMember> - a list of all members containing all linked session members
      */
-    public List<FullMember> getAllFullMembers();
+    List<FullMember> getAllFullMembers();
 
     /**
      * Adds the given members to the data store
@@ -86,5 +86,5 @@ public interface MemberService
      *  because it will trigger cache and search index rebuilds
      * @param members List<Member>
      */
-    public void updateMembers(List<SessionMember> members);
+    void updateMembers(List<SessionMember> members);
 }

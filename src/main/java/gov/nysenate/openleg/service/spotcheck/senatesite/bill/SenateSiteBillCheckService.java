@@ -58,7 +58,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
 
         SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), billId);
 
-        BillView contentBillView = new BillView(content);
+        BillView contentBillView = new BillView(content, Sets.newHashSet(BillTextFormat.PLAIN));
         BillAmendmentView amendment;
         try {
             Version refVersion = reference.getBillId().getVersion();
@@ -370,7 +370,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
             for (int memberId : vote.getVoteRoll().get(code)) {
                 String shortName;
                 try {
-                    FullMember member = memberService.getMemberById(memberId);
+                    FullMember member = memberService.getFullMemberById(memberId);
                     shortName = member.getLatestSessionMember()
                             .orElseThrow(MemberNotFoundEx::new)
                             .getLbdcShortName();

@@ -131,7 +131,7 @@ public abstract class AbstractDataProcessor
         }
         else {
             try {
-                baseBill = billDataService.getBill(baseBillId, EnumSet.allOf(BillTextFormat.class));
+                baseBill = billDataService.getBill(baseBillId);
             }
             catch (BillNotFoundEx ex) {
                 // Create the bill since it does not exist and add it to the ingest cache.
@@ -202,7 +202,7 @@ public abstract class AbstractDataProcessor
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
      */
     protected SessionMember getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
-        return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
+        return memberService.getSessionMemberByShortNameEnsured(shortName, sessionYear, chamber);
     }
 
     /**

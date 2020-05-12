@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -8,6 +9,7 @@ import gov.nysenate.openleg.dao.bill.reference.openleg.OpenlegBillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
@@ -102,7 +104,7 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
                     if (!localBillIds.contains(baseBillId)) {
                         throw new BillNotFoundEx(baseBillId);
                     }
-                    BillView localBill = new BillView(billDataService.getBill(baseBillId));
+                    BillView localBill = new BillView(billDataService.getBill(baseBillId), Sets.newHashSet(BillTextFormat.PLAIN));
                     SpotCheckObservation<BaseBillId> obs = checkService.check(localBill, refBill);
                     report.addObservation(obs);
                     // Remove this bill from localBillIds to indicate it was present in ref. bills.
