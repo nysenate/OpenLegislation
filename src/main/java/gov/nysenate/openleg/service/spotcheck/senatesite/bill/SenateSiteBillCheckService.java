@@ -21,6 +21,7 @@ import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
+import gov.nysenate.openleg.util.BillTextCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -284,7 +285,9 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
     }
 
     private void checkText(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        spotCheckUtils.checkString(content.getFullText(), reference.getText(), observation, BILL_TEXT);
+        // Normalize this check for now since there are a lot of minor whitespace mismatches with the new textdiff implementation.
+        spotCheckUtils.checkString(BillTextCheckUtils.ultraNormalize(content.getFullText()),
+                BillTextCheckUtils.ultraNormalize(reference.getText()), observation, BILL_TEXT);
     }
 
     private void checkLawCode(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
