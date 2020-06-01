@@ -24,7 +24,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
               "smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
               "m.chamber, m.incumbent,\n" +
                "p.id AS person_id, p.full_name, p.prefix, p.first_name, p.middle_name, p.last_name, p.suffix,\n" +
-               "p.img_name, p.verified, p.email,\n" +
+               "p.img_name, p.email,\n" +
                "(\n" +
             "  SELECT MIN(created)\n" +
             "  FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +

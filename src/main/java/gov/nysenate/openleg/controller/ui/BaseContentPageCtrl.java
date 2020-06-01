@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.controller.ui;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
-import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,15 +59,5 @@ public abstract class BaseContentPageCtrl
         assemblyMemList = allMembers.stream()
             .filter(m -> m.getChamber().equals(Chamber.ASSEMBLY))
             .collect(Collectors.toList());
-    }
-
-    @Subscribe
-    protected void handleMemberUpdate(MemberUpdateEvent event) {
-        initializeMembers();
-    }
-
-    @Subscribe
-    protected void handleMemberUpdate(BulkMemberUpdateEvent event) {
-        initializeMembers();
     }
 }

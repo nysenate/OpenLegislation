@@ -199,10 +199,10 @@ public abstract class AbstractDataProcessor
 
 
     /**
-     * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
+     * Retrieves a member from the LBDC short name.  Throws a MemberNotFoundEx if no member can be retrieved.
      */
     protected SessionMember getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
-        return memberService.getSessionMemberByShortNameEnsured(shortName, sessionYear, chamber);
+        return memberService.getSessionMemberByShortName(shortName, sessionYear, chamber);
     }
 
     /**

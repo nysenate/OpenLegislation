@@ -102,72 +102,6 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List<SessionMember> getUnverifiedSessionMembers() {
-        OrderBy order = new OrderBy("session_year", SortOrder.DESC, "lbdc_short_name", SortOrder.ASC);
-        return jdbcNamed.query(SqlMemberQuery.SELECT_UNVERIFIED_MEMBERS_SQL.getSql(schema(), order),
-                new MapSqlParameterSource(), new MemberRowMapper());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updatePerson(Person person) {
-        ImmutableParams params = ImmutableParams.from(getPersonParams(person));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON_SQL.getSql(schema()), params) == 0) {
-            Integer personId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_PERSON_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            person.setPersonId(personId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateMember(Member member) {
-        ImmutableParams params = ImmutableParams.from(getMemberParams(member));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_MEMBER_SQL.getSql(schema()), params) == 0) {
-            Integer memberId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            member.setMemberId(memberId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSessionMember(SessionMember sessionMember) {
-        ImmutableParams params = ImmutableParams.from(getSessionMemberParams(sessionMember));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER_SQL.getSql(schema()), params) == 0) {
-            Integer sessionMemberId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            sessionMember.setSessionMemberId(sessionMemberId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void linkMember(int memberId, int personId) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("memberId", memberId)
-                .addValue("personId", personId);
-        jdbcNamed.update(SqlMemberQuery.LINK_MEMBER_SQL.getSql(schema()), params);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void linkSessionMember(int sessionMemberId, int memberId) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("sessionMemberId", sessionMemberId)
-                .addValue("memberId", memberId);
-        jdbcNamed.update(SqlMemberQuery.LINK_SESSION_MEMBER_SQL.getSql(schema()), params);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearOrphans() {
-        jdbcNamed.update(SqlMemberQuery.DELETE_ORPHAN_MEMBERS_SQL.getSql(schema()), new MapSqlParameterSource());
-        jdbcNamed.update(SqlMemberQuery.DELETE_ORPHAN_PERSONS_SQL.getSql(schema()), new MapSqlParameterSource());
-    }
-
     /** --- Helper classes --- */
 
     public static class MemberRowMapper implements RowMapper<SessionMember>
@@ -193,7 +127,6 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setLastName(rs.getString("last_name"));
             member.setSuffix(rs.getString("suffix"));
             member.setImgName(rs.getString("img_name"));
-            member.setVerified(rs.getBoolean("verified"));
             member.setEmail(rs.getString("email"));
 
             sessionMember.setMember(member);
@@ -213,8 +146,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("email", person.getEmail())
                 .addValue("prefix", person.getPrefix())
                 .addValue("suffix", person.getSuffix())
-                .addValue("img_name", person.getImgName())
-                .addValue("verified", person.isVerified());
+                .addValue("img_name", person.getImgName());
     }
 
     private MapSqlParameterSource getMemberParams(Member member) {

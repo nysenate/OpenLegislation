@@ -61,7 +61,6 @@
               <menu-item url="${ctxPath}/admin">Configuration</menu-item>
               <menu-item url="${ctxPath}/admin/logs">Logs</menu-item>
               <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-              <menu-item url="${ctxPath}/admin/members">Members</menu-item>
               <menu-item url="${ctxPath}/admin/reports">Reports</menu-item>
               <menu-item url="${ctxPath}/admin/email">Batch Email</menu-item>
             </menu-section>

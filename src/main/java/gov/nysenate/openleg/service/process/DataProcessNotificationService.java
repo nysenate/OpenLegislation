@@ -10,7 +10,6 @@ import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessWarnEvent;
 import gov.nysenate.openleg.processor.DataProcessor;
-import gov.nysenate.openleg.service.entity.member.event.UnverifiedMemberEvent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,19 +65,6 @@ public class DataProcessNotificationService {
         eventBus.post(notification);
     }
 
-    public void unverifiedMemberNotification(SessionMember sessionMember) {
-        Optional<DataProcessRun> run = dataProcessor.getCurrentRun();
-        LocalDateTime occurred = LocalDateTime.now();
-        String summary = "New unverified session member: " + sessionMember.getLbdcShortName();
-        String message = "A new unverified session member has been created" + (run.isPresent() ? " during data processing" : "") + "\n" +
-                (run.map(dataProcessRun -> getDataProcessRunUrl(dataProcessRun.getProcessId()) + "\n").orElse("")) +
-                "shortname: " + sessionMember.getLbdcShortName() + "\n" +
-                "chamber: " + sessionMember.getMember().getChamber()+ "\n" +
-                "session: " + sessionMember.getSessionYear();
-        Notification notification = new Notification(UNVERIFIED_MEMBER, occurred, summary, message);
-        eventBus.post(notification);
-    }
-
     @Subscribe
     public void handleDataProcessErrorEvent(DataProcessErrorEvent event) {
         exceptionNotification(event.getEx(), event.getProcessRunId());
@@ -88,11 +74,6 @@ public class DataProcessNotificationService {
     public void handleDataProcessWarnEvent(DataProcessWarnEvent event) {
         event.getUnit().getErrors()
                 .forEach(warning -> warningNotification(warning, event.getDataProcessId(), event.getUnit()));
-    }
-
-    @Subscribe
-    public void handleUnverifiedMemberEvent(UnverifiedMemberEvent event) {
-        unverifiedMemberNotification(event.getMember());
     }
 
     private String getDataProcessRunUrl(int dataProcessId) {

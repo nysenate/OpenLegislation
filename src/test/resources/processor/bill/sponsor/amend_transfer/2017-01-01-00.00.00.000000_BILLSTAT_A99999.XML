@@ -1,7 +1,7 @@
-<billstatus  sessyr="1975" billhse="A" billno="10101" action="replace">
+<billstatus  sessyr="2017" billhse="A" billno="99999" action="replace">
 <deadtag></deadtag>
 <currentamd></currentamd>
-<sponsor><![CDATA[MAINSPON]]></sponsor>
+<sponsor><![CDATA[FINCH]]></sponsor>
 <reprint>
 <rprtbillhse></rprtbillhse>
 <rprtbillno></rprtbillno>
@@ -14,7 +14,7 @@
 <law><![CDATA[Anarchic Law]]></law>
 <title><![CDATA[Relates to absolutely nothing]]></title>
 <billactions><![CDATA[
-01/01/75 referred to education
+01/01/17 referred to education
 ]]></billactions>
 <actions>
 <action no="1">
@@ -24,22 +24,22 @@
 <actiontype>S</actiontype>
 <actiondata>11</actiondata>
 <actiondataamd></actiondataamd>
-<actiondate>1975-01-01</actiondate>
+<actiondate>2017-01-01</actiondate>
 <actiondesc><![CDATA[referred to education]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
-<action no="1975">
+<action no="2017">
 <actionbillamd></actionbillamd>
 <actionhouse>A</actionhouse>
 <actioncode>1</actioncode>
 <actiontype>S</actiontype>
 <actiondata>11</actiondata>
 <actiondataamd></actiondataamd>
-<actiondate>1975-01-01</actiondate>
+<actiondate>2017-01-01</actiondate>
 <actiondesc><![CDATA[referred to education]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
 </actions>
 </billstatus>

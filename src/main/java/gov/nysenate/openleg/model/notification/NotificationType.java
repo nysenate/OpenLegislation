@@ -18,7 +18,6 @@ public enum NotificationType {
     PROCESS_WARNING         (WARNING),
     SCRAPING_EXCEPTION      (WARNING),
     LRS_OUTAGE              (WARNING),
-    UNVERIFIED_MEMBER       (WARNING),
     SPOTCHECK               (WARNING),
     BUDGET_BILL_EMPTY_TEXT  (WARNING),
     DAYBREAK_SPOTCHECK      (SPOTCHECK),

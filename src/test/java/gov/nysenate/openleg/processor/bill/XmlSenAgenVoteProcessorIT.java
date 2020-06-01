@@ -62,9 +62,9 @@ public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
         LocalDateTime meetDataTime = DateUtils.getLrsDateTime("2017-02-06T00.00.00Z");
         AgendaVoteCommittee voteCommittee = new AgendaVoteCommittee(committeeId, chair, meetDataTime);
         SessionYear sessionYear = new SessionYear(2017);
-        SessionMember member = memberService.getSessionMemberByShortNameEnsured("Flanagan",sessionYear,Chamber.SENATE);
+        SessionMember member = memberService.getSessionMemberByShortName("FLANAGAN", sessionYear, Chamber.SENATE);
         AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(member,1,"R","Present");
-        SessionMember member1 = memberService.getSessionMemberByShortNameEnsured("DeFrancisco",sessionYear,Chamber.SENATE);
+        SessionMember member1 = memberService.getSessionMemberByShortName("DEFRANCISCO", sessionYear, Chamber.SENATE);
         AgendaVoteAttendance memberAttendance1 = new AgendaVoteAttendance(member1,2,"R","Present");
         voteCommittee.addAttendance(memberAttendance);
         voteCommittee.addAttendance(memberAttendance1);

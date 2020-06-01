@@ -14,11 +14,15 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -44,7 +48,7 @@ public class MemberGetCtrlTest extends ApiTest {
     @Test
     public void getMembersByYearTest() throws SearchException, MemberNotFoundEx {
         ListViewResponse<?> listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", false, testRequest);
-        assertEquals(223, listResponse.getTotal());
+        assertEquals(216, listResponse.getTotal());
         // If just SessionMemberViews are returned, there should be no alternates.
         long numAlternates = listResponse.getResult().getItems().stream().filter(sm ->
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
@@ -64,14 +68,14 @@ public class MemberGetCtrlTest extends ApiTest {
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
         Person testP = new Person(199, "Ruth Hassell-Thompson", "Ruth", null, "Hassell-Thompson",
-                "hassellt@senate.state.ny.us", "Senator", null, true, "380_ruth_hassell-thompson.jpg");
+                "hassellt@senate.state.ny.us", "Senator", null, "380_ruth_hassell-thompson.jpg");
         Member testM = new Member(testP, 380, Chamber.SENATE, false);
         SessionMember nonAlt2011 = new SessionMember(74, testM, name + "N", new
                 SessionYear(2011), 36, false);
 
         BaseResponse resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2011, false, testRequest);
         SessionMember actualSm = ((SessionMemberView)(((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
-        assertTrue(nonAlt2011.exactEquals(actualSm));
+        assertEquals(nonAlt2011, actualSm);
 
         SessionMember nonAlt2009 = new SessionMember(nonAlt2011);
         nonAlt2009.setSessionMemberId(12);
@@ -104,7 +108,7 @@ public class MemberGetCtrlTest extends ApiTest {
                 alt2011, nonAlt2011, alt2013, nonAlt2013, only2015)));
         resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2015, true, testRequest);
         FullMemberView actualFmv = (FullMemberView)(((ViewObjectResponse<?>) resp).getResult());
-        assertTrue(testFmv.exactEquals(actualFmv));
+        assertTrue(isFullMemberViewEqual(testFmv, actualFmv));
     }
 
     /**
@@ -125,5 +129,24 @@ public class MemberGetCtrlTest extends ApiTest {
     public void handleMemberNotFoundExTest() {
         ErrorResponse resp = testCtrl.handleMemberNotFoundEx(null);
         assertEquals(resp.getErrorCode(), ErrorCode.MEMBER_NOT_FOUND.getCode());
+    }
+
+    private boolean isFullMemberViewEqual(FullMemberView expected, FullMemberView actual) {
+        if (expected == actual) return true;
+        if (expected == null || actual == null || expected.getClass() != actual.getClass()) return false;
+        if (!Objects.equals(expected.getSessionShortNameMap().keySet(), actual.getSessionShortNameMap().keySet())) {
+            return false;
+        }
+        for (Integer key : expected.getSessionShortNameMap().keySet()) {
+            List<SessionMemberView> thisSms = expected.getSessionShortNameMap().get(key);
+            List<SessionMemberView> thatSms = actual.getSessionShortNameMap().get(key);
+            if (thisSms.size() != thatSms.size())
+                return false;
+            for (int i = 0; i < thisSms.size(); i++) {
+                if (!thisSms.get(i).toSessionMember().equals(thatSms.get(i).toSessionMember()))
+                    return false;
+            }
+        }
+        return true;
     }
 }

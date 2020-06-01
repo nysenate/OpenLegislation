@@ -390,11 +390,6 @@ public enum SqlBillQuery implements BasicSqlQuery
         "JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " cs ON cse.calendar_sup_id = cs.id\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
-
-    SELECT_XML_FULL_TEXT(
-            "SELECT full_text_html FROM ${schema}." + SqlTable.BILL_AMENDMENT + " \n" +
-            "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
-    )
     ;
 
     private String sql;

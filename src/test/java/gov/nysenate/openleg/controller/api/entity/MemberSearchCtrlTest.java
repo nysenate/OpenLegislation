@@ -38,15 +38,15 @@ public class MemberSearchCtrlTest extends ApiTest {
      */
     @Test
     public void aSimpleTest() throws SearchException {
-        Person testP = new Person(498, "Greene", "", "", "", "", "", "", false, "no_image.jpg");
-        Member testM = new Member(testP, 676, Chamber.ASSEMBLY, false);
-        SessionMember testSm = new SessionMember(664, testM, "GREENE", new SessionYear(2009), 0, false);
+        Person expectedPerson = new Person(498, "Aurelia Greene", "Aurelia", "", "Greene", "", "Assembly Member", "", "no_image.jpg");
+        Member expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
+        SessionMember expectedSessionMember = new SessionMember(664, expectedMember, "GREENE", new SessionYear(2009), 77, false);
 
         ListViewResponse<?> listResponse = (ListViewResponse<?>) testCtrl.globalSearch("memberId:676", "", false, testRequest);
         assertEquals(1, listResponse.getTotal());
 
-        SessionMember actualSm = ((SessionMemberView) listResponse.getResult().getItems().asList().get(0)).toSessionMember();
-        assertTrue(actualSm.exactEquals(testSm));
+        SessionMember actualSessionMember = ((SessionMemberView) listResponse.getResult().getItems().asList().get(0)).toSessionMember();
+        assertEquals(expectedSessionMember, actualSessionMember);
     }
 
     /**
@@ -54,7 +54,7 @@ public class MemberSearchCtrlTest extends ApiTest {
      */
     @Test
     public void searchBySessionMemberId() throws SearchException {
-        Person testP = new Person(499, "Edward Hennessey", "Edward", null, "Hennessey", null, null, null, true, "no_image.jpg");
+        Person testP = new Person(499, "Edward Hennessey", "Edward", null, "Hennessey", null, null, null, "no_image.jpg");
         Member testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
         SessionMember testSm = new SessionMember(666, testM, "HENNESSEY", new SessionYear(2013), 3, false);
         SessionMember testSmAlt = new SessionMember(testSm);
@@ -66,14 +66,14 @@ public class MemberSearchCtrlTest extends ApiTest {
         assertEquals(1, listResponse.getTotal());
 
         SessionMember actualSm = ((SessionMemberView) listResponse.getResult().getItems().get(0)).toSessionMember();
-        assertTrue(actualSm.exactEquals(testSm));
+        assertEquals(testSm, actualSm);
 
         listResponse = (ListViewResponse<?>) testCtrl.globalSearch(2013, "sessionShortNameMap.2013.sessionMemberId:667", "", true, testRequest);
         assertEquals(1, listResponse.getTotal());
 
         List<SessionMemberView> actual2013Smvs = ((FullMemberView) listResponse.getResult().getItems().get(0)).getSessionShortNameMap().get(2013);
         assertEquals(2, actual2013Smvs.size());
-        assertTrue(actual2013Smvs.get(0).toSessionMember().exactEquals(testSm));
-        assertTrue(actual2013Smvs.get(1).toSessionMember().exactEquals(testSmAlt));
+        assertEquals(testSm, actual2013Smvs.get(0).toSessionMember());
+        assertEquals(testSmAlt, actual2013Smvs.get(1).toSessionMember());
     }
 }

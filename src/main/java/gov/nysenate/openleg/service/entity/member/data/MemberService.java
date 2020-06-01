@@ -55,20 +55,6 @@ public interface MemberService
     SessionMember getSessionMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx;
 
     /**
-     * This functions in the same way as {@link #getSessionMemberByShortName(String, gov.nysenate.openleg.model.base.SessionYear, gov.nysenate.openleg.model.entity.Chamber)}
-     * with the exception that, instead of throwing an exception when a member is not found,
-     * this method creates a new Member in storage and returns that
-     * This should only be used in the processor layer
-     *
-     * @param lbdcShortName String - The short name of the member as represented in the source data.
-     * @param sessionYear SessionYear - The session year in which this member was active.
-     * @param chamber Chamber
-     * @return SessionMember
-     * @throws ParseError - if the provided short name does not match specification
-     */
-    SessionMember getSessionMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError;
-
-    /**
      * Retrieves all session members from all years and both chambers.
      * Useful for rebuilding the search index.
      * @return
@@ -79,12 +65,4 @@ public interface MemberService
      * @return List<FullMember> - a list of all members containing all linked session members
      */
     List<FullMember> getAllFullMembers();
-
-    /**
-     * Adds the given members to the data store
-     * This method should only be used for administrative purposes
-     *  because it will trigger cache and search index rebuilds
-     * @param members List<Member>
-     */
-    void updateMembers(List<SessionMember> members);
 }

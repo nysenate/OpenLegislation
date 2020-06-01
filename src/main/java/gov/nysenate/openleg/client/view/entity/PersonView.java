@@ -13,7 +13,9 @@ public class PersonView implements ViewObject
     protected String email;
     protected String prefix;
     protected String suffix;
-    protected boolean verified;
+    // The makeshift member logic has been removed so there are never unverified members anymore.
+    // Leaving 'verified' here for API backwards compatibility.
+    protected boolean verified = true;
     protected String imgName;
 
     public PersonView(Person person) {
@@ -26,7 +28,6 @@ public class PersonView implements ViewObject
             this.prefix = person.getPrefix();
             this.suffix = person.getSuffix();
             this.email = person.getEmail();
-            this.verified = person.isVerified();
             this.imgName = person.getImgName();
         }
     }

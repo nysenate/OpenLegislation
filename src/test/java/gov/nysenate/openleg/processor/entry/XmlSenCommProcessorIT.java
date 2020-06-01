@@ -52,7 +52,6 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         member.setPersonId(1237);
         member.setFullName("RITCHIE");
         member.setMemberId(1415);
-        member.setVerified(false);
 
         SessionMember sessionMember = new SessionMember();
         sessionMember.setMember(member);

@@ -1,7 +1,7 @@
-<billstatus  sessyr="1975" billhse="A" billno="10101" action="replace">
+<billstatus  sessyr="2017" billhse="A" billno="99999" action="replace">
 <deadtag></deadtag>
 <currentamd></currentamd>
-<sponsor><![CDATA[MAINSPON]]></sponsor>
+<sponsor><![CDATA[FINCH]]></sponsor>
 <reprint>
 <rprtbillhse></rprtbillhse>
 <rprtbillno></rprtbillno>
@@ -14,9 +14,9 @@
 <law><![CDATA[Anarchic Law]]></law>
 <title><![CDATA[Relates to absolutely nothing]]></title>
 <billactions><![CDATA[
-01/01/75 referred to education
-01/04/75 amended 10101A
-01/06/75 amend by restoring to original print 10101
+01/01/17 referred to education
+01/04/17 amended 10101A
+01/06/17 amend by restoring to original print 10101
 ]]></billactions>
 <actions>
 <action no="1">
@@ -26,46 +26,46 @@
 <actiontype>S</actiontype>
 <actiondata>11</actiondata>
 <actiondataamd></actiondataamd>
-<actiondate>1975-01-01</actiondate>
+<actiondate>2017-01-01</actiondate>
 <actiondesc><![CDATA[referred to education]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
 <action no="2">
 <actionbillamd></actionbillamd>
 <actionhouse>A</actionhouse>
 <actioncode>75</actioncode>
 <actiontype>B</actiontype>
-<actiondata>10101</actiondata>
+<actiondata>99999</actiondata>
 <actiondataamd>A</actiondataamd>
-<actiondate>1975-01-04</actiondate>
-<actiondesc><![CDATA[amended 10101A]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actiondate>2017-01-04</actiondate>
+<actiondesc><![CDATA[amended 99999A]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
 <action no="3">
 <actionbillamd>A</actionbillamd>
 <actionhouse>A</actionhouse>
 <actioncode>65</actioncode>
 <actiontype>B</actiontype>
-<actiondata>10101</actiondata>
+<actiondata>99999</actiondata>
 <actiondataamd></actiondataamd>
-<actiondate>1975-01-01</actiondate>
-<actiondesc><![CDATA[amend by restoring to original print 10101 ]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actiondate>2017-01-01</actiondate>
+<actiondesc><![CDATA[amend by restoring to original print 99999 ]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
-<action no="1975">
+<action no="2017">
 <actionbillamd>A</actionbillamd>
 <actionhouse>A</actionhouse>
 <actioncode>65</actioncode>
 <actiontype>B</actiontype>
-<actiondata>10101</actiondata>
+<actiondata>99999</actiondata>
 <actiondataamd></actiondataamd>
-<actiondate>1975-01-01</actiondate>
-<actiondesc><![CDATA[amend by restoring to original print 10101 ]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
+<actiondate>2017-01-01</actiondate>
+<actiondesc><![CDATA[amend by restoring to original print 99999 ]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
 </action>
 </actions>
 </billstatus>

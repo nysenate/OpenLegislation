@@ -5,8 +5,6 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
-import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 
 
 public interface MemberSearchService
@@ -41,17 +39,4 @@ public interface MemberSearchService
      * @throws SearchException
      */
     SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException;
-
-    /**
-     * Handles a member update event by indexing the supplied member.
-     * @param memberUpdateEvent
-     */
-    void handleMemberUpdate(MemberUpdateEvent memberUpdateEvent);
-
-    /**
-     * Handles a batch member update event by indexing the supplied members.
-     * @param bulkMemberUpdateEvent
-     */
-    void handleBulkMemberUpdate(BulkMemberUpdateEvent bulkMemberUpdateEvent);
-
 }

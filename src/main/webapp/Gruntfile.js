@@ -179,10 +179,7 @@ module.exports = function (grunt) {
                             '<%= jsSource %>/component/admin/email.js',
                             '<%= jsSource %>/component/admin/environment.js',
                             '<%= jsSource %>/component/admin/reports.js',
-                            '<%= jsSource %>/component/admin/indices.js',
-                            '<%= jsSource %>/component/admin/members.js',
-                            '<%= jsSource %>/component/admin/member.js',
-                            '<%= jsSource %>/component/admin/verify.js']
+                            '<%= jsSource %>/component/admin/indices.js']
 
                 }
             }
