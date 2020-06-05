@@ -7,18 +7,24 @@ import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocumentType;
 import gov.nysenate.openleg.util.RomanNumerals;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BillLawCodeParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(BillLawCodeParser.class);
     private static final Set<String> divisionIndicators = Sets.newHashSet();
+
     static {
         for (LawDocumentType t : LawDocumentType.values())
             divisionIndicators.add(t.name().toLowerCase());
         divisionIndicators.add("art");
     }
+
     // We don't have these law chapters.
     private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
     private static final String altGenPattern = "(?i)(Chap \\d+ of \\d+)";
@@ -124,7 +130,12 @@ public class BillLawCodeParser {
                 }
             }
 
-            Optional<LawChapterCode> currChapter = LawChapterCode.lookupCitation(chapterName);
+            Optional<LawChapterCode> currChapter = Optional.empty();
+            try {
+                currChapter = LawChapterCode.lookupCitation(chapterName);
+            } catch (Exception ex) {
+                logger.error("Error parsing Law Chapter Code from chapter name: " + chapterName, ex);
+            }
             if (!currChapter.isPresent())
                 continue;
             if (general)

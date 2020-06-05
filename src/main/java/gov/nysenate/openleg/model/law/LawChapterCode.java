@@ -205,8 +205,9 @@ public enum LawChapterCode
         LawChapterCode ret = null;
         for (LawChapterCode code : values()) {
             String name = code.name;
-            if (lawChapterNamePattern.matcher(name).matches())
+            if (lawChapterNamePattern.matcher(name).matches()) {
                 ret = chooseCode(ret, code, citation);
+            }
         }
         // If no result is found, try dropping a letter. But if it starts with "Chap", it's an
         // unconsolidated law we don't have. If it starts or ends with digits, it's a malformed citation.
