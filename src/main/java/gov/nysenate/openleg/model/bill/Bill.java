@@ -12,6 +12,7 @@ import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -351,7 +352,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /** --- Delegates --- */
-
     public String getFullTextPlain() {
         if (this.hasActiveAmendment()) {
             return this.getActiveAmendment().getFullText(PLAIN);
@@ -527,7 +527,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.chapterYear = chapterYear;
     }
 
-    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
+    public void setReprintOf(BillId reprintOf) {
+        this.reprintOf = reprintOf;
+    }
 
-    public BillId getReprintOf() {return reprintOf;}
+    public BillId getReprintOf() {
+        return reprintOf;
+    }
+
+    public boolean hasValidLaws(Version version)  {
+        // Indicates whether the laws referenced by this bill version exist in our database.
+        if (version == null || !hasAmendment(version) || amendPublishStatusMap.get(version) == null)
+            return false;
+        LocalDateTime publishDate = amendPublishStatusMap.get(version).getEffectDateTime();
+        LocalDateTime lawStartDate = Year.of(2014).atDay(1).atStartOfDay();
+        return publishDate != null && publishDate.isAfter(lawStartDate);
+    }
 }

@@ -463,9 +463,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     public List<CalendarId> getCalendars(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("cs.calendar_year", ASC, "cs.calendar_no", ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_CALENDAR_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
-                (rs, rowNum) -> {
-                    return new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
-                });
+                (rs, rowNum) -> new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
     }
 
     /**
@@ -810,7 +808,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
-            amend.setLaw(rs.getString("law_code"));
+            amend.setLawCode(rs.getString("law_code"));
+            amend.setRelatedLawsJson(rs.getString("related_laws"));
             return amend;
         }
     }
@@ -955,8 +954,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("actClause", amendment.getActClause())
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
-                .addValue("lawCode", amendment.getLaw())
-                .addValue("uniBill", amendment.isUniBill());
+                .addValue("lawCode", amendment.getLawCode())
+                .addValue("uniBill", amendment.isUniBill())
+                .addValue("relatedLawsJson", amendment.getRelatedLawsJson());
         addLastFragmentParam(fragment, params);
         return params;
     }
