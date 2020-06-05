@@ -59,10 +59,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
-                // TODO remove session check when we get xml bill text for previous years
-                if (bill.getSession().getYear() >= 2017) {
-                    checkHtmlBillText(amendment, reference, observation);
-                }
                 // Only check senate, non-resolution bills for sponsor memos
                 // Todo find a better way of checking memo text
                 //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
@@ -83,38 +79,12 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     }
 
     /**
-     * Cleans unnecessary elements e.g. style from observation html bill text
-     */
-    private String cleanHtml(String rawHtml) {
-        if (StringUtils.isBlank(rawHtml)) {
-            return "";
-        }
-        Document doc = Jsoup.parse(rawHtml);
-        Elements billTextElements = doc.getElementsByTag("pre");
-        String preHtml = billTextElements.html();
-        return preHtml
-                .replaceAll("\r\n", "\n")
-                .replaceAll(" +(?=$|\n)", "");
-    }
-
-    /**
-     * Check the html version of bill text.
-     */
-    private void checkHtmlBillText(BillAmendment amend, BillScrapeReference reference,
-                                   SpotCheckObservation<BaseBillId> obs) {
-        ensureTextFormatExists(amend, HTML);
-        String contentHtmlText = cleanHtml(Optional.ofNullable(amend.getFullText(HTML)).orElse(""));
-        String refHtmlText = cleanHtml(reference.getHtmlText());
-        spotCheckUtils.checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
-    }
-
-    /**
      * Checks text with all whitespace removed, and generates several mismatches with different levels of text
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        ensureTextFormatExists(billAmendment, PLAIN);
-        String dataText = Optional.ofNullable(billAmendment.getFullText(PLAIN)).orElse("");
+        ensureTextLoaded(billAmendment);
+        String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
         String strippedDataText = basicNormalize(dataText);
         String strippedRefText = basicNormalize(refText);
@@ -220,10 +190,9 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         return basicNormalize(stripped);
     }
 
-    private void ensureTextFormatExists(BillAmendment billAmendment, BillTextFormat format) {
-        if (!billAmendment.isTextFormatLoaded(format)) {
-            throw new IllegalStateException("Bill text format " + format +
-                    " is not represented in bill reference for " + billAmendment.getBillId());
+    private void ensureTextLoaded(BillAmendment billAmendment) {
+        if (!billAmendment.isTextLoaded()) {
+            throw new IllegalStateException("Bill text is missing for bill: " + billAmendment.getBillId());
         }
     }
 }

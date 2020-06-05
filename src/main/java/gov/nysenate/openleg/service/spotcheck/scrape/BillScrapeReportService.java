@@ -114,7 +114,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
     private SpotCheckObservation<BaseBillId> generateObservation(BillScrapeReference btr) {
         //Gets bill from openleg processed info
         try {
-            Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()), EnumSet.allOf(BillTextFormat.class));
+            Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()));
             return billScrapeCheckService.check(bill, btr);
         } catch (BillNotFoundEx e) {
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());

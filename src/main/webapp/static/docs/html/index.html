@@ -17,42 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="#"/>
-        <link rel="next" title="Bills and Resolutions API" href="bills.html"/>
-        <link rel="prev" title="&lt;no title&gt;" href="reference.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="reference.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -119,7 +113,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -127,9 +121,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -189,12 +184,12 @@ You will need to sign up for a free API key from the Open Legislation homepage i
 <p>To register and obtain an API key, visit our main page <a class="reference external" href="http://legislation.nysenate.gov">here</a>.</p>
 <p><strong>Making requests</strong></p>
 <p>All URIs listed in these docs are relative to the Open Legislation subdomain:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">legislation</span><span class="o">.</span><span class="n">nysenate</span><span class="o">.</span><span class="n">gov</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">legislation</span><span class="o">.</span><span class="n">nysenate</span><span class="o">.</span><span class="n">gov</span>
 </pre></div>
 </div>
 <p>To make an API request using your key, set the key string as the value of the ‘key’ request parameter in the request URL.</p>
 <p>For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
 </pre></div>
 </div>
 </div>
@@ -203,53 +198,55 @@ You will need to sign up for a free API key from the Open Legislation homepage i
 <p>We currently offer the following types of data:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Bills and Resolutions</li>
-<li>Committee Agendas</li>
-<li>Senate Calendars</li>
-<li>NYS Laws</li>
-<li>Senate Floor and Public Hearing Transcripts</li>
-<li>Committees</li>
-<li>Members</li>
+<li><p>Bills and Resolutions</p></li>
+<li><p>Committee Agendas</p></li>
+<li><p>Senate Calendars</p></li>
+<li><p>NYS Laws</p></li>
+<li><p>Senate Floor and Public Hearing Transcripts</p></li>
+<li><p>Committees</p></li>
+<li><p>Members</p></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="terminology">
 <h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
 <p>First let’s define some common legislative terminology</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Session Year:</th><td class="field-body">A legislative session year in New York State comprises of two years, with the first year being an odd numbered year.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Bill:</th><td class="field-body">A bill is passed with the intention of amending or creating a specific portion of NYS Law.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Resolution:</th><td class="field-body">A resolution does not necessarily impact law and are often introduced to provide honorable mentions.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Calendar:</th><td class="field-body">A legislative calendar is a snapshot of the status of bills that are under discussion at a particular time.
-A calendar will typically contain a floor calendar and an active list, along with supplemental floor calendars and active lists.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Floor Calendar:</th><td class="field-body">The floor calendar is a listing of all bills that are under discussion (on the floor).  A bill must be read on the
+<dl class="field-list simple">
+<dt class="field-odd">Session Year</dt>
+<dd class="field-odd"><p>A legislative session year in New York State comprises of two years, with the first year being an odd numbered year.</p>
+</dd>
+<dt class="field-even">Bill</dt>
+<dd class="field-even"><p>A bill is passed with the intention of amending or creating a specific portion of NYS Law.</p>
+</dd>
+<dt class="field-odd">Resolution</dt>
+<dd class="field-odd"><p>A resolution does not necessarily impact law and are often introduced to provide honorable mentions.</p>
+</dd>
+<dt class="field-even">Calendar</dt>
+<dd class="field-even"><p>A legislative calendar is a snapshot of the status of bills that are under discussion at a particular time.
+A calendar will typically contain a floor calendar and an active list, along with supplemental floor calendars and active lists.</p>
+</dd>
+<dt class="field-odd">Floor Calendar</dt>
+<dd class="field-odd"><p>The floor calendar is a listing of all bills that are under discussion (on the floor).  A bill must be read on the
 senate floor a minimum of three times to be eligible for a vote, and the floor calendar will indicate the number of
-readings for each bill at its time of publication.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Active List:</th><td class="field-body">An active list is a listing of bills that are scheduled for discussion during a single senate session.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Committee:</th><td class="field-body">Committees are groups of senators that are focused on particular areas of law.  Bills must be approved by a committee
-in order to be reported to the senate floor.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Uni-Bill:</th><td class="field-body">A uni bill is a bill that is sent through both chambers concurrently</td>
-</tr>
-</tbody>
-</table>
+readings for each bill at its time of publication.</p>
+</dd>
+<dt class="field-even">Active List</dt>
+<dd class="field-even"><p>An active list is a listing of bills that are scheduled for discussion during a single senate session.</p>
+</dd>
+<dt class="field-odd">Committee</dt>
+<dd class="field-odd"><p>Committees are groups of senators that are focused on particular areas of law.  Bills must be approved by a committee
+in order to be reported to the senate floor.</p>
+</dd>
+<dt class="field-even">Uni-Bill</dt>
+<dd class="field-even"><p>A uni bill is a bill that is sent through both chambers concurrently</p>
+</dd>
+</dl>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -258,7 +255,7 @@ in order to be reported to the senate floor.</td>
         <a href="bills.html" class="btn btn-neutral float-right" title="Bills and Resolutions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="reference.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -267,11 +264,11 @@ in order to be reported to the senate floor.</td>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services.
+        &copy; Copyright 2014, NY State Senate Technology Services
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -284,36 +281,15 @@ in order to be reported to the senate floor.</td>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0-alpha',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

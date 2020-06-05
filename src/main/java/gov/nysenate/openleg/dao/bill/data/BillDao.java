@@ -21,11 +21,10 @@ public interface BillDao
      * result was found.
      *
      * @param billId BillId - The version in the bill id is not used.
-     * @param textFormats {@link Set<BillTextFormat>} - specifies which text formats are loaded for the bill
      * @return Bill
      * @throws DataAccessException - If no bill was matched
      */
-    Bill getBill(BillId billId, Set<BillTextFormat> textFormats) throws DataAccessException;
+    Bill getBill(BillId billId) throws DataAccessException;
 
     /**
      * Retrieves a BillInfo for the given BillId. The query time for a BillInfo will be less than that
@@ -42,13 +41,10 @@ public interface BillDao
      * This can be used by caching implementations where the bill object is kept in memory but the references
      * to the full text and memo are dropped to save memory space.
      *
-     * Full text will be applied only in the given formats.
-     *
      * @param strippedBill Bill - The stripped Bill object.
-     * @param fullTextFormats {@link Set<BillTextFormat>} will apply texts for these formats.
      * @throws DataAccessException
      */
-    void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException;
+    void applyTextAndMemo(Bill strippedBill) throws DataAccessException;
 
     /**
      * Gets a List of BaseBillIds for the given session year with options to order and limit the results.
@@ -111,4 +107,8 @@ public interface BillDao
      * @return {@link List<BillId>}
      */
     List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear);
+
+    String getXmlFullText(BillId billId);
+
+    void updateBillAmendText(BillAmendment amend);
 }

@@ -5,12 +5,9 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
@@ -99,27 +96,13 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
         assertTrue("Post processed text is blank", StringUtils.isBlank(getPlainText(asmBillId)));
     }
 
-    @Test
-    public void htmlTextTest() throws IOException {
-        final String path = resourceDir + "/2017-01-01-00.00.00.000000_BILLTEXT_S09999.XML";
-        final BillId billId = new BillId("S9999", 2017);
-        final String expectedHtml = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.html");
-        final String expectedPlain = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.txt");
-
-        assertNotEquals("Preprocessed html is not set", expectedHtml, getHtmlTextSafe(billId));
-        assertNotEquals("Preprocessed plaintext is not set", expectedPlain, getPlainTextSafe(billId));
-        processXmlFile(path);
-        assertEquals("post processed html is set", expectedHtml, getHtmlText(billId));
-        assertEquals("post processed plaintext is set", expectedPlain, getPlainText(billId));
-    }
-
     /* --- Internal Methods --- */
 
     /**
      * Get the full text for a bill id
      */
     private String getPlainText(BillId billId) {
-        return getAmendment(billId, PLAIN).getFullText(PLAIN);
+        return getAmendment(billId).getFullText(PLAIN);
     }
 
     /**
@@ -137,7 +120,7 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
      * Get the html text for a bill id.
      */
     private String getHtmlText(BillId billId) {
-        return getAmendment(billId, HTML).getFullText(HTML);
+        return getAmendment(billId).getFullText(HTML);
     }
 
     /**
@@ -145,7 +128,7 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
      */
     private String getHtmlTextSafe(BillId billId) {
         try {
-            return getPlainText(billId);
+            return getHtmlText(billId);
         } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
             return null;
         }

@@ -177,7 +177,9 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
         executor.setCorePoolSize(8);
         executor.setMaxPoolSize(12);
         executor.setQueueCapacity(100);
+        executor.setWaitForTasksToCompleteOnShutdown(false);
         executor.initialize();
+        executor.shutdown();
         return executor;
     }
 

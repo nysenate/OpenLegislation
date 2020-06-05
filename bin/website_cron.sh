@@ -24,6 +24,7 @@
 # Revised: 2019-09-30 - Modify --qa option to add law spotcheck
 # Revised: 2019-12-06 - Add nys_petitions to Drupal maintenance tasks
 # Revised: 2019-12-16 - Remove feeds from Drupal maintenance tasks
+# Revised: 2020-04-10 - Add nys_sage to Drupal maintenance tasks
 #
 
 PATH=$PATH:/usr/local/bin
@@ -106,6 +107,7 @@ elif [ "$mode" = "maint" ]; then
   run_module_cron $penv job_scheduler
   run_module_cron $penv node
   run_module_cron $penv nys_petitions
+  run_module_cron $penv nys_sage
   run_module_cron $penv oauth_common
   run_module_cron $penv pantheon_api
   run_module_cron $penv password_policy

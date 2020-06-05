@@ -9,8 +9,10 @@ import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -34,14 +36,16 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CalendarIdView> calendars;
 
     public BillView(){}
-    public BillView(Bill bill) {
+
+    public BillView(Bill bill, Set<BillTextFormat> fullTextFormats) {
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
             // Only output amendments that are currently published
             TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
-                if (v.isPublished() && bill.hasAmendment(k))
-                    amendmentMap.put(k.toString(), new BillAmendmentView(bill.getAmendment(k), v));
+                if (v.isPublished() && bill.hasAmendment(k)) {
+                    amendmentMap.put(k.toString(), new BillAmendmentView(bill.getAmendment(k), v, fullTextFormats));
+                }
             });
 
             this.amendments = MapView.of(amendmentMap);

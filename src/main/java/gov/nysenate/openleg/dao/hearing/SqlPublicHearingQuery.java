@@ -31,7 +31,7 @@ public enum SqlPublicHearingQuery implements BasicSqlQuery
     DELETE_PUBLIC_HEARING_COMMITTEE(
         "DELETE FROM ${schema}." + SqlTable.PUBLIC_HEARING_COMMITTEE + "\n" +
         "WHERE filename = :filename AND committee_name = :committeeName " +
-        "AND committee_chamber = :committeeChamber::chamber)"
+        "AND committee_chamber = :committeeChamber::chamber"
     ),
     INSERT_PUBLIC_HEARING_COMMITTEES(
         "INSERT INTO ${schema}." + SqlTable.PUBLIC_HEARING_COMMITTEE + "\n" +

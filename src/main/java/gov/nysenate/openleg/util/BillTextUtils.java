@@ -2,6 +2,8 @@ package gov.nysenate.openleg.util;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.entity.Chamber;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -99,25 +101,29 @@ public class BillTextUtils
         return 1;
     }
 
-    /** WIP */
-    public static String formatBillText(boolean isResolution, String fullText) {
-        if (fullText == null) {
-            fullText = "";
-        }
-        if (!isResolution && StringUtils.isNotBlank(fullText)) {
-            List<String> lines = Splitter.on("\n").splitToList(fullText);
-            StringBuilder formattedFullText = new StringBuilder();
+    /**
+     * Return this amendment's plain text with line numbers stripped if they exist.
+     *
+     * Resolutions do not have line numbers.
+     *
+     * @param amendment
+     */
+    public static String getPlainTextWithoutLineNumbers(BillAmendment amendment) {
+        String text = amendment.getFullText(BillTextFormat.PLAIN);
+        if (!amendment.isResolution()) {
+            List<String> lines = Splitter.on("\n").splitToList(text);
+            StringBuilder textWithoutLineNums = new StringBuilder();
             lines.forEach(line -> {
                 if (line.length() > 7) {
-                    formattedFullText.append(line.substring(7)).append("\n");
+                    textWithoutLineNums.append(line.substring(7)).append("\n");
                 }
                 else {
-                    formattedFullText.append(line).append("\n");
+                    textWithoutLineNums.append(line).append("\n");
                 }
             });
-            return formattedFullText.toString();
+            text = textWithoutLineNums.toString();
         }
-        return fullText;
+        return text;
     }
 
     /**
@@ -138,21 +144,21 @@ public class BillTextUtils
      *  @see #formatHtmlExtractedBillText(String)
      *  @see #formatHtmlExtractedResoText(String)
      */
-    public static String parseHTMLtext(String htmlText)    {
+    public static String convertHtmlToPlainText(String htmlText)    {
 
         Document doc = Jsoup.parse(htmlText);
         if (doc.select("pre").size() == 0) {
             return htmlText;
         }
         Elements preTags = doc.select("pre");
-        return parseHTMLText(preTags);
+        return convertHtmlToPlainText(preTags);
     }
 
-    public static String parseHTMLText(Element element) {
-        return parseHTMLText(new Elements(element));
+    public static String convertHtmlToPlainText(Element element) {
+        return convertHtmlToPlainText(new Elements(element));
     }
 
-    public static String parseHTMLText(Collection<Element> elements) {
+    public static String convertHtmlToPlainText(Collection<Element> elements) {
         StringBuilder textBuilder = new StringBuilder();
 
         elements.forEach(element -> processTextNode(element, textBuilder));
@@ -166,7 +172,7 @@ public class BillTextUtils
     private static final String inSenate = "IN SENATE";
     private static final String inAssembly = "IN ASSEMBLY";
     private static final String inBoth = "SENATE - ASSEMBLY";
-    private static final Pattern billHeaderPattern = Pattern.compile("^(?<startingNewlines>\n*)" +
+    private static final Pattern billHeaderPattern = Pattern.compile("^(?<startingNewlines>\\s*)" +
             "[ ]{3,}STATE OF NEW YORK\n" +
             "(?<divider>(?:[ \\w.\\-]*\n){0,8})" +
             "[ ]{3,}(?<chamber>" + inSenate + "|" + inAssembly + "|" + inBoth + ")" +
@@ -180,26 +186,24 @@ public class BillTextUtils
      * @return String
      */
     public static String formatHtmlExtractedBillText(String text) {
-        // The html has an extra space at the beginning of each line
-        text = text.replaceAll("(?<=\n|^) ", "");
         Matcher matcher = billHeaderPattern.matcher(text);
         if (matcher.find()) {
             StringBuilder replacement = new StringBuilder()
                     .append(matcher.group("startingNewlines"))
-                    .append(StringUtils.repeat(' ', 27))
+                    .append(StringUtils.repeat(' ', 15))
                     .append("S T A T E   O F   N E W   Y O R K\n")
                     .append(matcher.group("divider"));
             switch (matcher.group("chamber")) {
                 case inSenate:
-                    replacement.append(StringUtils.repeat(' ', 35))
+                    replacement.append(StringUtils.repeat(' ', 36))
                             .append("I N  S E N A T E");
                     break;
                 case inAssembly:
-                    replacement.append(StringUtils.repeat(' ', 33))
+                    replacement.append(StringUtils.repeat(' ', 34))
                             .append("I N  A S S E M B L Y");
                     break;
                 case inBoth:
-                    replacement.append(StringUtils.repeat(' ', 29))
+                    replacement.append(StringUtils.repeat(' ', 30))
                             .append("S E N A T E - A S S E M B L Y");
                     break;
                 default:
@@ -211,7 +215,6 @@ public class BillTextUtils
             }
             text = matcher.replaceFirst(replacement.toString());
         }
-
         return text;
     }
 

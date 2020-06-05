@@ -155,6 +155,7 @@ public class SpotcheckRunService {
             sendMismatchEvents(report);
             reportDao.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
+            logger.info("Done saving spotcheck report.");
         } catch (ReferenceDataNotFoundEx ex) {
             logger.info("No report generated: no {} references could be found. Message: " + ex.getMessage(), reportService.getSpotcheckRefType());
         } catch (Exception ex) {

@@ -9,6 +9,9 @@ import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.mail.MailException;
 import gov.nysenate.openleg.service.mail.MimeSendMailService;
 import gov.nysenate.openleg.util.MailUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,23 +54,20 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     //rethrow a runtime exception in catch
     public int sendMessage(ApiUserMessage message) throws MailException {
         //get all the users who are subscribed to one or more of the subscriptions
-        Set<ApiUserSubscriptionType> subs = message.getSubscriptionTypes();
-        List<ApiUser> usersList = new ArrayList<>();
-        for (ApiUserSubscriptionType sub : subs) {
-            usersList.addAll(apiUserDao.getUsersWithSubscription(sub));
+        Set<ApiUserSubscriptionType> subscriptions = message.getSubscriptionTypes();
+        Set<ApiUser> users = new HashSet<>();
+        for (ApiUserSubscriptionType sub : subscriptions) {
+            users.addAll(apiUserDao.getUsersWithSubscription(sub));
         }
-        //use a set for the users to avoid sending duplicate emails
-        Set<ApiUser> users = new HashSet<>(usersList);
 
         //create a set with all the admins
-        List<AdminUser> adminsList = adminUserDao.getAdminUsers();
-        Set<AdminUser> admins = new HashSet<>(adminsList);
+        Set<AdminUser> admins = new HashSet<>(adminUserDao.getAdminUsers());
 
         Set<MimeMessage> allEmails = new HashSet<>();
         MimeMessage mimeMessage;
         String email;
 
-        //go through set of users an admins
+        //go through set of users
         for (ApiUser user : users) {
             email = user.getEmail();
             mimeMessage = getMimeMessage(message, email, user);
@@ -139,9 +139,12 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         }
         try {
             htmlPart.setContent(content, "text/html");
-            textPart.setText(text);
-            multipart.addBodyPart(htmlPart);
+            // Remove html tags from body for the plain text part.
+            String plainText = stripHtmlTags(text);
+            textPart.setText(plainText);
+            // Add parts in order of increasing preference.
             multipart.addBodyPart(textPart);
+            multipart.addBodyPart(htmlPart);
         } catch (MessagingException ex) {
             throw new MailException(ex.toString());
         }
@@ -152,14 +155,15 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * This method takes in an ApiUserMessage, an email address (String) and an optional ApiUser. It
      * creates a MimeMessage, with the recipient being the email address passed in, and the subject and
      * content being based on the message passed in. The content is set by making a call to getMultiPart()
+     *
+     * If ApiUser is not null, there will be an unsubscribe link generated in their message.
+     *
      * @param message
      * @param email
      * @param user
      * @return MimeMessage
      * @throws MailException
      */
-    //method that takes in a message and an email (string)  and returns a mimeMessage object (without the content set)
-    //sets the subject and recipient
     protected MimeMessage getMimeMessage(ApiUserMessage message, String email, @Nullable ApiUser user) throws MailException {
         try {
             MimeMessage mimeMessage = mimeSender.createMessage();
@@ -177,5 +181,14 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         } catch (MessagingException ex) {
             throw new MailException(ex.toString());
         }
+    }
+
+    /**
+     * Removes the html tags from the given string while preserving new lines.
+     * @param text
+     * @return
+     */
+    private String stripHtmlTags(String text) {
+        return Jsoup.clean(text, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
     }
 }

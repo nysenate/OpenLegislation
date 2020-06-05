@@ -41,7 +41,7 @@ public class OpenlegBillCheckService implements SpotCheckService<BaseBillId, Bil
     @Autowired private SpotCheckUtils spotCheckUtils;
 
     /**
-     * Check the mismatch between openleg sobi-processing and xml-data-processing Bills
+     * Comapres bills between two openleg environments. Only checks the data on the active amendment.
      *
      * @param content   ContentType - The content to check
      * @param reference ReferenceType - The reference content to use for comparison
@@ -69,6 +69,7 @@ public class OpenlegBillCheckService implements SpotCheckService<BaseBillId, Bil
             checkCalendars(content, reference, observation);
             checkBillCommitteeAgendas(content, reference, observation);
             checkBillPastCommmittee(content, reference, observation);
+            checkText(content, reference, observation);
         } else {
             checkActiveVersion(content, reference, observation);
         }
@@ -284,6 +285,15 @@ public class OpenlegBillCheckService implements SpotCheckService<BaseBillId, Bil
                 extractListValue(content.getPastCommittees()),
                 extractListValue(reference.getPastCommittees()),
                 obsrv, BILL_PAST_COMMITTEES, this::getCommVerIdStr, "\n"
+        );
+    }
+
+    private void checkText(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obs) {
+        spotCheckUtils.checkString(
+                getActiveAmendOpt(content).orElse(new BillAmendmentView()).getFullText(),
+                getActiveAmendOpt(reference).orElse(new BillAmendmentView()).getFullText(),
+                obs,
+                BILL_TEXT
         );
     }
 

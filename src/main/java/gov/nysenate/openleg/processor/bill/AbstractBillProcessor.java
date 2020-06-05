@@ -410,8 +410,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     }
 
     private void copyBillTexts(BillAmendment sourceAmend, BillAmendment destAmend) {
-        for (BillTextFormat format : sourceAmend.getFullTextFormats()) {
-            destAmend.setFullText(format, sourceAmend.getFullText(format));
-        }
+        destAmend.setBillText(sourceAmend.getBillText());
     }
 }
