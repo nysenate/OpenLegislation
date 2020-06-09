@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationDispatcher {
@@ -63,17 +64,21 @@ public class NotificationDispatcher {
         dispatchLock.lock();
         try {
             Multimap<NotificationMedium, NotificationSubscription> instantSubMap = ArrayListMultimap.create();
-            List<NotificationSubscription> digestSubs = new ArrayList<>();
+            List<NotificationSubscription> rateLimitedSubscription = new ArrayList<>();
             // sort out digest and instant subscriptions
             for (NotificationSubscription subscription :
                     subscriptionDataService.getSubscriptions(notification.getNotificationType())) {
-                if (!subscription.sendInstantly()) {
-                    continue;
-                }
-                if (subscription.receivesDigests()) {
-                    digestSubs.add(subscription);
-                } else {
-                    instantSubMap.put(subscription.getMedium(), subscription);
+                // Don't check Scheduled Notifications, its not time to send them even if they are subscribed to this notification type.
+                if (subscription.getSubscriptionType() == NotificationSubscriptionType.INSTANT) {
+                    if (subscription.receivesDigests()) {
+                        // If its an InstantSubscription with a rate limit
+                        if (subscription.canDispatchNow()) {
+                            // If we are outside the rate limit - we can send a notification.
+                            rateLimitedSubscription.add(subscription);
+                        }
+                    } else {
+                        instantSubMap.put(subscription.getMedium(), subscription);
+                    }
                 }
             }
 
@@ -85,9 +90,10 @@ public class NotificationDispatcher {
                     .forEach(sub -> subscriptionDataService.setLastSent(sub.getId(), notification.getOccurred()));
 
 
-            // Send the digests
-            for (NotificationSubscription digestSub : digestSubs) {
-                dispatchDigest(digestSub, notification);
+            // Send digests to rate limited subscriptions
+            for (NotificationSubscription rateLimitedSub : rateLimitedSubscription) {
+                dispatchDigest(rateLimitedSub, notification);
+                subscriptionDataService.setLastSent(rateLimitedSub.getId(), LocalDateTime.now());
             }
 
         } catch (Throwable ex) {
@@ -107,21 +113,27 @@ public class NotificationDispatcher {
         }
     }
 
-    @Scheduled(cron = "0 */1 * * * *")
-    public void processPendingDigests() {
+    /**
+     * Sends Digests to Scheduled Notifications and Instant Notifications if they are ready to receive notifications.
+     *
+     * For Instant Notifications, this ensures that Notifications which were withheld due to the rateLimit are eventually sent.
+     */
+    @Scheduled(cron = "0 */5 * * * *")
+    public void processPendingSubscriptions() {
         dispatchLock.lock();
         try {
-            Set<NotificationSubscription> pendingDigests = subscriptionDataService.getPendingDigests();
-            if (pendingDigests.isEmpty()) {
+            Set<NotificationSubscription> pendingSubscriptions = subscriptionDataService.getAllSubscriptions().stream()
+                    .filter(NotificationSubscription::canDispatchNow).collect(Collectors.toSet());
+            if (pendingSubscriptions.isEmpty()) {
                 return;
             }
-            logger.info("processing {} pending notification digests..", pendingDigests.size());
-            for (NotificationSubscription pendingDigest : pendingDigests) {
+            logger.info("processing {} pending notification subscriptions..", pendingSubscriptions.size());
+            for (NotificationSubscription pendingSubscription : pendingSubscriptions) {
                 LocalDateTime dispatchTime = LocalDateTime.now();
-                dispatchDigest(pendingDigest, null);
-                subscriptionDataService.setLastSent(pendingDigest.getId(), dispatchTime);
+                dispatchDigest(pendingSubscription, null);
+                subscriptionDataService.setLastSent(pendingSubscription.getId(), dispatchTime);
             }
-            logger.info("notification digests sent");
+            logger.info("Done sending notification subscriptions");
         } catch (Exception ex) {
             handleNotificationException(ex);
         } finally {

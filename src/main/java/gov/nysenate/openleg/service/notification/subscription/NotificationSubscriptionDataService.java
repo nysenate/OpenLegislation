@@ -31,7 +31,7 @@ public interface NotificationSubscriptionDataService {
     Set<NotificationSubscription> getAllSubscriptions();
 
     /**
-     * Insert a new subscription
+     * Update a subscription
      * @param subscription NotificationSubscription
      * @return {@link NotificationSubscription} the updated subscription
      */
@@ -42,12 +42,6 @@ public interface NotificationSubscriptionDataService {
      * @param subscriptionId
      */
     void removeSubscription(int subscriptionId);
-
-    /**
-     * Gets all notification digest subscriptions whose next digest is before the current time
-     * @return Set<NotificationDigestSubscription>
-     */
-    Set<NotificationSubscription> getPendingDigests();
 
     /**
      * Updates the last sent field for a subscription

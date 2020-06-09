@@ -130,6 +130,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                 .setTargetAddress(address)
                 .setDetail(true)
                 .setActive(true)
+                // TODO set rate limit
                 .build();
     }
 

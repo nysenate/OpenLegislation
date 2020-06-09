@@ -106,14 +106,6 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     /** {@inheritDoc} */
     @Override
-    public Set<NotificationSubscription> getPendingDigests() {
-        return getSubscriptionMap().values().stream()
-                .filter(sub -> sub.canDispatchNow() && !sub.sendInstantly())
-                .collect(Collectors.toSet());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void setLastSent(int id, LocalDateTime lastSent) throws SubscriptionNotFoundEx {
         NotificationSubscription notificationSubscription = subscriptionDao.getSubscription(id);
         subscriptionDao.setLastSent(id, lastSent);

@@ -89,7 +89,7 @@ public class InstantNotificationSubscription extends NotificationSubscription {
     }
 
     @Override
-    public boolean sendInstantly() {
+    public boolean sentInstantly() {
         return true;
     }
 

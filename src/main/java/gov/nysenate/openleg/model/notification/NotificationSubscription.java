@@ -187,7 +187,7 @@ public abstract class NotificationSubscription {
      * Defaults to false.
      * @return boolean
      */
-    public boolean sendInstantly() {
+    public boolean sentInstantly() {
         return false;
     }
 
@@ -246,6 +246,10 @@ public abstract class NotificationSubscription {
 
     public String getTargetAddress() {
         return targetAddress;
+    }
+
+    public void setLastSent(LocalDateTime dateTime) {
+        this.lastSent = dateTime;
     }
 
     public LocalDateTime getLastSent() {

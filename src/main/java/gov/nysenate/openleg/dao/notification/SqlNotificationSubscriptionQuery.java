@@ -27,7 +27,7 @@ public enum SqlNotificationSubscriptionQuery implements BasicSqlQuery {
             "UPDATE ${schema}." + NOTIFICATION_SUBSCRIPTION + "\n" +
             "SET subscription_type = :subType::${schema}.notification_subscription_type, user_name = :user,\n" +
             "    notification_type = :notifType, medium = :medium, address = :address, detail = :detail,\n" +
-            "    active = :active\n" +
+            "    active = :active, last_sent = :lastSent\n" +
             "WHERE id = :id"
     ),
     UPDATE_SUBSCRIPTION_LAST_SENT("" +
