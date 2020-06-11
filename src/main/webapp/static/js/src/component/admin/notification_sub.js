@@ -5,26 +5,32 @@ adminModule.factory('GetNotifSubsApi', ['$resource', function ($resource) {
 }]);
 
 adminModule.factory('SubscribeToNotifApi', ['$resource', function ($resource) {
-    return $resource(adminApiPath + '/notifications/subscribe', {type: '@type', target: '@target', address: '@address'});
+    return $resource(adminApiPath + '/notifications/subscribe',
+        {type: '@type', target: '@target', address: '@address', rateLimit: '@rateLimit'});
 }]);
 
 adminModule.factory('UnsubscribeToNotifApi', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/notifications/unsubscribe', {type: '@type', target: '@target', address: '@address'});
 }]);
 
-/** --- Notification Subscription Controller --- */
+/** --- Notification Subscription Controller ---
+ *
+ * Currently only supports instant notification subscriptions.
+ */
 
 adminModule.controller('NotificationSubCtrl', ['$scope', '$timeout', '$q', 'GetNotifSubsApi', 'SubscribeToNotifApi', 'UnsubscribeToNotifApi',
 function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
 
-    // a list of active notification subscriptions
-    $scope.subscriptions = [];
+    $scope.instantSubscriptions = [];
+    // Scheduled subscriptions are not currently supported in this UI.
+    $scope.scheduledSubscriptions = [];
 
     // a blank subscription
     var cleanSubscription = {
         type: "",
         target: "",
-        address: ""
+        address: "",
+        rateLimit: 60
     };
 
     // model for the entry form to enter a new subscription
@@ -61,7 +67,8 @@ function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
         var response = null;
         response = getSubsApi.get({}, function () {
             if (response.success) {
-                $scope.subscriptions = response.result.items;
+                $scope.instantSubscriptions = response.result.instantSubscriptions;
+                $scope.scheduledSubscriptions = response.result.scheduledSubscriptions;
                 $scope.selectAll = false;
                 $scope.selectedSubs = 0;
             }
@@ -86,7 +93,7 @@ function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
     };
 
     var getSelectedSubs = function() {
-        return $scope.subscriptions.filter(function(sub) {
+        return $scope.instantSubscriptions.filter(function(sub) {
             return sub.selected;
         })
     };

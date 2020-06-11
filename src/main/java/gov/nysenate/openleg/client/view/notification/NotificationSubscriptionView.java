@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationMedium;
 import gov.nysenate.openleg.model.notification.NotificationType;
 
-public class NotificationSubscriptionView implements ViewObject
+public abstract class NotificationSubscriptionView implements ViewObject
 {
     protected String userName;
     protected NotificationType type;

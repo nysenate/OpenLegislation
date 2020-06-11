@@ -75,7 +75,8 @@
                 </div>
                 <div class="notsub-type-column"><h4>Notification Type</h4></div>
                 <div class="notsub-target-column"><h4>Target Type</h4></div>
-                <div><h4>Target Address</h4></div>
+                <div class="notsub-address-column"><h4>Target Address</h4></div>
+                <div><h4>Rate Limit (Minutes)</h4></div>
               <md-divider class="md-defualt-theme"></md-divider>
             </md-list-item>
             <md-list-item ng-show="newSubscriptionShown">
@@ -99,6 +100,12 @@
                     <input type="text" ng-model="newSubscription.address">
                   </md-input-container>
                 </div>
+                <div class="margin-right-10">
+                  <md-input-container>
+                    <label>Rate Limit</label>
+                    <input type="number" required ng-model="newSubscription.rateLimit">
+                  </md-input-container>
+                </div>
                 <div>
                   <md-button class="md-primary md-raised" ng-click="registerNewSubscription()" aria-label="o_o">
                     Subscribe
@@ -107,14 +114,15 @@
               </form>
               <md-divider md-inset class="md-defualt-theme"></md-divider>
             </md-list-item>
-            <md-list-item ng-repeat-start="subscription in subscriptions" layout="row" class="notification-list-row">
+            <md-list-item ng-repeat-start="subscription in instantSubscriptions" layout="row" class="notification-list-row">
               <div class="notsub-check-column">
                 <md-checkbox ng-click="tallySelectedSubs()" ng-model="subscription.selected" aria-label=":P"
                              class="md-primary""></md-checkbox>
               </div>
               <div class="notsub-type-column"><span ng-bind="subscription.type"></span></div>
               <div class="notsub-target-column"><span ng-bind="subscription.target"></span></div>
-              <div><span ng-bind="subscription.address"></span></div>
+              <div class="notsub-address-column"><span ng-bind="subscription.address"></span></div>
+              <div><span ng-bind="subscription.rateLimit"></span></div>
             </md-list-item>
             <md-divider ng-repeat-end ng-if="!$last" class="md-default-theme"></md-divider>
           </md-list>

@@ -4,7 +4,9 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
+import gov.nysenate.openleg.client.view.notification.InstantNotificationSubscriptionView;
 import gov.nysenate.openleg.client.view.notification.NotificationSubscriptionView;
+import gov.nysenate.openleg.client.view.notification.UserNotificationSubscriptionsView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,16 +43,18 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      * Request Parameters:  type (string) - The Notification Type to subscribe for.
      *                      target (string) - The medium through which the notification will be sent.
      *                      address (string) - The address for the specified target medium.
+     *                      rateLimit (int) - The number of minutes to wait before sending another notification.
      *
      */
     @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscribe")
     public BaseResponse subscribeToNotification(@RequestParam String type,
                                                 @RequestParam String target,
-                                                @RequestParam String address) {
-        NotificationSubscription subscription = buildSubscriptionFromParams(type, target, address);
+                                                @RequestParam String address,
+                                                @RequestParam int rateLimit) {
+        NotificationSubscription subscription = buildSubscriptionFromParams(type, target, address, rateLimit);
         subscriptionDataService.updateSubscription(subscription);
-        return new ViewObjectResponse<>(new NotificationSubscriptionView(subscription));
+        return new ViewObjectResponse<>(new InstantNotificationSubscriptionView((InstantNotificationSubscription)subscription));
     }
 
 
@@ -105,21 +111,19 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      *
      * Request Parameters: limit, offset (int) - Paginate.
      *
-     * Expected Output: List of NotificationSubscriptionView
+     * Expected Output: UserNotificationSubscriptionsView
      */
     @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscriptions")
     public BaseResponse viewSubscriptions(WebRequest request) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
-        LimitOffset limOff = getLimitOffset(request, 0);
-        return ListViewResponse.of(subscriptionDataService.getSubscriptions(user).stream()
-                               .map(NotificationSubscriptionView::new).collect(Collectors.toList()),
-                0, limOff);
+        Set<NotificationSubscription> userSubscriptions = subscriptionDataService.getSubscriptions(user);
+        return new ViewObjectResponse<>(new UserNotificationSubscriptionsView(userSubscriptions));
     }
 
     /** --- Internal --- */
 
-    private NotificationSubscription buildSubscriptionFromParams(String type, String target, String address) {
+    private NotificationSubscription buildSubscriptionFromParams(String type, String target, String address, int rateLimit) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
         NotificationType notificationType = getEnumParameter("type", type, NotificationType.class);
         NotificationMedium notificationMedium = getNotificationTargetFromString(target);
@@ -130,7 +134,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                 .setTargetAddress(address)
                 .setDetail(true)
                 .setActive(true)
-                // TODO set rate limit
+                .setRateLimit(Duration.ofMinutes(rateLimit))
                 .build();
     }
 
