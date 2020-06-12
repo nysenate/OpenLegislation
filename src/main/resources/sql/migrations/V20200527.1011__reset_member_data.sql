@@ -6,25 +6,25 @@
 
 -- Remove constraints on session_member table, these will be re created at the end.
 ALTER TABLE master.agenda_vote_committee_attend
-DROP CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey;
+DROP CONSTRAINT IF EXISTS agenda_vote_committee_attend_session_member_id_fkey;
 
 ALTER TABLE master.bill_amendment_cosponsor
-DROP CONSTRAINT bill_amendment_cosponsor_session_member_id_fkey1;
+DROP CONSTRAINT IF EXISTS bill_amendment_cosponsor_session_member_id_fkey1;
 
 ALTER TABLE master.bill_amendment_multi_sponsor
-DROP CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey;
+DROP CONSTRAINT IF EXISTS bill_amendment_multi_sponsor_member_id_fkey;
 
 ALTER TABLE master.bill_amendment_vote_roll
-DROP CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey;
+DROP CONSTRAINT IF EXISTS bill_amendment_vote_roll_session_member_id_fkey;
 
 ALTER TABLE master.bill_sponsor_additional
-DROP CONSTRAINT bill_sponsor_additional_session_member_id_fkey;
+DROP CONSTRAINT IF EXISTS bill_sponsor_additional_session_member_id_fkey;
 
 ALTER TABLE master.bill_sponsor
-DROP CONSTRAINT bill_sponsor_session_member_id_fkey;
+DROP CONSTRAINT IF EXISTS bill_sponsor_session_member_id_fkey;
 
 ALTER TABLE master.committee_member
-DROP CONSTRAINT committee_member_session_member_id_fkey;
+DROP CONSTRAINT IF EXISTS committee_member_session_member_id_fkey;
 
 
 -- Delete references to bad session member ids
