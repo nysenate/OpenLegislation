@@ -32,14 +32,6 @@ public class BillText implements Cloneable {
     }
 
     /**
-     * Checks if the text has been loaded into this BillText.
-     * @return
-     */
-    public boolean isLoaded() {
-        return !(diffs.isEmpty() && sobiPlainText.isEmpty());
-    }
-
-    /**
      * Get the full bill text in the specified format.
      * <p>
      * PLAIN format slightly alters the bill headers adding space between characters and centering. (See {@link BillTextUtils#formatHtmlExtractedBillText(String)});

@@ -84,7 +84,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        ensureTextLoaded(billAmendment);
         String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
         String strippedDataText = BillTextCheckUtils.basicNormalize(dataText);
@@ -155,12 +154,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, dataMemo, refMemo));
-        }
-    }
-
-    private void ensureTextLoaded(BillAmendment billAmendment) {
-        if (!billAmendment.isTextLoaded()) {
-            throw new IllegalStateException("Bill text is missing for bill: " + billAmendment.getBillId());
         }
     }
 }

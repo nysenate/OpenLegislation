@@ -87,10 +87,6 @@ public class BillAmendment implements Serializable, Cloneable
 
     /* --- Functional Getters --- */
 
-    public boolean isTextLoaded() {
-        return billText.isLoaded();
-    }
-
     public String getFullText(BillTextFormat format) {
         return billText.getFullText(format);
     }

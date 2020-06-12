@@ -161,7 +161,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         // Categorize bills based on whether or not they should be index.
         for (Bill bill : bills) {
             if (isBillIndexable(bill)) {
-                indexableBills.add(ensurePlainTextPresent(bill));
+                indexableBills.add(bill);
             } else {
                 nonIndexableBills.add(bill);
             }
@@ -289,18 +289,5 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
                 throw ex;
             }
         }
-    }
-
-    /**
-     * Returns a version of the given bill that is guaranteed to contain plaintext versions of full text for all amendments
-     */
-    private Bill ensurePlainTextPresent(Bill bill) {
-        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(BillAmendment::isTextLoaded);
-        if (!allContainPlain) {
-            // If the bill doesn't have plain text for any amendments, reload bill with plain text
-            logger.warn("Bill passed in for indexing does not contain plain text: {}", bill.getBaseBillId());
-            bill = billDataService.getBill(bill.getBaseBillId());
-        }
-        return bill;
     }
 }
