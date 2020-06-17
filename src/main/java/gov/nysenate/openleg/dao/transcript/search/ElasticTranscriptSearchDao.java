@@ -36,7 +36,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
-                                                         List<SortBuilder> sort, LimitOffset limOff) {
+                                                         List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(transcriptIndexName, query, postFilter,
                 highlightedFields, null, sort, limOff,
                 false, this::getTranscriptIdFromHit);

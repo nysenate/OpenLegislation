@@ -16,14 +16,14 @@ public interface PublicHearingFileDao
      * @throws IOException
      * @see gov.nysenate.openleg.model.hearing.PublicHearingFile
      */
-    public List<PublicHearingFile> getIncomingPublicHearingFiles(LimitOffset limOff) throws IOException;
+    List<PublicHearingFile> getIncomingPublicHearingFiles(LimitOffset limOff) throws IOException;
 
     /**
      * Updates the backing store with a given instance or inserts it if the
      * record doesn't already exist.
      * @param publicHearingFile The {@link PublicHearingFile} to update.
      */
-    public void updatePublicHearingFile(PublicHearingFile publicHearingFile);
+    void updatePublicHearingFile(PublicHearingFile publicHearingFile);
 
     /**
      * Moves the PublicHearingFile to an archive directory. Ensures that this
@@ -32,12 +32,12 @@ public interface PublicHearingFileDao
      * @param publicHearingFile The {@link PublicHearingFile} to archive.
      * @throws IOException
      */
-    public void archivePublicHearingFile(PublicHearingFile publicHearingFile) throws IOException;
+    void archivePublicHearingFile(PublicHearingFile publicHearingFile) throws IOException;
 
     /**
      * Retrieves a list of PublicHearingFile that are awaiting processing.
      * @param limOff Specifies the maximum number of PublicHearingFiles to fetch.
      * @return
      */
-    public List<PublicHearingFile> getPendingPublicHearingFile(LimitOffset limOff);
+    List<PublicHearingFile> getPendingPublicHearingFile(LimitOffset limOff);
 }

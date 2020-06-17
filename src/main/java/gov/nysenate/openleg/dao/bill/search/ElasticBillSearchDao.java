@@ -60,8 +60,8 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
-                                                 List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder<?> rescorer,
+                                                 List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(billIndexName, query, postFilter,
                 highlightedFields, rescorer, sort, limOff,
                 false, this::getBaseBillIdFromHit);

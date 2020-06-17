@@ -12,7 +12,7 @@ public interface ApiUserBatchEmailService {
      * @param email String
      * @param message ApiUserMessage
      */
-    public void sendTestMessage(String email, ApiUserMessage message) throws MailException;
+    void sendTestMessage(String email, ApiUserMessage message) throws MailException;
 
     /**
      * Sends zero or more email messages regarding specific email-subscription
@@ -21,5 +21,5 @@ public interface ApiUserBatchEmailService {
      * @param message ApiUserMessage
      * @return int, the number of emails that were sent
      */
-    public int sendMessage(ApiUserMessage message) throws MailException;
+    int sendMessage(ApiUserMessage message) throws MailException;
 }

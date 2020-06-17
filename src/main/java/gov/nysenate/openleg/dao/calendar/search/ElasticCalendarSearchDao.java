@@ -41,7 +41,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     /**{@inheritDoc}*/
     @Override
     public SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
-                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
+                                                     List<SortBuilder<?>> sort, LimitOffset limitOffset) {
         return search(calIndexName, query, postFilter, sort, limitOffset, this::getCalendarId);
     }
 

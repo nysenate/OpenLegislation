@@ -108,7 +108,7 @@ public abstract class ElasticBaseDao
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
     protected <T> SearchResults<T> search(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                          List<SortBuilder> sort, LimitOffset limitOffset,
+                                          List<SortBuilder<?>> sort, LimitOffset limitOffset,
                                           Function<SearchHit, T> hitMapper)
             throws ElasticsearchException {
         return search(indexName, query, postFilter,
@@ -134,8 +134,8 @@ public abstract class ElasticBaseDao
                                           QueryBuilder query,
                                           QueryBuilder postFilter,
                                           List<HighlightBuilder.Field> highlightedFields,
-                                          RescorerBuilder rescorer,
-                                          List<SortBuilder> sort,
+                                          RescorerBuilder<?> rescorer,
+                                          List<SortBuilder<?>> sort,
                                           LimitOffset limitOffset,
                                           boolean fetchSource,
                                           Function<SearchHit, T> hitMapper
@@ -378,7 +378,7 @@ public abstract class ElasticBaseDao
             CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName)
                     .settings(getIndexSettings());
 
-            Map customMappingProps = getCustomMappingProperties();
+            Map<String, Object> customMappingProps = getCustomMappingProperties();
             if (customMappingProps != null && !customMappingProps.isEmpty()) {
                 createIndexRequest.mapping(ImmutableMap.of("properties", customMappingProps));
             }
@@ -420,8 +420,8 @@ public abstract class ElasticBaseDao
                                            QueryBuilder query,
                                            QueryBuilder postFilter,
                                            List<HighlightBuilder.Field> highlightedFields,
-                                           RescorerBuilder rescorer,
-                                           List<SortBuilder> sort,
+                                           RescorerBuilder<?> rescorer,
+                                           List<SortBuilder<?>> sort,
                                            LimitOffset limitOffset,
                                            boolean fetchSource) throws ElasticsearchException {
         limitOffset = adjustLimitOffset(limitOffset);

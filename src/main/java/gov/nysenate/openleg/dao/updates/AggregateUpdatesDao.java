@@ -27,7 +27,7 @@ public interface AggregateUpdatesDao {
      * @param limitOffset LimitOffset - Limit the response
      * @return PaginatedList<UpdateToken<Properties>>
      */
-    public PaginatedList<UpdateToken<Map<String, String>>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
+    PaginatedList<UpdateToken<Map<String, String>>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
                                                                            Set<UpdateContentType> types, UpdateType updateType,
                                                                            SortOrder order, LimitOffset limitOffset);
 
@@ -44,7 +44,7 @@ public interface AggregateUpdatesDao {
      * @param detail boolean - will return detailed update digests if set to true
      * @return PaginatedList<UpdateToken<Properties>>
      */
-    public PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
+    PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
                                                                              Set<UpdateContentType> types, UpdateType updateType,
                                                                              SortOrder order, LimitOffset limitOffset,
                                                                              boolean detail);
@@ -53,7 +53,7 @@ public interface AggregateUpdatesDao {
      * An override of getUpdateDigests that does not return detailed digests
      * @see #getUpdateDigests
      */
-    public default PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
+    default PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
                                                                                      Set<UpdateContentType> types, UpdateType updateType,
                                                                                      SortOrder order, LimitOffset limitOffset) {
         return getUpdateDigests(dateTimeRange, types, updateType, order, limitOffset, false);

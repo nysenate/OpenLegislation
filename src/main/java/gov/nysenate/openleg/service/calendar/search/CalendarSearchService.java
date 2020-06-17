@@ -21,7 +21,7 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
      * @return SearchResults<CalendarId> A list of calendar ids that match the given search parameters
      * @throws SearchException When there is a search related error
      */
-    public SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset)
+    SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset)
             throws SearchException;
 
     /**
@@ -33,7 +33,7 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
      * @return SearchResults<CalendarId> A list of calendar ids that match the given search parameters
      * @throws SearchException When there is a search related error
      */
-    public SearchResults<CalendarId> searchForCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
+    SearchResults<CalendarId> searchForCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
             throws SearchException;
 
     /**
@@ -41,11 +41,11 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
      *
      * @param calendarUpdateEvent
      */
-    public void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent);
+    void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent);
 
     /**
      * Handles a bulk calendar update event by indexing the updated calendars into the search index
      * @param bulkCalendarUpdateEvent
      */
-    public void handleBulkCalendarUpdateEvent(BulkCalendarUpdateEvent bulkCalendarUpdateEvent);
+    void handleBulkCalendarUpdateEvent(BulkCalendarUpdateEvent bulkCalendarUpdateEvent);
 }

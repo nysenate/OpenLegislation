@@ -16,7 +16,7 @@ public interface TranscriptFileDao
      * @throws IOException
      * @see TranscriptFile
      */
-    public List<TranscriptFile> getIncomingTranscriptFiles(LimitOffset limOff) throws IOException;
+    List<TranscriptFile> getIncomingTranscriptFiles(LimitOffset limOff) throws IOException;
 
     /**
      * Retrieves a list of TranscriptFiles that are awaiting processing.
@@ -25,7 +25,7 @@ public interface TranscriptFileDao
      * @param limOff Specifies the maximum number of TranscriptFiles to fetch
      * @return List<TranscriptFile>
      */
-    public List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limOff);
+    List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limOff);
 
     /**
      * Updates the backing store with the given instance or inserts it
@@ -33,7 +33,7 @@ public interface TranscriptFileDao
      *
      * @param transcriptFile The {@link TranscriptFile} instance to be updated.
      */
-    public void updateTranscriptFile(TranscriptFile transcriptFile);
+    void updateTranscriptFile(TranscriptFile transcriptFile);
 
     /**
      * Moves the TranscriptFile to an archived directory. Ensures that this TranscriptFile is not processed
@@ -43,5 +43,5 @@ public interface TranscriptFileDao
      * @throws IOException
      * @see TranscriptFile
      */
-    public void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException;
+    void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException;
 }

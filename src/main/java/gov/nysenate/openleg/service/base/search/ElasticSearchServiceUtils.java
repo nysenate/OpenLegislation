@@ -17,7 +17,7 @@ public abstract class ElasticSearchServiceUtils {
     // so the correct type must be identified.
     private final static String SCORE_NAME = "_score";
 
-    private static final ImmutableSet commonTextSortFields = ImmutableSet.of(
+    private static final ImmutableSet<String> commonTextSortFields = ImmutableSet.of(
             "printNo",
             "basePrintNo",
             "basePrintNoStr",
@@ -53,8 +53,8 @@ public abstract class ElasticSearchServiceUtils {
      * @param sort String
      * @return List<SortBuilder>
      */
-    public static List<SortBuilder> extractSortBuilders(String sort) throws SearchException {
-        List<SortBuilder> sortBuilders = new ArrayList<>();
+    public static List<SortBuilder<?>> extractSortBuilders(String sort) throws SearchException {
+        List<SortBuilder<?>> sortBuilders = new ArrayList<>();
         if (sort == null || sort.trim().isEmpty()) {
             sortBuilders.add(SortBuilders.scoreSort());
         }
@@ -68,7 +68,7 @@ public abstract class ElasticSearchServiceUtils {
                     if (commonTextSortFields.contains(field)) {
                         field += ".keyword";
                     }
-                    SortBuilder sb = SCORE_NAME.equals(field)
+                    SortBuilder<?> sb = SCORE_NAME.equals(field)
                             ? SortBuilders.scoreSort() : SortBuilders.fieldSort(field);
                     sb.order(org.elasticsearch.search.sort.SortOrder.valueOf(StringUtils.upperCase(order)));
                     sortBuilders.add(sb);

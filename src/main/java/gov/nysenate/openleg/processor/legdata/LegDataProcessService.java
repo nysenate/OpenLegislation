@@ -24,7 +24,7 @@ public interface LegDataProcessService extends ProcessService
      *
      * @return int - The number of sobi files that have been collated.
      */
-    public int collateSourceFiles();
+    int collateSourceFiles();
 
     /**
      * Retrieves the SobiFragments that are awaiting processing.
@@ -33,14 +33,14 @@ public interface LegDataProcessService extends ProcessService
      * @param limitOffset LimitOffset - Restrict the results list.
      * @return List<LegDataFragment>
      */
-    public List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
+    List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
 
     /**
      * Process the list of supplied SobiFragments.
      *  @param fragments List<LegDataFragment> - List of fragments to process.
      * @param options - SobiProcessOptions - Provide custom processing options or
      */
-    public int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options);
+    int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options);
 
     /**
      * Retrieves all pending fragments and processes them. This is essentially a shorthand
@@ -50,7 +50,7 @@ public interface LegDataProcessService extends ProcessService
      * @param options - SobiProcessOptions - Provide custom processing options or
      *                                       set to null to use the default options. TODO
      */
-    public int processPendingFragments(SobiProcessOptions options);
+    int processPendingFragments(SobiProcessOptions options);
 
     /**
      * Toggle the pending processing status of a LegDataFragment via it's fragmentId.
@@ -59,6 +59,6 @@ public interface LegDataProcessService extends ProcessService
      * @param pendingProcessing boolean - Indicate if fragment is pending processing
      * @throws LegDataFragmentNotFoundEx - If the fragmentId did not match a stored fragment
      */
-    public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
+    void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
                                         throws LegDataFragmentNotFoundEx;
 }

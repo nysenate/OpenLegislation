@@ -17,7 +17,7 @@ public interface VetoDao
      * @return VetoMessage
      * @throws DataAccessException if the veto cannot be found
      */
-    public VetoMessage getVetoMessage(VetoId vetoId) throws DataAccessException;
+    VetoMessage getVetoMessage(VetoId vetoId) throws DataAccessException;
 
     /**
      * Retrieves a chronologically ordered list of vetoes corresponding to the given bill
@@ -26,7 +26,7 @@ public interface VetoDao
      * @return List<VetoMessage>
      * @throws DataAccessException if no vetoes are found
      */
-    public Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws DataAccessException;
+    Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws DataAccessException;
 
     /**
      * Updates or inserts the given vetoMessage
@@ -35,18 +35,18 @@ public interface VetoDao
      * @param legDataFragment
      * @throws DataAccessException if there is an error inserting/updating the vetoMessage
      */
-    public void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment) throws DataAccessException;
+    void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment) throws DataAccessException;
 
     /**
      * Deletes a veto message specified by the given veto id
      * @param vetoId
      */
-    public void deleteVetoMessage(VetoId vetoId);
+    void deleteVetoMessage(VetoId vetoId);
 
     /**
      * Deletes all veto messages for the bill designated by the given base bill id
      * @param baseBillId
      */
-    public void deleteBillVetoes(BaseBillId baseBillId);
+    void deleteBillVetoes(BaseBillId baseBillId);
 
 }

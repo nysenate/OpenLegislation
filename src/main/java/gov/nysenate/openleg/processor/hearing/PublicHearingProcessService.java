@@ -15,14 +15,14 @@ public interface PublicHearingProcessService extends ProcessService
      * into an archive directory and saves them to the backing store as pending processing.
      * @return
      */
-    public int collatePublicHearingFiles();
+    int collatePublicHearingFiles();
 
     /**
      * Retrieves a list of Public Hearing Files that are awaiting processing.
      * @param limitOffset Restricts the number retrieved.
      * @return
      */
-    public List<PublicHearingFile> getPendingPublicHearingFiles(LimitOffset limitOffset);
+    List<PublicHearingFile> getPendingPublicHearingFiles(LimitOffset limitOffset);
 
     /**
      * Reads the content of a Public Hearing File and generates a PublicHearing object.
@@ -31,19 +31,19 @@ public interface PublicHearingProcessService extends ProcessService
      * @param publicHearingFiles The PublicHearingFile to process.
      * @see gov.nysenate.openleg.model.hearing.PublicHearing
      */
-    public int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles);
+    int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles);
 
     /**
      * Processes all the Public Hearing Files via calls to
      * {@link #getPendingPublicHearingFiles(gov.nysenate.openleg.dao.base.LimitOffset)}
      * and {@link #processPublicHearingFiles(java.util.List)}.
      */
-    public int processPendingPublicHearingFiles();
+    int processPendingPublicHearingFiles();
 
     /**
      * Toggle the pending processing status of a Public Hearing File.
      * @param publicHearingId
      * @param pendingProcessing
      */
-    public void updatePendingProcessing(PublicHearingId publicHearingId, boolean pendingProcessing);
+    void updatePendingProcessing(PublicHearingId publicHearingId, boolean pendingProcessing);
 }

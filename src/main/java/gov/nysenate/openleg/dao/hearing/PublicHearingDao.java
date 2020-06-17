@@ -20,14 +20,14 @@ public interface PublicHearingDao
      * Retrieves all PublicHearingId's.
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(SortOrder dateOrder, LimitOffset limOff);
+    List<PublicHearingId> getPublicHearingIds(SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves a {@link PublicHearing} via its {@link PublicHearingId}.
      * @param publicHearingId
      * @return
      */
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
+    PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
 
     /**
      * Updates the backing store with the given instance or inserts
@@ -36,7 +36,7 @@ public interface PublicHearingDao
      * @param publicHearingFile The {@link gov.nysenate.openleg.model.hearing.PublicHearingFile}
      *                          which updated the Public Hearing.
      */
-    public void updatePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile);
+    void updatePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile);
 
     /**
      * Fetches new and updated public hearings from a specified date range.
@@ -45,5 +45,5 @@ public interface PublicHearingDao
      * @param limOff LimitOffset - Restrict the result set.
      * @return List of PublicHearingUpdateToken
      */
-    public PaginatedList<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff);
+    PaginatedList<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff);
 }

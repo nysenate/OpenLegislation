@@ -24,14 +24,14 @@ public interface BillUpdatesDao
      * @param limOff LimitOffset - Restrict the result set
      * @return PaginatedList<UpdateToken<BaseBillId>>
      */
-    public PaginatedList<UpdateToken<BaseBillId>> getUpdates(
+    PaginatedList<UpdateToken<BaseBillId>> getUpdates(
         Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves update digests during a given date range with an optional filter.
      * @see #getUpdates for param details.
      */
-    public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdates(
+    PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdates(
         Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter, SortOrder dateOrder, LimitOffset limOff);
 
     /**
@@ -42,7 +42,7 @@ public interface BillUpdatesDao
      * @see #getUpdates for other param details.
      * @return PaginatedList<UpdateDigest<BaseBillId>>
      */
-    public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdatesForBill(
+    PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdatesForBill(
         BaseBillId billId, Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter, SortOrder dateOrder,
         LimitOffset limOff);
 }

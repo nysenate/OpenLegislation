@@ -13,19 +13,19 @@ public interface TranscriptSearchService
      * Provides a listing of all transcripts.
      * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Provides a listing of transcripts which took place in a given year.
      * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Performs a search across all transcripts.
      * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Performs a search across all transcripts in a given year.
@@ -37,18 +37,18 @@ public interface TranscriptSearchService
      * @return
      * @throws SearchException
      */
-    public SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Handles a transcript update event by indexing the supplied transcript.
      * @param transcriptUpdateEvent
      */
-    public void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent);
+    void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent);
 
     /**
      * Handles a batch transcript update event by indexing the supplied transcripts.
      * @param bulkTranscriptUpdateEvent
      */
-    public void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent);
+    void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent);
 
 }

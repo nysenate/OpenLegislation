@@ -22,7 +22,7 @@ public interface AgendaSearchDao
      * @returns SearchResults<AgendaId>
      */
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                 List<SortBuilder> sort, LimitOffset limOff);
+                                                 List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Performs a search across all agendas broken down by committee.
@@ -34,7 +34,7 @@ public interface AgendaSearchDao
      * @return SearchResults<AgendaCommitteeId>
      */
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                                   List<SortBuilder> sort, LimitOffset limOff);
+                                                                   List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Update the agenda index with the content of the supplied agenda.

@@ -17,14 +17,14 @@ public interface BillSearchService
      *
      * @see #searchBills(String, SessionYear, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Matches all bills for the given session year.
      *
      * @see #searchBills(String, SessionYear, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Performs search across bills in a given session year.
@@ -36,7 +36,7 @@ public interface BillSearchService
      * @return SearchResults<BaseBillId>
      * @throws SearchException
      */
-    public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff)
+    SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff)
         throws SearchException;
 
     /**
@@ -44,12 +44,12 @@ public interface BillSearchService
      *
      * @param billUpdateEvent BillUpdateEvent
      */
-    public void handleBillUpdate(BillUpdateEvent billUpdateEvent);
+    void handleBillUpdate(BillUpdateEvent billUpdateEvent);
 
     /**
      * Handle a batch bill update event by indexing the supplied bills in the update.
      *
      * @param bulkBillUpdateEvent BulkBillUpdateEvent
      */
-    public void handleBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent);
+    void handleBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent);
 }
