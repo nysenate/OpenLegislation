@@ -55,10 +55,9 @@ public class ElasticNotificationService implements NotificationService {
                                                                      LimitOffset limitOffset) throws SearchException {
         BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
 
-        EnumSet<NotificationType> coveredTypes = NotificationType.getCoverage(types);
-        if (!coveredTypes.equals(EnumSet.allOf(NotificationType.class))) {
+        if (!types.equals(EnumSet.allOf(NotificationType.class))) {
             // Convert to lowercase strings for term query.
-            List<String> typeValues = coveredTypes.stream()
+            List<String> typeValues = types.stream()
                     .map(Enum::name).map(String::toLowerCase).collect(Collectors.toList());
             filterQuery.must(QueryBuilders.termsQuery("notificationType", typeValues));
         }

@@ -47,24 +47,6 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
         slackChatService.sendMessage(message, addresses);
     }
 
-
-    @Override
-    public void sendDigest(NotificationDigest digest) {
-        String digestText = NotificationDigestFormatter.getDigestText(digest, this::getDisplayUrl);
-        SlackMessage message = new SlackMessage()
-                .addAttachments(new SlackAttachment()
-                        .setTitle(NotificationDigestFormatter.getSummary(digest))
-                        .setTitleLink(getDigestUrl(digest))
-                        .setText(digestText)
-                        .setFallback(truncateDigest(digest, digestText))
-                        .setColor(getColor(digest.getType()))
-                        .setFields(getDigestFields(digest)))
-                .setText("")
-                .setIcon(getIcon(digest.getType()));
-        slackChatService.sendMessage(message,
-                Collections.singleton(parseAddress(digest.getAddress())));
-    }
-
     /* --- Internal Methods --- */
 
     private ArrayList<SlackField> getFields(RegisteredNotification notification) {
@@ -75,30 +57,26 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
         ));
     }
 
-    private ArrayList<SlackField> getDigestFields(NotificationDigest digest) {
-        return Lists.newArrayList(
-                new SlackField("Type", digest.getType().toString()),
-                new SlackField("From", digest.getStartDateTime().toString()),
-                new SlackField("To", digest.getEndDateTime().toString()));
-    }
-
     private String getColor(NotificationType type) {
-        if (NotificationType.EXCEPTION.covers(type)) {
+        if (type.getUrgency().equals(NotificationUrgency.ERROR)) {
             return "danger";
-        } else if (NotificationType.WARNING.covers(type)) {
+        }
+        else if (type.getUrgency().equals(NotificationUrgency.WARNING)) {
+
             return "warning";
         }
-        return "good";
+        else {
+            return "good";
+        }
     }
 
     private String getIcon(NotificationType type) {
-        if (NotificationType.EXCEPTION.covers(type)) {
+        if (type.getUrgency().equals(NotificationUrgency.ERROR)) {
             return ":scream_cat:";
-        } else if (NotificationType.WARNING.covers(type)) {
+        } else if (type.getUrgency().equals(NotificationUrgency.WARNING)) {
             return ":pouting_cat:";
-        } else if (NotificationType.SPOTCHECK.covers(type)) {
-            return ":see_no_evil:";
+        } else {
+            return ":smile_cat:";
         }
-        return ":smile_cat:";
     }
 }

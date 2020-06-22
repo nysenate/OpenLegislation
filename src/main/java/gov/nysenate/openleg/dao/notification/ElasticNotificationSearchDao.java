@@ -12,6 +12,7 @@ import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -134,7 +135,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
 
     private RegisteredNotification getNotificationFromSourceMap(Map<String, Object> source) {
         long id = Long.parseLong(source.get("id").toString());
-        NotificationType type = NotificationType.getValue(source.get("notificationType").toString());
+        NotificationType type = NotificationType.valueOf(StringUtils.upperCase(source.get("notificationType").toString()));
         LocalDateTime occurred = LocalDateTime.parse(source.get("occurred").toString());
         String summary = source.get("summary") != null ? source.get("summary").toString() : "";
         String message = source.get("message") != null ? source.get("message").toString() : "";

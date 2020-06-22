@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.notification.dispatch;
 
-import gov.nysenate.openleg.model.notification.NotificationDigest;
 import gov.nysenate.openleg.model.notification.NotificationMedium;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
@@ -21,8 +20,4 @@ public interface NotificationSender {
      */
     void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> subscriptions);
 
-    /**
-     * Formats and sends the given notification digest
-     */
-    void sendDigest(NotificationDigest digest);
 }
