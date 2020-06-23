@@ -44,13 +44,6 @@ public interface NotificationSubscriptionDataService {
     void removeSubscription(int subscriptionId);
 
     /**
-     * Updates the last sent field for a subscription
-     * @param subscriptionId int
-     * @param lastSentDateTime LocalDateTime
-     */
-    void setLastSent(int subscriptionId, LocalDateTime lastSentDateTime) throws SubscriptionNotFoundEx;
-
-    /**
      * Sets the active status for the given notification id.
      *  @param subscriptionId int
      * @param active boolean

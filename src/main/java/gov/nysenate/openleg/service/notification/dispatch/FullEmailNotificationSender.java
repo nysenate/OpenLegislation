@@ -23,14 +23,4 @@ public class FullEmailNotificationSender extends EmailNotificationSender {
         message.setText(notification.getMessage());
         return message;
     }
-
-    /**
-     * Override to include full digest text in the message
-     */
-    @Override
-    protected SimpleMailMessage getDigestMessage(NotificationDigest digest) {
-        SimpleMailMessage message = super.getDigestMessage(digest);
-        message.setText(NotificationDigestFormatter.getDigestText(digest, this::getDisplayUrl));
-        return message;
-    }
 }
