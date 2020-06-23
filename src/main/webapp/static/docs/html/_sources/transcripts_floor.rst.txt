@@ -8,15 +8,15 @@ Get a single Transcript
 
 **Usage**
 
-Retrieve transcript by filename
+Retrieve transcript by dateTime
 ::
-    (GET) /api/3/transcripts/{filename}
+    (GET) /api/3/transcripts/{dateTime}
 
 **Examples**
 
-Request transcript 090314.txt
+Request transcript 2014-09-03T09:00
 ::
-    /api/3/transcripts/090314.txt
+    /api/3/transcripts/2014-09-03T09:00
 
 **Response**
 
@@ -25,15 +25,14 @@ Full Transcript Response
 .. code-block:: javascript
 
     {
-      "success" : true,                               // Indicates if a transcript was found.
-      "message" : "Data for transcript 090314.txt",   // Response description.
-      "responseType" : "transcript",                  // Response data type.
+      "success" : true,                                         // Indicates if a transcript was found.
+      "message" : "Data for transcript 2014-09-03T09:00:00",    // Response description.
+      "responseType" : "transcript",                            // Response data type.
       "result" : {
-        "filename" : "090314.txt",                    // Filename of transcript.
-        "sessionType" : "REGULAR SESSION",            // Session type
-        "dateTime" : "2014-09-03T09:00",              // Date Time of senate session.
-        "location" : "ALBANY, NEW YORK",              // Location of senate session.
-        "text" : "5100\n\n 1     NEW YORK STATE SE.." // The text of the transcript.
+        "dateTime" : "2014-09-03T09:00",                        // The date and time of the session.
+        "sessionType" : "REGULAR SESSION",                      // Session type
+        "location" : "ALBANY, NEW YORK",                        // Location of senate session.
+        "text" : "5100\n\n 1     NEW YORK STATE SE.."           // The text of the transcript.
         }
     }
 
@@ -42,15 +41,15 @@ Get a transcript pdf
 
 **Usage**
 
-Retrieve transcript pdf by filename
+Retrieve transcript pdf by dateTime
 ::
-    (GET) /api/3/transcripts/{filename}.pdf
+    (GET) /api/3/transcripts/{dateTime}.pdf
 
 **Examples**
 
-Request transcript 090314.txt
+Request transcript 2014-09-03T09:00
 ::
-    /api/3/transcripts/090314.txt.pdf
+    /api/3/transcripts/2014-09-03T09:00
 
 Get a list of transcripts
 -------------------------
