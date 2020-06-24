@@ -174,27 +174,26 @@
 <div class="section" id="get-a-single-transcript">
 <h2>Get a single Transcript<a class="headerlink" href="#get-a-single-transcript" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve transcript by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+<p>Retrieve transcript by dateTime</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request transcript 090314.txt</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mf">090314.</span><span class="n">txt</span>
+<p>Request transcript 2014-09-03T09:00</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
 <p>Full Transcript Response</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a transcript was found.</span>
-  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for transcript 090314.txt&quot;</span><span class="p">,</span>   <span class="c1">// Response description.</span>
-  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;transcript&quot;</span><span class="p">,</span>                  <span class="c1">// Response data type.</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                                         <span class="c1">// Indicates if a transcript was found.</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for transcript 2014-09-03T09:00:00&quot;</span><span class="p">,</span>    <span class="c1">// Response description.</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;transcript&quot;</span><span class="p">,</span>                            <span class="c1">// Response data type.</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;090314.txt&quot;</span><span class="p">,</span>                    <span class="c1">// Filename of transcript.</span>
-    <span class="s2">&quot;sessionType&quot;</span> <span class="o">:</span> <span class="s2">&quot;REGULAR SESSION&quot;</span><span class="p">,</span>            <span class="c1">// Session type</span>
-    <span class="s2">&quot;dateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-03T09:00&quot;</span><span class="p">,</span>              <span class="c1">// Date Time of senate session.</span>
-    <span class="s2">&quot;location&quot;</span> <span class="o">:</span> <span class="s2">&quot;ALBANY, NEW YORK&quot;</span><span class="p">,</span>              <span class="c1">// Location of senate session.</span>
-    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;5100\n\n 1     NEW YORK STATE SE..&quot;</span> <span class="c1">// The text of the transcript.</span>
+    <span class="s2">&quot;dateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-03T09:00&quot;</span><span class="p">,</span>                        <span class="c1">// The date and time of the session.</span>
+    <span class="s2">&quot;sessionType&quot;</span> <span class="o">:</span> <span class="s2">&quot;REGULAR SESSION&quot;</span><span class="p">,</span>                      <span class="c1">// Session type</span>
+    <span class="s2">&quot;location&quot;</span> <span class="o">:</span> <span class="s2">&quot;ALBANY, NEW YORK&quot;</span><span class="p">,</span>                        <span class="c1">// Location of senate session.</span>
+    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;5100\n\n 1     NEW YORK STATE SE..&quot;</span>           <span class="c1">// The text of the transcript.</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -203,13 +202,13 @@
 <div class="section" id="get-a-transcript-pdf">
 <h2>Get a transcript pdf<a class="headerlink" href="#get-a-transcript-pdf" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve transcript pdf by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<p>Retrieve transcript pdf by dateTime</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request transcript 090314.txt</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mf">090314.</span><span class="n">txt</span><span class="o">.</span><span class="n">pdf</span>
+<p>Request transcript 2014-09-03T09:00</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 </div>
