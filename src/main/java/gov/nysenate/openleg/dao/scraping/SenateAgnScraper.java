@@ -28,7 +28,7 @@ public class SenateAgnScraper extends LRSScraper{
 
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() {
         this.senateAgendaDirectory = new File(environment.getScrapedStagingDir(), "sen-agenda");
         try {
             FileUtils.forceMkdir(senateAgendaDirectory);

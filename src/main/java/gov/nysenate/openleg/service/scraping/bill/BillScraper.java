@@ -26,8 +26,6 @@ import java.nio.charset.Charset;
 @Repository
 public class BillScraper extends LRSScraper {
 
-    private static final Logger logger = LoggerFactory.getLogger(BillScraper.class);
-
     private static final String URL_TEMPLATE = "http://public.leginfo.state.ny.us/navigate.cgi?NVDTO:=&" +
             "QUERYDATA=${printNo}&QUERYTYPE=BILLNO&SESSYR=${sessionYear}&CBSTATUS=Y&CBTEXT=Y&CBSUMMARY=Y&CBSPONMEMO=Y&CBVOTING=Y";
 

@@ -1,7 +1,6 @@
-package gov.nysenate.openleg.model.bill;
+package gov.nysenate.openleg.model.base;
 
 import gov.nysenate.openleg.annotation.UnitTest;
-import gov.nysenate.openleg.model.base.Version;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -12,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class BillVersionTest
+public class VersionTest
 {
     @Test
     public void testToString() {
@@ -27,7 +26,7 @@ public class BillVersionTest
     }
 
     @Test
-    public void testOf_WhitespaceReturnsDefault() {
+    public void testWhitespaceReturnsDefault() {
         String s1 = "";
         String s2 = " ";
         String s3 = "      ";
@@ -39,15 +38,17 @@ public class BillVersionTest
     }
 
     @Test
-    public void testGetValue_Succeeds() {
+    public void testGetValue() {
         String s1 = "a";
         String s2 = "A   ";
         String s3 = " z";
         String s4 = "  c ";
+        String s5 = "DEFAULT";
         assertEquals(Version.A, Version.of(s1));
         assertEquals(Version.A, Version.of(s2));
         assertEquals(Version.Z, Version.of(s3));
         assertEquals(Version.C, Version.of(s4));
+        assertEquals(Version.ORIGINAL, Version.of(s5));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -67,5 +68,10 @@ public class BillVersionTest
     @Test
     public void testGetVersionsBefore() {
         assertEquals(Version.before(Version.A).get(0), Version.ORIGINAL);
+    }
+
+    @Test
+    public void getVersionsAfter() {
+        assertEquals(Version.after(Version.Y).get(0), Version.Z);
     }
 }

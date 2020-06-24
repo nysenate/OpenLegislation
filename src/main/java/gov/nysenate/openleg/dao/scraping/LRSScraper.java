@@ -34,7 +34,6 @@ public abstract class LRSScraper {
 
     @Autowired protected Environment environment;
     @Autowired private EventBus eventBus;
-    @Autowired private SpotCheckNotificationService notificationService;
 
     /**
      * Duration of tolerance for scrape failure to account for routine outages.
