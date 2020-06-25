@@ -16,14 +16,15 @@ Updates to legislative data are distributed by the Legislative Bill drafting Com
 * AngularJS
 * Tomcat
 
-![Bill page demo](https://raw.githubusercontent.com/nysenate/OpenLegislation/master/src/main/webapp/static/img/bill-page.png)
+![Bill page demo](https://raw.githubusercontent.com/nysenate/OpenLegislation/dev/src/main/webapp/static/img/bill-page.png)
 
 Current Senate Developers
 ---------------------------
 
-* Sam Stouffer <stouffer@nysenate.gov>
 * Kevin Caseiras <caseiras@nysenate.gov>
 * Ken Zalewski <zalewski@nysenate.gov>
+* Anthony Calabrese <calabres@nysenate.gov>
+* Jacob Keegan <jacobmkeegan@gmail.com>
 
 Past Developers
 --------------------
@@ -32,3 +33,4 @@ Past Developers
 * Jared Williams <jared.mi.williams@gmail.com>
 * Graylin Kim <kim@nysenate.gov>
 * Ash Islam <islam@nysenate.gov>
+* Sam Stouffer <stouffer@nysenate.gov>
