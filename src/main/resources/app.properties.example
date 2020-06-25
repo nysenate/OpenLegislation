@@ -252,6 +252,9 @@ mail.smtp.connectiontimeout = 5000
 mail.smtp.timeout = 5000
 mail.smtp.writetimeout = 5000
 
+# Open Legislation's Contact Email Address
+contact.email =
+
 # --- Notification Configuration ----------------------------------------------
 
 # Set to true to enable notification sending. (Default false)
