@@ -66,10 +66,10 @@ public enum SqlLawDataQuery implements BasicSqlQuery
 
     SELECT_REPEALED_LAWS(
         "SELECT t.law_id, t.doc_id AS document_id, t.published_date, t.repealed_date\n" +
-        "FROM master.law_tree t\n" +
+        "FROM ${schema}." + SqlTable.LAW_TREE + " t\n" +
         "JOIN (\n" +
         "  SELECT law_id, doc_id, MAX(published_date) AS max_published_date\n" +
-        "  FROM master.law_tree\n" +
+        "  FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
         "  GROUP BY law_id, doc_id\n" +
         ") tm\n" +
         "ON tm.law_id = t.law_id AND tm.doc_id = t.doc_id\n" +

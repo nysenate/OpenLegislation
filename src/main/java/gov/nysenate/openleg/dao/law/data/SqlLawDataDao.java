@@ -49,9 +49,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public Map<String, LocalDate> getLastPublishedMap() {
         List<Pair<String, LocalDate>> res = jdbcNamed.query(SqlLawDataQuery.SELECT_MAX_PUB_DATE.getSql(schema()),
-            (rs, rowNum) -> {
-                return Pair.of(rs.getString("law_id"), getLocalDateFromRs(rs, "max_pub_date"));
-        });
+            (rs, rowNum) -> Pair.of(rs.getString("law_id"), getLocalDateFromRs(rs, "max_pub_date")));
         return res.stream().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 

@@ -14,8 +14,6 @@ import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +33,6 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(value = BASE_API_PATH + "/laws", method = RequestMethod.GET)
 public class LawGetCtrl extends BaseCtrl
 {
-    private static final Logger logger = LoggerFactory.getLogger(LawGetCtrl.class);
-
     @Autowired private LawDataService lawDataService;
 
     /** --- Request Handlers --- */
@@ -146,12 +142,9 @@ public class LawGetCtrl extends BaseCtrl
         LocalDateTime parsedEndDate = Optional.ofNullable(toDateTime)
                 .map(date -> parseISODateTime(date, "toDateTime"))
                 .orElse(LocalDateTime.now());
-
         Range<LocalDateTime> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
                 "fromDateTime", "toDateTime");
-
         Set<LawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
-
         return repealedLawDocs.stream()
                 .map(LawDocIdView::new)
                 .collect(collectingAndThen(toList(), ListViewResponse::of));
@@ -162,7 +155,7 @@ public class LawGetCtrl extends BaseCtrl
     @ExceptionHandler(LawTreeNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleLawTreeNotFoundEx(LawTreeNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.LAW_DOC_NOT_FOUND, new LawIdQueryView(ex.getLawId(), ex.getEndPubDate()));
+        return new ViewObjectErrorResponse(ErrorCode.LAW_TREE_NOT_FOUND, new LawIdQueryView(ex.getLawId(), ex.getEndPubDate()));
     }
 
     @ExceptionHandler(LawDocumentNotFoundEx.class)

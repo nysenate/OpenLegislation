@@ -40,7 +40,7 @@ public class RulesBuilder extends IdBasedLawBuilder {
         ruleStart.add("No zeroth rule.");
         Matcher ruleMatch = Pattern.compile(RULE_PATTERN).matcher(block.getText());
         while (ruleMatch.find())
-            ruleStart.add(ruleMatch.group(1));
+            ruleStart.add(ruleMatch.group(1).trim());
         String[] rules = block.getText().toString().split(RULE_PATTERN);
         // Create dummy Rule documents to parse properly.
         int lastRule = 0;

@@ -12,13 +12,13 @@ import java.util.regex.Pattern;
 public class LawFile extends BaseSourceData implements Comparable<LawFile>
 {
     /** Pattern for the file names of the initial dumps. */
-    private static Pattern initialFilePattern = Pattern.compile("DATABASE\\.LAW.+");
+    private static final Pattern INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+");
 
     /** Pattern for the file names of law updates. */
-    private static Pattern updateFilePattern = Pattern.compile("([0-9]{8})\\.UPDATE");
+    private static final Pattern UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE");
 
     /** Received the initial data dumps from LBDC on this date. */
-    private static LocalDate initialPublishDate = LocalDate.of(2014, 9, 22);
+    private static final LocalDate INITIAL_PUBLISH_DATE = LocalDate.of(2014, 9, 22);
 
     /** File handle to the source law file. */
     protected File file;
@@ -49,12 +49,12 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile>
             throw new IllegalArgumentException("You must supply a valid file handle when constructing a LawFile.");
         }
         this.file = file;
-        if (initialFilePattern.matcher(getFileName()).matches()) {
-            this.publishedDate = initialPublishDate;
+        if (INITIAL_FILE_PATTERN.matcher(getFileName()).matches()) {
+            this.publishedDate = INITIAL_PUBLISH_DATE;
             this.isInitialDump = true;
         }
         else {
-            Matcher updateFileMatcher = updateFilePattern.matcher(getFileName());
+            Matcher updateFileMatcher = UPDATE_FILE_PATTERN.matcher(getFileName());
             if (updateFileMatcher.matches()) {
                 this.publishedDate = LocalDate.from(DateUtils.LRS_LAW_FILE_DATE.parse(updateFileMatcher.group(1)));
             }

@@ -67,7 +67,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     /** {@inheritDoc} */
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(lawTreeCache.getNativeCache());
+        return Collections.singletonList(lawTreeCache.getNativeCache());
     }
 
     /** {@inheritDoc} */

@@ -96,7 +96,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
             Collections.sort(lawFiles);
         }
         else {
-            Collections.sort(lawFiles, Collections.reverseOrder());
+            lawFiles.sort(Collections.reverseOrder());
         }
     }
 

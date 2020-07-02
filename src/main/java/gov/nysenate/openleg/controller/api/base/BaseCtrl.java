@@ -424,7 +424,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
      * returns a default value if the map function returns null
      */
-    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType,Function<String, T> mapFunction,
+    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
                                                             String paramValue, T defaultValue) {
         T result = mapFunction.apply(paramValue);
         return result != null ? result : defaultValue;

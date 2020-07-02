@@ -50,7 +50,7 @@ public class SenateSiteLawDocCheckService implements SpotCheckService<LawSpotChe
     }
 
     private void checkDocLevelId(LawDocView content, SenateSiteLawDoc reference, SpotCheckObservation<LawSpotCheckId> obs) {
-        spotCheckUtils.checkString(content.getDocLevelId(), reference.getDocLevelId(), obs, LAW_DOC_DOC_LEVEL_ID);
+        spotCheckUtils.checkString(content.getDocTypeId(), reference.getDocLevelId(), obs, LAW_DOC_DOC_LEVEL_ID);
     }
 
     private void checkDocType(LawDocView content, SenateSiteLawDoc reference, SpotCheckObservation<LawSpotCheckId> obs) {

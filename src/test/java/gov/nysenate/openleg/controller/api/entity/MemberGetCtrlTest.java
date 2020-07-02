@@ -14,10 +14,8 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -39,7 +37,7 @@ public class MemberGetCtrlTest extends ApiTest {
 
     @Override
     protected int allItemsInIndex() throws SearchException {
-        return ((ListViewResponse<?>)testCtrl.getAllMembers("shortName:asc", true, testRequest)).getTotal();
+        return ((ListViewResponse<?>)testCtrl.getAllMembers("shortName:asc", false, testRequest)).getTotal();
     }
 
     /**
