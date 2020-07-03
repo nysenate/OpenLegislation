@@ -75,7 +75,7 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "ON tm.law_id = t.law_id AND tm.doc_id = t.doc_id\n" +
         "  AND tm.max_published_date = t.published_date\n" +
         "WHERE t.repealed_date IS NOT NULL" +
-        "  AND created_date_time BETWEEN :startDateTime AND :endDateTime"
+        "  AND t.repealed_date BETWEEN :startDateTime AND :endDateTime"
     ),
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +
