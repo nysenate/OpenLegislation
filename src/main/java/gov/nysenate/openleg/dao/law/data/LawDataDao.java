@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.law.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public interface LawDataDao
      * @param dateRange Range<LocalDateTime>
      * @return {@link List<LawDocId>}
      */
-    List<LawDocId> getRepealedLaws(Range<LocalDateTime> dateRange);
+    List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange);
 
     /**
      * Retrieve a LawDocument using the given document id and end published date. The most recent law document

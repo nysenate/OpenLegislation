@@ -201,10 +201,9 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
         return lawDataDao.getLawDocuments(lawId.toUpperCase(), endPublishedDate);
     }
 
-    /** {@inheritDoc}
-     * @param dateRange*/
+    /** {@inheritDoc} */
     @Override
-    public Set<LawDocId> getRepealedLawDocs(Range<LocalDateTime> dateRange) {
+    public Set<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange) {
         return new HashSet<>(lawDataDao.getRepealedLaws(dateRange));
     }
 

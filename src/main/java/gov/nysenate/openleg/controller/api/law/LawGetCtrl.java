@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -132,21 +131,21 @@ public class LawGetCtrl extends BaseCtrl
      * Request Params:
      * @param fromDateTime iso datetime - default 1970-01-01 - The inclusive start time of the specified time period
      * @param toDateTime iso datetime - default today - The inclusive end time of the specified time period
-     * @return {@link ListViewResponse<LawDocIdView>}
+     * @return {@link ListViewResponse<RepealedLawDocIdView>}
      */
     @RequestMapping("/repealed")
-    public ListViewResponse<LawDocIdView> getRepealedLaws(
+    public ListViewResponse<RepealedLawDocIdView> getRepealedLaws(
             @RequestParam(defaultValue = "1970-01-01") String fromDateTime,
             @RequestParam(required = false) String toDateTime) {
-        LocalDateTime parsedStartDate = parseISODateTime(fromDateTime, "fromDateTime");
-        LocalDateTime parsedEndDate = Optional.ofNullable(toDateTime)
-                .map(date -> parseISODateTime(date, "toDateTime"))
-                .orElse(LocalDateTime.now());
-        Range<LocalDateTime> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
+        LocalDate parsedStartDate = parseISODate(fromDateTime, "fromDateTime");
+        LocalDate parsedEndDate = Optional.ofNullable(toDateTime)
+                .map(date -> parseISODate(date, "toDateTime"))
+                .orElse(LocalDate.now());
+        Range<LocalDate> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
                 "fromDateTime", "toDateTime");
-        Set<LawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
+        Set<RepealedLawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
         return repealedLawDocs.stream()
-                .map(LawDocIdView::new)
+                .map(RepealedLawDocIdView::new)
                 .collect(collectingAndThen(toList(), ListViewResponse::of));
     }
 
