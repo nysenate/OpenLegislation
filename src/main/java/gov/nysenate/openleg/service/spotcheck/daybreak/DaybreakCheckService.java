@@ -205,7 +205,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .map(s -> spotCheckUtils.getPrimaryShortname(session, chamber, s.toString()))
                 .orElse(null);
         String refSponsor = spotCheckUtils.getPrimaryShortname(session, chamber, daybreakBill.getSponsor());
-        spotCheckUtils.checkString(contentSponsor, refSponsor, obsrv, BILL_SPONSOR);
+        spotCheckUtils.checkString(StringUtils.upperCase(contentSponsor), StringUtils.upperCase(refSponsor), obsrv, BILL_SPONSOR);
     }
 
     /**
