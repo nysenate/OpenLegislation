@@ -5,7 +5,6 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.ApiTest;
-import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
@@ -22,16 +21,6 @@ public class MemberSearchCtrlTest extends ApiTest {
 
     @Autowired
     private MemberSearchCtrl testCtrl;
-
-    @Override
-    protected SearchIndex getIndex() {
-        return SearchIndex.MEMBER;
-    }
-
-    @Override
-    protected int allItemsInIndex() throws SearchException {
-        return ((ListViewResponse<?>) testCtrl.globalSearch("*", "", false, testRequest)).getTotal();
-    }
 
     /**
      * Tests that a Member is retrieved correctly.

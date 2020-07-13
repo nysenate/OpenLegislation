@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -150,8 +149,9 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
             }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
             LawTree lawTree;
-            if (lawTreeCache.get(lawVersionId) != null) {
-                lawTree = (LawTree) lawTreeCache.get(lawVersionId).get();
+            org.springframework.cache.Cache.ValueWrapper tree = lawTreeCache.get(lawVersionId);
+            if (tree != null) {
+                lawTree = (LawTree) tree.get();
             }
             else {
                 lawTree = lawDataDao.getLawTree(lawId, endPublishedDate);

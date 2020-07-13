@@ -10,7 +10,6 @@ import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SessionMemberView;
 import gov.nysenate.openleg.controller.api.ApiTest;
-import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchException;
@@ -29,16 +28,6 @@ import static org.junit.Assert.*;
 public class MemberGetCtrlTest extends ApiTest {
     @Autowired
     private MemberGetCtrl testCtrl;
-
-    @Override
-    protected SearchIndex getIndex() {
-        return SearchIndex.MEMBER;
-    }
-
-    @Override
-    protected int allItemsInIndex() throws SearchException {
-        return ((ListViewResponse<?>)testCtrl.getAllMembers("shortName:asc", false, testRequest)).getTotal();
-    }
 
     /**
      * Tests that all members of a certain year are correctly retrieved.
