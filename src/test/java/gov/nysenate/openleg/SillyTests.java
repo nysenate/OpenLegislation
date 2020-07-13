@@ -26,6 +26,8 @@ public class SillyTests extends BaseTests {
                              `'-'`
     */
 
+
     @Test
-    public void sillyTest() {}
+    public void sillyTest() throws Exception {
+    }
 }

@@ -88,6 +88,19 @@ public class Person implements Comparable<Person>
         this.imgName = other.getImgName();
     }
 
+    /**
+     * A consistent naming convention for image names.
+     *
+     * This should be used when naming the image for all new legislators.
+     *
+     * For newer images, this will likely be the same as <code>getImageName</code>, but it may
+     * not be the same for older images which had a different naming conventions.
+     * @return
+     */
+    public String getSuggestedImageFileName() {
+        return getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
+    }
+
     /** --- Overrides --- */
 
     @Override
@@ -201,8 +214,14 @@ public class Person implements Comparable<Person>
         this.suffix = suffix;
     }
 
+    /**
+     * The name of the image file that represents this Person.
+     *
+     * If the person does not have an image use the no_image.jpg placeholder.
+     * @return
+     */
     public String getImgName() {
-        return imgName;
+        return imgName == null || imgName.equals("") ? "no_image.jpg" : imgName;
     }
 
     public void setImgName(String imgName) {
