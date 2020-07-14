@@ -9,18 +9,14 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.law.*;
-import gov.nysenate.openleg.controller.api.ApiTest;
-import gov.nysenate.openleg.dao.law.data.LawFileDao;
+import gov.nysenate.openleg.controller.api.LawCtrlTest;
 import gov.nysenate.openleg.model.law.LawDocumentType;
-import gov.nysenate.openleg.model.law.LawFile;
-import gov.nysenate.openleg.processor.law.ManagedLawProcessService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,18 +24,11 @@ import static gov.nysenate.openleg.model.law.LawChapterCode.*;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class LawGetCtrlTest extends ApiTest {
+public class LawGetCtrlTest extends LawCtrlTest {
 
     @Autowired
-    private ManagedLawProcessService testService;
-    @Autowired
-    private LawFileDao testDao;
-    @Autowired
     private LawGetCtrl testCtrl;
-    private static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
-    private static final List<String> TEST_LAW_IDS = Arrays.asList(EHC.name(), ETP.name(), CMA.name(), CMS.name(), ABC.name());
-    private static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20200529", "20200530", "20200531");
-    
+
     @Test
     public void getAllLawsTest() {
         for (String fileId : TEST_LAW_IDS)
@@ -170,15 +159,4 @@ public class LawGetCtrlTest extends ApiTest {
             assertEquals(date, view.getEndDate());
         }
     }
-
-    private void loadTestData(String fileId, boolean isInitial) {
-        LawFile file;
-        if (isInitial)
-            file = new LawFile(new File(TEST_FILE_PREFIX + "DATABASE.LAW." + fileId));
-        else
-            file = new LawFile(new File(TEST_FILE_PREFIX + fileId + ".UPDATE"));
-        testDao.updateLawFile(file);
-        testService.processLawFiles(Collections.singletonList(file));
-    }
-
 }
