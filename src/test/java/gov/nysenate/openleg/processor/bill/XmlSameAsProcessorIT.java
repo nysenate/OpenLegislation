@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -31,7 +32,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
         Bill bill = billDataService.getBill(new BaseBillId("A5457", 2017));
         BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
-        assertTrue(amendment.getSameAs().size() == 1);
+        assertEquals(1, amendment.getSameAs().size());
     }
 
     @Test
@@ -47,7 +48,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
         Bill bill = billDataService.getBill(new BaseBillId("A5457", 2017));
         BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
-        assertTrue(amendment.getSameAs().size() == 1);
+        assertEquals(1, amendment.getSameAs().size());
     }
 
     @Test
@@ -62,7 +63,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
 
         Bill bill = billDataService.getBill(new BaseBillId("A5457",2017));
         BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
-        assertTrue(amendment.getSameAs().size() == 0);
+        assertEquals(0, amendment.getSameAs().size());
     }
 
     @Test
@@ -73,7 +74,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
         Bill bill = billDataService.getBill(new BaseBillId("S4257", 2017));
         BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("A5261", 2017)));
-        assertTrue(amendment.getSameAs().size() == 1);
+        assertEquals(1, amendment.getSameAs().size());
     }
 
     @Test
@@ -85,7 +86,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
         BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S3779",2017)));
-        assertTrue(amendment.getSameAs().size() ==  2);
+        assertEquals(2, amendment.getSameAs().size());
     }
 
     @Test(expected = ParseError.class)
@@ -102,6 +103,6 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
         Bill bill = billDataService.getBill(new BaseBillId("S3526",2017));
         BillAmendment amendment = bill.getAmendment(Version.A);
         assertTrue(amendment.getSameAs().contains(new BillId("A3028A", 2017)));
-        assertTrue(amendment.getSameAs().size() == 1);
+        assertEquals(1, amendment.getSameAs().size());
     }
 }

@@ -14,30 +14,27 @@ import java.util.List;
 public interface CommitteeDao
 {
     /**
-     * Retrieves the most recent information on the committee designated by name
-     *
+     * Retrieves the most recent information on the committee designated by name.
      * @param committeeId
      * @return Committee
      */
     Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException;
 
     /**
-     * Retrieves committee information for the specified committee name at a particular time
-     *
+     * Retrieves committee information for the specified committee name at a particular time.
      * @param committeeVersionId
      * @return Committee
      */
     Committee getCommittee(CommitteeVersionId committeeVersionId) throws EmptyResultDataAccessException;
 
     /**
-     * Retrieves a list containing all committee ids
-     *
+     * Retrieves a list containing all committee ids.
      * @return List<Committee>
      */
     List<CommitteeId> getCommitteeList();
 
     /**
-     * Retrieves a list of all valid committee session ids
+     * Retrieves a list of all valid committee session ids.
      * @return
      * @throws DataAccessException
      */
@@ -45,7 +42,7 @@ public interface CommitteeDao
 
     /**
      * Retrieves a list of committee versions for a given committee that occur within the given date range
-     * ordered by session year and creation date
+     * ordered by session year and creation date.
      *
      * @param committeeSessionId
      * @return List<Committee>
@@ -53,10 +50,10 @@ public interface CommitteeDao
     List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId) throws EmptyResultDataAccessException;
 
     /**
-     * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
+     * Updates a committee with the given new committee version.
      *
      * @param committee
-     * @param legDataFragment
+     * @param legDataFragment name is stored in database.
      */
     void updateCommittee(Committee committee, LegDataFragment legDataFragment);
 

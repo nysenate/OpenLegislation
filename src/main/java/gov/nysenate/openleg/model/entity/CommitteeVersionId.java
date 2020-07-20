@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class CommitteeVersionId extends CommitteeSessionId implements Serializable
 {
@@ -45,7 +46,7 @@ public class CommitteeVersionId extends CommitteeSessionId implements Serializab
 
         CommitteeVersionId versionId = (CommitteeVersionId) o;
 
-        return (referenceDate != null ? referenceDate.equals(versionId.referenceDate) : versionId.referenceDate == null);
+        return (Objects.equals(referenceDate, versionId.referenceDate));
     }
 
     @Override

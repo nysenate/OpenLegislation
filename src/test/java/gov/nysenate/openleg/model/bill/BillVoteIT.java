@@ -22,7 +22,7 @@ public class BillVoteIT extends BaseTests
     private MemberService memberService;
 
     @Test
-    public void testBillVoteEquality() throws Exception {
+    public void testBillVoteEquality() {
         LocalDate date = LocalDate.now();
         BillId billId = new BillId("S1234", 2013);
         SessionYear sessionYear = SessionYear.of(2013);

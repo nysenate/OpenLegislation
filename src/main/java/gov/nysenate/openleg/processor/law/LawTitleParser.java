@@ -32,9 +32,9 @@ public class LawTitleParser
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
-    private static final String docTypeString = ".*?%s *(%s).*";
+    private final static String docTypeString = ".*?%s *(%s).*";
     /** Pattern to match a full docTypeId, and and parse out the starting number. */
-    private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
+    private final static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
     private final static int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
@@ -73,7 +73,7 @@ public class LawTitleParser
             case SECTION:
                 return extractTitleFromSection(lawDocInfo, bodyText);
             case INDEX:
-                return "Index range: " + lawDocInfo.getDocTypeId();
+                return "Index of: " + lawDocInfo.getDocTypeId();
             case PREAMBLE:
                 return "Preamble";
             case JOINT_RULE:
@@ -101,7 +101,7 @@ public class LawTitleParser
         String realID = getRealID(lawDocInfo, bodyText);
         String typeLabel = lawDocInfo.getDocType().name();
         String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
-        String title = bodyText.replaceFirst(".*?" + label, "")
+        String title = bodyText.replaceAll("\\* NB.*?\\\\n ", "").replaceFirst(".*?" + label, "")
                 // Removes division names that might come after, and converts
                 // whitespace into single spaces.
                 .replaceFirst(TYPES + "\\s+(1|I|A|ONE)?\\W.*", "")

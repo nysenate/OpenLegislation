@@ -2,14 +2,13 @@ package gov.nysenate.openleg.dao.auth;
 
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,29 +17,34 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@Category(IntegrationTest.class)
 public class ApiUserDaoIT extends BaseTests {
-    private static final Logger logger = LoggerFactory.getLogger(ApiUserDaoIT.class);
 
-    @Autowired private ApiUserDao apiUserDao;
+    @Autowired
+    private ApiUserDao apiUserDao;
+    private final String sub1 = "BREAKING_CHANGES";
+    private final String sub2 = "NEW_FEATURES";
+    private final String emailOne = "bogusBunny@nysenate.gov";
+    private ApiUser apiUserOne;
+    private String apiKey;
 
-
-    @Test public void insertTest() {
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        apiUserDao.insertUser(apiUser);
-        ApiUser savedUser = apiUserDao.getApiUserFromEmail(email);
-        assertEquals("User was not inserted properly.",apiUser.getEmail(), savedUser.getEmail());
-    }
-
-    @Test public void getAllUsersTest() {
-        //Add one user
-        String emailOne = "bogusBunny@nysenate.gov";
-        ApiUser apiUserOne = new ApiUser(emailOne);
+    @Before
+    public void setup() {
+        apiUserOne = new ApiUser(emailOne);
         apiUserOne.setName("Bugs");
         apiUserOne.setRegistrationToken("ABC123");
+        apiKey = apiUserOne.getApiKey();
+    }
 
+    @Test
+    public void insertTest() {
+        apiUserDao.insertUser(apiUserOne);
+        ApiUser savedUser = apiUserDao.getApiUserFromEmail(emailOne);
+        assertEquals("User was not inserted properly.", apiUserOne.getEmail(), savedUser.getEmail());
+    }
+
+    @Test
+    public void getAllUsersTest() {
         //Add a second user
         String emailTwo = "world@nysenate.gov";
         ApiUser apiUserTwo = new ApiUser(emailTwo);
@@ -58,29 +62,22 @@ public class ApiUserDaoIT extends BaseTests {
     }
 
 
-    @Test public void addSubscriptionTest() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        apiUser.addSubscription(ApiUserSubscriptionType.valueOf(sub1));
-        apiUser.addSubscription(ApiUserSubscriptionType.valueOf(sub2));
-        String apikey = apiUser.getApiKey();
-
+    @Test
+    public void addSubscriptionTest() {
+        apiUserOne.addSubscription(ApiUserSubscriptionType.valueOf(sub1));
+        apiUserOne.addSubscription(ApiUserSubscriptionType.valueOf(sub2));
         //check the subscription list of user
-        ImmutableSet<ApiUserSubscriptionType> subs = apiUser.getSubscriptions();
+        ImmutableSet<ApiUserSubscriptionType> subs = apiUserOne.getSubscriptions();
         assertTrue(subs.contains(ApiUserSubscriptionType.valueOf(sub1)));
         assertTrue(subs.contains(ApiUserSubscriptionType.valueOf(sub2)));
         assertEquals("Number of subscriptions for this user is incorrect.",2, subs.size());
 
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
-        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub2));
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
+        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub2));
 
         //check that the subscription was added to the database
-        ApiUser checkApiUser = apiUserDao.getApiUserFromKey(apikey);
+        ApiUser checkApiUser = apiUserDao.getApiUserFromKey(apiKey);
         ImmutableSet<ApiUserSubscriptionType> checkSubs = checkApiUser.getSubscriptions();
         assertTrue("Subscription not added properly.", checkSubs.contains(ApiUserSubscriptionType.valueOf(sub1)));
         assertTrue("Subscription not added properly.", checkSubs.contains(ApiUserSubscriptionType.valueOf(sub2)));
@@ -88,76 +85,51 @@ public class ApiUserDaoIT extends BaseTests {
                      2, checkSubs.size());
     }
 
-    @Test public void removeSubscription() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
-
-        ApiUser checkUser;
-        ImmutableSet<ApiUserSubscriptionType> checkSubs;
-
+    @Test
+    public void removeSubscription() {
         //add two subscriptions
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
-        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub2));
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
+        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub2));
 
         //remove "BREAKING_CHANGES"
-        apiUserDao.removeSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
-        checkUser = apiUserDao.getApiUserFromKey(apikey);
-        checkSubs = checkUser.getSubscriptions();
+        apiUserDao.removeSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apiKey);
+        ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
         assertTrue("Subscription removed unexpectedly.",checkSubs.contains(ApiUserSubscriptionType.valueOf(sub2)));
         assertFalse("Subscription was not removed.",checkSubs.contains(ApiUserSubscriptionType.valueOf(sub1)));
         assertEquals("Number of subscriptions removed for this user in database is incorrect.",
                      1, checkSubs.size());
 
         //remove "NEW_FEATURES"
-        apiUserDao.removeSubscription(apikey, ApiUserSubscriptionType.valueOf(sub2));
-        checkUser = apiUserDao.getApiUserFromKey(apikey);
+        apiUserDao.removeSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub2));
+        checkUser = apiUserDao.getApiUserFromKey(apiKey);
         checkSubs = checkUser.getSubscriptions();
         assertFalse("Subscription was not removed.", checkSubs.contains(ApiUserSubscriptionType.valueOf(sub2)));
         assertEquals("Number of subscriptions removed for this user in database is incorrect.",
                      0, checkSubs.size());
     }
 
-    @Test public void removeSubscriptionThatDoesntExist() {
-        String sub1 = "BREAKING_CHANGES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
-
-        apiUserDao.insertUser(apiUser);
-        ApiUser checkUser;
-        ImmutableSet<ApiUserSubscriptionType> checkSubs;
+    @Test
+    public void removeSubscriptionThatDoesntExist() {
+        apiUserDao.insertUser(apiUserOne);
 
         //remove "BREAKING_CHANGES"
-        apiUserDao.removeSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
-        checkUser = apiUserDao.getApiUserFromKey(apikey);
-        checkSubs = checkUser.getSubscriptions();
+        apiUserDao.removeSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apiKey);
+        ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
         assertEquals("Removal of non-existent subscription failed.", 0, checkSubs.size());
     }
 
-    @Test public void setSetSubscriptionsTest() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
-
+    @Test
+    public void setSetSubscriptionsTest() {
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         subs.add(ApiUserSubscriptionType.valueOf(sub1));
         subs.add(ApiUserSubscriptionType.valueOf(sub2));
 
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.setSubscriptions(apikey, subs);
-        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.setSubscriptions(apiKey, subs);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apiKey);
         ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
 
         //user should have two subscriptions
@@ -169,22 +141,15 @@ public class ApiUserDaoIT extends BaseTests {
 
     }
 
-    @Test public void setSubscriptionsAlreadyExistTest() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
-
+    @Test
+    public void setSubscriptionsAlreadyExistTest() {
         Set<ApiUserSubscriptionType> sub2Set = new HashSet<>();
         sub2Set.add(ApiUserSubscriptionType.valueOf(sub2));
 
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
-        apiUserDao.setSubscriptions(apikey, sub2Set);
-        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
+        apiUserDao.setSubscriptions(apiKey, sub2Set);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apiKey);
         ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
 
         //user should have one subscription of 'NEW_FEATURES'
@@ -196,42 +161,27 @@ public class ApiUserDaoIT extends BaseTests {
     }
 
     /* Test deleting all current subscriptions */
-    @Test public void setSubscriptionsEmptySet() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
-
+    @Test
+    public void setSubscriptionsEmptySet() {
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         subs.add(ApiUserSubscriptionType.valueOf(sub1));
         subs.add(ApiUserSubscriptionType.valueOf(sub2));
         Set<ApiUserSubscriptionType> emptySubs = new HashSet<>();
 
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.setSubscriptions(apikey, subs);
-        apiUserDao.setSubscriptions(apikey, emptySubs);
-        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.setSubscriptions(apiKey, subs);
+        apiUserDao.setSubscriptions(apiKey, emptySubs);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apiKey);
         ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
         assertEquals("The user should have no subscriptions", 0, checkSubs.size());
     }
 
     /* Test getting users by subscription when two users have subscriptions */
-    @Test public void getUserBySubscription() {
-        String sub1 = "BREAKING_CHANGES";
-        String sub2 = "NEW_FEATURES";
+    @Test
+    public void getUserBySubscription() {
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         subs.add(ApiUserSubscriptionType.valueOf(sub1));
         subs.add(ApiUserSubscriptionType.valueOf(sub2));
-
-        //first user
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String apikey = apiUser.getApiKey();
 
         //second user
         String emailTwo = "world@nysenate.gov";
@@ -244,8 +194,8 @@ public class ApiUserDaoIT extends BaseTests {
         List<ApiUser> subscribers_before = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));
 
         //add the user and set their subscriptions
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.setSubscriptions(apikey, subs);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.setSubscriptions(apiKey, subs);
         apiUserDao.insertUser(apiUserTwo);
         apiUserDao.setSubscriptions(apikeyTwo, subs);
 
@@ -259,13 +209,13 @@ public class ApiUserDaoIT extends BaseTests {
         assertEquals("Number of users returned is incorrect.", 2,
                 subscribers_after.size()-subscribers_before.size());
         assertTrue("Api User Bugs was not in the returned list.",
-                email_list.contains(apiUser.getEmail()));
+                email_list.contains(apiUserOne.getEmail()));
         assertTrue("Api User Hello was not in the returned List.",
                 email_list.contains(apiUserTwo.getEmail()));
 
         //Get the list of users subscribed to 'NEW_FEATURES'
         subscribers_after = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub2));
-        email_list.removeAll(email_list);
+        email_list.clear();
         for(ApiUser user : subscribers_after) {
             email_list.add(user.getEmail());
         }
@@ -273,32 +223,20 @@ public class ApiUserDaoIT extends BaseTests {
 
     @Test
     public void updateUserEmailTest() {
-        String email = "bogusBunny@nysenate.gov";
         String newEmail = "helloworld@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String key = apiUser.getApiKey();
-
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.updateEmail(key, newEmail);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.updateEmail(apiKey, newEmail);
 
         assertEquals("User email was not updated to the new email address.",
-                     newEmail, apiUserDao.getApiUserFromKey(key).getEmail());
+                     newEmail, apiUserDao.getApiUserFromKey(apiKey).getEmail());
     }
 
     @Test
     public void updateUserEmailSameAsCurrentEmail() {
-        String email = "bogusBunny@nysenate.gov";
-        ApiUser apiUser = new ApiUser(email);
-        apiUser.setName("Bugs");
-        apiUser.setRegistrationToken("ABC123");
-        String key = apiUser.getApiKey();
-
-        apiUserDao.insertUser(apiUser);
-        apiUserDao.updateEmail(key, email);
+        apiUserDao.insertUser(apiUserOne);
+        apiUserDao.updateEmail(apiKey, emailOne);
 
         assertEquals("User email was not updated to the new email address.",
-                email, apiUserDao.getApiUserFromKey(key).getEmail());
+                emailOne, apiUserDao.getApiUserFromKey(apiKey).getEmail());
     }
 }

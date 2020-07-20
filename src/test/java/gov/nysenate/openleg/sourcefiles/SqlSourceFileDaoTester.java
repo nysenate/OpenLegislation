@@ -10,8 +10,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -33,8 +31,6 @@ public class SqlSourceFileDaoTester extends BaseTests {
     @Autowired private FsXmlDao xmlDao;
 
     @Autowired Environment environment;
-    private static final Logger logger = LoggerFactory.getLogger(SqlSourceFileDaoTester.class);
-
 
     public File preTestSetup(String sourceName, String archiveName, boolean makedir) throws IOException {
         File temp = new File(archiveName, sourceName);
@@ -46,10 +42,6 @@ public class SqlSourceFileDaoTester extends BaseTests {
         return temp;
     }
 
-    /**
-     *
-     * @throws IOException
-     */
     @Test
     public void testXmlFileArchive() throws IOException {
         String fileName = "2017-02-06-12.13.28.656756_LDSUMM_A04892.XML";

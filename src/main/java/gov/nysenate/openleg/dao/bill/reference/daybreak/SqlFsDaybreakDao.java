@@ -628,7 +628,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    private class DaybreakBillRowMapper implements RowMapper<DaybreakBill>{
+    private static class DaybreakBillRowMapper implements RowMapper<DaybreakBill>{
         @Override
         public DaybreakBill mapRow(ResultSet rs, int rowNum) throws SQLException {
             DaybreakBill daybreakBill = new DaybreakBill();
@@ -643,7 +643,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    private class DaybreakBillActionRowMapper implements RowMapper<BillAction>{
+    private static class DaybreakBillActionRowMapper implements RowMapper<BillAction>{
         @Override
         public BillAction mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillAction billAction = new BillAction();
@@ -656,7 +656,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    private class DaybreakBillAmendmentRowMapper implements RowMapper<DaybreakBillAmendment>{
+    private static class DaybreakBillAmendmentRowMapper implements RowMapper<DaybreakBillAmendment>{
         @Override
         public DaybreakBillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
             DaybreakBillAmendment daybreakBillAmendment = new DaybreakBillAmendment();
@@ -671,14 +671,14 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    private class DaybreakSponsorRowMapper implements RowMapper<String>{
+    private static class DaybreakSponsorRowMapper implements RowMapper<String>{
         @Override
         public String mapRow(ResultSet rs, int rowNum) throws SQLException {
             return rs.getString("member_short_name");
         }
     }
 
-    private class DaybreakReportDateRowMapper implements RowMapper<LocalDate>{
+    private static class DaybreakReportDateRowMapper implements RowMapper<LocalDate>{
         @Override
         public LocalDate mapRow(ResultSet rs, int rowNum) throws SQLException {
             return getLocalDateFromRs(rs, "report_date");

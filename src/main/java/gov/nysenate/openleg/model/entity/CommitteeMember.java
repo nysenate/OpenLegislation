@@ -62,6 +62,13 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
         this.majority = other.majority;
     }
 
+    public CommitteeMember(int sequenceNo, SessionMember sessionMember, CommitteeMemberTitle title, boolean majority) {
+        this.sequenceNo = sequenceNo;
+        this.sessionMember = sessionMember;
+        this.title = title;
+        this.majority = majority;
+    }
+
     /** --- Functional Getters/Setters --- */
 
     public static Comparator<CommitteeMember> getComparator() {

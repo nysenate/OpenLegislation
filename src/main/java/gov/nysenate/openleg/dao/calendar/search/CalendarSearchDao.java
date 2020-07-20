@@ -15,7 +15,7 @@ public interface CalendarSearchDao {
     /**
      * Performs a calendar search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
-     *  @param query
+     * @param query
      * @param postFilter
      * @param sort
      * @param limitOffset   @return

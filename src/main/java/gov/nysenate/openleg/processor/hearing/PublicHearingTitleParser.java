@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 @Service
 public class PublicHearingTitleParser
 {
-
     private static final Pattern TITLE = Pattern.compile(
             ".*(?<prefix>" +
             "((NEW YORK STATE |PUBLIC )?FORUM/TOWN HALL" +
@@ -23,17 +22,6 @@ public class PublicHearingTitleParser
             "|-{10,})[ :]*)" +
             "(?<title>.+?) " + // Title body
             "(-{10,})"); // Marks the end of title.
-
-
-
-static final Pattern oold_title = Pattern.compile("(?<title>" +
-        "((NEW YORK STATE )?FORUM/TOWN HALL" +
-        "|PUBLIC (HEARING|FORUM)" +
-        "|ROUNDTABLE DISCUSSION" +
-        "|A NEW YORK STATE SENATE HEARING" +
-        "|NEW YORK STATE \\d{4})" +
-        ".+?) " + // Title body
-        "*(?=-{10,})"); // Marks the end of title.)
 
     /**
      * Extracts the PublicHearing title from the first page of the PublicHearingFile.

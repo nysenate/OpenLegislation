@@ -32,10 +32,10 @@ public class LawProcessor extends AbstractDataProcessor
     private static final Logger logger = LoggerFactory.getLogger(LawProcessor.class);
 
     /** The law files are most likely sent in CP850 encoding. */
-    private static Charset LAWFILE_CHARSET = Charset.forName("CP850");
+    private static final Charset LAWFILE_CHARSET = Charset.forName("CP850");
 
     /** Pattern for law doc headers.  */
-    private static Pattern lawHeader =
+    private static final Pattern lawHeader =
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
 
     @Autowired private LawDataService lawDataService;
@@ -173,9 +173,8 @@ public class LawProcessor extends AbstractDataProcessor
             String line = fileItr.next();
             headerMatcher = lawHeader.matcher(line);
             if (headerMatcher.matches()) {
-                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
+                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId()))
                     rawDocList.add(block);
-                }
                 block = new LawBlock();
                 block.setHeader(line);
                 block.setLawId(headerMatcher.group(2).trim());
@@ -187,13 +186,13 @@ public class LawProcessor extends AbstractDataProcessor
                 block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
             }
             else {
-                if (block == null) throw new LawParseException("No doc header received prior to line: " + line);
+                if (block == null)
+                    throw new LawParseException("No doc header received prior to line: " + line);
                 block.getText().append(line).append("\\n");
             }
         }
-        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
+        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId()))
             rawDocList.add(block);
-        }
         return rawDocList;
     }
 }

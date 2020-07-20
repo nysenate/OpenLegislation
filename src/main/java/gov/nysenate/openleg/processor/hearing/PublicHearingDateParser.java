@@ -31,7 +31,6 @@ public class PublicHearingDateParser
 
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
-
     private final static String SINGLE_LINE_DATE = "(\\w+ \\d+, \\d+)(, at \\d+:\\d+ " + AM_PM + ")";
 
     /**

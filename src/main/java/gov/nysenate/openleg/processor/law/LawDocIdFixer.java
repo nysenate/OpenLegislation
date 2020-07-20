@@ -16,7 +16,7 @@ public class LawDocIdFixer
     private static final Logger logger = LoggerFactory.getLogger(LawDocIdFixer.class);
 
     /** Hacks to fix various document id inconsistencies. */
-    private static HashMap<String, String> docIdReplacements = new HashMap<>();
+    private static final HashMap<String, String> docIdReplacements = new HashMap<>();
     static {
         docIdReplacements.put("PARA43", "PARTGA43");
         docIdReplacements.put("PENA470", "PENP4TXA470");
@@ -31,7 +31,7 @@ public class LawDocIdFixer
     }
 
     /** Ignore these document ids since they cause issues with constructing the trees properly. */
-    private static Set<String> ignoreDocIds = new HashSet<>();
+    private static final Set<String> ignoreDocIds = new HashSet<>();
     static {
         ignoreDocIds.add("SOSA2-A*");
         ignoreDocIds.add("SOS41*");
@@ -44,7 +44,6 @@ public class LawDocIdFixer
         if (!ret.equals(documentId))
             logger.info("Doc Id Replacement made from {} to {}", documentId, ret);
         return ret;
-
     }
 
     public static boolean ignoreDocument(String documentId) {

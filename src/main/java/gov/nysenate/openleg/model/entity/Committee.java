@@ -8,11 +8,7 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class Committee extends BaseLegislativeContent implements Serializable
 {
@@ -108,12 +104,6 @@ public class Committee extends BaseLegislativeContent implements Serializable
     public int hashCode() {
         return Objects.hash(name, chamber, reformed, location, meetDay, meetTime, meetAltWeek, meetAltWeekText, members);
     }
-
-    public static final Comparator<Committee> BY_DATE = (left, right) ->
-        ComparisonChain.start()
-            .compare(left.session, right.session)
-            .compare(left.publishedDateTime, right.publishedDateTime)
-            .result();
 
     /** --- Helper functions --- */
 
@@ -222,7 +212,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
     }
 
     public List<CommitteeMember> getMembers() {
-        return members.stream().collect(Collectors.toList());
+        return new ArrayList<>(members);
     }
 
     public void setMembers(Collection<CommitteeMember> members) {
