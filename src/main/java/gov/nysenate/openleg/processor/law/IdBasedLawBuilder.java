@@ -2,8 +2,6 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -11,18 +9,9 @@ import java.util.regex.Matcher;
 /**
  * Constructs document hierarchies using document id prefixes.
  */
-public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
-{
-    private static final Logger logger = LoggerFactory.getLogger(IdBasedLawBuilder.class);
-
+public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder {
     /** Stack of the current parent nodes, used to determine hierarchy. */
     protected Stack<LawTreeNode> parentNodes = new Stack<>();
-
-    /** --- Constructors --- */
-
-    public IdBasedLawBuilder(LawVersionId lawVersionId) {
-        super(lawVersionId);
-    }
 
     public IdBasedLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
@@ -43,10 +32,11 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
     protected String determineHierarchy(LawBlock block) {
         if (block.getDocumentId().startsWith(CITY_TAX_STR + "P"))
             return block.getDocumentId().replace(CITY_TAX_STR, "");
-        String blockLocID = block.getLocationId();
+        String blockLocID = block.getDocumentId().substring(3);
         while (!currParent().isRootNode()) {
             String parentLocID = currParent().getLocationId();
             if (StringUtils.startsWith(blockLocID, parentLocID)) {
+                // Remove parent location ID.
                 String trimLocId = StringUtils.removeStart(blockLocID, parentLocID);
                 LawDocumentType parentType = currParent().getDocType();
                 Matcher blockMatch = locationPattern.matcher(trimLocId);
@@ -63,7 +53,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
         // Handles special GCT sections.
         if (node.getDocumentId().matches(CITY_TAX_STR.substring(0, 6) + "(B|AP[^1].*)")) {
             parentNodes.pop();
-            if (node.getLocationId().length() == 4)
+            if (node.getLocationId().endsWith("B"))
                 parentNodes.pop();
         }
         if (currParent() != null)
@@ -87,11 +77,6 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      * Peek at the parent node stack which holds the current parent.
     */
     protected LawTreeNode currParent() {
-       if (!parentNodes.empty()) {
-           return parentNodes.peek();
-       }
-       else {
-           return null;
-       }
+        return parentNodes.empty() ? null : parentNodes.peek();
     }
 }

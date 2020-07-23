@@ -13,7 +13,8 @@ public class LawDocInfoView implements ViewObject
     protected String locationId;
     protected String title;
     protected String docType;
-    protected String docTypeId;
+    // TODO: should really be docTypeId.
+    protected String docLevelId;
     protected LocalDate activeDate;
 
     public LawDocInfoView(LawDocInfo docInfo) {
@@ -23,7 +24,7 @@ public class LawDocInfoView implements ViewObject
             this.locationId = docInfo.getLocationId();
             this.title = (docInfo.getTitle() != null) ? docInfo.getTitle().replaceAll("\\\\n", " ") : null;
             this.docType = docInfo.getDocType().name();
-            this.docTypeId = docInfo.getDocTypeId();
+            this.docLevelId = docInfo.getDocTypeId();
             this.activeDate = docInfo.getPublishedDate();
         }
     }
@@ -53,8 +54,8 @@ public class LawDocInfoView implements ViewObject
         return docType;
     }
 
-    public String getDocTypeId() {
-        return docTypeId;
+    public String getDocLevelId() {
+        return docLevelId;
     }
 
     public LocalDate getActiveDate() {

@@ -12,15 +12,14 @@ import java.util.regex.Pattern;
 
 import static gov.nysenate.openleg.model.law.LawDocumentType.*;
 
-public abstract class AbstractLawBuilder implements LawBuilder
-{
+public abstract class AbstractLawBuilder implements LawBuilder {
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
+    protected static final Pattern locationPattern = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
-    private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
+    private static final Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
     private static final String ROOT = "ROOT";
 
@@ -33,13 +32,16 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Document ID for special tax law. */
     private static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
 
+    /** Location Id for Constitution Preamble. */
+    private static final String PREAMBLE_LOC_ID = "AA1";
+
     /** Special law IDs. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
-    private static final String A_RULES = LawChapterCode.CMA.toString();
-    private static final String S_RULES = LawChapterCode.CMS.toString();
+    private static final String A_RULES = LawChapterCode.CMA.name();
+    private static final String S_RULES = LawChapterCode.CMS.name();
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
-    private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
+    private static final Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
     static {
         expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
         expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
@@ -61,7 +63,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     }
 
     /** A law version id that is obtained from the law blocks. */
-    private LawVersionId lawVersionId;
+    private final LawVersionId lawVersionId;
 
     /** The root node in the law tree. */
     protected LawTreeNode rootNode = null;
@@ -75,14 +77,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** A sequence number is used to maintain the order of the nodes. */
     protected int sequenceNo = 0;
 
-    /** --- Constructors --- */
-
-    public AbstractLawBuilder(LawVersionId lawVersionId) {
+    protected AbstractLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         this.lawVersionId = lawVersionId;
-    }
-
-    public AbstractLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        this(lawVersionId);
         if (previousTree != null) {
             this.rootNode = previousTree.getRootNode();
             this.lawInfo = previousTree.getLawInfo();
@@ -100,7 +96,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         if (lawID.equals(CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
         if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
-            return new RulesBuilder(lawVersionId, previousTree);
+            return new RulesLawBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawID))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
         return new IdBasedLawBuilder(lawVersionId, previousTree);
@@ -136,15 +132,14 @@ public abstract class AbstractLawBuilder implements LawBuilder
     public void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
-        String lawId = lawDoc.getLawId();
 
         // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
         if (rootNode == null) {
-            logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawId);
+            logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
             LawDocument chapterDoc;
             // If the block seems to be a chapter node, we'll treat this document as the root.
             Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
-            if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
+            if (specialChapter.matches() || isChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
                 String docTypeId = (specialChapter.matches() ? "" : lawDoc.getLocationId().replace("-CH", ""));
                 lawDoc.setDocTypeId(docTypeId);
@@ -152,54 +147,19 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 isRootDoc = true;
             }
             // Otherwise we have to create our own root node and process the current document as a child of it.
-            else {
+            else
                 chapterDoc = createRootDocument(block, priorRoot);
-            }
             lawInfo = deriveLawInfo(chapterDoc.getLawId(), isRootDoc ? chapterDoc.getDocTypeId() : "");
             addRootDocument(chapterDoc, isNewDoc);
         }
 
-        // If this block is not a root doc,
         if (!isRootDoc) {
-            // Section docs are easy, since their location ids are simply
-            // numbers (if it's not the Constitution) and they do not have
-            // any children.
-            if (isLikelySectionDoc(lawDoc)) {
-                logger.debug("Processing section {}", lawDoc.getDocumentId());
-                lawDoc.setDocType(LawDocumentType.SECTION);
-                String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR.substring(3) + "-", "");
-                if (lawId.equals(CONS_STR) || lawId.equals(A_RULES) || lawId.equals(S_RULES))
-                    docTypeId = docTypeId.replaceAll("[AR]\\d+S", "");
-                lawDoc.setDocTypeId(docTypeId);
-                if (isNewDoc)
-                    lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-                addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
-            }
-
-            else {
-                String specificLocId = determineHierarchy(block);
-                Matcher locMatcher = locationPattern.matcher(specificLocId);
-                if (specificLocId.equals("AA1")) {
-                    lawDoc.setDocType(PREAMBLE);
-                    lawDoc.setDocTypeId("");
-                }
-                else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
-                    LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
-                    // GCM has some Subparts labeled with an S.
-                    if (lawId.equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
-                        type = SUBPART;
-                    lawDoc.setDocType(type);
-                    String docTypeId = locMatcher.group(2);
-                    lawDoc.setDocTypeId(docTypeId);
-                }
-                else {
-                    if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
-                        logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
-                    lawDoc.setDocType(LawDocumentType.MISC);
-                    lawDoc.setDocTypeId(block.getLocationId());
-                }
-                addDocument(lawDoc, isNewDoc);
-            }
+            if (isNodeListEmpty())
+                throw new IllegalStateException("Failed to add node because it's parent node was not added!");
+            if (isSectionDoc(lawDoc))
+                processSection(lawDoc, isNewDoc);
+            else
+                processNonSection(lawDoc, block, isNewDoc);
         }
         setLawDocTitle(lawDoc, isNewDoc);
     }
@@ -264,7 +224,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         for (String docId : StringUtils.split(masterDoc, "\\n")) {
             // Apply doc id replacements if necessary
             final String resolvedDocId = LawDocIdFixer.applyReplacement(docId);
-            // Repeats DocIDs should also be ignored.
+            // Repeat DocIDs should also be ignored.
             if (processed.contains(resolvedDocId) || LawDocIdFixer.ignoreDocument(docId))
                 continue;
             LawBlock block = new LawBlock();
@@ -320,7 +280,6 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
     private void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
-        if (rootDoc == null) throw new IllegalArgumentException("Root document cannot be null!");
         sequenceNo = 0;
         rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
         if (isNewDoc)
@@ -336,12 +295,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
     protected void addDocument(LawDocument lawDoc, boolean isNewDoc) {
-        if (isNodeListEmpty()) {
-            throw new IllegalStateException("Failed to add node because it's parent node was not added!");
-        }
-        if (isNewDoc) {
+        if (isNewDoc)
             lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-        }
         LawTreeNode node = new LawTreeNode(lawDoc, lawDoc.getDocType() == LawDocumentType.PREAMBLE ? 2 : ++sequenceNo);
         addChildNode(node);
     }
@@ -377,28 +332,28 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param doc LawDocument
      * @return boolean
      */
-    private boolean isLikelyChapterDoc(LawDocument doc) {
+    private static boolean isChapterDoc(LawDocument doc) {
         String locId = doc.getLocationId();
         return (locId.startsWith("-CH") ||
-                (!locId.equals("1") && !locId.equals("AA1") &&
+                (!locId.equals("1") && !locId.equals(PREAMBLE_LOC_ID) &&
                         !locationPattern.matcher(locId).matches()));
     }
 
     /**
      * Section documents typically just have a location id with the number of the section (except in the constitution).
      * All other document types start with a character or symbol.
-     *
      * @param lawDoc LawDocument
-     * @return boolean - true if this block is most likely a section
+     * @return boolean - true if this block is a section.
      */
-    protected boolean isLikelySectionDoc(LawDocument lawDoc) {
+    private static boolean isSectionDoc(LawDocument lawDoc) {
         String docID = lawDoc.getDocumentId();
         String lawID = lawDoc.getLawId();
+        String locId = lawDoc.getLocationId();
         if (docID.matches(CITY_TAX_STR + ".+"))
             return !docID.contains("P");
         if (lawID.equals(CONS_STR) || lawID.equals(A_RULES) || lawID.equals(S_RULES))
-            return docID.contains("S");
-        return Character.isDigit(lawDoc.getLocationId().charAt(0));
+            return locId.matches(".*S\\d+-?[A-Z]?");
+        return Character.isDigit(locId.charAt(0));
     }
 
     /**
@@ -408,11 +363,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * If the previous root exists and was a dummy parent, reuse it.
      * @param block LawBlock
      */
-    protected LawDocument createRootDocument(LawBlock block, LawTreeNode priorRoot) {
+    private LawDocument createRootDocument(LawBlock block, LawTreeNode priorRoot) {
         // Reuse the old root doc if it was a dummy
-        if (priorRoot != null && priorRoot.getLawDocInfo().isDummy()) {
+        if (priorRoot != null && priorRoot.getLawDocInfo().isDummy())
             return new LawDocument(priorRoot.getLawDocInfo(), "");
-        }
 
         LawDocument dummyParent = new LawDocument();
         dummyParent.setDummy(true);
@@ -429,5 +383,55 @@ public abstract class AbstractLawBuilder implements LawBuilder
 
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
+    }
+
+    /**
+     * Section docs are easy, since their location ids are simply numbers (if it's not the
+     * Constitution) and they do not have any children.
+     * @param lawDoc to process.
+     * @param isNewDoc if the document is new or already exists.
+     */
+    private void processSection(LawDocument lawDoc, boolean isNewDoc) {
+        logger.debug("Processing section {}", lawDoc.getDocumentId());
+        String lawId = lawDoc.getLawId();
+        lawDoc.setDocType(LawDocumentType.SECTION);
+        String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR.substring(3) + "-", "");
+        if (lawId.equals(CONS_STR) || lawId.equals(A_RULES) || lawId.equals(S_RULES))
+            docTypeId = docTypeId.replaceAll("[AJR]+\\d+S", "");
+        lawDoc.setDocTypeId(docTypeId);
+        if (isNewDoc)
+            lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+        addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
+    }
+
+    /**
+     * Processes documents that aren't sections, with various exceptions to normal parsing rules.
+     * @param lawDoc to process.
+     * @param block to pull some information from.
+     * @param isNewDoc if the document is new or already exists.
+     */
+    private void processNonSection(LawDocument lawDoc, LawBlock block, boolean isNewDoc) {
+        String specificLocId = determineHierarchy(block);
+        Matcher locMatcher = locationPattern.matcher(specificLocId);
+        if (specificLocId.equals(PREAMBLE_LOC_ID)) {
+            lawDoc.setDocType(PREAMBLE);
+            lawDoc.setDocTypeId("");
+        }
+        else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
+            LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
+            // GCM has some Subparts labeled with an S.
+            if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
+                type = SUBPART;
+            lawDoc.setDocType(type);
+            String docTypeId = locMatcher.group(2);
+            lawDoc.setDocTypeId(docTypeId);
+        }
+        else {
+            if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
+                logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
+            lawDoc.setDocType(LawDocumentType.MISC);
+            lawDoc.setDocTypeId(block.getLocationId());
+        }
+        addDocument(lawDoc, isNewDoc);
     }
 }

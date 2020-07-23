@@ -52,7 +52,7 @@ public class SenateSiteLawDoc {
                 .setTitle(lawDocView.getTitle())
                 .setActiveDate(Optional.ofNullable(lawDocView.getActiveDate())
                         .map(LocalDate::atStartOfDay).orElse(null))
-                .setDocLevelId(lawDocView.getDocTypeId())
+                .setDocLevelId(lawDocView.getDocLevelId())
                 .setDocType(lawDocView.getDocType())
                 .setLawId(lawDocView.getLawId())
                 .setLawName(lawDocView.getLawName())
