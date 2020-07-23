@@ -78,6 +78,7 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
                     committee.setPublishedDateTime(legDataFragment.getPublishedDateTime());
                     committee.setChamber(chamber);
                     processCommittee(committeeNode, committee);
+                    committee.setModifiedDateTime(legDataFragment.getPublishedDateTime());
                     committeeDataService.saveCommittee(committee, legDataFragment);
                 }
             }

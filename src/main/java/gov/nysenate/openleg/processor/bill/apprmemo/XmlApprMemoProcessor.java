@@ -95,6 +95,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements LegDa
             BillId billId = approvalMessage.getBillId();
             Bill bill = getOrCreateBaseBill(billId, fragment);
             bill.setApprovalMessage(null);
+            bill.setModifiedDateTime(fragment.getPublishedDateTime());
             billIngestCache.set(bill.getBaseBillId(), bill, fragment);
         } catch (ApprovalNotFoundException ignored) {
             // if the approval doesn't exist, we can't remove it.
@@ -127,6 +128,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements LegDa
         BillId billId = new BillId(billhse + billno, year);
         Bill bill = getOrCreateBaseBill(billId, fragment);
         applyMemoText(cdata, bill, apprNo, year);
+        bill.setModifiedDateTime(fragment.getPublishedDateTime());
         billIngestCache.set(bill.getBaseBillId(), bill, fragment);
     }
 

@@ -60,7 +60,7 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements LegDat
             BillAmendment amendment = basebill.getAmendment(version);
             amendment.setMemo(memoText);
 
-
+            basebill.setModifiedDateTime(fragment.getPublishedDateTime());
             billIngestCache.set(basebill.getBaseBillId(), basebill, fragment);
             checkIngestCache();
         } catch (IOException | SAXException | XPathExpressionException e) {

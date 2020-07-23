@@ -64,6 +64,7 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements LegDat
             } else if (action.equals("remove")) {
                 baseBill.setLDBlurb("");
             }
+            baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
 
         } catch (IOException | SAXException | XPathExpressionException e) {

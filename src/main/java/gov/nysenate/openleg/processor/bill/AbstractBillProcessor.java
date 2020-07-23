@@ -161,7 +161,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
             baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
-            baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             setModifiedDateTime(baseBill, fragment);
         }
     }
