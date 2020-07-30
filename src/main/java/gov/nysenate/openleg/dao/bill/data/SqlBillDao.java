@@ -191,6 +191,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         updateApprovalMessage(bill, legDataFragment);
     }
 
+    public void updateBillAmendText(BillAmendment amend) {
+        ImmutableParams params = getBillIdParams(amend.getBillId());
+        updateBillTextDiff(amend, params);
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
@@ -749,6 +754,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                         rs.getInt("bill_session_year"),
                         rs.getString("bill_amend_version")
                 ));
+    }
+
+    @Override
+    public String getXmlFullText(BillId billId) {
+        ImmutableParams params = getBillIdParams(billId);
+        return jdbcNamed.queryForObject(SqlBillQuery.SELECT_XML_FULL_TEXT.getSql(schema()), params, String.class);
     }
 
     /* --- Helper Classes --- */
