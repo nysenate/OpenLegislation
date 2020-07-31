@@ -107,8 +107,4 @@ public interface BillDao
      * @return {@link List<BillId>}
      */
     List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear);
-
-    String getXmlFullText(BillId billId);
-
-    void updateBillAmendText(BillAmendment amend);
 }
