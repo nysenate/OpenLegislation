@@ -21,7 +21,7 @@ public interface TranscriptDao
      * @param limOff LimitOffset
      * @return List<TranscriptId>
      */
-    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff);
+    List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff);
 
     /**
      * Retrieves a Transcript via its TranscriptId.
@@ -31,7 +31,7 @@ public interface TranscriptDao
      * @see gov.nysenate.openleg.model.transcript.TranscriptId
      * @see Transcript
      */
-    public Transcript getTranscript(TranscriptId transcriptId);
+    Transcript getTranscript(TranscriptId transcriptId);
 
     /**
      * Updates the backing store with the given instance or inserts it
@@ -40,7 +40,7 @@ public interface TranscriptDao
      * @param transcript The {@link Transcript} to update.
      * @param transcriptFile The {@link TranscriptFile} which updated the Transcript.
      */
-    public void updateTranscript(Transcript transcript, TranscriptFile transcriptFile);
+    void updateTranscript(Transcript transcript, TranscriptFile transcriptFile);
 
     /**
      * Fetches new and updated transcripts from a specified date range.
@@ -49,6 +49,6 @@ public interface TranscriptDao
      * @param limOff LimitOffset - Restrict the result set.
      * @return PaginatedList containing TranscriptUpdateToken's
      */
-    public PaginatedList<TranscriptUpdateToken> transcriptsUpdatedDuring(Range<LocalDateTime> dateRange,
+    PaginatedList<TranscriptUpdateToken> transcriptsUpdatedDuring(Range<LocalDateTime> dateRange,
                                                                 SortOrder dateOrder, LimitOffset limOff);
 }

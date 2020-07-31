@@ -27,7 +27,7 @@ public class CalendarScraper extends LRSScraper{
     private File calendarDirectory;
 
     @PostConstruct
-    public void init() throws IOException{
+    public void init() {
         this.calendarDirectory = new File(environment.getScrapedStagingDir(), "calendar");
         try {
             FileUtils.forceMkdir(calendarDirectory);
@@ -104,7 +104,7 @@ public class CalendarScraper extends LRSScraper{
                 FileIOUtils.write(outfile, contents);
             }
         }
-        ArrayList<File> list = new ArrayList<File>();
+        ArrayList<File> list = new ArrayList<>();
         list.add(outfile);
         return 1;
     }

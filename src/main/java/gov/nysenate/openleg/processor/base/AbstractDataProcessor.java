@@ -131,7 +131,7 @@ public abstract class AbstractDataProcessor
         }
         else {
             try {
-                baseBill = billDataService.getBill(baseBillId, EnumSet.allOf(BillTextFormat.class));
+                baseBill = billDataService.getBill(baseBillId);
             }
             catch (BillNotFoundEx ex) {
                 // Create the bill since it does not exist and add it to the ingest cache.
@@ -169,7 +169,7 @@ public abstract class AbstractDataProcessor
                     BillAmendment activeAmendment = baseBill.getActiveAmendment();
                     billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
                     billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
-                    billAmendment.setLaw(activeAmendment.getLaw());
+                    billAmendment.setLawCode(activeAmendment.getLawCode());
                     billAmendment.setLawSection(activeAmendment.getLawSection());
                 }
             }
@@ -199,10 +199,10 @@ public abstract class AbstractDataProcessor
 
 
     /**
-     * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
+     * Retrieves a member from the LBDC short name.  Throws a MemberNotFoundEx if no member can be retrieved.
      */
     protected SessionMember getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
-        return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
+        return memberService.getSessionMemberByShortName(shortName, sessionYear, chamber);
     }
 
     /**

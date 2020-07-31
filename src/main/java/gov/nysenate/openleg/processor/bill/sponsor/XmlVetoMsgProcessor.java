@@ -105,6 +105,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements LegDat
 
                 baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
             }
+            baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
             checkIngestCache();
 

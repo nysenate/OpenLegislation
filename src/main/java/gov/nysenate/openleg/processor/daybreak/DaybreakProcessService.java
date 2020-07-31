@@ -20,14 +20,14 @@ public interface DaybreakProcessService extends ProcessService
      *
      * @return int - the number of collated daybreak sets
      */
-    public int collateDaybreakReports();
+    int collateDaybreakReports();
 
     /**
      * Retrieves DaybreakFragments that are pending processing.
      *
      * @return List<DaybreakFragment>
      */
-    public List<DaybreakFragment> getPendingDaybreakFragments();
+    List<DaybreakFragment> getPendingDaybreakFragments();
 
     /**
      * Parses the given DaybreakFragments and stores them as DaybreakBills
@@ -35,13 +35,13 @@ public interface DaybreakProcessService extends ProcessService
      * @param fragments List<DaybreakFragment>
      * @return the number of processed fragments
      */
-    public int processFragments(List<DaybreakFragment> fragments);
+    int processFragments(List<DaybreakFragment> fragments);
 
     /**
      * Retrieves and processes all DaybreakFragments marked as pending processing
      * @return the number of processd fragments
      */
-    public int processPendingFragments();
+    int processPendingFragments();
 
     /**
      * Sets the pending processing flag for the given fragment id in the store to the given boolean
@@ -49,5 +49,5 @@ public interface DaybreakProcessService extends ProcessService
      * @param fragmentId DaybreakBillId
      * @param pendingProcessing boolean
      */
-    public void updatePendingProcessing(DaybreakBillId fragmentId, boolean pendingProcessing);
+    void updatePendingProcessing(DaybreakBillId fragmentId, boolean pendingProcessing);
 }

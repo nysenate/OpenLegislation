@@ -22,14 +22,14 @@ public interface AgendaUpdatesDao
      * @param limOff LimitOffset - Restrict the result set
      * @return PaginatedList<UpdateToken<AgendaId>>
      */
-    public PaginatedList<UpdateToken<AgendaId>> getUpdates(
+    PaginatedList<UpdateToken<AgendaId>> getUpdates(
             Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves update digests during a given date range with an optional filter.
      * @see #getUpdates for param details.
      */
-    public PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdates(
+    PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdates(
             Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limOff);
 
     /**
@@ -40,6 +40,6 @@ public interface AgendaUpdatesDao
      * @see #getUpdates for other param details.
      * @return PaginatedList<UpdateDigest<AgendaId>>
      */
-    public PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdatesForAgenda(
+    PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdatesForAgenda(
         AgendaId agendaId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limOff);
 }

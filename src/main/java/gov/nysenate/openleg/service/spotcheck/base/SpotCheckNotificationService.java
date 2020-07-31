@@ -77,7 +77,7 @@ public class SpotCheckNotificationService {
                 .append("\n");
 
         report.getMismatchStatusTypeCounts(false).forEach((status, typeCounts) -> {
-            long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
+            long totalTypeCounts = typeCounts.values().stream().reduce(0L, Long::sum);
             messageBuilder.append(status)
                     .append(": ")
                     .append(totalTypeCounts)

@@ -78,6 +78,7 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
                     committee.setPublishedDateTime(legDataFragment.getPublishedDateTime());
                     committee.setChamber(chamber);
                     processCommittee(committeeNode, committee);
+                    committee.setModifiedDateTime(legDataFragment.getPublishedDateTime());
                     committeeDataService.saveCommittee(committee, legDataFragment);
                 }
             }
@@ -139,12 +140,12 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
             Node memberNode = committeeMembersNodes.item(i);
             if (memberNode.getNodeName().equals("member")) {
                 String shortName = xml.getString("name/text()", memberNode);
-                SessionMember sessionMember = memberService.getMemberByShortNameEnsured(
+                SessionMember sessionMember = memberService.getSessionMemberByShortName(
                         shortName, committee.getSession(), committee.getChamber());
 
                 CommitteeMember committeeMember = new CommitteeMember();
                 committeeMember.setSequenceNo(Integer.parseInt(xml.getString("@seqno", memberNode)));
-                committeeMember.setMember(sessionMember);
+                committeeMember.setSessionMember(sessionMember);
                 committeeMember.setMajority(
                         xml.getString("memberlist/text()", memberNode)
                                 .trim()

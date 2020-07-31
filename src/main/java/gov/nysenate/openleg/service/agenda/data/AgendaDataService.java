@@ -19,7 +19,7 @@ public interface AgendaDataService
      * @return Agenda
      * @throws AgendaNotFoundEx - If an agenda with the given agendaId could not be found.
      */
-    public Agenda getAgenda(AgendaId agendaId) throws AgendaNotFoundEx;
+    Agenda getAgenda(AgendaId agendaId) throws AgendaNotFoundEx;
 
     /**
      * Retreives an agenda for the week of a date
@@ -27,7 +27,7 @@ public interface AgendaDataService
      * @return Agenda
      * @throws AgendaNotFoundEx - If no such agenda can be found
      */
-    public Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx;
+    Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx;
 
     /**
      * Retrieves a list of agenda ids for a given year.
@@ -36,7 +36,7 @@ public interface AgendaDataService
      * @param idOrder SortOrder
      * @return List<AgendaId>
      */
-    public List<AgendaId> getAgendaIds(int year, SortOrder idOrder);
+    List<AgendaId> getAgendaIds(int year, SortOrder idOrder);
 
     /**
      * Saves the Agenda into the persistence layer. If a new Agenda reference is
@@ -48,7 +48,7 @@ public interface AgendaDataService
      * @param legDataFragment LegDataFragment
      * @param postUpdateEvent boolean
      */
-    public void saveAgenda(Agenda agenda, LegDataFragment legDataFragment, boolean postUpdateEvent);
+    void saveAgenda(Agenda agenda, LegDataFragment legDataFragment, boolean postUpdateEvent);
 
     /**
      * Deletes an Agenda from the persistence layer that matches the given agenda id.
@@ -56,5 +56,5 @@ public interface AgendaDataService
      *
      * @param agendaId AgendaId - Remove agenda that matches this id.
      */
-    public void deleteAgenda(AgendaId agendaId);
+    void deleteAgenda(AgendaId agendaId);
 }

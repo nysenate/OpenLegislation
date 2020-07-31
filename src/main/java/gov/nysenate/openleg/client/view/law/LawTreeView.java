@@ -28,12 +28,12 @@ public class LawTreeView implements ViewObject
             info = new LawInfoView(lawTree.getLawInfo());
             publishedDates = lawTree.getPublishedDates();
             if (fromLocation != null && !fromLocation.isEmpty()) {
-                Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.lawId + fromLocation, false);
+                Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.getLawId() + fromLocation, false);
                 if (fromNode.isPresent()) {
                     documents = new LawNodeView(fromNode.get(), depth, docMap);
                 }
                 else {
-                    throw new LawDocumentNotFoundEx(info.lawId, LocalDate.now(),
+                    throw new LawDocumentNotFoundEx(info.getLawId(), LocalDate.now(),
                             "The location " + fromLocation + " does not exist for this law tree,");
                 }
             }

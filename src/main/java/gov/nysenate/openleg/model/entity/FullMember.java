@@ -18,12 +18,11 @@ public class FullMember extends Member {
     protected final TreeMultimap<SessionYear, SessionMember> sessionMemberMap = TreeMultimap.create();
 
     public FullMember(Collection<SessionMember> sessionMembers) {
-        super(sessionMembers.stream().max(SessionMember::compareTo).orElse(null));
+        super(sessionMembers.stream().max(SessionMember::compareTo).orElse(new SessionMember()).member);
         sessionMembers.stream()
                 .peek(sm -> {
-                    if (sm.memberId != this.memberId) {
+                    if (sm.member.memberId != this.memberId)
                         throw new IllegalArgumentException("All supplied session members must have the same member id");
-                    }
                 })
                 .forEach(sm -> sessionMemberMap.put(sm.getSessionYear(), sm));
     }

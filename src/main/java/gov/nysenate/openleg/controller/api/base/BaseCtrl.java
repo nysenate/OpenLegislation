@@ -103,8 +103,8 @@ public abstract class BaseCtrl
     protected LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
         int limit = defaultLimit;
         int offset = 0;
-        if (webRequest.getParameter("limit") != null) {
-            String limitStr = webRequest.getParameter("limit");
+        String limitStr = webRequest.getParameter("limit");
+        if (limitStr != null) {
             if (limitStr.equalsIgnoreCase("all")) {
                 limit = 0;
             }
@@ -128,7 +128,7 @@ public abstract class BaseCtrl
      * @param dateString The parameter value to be parsed
      * @param parameter The name of the parameter.  Used to generate the exception
      * @return LocalDate
-     * @throws InvalidRequestParamEx
+     * @throws InvalidRequestParamEx if the date could not be parsed.
      */
     protected LocalDate parseISODate(String dateString, String parameter) {
         try {
@@ -147,7 +147,7 @@ public abstract class BaseCtrl
      * @param dateTimeString The parameter value to be parsed
      * @param parameterName The name of the parameter.  Used to generate the exception
      * @return LocalDateTime
-     * @throws InvalidRequestParamEx
+     * @throws InvalidRequestParamEx if the datetime could not be parsed.
      */
     protected LocalDateTime parseISODateTime(String dateTimeString, String parameterName) {
         try {
@@ -174,7 +174,7 @@ public abstract class BaseCtrl
      */
     protected LocalDateTime parseISODateTime(String dateTimeString, LocalDateTime defaultValue) {
         try {
-            return parseISODateTime(dateTimeString, "dont matter");
+            return parseISODateTime(dateTimeString, "don't matter");
         } catch (InvalidRequestParamEx ex) {
             return defaultValue;
         }
@@ -300,31 +300,31 @@ public abstract class BaseCtrl
      * @param <T> T
      * @return Range<T>
      */
-    protected <T extends Comparable> Range<T> getRange(T lower, T upper, String fromName, String upperName,
+    protected <T extends Comparable<?>> Range<T> getRange(T lower, T upper, String fromName, String upperName,
                                                                     BoundType lowerType, BoundType upperType) {
         try {
             return Range.range(lower, lowerType, upper, upperType);
         } catch (IllegalArgumentException ex) {
             String rangeString = (lowerType == BoundType.OPEN ? "(" : "[") + lower + " - " +
                     upper + (upperType == BoundType.OPEN ? ")" : "]");
-            throw new InvalidRequestParamEx( rangeString, fromName + ", " + upperName, "range",
+            throw new InvalidRequestParamEx(rangeString, fromName + ", " + upperName, "range",
                                             "Range start must not exceed range end");
         }
     }
 
-    protected <T extends Comparable> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
+    protected <T extends Comparable<?>> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.OPEN);
     }
 
-    protected <T extends Comparable> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
+    protected <T extends Comparable<?>> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.CLOSED);
     }
 
-    protected <T extends Comparable> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
+    protected <T extends Comparable<?>> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.OPEN);
     }
 
-    protected <T extends Comparable> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
+    protected <T extends Comparable<?>> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.CLOSED);
     }
 
@@ -335,7 +335,7 @@ public abstract class BaseCtrl
         String intString = request.getParameter(paramName);
         try {
             return Integer.parseInt(intString);
-        } catch (NumberFormatException ex) {
+        } catch (NullPointerException | NumberFormatException ex) {
             throw new InvalidRequestParamEx(intString, paramName, "integer", "integer");
         }
     }
@@ -377,7 +377,7 @@ public abstract class BaseCtrl
     private <T extends Enum<T>> InvalidRequestParamEx getEnumParamEx(Class<T> enumType, Function<T, String> valueFunction,
                                                         String paramName, String paramValue) {
         throw new InvalidRequestParamEx(paramValue, paramName, "string",
-                Arrays.asList(enumType.getEnumConstants()).stream()
+                Arrays.stream(enumType.getEnumConstants())
                         .map(valueFunction)
                         .reduce("", (a, b) -> (StringUtils.isNotBlank(a) ? a + "|" : "") + b));
     }
@@ -414,7 +414,7 @@ public abstract class BaseCtrl
     protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
                                                             Function<T, String> valueFunction,
                                                             String paramName, String paramValue) {
-        T result = getEnumParameterByValue(enumType, mapFunction, paramValue, null);
+        T result = getEnumParameterByValue(mapFunction, paramValue, null);
         if (result != null) {
             return result;
         }
@@ -424,7 +424,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
      * returns a default value if the map function returns null
      */
-    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType,Function<String, T> mapFunction,
+    protected <T extends Enum<T>> T getEnumParameterByValue(Function<String, T> mapFunction,
                                                             String paramValue, T defaultValue) {
         T result = mapFunction.apply(paramValue);
         return result != null ? result : defaultValue;

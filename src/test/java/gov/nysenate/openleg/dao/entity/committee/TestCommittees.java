@@ -33,9 +33,9 @@ public class TestCommittees {
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
             CommitteeMember cm = new CommitteeMember();
-            SessionMember m = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
-            cm.setMember(m);
-            cm.setMajority(m.getMemberId()%2==0);
+            SessionMember sm = memberService.getSessionMemberById((int)triple[1], new SessionYear((int)triple[2]));
+            cm.setSessionMember(sm);
+            cm.setMajority(sm.getMember().getMemberId()%2==0);
             cm.setTitle(CommitteeMemberTitle.MEMBER);
             return cm;
         } catch (MemberNotFoundEx memberNotFoundEx) {
@@ -110,7 +110,7 @@ public class TestCommittees {
         return createdCommittees.get(name);
     }
     public List<Committee> getCommittees(){
-        return new ArrayList<Committee>(createdCommittees.values());
+        return new ArrayList<>(createdCommittees.values());
     }
     public void putCommittee(String name, Committee committee){
         createdCommittees.put(name, committee);

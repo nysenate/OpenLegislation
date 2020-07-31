@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
+import gov.nysenate.openleg.util.RomanNumerals;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
@@ -31,9 +32,9 @@ public class LawTitleParser
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
-    private static final String docTypeString = ".*?%s *(%s).*";
+    private final static String docTypeString = ".*?%s *(%s).*";
     /** Pattern to match a full docTypeId, and and parse out the starting number. */
-    private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
+    private final static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
     private final static int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
@@ -42,18 +43,6 @@ public class LawTitleParser
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     protected final static String NO_TITLE = "No title";
-
-    /** For use in Roman numeral conversion. */
-    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
-    static {
-        NUMERALS.put(50, "L");
-        NUMERALS.put(40, "XL");
-        NUMERALS.put(10, "X");
-        NUMERALS.put(9, "IX");
-        NUMERALS.put(5, "V");
-        NUMERALS.put(4, "IV");
-        NUMERALS.put(1, "I");
-    }
 
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
@@ -84,7 +73,7 @@ public class LawTitleParser
             case SECTION:
                 return extractTitleFromSection(lawDocInfo, bodyText);
             case INDEX:
-                return "Index range: " + lawDocInfo.getDocTypeId();
+                return "Index of: " + lawDocInfo.getDocTypeId();
             case PREAMBLE:
                 return "Preamble";
             case JOINT_RULE:
@@ -112,7 +101,7 @@ public class LawTitleParser
         String realID = getRealID(lawDocInfo, bodyText);
         String typeLabel = lawDocInfo.getDocType().name();
         String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
-        String title = bodyText.replaceFirst(".*?" + label, "")
+        String title = bodyText.replaceAll("\\* NB.*?\\\\n ", "").replaceFirst(".*?" + label, "")
                 // Removes division names that might come after, and converts
                 // whitespace into single spaces.
                 .replaceFirst(TYPES + "\\s+(1|I|A|ONE)?\\W.*", "")
@@ -197,20 +186,6 @@ public class LawTitleParser
     }
 
     /**
-     * Quickly converts a number to a Roman numeral. Used to display Articles
-     * as Roman numerals, as they are in the Constitution text.
-     *
-     * @param number to convert.
-     * @return a Roman numeral.
-     */
-    private static String toNumeral(int number) {
-        if (number == 0)
-            return "";
-        int next = NUMERALS.floorKey(number);
-        return NUMERALS.get(next) + toNumeral(number-next);
-    }
-
-    /**
      * Quickly converts a number 1-12 or 101-112 to a word.
      * @param number to convert.
      * @return a word/phrase.
@@ -253,7 +228,7 @@ public class LawTitleParser
         Matcher idMatch = idNumPattern.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
             int num = Integer.parseInt(idMatch.group(1));
-            String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
+            String options = idMatch.group(1) + "|" + RomanNumerals.intToNumeral(num) + "|" + toWord(num);
             Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())

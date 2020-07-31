@@ -26,27 +26,27 @@ public interface BillSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
-                                                 List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescorerBuilder<?> rescorer,
+                                                 List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Update the bill index with the content of the supplied bill.
      *
      * @param bill Bill
      */
-    public void updateBillIndex(Bill bill);
+    void updateBillIndex(Bill bill);
 
     /**
      * Updates the bill index with the content of the supplied Bills.
      *
      * @param bills Collection<Bill>
      */
-    public void updateBillIndex(Collection<Bill> bills);
+    void updateBillIndex(Collection<Bill> bills);
 
     /**
      * Removes the bill from the search index with the given id.
      *
      * @param baseBillId BaseBillId
      */
-    public void deleteBillFromIndex(BaseBillId baseBillId);
+    void deleteBillFromIndex(BaseBillId baseBillId);
 }

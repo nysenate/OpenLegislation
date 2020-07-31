@@ -11,7 +11,6 @@ import gov.nysenate.openleg.dao.law.search.ElasticLawSearchDao;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawInfo;
-import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;

@@ -16,7 +16,7 @@ public interface SlackChatService {
      *
      * @param text String
      */
-    public void sendMessage(String text);
+    void sendMessage(String text);
 
     /**
      * Sends a message that mentions the given user names.
@@ -25,14 +25,14 @@ public interface SlackChatService {
      * @param text     String
      * @param mentions Collection<String>
      */
-    public void sendMessage(String text, Collection<String> mentions);
+    void sendMessage(String text, Collection<String> mentions);
 
     /**
      * Sends a customized slack message
      *
      * @param message SlackMessage
      */
-    public void sendMessage(SlackMessage message);
+    void sendMessage(SlackMessage message);
 
     /**
      * Sends the given slack message to the given address strings.
@@ -43,7 +43,7 @@ public interface SlackChatService {
      * @param messageContent {@link SlackMessage}
      * @param addresses      Collection<{@link SlackAddress}>
      */
-    public void sendMessage(SlackMessage messageContent,
+    void sendMessage(SlackMessage messageContent,
                             Collection<SlackAddress> addresses);
 }
 

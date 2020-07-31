@@ -40,7 +40,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     /** {@inheritDoc} */
     @Override
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
-                                                 RescorerBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
+                                                 RescorerBuilder<?> rescorer, List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(lawIndexName, query, postFilter,
                 highlightFields, rescorer,
                 sort, limOff,

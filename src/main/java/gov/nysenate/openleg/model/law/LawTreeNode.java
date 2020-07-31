@@ -78,10 +78,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         if (sectionRange == null) {
             sectionRange = getSectionRange();
         }
-        if (sectionRange.isPresent()) {
-            return Optional.of(sectionRange.get().lowerEndpoint());
-        }
-        return Optional.empty();
+        return sectionRange.map(Range::lowerEndpoint);
     }
 
     /**
@@ -92,10 +89,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         if (sectionRange == null) {
             sectionRange = getSectionRange();
         }
-        if (sectionRange.isPresent()) {
-            return Optional.of(sectionRange.get().upperEndpoint());
-        }
-        return Optional.empty();
+        return sectionRange.map(Range::upperEndpoint);
     }
 
     /**
@@ -183,7 +177,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      */
     public Optional<LawDocInfo> find(String documentId) {
         Optional<LawTreeNode> lawTreeNode = findNode(documentId, false);
-        return (lawTreeNode.isPresent()) ? Optional.of(lawTreeNode.get().getLawDocInfo()) : Optional.empty();
+        return lawTreeNode.map(LawTreeNode::getLawDocInfo);
     }
 
     /**

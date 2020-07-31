@@ -7,16 +7,27 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 
 public class NotificationSubscriptionView implements ViewObject
 {
+    protected int id;
     protected String userName;
     protected NotificationType type;
     protected NotificationMedium target;
     protected String address;
 
     public NotificationSubscriptionView(NotificationSubscription subscription) {
+        this.id = subscription.getId();
         this.userName = subscription.getUserName();
         this.type = subscription.getNotificationType();
         this.target = subscription.getMedium();
         this.address = subscription.getTargetAddress();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public NotificationSubscriptionView setId(int id) {
+        this.id = id;
+        return this;
     }
 
     public String getUserName() {

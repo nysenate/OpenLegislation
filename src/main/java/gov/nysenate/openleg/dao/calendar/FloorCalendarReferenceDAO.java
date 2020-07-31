@@ -17,18 +17,18 @@ public interface FloorCalendarReferenceDAO {
      * @param spot SpotCheckReferenceId
      * @return FloorCalendarSpotcheckReference
      */
-    public FloorCalendarSpotcheckReference getFCR(CalendarSupplementalId cal, SpotCheckReferenceId spot) throws DataAccessException;
+    FloorCalendarSpotcheckReference getFCR(CalendarSupplementalId cal, SpotCheckReferenceId spot) throws DataAccessException;
 
     /**
      * @param cal CalendarSupplementalId
      * @return FloorCalendarSpotcheckReference
      */
-    public FloorCalendarSpotcheckReference getCurrentFCR(CalendarSupplementalId cal) throws DataAccessException;
+    FloorCalendarSpotcheckReference getCurrentFCR(CalendarSupplementalId cal) throws DataAccessException;
 
     /**
      * @param year int
      * @return SessionYear
      */
-    public List<FloorCalendarSpotcheckReference> getFCRYear(int year) throws DataAccessException;
+    List<FloorCalendarSpotcheckReference> getFCRYear(int year) throws DataAccessException;
 
 }

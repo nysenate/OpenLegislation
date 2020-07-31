@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
+import gov.nysenate.openleg.util.BillTextCheckUtils;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -44,7 +45,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), bill.getBaseBillId());
 
-        //Add mismatches to observation
+        // Add mismatches to observation
 
         // If not found on LRS and not published in openleg, don't create mismatch. LRS removes bills when unpublished.
         Optional<PublishStatus> publishStatus = bill.getPublishStatus(bill.getActiveVersion());
@@ -59,10 +60,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
-                // TODO remove session check when we get xml bill text for previous years
-                if (bill.getSession().getYear() >= 2017) {
-                    checkHtmlBillText(amendment, reference, observation);
-                }
                 // Only check senate, non-resolution bills for sponsor memos
                 // Todo find a better way of checking memo text
                 //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
@@ -83,61 +80,34 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     }
 
     /**
-     * Cleans unnecessary elements e.g. style from observation html bill text
-     */
-    private String cleanHtml(String rawHtml) {
-        if (StringUtils.isBlank(rawHtml)) {
-            return "";
-        }
-        Document doc = Jsoup.parse(rawHtml);
-        Elements billTextElements = doc.getElementsByTag("pre");
-        String preHtml = billTextElements.html();
-        return preHtml
-                .replaceAll("\r\n", "\n")
-                .replaceAll(" +(?=$|\n)", "");
-    }
-
-    /**
-     * Check the html version of bill text.
-     */
-    private void checkHtmlBillText(BillAmendment amend, BillScrapeReference reference,
-                                   SpotCheckObservation<BaseBillId> obs) {
-        ensureTextFormatExists(amend, HTML);
-        String contentHtmlText = cleanHtml(Optional.ofNullable(amend.getFullText(HTML)).orElse(""));
-        String refHtmlText = cleanHtml(reference.getHtmlText());
-        spotCheckUtils.checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
-    }
-
-    /**
      * Checks text with all whitespace removed, and generates several mismatches with different levels of text
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        ensureTextFormatExists(billAmendment, PLAIN);
-        String dataText = Optional.ofNullable(billAmendment.getFullText(PLAIN)).orElse("");
+        String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
-        String strippedDataText = basicNormalize(dataText);
-        String strippedRefText = basicNormalize(refText);
+        String strippedDataText = BillTextCheckUtils.basicNormalize(dataText);
+        String strippedRefText = BillTextCheckUtils.basicNormalize(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equals(strippedRefText, strippedDataText)) {
             // If its a resolution, check if its a header problem
             if (billAmendment.getBillId().getBillType().isResolution()) {
                 // Try removing the resolution header from the ref in case we are checking against sobi data
-                String refTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(refText));
+                String refTextNoHeader = BillTextCheckUtils.basicNormalize(BillTextUtils.formatHtmlExtractedResoText(refText));
                 if (StringUtils.equals(strippedDataText, refTextNoHeader)) {
                     // todo remove this when we have bill text for all sobi years.
                     return;
                 }
                 // Try stripping the data header as well, to see if the header is the only issue.
-                String dataTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(dataText));
+                String dataTextNoHeader = BillTextCheckUtils.basicNormalize(BillTextUtils.formatHtmlExtractedResoText(dataText));
                 if (StringUtils.equals(refTextNoHeader, dataTextNoHeader)) {
                     obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_RESO_HEADER, dataText, refText));
                     return;
                 }
             }
 
-            String pureContentRefText = ultraNormalize(refText);
-            String pureContentDataText = ultraNormalize(dataText);
+            String pureContentRefText = BillTextCheckUtils.ultraNormalize(refText);
+            String pureContentDataText = BillTextCheckUtils.ultraNormalize(dataText);
             if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {
                 obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, dataText, refText));
             } else {
@@ -160,8 +130,8 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             SortedSetMultimap<BillVoteCode, String> voteMultiList = TreeMultimap.create();
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
-                for (SessionMember member : vote.getMembersByVote(code)) {
-                    voteMultiList.put(code, member.getLastName());
+                for (SessionMember sessionMember : vote.getMembersByVote(code)) {
+                    voteMultiList.put(code, sessionMember.getMember().getLastName());
                 }
             }
             BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);
@@ -184,46 +154,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, dataMemo, refMemo));
-        }
-    }
-
-    /**
-     * Performs a simple normalization to eliminate potential for mismatches that we would never care about.
-     *
-     * Removes all non alpha characters
-     * Replace section symbol(§) with S
-     * CAPITALIZE EVERYTHING.
-     */
-    private String basicNormalize(String text) {
-        return Optional.ofNullable(text).orElse("")
-                .replaceAll("§", "S")
-                .replaceAll("(?:[^\\w]|_)+", "")
-                .toUpperCase();
-    }
-
-    private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
-    private static final String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
-    private static final String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
-    private static final String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
-    private static final String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
-    private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
-            lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
-    /**
-     * Performs a more advanced normalization of text,
-     * removing specific sections that do not contribute to overall content.
-     *
-     * Removes all whitespace, line numbers, and page numbers
-     * also performs {@link #basicNormalize(String)}
-     */
-    private String ultraNormalize(String text) {
-        String stripped = Optional.ofNullable(text).orElse("").replaceAll(ultraNormalizeRegex, "");
-        return basicNormalize(stripped);
-    }
-
-    private void ensureTextFormatExists(BillAmendment billAmendment, BillTextFormat format) {
-        if (!billAmendment.isTextFormatLoaded(format)) {
-            throw new IllegalStateException("Bill text format " + format +
-                    " is not represented in bill reference for " + billAmendment.getBillId());
         }
     }
 }

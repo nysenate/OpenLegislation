@@ -79,6 +79,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
                             "Unrecognized xml action: " + action + " in fragment: " + legDataFragment);
             }
 
+            bill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(bill.getBaseBillId(), bill, legDataFragment);
             postDataUnitEvent(unit);
             checkIngestCache();

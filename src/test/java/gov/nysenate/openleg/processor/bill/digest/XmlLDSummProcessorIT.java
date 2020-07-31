@@ -41,7 +41,7 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
         if (doesBillExist(baseBillId)) {
             Bill bill = getBill(baseBillId);
             bill.setSummary("");
-            bill.getAmendment(Version.ORIGINAL).setLaw("");
+            bill.getAmendment(Version.ORIGINAL).setLawCode("");
             bill.setAllPreviousVersions(new HashSet<>());
         }
 
@@ -49,7 +49,7 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
         Bill bill = getBill(baseBillId);
 
         assertEquals(expectedSummary, bill.getSummary());
-        assertEquals(expectedLaw, bill.getAmendment(Version.ORIGINAL).getLaw());
+        assertEquals(expectedLaw, bill.getAmendment(Version.ORIGINAL).getLawCode());
         assertTrue(bill.getAllPreviousVersions().contains(expectedPreviousVersion));
     }
 
@@ -66,7 +66,7 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
         Bill b = billDataService.getBill(new BaseBillId("S99999", 2017));
 
         assertEquals("", b.getSummary());
-        assertEquals("", b.getAmendment(Version.ORIGINAL).getLaw());
+        assertEquals("", b.getAmendment(Version.ORIGINAL).getLawCode());
         assertTrue(b.getAllPreviousVersions().isEmpty());
     }
 }

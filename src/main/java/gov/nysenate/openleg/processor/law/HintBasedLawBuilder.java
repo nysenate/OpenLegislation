@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,21 +12,15 @@ import java.util.regex.Matcher;
  * {@link IdBasedLawBuilder}. This implementation can be initialized with an expected ordering of
  * the document types so that the sub documents can be paired correctly with their parent doc.
  */
-public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
-{
+public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder {
     private static final Logger logger = LoggerFactory.getLogger(HintBasedLawBuilder.class);
 
     /** Ordered list of law document types used to constrain the hierarchy to certain nesting rules. */
-    private LinkedList<LawDocumentType> expectedOrder;
+    private final LinkedList<LawDocumentType> expectedOrder;
 
-    private Map<LawDocumentType, LawTreeNode> lastParentNodeOfType = new HashMap<>();
+    private final Map<LawDocumentType, LawTreeNode> lastParentNodeOfType = new HashMap<>();
 
     /** --- Constructors --- */
-
-    public HintBasedLawBuilder(LawVersionId lawVersionId, List<LawDocumentType> expectedOrder) {
-        super(lawVersionId);
-        this.expectedOrder = new LinkedList<>(expectedOrder);
-    }
 
     public HintBasedLawBuilder(LawVersionId lawVersionId, LawTree previousTree, List<LawDocumentType> expectedOrder) {
         super(lawVersionId, previousTree);
@@ -36,6 +29,7 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
 
     /** --- Overrides --- */
 
+    @SuppressWarnings("unchecked")
     @Override
     protected String determineHierarchy(LawBlock block) {
         Stack<LawTreeNode> backup = (Stack<LawTreeNode>) parentNodes.clone();
@@ -54,6 +48,8 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
                             if (lastParentNodeOfType.containsKey(expectedType)) {
                                 LawTreeNode expectedParent = lastParentNodeOfType.get(expectedType);
                                 parentNodes = backup;
+                                if (parentNodes.peek().equals(expectedParent))
+                                    parentNodes.pop();
                                 parentNodes.push(expectedParent);
                                 logger.info("Guessing actual parent is {}", expectedParent);
                             }
@@ -71,15 +67,13 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
         // CPL sections should be of the form precedingArticleNumber.anotherNumber, but some aren't and should be removed.
         if (lawInfo.getLawId().equals(LawChapterCode.CPL.name()) &&
                 node.getDocType() == LawDocumentType.SECTION &&
-                !(currParent().getLocationId().replace("A", "")
-                        .equals(node.getLocationId().split("\\.")[0]))) {
+                !(currParent().getLocationId().substring(1).equals(node.getLocationId().split("\\.")[0]))) {
             logger.debug("Removing CPL section {}.", node.getLocationId());
             lawDocMap.remove(node.getDocumentId());
             return;
         }
         super.addChildNode(node);
-        if (!node.isRootNode() && !node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (!node.isRootNode() && node.getDocType() != LawDocumentType.SECTION)
             lastParentNodeOfType.put(node.getDocType(), node);
-        }
     }
 }

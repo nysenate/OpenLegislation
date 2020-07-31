@@ -22,8 +22,7 @@ import java.util.ArrayList;
 @Repository
 public class AssemblyAgnScraper extends LRSScraper {
     private static final Logger logger = LogManager.getLogger(LRSScraper.class);
-    String assemblyAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=ASMAGEN";
-    String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
+    private static final String assemblyAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=ASMAGEN";
 
     protected URL agendaURL;
     private File assemblyAgendaDirectory;

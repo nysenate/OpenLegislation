@@ -36,7 +36,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
-                                                         List<SortBuilder> sort, LimitOffset limOff) {
+                                                         List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(transcriptIndexName, query, postFilter,
                 highlightedFields, null, sort, limOff,
                 false, this::getTranscriptIdFromHit);
@@ -54,7 +54,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
         BulkRequest bulkRequest = new BulkRequest();
         transcripts.stream()
                 .map(TranscriptView::new)
-                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getFilename(), t))
+                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getDateTime(), t))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
     }
@@ -63,7 +63,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     public void deleteTranscriptFromIndex(TranscriptId transcriptId) {
         if (transcriptId != null) {
-            deleteEntry(transcriptIndexName, transcriptId.getFilename());
+            deleteEntry(transcriptIndexName, transcriptId.getDateTime().toString());
         }
     }
 

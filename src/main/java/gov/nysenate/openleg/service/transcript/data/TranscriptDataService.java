@@ -20,7 +20,7 @@ public interface TranscriptDataService
      * @param transcriptId TranscriptId
      * @return Transcript
      */
-    public Transcript getTranscript(TranscriptId transcriptId) throws TranscriptNotFoundEx;
+    Transcript getTranscript(TranscriptId transcriptId) throws TranscriptNotFoundEx;
 
     /**
      * Get a list of transcript ids for a given session year.
@@ -29,7 +29,7 @@ public interface TranscriptDataService
      * @param limitOffset LimitOffset
      * @return List<TranscriptId>
      */
-    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limitOffset);
+    List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Saves the transcript.
@@ -37,5 +37,5 @@ public interface TranscriptDataService
      * @param transcript Transcript
      * @param transcriptFile TranscriptFile
      */
-    public void saveTranscript(Transcript transcript, TranscriptFile transcriptFile, boolean postUpdateEvent);
+    void saveTranscript(Transcript transcript, TranscriptFile transcriptFile, boolean postUpdateEvent);
 }

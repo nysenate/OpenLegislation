@@ -100,7 +100,7 @@ public class AngularAppCtrl
         request.setAttribute("gaTrackingId", gaTrackingId);
         // NYSenate.gov url
         request.setAttribute("senSitePath", environment.getSenSiteUrl());
-        //Openleg reference URL
+        // Openleg reference URL
         request.setAttribute("openlegRefPath", environment.getOpenlegRefUrl());
     }
 }

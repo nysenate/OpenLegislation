@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,7 +36,7 @@ public class LawTree
         this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
         this.lawInfo = lawInfo;
-        this.publishedDates = Arrays.asList(lawVersionId.getPublishedDate());
+        this.publishedDates = Collections.singletonList(lawVersionId.getPublishedDate());
     }
 
     /** --- Method --- */

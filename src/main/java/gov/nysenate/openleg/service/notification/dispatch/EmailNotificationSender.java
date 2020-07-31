@@ -24,15 +24,6 @@ public abstract class EmailNotificationSender extends BaseNotificationSender imp
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sendDigest(NotificationDigest digest) {
-        SimpleMailMessage message = getDigestMessage(digest);
-        sendMailService.sendMessage(message);
-    }
-
-    /**
      * Does the work of addressing and sending a mail message to a number of notification subscribers
      * @param message A message to send
      * @param subscriptions A collection of notification subscribers that will receive the message
@@ -53,17 +44,6 @@ public abstract class EmailNotificationSender extends BaseNotificationSender imp
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(notification.getSummary());
         message.setText(getDisplayUrl(notification));
-        return message;
-    }
-
-    /**
-     * Generate a simple digest message with a link for displaying the full digest.
-     */
-    protected SimpleMailMessage getDigestMessage(NotificationDigest digest) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(digest.getAddress());
-        message.setSubject(NotificationDigestFormatter.getSummary(digest));
-        message.setText(getDigestUrl(digest));
         return message;
     }
 }

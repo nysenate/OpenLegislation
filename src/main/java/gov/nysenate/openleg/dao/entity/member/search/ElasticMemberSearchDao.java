@@ -28,7 +28,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(memberIndexName, query, filter, sort, limOff, this::getMemberIdFromHit);
     }
 
@@ -46,7 +46,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
         BulkRequest bulkRequest = new BulkRequest();
         members.stream()
                 .map(FullMemberView::new)
-                .map(mv -> getJsonIndexRequest(memberIndexName, String.valueOf(mv.getMemberId()), mv))
+                .map(fmv -> getJsonIndexRequest(memberIndexName, String.valueOf(fmv.getMemberId()), fmv))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
     }

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.search;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 
 import java.math.BigDecimal;
@@ -27,9 +28,8 @@ public class SearchResultView implements ViewObject
         if (highlightMap != null) {
             highlightMap.forEach((k,v) ->
                highlights.put(k,
-                   Arrays.asList(v.getFragments())
-                       .stream()
-                       .map(f -> f.toString())
+                   Arrays.stream(v.getFragments())
+                       .map(Text::toString)
                        .collect(toList()))
             );
         }

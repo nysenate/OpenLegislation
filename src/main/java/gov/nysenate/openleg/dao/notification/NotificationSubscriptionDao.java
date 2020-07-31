@@ -26,8 +26,6 @@ public interface NotificationSubscriptionDao {
      *
      * Assigns an id to the notification if it is new.
      * The returned {@link NotificationSubscription} will contain the assigned id.
-     * The last sent value is NOT updated if the subscription exists.
-     * @see #setLastSent(int, LocalDateTime)
      * @param subscription NotificationSubscription
      * @return {@link NotificationSubscription} - the updated subscription
      */
@@ -38,11 +36,4 @@ public interface NotificationSubscriptionDao {
      * @param subscriptionId int
      */
     void removeSubscription(int subscriptionId);
-
-    /**
-     * Update the "last sent" value of a subscription.
-     * @param subscriptionId int
-     * @param lastSentDateTime LocalDateTime
-     */
-    void setLastSent(int subscriptionId, LocalDateTime lastSentDateTime);
 }

@@ -121,6 +121,9 @@ public class Environment
     /** The return address on outbound emails */
     @Value("${mail.smtp.from:}") private String emailFromAddress;
 
+    /** The contact email address on outbound emails */
+    @Value("${contact.email:}") private String contactEmailAddress;
+
     /** --- Notifications --- */
     @Value("${notifications.enabled}")
     private boolean notificationsEnabled;
@@ -416,5 +419,9 @@ public class Environment
 
     public void setEmailFromAddress(String emailFromAddress) {
         this.emailFromAddress = emailFromAddress;
+    }
+
+    public String getContactEmailAddress() {
+        return contactEmailAddress;
     }
 }

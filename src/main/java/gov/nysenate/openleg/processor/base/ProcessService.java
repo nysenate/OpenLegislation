@@ -10,23 +10,23 @@ public interface ProcessService
      * Perform pre-processing steps
      * @return int the number of collated items
      */
-    public int collate();
+    int collate();
 
     /**
      * Perform the data processing
      * @return int the number of processed items
      */
-    public int ingest();
+    int ingest();
 
     /**
      * @return the name of the data type that is collated
      */
-    public String getCollateType();
+    String getCollateType();
 
     /**
      * @return the name of the data type that is ingested
      */
-    default public String getIngestType() {
+    default String getIngestType() {
         return getCollateType();
     }
 }

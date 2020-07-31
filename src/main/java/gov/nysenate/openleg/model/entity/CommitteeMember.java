@@ -14,7 +14,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
     protected int sequenceNo;
 
     /** The member. */
-    protected SessionMember member;
+    protected SessionMember sessionMember;
 
     /** The title of the member, e.g Chairperson, Vice-Chair. */
     protected CommitteeMemberTitle title;
@@ -29,7 +29,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
     public int compareTo(CommitteeMember o) {
         return ComparisonChain.start()
                 .compare(this.sequenceNo, o.sequenceNo)
-                .compare(this.member, o.member)
+                .compare(this.sessionMember, o.sessionMember)
                 .compare(this.title, o.title)
                 .compareTrueFirst(this.majority, o.majority)
                 .result();
@@ -42,13 +42,13 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
         CommitteeMember that = (CommitteeMember) o;
         return sequenceNo == that.sequenceNo &&
                 majority == that.majority &&
-                Objects.equal(member, that.member) &&
+                Objects.equal(sessionMember, that.sessionMember) &&
                 title == that.title;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(sequenceNo, member, title, majority);
+        return Objects.hashCode(sequenceNo, sessionMember, title, majority);
     }
 
     /** --- Constructors --- */
@@ -57,15 +57,22 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
 
     public CommitteeMember(CommitteeMember other) {
         this.sequenceNo = other.sequenceNo;
-        this.member = new SessionMember(other.member);
+        this.sessionMember = new SessionMember(other.sessionMember);
         this.title = other.title;
         this.majority = other.majority;
+    }
+
+    public CommitteeMember(int sequenceNo, SessionMember sessionMember, CommitteeMemberTitle title, boolean majority) {
+        this.sequenceNo = sequenceNo;
+        this.sessionMember = sessionMember;
+        this.title = title;
+        this.majority = majority;
     }
 
     /** --- Functional Getters/Setters --- */
 
     public static Comparator<CommitteeMember> getComparator() {
-        return (l,r) -> l.compareTo(r);
+        return CommitteeMember::compareTo;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -78,12 +85,12 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
         this.sequenceNo = sequenceNo;
     }
 
-    public SessionMember getMember() {
-        return member;
+    public SessionMember getSessionMember() {
+        return sessionMember;
     }
 
-    public void setMember(SessionMember member) {
-        this.member = member;
+    public void setSessionMember(SessionMember sessionMember) {
+        this.sessionMember = sessionMember;
     }
 
     public CommitteeMemberTitle getTitle() {

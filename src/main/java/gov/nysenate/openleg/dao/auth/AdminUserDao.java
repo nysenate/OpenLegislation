@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface AdminUserDao
 {
-    public void addAdmin(AdminUser admin) throws DataAccessException;
-    public void deleteAdmin(String user) throws DataAccessException;
-    public List<AdminUser> getAdminUsers() throws DataAccessException;
-    public AdminUser getAdminUser(String username) throws DataAccessException;
-    public void updateAdmin(AdminUser admin) throws DataAccessException;
+    void addAdmin(AdminUser admin) throws DataAccessException;
+    void deleteAdmin(String user) throws DataAccessException;
+    List<AdminUser> getAdminUsers() throws DataAccessException;
+    AdminUser getAdminUser(String username) throws DataAccessException;
+    void updateAdmin(AdminUser admin) throws DataAccessException;
 }

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
@@ -33,8 +34,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
     @Autowired
     private XmlHelper xmlHelper;
 
-    public XmlLDSummProcessor() {
-    }
+    public XmlLDSummProcessor() {}
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -55,10 +55,14 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("º","§").replaceAll("\n"," ").trim();
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
-            final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
+            final String lawCode = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("([\n\t])"," ").replaceAll(" +"," ").trim();
             final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), legDataFragment);
             baseBill.setSummary(summary);
-            baseBill.getAmendment(version).setLaw(law);
+            BillAmendment amendment = baseBill.getAmendment(version);
+            amendment.setLawCode(lawCode);
+            String json = BillLawCodeParser.parse(amendment.getLawCode(), baseBill.hasValidLaws(version));
+            amendment.setRelatedLawsJson(json);
+
             if (action.equals("replace")) { //replace bill
                 /**
                  * add previous bills
@@ -74,11 +78,10 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
                     baseBill.setDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
                 }
             } else { //remove bill
-
-                // clear Set<BillID> pre version
                 baseBill.getAllPreviousVersions().clear();
                 baseBill.setDirectPreviousVersion(null);
             }
+            baseBill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
             logger.info("Put base bill in the ingest cache.");
 

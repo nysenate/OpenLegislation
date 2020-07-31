@@ -205,7 +205,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .map(s -> spotCheckUtils.getPrimaryShortname(session, chamber, s.toString()))
                 .orElse(null);
         String refSponsor = spotCheckUtils.getPrimaryShortname(session, chamber, daybreakBill.getSponsor());
-        spotCheckUtils.checkString(contentSponsor, refSponsor, obsrv, BILL_SPONSOR);
+        spotCheckUtils.checkString(StringUtils.upperCase(contentSponsor), StringUtils.upperCase(refSponsor), obsrv, BILL_SPONSOR);
     }
 
     /**
@@ -213,7 +213,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * concatenate our own law and summary and just compare the strings.
      */
     private void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        String billLawSummary = (Strings.nullToEmpty(bill.getAmendment(bill.getActiveVersion()).getLaw()) + " " +
+        String billLawSummary = (Strings.nullToEmpty(bill.getAmendment(bill.getActiveVersion()).getLawCode()) + " " +
                 Strings.nullToEmpty(bill.getSummary())).trim();
         billLawSummary = billLawSummary.replace('§', 'S').replace('¶', 'P');
         String dayBreakLawSummary = daybreakBill.getLawCodeAndSummary();

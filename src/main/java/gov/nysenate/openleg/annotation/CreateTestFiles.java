@@ -90,16 +90,15 @@ public class CreateTestFiles {
         else if(UNIT_PATTERN.matcher(contents).find()){
             category = CategoryTypes.UnitTest;
         }
-        
-        StringBuilder sb = new StringBuilder();
-        sb = sb.append("package " + pack + ";\n")
-                .append("import " + ANNOTATION_PACKAGE + '.' + category + ";\n")
-                .append("import org.junit.Assert;\n")
-                .append("import org.junit.Test;\n")
-                .append("import org.junit.experimental.categories.Category;\n")
-                .append("\n")
-                .append("@Category(" + category + ".class)\n")
-                .append("public class " + name + category.getSuffix() + " {}\n");
+
+        String sb = "package " + pack + ";\n" +
+                "import " + ANNOTATION_PACKAGE + '.' + category + ";\n" +
+                "import org.junit.Assert;\n" +
+                "import org.junit.Test;\n" +
+                "import org.junit.experimental.categories.Category;\n" +
+                "\n" +
+                "@Category(" + category + ".class)\n" +
+                "public class " + name + category.getSuffix() + " {}\n";
         System.out.println(sb);
     }
 }

@@ -181,6 +181,7 @@
 </pre></div>
 </div>
 <p><strong>Sample Response</strong></p>
+<p>}</p>
 </div>
 <div class="section" id="get-a-list-of-members">
 <h2>Get a list of members<a class="headerlink" href="#get-a-list-of-members" title="Permalink to this headline">¶</a></h2>
@@ -245,6 +246,10 @@
 </div>
 <p>Search within a session year</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/members/{sessionYear}/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Note: given a sessionMemberId = #### in a session year yyyy, you can get the member that sessionMemberId is used by with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>

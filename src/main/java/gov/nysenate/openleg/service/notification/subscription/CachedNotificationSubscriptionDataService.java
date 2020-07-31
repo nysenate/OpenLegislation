@@ -74,7 +74,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     @Override
     public Set<NotificationSubscription> getSubscriptions(NotificationType type) {
         return getSubscriptionMap().values().stream()
-                .filter(subscription -> subscription.getNotificationType().covers(type))
+                .filter(s -> s.subscribesTo(type))
                 .collect(Collectors.toSet());
     }
 
@@ -102,23 +102,6 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     public void removeSubscription(int subscriptionId) {
         subscriptionDao.removeSubscription(subscriptionId);
         getSubscriptionMap().remove(subscriptionId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<NotificationSubscription> getPendingDigests() {
-        return getSubscriptionMap().values().stream()
-                .filter(sub -> sub.canDispatchNow() && !sub.sendInstantly())
-                .collect(Collectors.toSet());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLastSent(int id, LocalDateTime lastSent) throws SubscriptionNotFoundEx {
-        NotificationSubscription notificationSubscription = subscriptionDao.getSubscription(id);
-        subscriptionDao.setLastSent(id, lastSent);
-        NotificationSubscription updated = notificationSubscription.copy().setLastSent(lastSent).build();
-        updateCachedSubscription(updated);
     }
 
     /** {@inheritDoc} */

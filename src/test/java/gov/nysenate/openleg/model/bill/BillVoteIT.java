@@ -22,15 +22,15 @@ public class BillVoteIT extends BaseTests
     private MemberService memberService;
 
     @Test
-    public void testBillVoteEquality() throws Exception {
+    public void testBillVoteEquality() {
         LocalDate date = LocalDate.now();
         BillId billId = new BillId("S1234", 2013);
         SessionYear sessionYear = SessionYear.of(2013);
 
-        SessionMember ball = memberService.getMemberByShortName("BALL", sessionYear, Chamber.SENATE);
-        SessionMember lavalle = memberService.getMemberByShortName("LAVALLE", sessionYear, Chamber.SENATE);
-        SessionMember lanza = memberService.getMemberByShortName("LANZA", sessionYear, Chamber.SENATE);
-        SessionMember breslin = memberService.getMemberByShortName("BRESLIN", sessionYear, Chamber.SENATE);
+        SessionMember ball = memberService.getSessionMemberByShortName("BALL", sessionYear, Chamber.SENATE);
+        SessionMember lavalle = memberService.getSessionMemberByShortName("LAVALLE", sessionYear, Chamber.SENATE);
+        SessionMember lanza = memberService.getSessionMemberByShortName("LANZA", sessionYear, Chamber.SENATE);
+        SessionMember breslin = memberService.getSessionMemberByShortName("BRESLIN", sessionYear, Chamber.SENATE);
 
         BillVote vote1 = new BillVote(billId, date, BillVoteType.FLOOR, 1);
         vote1.addMemberVote(BillVoteCode.AYE, ball);

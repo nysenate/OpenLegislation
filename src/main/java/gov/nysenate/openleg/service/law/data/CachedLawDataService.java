@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -67,7 +66,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     /** {@inheritDoc} */
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(lawTreeCache.getNativeCache());
+        return Collections.singletonList(lawTreeCache.getNativeCache());
     }
 
     /** {@inheritDoc} */
@@ -150,8 +149,9 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
             }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
             LawTree lawTree;
-            if (lawTreeCache.get(lawVersionId) != null) {
-                lawTree = (LawTree) lawTreeCache.get(lawVersionId).get();
+            org.springframework.cache.Cache.ValueWrapper tree = lawTreeCache.get(lawVersionId);
+            if (tree != null) {
+                lawTree = (LawTree) tree.get();
             }
             else {
                 lawTree = lawDataDao.getLawTree(lawId, endPublishedDate);
@@ -201,10 +201,9 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
         return lawDataDao.getLawDocuments(lawId.toUpperCase(), endPublishedDate);
     }
 
-    /** {@inheritDoc}
-     * @param dateRange*/
+    /** {@inheritDoc} */
     @Override
-    public Set<LawDocId> getRepealedLawDocs(Range<LocalDateTime> dateRange) {
+    public Set<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange) {
         return new HashSet<>(lawDataDao.getRepealedLaws(dateRange));
     }
 

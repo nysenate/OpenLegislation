@@ -33,14 +33,14 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     /** {@inheritDoc} */
     @Override
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                 List<SortBuilder> sort, LimitOffset limOff) {
+                                                 List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(agendaIndexName, query, postFilter, sort, limOff, this::getAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                                   List<SortBuilder> sort, LimitOffset limOff) {
+                                                                   List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(agendaIndexName, query, postFilter, sort, limOff, this::getCommAgendaIdFromHit);
     }
 

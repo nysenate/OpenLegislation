@@ -33,6 +33,7 @@ import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -67,7 +68,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
      */
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(committeeCache);
+        return Collections.singletonList(committeeCache);
     }
 
     /** {@inheritDoc} */

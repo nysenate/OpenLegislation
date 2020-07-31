@@ -28,8 +28,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
-
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
@@ -43,11 +41,13 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
 
     private final XmlHelper xmlHelper;
     private final EventBus eventBus;
+    private final BillTextDiffProcessor textDiffProcessor;
 
     @Autowired
-    public XmlBillTextProcessor(XmlHelper xmlHelper, EventBus eventBus) {
+    public XmlBillTextProcessor(XmlHelper xmlHelper, EventBus eventBus, BillTextDiffProcessor textDiffProcessor) {
         this.xmlHelper = xmlHelper;
         this.eventBus = eventBus;
+        this.textDiffProcessor = textDiffProcessor;
     }
 
     @Override
@@ -78,31 +78,29 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
             final String action = xmlHelper.getString("@action", billTextNode);
 
             // If remove action, set bill text to blank
-            final String billText = "remove".equals(action)
+            final String text = "remove".equals(action)
                     ? ""
                     : billTextNode.getTextContent();
-            String strippedBillText = BillTextUtils.parseHTMLtext(billText);
+
+            BillText billText = textDiffProcessor.processBillText(text);
 
             Set<BillId> updatedBills = new HashSet<>();
-
             BillId filenamePrintNo = getFilenamePrintNo(sessionYear, legDataFragment);
 
             // For Resolutions only apply to the bill from the filename
             if (filenamePrintNo.getBillType().isResolution()) {
-                applyBillText(filenamePrintNo, billText, strippedBillText, legDataFragment);
+                applyBillText(filenamePrintNo, billText, legDataFragment);
                 updatedBills.add(filenamePrintNo);
             } else {
-                // Apply special formatting for bill text
-                strippedBillText = BillTextUtils.formatHtmlExtractedBillText(strippedBillText);
                 // Apply to senate and/or assembly versions if referenced
                 if (!StringUtils.isBlank(senhse)) {
                     BillId senateId = new BillId(senhse + senno, sessionYear, senamd);
-                    applyBillText(senateId, billText, strippedBillText, legDataFragment);
+                    applyBillText(senateId, billText, legDataFragment);
                     updatedBills.add(senateId);
                 }
                 if (!StringUtils.isBlank(asmhse)) {
                     BillId assemblyId = new BillId(asmhse + asmno, sessionYear, asmamd);
-                    applyBillText(assemblyId, billText, strippedBillText, legDataFragment);
+                    applyBillText(assemblyId, billText, legDataFragment);
                     updatedBills.add(assemblyId);
                 }
             }
@@ -136,13 +134,11 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
     /**
      * Applies bill text to a single bill using the values parsed from the billtext html tag
      */
-    private void applyBillText(BillId billId,
-                               String billText, String strippedBillText,
-                               LegDataFragment fragment) {
+    private void applyBillText(BillId billId, BillText billText, LegDataFragment fragment) {
         final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(billId.getVersion());
-        amendment.setFullText(HTML, billText);
-        amendment.setFullText(PLAIN, strippedBillText);
+        amendment.setBillText(billText);
+        baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
         billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
     }
 

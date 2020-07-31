@@ -2,6 +2,8 @@ package gov.nysenate.openleg.model.hearing;
 
 import gov.nysenate.openleg.model.entity.Chamber;
 
+import java.util.Objects;
+
 /**
  * A Committee, Task Force, or other group
  * that can hold Public Hearings. Not necessarily a valid
@@ -40,10 +42,8 @@ public class PublicHearingCommittee
 
         PublicHearingCommittee that = (PublicHearingCommittee) o;
 
-        if (chamber != null ? !chamber.equals(that.chamber) : that.chamber != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-
-        return true;
+        if (!Objects.equals(chamber, that.chamber)) return false;
+        return Objects.equals(name, that.name);
     }
 
     @Override

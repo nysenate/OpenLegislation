@@ -2,6 +2,7 @@
 <%@ page import="gov.nysenate.openleg.model.notification.NotificationType" %>
 <%@ page import="gov.nysenate.openleg.util.OutputUtils" %>
 <%@ page import="gov.nysenate.openleg.model.notification.NotificationMedium" %>
+<%@ page import="java.util.EnumSet" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)" class="content-section">
@@ -48,13 +49,13 @@
     <!-- Notification Settings -->
 
     <%
-      String notifTypeHierarchy = OutputUtils.toJson(NotificationType.getHierarchy());
+      String notifTypes = OutputUtils.toJson(EnumSet.allOf(NotificationType.class));
       String notifTargets = OutputUtils.toJson(NotificationMedium.values());
     %>
 
     <md-tab label="Notification Settings">
       <md-card ng-controller="NotificationSubCtrl"
-          ng-init='init(<%=notifTypeHierarchy%>, <%=notifTargets%>)'>
+          ng-init='init(<%=notifTypes%>, <%=notifTargets%>)'>
         <md-toolbar>
           <h5 class="md-toolbar-tools">Manage Notification Subscriptions</h5>
         </md-toolbar>
@@ -75,7 +76,7 @@
                 </div>
                 <div class="notsub-type-column"><h4>Notification Type</h4></div>
                 <div class="notsub-target-column"><h4>Target Type</h4></div>
-                <div><h4>Target Address</h4></div>
+                <div class="notsub-address-column"><h4>Target Address</h4></div>
               <md-divider class="md-defualt-theme"></md-divider>
             </md-list-item>
             <md-list-item ng-show="newSubscriptionShown">
@@ -114,7 +115,7 @@
               </div>
               <div class="notsub-type-column"><span ng-bind="subscription.type"></span></div>
               <div class="notsub-target-column"><span ng-bind="subscription.target"></span></div>
-              <div><span ng-bind="subscription.address"></span></div>
+              <div class="notsub-address-column"><span ng-bind="subscription.address"></span></div>
             </md-list-item>
             <md-divider ng-repeat-end ng-if="!$last" class="md-default-theme"></md-divider>
           </md-list>

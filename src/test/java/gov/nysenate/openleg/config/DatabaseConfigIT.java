@@ -16,9 +16,9 @@ public class DatabaseConfigIT extends BaseTests
     private JdbcTemplate jdbc;
 
     @Test
-    public void testPostgreSQLConnectionPool() throws Exception {
+    public void testPostgreSQLConnectionPool() {
         Assert.assertNotNull(jdbc);
-        Integer one = jdbc.queryForObject("SELECT 1", new SingleColumnRowMapper<Integer>());
-        Assert.assertEquals(1, one.intValue());
+        Integer one = jdbc.queryForObject("SELECT 1", new SingleColumnRowMapper<>());
+        Assert.assertEquals(new Integer(1), one);
     }
 }

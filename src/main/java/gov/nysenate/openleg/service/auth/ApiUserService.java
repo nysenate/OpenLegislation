@@ -19,21 +19,21 @@ public interface ApiUserService
      * @param subscriptions The email subscriptions the user has signed up for
      * @return A new ApiUser object if the registration is successful
      */
-    public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions);
+    ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions);
 
     /**
      * Get an API User from a given email address
      * @param email The email address of the user being search for.
      * @return An APIUser if the email is valid
      */
-    public ApiUser getUser(String email);
+    ApiUser getUser(String email);
 
     /**
      * Get an API User from a given api key
      * @param apiKey The apiKey of the user being search for.
      * @return An APIUser if the apiKey matches
      */
-    public Optional<ApiUser> getUserByKey(String apiKey);
+    Optional<ApiUser> getUserByKey(String apiKey);
 
     /**
      * Attempt to activate a user based on the provided registration token. If a valid registration
@@ -42,7 +42,7 @@ public interface ApiUserService
      *
      * @param regToken The supplied registration token.
      */
-    public void activateUser(String regToken);
+    void activateUser(String regToken);
 
     /**
      * Check to see if a given Apikey is valid.
@@ -52,47 +52,47 @@ public interface ApiUserService
      * @param key The apikey used with the call to the API
      * @return True if the key is valid and the user has activated their account.
      */
-    public boolean validateKey(String key);
+    boolean validateKey(String key);
 
     /**
      * Gets any permissions explicitly granted to this api key
      * @param key String
      * @return Set<String> set of permission strings
      */
-    public ImmutableSet<OpenLegRole> getRoles(String key);
+    ImmutableSet<OpenLegRole> getRoles(String key);
 
     /**
      * Grants a role to the api user with the given key
      * @param apiKey String
      * @param role String
      */
-    public void grantRole(String apiKey, OpenLegRole role);
+    void grantRole(String apiKey, OpenLegRole role);
 
     /**
      * Revokes a role from the api user with the given key
      * @param apiKey String
      * @param role String
      */
-    public void revokeRole(String apiKey, OpenLegRole role);
+    void revokeRole(String apiKey, OpenLegRole role);
 
     /**
      * Gets any e-mail subscriptions this api key is signed up for
      * @param key String
      * @return Set<ApiUserSubscriptionType> set of subscriptions
      */
-    public ImmutableSet<ApiUserSubscriptionType> getSubscriptions(String key);
+    ImmutableSet<ApiUserSubscriptionType> getSubscriptions(String key);
 
     /**
      * Adds an e-mail subscription to a user with the given api key
      * @param apiKey String
      * @param subscription ApiUserSubscriptionType
      */
-    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
+    void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
 
     /**
      * Removes an e-mail subscription from the user with the given api key
      * @param apiKey String
      * @param subscription ApiUserSubscriptionType
      */
-    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
+    void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
 }

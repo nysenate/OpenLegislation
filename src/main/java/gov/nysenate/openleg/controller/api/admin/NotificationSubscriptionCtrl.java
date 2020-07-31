@@ -7,7 +7,6 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.view.notification.NotificationSubscriptionView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.notification.*;
 import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +46,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                                                 @RequestParam String target,
                                                 @RequestParam String address) {
         NotificationSubscription subscription = buildSubscriptionFromParams(type, target, address);
-        subscriptionDataService.updateSubscription(subscription);
+        subscription = subscriptionDataService.updateSubscription(subscription);
         return new ViewObjectResponse<>(new NotificationSubscriptionView(subscription));
     }
 
@@ -105,16 +104,16 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      *
      * Request Parameters: limit, offset (int) - Paginate.
      *
-     * Expected Output: List of NotificationSubscriptionView
+     * Expected Output: UserNotificationSubscriptionsView
      */
     @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscriptions")
     public BaseResponse viewSubscriptions(WebRequest request) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
-        LimitOffset limOff = getLimitOffset(request, 0);
-        return ListViewResponse.of(subscriptionDataService.getSubscriptions(user).stream()
-                               .map(NotificationSubscriptionView::new).collect(Collectors.toList()),
-                0, limOff);
+        Set<NotificationSubscription> userSubscriptions = subscriptionDataService.getSubscriptions(user);
+        return ListViewResponse.of(userSubscriptions.stream()
+                .map(NotificationSubscriptionView::new)
+                .collect(Collectors.toList()));
     }
 
     /** --- Internal --- */
@@ -123,7 +122,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
         String user = (String) SecurityUtils.getSubject().getPrincipal();
         NotificationType notificationType = getEnumParameter("type", type, NotificationType.class);
         NotificationMedium notificationMedium = getNotificationTargetFromString(target);
-        return InstantNotificationSubscription.builder()
+        return new NotificationSubscription.Builder()
                 .setUserName(user)
                 .setNotificationType(notificationType)
                 .setMedium(notificationMedium)

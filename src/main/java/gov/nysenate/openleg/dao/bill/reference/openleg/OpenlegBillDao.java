@@ -16,5 +16,5 @@ public interface OpenlegBillDao {
      * @param limitOffset {@link LimitOffset}
      * @return {@link PaginatedList<BillView>}
      */
-    public PaginatedList<BillView> getBillViews(SessionYear sessionYear, LimitOffset limitOffset);
+    PaginatedList<BillView> getBillViews(SessionYear sessionYear, LimitOffset limitOffset);
 }

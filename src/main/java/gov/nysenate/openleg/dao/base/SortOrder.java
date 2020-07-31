@@ -8,15 +8,13 @@ public enum SortOrder
 {
     ASC,
     DESC,
-    NONE,
-    ;
+    NONE;
 
     public static SortOrder getOpposite(SortOrder order) {
-        if (ASC.equals(order)) {
+        if (ASC == order)
             return DESC;
-        } else if (DESC.equals(order)) {
+        else if (DESC == order)
             return ASC;
-        }
         return NONE;
     }
 }

@@ -14,8 +14,6 @@ import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
-import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -44,6 +42,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @PostConstruct
     protected void init() {
         eventBus.register(this);
+        this.rebuildIndex();
     }
 
     /** {@inheritDoc} */
@@ -151,30 +150,10 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleMemberUpdate(MemberUpdateEvent memberUpdateEvent) {
-        SessionMember sessionMember = memberUpdateEvent.getMember();
-        if (sessionMember != null) {
-            updateSessionMember(sessionMember);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleBulkMemberUpdate(BulkMemberUpdateEvent bulkMemberUpdateEvent) {
-        Collection<SessionMember> sessionMembers = bulkMemberUpdateEvent.getMembers();
-        if (sessionMembers != null) {
-            sessionMembers.forEach(this::updateSessionMember);
-        }
-    }
-
     /* --- Internal Methods --- */
 
     private void updateSessionMember(SessionMember sessionMember) {
-        FullMember member = memberDataService.getMemberById(sessionMember.getMemberId());
+        FullMember member = memberDataService.getFullMemberById(sessionMember.getMember().getMemberId());
         updateIndex(member);
     }
 
@@ -188,4 +167,3 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
     }
 }
-

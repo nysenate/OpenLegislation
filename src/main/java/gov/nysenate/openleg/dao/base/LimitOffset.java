@@ -37,7 +37,7 @@ public class LimitOffset
 
     public LimitOffset(int limit, int offset) {
         this.limit = limit;
-        this.offset = (offset > 1) ? offset : 1;
+        this.offset = Math.max(offset, 1);
     }
 
     /** --- Methods --- */
@@ -53,7 +53,7 @@ public class LimitOffset
         if (limOff != null && limOff.hasLimit()) {
             int start = limOff.getOffsetStart() - 1;
             int end = start + limOff.getLimit();
-            end = (end > list.size()) ? list.size() : end;
+            end = Math.min(end, list.size());
             return new ArrayList<>(list.subList(start, end));
         }
         return list;
@@ -95,8 +95,7 @@ public class LimitOffset
         if (!(o instanceof LimitOffset)) return false;
         LimitOffset that = (LimitOffset) o;
         if (limit != that.limit) return false;
-        if (offset != that.offset) return false;
-        return true;
+        return offset == that.offset;
     }
 
     @Override

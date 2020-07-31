@@ -24,7 +24,7 @@ public interface DataProcessLogDao
      * @param processId int
      * @return DataProcessRun
      */
-    public DataProcessRun getRun(int processId) throws DataAccessException;
+    DataProcessRun getRun(int processId) throws DataAccessException;
 
     /**
      * Returns a list of DataProcessRun instances that began within the given date/time range.
@@ -35,7 +35,7 @@ public interface DataProcessLogDao
      * @param limOff LimitOffset - Limit the result set
      * @return List<DataProcessRun>
      */
-    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
+    PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
                                         SortOrder dateOrder, LimitOffset limOff);
 
     /**
@@ -46,7 +46,7 @@ public interface DataProcessLogDao
      * @param limOff LimitOffset - Limit the result set
      * @return PaginatedList<DataProcessUnit>
      */
-    public PaginatedList<DataProcessUnit> getUnits(int processId, SortOrder dateOrder, LimitOffset limOff);
+    PaginatedList<DataProcessUnit> getUnits(int processId, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Returns the first and last data process units for a given DataProcessRun.
@@ -55,14 +55,14 @@ public interface DataProcessLogDao
      *                                 two items if >1 units processed where first item is first processed, second
      *                                 item is last processed.
      */
-    public List<DataProcessUnit> getFirstAndLastUnits(int processId);
+    List<DataProcessUnit> getFirstAndLastUnits(int processId);
 
     /**
      * Insert a run into the persistence layer.
      *
      * @param run DataProcessRun
      */
-    public void insertRun(DataProcessRun run);
+    void insertRun(DataProcessRun run);
 
     /**
      * Insert a unit into the persistence layer.
@@ -70,12 +70,12 @@ public interface DataProcessLogDao
      * @param processId int - DataProcessRun id to associate this unit with
      * @param unit DataProcessUnit
      */
-    public void insertUnit(int processId, DataProcessUnit unit);
+    void insertUnit(int processId, DataProcessUnit unit);
 
     /**
      * Updates the run.
      *
      * @param run DataProcessRun
      */
-    public void updateRun(DataProcessRun run);
+    void updateRun(DataProcessRun run);
 }

@@ -21,7 +21,7 @@ public interface AgendaDao
      * @return Agenda
      * @throws DataAccessException
      */
-    public Agenda getAgenda(AgendaId agendaId) throws DataAccessException;
+    Agenda getAgenda(AgendaId agendaId) throws DataAccessException;
 
     /**
      * Get an agenda that starts with a certain date
@@ -29,7 +29,7 @@ public interface AgendaDao
      * @return Agenda
      * @throws DataAccessException - if no such agenda exists
      */
-    public Agenda getAgenda(LocalDate weekOf) throws DataAccessException;
+    Agenda getAgenda(LocalDate weekOf) throws DataAccessException;
 
     /**
      * Retrieve a list of agenda ids for all the agendas processed during the given year.
@@ -38,7 +38,7 @@ public interface AgendaDao
      * @param idOrder SortOrder - Specifies the sort order for the returned ids.
      * @return List<AgendaId>
      */
-    public List<AgendaId> getAgendaIds(int year, SortOrder idOrder);
+    List<AgendaId> getAgendaIds(int year, SortOrder idOrder);
 
     /**
      * Updates the agenda or inserts it if it does not yet exist. This includes all the
@@ -49,12 +49,12 @@ public interface AgendaDao
      * @param legDataFragment LegDataFragment - The fragment that triggered this update.
      * @throws DataAccessException
      */
-    public void updateAgenda(Agenda agenda, LegDataFragment legDataFragment) throws DataAccessException;
+    void updateAgenda(Agenda agenda, LegDataFragment legDataFragment) throws DataAccessException;
 
     /**
      * Deletes an agenda and all of it's associated addenda.
      *
      * @param agendaId AgendaId - Delete the agenda that matches this AgendaId.
      */
-    public void deleteAgenda(AgendaId agendaId);
+    void deleteAgenda(AgendaId agendaId);
 }

@@ -252,6 +252,9 @@ mail.smtp.connectiontimeout = 5000
 mail.smtp.timeout = 5000
 mail.smtp.writetimeout = 5000
 
+# Open Legislation's Contact Email Address
+contact.email =
+
 # --- Notification Configuration ----------------------------------------------
 
 # Set to true to enable notification sending. (Default false)
@@ -277,3 +280,8 @@ domain.url = http://localhost:8080/legislation
 # The base url of the NYSenate public website
 # Useful when testing openleg alongside a development instance of NYSenate.gov
 nysenate.gov.url = https://www.NYSenate.gov
+
+# --- Script Configuration ----------------------------------------------------
+
+# The Open Legislation source code directory. Used by member scripts when downloading senator images.
+source.code.directory = "/home/user/OpenLegislation"

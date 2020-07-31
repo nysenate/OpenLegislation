@@ -11,8 +11,6 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.search.LawSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -24,8 +22,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BaseCtrl.BASE_API_PATH + "/laws", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class LawSearchCtrl extends BaseCtrl
 {
-    private static final Logger logger = LoggerFactory.getLogger(LawSearchCtrl.class);
-
     @Autowired private LawDataService lawData;
     @Autowired private LawSearchService lawSearch;
 
@@ -47,13 +43,13 @@ public class LawSearchCtrl extends BaseCtrl
      */
 
     @RequestMapping("/search")
-    public BaseResponse searchLaws(@RequestParam(required = true) String term, WebRequest request)
+    public BaseResponse searchLaws(@RequestParam String term, WebRequest request)
                                    throws SearchException {
         return searchLaws(null, term, request);
     }
 
     @RequestMapping("/{lawId}/search")
-    public BaseResponse searchLaws(@PathVariable String lawId, @RequestParam(required = true) String term,
+    public BaseResponse searchLaws(@PathVariable String lawId, @RequestParam String term,
                                    WebRequest request) throws SearchException {
         LimitOffset limOff = getLimitOffset(request, 25);
         String sort = request.getParameter("sort");

@@ -36,13 +36,13 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<Integer> searchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(logIndexName, query, filter, sort, limOff, this::parseId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(logIndexName,
                 query, filter, null, null, sort, limOff, true, this::parseLogItem);
     }

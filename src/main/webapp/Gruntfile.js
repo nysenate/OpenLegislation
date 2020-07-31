@@ -8,6 +8,8 @@ var pomDoc = libxmljs.parseXml(pomXml);
 var artifactId = pomDoc.find("/*/*[name()='artifactId']")[0].text();
 var version = pomDoc.find("/*/*[name()='version']")[0].text();
 
+var sass = require('node-sass');
+
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -33,6 +35,7 @@ module.exports = function (grunt) {
         // Compile sass into css
         sass: {
             options: {
+                implementation: sass,
                 sourceMap: true
             },
             openleg: {
@@ -176,10 +179,7 @@ module.exports = function (grunt) {
                             '<%= jsSource %>/component/admin/email.js',
                             '<%= jsSource %>/component/admin/environment.js',
                             '<%= jsSource %>/component/admin/reports.js',
-                            '<%= jsSource %>/component/admin/indices.js',
-                            '<%= jsSource %>/component/admin/members.js',
-                            '<%= jsSource %>/component/admin/member.js',
-                            '<%= jsSource %>/component/admin/verify.js']
+                            '<%= jsSource %>/component/admin/indices.js']
 
                 }
             }

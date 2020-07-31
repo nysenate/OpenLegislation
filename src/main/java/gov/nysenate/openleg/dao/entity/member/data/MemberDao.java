@@ -17,7 +17,7 @@ public interface MemberDao
      * @param session SessionYear
      * @return Member
      */
-    public SessionMember getMemberById(int id, SessionYear session);
+    SessionMember getMemberById(int id, SessionYear session);
 
     /**
      * Retrieve a member by session member id
@@ -27,7 +27,7 @@ public interface MemberDao
      * @param sessionMemberId
      * @return Member
      */
-    public SessionMember getMemberBySessionId(int sessionMemberId);
+    SessionMember getMemberBySessionId(int sessionMemberId);
 
     /**
      * Retrieves map of session year -> Member for a given member id.
@@ -35,7 +35,7 @@ public interface MemberDao
      * @param id int
      * @return Map<Integer, Member>
      */
-    public FullMember getMemberById(int id) throws MemberNotFoundEx;
+    FullMember getMemberById(int id) throws MemberNotFoundEx;
 
     /**
      * Retrieve a map of session year -> Member given the LBDC short name.
@@ -44,7 +44,7 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Map<Integer,Member>
      */
-    public Map<SessionYear, SessionMember> getMembersByShortName(String lbdcShortName, Chamber chamber);
+    Map<SessionYear, SessionMember> getMembersByShortName(String lbdcShortName, Chamber chamber);
 
     /**
      * Retrieve the Member instance via the LBDC shortName and the session year.
@@ -54,60 +54,12 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Member
      */
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
+    SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
 
     /**
      * Retrieve members from all years and both chambers.
      * @return
      */
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
+    List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
 
-    /**
-     * @return List<Member> - a list of members that were created on the fly during processing and have not yet been verified
-     */
-    public List<SessionMember> getUnverifiedSessionMembers();
-
-    /**
-     * Updates or inserts a person into the data store
-     * Sets the personId field of the given person using the newly generated id
-     * @param person Person
-     *
-     */
-    public void updatePerson(Person person);
-
-    /**
-     * Updates or inserts a member into the data store
-     * Sets the memberId field of the given member using the newly generated id
-     * @param member Member
-     */
-    public void updateMember(SessionMember member);
-
-    /**
-     * Updates or inserts a session member into the data store
-     * Sets the sessionMemberId field of the given member using the newly generated id
-     * @param member Member
-     */
-    public void updateSessionMember(SessionMember member);
-
-
-    /**
-     * Links a member to a person in the data store
-     * @param memberId int - member id
-     * @param personId int - person id
-     */
-    public void linkMember(int memberId, int personId);
-
-    /**
-     * Links a session member to a member in the data store
-     * @param sessionMemberId int - session member id
-     * @param memberId int - member id
-     */
-    public void linkSessionMember(int sessionMemberId, int memberId);
-
-    /**
-     * Removes all persons and members that do not have an associated session member
-     * These are typically persons/members/session members that were created on the fly during processing
-     *      where the session
-     */
-    public void clearOrphans();
 }

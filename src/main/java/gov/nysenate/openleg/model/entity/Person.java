@@ -11,9 +11,6 @@ public class Person implements Comparable<Person>
      *  This value should only be set after retrieval from the persistence layer. */
     private Integer personId;
 
-    /** The prefix (Mr, Mrs, Senator, etc) */
-    private String prefix = "";
-
     /** The full name of the person. */
     private String fullName = "";
 
@@ -26,17 +23,17 @@ public class Person implements Comparable<Person>
     /** The last name of the person. */
     private String lastName = "";
 
-    /** The suffix of the person (Jr, Sr, etc) */
-    private String suffix = "";
-
     /** The email address of the person. */
     private String email = "";
 
+    /** The prefix (Mr, Mrs, Senator, etc) */
+    private String prefix = "";
+
+    /** The suffix of the person (Jr, Sr, etc) */
+    private String suffix = "";
+
     /** The name of the image for this person. */
     private String imgName = "";
-
-    /** True if this person has been manually verified */
-    protected boolean verified;
 
     /** --- Constructors --- */
 
@@ -47,7 +44,20 @@ public class Person implements Comparable<Person>
     }
 
     public Person (String fullName) {
+        this.fullName = fullName.trim();
+    }
+
+    public Person(Integer personId, String fullName, String firstName, String middleName, String
+            lastName, String email, String pref, String suffix, String imgName) {
+        this.personId = personId;
         this.fullName = fullName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.prefix = pref;
+        this.suffix = suffix;
+        this.imgName = imgName;
     }
 
     public Person(Person other) {
@@ -60,12 +70,11 @@ public class Person implements Comparable<Person>
         this.suffix = other.suffix;
         this.email = other.email;
         this.imgName = other.imgName;
-        this.verified = other.verified;
     }
 
     /**
      * Updates a Person's fields to be equal to other.
-     * @param other
+     * @param other to copy from.
      */
     public void updateFromOther(Person other) {
         this.personId = other.getPersonId();
@@ -77,7 +86,19 @@ public class Person implements Comparable<Person>
         this.suffix = other.getSuffix();
         this.email = other.getEmail();
         this.imgName = other.getImgName();
-        this.verified = other.isVerified();
+    }
+
+    /**
+     * A consistent naming convention for image names.
+     *
+     * This should be used when naming the image for all new legislators.
+     *
+     * For newer images, this will likely be the same as <code>getImageName</code>, but it may
+     * not be the same for older images which had a different naming conventions.
+     * @return
+     */
+    public String getSuggestedImageFileName() {
+        return getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
     }
 
     /** --- Overrides --- */
@@ -193,19 +214,17 @@ public class Person implements Comparable<Person>
         this.suffix = suffix;
     }
 
+    /**
+     * The name of the image file that represents this Person.
+     *
+     * If the person does not have an image use the no_image.jpg placeholder.
+     * @return
+     */
     public String getImgName() {
-        return imgName;
+        return imgName == null || imgName.equals("") ? "no_image.jpg" : imgName;
     }
 
     public void setImgName(String imgName) {
         this.imgName = imgName;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
     }
 }

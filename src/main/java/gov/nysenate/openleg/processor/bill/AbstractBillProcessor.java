@@ -161,7 +161,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
             baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
-            baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             setModifiedDateTime(baseBill, fragment);
         }
     }
@@ -410,8 +409,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     }
 
     private void copyBillTexts(BillAmendment sourceAmend, BillAmendment destAmend) {
-        for (BillTextFormat format : sourceAmend.getFullTextFormats()) {
-            destAmend.setFullText(format, sourceAmend.getFullText(format));
-        }
+        destAmend.setBillText(sourceAmend.getBillText());
     }
 }

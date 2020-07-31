@@ -1,0 +1,58 @@
+<billstatus  sessyr="2017" billhse="A" billno="99999" action="replace">
+<deadtag></deadtag>
+<currentamd>A</currentamd>
+<sponsor><![CDATA[FINCH]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>10879036</lbdno>
+<introcomm>11</introcomm>
+<curcomm></curcomm>
+<curcommhse></curcommhse>
+<law><![CDATA[Anarchic Law]]></law>
+<title><![CDATA[Relates to absolutely nothing]]></title>
+<billactions><![CDATA[
+01/01/17 referred to education
+01/04/17 amended 10101A
+]]></billactions>
+<actions>
+<action no="1">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-01-01</actiondate>
+<actiondesc><![CDATA[referred to education]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+<action no="2">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>75</actioncode>
+<actiontype>B</actiontype>
+<actiondata>99999</actiondata>
+<actiondataamd>A</actiondataamd>
+<actiondate>2017-01-04</actiondate>
+<actiondesc><![CDATA[amended 999999A]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+<action no="2017">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>75</actioncode>
+<actiontype>B</actiontype>
+<actiondata>999999</actiondata>
+<actiondataamd>A</actiondataamd>
+<actiondate>2017-01-04</actiondate>
+<actiondesc><![CDATA[amended 99999A]]></actiondesc>
+<actionpostdate>2017-01-01</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+</actions>
+</billstatus>

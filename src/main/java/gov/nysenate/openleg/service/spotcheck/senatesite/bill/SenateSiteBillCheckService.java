@@ -21,6 +21,7 @@ import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
+import gov.nysenate.openleg.util.BillTextCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
 
         SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), billId);
 
-        BillView contentBillView = new BillView(content);
+        BillView contentBillView = new BillView(content, Sets.newHashSet(BillTextFormat.PLAIN));
         BillAmendmentView amendment;
         try {
             Version refVersion = reference.getBillId().getVersion();
@@ -284,7 +285,9 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
     }
 
     private void checkText(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        spotCheckUtils.checkString(content.getFullText(), reference.getText(), observation, BILL_TEXT);
+        // Normalize this check for now since there are a lot of minor whitespace mismatches with the new textdiff implementation.
+        spotCheckUtils.checkString(BillTextCheckUtils.ultraNormalize(content.getFullText()),
+                BillTextCheckUtils.ultraNormalize(reference.getText()), observation, BILL_TEXT);
     }
 
     private void checkLawCode(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -370,7 +373,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
             for (int memberId : vote.getVoteRoll().get(code)) {
                 String shortName;
                 try {
-                    FullMember member = memberService.getMemberById(memberId);
+                    FullMember member = memberService.getFullMemberById(memberId);
                     shortName = member.getLatestSessionMember()
                             .orElseThrow(MemberNotFoundEx::new)
                             .getLbdcShortName();

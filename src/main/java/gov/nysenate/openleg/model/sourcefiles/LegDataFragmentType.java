@@ -22,11 +22,11 @@ public enum LegDataFragmentType
     ANACT           (true, "<anact.+", "</anact.+"),                              // An act to
     APPRMEMO        (true, "<approval_memorandum .+", "</approval_memorandum.+"), // Approval memo
     BILLSTAT        (true, "<billstatus .+", "</billstatus.+"),                   // Bill status
-    BILLTEXT        (true, "<billtext_html .+", "</billtext_html.+"),                       // Bill text
+    BILLTEXT        (true, "<billtext_html .+", "</billtext_html.+"),             // Bill text
     LDBLURB         (true, "<sponsor_blurb .+", "</sponsor_blurb.+"),             // Blurb
     LDSPON          (true, "<sponsor_data .+", "</sponsor_data.+"),               // Sponsor
     LDSUMM          (true, "<digestsummary .+", "</digestsummary.+"),             // Summary
-    SAMEAS          (true, "<sameas .+", "</sameas>.+"),                           // Same as
+    SAMEAS          (true, "<sameas .+", "</sameas>.+"),                          // Same as
     SENMEMO         (true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
     VETOMSG         (true, "<veto_message .+", "</veto_message.+"),               // Veto memo
     SENFLVOTE       (true, "<senfloorvote .+","</senfloorvote>.+");

@@ -43,6 +43,7 @@ public enum SqlTable
     BILL_AMENDMENT_PUBLISH_STATUS("bill_amendment_publish_status"),
     BILL_AMENDMENT_VOTE_INFO     ("bill_amendment_vote_info"),
     BILL_AMENDMENT_VOTE_ROLL     ("bill_amendment_vote_roll"),
+    BILL_AMENDMENT_TEXT_DIFF     ("bill_amendment_text_diff"),
     BILL_APPROVAL                ("bill_approval"),
     BILL_COMMITTEE               ("bill_committee"),
     BILL_MULTI_SPONSOR           ("bill_multi_sponsor"),
@@ -100,8 +101,6 @@ public enum SqlTable
 
     NOTIFICATION                 ("notification"),
     NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
-    NOTIFICATION_SCHEDULE        ("notification_schedule"),
-    NOTIFICATION_RATE_LIMIT      ("notification_rate_limit"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),

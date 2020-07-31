@@ -116,6 +116,7 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements LegData
                     baseBill.setModifiedDateTime(date);
                 }
             }
+            baseBill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
 
         } catch (IOException | SAXException | XPathExpressionException e) {

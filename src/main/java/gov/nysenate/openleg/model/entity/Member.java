@@ -13,26 +13,38 @@ public class Member extends Person {
     /** The legislative chamber this member is associated with. */
     protected Chamber chamber;
 
-    public Member() { }
+    /** Indicates if the member is currently an incumbent. */
+    protected boolean incumbent;
+
+    public Member() {}
 
     public Member(int memberId) {
         this.memberId = memberId;
+    }
+
+    public Member(Person person, int memberId, Chamber chamber, boolean incumbent) {
+        super(person);
+        this.memberId = memberId;
+        this.chamber = chamber;
+        this.incumbent = incumbent;
     }
 
     public Member(Member member) {
         super(member);
         this.memberId = member.memberId;
         this.chamber = member.chamber;
+        this.incumbent = member.incumbent;
     }
 
     /**
      * Updates a Members fields to be equal to other.
-     * @param other
+     * @param other to copy from.
      */
     public void updateFromOther(Member other) {
         super.updateFromOther(other);
         this.memberId = other.getMemberId();
         this.chamber = other.getChamber();
+        this.incumbent = other.incumbent;
     }
 
     /** --- Overrides --- */
@@ -44,12 +56,13 @@ public class Member extends Person {
         if (!super.equals(o)) return false;
         Member member = (Member) o;
         return memberId == member.memberId &&
-                chamber == member.chamber;
+                chamber == member.chamber &&
+                incumbent == member.incumbent;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), memberId, chamber);
+        return Objects.hashCode(super.hashCode(), memberId, chamber, incumbent);
     }
 
     /** --- Getters / Setters --- */
@@ -68,5 +81,13 @@ public class Member extends Person {
 
     public void setChamber(Chamber chamber) {
         this.chamber = chamber;
+    }
+
+    public boolean isIncumbent() {
+        return this.incumbent;
+    }
+
+    public void setIncumbent(boolean incumbent) {
+        this.incumbent = incumbent;
     }
 }

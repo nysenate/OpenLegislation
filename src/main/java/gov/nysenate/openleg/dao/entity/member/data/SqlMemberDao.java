@@ -102,84 +102,21 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List<SessionMember> getUnverifiedSessionMembers() {
-        OrderBy order = new OrderBy("session_year", SortOrder.DESC, "lbdc_short_name", SortOrder.ASC);
-        return jdbcNamed.query(SqlMemberQuery.SELECT_UNVERIFIED_MEMBERS_SQL.getSql(schema(), order),
-                new MapSqlParameterSource(), new MemberRowMapper());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updatePerson(Person person) {
-        ImmutableParams params = ImmutableParams.from(getPersonParams(person));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON_SQL.getSql(schema()), params) == 0) {
-            int personId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_PERSON_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            person.setPersonId(personId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateMember(SessionMember member) {
-        ImmutableParams params = ImmutableParams.from(getMemberParams(member));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_MEMBER_SQL.getSql(schema()), params) == 0) {
-            int memberId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            member.setMemberId(memberId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSessionMember(SessionMember member) {
-        ImmutableParams params = ImmutableParams.from(getMemberParams(member));
-        if (jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER_SQL.getSql(schema()), params) == 0) {
-            int sessionMemberId = jdbcNamed.queryForObject(
-                    SqlMemberQuery.INSERT_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
-            member.setSessionMemberId(sessionMemberId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void linkMember(int memberId, int personId) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("memberId", memberId)
-                .addValue("personId", personId);
-        jdbcNamed.update(SqlMemberQuery.LINK_MEMBER_SQL.getSql(schema()), params);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void linkSessionMember(int sessionMemberId, int memberId) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("sessionMemberId", sessionMemberId)
-                .addValue("memberId", memberId);
-        jdbcNamed.update(SqlMemberQuery.LINK_SESSION_MEMBER_SQL.getSql(schema()), params);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearOrphans() {
-        jdbcNamed.update(SqlMemberQuery.DELETE_ORPHAN_MEMBERS_SQL.getSql(schema()), new MapSqlParameterSource());
-        jdbcNamed.update(SqlMemberQuery.DELETE_ORPHAN_PERSONS_SQL.getSql(schema()), new MapSqlParameterSource());
-    }
-
     /** --- Helper classes --- */
 
     public static class MemberRowMapper implements RowMapper<SessionMember>
     {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
-            SessionMember member = new SessionMember();
-            member.setMemberId(rs.getInt("member_id"));
-            member.setSessionMemberId(rs.getInt("session_member_id"));
-            member.setLbdcShortName(rs.getString("lbdc_short_name"));
-            member.setSessionYear(getSessionYearFromRs(rs, "session_year"));
-            member.setDistrictCode(rs.getInt("district_code"));
+            SessionMember sessionMember = new SessionMember();
+
+            sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
+            sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
+            sessionMember.setSessionYear(getSessionYearFromRs(rs, "session_year"));
+            sessionMember.setDistrictCode(rs.getInt("district_code"));
+            sessionMember.setAlternate(rs.getBoolean("alternate"));
+
+            Member member = new Member(rs.getInt("member_id"));
             member.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
@@ -190,10 +127,10 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setLastName(rs.getString("last_name"));
             member.setSuffix(rs.getString("suffix"));
             member.setImgName(rs.getString("img_name"));
-            member.setAlternate(rs.getBoolean("alternate"));
-            member.setVerified(rs.getBoolean("verified"));
             member.setEmail(rs.getString("email"));
-            return member;
+
+            sessionMember.setMember(member);
+            return sessionMember;
         }
     }
 
@@ -209,21 +146,24 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("email", person.getEmail())
                 .addValue("prefix", person.getPrefix())
                 .addValue("suffix", person.getSuffix())
-                .addValue("img_name", person.getImgName())
-                .addValue("verified", person.isVerified());
+                .addValue("img_name", person.getImgName());
     }
 
-    private MapSqlParameterSource getMemberParams(SessionMember member) {
+    private MapSqlParameterSource getMemberParams(Member member) {
         return getPersonParams(member)
                 .addValue("memberId", member.getMemberId())
-                .addValue("sessionMemberId", member.getSessionMemberId())
                 .addValue("chamber", Optional.ofNullable(member.getChamber()).map(Chamber::asSqlEnum).orElse(null))
                 .addValue("incumbent", member.isIncumbent())
-                .addValue("fullName", member.getFullName())
-                .addValue("lbdcShortName", member.getLbdcShortName())
-                .addValue("sessionYear", Optional.ofNullable(member.getSessionYear()).map(SessionYear::getYear).orElse(null))
-                .addValue("districtCode", member.getDistrictCode())
-                .addValue("alternate", member.isAlternate());
+                .addValue("fullName", member.getFullName());
+    }
+
+    private MapSqlParameterSource getSessionMemberParams(SessionMember sessionMember) {
+        return getMemberParams(sessionMember.getMember())
+                .addValue("sessionMemberId", sessionMember.getSessionMemberId())
+                .addValue("lbdcShortName", sessionMember.getLbdcShortName())
+                .addValue("sessionYear", Optional.ofNullable(sessionMember.getSessionYear()).map(SessionYear::getYear).orElse(null))
+                .addValue("districtCode", sessionMember.getDistrictCode())
+                .addValue("alternate", sessionMember.isAlternate());
     }
 
     /**

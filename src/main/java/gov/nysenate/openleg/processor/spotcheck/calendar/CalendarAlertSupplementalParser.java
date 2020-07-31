@@ -98,7 +98,7 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
      */
     private Chamber getChamber(SessionYear sessionYear, String sponsor) {
         try {
-            memberService.getMemberByShortName(sponsor, sessionYear, Chamber.ASSEMBLY);
+            memberService.getSessionMemberByShortName(sponsor, sessionYear, Chamber.ASSEMBLY);
             return Chamber.ASSEMBLY;
         } catch (Exception ex) {
             return Chamber.SENATE;

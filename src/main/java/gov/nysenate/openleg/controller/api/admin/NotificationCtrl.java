@@ -32,6 +32,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -169,15 +170,14 @@ public class NotificationCtrl extends BaseCtrl
 
     private Set<NotificationType> getNotificationTypes(WebRequest request) {
         String[] types = request.getParameterValues("type");
-        return types == null ? NotificationType.getAllNotificationTypes() : getTypesFromStrings(types);
+        return types == null ? EnumSet.allOf(NotificationType.class) : getTypesFromStrings(types);
     }
 
     private Set<NotificationType> getTypesFromStrings(String[] types) {
         Set<NotificationType> typeSet = new HashSet<>();
         for (String type : types) {
-            typeSet.addAll(NotificationType.getCoverage(getEnumParameter("type", type, NotificationType.class)));
+            typeSet.add(getEnumParameter("type", type, NotificationType.class));
         }
-        logger.info("{}", typeSet);
         return typeSet;
     }
 }
