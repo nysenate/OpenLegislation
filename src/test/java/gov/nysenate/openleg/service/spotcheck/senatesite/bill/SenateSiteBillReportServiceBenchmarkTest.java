@@ -28,12 +28,12 @@ import static gov.nysenate.openleg.dao.bill.reference.senatesite.FsSenateSiteDao
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.SENATE_SITE_BILLS;
 
 @Category(SillyTest.class)
-public class BillReportServiceBenchmarkTest extends BaseTests {
+public class SenateSiteBillReportServiceBenchmarkTest extends BaseTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(BillReportServiceBenchmarkTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillReportServiceBenchmarkTest.class);
 
     @Autowired private SpotcheckRunService spotcheckRunService;
-    @Autowired private BillReportService billReportService;
+    @Autowired private SenateSiteBillReportService senateSiteBillReportService;
     @Autowired private Environment env;
 
     private int initialRefQueueSize;
@@ -74,7 +74,7 @@ public class BillReportServiceBenchmarkTest extends BaseTests {
                 stageDump();
                 env.setSensiteBillRefQueueSize(queueSize);
                 env.setSensiteBillDataQueueSize(queueSize);
-                billReportService.generateReport(null, null);
+                senateSiteBillReportService.generateReport(null, null);
 
                 long time = sw.elapsed(TimeUnit.SECONDS);
                 logger.info("Finished test for queue size {}.  Took {}s", queueSize, time);
