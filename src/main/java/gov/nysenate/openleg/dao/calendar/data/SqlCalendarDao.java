@@ -353,6 +353,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             activeList.setCalendarId(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
             activeList.setCalDate(getLocalDateFromRs(rs, "calendar_date"));
             activeList.setReleaseDateTime(getLocalDateTimeFromRs(rs, "release_date_time"));
+            activeList.setNotes(rs.getString("notes"));
             setModPubDatesFromResultSet(activeList, rs);
             return activeList;
         }

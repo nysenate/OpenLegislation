@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class MemberSearchCtrlTest extends ApiTest {
+public class MemberSearchCtrlIT extends ApiTest {
 
     @Autowired
     private MemberSearchCtrl testCtrl;

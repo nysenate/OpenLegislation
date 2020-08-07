@@ -130,7 +130,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     /**
      * Maps rows from the sobi fragment table to LegDataFragment objects.
      */
-    protected class LegDataFragmentRowMapper implements RowMapper<LegDataFragment> {
+    protected static class LegDataFragmentRowMapper implements RowMapper<LegDataFragment> {
 
         SourceFileRowMapper sourceFileRowMapper;
 

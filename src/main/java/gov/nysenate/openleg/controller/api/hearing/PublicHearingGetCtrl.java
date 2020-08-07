@@ -80,7 +80,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingIdView or PublicHearingView.
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}")
+    @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getHearingsByYear(@PathVariable int year,
                                           @RequestParam(defaultValue = "date:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean full,

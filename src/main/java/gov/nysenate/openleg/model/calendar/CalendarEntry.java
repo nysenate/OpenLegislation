@@ -41,7 +41,7 @@ public class CalendarEntry
 
     @Override
     public String toString() {
-        return String.valueOf(billCalNo) + " " + (billId == null ? "" : billId.toString());
+        return billCalNo + " " + (billId == null ? "" : billId.toString());
     }
 
     /** --- Basic Getters/Setters --- */

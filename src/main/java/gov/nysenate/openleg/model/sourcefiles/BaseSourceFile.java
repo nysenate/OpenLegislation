@@ -45,14 +45,14 @@ public abstract class BaseSourceFile implements SourceFile {
     }
     
     public BaseSourceFile(File infile, String encoding) throws IOException, LegDataFileNotFoundEx {
-        if(infile.exists()){
+        if(infile.exists()) {
             this.file = infile;
             this.encoding = encoding;
             archived = false;
             // Attempt to parse the file name, raising an exception if the name is invalid
             getPublishedDateTime();
         }
-        else{
+        else {
             throw new FileNotFoundException(infile.getAbsolutePath());
         }
     }

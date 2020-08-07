@@ -55,7 +55,7 @@ public class XmlFile extends BaseSourceFile {
             Matcher m = fileNamePattern.matcher(fileName);
             DateTimeFormatter dateTimeFormatter= DateTimeFormatter.ofPattern(xmlPattern);
             if (m.matches()) {
-                return LocalDateTime.parse(m.group("date")+ "T" + m.group("time"),
+                return LocalDateTime.parse(m.group("date") + "T" + m.group("time"),
                         dateTimeFormatter);
             }
         } catch (DateTimeParseException ex) {

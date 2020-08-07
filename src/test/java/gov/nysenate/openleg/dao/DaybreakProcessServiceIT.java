@@ -17,9 +17,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Category(SillyTest.class)
-public class DaybreakProcessServiceTest extends BaseTests {
+public class DaybreakProcessServiceIT extends BaseTests {
 
-    private static Logger logger = LoggerFactory.getLogger(DaybreakProcessServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DaybreakProcessServiceIT.class);
 
     @Autowired
     private DaybreakProcessService daybreakProcessService;

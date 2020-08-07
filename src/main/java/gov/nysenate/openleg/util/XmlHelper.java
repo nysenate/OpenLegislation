@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class XmlHelper
@@ -34,7 +35,7 @@ public class XmlHelper
     }
 
     public Document parse(String xmlString) throws IOException, SAXException {
-        InputSource is = new InputSource(new ByteArrayInputStream(xmlString.getBytes("utf-8")));
+        InputSource is = new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
         return dBuilder.parse(is);
     }
 

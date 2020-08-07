@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class CommitteeDaoTest extends BaseTests {
+public class CommitteeDaoIT extends BaseTests {
 
     @Autowired
     protected CommitteeDao committeeDao;

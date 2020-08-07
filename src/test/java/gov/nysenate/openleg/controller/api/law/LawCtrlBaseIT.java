@@ -1,5 +1,6 @@
-package gov.nysenate.openleg.controller.api;
+package gov.nysenate.openleg.controller.api.law;
 
+import gov.nysenate.openleg.controller.api.ApiTest;
 import gov.nysenate.openleg.dao.law.data.LawFileDao;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.processor.law.ManagedLawProcessService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 import static gov.nysenate.openleg.model.law.LawChapterCode.*;
 
-public class LawCtrlTest extends ApiTest {
+public class LawCtrlBaseIT extends ApiTest {
     @Autowired
     private ManagedLawProcessService testService;
     @Autowired

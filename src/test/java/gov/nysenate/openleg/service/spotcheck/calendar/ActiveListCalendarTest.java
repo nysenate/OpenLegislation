@@ -37,7 +37,7 @@ public class ActiveListCalendarTest extends BaseTests {
         Calendar expected = process.process(new CalendarAlertFile(alertFile));
         List<SpotCheckObservation<CalendarEntryListId>> spotCheckObservation = calendarCheckService.checkAll(dummyCalendar,expected);
         CalendarEntryListId actual = spotCheckObservation.get(0).getKey();
-        assertTrue(actual.getType().equals(CalendarType.ACTIVE_LIST));
+        assertEquals(CalendarType.ACTIVE_LIST, actual.getType());
         assertEquals(expected.getId().getCalNo(),actual.getCalendarId().getCalNo());
         assertEquals(expected.getId().getYear(),actual.getCalendarId().getYear());
 

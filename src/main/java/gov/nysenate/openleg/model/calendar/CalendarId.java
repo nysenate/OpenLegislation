@@ -43,7 +43,7 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || !(obj instanceof CalendarId)) return false;
+        if (!(obj instanceof CalendarId)) return false;
         final CalendarId other = (CalendarId) obj;
         return Objects.equals(this.calNo, other.calNo) &&
                Objects.equals(this.year, other.year);

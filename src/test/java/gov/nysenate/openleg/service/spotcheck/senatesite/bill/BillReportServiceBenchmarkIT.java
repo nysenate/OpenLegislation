@@ -28,9 +28,9 @@ import static gov.nysenate.openleg.dao.bill.reference.senatesite.FsSenateSiteDao
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.SENATE_SITE_BILLS;
 
 @Category(SillyTest.class)
-public class BillReportServiceBenchmarkTest extends BaseTests {
+public class BillReportServiceBenchmarkIT extends BaseTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(BillReportServiceBenchmarkTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(BillReportServiceBenchmarkIT.class);
 
     @Autowired private SpotcheckRunService spotcheckRunService;
     @Autowired private BillReportService billReportService;

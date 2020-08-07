@@ -107,7 +107,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Active List --- */
 
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR(
-        "SELECT al.id AS al_id, calendar_active_list_id AS ent_id, *\n" +
+        "SELECT al.id AS al_id, calendar_active_list_id AS ent_id, al.notes AS notes, *\n" +
         "FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
         "LEFT JOIN ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + " ent" + "\n" +
         "  ON al.id = ent.calendar_active_list_id" + "\n" +

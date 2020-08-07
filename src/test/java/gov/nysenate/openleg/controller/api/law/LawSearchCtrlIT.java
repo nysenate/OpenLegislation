@@ -4,10 +4,8 @@ import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.law.LawDocInfoView;
 import gov.nysenate.openleg.client.view.search.SearchResultView;
-import gov.nysenate.openleg.controller.api.LawCtrlTest;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawType;
 import gov.nysenate.openleg.model.search.SearchException;
@@ -15,7 +13,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +20,7 @@ import static gov.nysenate.openleg.model.law.LawChapterCode.EHC;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class LawSearchCtrlTest extends LawCtrlTest {
+public class LawSearchCtrlIT extends LawCtrlBaseIT {
 
     @Autowired
     private LawSearchCtrl testCtrl;

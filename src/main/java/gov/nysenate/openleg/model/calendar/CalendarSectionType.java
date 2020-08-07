@@ -32,7 +32,6 @@ public enum CalendarSectionType
         for (CalendarSectionType cst : CalendarSectionType.values()) {
             codeMap.put(cst.code, cst);
             lrsMap.put(cst.lrsRepresentation, cst);
-
         }
     }
 

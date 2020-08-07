@@ -73,7 +73,7 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
                     LocalDate calDate = DateUtils.getLrsLocalDate(xml.getString("actcaldate/text()", xmlSequence));
                     LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(
                             xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
-                    String notes = xml.getString("notes/text()", xmlSequence);
+                    String notes = xml.getString("notes/text()", xmlSequence).trim();
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);
                     activeList.setModifiedDateTime(modifiedDate);
                     activeList.setPublishedDateTime(modifiedDate);
