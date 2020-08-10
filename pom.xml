@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
@@ -17,89 +18,91 @@
 
   <build>
     <finalName>${project.artifactId}##${project.version}</finalName>
-    <plugins>
-      <!-- Compiler Plugin -->
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <!-- avoid possible encoding issues -->
-          <encoding>utf-8</encoding>
-        </configuration>
-      </plugin>
-      <!-- Surefire Plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20</version>
-        <configuration>
-          <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <skipTests>false</skipTests>
-          <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
-        </configuration>
-      </plugin>
-      <!-- Failsafe Plugin -->
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19</version>
-        <configuration>
-          <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
-        </configuration>
-        <executions>
-          <execution>
-            <id>integration-test</id>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <version>1.6.0</version>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>exec-npm-install</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>install</argument>
-                <argument>--no-audit</argument>
-              </arguments>
-              <workingDirectory>src/main/webapp</workingDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-maven-plugin</artifactId>
-        <version>6.0.1</version>
-        <configuration>
-          <configFiles>
-            <configFile>src/main/resources/flyway.conf</configFile>
-          </configFiles>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flyway-migrate</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>migrate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- Compiler Plugin -->
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+            <!-- avoid possible encoding issues -->
+            <encoding>utf-8</encoding>
+          </configuration>
+        </plugin>
+        <!-- Surefire Plugin -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M5</version>
+          <configuration>
+            <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
+            <skipTests>false</skipTests>
+            <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
+          </configuration>
+        </plugin>
+        <!-- Failsafe Plugin -->
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.0.0-M5</version>
+          <configuration>
+            <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
+            <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
+          </configuration>
+          <executions>
+            <execution>
+              <id>integration-test</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <version>1.6.0</version>
+          <artifactId>exec-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>exec-npm-install</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+              <configuration>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>install</argument>
+                  <argument>--no-audit</argument>
+                </arguments>
+                <workingDirectory>src/main/webapp</workingDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.flywaydb</groupId>
+          <artifactId>flyway-maven-plugin</artifactId>
+          <version>6.0.1</version>
+          <configuration>
+            <configFiles>
+              <configFile>src/main/resources/flyway.conf</configFile>
+            </configFiles>
+          </configuration>
+          <executions>
+            <execution>
+              <id>flyway-migrate</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>migrate</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <properties>
@@ -129,7 +132,8 @@
     <spring.version>5.2.3.RELEASE</spring.version>
     <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
-    <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
+    <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
+    <javax.activation.version>1.1.1</javax.activation.version>
   </properties>
 
   <dependencies>
@@ -317,6 +321,21 @@
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>${javax.activation.version}</version>
     </dependency>
 
     <!-- Apache commons -->
