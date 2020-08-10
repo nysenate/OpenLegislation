@@ -11,16 +11,16 @@ public enum AdminUserQuery implements BasicSqlQuery
             " VALUES (:username, :password, :master, :active)"
     ),
     SELECT_ALL(
-            "SELECT * FROM PUBLIC." + SqlTable.ADMIN
+            "SELECT * FROM public." + SqlTable.ADMIN
     ),
     SELECT_BY_NAME(
             "SELECT * FROM public." + SqlTable.ADMIN + " WHERE username = :username"
     ),
     DELETE_BY_NAME(
-            "DELETE FROM public." +SqlTable.ADMIN + " WHERE username = :username"
+            "DELETE FROM public." + SqlTable.ADMIN + " WHERE username = :username"
     ),
     UPDATE_ADMIN(
-            "UPDATE public." +SqlTable.ADMIN+ "\n" +
+            "UPDATE public." + SqlTable.ADMIN + "\n" +
             "SET password = :password, master = :master, active = :active\n"+
             "WHERE username = :username"
     );
