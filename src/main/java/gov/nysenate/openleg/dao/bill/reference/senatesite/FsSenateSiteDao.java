@@ -61,6 +61,10 @@ public class FsSenateSiteDao implements SenateSiteDao {
         return groupFragmentsIntoDumps(fragments);
     }
 
+    public Collection<File> getDumpFilesFromDir(SpotCheckRefType refType, File directory) {
+         return FileUtils.listFiles(directory, new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
+    }
+
     private Collection<SenateSiteDump> groupFragmentsIntoDumps(Collection<SenateSiteDumpFragment> fragments) {
         Map<SenateSiteDumpId, SenateSiteDump> dumpMap = new HashMap<>();
         fragments.forEach(fragment -> {

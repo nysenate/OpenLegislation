@@ -212,6 +212,10 @@ bill.scrape.queue.enabled = true
 # e.g. Daybreaks, agenda/calendar alerts
 spotcheck.checkmail.enabled = true
 
+# How many months of senate site spotcheck dump archives to keep on the filesystem.
+# Dumps older than this will be deleted.
+spotcheck.senatesite.archives.months.to.keep = 6
+
 # --- Openleg Ref to Openleg Source--------------------------------------------
 #Api Key for the reference instance of Openleg
 spotcheck.openleg_ref.api.key =
