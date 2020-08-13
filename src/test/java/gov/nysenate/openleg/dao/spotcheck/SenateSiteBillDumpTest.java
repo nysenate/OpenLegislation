@@ -36,7 +36,7 @@ public class SenateSiteBillDumpTest extends BaseTests {
     public void setProcessedTest() throws Exception {
         Collection<SenateSiteDump> dumps = senateSiteDao.getPendingDumps(SpotCheckRefType.SENATE_SITE_BILLS);
         for (SenateSiteDump dump : dumps) {
-            senateSiteDao.setProcessed(dump);
+            senateSiteDao.archiveDump(dump);
         }
     }
 }

@@ -23,9 +23,15 @@ public interface SenateSiteDao {
     void saveDumpFragment(SenateSiteDumpFragment fragment, String fragmentData) throws IOException;
 
     /**
-     * Marks the designated dump fragment as processed, ensuring it will not be retrieved with <code>getPendingDumps()</code>
-     * @see #getPendingDumps(SpotCheckRefType)
-     * @param dump SenateSiteBillDumpFragId
+     * Archives a senate site dump such that it will not be picked up by {@link #getPendingDumps(SpotCheckRefType)}.
+     *
+     * On success: All fragments belonging to {@code dump} will be gzipped and moved into the archive directory.
+     * The original fragments (from the incoming directory) will be deleted.
+     *
+     * On failure: An exception will be thrown and no changes will be made to the file system.
+     *
+     * @param dump The {@link SenateSiteDump} to be archived.
+     * @throws IOException if any IO error occurs while compressing or moving these files.
      */
-    void setProcessed(SenateSiteDump dump) throws IOException;
+    void archiveDump(SenateSiteDump dump) throws IOException;
 }

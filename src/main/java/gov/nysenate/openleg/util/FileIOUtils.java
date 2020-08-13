@@ -10,9 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
-public class FileIOUtils
-{
+public class FileIOUtils {
     private static final Set<PosixFilePermission> filePermissions = ImmutableSet.of(
             PosixFilePermission.OWNER_READ,
             PosixFilePermission.OWNER_WRITE,
@@ -44,9 +44,9 @@ public class FileIOUtils
      * Any directory that we attempt to list files from should exist. If it doesn't then
      * create them. This makes the processes robust against incomplete environment setups.
      *
-     * @param directory - The directory to list files from (and create if necessary)
+     * @param directory  - The directory to list files from (and create if necessary)
      * @param extensions - A list of extensions to grab. null for all extensions.
-     * @param recursive - true when you want to list files recursively.
+     * @param recursive  - true when you want to list files recursively.
      * @return A collection of matching filenames
      * @throws IOException
      */
@@ -59,10 +59,10 @@ public class FileIOUtils
      * Any directory that we attempt to list files from should exist. If it doesn't then
      * create them. This overload can be used to exclude certain directories if recursive is true.
      *
-     * @param directory - The directory to list files from (and create if necessary)
-     * @param recursive - true when you want to list files recursively.
+     * @param directory   - The directory to list files from (and create if necessary)
+     * @param recursive   - true when you want to list files recursively.
      * @param excludeDirs - Array of directory names that should be excluded from the match.
-     *                      Set to null if all directories should be matched.
+     *                    Set to null if all directories should be matched.
      * @return A collection of matching filenames
      * @throws IOException
      */
@@ -75,8 +75,7 @@ public class FileIOUtils
                 excludeDirFilters.add(FileFilterUtils.nameFileFilter(excludeDir));
             }
             dirFileFilter = FileFilterUtils.notFileFilter(new OrFileFilter(excludeDirFilters));
-        }
-        else {
+        } else {
             dirFileFilter = (recursive) ? TrueFileFilter.TRUE : FalseFileFilter.FALSE;
         }
         return FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
@@ -85,10 +84,10 @@ public class FileIOUtils
     /**
      * Create the specified folder if necessary and return a File handle to it.
      *
-     * @param parent - The parent directory for this folder
+     * @param parent     - The parent directory for this folder
      * @param folderName - The name of the directory to retrieve
      * @return a File handle to the requested folder.
-     * @throws IOException
+     * @throws IOException if this folder cannot be created.
      */
     public static File safeGetFolder(File parent, String folderName) throws IOException {
         File directory = new File(parent, folderName);
@@ -109,8 +108,8 @@ public class FileIOUtils
     /**
      * Moves a file, deleting the destination file if it already exists.
      *
-     * @param file File
-     * @param directory File
+     * @param file            File
+     * @param directory       File
      * @param createDirectory ?
      * @throws IOException
      */
@@ -125,7 +124,7 @@ public class FileIOUtils
     /**
      * Writes out an InputStream to the destination file path specified.
      *
-     * @param stuffToWrite InputStream
+     * @param stuffToWrite    InputStream
      * @param destinationPath String
      * @throws IOException
      */
@@ -147,8 +146,8 @@ public class FileIOUtils
             plsof = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
             reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
             String line;
-            while((line=reader.readLine())!=null) {
-                if(line.contains(file.getAbsolutePath())) {
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(file.getAbsolutePath())) {
                     reader.close();
                     plsof.destroy();
                     return false;
@@ -159,7 +158,8 @@ public class FileIOUtils
                 if (reader != null) {
                     reader.close();
                 }
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             Optional.ofNullable(plsof).ifPresent(Process::destroy);
         }
         return true;
@@ -168,11 +168,11 @@ public class FileIOUtils
     /**
      * Saves a character sequence to a file and sets common permissions to the file.
      * Permissions set are owner read + write, group read, and others read.
-     * @see FileUtils#write(File, CharSequence) for details on file saving.
      *
      * @param file The file to save to.
      * @param data The data to save to the file.
      * @throws IOException
+     * @see FileUtils#write(File, CharSequence) for details on file saving.
      */
     public static void write(File file, CharSequence data) throws IOException {
         FileUtils.write(file, data, Charset.defaultCharset());
@@ -182,12 +182,12 @@ public class FileIOUtils
     /**
      * Saves a character sequence to a file and sets common permissions to the file.
      * Permissions set are owner read + write, group read, and others read.
-     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
      *
-     * @param file The file to save to.
-     * @param data The data to save to the file.
+     * @param file     The file to save to.
+     * @param data     The data to save to the file.
      * @param encoding The encoding to use.
      * @throws IOException
+     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
      */
     public static void write(File file, CharSequence data, Charset encoding) throws IOException {
         FileUtils.write(file, data, encoding);
@@ -196,10 +196,11 @@ public class FileIOUtils
 
     /**
      * Save a string to a file and sets common permissions to the file.
-     * @see FileUtils#writeStringToFile(File, String) for details.
+     *
      * @param file
      * @param data
      * @throws IOException
+     * @see FileUtils#writeStringToFile(File, String) for details.
      */
     public static void writeStringToFile(File file, String data) throws IOException {
         FileUtils.writeStringToFile(file, data, Charset.defaultCharset());
@@ -208,11 +209,12 @@ public class FileIOUtils
 
     /**
      * Save a string to a file with a specified encoding. Sets common permissions to the saved file.
-     * @see FileUtils#writeStringToFile(File, String, Charset) for details.
+     *
      * @param file
      * @param data
      * @param encoding
      * @throws IOException
+     * @see FileUtils#writeStringToFile(File, String, Charset) for details.
      */
     public static void writeStringToFile(File file, String data, Charset encoding) throws IOException {
         FileUtils.writeStringToFile(file, data, encoding);
@@ -224,12 +226,12 @@ public class FileIOUtils
      * The data is initially saved to a temporary file and then moved to the destination file.
      * This discourages use of the file while data is being written.
      * Permissions set are owner read + write, group read, and others read.
-     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
      *
-     * @param file The file to save to.
-     * @param data The data to save to the file.
+     * @param file     The file to save to.
+     * @param data     The data to save to the file.
      * @param encoding The encoding to use.
      * @throws IOException
+     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
      */
     public static void writeUsingTemp(File file, CharSequence data, Charset encoding) throws IOException {
         File tempFile = getTempFile(file);
@@ -253,6 +255,7 @@ public class FileIOUtils
     /**
      * Saves an input stream to a file and sets common permissions to the file.
      * Wraps the FileUtils.copyInputStreamToFile method.
+     *
      * @param stream
      * @param file
      * @throws IOException
@@ -272,6 +275,41 @@ public class FileIOUtils
         return new File(
                 FileIOUtils.class.getClassLoader().getResource(relativePath).getFile()
         );
+    }
+
+    /**
+     * Gzip the given {@code srcFile}.
+     *
+     * On success, {@code srcFile} will remain unchanged and a gzipped version will exist in the same
+     * directory with a '.gz' extension added on to the name.
+     *
+     * In the case of an error, {@code srcFile} will remain unchanged and the gzipped file will not exist
+     * and an exception will be thrown.
+     *
+     * @param srcFile An existing file to gzip.
+     * @return A File containing {@code srcFile} gzipped. '.gz' is appended to its name.
+     * @throws IOException if {@code srcFile} cannot be found.
+     * @throws IOException if an IO error occurs.
+     * @throws NullPointerException if {@code srcFile} is null
+     */
+    public static File gzipFile(File srcFile) throws IOException {
+        Objects.requireNonNull(srcFile);
+
+        File gzipFile = new File(srcFile.getPath() + ".gz");
+        try (FileInputStream fis = new FileInputStream(srcFile);
+             GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(gzipFile))) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) > 0) {
+                gos.write(buffer, 0, len);
+            }
+        } catch (IOException ex) {
+            // If an error occurs during writing - the archive is incomplete - delete it.
+            FileUtils.deleteQuietly(gzipFile);
+            throw new IOException("An error occurred while gzipping file '" + gzipFile +"'.");
+        }
+
+        return gzipFile;
     }
 
     /**

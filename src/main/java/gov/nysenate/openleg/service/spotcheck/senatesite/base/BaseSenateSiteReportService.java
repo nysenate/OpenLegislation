@@ -37,7 +37,7 @@ public abstract class BaseSenateSiteReportService<ContentKey> implements SpotChe
             checkDump(dump, report);
         } finally {
             logger.info("archiving {} dump...", getSpotcheckRefType());
-            senateSiteDao.setProcessed(dump);
+            senateSiteDao.archiveDump(dump);
         }
         return report;
     }
