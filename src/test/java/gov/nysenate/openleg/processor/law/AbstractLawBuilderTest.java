@@ -65,7 +65,7 @@ public class AbstractLawBuilderTest {
     }
 
     @Test
-    public void GCMaddInitialBlockTest() {
+    public void addInitialBlockTestGCM() {
         init("GCM", "-CH772");
         testInitialBlock("P3", PART, "3");
         testInitialBlock("P3S1", SUBPART, "1");
@@ -74,7 +74,7 @@ public class AbstractLawBuilderTest {
     }
 
     @Test
-    public void ACAaddInitialBlockTest() {
+    public void addInitialBlockTestACA() {
         init("ACA", "-CH11-C");
         testInitialBlock("TA", TITLE, "A");
         testInitialBlock("TAA1", ARTICLE, "1");

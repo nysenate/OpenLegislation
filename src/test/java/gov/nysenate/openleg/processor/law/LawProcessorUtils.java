@@ -4,12 +4,11 @@ import gov.nysenate.openleg.model.law.*;
 
 import java.time.LocalDate;
 
-import static gov.nysenate.openleg.model.law.LawDocumentType.ARTICLE;
 import static gov.nysenate.openleg.model.law.LawDocumentType.SECTION;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public abstract class LawProcessorUtils {
+    protected final static String TEST_DATA_DIRECTORY = "src/test/resources/processor/law/";
 
     /**
      * Creates and returns a LawDocInfo. See getLawBlock for param info.
@@ -53,7 +52,7 @@ public abstract class LawProcessorUtils {
      * @param type of node to be added.
      */
     public static void testChildNode(String locId, LawDocumentType type, LawChapterCode code, IdBasedLawBuilder builder) {
-        LawDocInfo info = LawProcessorUtils.getLawDocInfo(code, locId, type);
+        LawDocInfo info = getLawDocInfo(code, locId, type);
         builder.addChildNode(new LawTreeNode(info, ++builder.sequenceNo));
         if (builder.rootNode == null)
             builder.rootNode = builder.currParent();

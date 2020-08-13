@@ -2,7 +2,9 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.law.*;
+import gov.nysenate.openleg.model.law.LawChapterCode;
+import gov.nysenate.openleg.model.law.LawDocument;
+import gov.nysenate.openleg.model.law.LawVersionId;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -17,7 +19,6 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class RulesLawBuilderTest {
-    private static final String FILENAME_PREFIX = "src/test/resources/processor/law/";
     private static final String[] ASSEMBLY_RULE_LOC_IDS = {"ASSEMBLYRULES", "R1", "R1S1", "R1S2", "R1S3", "R1S4", "R1S5", "R1S6", "R1S7", "R1S8", "R2", "R2S1", "R2S2", "R2S3", "R2S4"};
     private static final String[] SENATE_RULE_LOC_IDS = {"SENATERULES", "R1", "R1S1", "R2", "R2S1"};
     private static final String[] JOINT_RULE_LOC_IDS = {"JR1", "JR1S1", "JR1S2", "JR1S3", "JR1S4", "JR1S5", "JR1S6", "JR2", "JR2S1"};
@@ -48,7 +49,8 @@ public class RulesLawBuilderTest {
     private static RulesLawBuilder initRulesBuilder(Chamber chamber) {
         String lawId = (chamber == Chamber.SENATE ? LawChapterCode.CMS : LawChapterCode.CMA).name();
         RulesLawBuilder builder = (RulesLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
-        String fileName = FILENAME_PREFIX + chamber.name().substring(0, 1).toUpperCase() + chamber.name().substring(1).toLowerCase() + "RulesSample";
+        String fileName = LawProcessorUtils.TEST_DATA_DIRECTORY + chamber.name().substring(0, 1).toUpperCase() +
+                chamber.name().substring(1).toLowerCase() + "RulesSample";
         Scanner scanner;
         try {
             scanner = new Scanner(new File(fileName));

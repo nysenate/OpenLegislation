@@ -8,13 +8,15 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class LawTitleParser
+public abstract class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
     private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)";
@@ -178,7 +180,7 @@ public class LawTitleParser
     private static String capitalizeTitle(String title) {
         if (title != null && !title.isEmpty()) {
             String capStr = WordUtils.capitalizeFully(title);
-            return capStr.substring(0, 1) + Stream.of(capStr.substring(1).split(" "))
+            return capStr.charAt(0) + Stream.of(capStr.substring(1).split(" "))
                     .map(s -> (s.matches("(Of|Or|The|A|And|An|To)")) ? s.toLowerCase() : s)
                     .collect(Collectors.joining(" "));
         }
