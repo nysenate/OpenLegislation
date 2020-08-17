@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.FsSenateSiteDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
@@ -29,13 +30,16 @@ public class SenateSiteArchiveManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteArchiveManager.class);
 
+    private EventBus eventBus;
     private Environment environment;
     private final List<SpotCheckRefType> senateSiteRefTypes;
     private final int monthsToKeep;
 
     @Autowired
-    public SenateSiteArchiveManager(Environment environment,
+    public SenateSiteArchiveManager(EventBus eventBus, Environment environment,
                                     @Value("${spotcheck.senatesite.archives.months.to.keep:6}") int monthsToKeep) {
+        this.eventBus = eventBus;
+        this.eventBus.register(this);
         this.environment = environment;
         this.monthsToKeep = monthsToKeep;
 
