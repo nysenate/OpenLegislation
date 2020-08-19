@@ -8,13 +8,10 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -27,14 +24,9 @@ import java.io.IOException;
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
-public class XmlLDSummProcessor extends AbstractDataProcessor implements LegDataProcessor {
+public class XmlLDSummProcessor extends AbstractLegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSummProcessor.class);
-
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    public XmlLDSummProcessor() {}
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -64,9 +56,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             amendment.setRelatedLawsJson(json);
 
             if (action.equals("replace")) { //replace bill
-                /**
-                 * add previous bills
-                 */
+                // add previous bills
                 int totalNumsOfPreBills = xmlHelper.getNodeList("digestsummary/oldbill/oldyear", doc).getLength();
                 for (int i = 1; i <= totalNumsOfPreBills; i++) {
                     int sess = xmlHelper.getInteger("digestsummary/oldbill/oldyear[" + i + "]", doc);
@@ -93,22 +83,4 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             checkIngestCache();
         }
     }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
-    @Override
-    public void init() {
-        initBase();
-    }
-
 }

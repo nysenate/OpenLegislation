@@ -8,7 +8,10 @@ import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -39,12 +42,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -88,9 +91,8 @@ public abstract class AbstractDataProcessor
 
     @Autowired protected XmlHelper xmlHelper;
 
-    public abstract void init();
-
-    public void initBase() {
+    @PostConstruct
+    public void init() {
         eventBus.register(this);
     }
 

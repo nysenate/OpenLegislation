@@ -9,17 +9,12 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
-import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -36,17 +31,15 @@ import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
  * The AbstractBillProcessor serves as a base class for actual bill processor implementations to provide unified
  * helper methods to address some of the quirks that are present when processing bill data.
  */
-public abstract class AbstractBillProcessor extends AbstractDataProcessor implements LegDataProcessor
+public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
 {
-    private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
-
     /* --- Patterns --- */
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
     protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     /** The expected format for the first line of the vote memo [V] block data. */
-    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
+    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
 
     /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
     protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
@@ -61,32 +54,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
-
-    /* --- Constructors --- */
-
-    @PostConstruct
-    public void init() {
-        initBase();
-    }
-
-    /* --- Abstract methods --- */
-
-    /** {@inheritDoc} */
-    public abstract LegDataFragmentType getSupportedType();
-
-    /**
-     * Performs processing of the SOBI bill fragments.
-     * @param legDataFragment LegDataFragment
-     */
-    public abstract void process(LegDataFragment legDataFragment);
-
-    /**
-     * Make sure that the global ingest cache is purged.
-     */
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
 
     /* --- Processing Methods --- */
 

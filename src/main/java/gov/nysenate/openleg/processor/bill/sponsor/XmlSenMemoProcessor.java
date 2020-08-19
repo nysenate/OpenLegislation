@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,7 @@ import java.io.IOException;
  * Created by uros on 3/21/17.
  */
 @Service
-public class XmlSenMemoProcessor extends AbstractMemoProcessor implements LegDataProcessor {
-
-    private final XmlHelper xmlHelper;
+public class XmlSenMemoProcessor extends AbstractMemoProcessor {
 
     @Autowired
     public XmlSenMemoProcessor(XmlHelper xmlHelper) {
@@ -66,23 +63,6 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements LegDat
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing senate_billMemo", e);
         }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
-    @Override
-    public void init() {
-        initBase();
     }
 
     /**

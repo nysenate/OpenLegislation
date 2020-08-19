@@ -12,10 +12,8 @@ import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processor.bill.BillActionParser;
 import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -32,17 +30,6 @@ import java.util.Optional;
 public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
-
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    public XmlBillStatProcessor() {
-    }
-
-    @Override
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -86,13 +73,6 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML bill stat parsing error", e);
             throw new ParseError("Error While Parsing BillStatProcessorXML", e);
-        }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
         }
     }
 
@@ -171,10 +151,4 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
             return str;
         return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)", "\n$0").substring(1);
     }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
 }

@@ -7,13 +7,10 @@ import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,21 +25,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Service
-public class XmlSenFlVotProcessor extends AbstractDataProcessor implements LegDataProcessor {
+public class XmlSenFlVotProcessor extends AbstractLegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenFlVotProcessor.class);
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
     protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    public XmlSenFlVotProcessor() {}
-
-    @Override
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -129,18 +116,6 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements LegDa
             postDataUnitEvent(unit);
             checkIngestCache();
         }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
     }
 
     private void removeCase(BillAmendment billAmendment, BillVote vote) {

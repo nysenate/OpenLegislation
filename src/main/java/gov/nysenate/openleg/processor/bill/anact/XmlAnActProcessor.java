@@ -8,13 +8,10 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -29,19 +26,9 @@ import java.io.IOException;
  * Created by Robert Bebber on 2/15/17.
  */
 @Service
-public class XmlAnActProcessor extends AbstractDataProcessor implements LegDataProcessor {
+public class XmlAnActProcessor extends AbstractLegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessor.class);
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    public XmlAnActProcessor() {
-    }
-
-    @Override
-    public void init() {
-        initBase();
-    }
 
     /**
      * This method allows for the retrieval of the LegDataFragmentType
@@ -59,7 +46,6 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements LegDataP
      */
     @Override
     public void process(LegDataFragment legDataFragment) {
-
         logger.info("Processing AnAct...");
         logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(legDataFragment);
@@ -92,17 +78,5 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements LegDataP
             postDataUnitEvent(unit);
             checkIngestCache();
         }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
     }
 }

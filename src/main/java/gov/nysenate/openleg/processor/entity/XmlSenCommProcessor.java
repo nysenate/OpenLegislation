@@ -5,9 +5,8 @@ import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -27,24 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDataProcessor
+public class XmlSenCommProcessor extends AbstractLegDataProcessor
 {
     private static final Logger logger = LogManager.getLogger(XmlSenCommProcessor.class);
 
     private static final DateTimeFormatter meetTimeSDF = DateTimeFormatter.ofPattern("hh:mm a");
 
     protected final MemberService memberService;
-    protected final XmlHelper xml;
 
     @Autowired
     public XmlSenCommProcessor(MemberService memberService, XmlHelper xml) {
         this.memberService = memberService;
-        this.xml = xml;
-    }
-
-    @PostConstruct
-    public void init() {
-        initBase();
+        this.xmlHelper = xml;
     }
 
     /** {@inheritDoc  */
@@ -61,14 +53,14 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
         String xmlString = legDataFragment.getText();
         try {
             Node root = getXmlRoot(xmlString);
-            Node committeeRoot = xml.getNode("sencommmem", root);
-            SessionYear sessionYear = new SessionYear(Integer.parseInt(xml.getString("@sessyr", committeeRoot)));
-            int year = Integer.parseInt(xml.getString("@year", committeeRoot));
+            Node committeeRoot = xmlHelper.getNode("sencommmem", root);
+            SessionYear sessionYear = new SessionYear(Integer.parseInt(xmlHelper.getString("@sessyr", committeeRoot)));
+            int year = Integer.parseInt(xmlHelper.getString("@year", committeeRoot));
             Chamber chamber = Chamber.SENATE;
             logger.info("Processing " + chamber + "committees for s" + sessionYear + " y" + year + "\t" +
                     legDataFragment.getPublishedDateTime());
 
-            committeeRoot = xml.getNode("committees", committeeRoot);
+            committeeRoot = xmlHelper.getNode("committees", committeeRoot);
             NodeList committeeNodes = committeeRoot.getChildNodes();
             for (int i = 0; i < committeeNodes.getLength(); i++) {
                 Node committeeNode = committeeNodes.item(i);
@@ -102,30 +94,29 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
 
     @Override
     public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled()) {
+        if (!env.isLegDataBatchEnabled())
             flushAllUpdates();
-        }
     }
 
     /* --- Internal Methods --- */
 
     private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException {
-        committee.setName(xml.getString("name/text()", committeeNode));
-        committee.setLocation(xml.getString("location/text()", committeeNode));
+        committee.setName(xmlHelper.getString("name/text()", committeeNode));
+        committee.setLocation(xmlHelper.getString("location/text()", committeeNode));
 
-        String meetDay = xml.getString("meetday/text()", committeeNode);
+        String meetDay = xmlHelper.getString("meetday/text()", committeeNode);
         committee.setMeetDay(StringUtils.isNotEmpty(meetDay) ? DayOfWeek.valueOf(meetDay.toUpperCase()) : null);
 
-        String meetTimeStr = xml.getString("meettime/text()", committeeNode);
+        String meetTimeStr = xmlHelper.getString("meettime/text()", committeeNode);
         committee.setMeetTime(StringUtils.isNotEmpty(meetTimeStr) ? LocalTime.parse(meetTimeStr, meetTimeSDF) : null);
 
         committee.setMeetAltWeek(
-                xml.getString("meetaltweek/text()", committeeNode)
+                xmlHelper.getString("meetaltweek/text()", committeeNode)
                         .trim()
                         .equalsIgnoreCase("Yes"));
-        committee.setMeetAltWeekText(xml.getString("meetaltweektext/text()", committeeNode));
+        committee.setMeetAltWeekText(xmlHelper.getString("meetaltweektext/text()", committeeNode));
 
-        Node committeeMembership = xml.getNode("membership", committeeNode);
+        Node committeeMembership = xmlHelper.getNode("membership", committeeNode);
         committee.setMembers(processCommitteeMembers(committeeMembership, committee));
         return committee;
     }
@@ -139,19 +130,19 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDat
 
             Node memberNode = committeeMembersNodes.item(i);
             if (memberNode.getNodeName().equals("member")) {
-                String shortName = xml.getString("name/text()", memberNode);
+                String shortName = xmlHelper.getString("name/text()", memberNode);
                 SessionMember sessionMember = memberService.getSessionMemberByShortName(
                         shortName, committee.getSession(), committee.getChamber());
 
                 CommitteeMember committeeMember = new CommitteeMember();
-                committeeMember.setSequenceNo(Integer.parseInt(xml.getString("@seqno", memberNode)));
+                committeeMember.setSequenceNo(Integer.parseInt(xmlHelper.getString("@seqno", memberNode)));
                 committeeMember.setSessionMember(sessionMember);
                 committeeMember.setMajority(
-                        xml.getString("memberlist/text()", memberNode)
+                        xmlHelper.getString("memberlist/text()", memberNode)
                                 .trim()
                                 .equalsIgnoreCase("Majority"));
 
-                String title = xml.getString("title/text()", memberNode).trim();
+                String title = xmlHelper.getString("title/text()", memberNode).trim();
                 if (title.equalsIgnoreCase("Chairperson")) {
                     committeeMember.setTitle(CommitteeMemberTitle.CHAIR_PERSON);
                 } else if (title.equalsIgnoreCase("Vice-Chair")) {

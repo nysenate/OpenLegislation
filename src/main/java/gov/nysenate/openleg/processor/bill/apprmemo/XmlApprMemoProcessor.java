@@ -9,12 +9,9 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -30,16 +27,9 @@ import java.io.IOException;
  * Created by Robert Bebber on 3/6/17.
  */
 @Service
-public class XmlApprMemoProcessor extends AbstractMemoProcessor implements LegDataProcessor {
+public class XmlApprMemoProcessor extends AbstractMemoProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlApprMemoProcessor.class);
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    @Override
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -72,18 +62,6 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements LegDa
             postDataUnitEvent(unit);
             checkIngestCache();
         }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
     }
 
     /* --- Internal Methods --- */

@@ -13,7 +13,6 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,15 +31,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
-
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
  * store via the service layer. This implementation is fairly lengthy due to the various types of data that
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractBillProcessor implements LegDataProcessor
+public class BillSobiProcessor extends AbstractBillProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
@@ -51,7 +47,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
     protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     /** The expected format for the first line of the vote memo [V] block data. */
-    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
+    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
 
     /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
     protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
@@ -81,11 +77,6 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
     /** --- Constructors --- */
 
     public BillSobiProcessor() {}
-
-    @PostConstruct
-    public void init() {
-        initBase();
-    }
 
     /** --- Implementation methods --- */
 
@@ -150,21 +141,6 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
         postDataUnitEvent(unit);
     }
 
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    /**
-     * Make sure that the global ingest cache is purged.
-     */
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
     /** --- Processing Methods --- */
 
     /**
@@ -226,7 +202,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
                 else {
                     // Set prev version
                     try {
-                        Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
+                        int prevSessionYear = Integer.parseInt(prevSessionYearStr);
                         baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
                         baseBill.setModifiedDateTime(date);
                     } catch (NumberFormatException ex) {

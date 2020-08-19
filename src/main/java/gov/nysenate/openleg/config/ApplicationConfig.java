@@ -75,7 +75,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
         // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
         config.addDefaultCache(cacheConfiguration);
-        config.setUpdateCheck(false);
 
         return net.sf.ehcache.CacheManager.newInstance(config);
     }

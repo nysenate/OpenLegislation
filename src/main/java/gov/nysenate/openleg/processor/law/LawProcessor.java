@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.processor.law;
 
-import gov.nysenate.openleg.model.law.*;
+import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.LawVersionId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
@@ -40,11 +42,6 @@ public class LawProcessor extends AbstractDataProcessor
 
     @Autowired private LawDataService lawDataService;
 
-    @Override
-    public void init() {
-        initBase();
-    }
-
     /**
      * Performs all the steps required to process and persist the supplied LawFile.
      *
@@ -56,12 +53,10 @@ public class LawProcessor extends AbstractDataProcessor
         try {
             logger.info("Processing law file {}", lawFile);
             List<LawBlock> lawBlocks = getLawBlocks(lawFile);
-            if (isInitial) {
+            if (isInitial)
                 processInitialLaws(lawFile, lawBlocks, unit);
-            }
-            else {
+            else
                 processLawUpdates(lawFile, lawBlocks, unit);
-            }
         }
         catch (IOException ex) {
             logger.error("Unexpected IOException during LawFile processing", ex);
@@ -160,7 +155,7 @@ public class LawProcessor extends AbstractDataProcessor
      *
      * @param lawFile LawFile - The LawFile to extract the blocks from.
      * @return List<ListBlock>
-     * @throws IOException
+     * @throws IOException if there is an error reading the file.
      */
     private List<LawBlock> getLawBlocks(LawFile lawFile) throws IOException {
         List<LawBlock> rawDocList = new ArrayList<>();
