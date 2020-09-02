@@ -3,7 +3,6 @@ package gov.nysenate.openleg.service.transcript.data;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 
@@ -35,7 +34,6 @@ public interface TranscriptDataService
      * Saves the transcript.
      *
      * @param transcript Transcript
-     * @param transcriptFile TranscriptFile
      */
-    void saveTranscript(Transcript transcript, TranscriptFile transcriptFile, boolean postUpdateEvent);
+    void saveTranscript(Transcript transcript, boolean postUpdateEvent);
 }

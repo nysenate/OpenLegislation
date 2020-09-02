@@ -27,8 +27,7 @@ public class TranscriptParser
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
-        transcriptFile.setTranscript(getTranscriptFromFile(transcriptFile));
-        transcriptDataService.saveTranscript(transcriptFile.getTranscript(), transcriptFile, true);
+        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
     }
 
     public Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
@@ -78,7 +77,7 @@ public class TranscriptParser
                 if (line.isSession())
                     sessionType = line.removeLineNumber().trim();
 
-                firstPageParsed = areWeDoneWithFirstPage(sessionType, location, date, time);
+                firstPageParsed = doneWithFirstPage(sessionType, location, date, time);
             }
 
             firstLineParsed = true;
@@ -94,7 +93,7 @@ public class TranscriptParser
         return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
     }
 
-    private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {
+    private boolean doneWithFirstPage(String sessionType, String location, String date, String time) {
         return sessionType != null && location != null && date != null && time != null;
     }
 }

@@ -5,7 +5,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
 
@@ -38,9 +37,8 @@ public interface TranscriptDao
      * if the record doesn't already exist.
      *
      * @param transcript The {@link Transcript} to update.
-     * @param transcriptFile The {@link TranscriptFile} which updated the Transcript.
      */
-    void updateTranscript(Transcript transcript, TranscriptFile transcriptFile);
+    void updateTranscript(Transcript transcript);
 
     /**
      * Fetches new and updated transcripts from a specified date range.

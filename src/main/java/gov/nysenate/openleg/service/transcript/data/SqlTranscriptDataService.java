@@ -5,7 +5,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
@@ -53,11 +52,11 @@ public class SqlTranscriptDataService implements TranscriptDataService
 
     /** {@inheritDoc} */
     @Override
-    public void saveTranscript(Transcript transcript, TranscriptFile transcriptFile, boolean postUpdateEvent) {
+    public void saveTranscript(Transcript transcript, boolean postUpdateEvent) {
         if (transcript == null) {
             throw new IllegalArgumentException("transcript cannot be null");
         }
-        transcriptDao.updateTranscript(transcript, transcriptFile);
+        transcriptDao.updateTranscript(transcript);
         if (postUpdateEvent) {
             eventBus.post(new TranscriptUpdateEvent(transcript, LocalDateTime.now()));
         }

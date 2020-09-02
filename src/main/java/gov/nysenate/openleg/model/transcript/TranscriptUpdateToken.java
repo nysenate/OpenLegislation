@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public class TranscriptUpdateToken
 {
-    private TranscriptId transcriptId;
-    private LocalDateTime updateDateTime;
+    private final TranscriptId transcriptId;
+    private final LocalDateTime updateDateTime;
 
     public TranscriptUpdateToken(TranscriptId transcriptId, LocalDateTime updateDateTime) {
         this.transcriptId = transcriptId;
