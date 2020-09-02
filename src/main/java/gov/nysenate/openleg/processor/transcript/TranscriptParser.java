@@ -4,8 +4,6 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +17,15 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class TranscriptParser
 {
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptParser.class);
-
     private static final String TRANSCRIPT_ENCODING = "latin1";
 
     @Autowired
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
-        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
+        Transcript processed = getTranscriptFromFile(transcriptFile);
+        transcriptFile.setTranscript(processed);
+        transcriptDataService.saveTranscript(processed, true);
     }
 
     public Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {

@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class ManagedTranscriptProcessService implements TranscriptProcessService
 {
-    private static Logger logger = LoggerFactory.getLogger(ManagedTranscriptProcessService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagedTranscriptProcessService.class);
 
     @Autowired
     private TranscriptFileDao transcriptFileDao;

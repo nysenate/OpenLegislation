@@ -242,8 +242,7 @@ public abstract class SqlBaseDao
      */
     public static LocalDateTime getLocalDateTimeFromRs(ResultSet rs, String column) throws SQLException {
         if (rs.getTimestamp(column) == null) return null;
-        LocalDateTime ldt = rs.getTimestamp(column).toLocalDateTime();
-        return ldt;
+        return rs.getTimestamp(column).toLocalDateTime();
     }
 
     /**
