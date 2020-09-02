@@ -28,7 +28,7 @@ public class TranscriptParser
         transcriptDataService.saveTranscript(processed, true);
     }
 
-    public Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
+    protected static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
         String sessionType = null;
         String location = null;
         String date = null;
@@ -91,7 +91,7 @@ public class TranscriptParser
         return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
     }
 
-    private boolean doneWithFirstPage(String sessionType, String location, String date, String time) {
+    private static boolean doneWithFirstPage(String sessionType, String location, String date, String time) {
         return sessionType != null && location != null && date != null && time != null;
     }
 }
