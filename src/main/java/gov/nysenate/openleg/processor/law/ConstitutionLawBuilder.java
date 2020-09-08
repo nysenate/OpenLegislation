@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A class for the special cases of the Constitution, Senate Rules, and Assembly Rules.
+ * A class for the special case of the Constitution.
  */
 public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuilder {
     private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*");
@@ -65,11 +65,11 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
                 String matchedArticleNum = m.group(1);
                 // Adds in articles where they are supposed to be in the tree.
                 if (!matchedArticleNum.equals(currArticle)) {
-                    correctedMasterDoc.append(CONS_STR).append("A").append(matchedArticleNum);
+                    correctedMasterDoc.append(CONS_STR).append("A").append(matchedArticleNum).append("\\n");
                     currArticle = matchedArticleNum;
                 }
             }
-            correctedMasterDoc.append(docId);
+            correctedMasterDoc.append(docId).append("\\n");
         }
         super.rebuildTree(correctedMasterDoc.toString());
     }

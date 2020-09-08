@@ -41,12 +41,12 @@ public class LawPdfCtrl extends BaseCtrl {
 
     /**
      *
-     * @param documentId of the law document to look up.
+     * @param documentId of the law document to look up. If you want the root
+     * node, enter just the 3 letter law id instead.
      * @param response for HTTP.
      * @param full if you want the children to be shown.
      * @return a law document PDF.
      * @throws IOException if PDF cannot be written.
-     * @throws COSVisitorException for other
      */
     @RequestMapping("/{documentId}")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId, HttpServletResponse response,
