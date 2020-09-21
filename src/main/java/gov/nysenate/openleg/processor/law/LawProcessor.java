@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.LawType;
 import gov.nysenate.openleg.model.law.LawVersionId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -168,8 +169,6 @@ public class LawProcessor extends AbstractDataProcessor
             String line = fileItr.next();
             headerMatcher = lawHeader.matcher(line);
             if (headerMatcher.matches()) {
-                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId()))
-                    rawDocList.add(block);
                 block = new LawBlock();
                 block.setHeader(line);
                 block.setLawId(headerMatcher.group(2).trim());
@@ -178,7 +177,9 @@ public class LawProcessor extends AbstractDataProcessor
                     LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim()));
                 block.setLocationId(block.getDocumentId().substring(3));
                 block.setMethod(headerMatcher.group(4).trim());
-                block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
+                block.setConsolidated(headerMatcher.group(6).equals(LawType.CONSOLIDATED.name()));
+                if (!LawDocIdFixer.ignoreDocument(block.getDocumentId()))
+                    rawDocList.add(block);
             }
             else {
                 if (block == null)
@@ -186,8 +187,6 @@ public class LawProcessor extends AbstractDataProcessor
                 block.getText().append(line).append("\\n");
             }
         }
-        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId()))
-            rawDocList.add(block);
         return rawDocList;
     }
 }

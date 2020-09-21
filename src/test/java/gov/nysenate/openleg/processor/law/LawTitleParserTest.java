@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.annotation.UnitTest;
+import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
 import gov.nysenate.openleg.model.law.LawDocumentType;
 import org.junit.Ignore;
@@ -540,7 +541,7 @@ public class LawTitleParserTest {
                 " as follows:\\n                   CHAPTER 77 OF THE CONSOLIDATED LAWS\\n       " +
                 "               COOPERATIVE CORPORATIONS LAW\\nArticle 1.   Short title; policy;" +
                 " definitions. (§§ 1-5.)\\n";
-        String expectedTitle = "Cooperative Corporations";
+        String expectedTitle = LawChapterCode.CCO.getName();
         testTitle(text, expectedTitle, "77", "CCO-CH77", LawDocumentType.CHAPTER);
     }
 

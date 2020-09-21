@@ -19,7 +19,7 @@ public class LawCtrlBaseIT extends ApiTest {
     @Autowired
     private LawFileDao testDao;
 
-    protected static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
+    private static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
     protected static final List<String> TEST_LAW_IDS = Arrays.asList(EHC.name(), ETP.name(), CMA.name(), CMS.name(), ABC.name());
     protected static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20200529", "20200530", "20200531");
 

@@ -117,7 +117,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
      * Class to model the elasticsearch document that tracks the notification id field.
      */
     private static class NotificationIdCounterDoc {
-        private LocalDateTime incremented = LocalDateTime.now();
+        private final LocalDateTime incremented = LocalDateTime.now();
 
         public LocalDateTime getIncremented() {
             return incremented;
