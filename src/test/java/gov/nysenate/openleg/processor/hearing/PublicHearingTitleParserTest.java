@@ -71,6 +71,12 @@ public class PublicHearingTitleParserTest
                 "TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE OF INCREASED HEROIN AND OPIOID ABUSE");
     }
 
+    @Test
+    public void jointLegislativeHearingParses() throws IOException, URISyntaxException {
+        testTitle("1-30-20 Human Services Transcript.txt",
+                "JOINT LEGISLATIVE HEARING In the Matter of the 2020-2021 EXECUTIVE BUDGET ON HUMAN SERVICES");
+    }
+
     private void testTitle(String filename, String expected) throws URISyntaxException, IOException{
         List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(filename);
         String actual = titleParser.parse(pages.get(0));
