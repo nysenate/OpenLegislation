@@ -17,11 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.util.DateUtils.BASIC_ISO_DATE_TIME;
 import static gov.nysenate.openleg.util.DateUtils.BASIC_ISO_DATE_TIME_REGEX;
@@ -31,28 +30,39 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     private static final Logger logger = LoggerFactory.getLogger(FsSenateSiteDao.class);
 
-    @Autowired private Environment environment;
-    @Autowired private SenateSiteDumpFragParser parser;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private Environment environment;
+    @Autowired
+    private SenateSiteDumpFragParser parser;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    /** Establishes the fixed number of digits in the sequence No portion of the file name */
+    /**
+     * Establishes the fixed number of digits in the sequence No portion of the file name
+     */
     private static final String seqNoFormat = "%03d";
 
     public static final String SENSITE_DUMP_DIRNAME = "sensite-dump";
     private static final String DUMP_FRAG_FILENAME_PREFIX_TEMPL = "_dump-${year}-${refDateTime}-";
     private static final String DUMP_FRAG_FILENAME_TEMPL = "${seqNo}.json";
 
-    /** --- Implemented Methods --- */
+    /**
+     * --- Implemented Methods ---
+     */
 
     @Override
     public Collection<SenateSiteDump> getPendingDumps(SpotCheckRefType refType) throws IOException {
         Collection<File> fragmentFiles =
                 FileUtils.listFiles(getIncomingDumpDir(refType), new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
         List<SenateSiteDumpFragment> fragments = new LinkedList<>();
-        for(File file : fragmentFiles) {
+        for (File file : fragmentFiles) {
             fragments.add(getFragmentFromFile(file));
         }
         return groupFragmentsIntoDumps(fragments);
+    }
+
+    public Collection<File> getDumpFilesFromDir(SpotCheckRefType refType, File directory) {
+         return FileUtils.listFiles(directory, new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
     }
 
     private Collection<SenateSiteDump> groupFragmentsIntoDumps(Collection<SenateSiteDumpFragment> fragments) {
@@ -74,7 +84,8 @@ public class FsSenateSiteDao implements SenateSiteDao {
         logger.info("saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
         try {  // Delete existing dump if possible
             FileUtils.forceDelete(fragmentFile);
-        } catch (FileNotFoundException ignored) {}
+        } catch (FileNotFoundException ignored) {
+        }
 
         // Write pretty printed json to a temporary file, then rename it to the desired name
         File tempFile = FileIOUtils.getTempFile(fragmentFile);
@@ -84,16 +95,64 @@ public class FsSenateSiteDao implements SenateSiteDao {
     }
 
     @Override
-    public void setProcessed(SenateSiteDump dump) throws IOException {
-        for(SenateSiteDumpFragment fragment : dump.getDumpFragments()) {
-            File fragFile = fragment.getFragmentFile();
-            File destFile = new File(getArchiveBillDir(dump.getDumpId().getRefType()), fragFile.getName());
-            try {  // Delete existing fragment file if possible
-                FileUtils.forceDelete(destFile);
-            } catch (FileNotFoundException ignored) {}
-            FileUtils.moveFile(fragFile, destFile);
-            destFile.setReadable(true, false);
+    public void archiveDump(SenateSiteDump dump) throws IOException {
+        List<File> fragFiles = dump.getDumpFragments().stream()
+                .map(SenateSiteDumpFragment::getFragmentFile)
+                .collect(Collectors.toList());
+        List<File> archivedFiles = new ArrayList<>();
+
+        try {
+            for (File fragFile : fragFiles) {
+                File archivedFile = archiveFile(fragFile, getArchiveBillDir(dump.getDumpId().getRefType()));
+                archivedFiles.add(archivedFile);
+            }
+        } catch (IOException|NullPointerException ex) {
+            // Unable to archive the entire dump. Delete any archived files to leave the filesystem in a valid state.
+            for (File archivedFile : archivedFiles) {
+                FileUtils.deleteQuietly(archivedFile);
+            }
+            throw ex;
         }
+
+        // The entire dump was archived successfully. The fragments from the incoming directory are no longer needed.
+        for (File fragFile : fragFiles) {
+            FileUtils.deleteQuietly(fragFile);
+        }
+    }
+
+    /**
+     * Creates a gzipped archive of {@code fragFile} in the {@code archiveDir} directory
+     *
+     * If successful, a gzipped copy of {@code fragFile} will be placed in the {@code archiveDir}
+     * and returned. {@code fragFile} is left unchanged.
+     *
+     * In case of an error: {@code fragFile} will be unchanged, no gzipped file will be saved, and
+     * an exception will be thrown.
+     *
+     * @param fragFile A non null File for an individual fragment of a senate site dump.
+     * @param archiveDir A non null, already existing directory, where the archive should be placed.
+     * @return the gzipped and archived file.
+     * @throws NullPointerException if {@code fragFile} is null.
+     * @throws NullPointerException if {@code archiveDir} is null.
+     * @throws IOException if {@code fragFile} or {@code archiveDir} are invalid.
+     * @throws IOException if an IO error occurs.
+     */
+    private File archiveFile(File fragFile, File archiveDir) throws IOException {
+        Objects.requireNonNull(fragFile);
+        Objects.requireNonNull(archiveDir);
+
+        File gzipFragFile = FileIOUtils.gzipFile(fragFile);
+        File destFile = new File(archiveDir, gzipFragFile.getName());
+        try {
+            FileUtils.moveFile(gzipFragFile, destFile);
+        } catch (Exception ex) {
+            // Moving the gzip to the archive failed. Clean up by deleting the gzip file.
+            FileUtils.deleteQuietly(gzipFragFile);
+            logger.error("Error moving gzipped file '" + fragFile + "' to '" + archiveDir + "'.");
+            throw ex;
+        }
+        destFile.setReadable(true, false);
+        return destFile;
     }
 
     /** --- Internal Methods --- */
@@ -136,27 +195,37 @@ public class FsSenateSiteDao implements SenateSiteDao {
                 .build();
     }
 
-    /** Directory where new dumps are placed. */
+    /**
+     * Directory where new dumps are placed.
+     */
     private File getIncomingDumpDir(SpotCheckRefType refType) throws IOException {
         return FileIOUtils.safeGetFolder(environment.getStagingDir(), SENSITE_DUMP_DIRNAME + "/" + refType.getRefName());
     }
 
-    /** Directory where dumps that have been processed are stored. */
+    /**
+     * Directory where dumps that have been processed are stored.
+     */
     private File getArchiveBillDir(SpotCheckRefType refType) throws IOException {
         return FileIOUtils.safeGetFolder(environment.getArchiveDir(), SENSITE_DUMP_DIRNAME + "/" + refType.getRefName());
     }
 
-    /** Prefix for naming SenateSiteDumpFragment files. */
+    /**
+     * Prefix for naming SenateSiteDumpFragment files.
+     */
     private static String dumpFragFilenamePrefix(SpotCheckRefType refType) {
         return refType.getRefName() + DUMP_FRAG_FILENAME_PREFIX_TEMPL;
     }
 
-    /** Full filename for SenateSiteDumpFragment files. */
+    /**
+     * Full filename for SenateSiteDumpFragment files.
+     */
     private static String dumpFragFilename(SpotCheckRefType refType) {
         return dumpFragFilenamePrefix(refType) + DUMP_FRAG_FILENAME_TEMPL;
     }
 
-    /** Regex to match SenateSiteDumpFragments of the given refType. */
+    /**
+     * Regex to match SenateSiteDumpFragments of the given refType.
+     */
     private static Pattern dumpFragFilenameRegex(SpotCheckRefType refType) {
         String reTemplate = "^" + dumpFragFilename(refType);
         String regex = StringSubstitutor.replace(reTemplate, ImmutableMap.of(

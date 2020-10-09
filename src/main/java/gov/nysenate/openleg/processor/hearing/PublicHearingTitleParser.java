@@ -19,6 +19,7 @@ public class PublicHearingTitleParser
             "|TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE" +
             "|.*NOMINATION(S:)?" +
             "|NEW YORK STATE \\d{4}" +
+            "|JOINT LEGISLATIVE HEARING In the Matter of the" +
             "|-{10,})[ :]*)" +
             "(?<title>.+?) " + // Title body
             "(-{10,})"); // Marks the end of title.

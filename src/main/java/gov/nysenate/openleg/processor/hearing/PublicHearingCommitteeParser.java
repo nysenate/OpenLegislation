@@ -24,8 +24,14 @@ public class PublicHearingCommitteeParser
     private static final Pattern FIRST_COMMITTEE = Pattern.compile(
             "BEFORE THE NEW YORK STATE (?<chamber>SENATE|ASSEMBLY) ?(MAJORITY COALITION JOINT TASK FORCE ON |STANDING COMMITTEE ON )?(?<name>.*)");
 
-    private static final Pattern ADDITIONAL_COMMITTEE = Pattern.compile(
-            "AND (THE )?(SENATE|ASSEMBLY) (STANDING COMMITTEE|TASK FORCE) ON (.+)");
+    // Additional committee pattern for hearing files obtained from the Senate.
+    private static final Pattern SENATE_ADDITIONAL_COMMITTEE_PATTERN = Pattern.compile(
+            "AND (THE )?(?<chamber>SENATE|ASSEMBLY) (STANDING COMMITTEE|TASK FORCE) ON (?<name>.+)");
+
+    // Additional committee pattern for hearing files obtained from the Assembly.
+    private static final Pattern ASSEMBLY_ADDITIONAL_COMMITTEE_PATTERN = Pattern.compile(
+            "AND (?<chamber>SENATE|ASSEMBLY) (?<name>.+) COMMITTEE"
+    );
 
     /**
      * Extracts PublicHearingCommittee's from the first page of a PublicHearingFile.
@@ -99,11 +105,17 @@ public class PublicHearingCommitteeParser
      */
     private PublicHearingCommittee parseAdditionalCommittee(String committeeString) {
         PublicHearingCommittee committee = new PublicHearingCommittee();
-        Matcher additionalCommitteeMatcher = ADDITIONAL_COMMITTEE.matcher(committeeString);
-        additionalCommitteeMatcher.find();
+        Matcher senateAdditionalCommitteeMatcher = SENATE_ADDITIONAL_COMMITTEE_PATTERN.matcher(committeeString);
+        Matcher assemblyAdditionalCommiteeMatcher = ASSEMBLY_ADDITIONAL_COMMITTEE_PATTERN.matcher(committeeString);
+        if (senateAdditionalCommitteeMatcher.find()) {
+            committee.setName(senateAdditionalCommitteeMatcher.group("name"));
+            committee.setChamber(Chamber.valueOf(senateAdditionalCommitteeMatcher.group("chamber")));
+        }
+        else if (assemblyAdditionalCommiteeMatcher.find()) {
+            committee.setName(assemblyAdditionalCommiteeMatcher.group("name"));
+            committee.setChamber(Chamber.valueOf(assemblyAdditionalCommiteeMatcher.group("chamber")));
+        }
 
-        committee.setName(additionalCommitteeMatcher.group(4));
-        committee.setChamber(Chamber.valueOf(additionalCommitteeMatcher.group(2).toUpperCase()));
         return committee;
     }
 

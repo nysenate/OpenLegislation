@@ -32,7 +32,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 @Service
-public class BillReportService extends BaseSenateSiteReportService<BillId> {
+public class SenateSiteBillReportService extends BaseSenateSiteReportService<BillId> {
 
     private final Environment env;
     private final PipelineFactory pipelineFactory;
@@ -41,9 +41,9 @@ public class BillReportService extends BaseSenateSiteReportService<BillId> {
     private final SenateSiteBillCheckService billCheckService;
 
     @Autowired
-    public BillReportService(Environment env, PipelineFactory pipelineFactory,
-                             SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
-                             SenateSiteBillCheckService billCheckService) {
+    public SenateSiteBillReportService(Environment env, PipelineFactory pipelineFactory,
+                                       SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
+                                       SenateSiteBillCheckService billCheckService) {
         this.env = env;
         this.pipelineFactory = pipelineFactory;
         this.billJsonParser = billJsonParser;

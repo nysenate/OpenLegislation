@@ -2,8 +2,6 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
 import org.junit.Test;
