@@ -121,7 +121,7 @@
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.11.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <log4j.version>2.12.1</log4j.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>1.8.16</pdfbox.version>
