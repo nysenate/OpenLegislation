@@ -28,9 +28,9 @@ public class ImportCommittees extends BaseScript {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportCommittees.class);
 
-    private static FilenameFilter intFileNameFilter = (File dir, String name) -> StringUtils.isNumeric(name);
+    private static final FilenameFilter intFileNameFilter = (File dir, String name) -> StringUtils.isNumeric(name);
 
-    private static FilenameFilter jsonFileNameFilter = (File dir, String name) -> name.endsWith(".json");
+    private static final FilenameFilter jsonFileNameFilter = (File dir, String name) -> name.endsWith(".json");
 
     @Autowired
     CommitteeDataService committeeDataService;
@@ -60,7 +60,7 @@ public class ImportCommittees extends BaseScript {
         if (committeeDir.isDirectory()) {
             List<File> yearDirs = Arrays.asList(committeeDir.listFiles(intFileNameFilter));
             yearDirs.sort(Comparator.comparingInt((File f) -> Integer.parseInt(f.getName())));
-            for (File yearDir : committeeDir.listFiles(intFileNameFilter)) {
+            for (File yearDir : yearDirs) {
                 int year = Integer.parseInt(yearDir.getName());
                 if (yearDir.isDirectory()) {
                     for (File jsonFile : yearDir.listFiles(jsonFileNameFilter)) {
@@ -86,7 +86,7 @@ public class ImportCommittees extends BaseScript {
         }
     }
 
-    private Committee getCommitteeFromJson(File jsonFile, int year, Chamber chamber) throws Exception{
+    private Committee getCommitteeFromJson(File jsonFile, int year, Chamber chamber) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(jsonFile);
 

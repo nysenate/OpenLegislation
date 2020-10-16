@@ -15,7 +15,7 @@ public interface LegDataProcessor
      *
      * @return LegDataFragmentType
      */
-    public LegDataFragmentType getSupportedType();
+    LegDataFragmentType getSupportedType();
 
     /**
      * Process the given fragment if it's type matches the processor's supported
@@ -24,12 +24,12 @@ public interface LegDataProcessor
      *
      * @param fragment LegDataFragment - The fragment to be processed.
      */
-    public void process(final LegDataFragment fragment);
+    void process(final LegDataFragment fragment);
 
     /**
      * Perform any additional tasks that must be run prior to finishing processing.
      */
-    public void postProcess();
+    void postProcess();
 
     /**
      * All processors must have this method to ensure that the ManagedLegDataProcessService can properly flush the
@@ -40,5 +40,5 @@ public interface LegDataProcessor
      *             flushBillUpdates();
      *         }
      */
-    public void checkIngestCache();
+    void checkIngestCache();
 }

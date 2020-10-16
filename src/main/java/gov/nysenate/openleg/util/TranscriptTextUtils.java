@@ -21,7 +21,7 @@ public class TranscriptTextUtils
         List<List<String>> rawPages = getPages(fullText);
         fixErrorsOnFirstPage(rawPages);
 
-        List<List<String>> formattedPages = new ArrayList<List<String>>();
+        List<List<String>> formattedPages = new ArrayList<>();
         for (List<String> pageLines : rawPages) {
             if (isFirstPage(pageLines, rawPages) && !pageHasLineNumbers(pageLines)) {
                 formattedPages.add(parseWithManualSpacing(pageLines));
@@ -41,8 +41,8 @@ public class TranscriptTextUtils
      * @return
      */
     private static List<List<String>> getPages(String fullText) {
-        List<List<String>> pages = new ArrayList<List<String>>();
-        List<String> page = new ArrayList<String>();
+        List<List<String>> pages = new ArrayList<>();
+        List<String> page = new ArrayList<>();
 
         String[] pageLines = fullText.split("\n");
         for (int lineNum = 0; lineNum < pageLines.length; lineNum++) {
@@ -50,7 +50,7 @@ public class TranscriptTextUtils
 
             if(endOfPage(pageLines, lineNum)) {
                 pages.add(page);
-                page = new ArrayList<String>();
+                page = new ArrayList<>();
             }
         }
         return pages;
@@ -67,11 +67,7 @@ public class TranscriptTextUtils
             }
         }
 
-        if (lineNum + 1 == pageLines.length) {
-            return true;
-        }
-
-        return false;
+        return lineNum + 1 == pageLines.length;
     }
 
     /**
@@ -79,28 +75,21 @@ public class TranscriptTextUtils
      */
     private static List<String> parseWithManualSpacing(List<String> pageLines) {
         List<String> page = new ArrayList<>();
-        for (int i = 0; i < pageLines.size(); i++) {
-            TranscriptLine line = new TranscriptLine(pageLines.get(i));
+        for (String pageLine : pageLines) {
+            TranscriptLine line = new TranscriptLine(pageLine);
 
             if (line.isPageNumber()) {
                 page.add(line.stripInvalidCharacters());
-            }
-            else if (!line.isEmpty() && !line.isStenographer()) {
+            } else if (!line.isEmpty() && !line.isStenographer()) {
                 page.add(line.fullText());
 
                 if (line.fullText().trim().equals("NEW YORK STATE SENATE")) {
                     addBlankLines(page, 2);
-                }
-
-                else if (line.fullText().trim().contains("STENOGRAPHIC RECORD")) {
+                } else if (line.fullText().trim().contains("STENOGRAPHIC RECORD")) {
                     addBlankLines(page, 2);
-                }
-
-                else if (line.isTime()) {
+                } else if (line.isTime()) {
                     addBlankLines(page, 2);
-                }
-
-                else if (line.isSession()) {
+                } else if (line.isSession()) {
                     addBlankLines(page, 3);
                 }
             }
@@ -129,7 +118,7 @@ public class TranscriptTextUtils
      * Fixes a variety of formatting errors that occur on the first page of the original documents.
      */
     private static void fixErrorsOnFirstPage(List<List<String>> pages) {
-        List<String> correctedFirstPage = new ArrayList<String>();
+        List<String> correctedFirstPage = new ArrayList<>();
         List<String> firstPage = pages.get(0);
 
         for (int i = 0; i < firstPage.size(); i++) {
@@ -138,9 +127,9 @@ public class TranscriptTextUtils
             if (!line.isEmpty()) {
                 if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
                     // Combine two lines into one; corrects formatting. i.e. 123096.v1
-                    TranscriptLine nextLine = getNextLine(firstPage, i);
-                    if (nextLine.fullText().trim().equals("President") || nextLine.fullText().trim().equals("Acting President")) {
-                        line = new TranscriptLine(line.fullText() + " " + nextLine.fullText().trim());
+                    String nextLine = getNextLine(firstPage, i).fullText().trim();
+                    if (nextLine.equals("President") || nextLine.equals("Acting President")) {
+                        line = new TranscriptLine(line.fullText() + " " + nextLine);
                         // Skip next line since we combined it with the previous line.
                         i++;
                     }

@@ -14,7 +14,7 @@ public interface LawProcessService extends ProcessService
      *
      * @return int - Number of law files collated
      */
-    public int collateLawFiles();
+    int collateLawFiles();
 
     /**
      * Retrieve a list of the files that are awaiting processing.
@@ -22,17 +22,17 @@ public interface LawProcessService extends ProcessService
      * @param limitOffset LimitOffset - Restrict the result set.
      * @return List<LawFile>
      */
-    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset);
+    List<LawFile> getPendingLawFiles(LimitOffset limitOffset);
 
     /**
      * Processes the given law files and updates the backing store as necessary.
      *
      * @param lawFiles List<LawFile>
      */
-    public void processLawFiles(List<LawFile> lawFiles);
+    void processLawFiles(List<LawFile> lawFiles);
 
     /**
      * Processes all the law files that are set as pending processing.
      */
-    public int processPendingLawFiles();
+    int processPendingLawFiles();
 }

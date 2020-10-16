@@ -28,7 +28,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(memberIndexName, query, filter, sort, limOff, this::getMemberIdFromHit);
     }
 

@@ -52,4 +52,12 @@ public class PublicHearingCommittee
         result = 31 * result + (chamber != null ? chamber.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PublicHearingCommittee{" +
+               "name='" + name + '\'' +
+               ", chamber=" + chamber +
+               '}';
+    }
 }

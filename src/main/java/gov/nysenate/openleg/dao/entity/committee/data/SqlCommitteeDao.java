@@ -39,18 +39,23 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     public static final Logger logger = LoggerFactory.getLogger(SqlCommitteeDao.class);
 
     @Autowired
-    public SqlCommitteeDao() {
-    }
+    public SqlCommitteeDao() {}
 
     /**
      * {@inheritDoc}
      * */
     @Override
     public Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException {
-        return getCommittee(new CommitteeVersionId(
-                committeeId,
-                SessionYear.current(),
-                DateUtils.THE_FUTURE.atStartOfDay()));
+        Committee committee;
+        for (SessionYear year = SessionYear.current(); year.getYear() >= 2009; year = year.prev()) {
+            try {
+                committee = getCommittee(new CommitteeVersionId(
+                        committeeId, year, DateUtils.THE_FUTURE.atStartOfDay()));
+                return committee;
+            }
+            catch (EmptyResultDataAccessException ignored){}
+        }
+        throw new EmptyResultDataAccessException(1);
     }
 
     /**
@@ -129,7 +134,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             // insert the committee as a new version.
             insertCommitteeVersion(committee, legDataFragment);
         } else if (!committee.meetingEquals(prevVersion)) {
-            logger.info("UPDATING MEETING INFO for {} {}", committee.getName(), legDataFragment.getPublishedDateTime());
+            logger.info("UPDATING MEETING INFO for {} {}", committee.getName(), legDataFragment == null ? null : legDataFragment.getPublishedDateTime());
             // If the only difference from the prev version was meeting info,
             // just update the prev version's meeting info.
             prevVersion.updateMeetingInfo(committee);
@@ -203,7 +208,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     private List<Committee> selectCommitteeVersionHistory(CommitteeSessionId committeeSessionId){
         MapSqlParameterSource params = getCommitteeSessionIdParams(committeeSessionId);
         CommitteeRowHandler rowHandler = new CommitteeRowHandler();
-        jdbcNamed.query(SELECT_COMMITTEE_VERSION_HISTORY.getSql( schema(), new OrderBy("created", DESC), ALL),
+        jdbcNamed.query(SELECT_COMMITTEE_VERSION_HISTORY.getSql(schema(), new OrderBy("created", DESC), ALL),
                 params, rowHandler);
         return rowHandler.getCommitteeList();
     }
@@ -239,7 +244,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     /* --- Row Mappers --- */
 
-    protected class CommitteeIdRowMapper implements RowMapper<CommitteeId> {
+    protected static class CommitteeIdRowMapper implements RowMapper<CommitteeId> {
         @Override
         public CommitteeId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommitteeId(
@@ -249,7 +254,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
-    protected class CommitteeSessionIdRowMapper implements RowMapper<CommitteeSessionId> {
+    protected static class CommitteeSessionIdRowMapper implements RowMapper<CommitteeSessionId> {
         @Override
         public CommitteeSessionId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommitteeSessionId(
@@ -260,7 +265,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
-    protected class CommitteeVersionIdRowMapper implements RowMapper<CommitteeVersionId> {
+    protected static class CommitteeVersionIdRowMapper implements RowMapper<CommitteeVersionId> {
         private final CommitteeSessionIdRowMapper sessionIdRowMapper = new CommitteeSessionIdRowMapper();
 
         @Override
@@ -308,12 +313,12 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
-    protected class CommitteeRowHandler implements RowCallbackHandler {
-        private CommitteeRowMapper committeeRowMapper = new CommitteeRowMapper();
-        private CommitteeMemberRowMapper committeeMemberRowMapper = new CommitteeMemberRowMapper();
-        private CommitteeVersionIdRowMapper versionIdRowMapper = new CommitteeVersionIdRowMapper();
+    protected static class CommitteeRowHandler implements RowCallbackHandler {
+        private final CommitteeRowMapper committeeRowMapper = new CommitteeRowMapper();
+        private final CommitteeMemberRowMapper committeeMemberRowMapper = new CommitteeMemberRowMapper();
+        private final CommitteeVersionIdRowMapper versionIdRowMapper = new CommitteeVersionIdRowMapper();
 
-        private Map<CommitteeVersionId, Committee> committeeMap = new LinkedHashMap<>();
+        private final Map<CommitteeVersionId, Committee> committeeMap = new LinkedHashMap<>();
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {

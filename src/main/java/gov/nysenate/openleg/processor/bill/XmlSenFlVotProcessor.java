@@ -116,6 +116,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements LegDa
             }
             billAmendment.updateVote(vote);
 
+            baseBill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
         }
 

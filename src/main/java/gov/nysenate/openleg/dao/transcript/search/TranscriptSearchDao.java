@@ -25,24 +25,24 @@ public interface TranscriptSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Update the transcript search index with the supplied transcript.
      * @param transcript
      */
-    public void updateTranscriptIndex(Transcript transcript);
+    void updateTranscriptIndex(Transcript transcript);
 
     /**
      * Updates the transcript search index with the supplied transcripts.
      * @param transcripts
      */
-    public void updateTranscriptIndex(Collection<Transcript> transcripts);
+    void updateTranscriptIndex(Collection<Transcript> transcripts);
 
     /**
      * Removes the transcript from the search index with the given id.
      *
      * @param transcriptId
      */
-    public void deleteTranscriptFromIndex(TranscriptId transcriptId);
+    void deleteTranscriptFromIndex(TranscriptId transcriptId);
 }

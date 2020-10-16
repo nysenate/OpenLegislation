@@ -50,7 +50,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     /** {@inheritDoc} */
     @Override
     public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
-                                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
+                                                                     List<SortBuilder<?>> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
         QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).mustNot(idIdQuery);
         return search(notificationIndex, query, fullFilter,

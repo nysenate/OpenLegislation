@@ -45,8 +45,8 @@ public class CalendarSupplementalTest
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1231", 2013), null, true));
 
-        EnumMap<Version, Object> map1 = new EnumMap<>(Version.class);
-        EnumMap<Version, Object> map2 = new EnumMap<>(Version.class);
+        EnumMap<Version, CalendarSupplemental> map1 = new EnumMap<>(Version.class);
+        EnumMap<Version, CalendarSupplemental> map2 = new EnumMap<>(Version.class);
 
         map1.put(sup1.getVersion(), sup1);
         map1.put(sup2.getVersion(), sup2);
@@ -54,7 +54,7 @@ public class CalendarSupplementalTest
         map2.put(sup3.getVersion(), sup3);
         map2.put(sup4.getVersion(), sup4);
 
-        MapDifference<Version, Object> diff = Maps.difference(map1, map2);
+        MapDifference<Version, CalendarSupplemental> diff = Maps.difference(map1, map2);
         logger.info("Only Left: {}", diff.entriesOnlyOnLeft().keySet());
         logger.info("Only Right: {}", diff.entriesOnlyOnRight().keySet());
         logger.info("Differing: {}", diff.entriesDiffering().keySet());

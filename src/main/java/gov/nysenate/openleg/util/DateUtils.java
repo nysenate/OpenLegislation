@@ -33,10 +33,10 @@ public abstract class DateUtils
 
     /** --- Reference Dates --- */
 
-    public static final LocalDate LONG_AGO = LocalDate.of(1970, 1, 1);
-    public static final LocalDate THE_FUTURE = LocalDate.of(2999, 12, 31);
-    public static final Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
-    public static final Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
+    public final static LocalDate LONG_AGO = LocalDate.of(1970, 1, 1);
+    public final static LocalDate THE_FUTURE = LocalDate.of(2999, 12, 31);
+    public final static Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
+    public final static Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
 
     /** --- Static Methods --- */
 
@@ -103,9 +103,6 @@ public abstract class DateUtils
 
     /**
      * Convert a Date to a LocalTime at the system's default time zone.  Returns null on null input.
-     *
-     * @param date
-     * @return
      */
     public static LocalTime getLocalTime(Date date) {
         if (date == null) return null;

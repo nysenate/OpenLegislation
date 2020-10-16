@@ -12,12 +12,12 @@ import java.util.List;
 
 public interface CommitteeSearchDao {
 
-    public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
-                                                              List<SortBuilder> sort, LimitOffset limitOffset);
+    SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
+                                                              List<SortBuilder<?>> sort, LimitOffset limitOffset);
 
-    public void updateCommitteeIndex(CommitteeSessionId committeeSessionId);
+    void updateCommitteeIndex(CommitteeSessionId committeeSessionId);
 
-    public void updateCommitteeIndexBulk(Collection<CommitteeSessionId> sessionIds);
+    void updateCommitteeIndexBulk(Collection<CommitteeSessionId> sessionIds);
 
-    public void deleteCommitteeFromIndex(CommitteeSessionId committeeSessionId);
+    void deleteCommitteeFromIndex(CommitteeSessionId committeeSessionId);
 }

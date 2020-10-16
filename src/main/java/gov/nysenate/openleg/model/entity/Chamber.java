@@ -8,7 +8,7 @@ public enum Chamber
     SENATE  ('S'),
     ASSEMBLY('A');
 
-    private char abbreviation;
+    private final char abbreviation;
 
     Chamber(char abbreviation){
         this.abbreviation = abbreviation;

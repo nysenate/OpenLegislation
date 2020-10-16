@@ -7,6 +7,6 @@ public interface CalendarEntryList {
     /**
      * @return CalendarEntryListId for a floor calendar, supplemental calendar, or active list
      */
-    public CalendarEntryListId getCalendarEntryListId();
+    CalendarEntryListId getCalendarEntryListId();
 
 }

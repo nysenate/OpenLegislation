@@ -13,7 +13,7 @@ public class ElasticLawSearchServiceTest extends BaseTests {
     @Autowired ElasticLawSearchService lawSearchService;
 
     @Test
-    public void handleLawTreeUpdateTest() throws Exception {
+    public void handleLawTreeUpdateTest() {
         lawSearchService.handleLawTreeUpdate(new LawTreeUpdateEvent("ABC"));
     }
 }

@@ -22,18 +22,18 @@ import java.util.List;
 public class TranscriptPdfView
 {
     // Kirkland started on May 16, 2011
-    private static LocalDateTime KIRKLAND_START_TIME = LocalDateTime.of(2011, 5, 16, 0, 0, 0);
+    private static final LocalDateTime KIRKLAND_START_TIME = LocalDateTime.of(2011, 5, 16, 0, 0, 0);
 
     // Candyco started Jan 1st, 2005
-    private static LocalDateTime CANDYCO_START_TIME = LocalDateTime.of(2005, 1, 1, 0, 0, 0);
+    private static final LocalDateTime CANDYCO_START_TIME = LocalDateTime.of(2005, 1, 1, 0, 0, 0);
 
     // Candyco also did 1999-2003
-    private static LocalDateTime CANDYCO_1999_START = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
-    private static LocalDateTime CANDYCO_2003_END = LocalDateTime.of(2004, 1, 1, 0, 0, 0);
+    private static final LocalDateTime CANDYCO_1999_START = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
+    private static final LocalDateTime CANDYCO_2003_END = LocalDateTime.of(2004, 1, 1, 0, 0, 0);
 
     // Pauline Williman did 1993-1998
-    private static LocalDateTime WILLIMAN_START = LocalDateTime.of(1993, 1, 1, 0, 0, 0);
-    private static LocalDateTime WILLIMAN_END = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
+    private static final LocalDateTime WILLIMAN_START = LocalDateTime.of(1993, 1, 1, 0, 0, 0);
+    private static final LocalDateTime WILLIMAN_END = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
 
     private static Float bot = 90f;
     private static Float right = 575f;

@@ -14,28 +14,28 @@ import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBe
 
 public interface CachingService<ContentId>
 {
-    static final Logger logger = LoggerFactory.getLogger(CachingService.class);
+    Logger logger = LoggerFactory.getLogger(CachingService.class);
 
     /**
      * Performs cache creation and any pre-caching of data.
      */
-    public void setupCaches();
+    void setupCaches();
 
     /**
      * Returns all cache instances.
      */
-    public List<Ehcache> getCaches();
+    List<Ehcache> getCaches();
 
     /**
      * Evicts a single item from the cache based on the given content id
      */
-    public void evictContent(ContentId contentId);
+    void evictContent(ContentId contentId);
 
     /**
      * (Default Method)
      * Clears all the cache entries from all caches.
      */
-    public default void evictCaches() {
+    default void evictCaches() {
         if (getCaches() != null && !getCaches().isEmpty()) {
             getCaches().forEach(c -> {
                 logger.info("Clearing out {} cache", c.getName());
@@ -50,19 +50,19 @@ public interface CachingService<ContentId>
      *
      * @param evictEvent CacheEvictEvent
      */
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent);
+    void handleCacheEvictEvent(CacheEvictEvent evictEvent);
 
     /**
      * Intercept an evict Id event and evict the specified content
      * if the caching service has any of the affected caches
      * @param evictIdEvent CacheEvictIdEvent
      */
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<ContentId> evictIdEvent);
+    void handleCacheEvictIdEvent(CacheEvictIdEvent<ContentId> evictIdEvent);
 
     /**
      * Pre-fetch a subset of currently active data and store it in the cache.
      */
-    public void warmCaches();
+    void warmCaches();
 
     /**
      * If a CacheWarmEvent is sent out on the event bus, the caching service
@@ -70,7 +70,7 @@ public interface CachingService<ContentId>
      *
      * @param warmEvent CacheWarmEvent
      */
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent);
+    void handleCacheWarmEvent(CacheWarmEvent warmEvent);
 
     /**
      * The default side of configuration to use with caches sized by bytes on heap.
@@ -82,7 +82,7 @@ public interface CachingService<ContentId>
      *
      * @return SizeOfPolicyConfiguration
      */
-    public default SizeOfPolicyConfiguration byteSizeOfPolicy() {
+    default SizeOfPolicyConfiguration byteSizeOfPolicy() {
         return new SizeOfPolicyConfiguration().maxDepth(5000).maxDepthExceededBehavior(CONTINUE);
     }
 

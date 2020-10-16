@@ -138,6 +138,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
         final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(billId.getVersion());
         amendment.setBillText(billText);
+        baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
         billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
     }
 

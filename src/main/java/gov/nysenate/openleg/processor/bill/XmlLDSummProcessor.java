@@ -81,6 +81,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
                 baseBill.getAllPreviousVersions().clear();
                 baseBill.setDirectPreviousVersion(null);
             }
+            baseBill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
             logger.info("Put base bill in the ingest cache.");
 

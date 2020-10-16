@@ -47,7 +47,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
-                                                              List<SortBuilder> sort, LimitOffset limitOffset) {
+                                                              List<SortBuilder<?>> sort, LimitOffset limitOffset) {
         return search(committeeSearchIndexName, query, filter, sort, limitOffset, this::getCommitteeVersionId);
     }
 

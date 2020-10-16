@@ -13,13 +13,13 @@ public interface AgendaSearchService
      * Performs a search across all committee agendas.
      * @see #searchCommitteeAgendas(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Retrieve all committee agendas for a given year, with sorting.
      * @see #searchCommitteeAgendas(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Search for committee agendas during a given year.
@@ -31,7 +31,7 @@ public interface AgendaSearchService
      * @return SearchResults<CommitteeAgendaId>
      * @throws SearchException
      */
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, int year, String sort, LimitOffset limOff)
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, int year, String sort, LimitOffset limOff)
         throws SearchException;
 
     /**
@@ -39,12 +39,12 @@ public interface AgendaSearchService
      *
      * @param agendaUpdateEvent AgendaUpdateEvent
      */
-    public void handleAgendaUpdateEvent(AgendaUpdateEvent agendaUpdateEvent);
+    void handleAgendaUpdateEvent(AgendaUpdateEvent agendaUpdateEvent);
 
     /**
      * Handle a batch agenda update event by indexing the supplied agendas in the update.
      *
      * @param bulkAgendaUpdateEvent BulkAgendaUpdateEvent
      */
-    public void handleBulkAgendaUpdateEvent(BulkAgendaUpdateEvent bulkAgendaUpdateEvent);
+    void handleBulkAgendaUpdateEvent(BulkAgendaUpdateEvent bulkAgendaUpdateEvent);
 }

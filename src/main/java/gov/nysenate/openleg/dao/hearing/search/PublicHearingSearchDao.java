@@ -15,7 +15,6 @@ import java.util.List;
  */
 public interface PublicHearingSearchDao
 {
-
     /**
      * Performs a free-form search across all public hearings using the query string syntax and a filter.
      *
@@ -25,23 +24,22 @@ public interface PublicHearingSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
     /**
      * Updates the public hearing search index with the supplied public hearing.
      * @param publicHearing
      */
-    public void updatePublicHearingIndex(PublicHearing publicHearing);
+    void updatePublicHearingIndex(PublicHearing publicHearing);
 
     /**
      * Updates the public hearing search index with the supplied public hearings.
      * @param publicHearings
      */
-    public void updatePublicHearingIndex(Collection<PublicHearing> publicHearings);
+    void updatePublicHearingIndex(Collection<PublicHearing> publicHearings);
 
     /**
      * Removes the public hearing from the search index with the given id.
      * @param publicHearingId
      */
-    public void deletePublicHearingFromIndex(PublicHearingId publicHearingId);
-
+    void deletePublicHearingFromIndex(PublicHearingId publicHearingId);
 }

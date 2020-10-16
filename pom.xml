@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.6</version>
+  <version>3.7</version>
 
   <!-- NY Senate Maven Repository -->
 
@@ -33,7 +34,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20</version>
+        <version>3.0.0-M5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <skipTests>false</skipTests>
@@ -42,8 +43,9 @@
       </plugin>
       <!-- Failsafe Plugin -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19</version>
+        <version>3.0.0-M5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
@@ -119,7 +121,7 @@
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.11.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <log4j.version>2.13.3</log4j.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>1.8.16</pdfbox.version>
@@ -129,7 +131,8 @@
     <spring.version>5.2.3.RELEASE</spring.version>
     <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
-    <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
+    <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
+    <javax.activation.version>1.1.1</javax.activation.version>
   </properties>
 
   <dependencies>
@@ -317,6 +320,21 @@
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>${javax.xml.bind.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>${javax.activation.version}</version>
     </dependency>
 
     <!-- Apache commons -->

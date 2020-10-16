@@ -23,26 +23,27 @@ Retrieve bill by session year and print no
 +----------------+----------------------------------------------------------------------------------------------+
 | version        | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A       |
 +----------------+----------------------------------------------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML) Which bill text formats will be included. Multiple formats can be requested. |
+| fullTextFormat | (PLAIN, HTML, TEMPLATE) Which bill text formats will be included.                            |
+|                | Multiple formats can be requested.                                                           |
 +----------------+----------------------------------------------------------------------------------------------+
 
 View options
 
-+------------------+----------------------------------------------------------------------------------+
-| View type        | Description                                                                      |
-+==================+==================================================================================+
-| default          | If the view param is omitted, the default response will be as documented below.  |
-+------------------+----------------------------------------------------------------------------------+
-| info             | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
-+------------------+----------------------------------------------------------------------------------+
-| no_fulltext      | Identical to the default response except the full text will be omitted.          |
-+------------------+----------------------------------------------------------------------------------+
-| only_fulltext    | If you only need the full text for a bill. Use the version param if needed.      |
-+------------------+----------------------------------------------------------------------------------+
-| with_refs        | If you need basic info views included for any related bills (e.g. same as bills).|
-+------------------+----------------------------------------------------------------------------------+
-|                  | with_refs_no_fulltext is the same as above, just without any full text.          |
-+------------------+----------------------------------------------------------------------------------+
++-----------------------+----------------------------------------------------------------------------------+
+| View type             | Description                                                                      |
++=======================+==================================================================================+
+| default               | If the view param is omitted, the default response will be as documented below.  |
++-----------------------+----------------------------------------------------------------------------------+
+| info                  | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
++-----------------------+----------------------------------------------------------------------------------+
+| no_fulltext           | Identical to the default response except the full text will be omitted.          |
++-----------------------+----------------------------------------------------------------------------------+
+| only_fulltext         | If you only need the full text for a bill. Use the version param if needed.      |
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs             | If you need basic info views included for any related bills (e.g. same as bills).|
++-----------------------+----------------------------------------------------------------------------------+
+| with_refs_no_fulltext | Same as above, just without any full text.                                       |
++-----------------------+----------------------------------------------------------------------------------+
 
 .. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
@@ -129,6 +130,7 @@ Default Bill Response
           "": {                                   // Map of Amendment versions
             "basePrintNo": "S2180",               // Bill print no/session details duplicated here
             "session": 2013,
+            "basePrintNoStr": "S2180-2013",
             "printNo": "S2180",
             "version": "",                        // Amendment version
             "publishDate": "2013-01-14",          // Date this amendment was published
@@ -145,7 +147,10 @@ Default Bill Response
             "lawSection": "Penal Law",            // The primary section of law this bill impacts.
             "lawCode": "Add Â§265.18, Pen L",     // A code that states the actions being taken on specific portions of law.
             "actClause": "AN ACT to amend the..", // An Act to Clause
+            "fullTextFormats": [ "PLAIN" ],
             "fullText": "...",                    // Full text of the bill amendment
+            "fullTextHtml": null,
+            "fullTextTemplate": null,
             "coSponsors": {                       // List of co sponsors
               "items": [
                {
@@ -342,23 +347,23 @@ List bills within a session year
 
 **Optional Params**
 
-+----------------+--------------------+--------------------------------------------------------+
-| Parameter      | Values             | Description                                            |
-+================+====================+========================================================+
-| limit          | 1 - 1000           | Number of results to return                            |
-+----------------+--------------------+--------------------------------------------------------+
-| offset         | >= 1               | Result number to start from                            |
-+----------------+--------------------+--------------------------------------------------------+
-| full           | boolean            | Set to true to see the full bill responses.            |
-+----------------+--------------------+--------------------------------------------------------+
-| idsOnly        | boolean            | Set to true to see only the printNo and session        |
-|                |                    | for each bill.  (overrides 'full' parameter)           |
-+----------------+--------------------+--------------------------------------------------------+
-| sort           | string             | Sort by any field from the response.                   |
-+----------------+--------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML)    | Which bill text formats will be included.              |
-|                |                    | Multiple formats can be requested.                     |
-+----------------+--------------------+--------------------------------------------------------+
++----------------+------------------------------+--------------------------------------------------------+
+| Parameter      | Values                       | Description                                            |
++================+==============================+========================================================+
+| limit          | 1 - 1000                     | Number of results to return                            |
++----------------+------------------------------+--------------------------------------------------------+
+| offset         | >= 1                         | Result number to start from                            |
++----------------+------------------------------+--------------------------------------------------------+
+| full           | boolean                      | Set to true to see the full bill responses.            |
++----------------+------------------------------+--------------------------------------------------------+
+| idsOnly        | boolean                      | Set to true to see only the printNo and session        |
+|                |                              | for each bill.  (overrides 'full' parameter)           |
++----------------+------------------------------+--------------------------------------------------------+
+| sort           | string                       | Sort by any field from the response.                   |
++----------------+------------------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included.              |
+|                |                              | Multiple formats can be requested.                     |
++----------------+------------------------------+--------------------------------------------------------+
 
 **Default Sort Order**
 
@@ -491,25 +496,25 @@ List of bills updated since the given date/time
 
 **Optional Params**
 
-+----------------+----------------------+--------------------------------------------------------+
-| Parameter      | Values               | Description                                            |
-+================+======================+========================================================+
-| type           | (processed|published)| The type of bill update (see below for explanation)    |
-+----------------+----------------------+--------------------------------------------------------+
-| detail         | boolean              | Set to true to see `detailed update digests`_          |
-+----------------+----------------------+--------------------------------------------------------+
-| filter         | string               | Filter by update type. See `update filters`_           |
-+----------------+----------------------+--------------------------------------------------------+
-| order          | string (asc|desc)    | Order the results by update date/time                  |
-+----------------+----------------------+--------------------------------------------------------+
-| summary        | boolean              | Include a bill info response per item                  |
-+----------------+----------------------+--------------------------------------------------------+
-| fullBill       | boolean              | Include a bill info response per item                  |
-+----------------+----------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML)      | Which bill text formats will be included               |
-|                |                      | if full bills are requested.                           |
-|                |                      | Multiple formats can be requested.                     |
-+----------------+----------------------+--------------------------------------------------------+
++----------------+---------------------------+--------------------------------------------------------+
+| Parameter      | Values                    | Description                                            |
++================+===========================+========================================================+
+| type           | (processed|published)     | The type of bill update (see below for explanation)    |
++----------------+---------------------------+--------------------------------------------------------+
+| detail         | boolean                   | Set to true to see `detailed update digests`_          |
++----------------+---------------------------+--------------------------------------------------------+
+| filter         | string                    | Filter by update type. See `update filters`_           |
++----------------+---------------------------+--------------------------------------------------------+
+| order          | string (asc|desc)         | Order the results by update date/time                  |
++----------------+---------------------------+--------------------------------------------------------+
+| summary        | boolean                   | Include a bill info response per item                  |
++----------------+---------------------------+--------------------------------------------------------+
+| fullBill       | boolean                   | Include a bill info response per item                  |
++----------------+---------------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN, HTML or TEMPLATE) | Which bill text formats will be included               |
+|                |                           | if full bills are requested.                           |
+|                |                           | Multiple formats can be requested.                     |
++----------------+---------------------------+--------------------------------------------------------+
 
 .. warning:: By default the type is set to 'processed'. Ensure you have the right type in the api request so you receive the results you are looking for
 
@@ -648,27 +653,29 @@ Sample response:
                 "basePrintNo": "S1234",
                 "session": 2013
             },
+            "contentType" : "BILL",
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
             "sourceDateTime": "2012-12-20T16:05:35",        // The date of the source file
             "processedDateTime": "2014-12-13T13:40:08.564879",
-            "action": "INSERT",                              // Database operation
+            "action": "Insert",                              // Database operation
             "scope": "Bill",                                 // Type of data modified
             "fields": {                                      // Database fields that were updated
-                "summary": "",
-                "statusDate": "2013-01-09",
-                "publishedDateTime": "2012-12-20 16:05:35",
-                "committeeChamber": "senate",
-                "programInfo": null,
-                "subBillPrintNo": null,
-                "createdDateTime": "2014-12-13 13:40:08.564879",
-                "title": "Creates the office of the taxpayer advocate",
-                "programInfoNum": null,
-                "billCalNo": null,
-                "activeYear": "2013",
-                "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                "activeVersion": " ",
-                "status": "IN_SENATE_COMM"
+                "Summary": "",
+                "Status Date": "2013-01-09",
+                "Published Date Time": "2012-12-20 16:05:35",
+                "Committee Chamber": "senate",
+                "Program Info": null,
+                "Sub Bill Print No": null,
+                "Created Date Time": "2014-12-13 13:40:08.564879",
+                "Title": "Creates the office of the taxpayer advocate",
+                "Program Info Num": null,
+                "Bill Cal No": null,
+                "Active Year": "2013",
+                "Committee Name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
+                "Active Version": " ",
+                "Status": "IN_SENATE_COMM"
             }
+            "fieldCount" : 14
         },
         ... (truncated)
 

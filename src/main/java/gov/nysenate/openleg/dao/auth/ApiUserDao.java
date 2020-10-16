@@ -20,28 +20,28 @@ public interface ApiUserDao
      * @return The ApiUser
      * @throws org.springframework.dao.DataAccessException
      */
-    public ApiUser getApiUserFromEmail(String email) throws DataAccessException;
+    ApiUser getApiUserFromEmail(String email) throws DataAccessException;
 
     /**
      * Finds the user with the specified key
      * @param apikey The User's API key
      * @return The ApiUser
      */
-    public ApiUser getApiUserFromKey(String apikey) throws DataAccessException;
+    ApiUser getApiUserFromKey(String apikey) throws DataAccessException;
 
     /**
      * Insert a new user into the database
      * @param user The new apiuser
      * @throws org.springframework.dao.DataAccessException
      */
-    public void insertUser(ApiUser user) throws DataAccessException;
+    void insertUser(ApiUser user) throws DataAccessException;
 
     /**
      * Update a preexisting user
      * @param user The APIUser to update
      * @throws DataAccessException
      */
-    public void updateUser(ApiUser user) throws DataAccessException;
+    void updateUser(ApiUser user) throws DataAccessException;
 
     /**
      * Update a preexisting user's email
@@ -49,13 +49,13 @@ public interface ApiUserDao
      *               updated
      * @param email String, The new email
      */
-    public void updateEmail(String apikey, String email);
+    void updateEmail(String apikey, String email);
 
     /**
      * @return List<ApiUser> a list of all api users
      * @throws DataAccessException
      */
-    public List<ApiUser> getAllUsers() throws DataAccessException;
+    List<ApiUser> getAllUsers() throws DataAccessException;
 
 
     /**
@@ -63,33 +63,33 @@ public interface ApiUserDao
      * @param token The registration token for the user
      * @return A user if the token is valid
      */
-    public ApiUser getApiUserFromToken(String token);
+    ApiUser getApiUserFromToken(String token);
 
     /**
      * Grants a role to an api user
      * @param apiKey String
      * @param role String
      */
-    public void grantRole(String apiKey, OpenLegRole role);
+    void grantRole(String apiKey, OpenLegRole role);
 
     /**
      * Revokes a role from an api user
      * @param apiKey String
      * @param role String
      */
-    public void revokeRole(String apiKey, OpenLegRole role);
+    void revokeRole(String apiKey, OpenLegRole role);
 
     /**
      * Adds an e-mail subscription for an api user
      * @param subscription ApiUserSubscriptionType
      */
-    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
+    void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
 
     /**
      * Removes an e-mail subscription for an api user
      * @param subscription ApiUserSubscriptionType
      */
-    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
+    void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
 
     /**
      * Removes all current subscriptions for a user and
@@ -97,12 +97,12 @@ public interface ApiUserDao
      * @param apiKey String
      * @param subscriptions Set<ApiUserSubscriptionType>
      */
-    public void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions);
+    void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions);
 
     /**
      * Gets all users with the given subscription
      * @param subscription_type ApiUserSubscriptionType
      * @return A list of ApiUsers
      */
-    public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscription_type);
+    List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscription_type);
 }

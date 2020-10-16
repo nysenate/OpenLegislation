@@ -81,6 +81,7 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements LegDataP
             } else if (action.equals("remove")) {
                 baseAnAct.getAmendment(version).setActClause("");
             }
+            baseAnAct.setModifiedDateTime(legDataFragment.getPublishedDateTime());
             billIngestCache.set(baseAnAct.getBaseBillId(), baseAnAct, legDataFragment);
 
         } catch (IOException | SAXException | XPathExpressionException e) {

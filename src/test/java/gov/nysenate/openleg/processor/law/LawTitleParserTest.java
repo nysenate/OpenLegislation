@@ -8,12 +8,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
 public class LawTitleParserTest {
 
     // NOTE: Make sure to use '\\n' instead of '\n' for line endings to match the encoding of law files.
-    private LawDocInfo lawInfo = new LawDocInfo();
+    private final LawDocInfo lawInfo = new LawDocInfo();
 
     // Article tests
     @Test
@@ -141,6 +142,22 @@ public class LawTitleParserTest {
                 "* NB Repealed December 31, 2027\\n  * NB There are 3 Article 31-A-2's\\n";
         String expectedTitle = "Tax On Real Estate Transfers In the Town of Chatham";
         testArticleTitle(text, expectedTitle,"31-A-2*2", "TAXA31-A-2*2");
+    }
+
+    @Test
+    public void NBarticleTest() {
+        String text = "  * NB The text of Article 5 of the former State Housing Law (cited\\n" +
+                "herein as the \"Municipal Housing Authorities Law\"), as such article\\nexisted" +
+                " immediately prior to its repeal pursuant to section 227 of\\nChapter 808 of " +
+                "the Laws of 1939, is provided here for ease of reference\\nand historical " +
+                "purposes as such text continues to be applicable for the\\nNew York City " +
+                "Housing Authority pursuant to the provisions of section\\n401 of the current " +
+                "Public Housing Law.\\n                               * ARTICLE 5\\n              " +
+                "        MUNICIPAL HOUSING AUTHORITIES\\nSection 60. Short title.\\n        61. " +
+                "Finding.\\n        62. Definitions.\\n        63. Establishment and " +
+                "organizations of authorities.\\n        64. Officers and employees.\\n        ";
+        String expectedTitle = "Municipal Housing Authorities";
+        testArticleTitle(text, expectedTitle, "5", "MHAA5");
     }
 
     //Title tests
@@ -456,7 +473,9 @@ public class LawTitleParserTest {
     // Miscellaneous tests
     @Test
     public void preambleTest() {
-        String text = "                            THE CONSTITUTION\\n  We The People of the State of New York, grateful to Almighty God for\\nour Freedom, in order to secure its blessings, DO ESTABLISH THIS\\nCONSTITUTION.\\n";
+        String text = "                            THE CONSTITUTION\\n  We The People of the " +
+                "State of New York, grateful to Almighty God for\\nour Freedom, in order to " +
+                "secure its blessings, DO ESTABLISH THIS\\nCONSTITUTION.\\n";
         String expectedTitle = "Preamble";
         testTitle(text, expectedTitle, "1", "CNSAA1", LawDocumentType.PREAMBLE);
     }
@@ -499,8 +518,8 @@ public class LawTitleParserTest {
         String text = "                                 INDEX\\n                                " +
                 "           Art.            Sec.\\nEDUCATION (see also \"Schools\"):\\n  Blind, " +
                 "power of legislature to provide...  7";
-        String expectedTitle = "Index range: E-K";
-        testTitle(text, expectedTitle, "E-K", "CNSINDEXE-K", LawDocumentType.INDEX);
+        String expectedTitle = "Index of: E-K";
+        testTitle(text, expectedTitle, "E-K", "CNSIE-K", LawDocumentType.INDEX);
     }
 
     @Test
@@ -509,15 +528,6 @@ public class LawTitleParserTest {
                 "   Imposition of tax.\\n";
         String expectedTitle = "City Unincorporated Business Income Tax";
         testTitle(text, expectedTitle, "CUBIT", "GCMCUBIT", LawDocumentType.MISC);
-    }
-
-    @Test
-    public void emptyStringTest() {
-        // Doc ID doesn't matter.
-        String dummyDocID = "AAA123";
-        testSectionTitle(null, "", dummyDocID);
-        testSectionTitle("", "", dummyDocID);
-        testTitle("It's a title", "", "123", dummyDocID, LawDocumentType.PARAGRAPH);
     }
 
     @Test
@@ -532,6 +542,19 @@ public class LawTitleParserTest {
                 " definitions. (§§ 1-5.)\\n";
         String expectedTitle = "Cooperative Corporations";
         testTitle(text, expectedTitle, "77", "CCO-CH77", LawDocumentType.CHAPTER);
+    }
+
+    @Test
+    public void badDataTest() {
+        lawInfo.setDocType(LawDocumentType.CHAPTER);
+        lawInfo.setLawId("XXX");
+        assertEquals("XXX Law", LawTitleParser.extractTitle(lawInfo, "Bad code text"));
+
+        String dummyDocID = "AAA123";
+        testSectionTitle(null, "", dummyDocID);
+        testSectionTitle("", "", dummyDocID);
+        testTitle("It's a title", "", "123", dummyDocID, LawDocumentType.PARAGRAPH);
+        assertTrue(LawTitleParser.extractTitle(null, "Null LawDocInfo").isEmpty());
     }
 
     @Ignore

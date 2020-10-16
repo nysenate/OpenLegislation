@@ -337,7 +337,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
                 userPlaceholder, user.getName(),
                 keyPlaceholder, user.getApiKey(),
                 domainPlaceholder, environment.getUrl(),
-                fromPlaceholder, environment.getEmailFromAddress());
+                fromPlaceholder, environment.getContactEmailAddress());
         final String message = StringSubstitutor.replace(keyEmailTemplate, subMap);
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);

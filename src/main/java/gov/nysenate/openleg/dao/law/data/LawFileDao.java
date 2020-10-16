@@ -18,7 +18,7 @@ public interface LawFileDao
      * @return List<LawFile>
      * @throws IOException - If there was a problem with handling the files.
      */
-    public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException;
+    List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException;
 
     /**
      * Retrieves a list of LawFiles that are awaiting processing.
@@ -28,7 +28,7 @@ public interface LawFileDao
      * @param limitOffset LimitOffset - Limit the result set.
      * @return List<LawFile>
      */
-    public List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset);
+    List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset);
 
     /**
      * Updates an existing LawFile in the backing store with the given instance or inserts it if
@@ -36,7 +36,7 @@ public interface LawFileDao
      *
      * @param lawFile LawFile - The LawFile instance to be updated.
      */
-    public void updateLawFile(LawFile lawFile);
+    void updateLawFile(LawFile lawFile);
 
     /**
      * Moves the underlying file in the LawFile instance into the archive directory. This will
@@ -46,5 +46,5 @@ public interface LawFileDao
      * @param lawFile
      * @throws IOException
      */
-    public void archiveAndUpdateLawFile(LawFile lawFile) throws IOException;
+    void archiveAndUpdateLawFile(LawFile lawFile) throws IOException;
 }

@@ -26,8 +26,8 @@ public interface LawSearchDao
      * @param limOff LimitOffset
      * @return SearchResults<LawDocId>
      */
-    SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
-                                          List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescorerBuilder<?> rescorer,
+                                          List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Update the law index with the supplied law doc.

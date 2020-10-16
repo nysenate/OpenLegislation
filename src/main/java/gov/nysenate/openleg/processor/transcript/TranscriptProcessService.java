@@ -15,7 +15,7 @@ public interface TranscriptProcessService extends ProcessService
      *
      * @return int - Number of transcript files collated
      */
-    public int collateTranscriptFiles();
+    int collateTranscriptFiles();
 
     /**
      * Retrieves a list of TranscriptFiles that are awaiting processing.
@@ -23,7 +23,7 @@ public interface TranscriptProcessService extends ProcessService
      *
      * @return List<TranscriptFile>
      */
-    public List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limitOffset);
+    List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limitOffset);
 
     /**
      * Reads the content of a TranscriptFile and generates a Transcript object.
@@ -34,14 +34,14 @@ public interface TranscriptProcessService extends ProcessService
      * @see gov.nysenate.openleg.model.transcript.Transcript
      * @see gov.nysenate.openleg.model.transcript.TranscriptFile
      */
-    public int processTranscriptFiles(List<TranscriptFile> transcriptFiles);
+    int processTranscriptFiles(List<TranscriptFile> transcriptFiles);
 
     /**
      * Processes all pending TranscriptFiles via calls to
      * {@link #getPendingTranscriptFiles(gov.nysenate.openleg.dao.base.LimitOffset)}
      * and {@link #processTranscriptFiles(java.util.List)}
      */
-    public int processPendingTranscriptFiles();
+    int processPendingTranscriptFiles();
 
     /**
      * Toggle the pending processing status of a TranscriptFile.
@@ -49,5 +49,5 @@ public interface TranscriptProcessService extends ProcessService
      * @param transcriptId
      * @param pendingProcessing
      */
-    public void updatePendingProcessing(TranscriptId transcriptId, boolean pendingProcessing);
+    void updatePendingProcessing(TranscriptId transcriptId, boolean pendingProcessing);
 }

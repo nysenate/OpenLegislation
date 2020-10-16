@@ -35,7 +35,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder postFilter,
-                                                               List<SortBuilder> sort, LimitOffset limOff) {
+                                                               List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(publicHearingIndexName, query, postFilter, highlightedFields, null,
                 sort, limOff, false, this::getPublicHearingIdFromHit);
     }

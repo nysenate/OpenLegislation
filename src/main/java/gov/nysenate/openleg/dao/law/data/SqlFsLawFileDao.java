@@ -3,8 +3,6 @@ package gov.nysenate.openleg.dao.law.data;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.util.FileIOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -24,7 +22,6 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlFsLawFileDao.class);
 
     /** Directory where new law files come in. */
     private File incomingLawDir;
@@ -96,7 +93,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
             Collections.sort(lawFiles);
         }
         else {
-            Collections.sort(lawFiles, Collections.reverseOrder());
+            lawFiles.sort(Collections.reverseOrder());
         }
     }
 
@@ -129,7 +126,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     /** --- Row Mapper Instances --- */
 
-    private RowMapper<LawFile> lawFileRowMapper = (rs, rowNum) -> {
+    private final RowMapper<LawFile> lawFileRowMapper = (rs, rowNum) -> {
         String fileName = rs.getString("file_name");
         boolean isArchived = rs.getBoolean("archived");
         File file = (isArchived) ? getFileInArchiveDir(fileName) : getFileInIncomingDir(fileName);

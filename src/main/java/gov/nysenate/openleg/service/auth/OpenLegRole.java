@@ -15,8 +15,8 @@ public enum OpenLegRole
 {
     MASTER_ADMIN(Collections.singletonList("*")),
     READONLY_ADMIN(Arrays.asList("admin:view", "ui:view")),
-    INTERNAL_USER(Arrays.asList("ui:view")),
-    API_USER(Arrays.asList("ui:view")),
+    INTERNAL_USER(Collections.singletonList("ui:view")),
+    API_USER(Collections.singletonList("ui:view")),
     SEN_SITE_API_USER(Collections.singletonList("senatesite:*:*"))
     ;
 

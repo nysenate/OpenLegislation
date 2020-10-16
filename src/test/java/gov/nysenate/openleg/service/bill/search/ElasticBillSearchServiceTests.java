@@ -38,7 +38,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
 
     @Test
     public void testSearch() throws Exception {
-        billSearchService.searchBills("explore", null, LimitOffset.TEN).getResults().stream()
+        billSearchService.searchBills("explore", null, LimitOffset.TEN).getResults()
             .forEach(r -> logger.info("{}", r.getResult()));
     }
 
@@ -64,7 +64,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
     }
 
     @Test
-    public void testRebuildIndex() throws Exception {
+    public void testRebuildIndex() {
         billSearchService.rebuildIndex();
     }
 

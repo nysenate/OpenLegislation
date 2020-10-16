@@ -16,14 +16,14 @@ public interface PublicHearingDataService
      * @param publicHearingId
      * @return
      */
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx;
+    PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx;
 
     /**
      * Retrieves a List of {@link PublicHearingId}.
      * @param limitOffset Restrict the number of results.
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limitOffset);
+    List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limitOffset);
 
     /**
      * Saves a {@link PublicHearing} to the backing store.
@@ -32,6 +32,6 @@ public interface PublicHearingDataService
      * @param publicHearingFile
      * @param postUpdateEvent
      */
-    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent);
+    void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent);
 
 }

@@ -20,7 +20,7 @@ public interface MemberSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<Integer> - memberIds from matched members
      */
-    SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
 
     /**
      * Update the Member search index with the supplied Member.

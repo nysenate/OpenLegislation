@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.law.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,21 +20,21 @@ public interface LawDataDao
      * @return LawInfo
      * @throws DataAccessException - If no matching law id was found
      */
-    public LawInfo getLawInfo(String lawId) throws DataAccessException;
+    LawInfo getLawInfo(String lawId) throws DataAccessException;
 
     /**
      * Returns a list of all LawInfo stored in the backing store in no particular order.
      *
      * @return List<LawInfo>
      */
-    public List<LawInfo> getLawInfos();
+    List<LawInfo> getLawInfos();
 
     /**
      * Returns a map of law ids to the last published law tree date.
      *
      * @return Map<String, LocalDate>
      */
-    public Map<String, LocalDate> getLastPublishedMap();
+    Map<String, LocalDate> getLastPublishedMap();
 
     /**
      * Retrieves and constructs a LawTree given the lawId and an ending publish date. This LawTree
@@ -49,7 +48,7 @@ public interface LawDataDao
      * @return LawTree
      * @throws DataAccessException - If there was an error while trying to retrieve the given law.
      */
-    public LawTree getLawTree(String lawId, LocalDate endPublishDate) throws DataAccessException;
+    LawTree getLawTree(String lawId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
      * Get law documents that were repealed during the given date time range
@@ -57,7 +56,7 @@ public interface LawDataDao
      * @param dateRange Range<LocalDateTime>
      * @return {@link List<LawDocId>}
      */
-    public List<LawDocId> getRepealedLaws(Range<LocalDateTime> dateRange);
+    List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange);
 
     /**
      * Retrieve a LawDocument using the given document id and end published date. The most recent law document
@@ -70,7 +69,7 @@ public interface LawDataDao
      * @return LawDocument
      * @throws DataAccessException - If there was an error while trying to retrieve the law document.
      */
-    public LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException;
+    LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
      * Retrieve all the law documents (with greatest pub date that is <= 'endPublishDate') for the
@@ -81,7 +80,7 @@ public interface LawDataDao
      * @return Map<String, LawDocument>
      * @throws DataAccessException
      */
-    public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishDate) throws DataAccessException;
+    Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
      * Updates or inserts a LawDocument into the database, using the document id and published date as the
@@ -90,7 +89,7 @@ public interface LawDataDao
      * @param lawFile LawFile - The law file source that triggered the update.
      * @param lawDocument LawDocument - The law document to persist.
      */
-    public void updateLawDocument(LawFile lawFile, LawDocument lawDocument);
+    void updateLawDocument(LawFile lawFile, LawDocument lawDocument);
 
     /**
      * Updates or inserts the tree structure for the laws via the given LawTree. The law id and the published date
@@ -99,5 +98,5 @@ public interface LawDataDao
      * @param lawFile LawFile - The law file source that triggered the update.
      * @param lawTree LawTree - The law tree to persist.
      */
-    public void updateLawTree(LawFile lawFile, LawTree lawTree);
+    void updateLawTree(LawFile lawFile, LawTree lawTree);
 }

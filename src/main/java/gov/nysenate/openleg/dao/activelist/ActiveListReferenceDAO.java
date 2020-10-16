@@ -12,14 +12,13 @@ import java.util.List;
  * Created by kyle on 11/21/14.
  */
 public interface ActiveListReferenceDAO {
-    public void addCalendarReference(ActiveListSpotcheckReference act);
+    void addCalendarReference(ActiveListSpotcheckReference act);
 
-    public ActiveListSpotcheckReference getCalendarReference(CalendarActiveListId cal, LocalDateTime time);
-    public ActiveListSpotcheckReference getMostRecentReference(CalendarActiveListId cal);
-    public List<ActiveListSpotcheckReference> getMostRecentEachYear(int year);
-    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDateTime> dateRange) throws DataAccessException;
+    ActiveListSpotcheckReference getCalendarReference(CalendarActiveListId cal, LocalDateTime time);
+    ActiveListSpotcheckReference getMostRecentReference(CalendarActiveListId cal);
+    List<ActiveListSpotcheckReference> getMostRecentEachYear(int year);
+    ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDateTime> dateRange) throws DataAccessException;
 
     //public ActiveListSpotcheckReference getRange
     //DELETE
-
 }

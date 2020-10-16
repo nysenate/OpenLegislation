@@ -97,6 +97,7 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements LegData
                     }
                 }
             }
+            baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
 
         } catch (IOException | SAXException |XPathExpressionException e) {

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class ActiveListHTMLParser {
 
     public static ActiveListSpotcheckReference getSpotcheckReference(File html) throws Exception {
-        List<CalendarEntry> entries = new ArrayList();
+        List<CalendarEntry> entries = new ArrayList<>();
         //Get sequence number from previous page
         //todo Get CalendarId from previous page, can use yearstring for year though
         String monthString = null, dayString = null, yearString = null;

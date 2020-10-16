@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.law.LawTreeNode;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LawNodeView extends LawDocInfoView implements ViewObject
@@ -30,8 +29,7 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
         if (treeNode != null) {
             initFromLawTreeNode(treeNode);
             this.text = (docMap != null && docMap.containsKey(treeNode.getDocumentId()))
-                ? docMap.get(treeNode.getDocumentId()).getText()
-                : null;
+                ? docMap.get(treeNode.getDocumentId()).getText() : null;
             if (depth == null || depth > 0) {
                 final Integer childDepth = (depth != null) ? depth - 1 : null;
                 this.documents = ListView.of(

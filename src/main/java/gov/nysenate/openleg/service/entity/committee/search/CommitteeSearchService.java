@@ -18,7 +18,7 @@ public interface CommitteeSearchService extends IndexedSearchService<CommitteeSe
      * @param limitOffset
      * @return
      */
-    public SearchResults<CommitteeVersionId> searchAllCommittees(String query, String sort, LimitOffset limitOffset)
+    SearchResults<CommitteeVersionId> searchAllCommittees(String query, String sort, LimitOffset limitOffset)
                                                                                         throws SearchException;
 
     /**
@@ -28,7 +28,7 @@ public interface CommitteeSearchService extends IndexedSearchService<CommitteeSe
      * @param limitOffset
      * @return
      */
-    public SearchResults<CommitteeVersionId> searchAllCurrentCommittees(String query, String sort, LimitOffset limitOffset)
+    SearchResults<CommitteeVersionId> searchAllCurrentCommittees(String query, String sort, LimitOffset limitOffset)
             throws SearchException;
 
     /**
@@ -39,7 +39,7 @@ public interface CommitteeSearchService extends IndexedSearchService<CommitteeSe
      * @param limitOffset
      * @return
      */
-    public SearchResults<CommitteeVersionId> searchCommitteesForSession(SessionYear sessionYear, String query,
+    SearchResults<CommitteeVersionId> searchCommitteesForSession(SessionYear sessionYear, String query,
                                                                         String sort, LimitOffset limitOffset)
                                                                                         throws SearchException;
 
@@ -52,7 +52,7 @@ public interface CommitteeSearchService extends IndexedSearchService<CommitteeSe
      * @param limitOffset
      * @return
      */
-    public SearchResults<CommitteeVersionId> searchCurrentCommitteesForSession(SessionYear sessionYear, String query,
+    SearchResults<CommitteeVersionId> searchCurrentCommitteesForSession(SessionYear sessionYear, String query,
                                                                                String sort, LimitOffset limitOffset)
                                                                                         throws SearchException;
 
@@ -61,6 +61,6 @@ public interface CommitteeSearchService extends IndexedSearchService<CommitteeSe
      * Handles a committee update event by indexing the updated committee
      * @param committeeUpdateEvent
      */
-    public void handleCommitteeUpdateEvent(CommitteeUpdateEvent committeeUpdateEvent);
+    void handleCommitteeUpdateEvent(CommitteeUpdateEvent committeeUpdateEvent);
 }
 

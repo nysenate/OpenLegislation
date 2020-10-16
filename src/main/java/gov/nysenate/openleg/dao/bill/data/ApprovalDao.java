@@ -16,7 +16,7 @@ public interface ApprovalDao {
      * @return
      * @throws DataAccessException
      */
-    public ApprovalMessage getApprovalMessage(ApprovalId approvalId) throws DataAccessException;
+    ApprovalMessage getApprovalMessage(ApprovalId approvalId) throws DataAccessException;
 
     /**
      * Retrieves an approval message for a particular base bill
@@ -24,7 +24,7 @@ public interface ApprovalDao {
      * @return
      * @throws DataAccessException
      */
-    public ApprovalMessage getApprovalMessage(BaseBillId baseBillId) throws DataAccessException;
+    ApprovalMessage getApprovalMessage(BaseBillId baseBillId) throws DataAccessException;
 
     /**
      * Gets all approval messages for the given year ordered by approval id number
@@ -32,24 +32,24 @@ public interface ApprovalDao {
      * @return
      * @throws DataAccessException
      */
-    public List<ApprovalMessage> getApprovalMessages(int year) throws DataAccessException;
+    List<ApprovalMessage> getApprovalMessages(int year) throws DataAccessException;
 
     /**
      * Updates or inserts the given approval message into the persistence layer
      * @param approvalMessage
      * @param legDataFragment
      */
-    public void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment);
+    void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment);
 
     /**
      * Deletes any approval message with the given approval id
      * @param approvalId
      */
-    public void deleteApprovalMessage(ApprovalId approvalId);
+    void deleteApprovalMessage(ApprovalId approvalId);
 
     /**
      * Deletes any approval message that approves the bill designated by the given base bill id
      * @param baseBillId
      */
-    public void deleteApprovalMessage(BaseBillId baseBillId);
+    void deleteApprovalMessage(BaseBillId baseBillId);
 }

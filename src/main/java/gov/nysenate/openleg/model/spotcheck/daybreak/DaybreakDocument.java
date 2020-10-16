@@ -9,11 +9,11 @@ public interface DaybreakDocument {
      * Returns the daybreak document type
      * @return
      */
-    public DaybreakDocType getDaybreakDocType();
+    DaybreakDocType getDaybreakDocType();
 
     /**
      * Returns the date of the associated Daybreak report
      * @return
      */
-    public LocalDateTime getReportDateTime();
+    LocalDateTime getReportDateTime();
 }

@@ -12,7 +12,7 @@ public interface ViewObject
      * @return String
      */
     @JsonIgnore
-    public String getViewType();
+    String getViewType();
 
     /**
      * Infers the view type of any object
@@ -21,7 +21,7 @@ public interface ViewObject
      * @param obj
      * @return String
      */
-    public static String getViewTypeOf(Object obj) {
+    static String getViewTypeOf(Object obj) {
         if (obj instanceof ViewObject) {
             return ((ViewObject) obj).getViewType();
         }

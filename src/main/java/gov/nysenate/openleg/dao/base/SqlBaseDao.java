@@ -155,16 +155,15 @@ public abstract class SqlBaseDao
         String[] hstoreEntry = hstoreString.contains(",") ? StringUtils.commaDelimitedListToStringArray(hstoreString) : new String[]{hstoreString};
         String key="";
         String value="";
-        for (int i = 0; i < hstoreEntry.length; i++) {
-            if (hstoreEntry[i].contains("=>")){
-                key = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[0]);
-                value = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[1]);
+        for (String s : hstoreEntry) {
+            if (s.contains("=>")) {
+                key = StringUtils.trimLeadingWhitespace(StringUtils.split(s, "=>")[0]);
+                value = StringUtils.trimLeadingWhitespace(StringUtils.split(s, "=>")[1]);
                 hstoreMap.put(key, value);
-            }
-            else {
+            } else {
                 hstoreMap.remove(key);
-                value +=","+StringUtils.trimLeadingWhitespace(hstoreEntry[i]);
-                hstoreMap.put(key,value);
+                value += "," + StringUtils.trimLeadingWhitespace(s);
+                hstoreMap.put(key, value);
             }
         }
         return hstoreMap;

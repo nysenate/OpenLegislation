@@ -29,7 +29,7 @@ public interface NotificationSearchDao {
      * @return SearchResults<RegisteredNotification>
      */
     SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
-                                                              List<SortBuilder> sort, LimitOffset limitOffset);
+                                                              List<SortBuilder<?>> sort, LimitOffset limitOffset);
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

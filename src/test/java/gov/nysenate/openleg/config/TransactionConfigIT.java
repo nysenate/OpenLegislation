@@ -16,8 +16,6 @@ import java.time.ZoneOffset;
 @Category(IntegrationTest.class)
 public class TransactionConfigIT extends BaseTests
 {
-    private static final Logger logger = LoggerFactory.getLogger(TransactionConfigIT.class);
-
     private static final String testTableName = "rollback_test_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 
     @Autowired private JdbcTemplate jdbc;

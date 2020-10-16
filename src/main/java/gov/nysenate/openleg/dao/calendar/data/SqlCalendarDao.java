@@ -223,7 +223,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
      */
     private List<CalendarEntry> getActiveListEntries(ImmutableParams activeListParams) {
         return jdbcNamed.query(SqlCalendarQuery.SELECT_CALENDAR_ACTIVE_LIST_ENTRIES.getSql(schema()), activeListParams,
-                               new CalendarActiveListEntryRowMapper());
+                new CalendarActiveListEntryRowMapper());
     }
 
     /**
@@ -257,7 +257,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     /** --- Helper Classes --- */
 
-    protected class CalendarRowMapper implements RowMapper<Calendar>
+    protected static class CalendarRowMapper implements RowMapper<Calendar>
     {
         @Override
         public Calendar mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -267,7 +267,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarIdRowMapper implements RowMapper<CalendarId>
+    protected static class CalendarIdRowMapper implements RowMapper<CalendarId>
     {
         @Override
         public CalendarId mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -275,7 +275,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarSupRowMapper implements RowMapper<CalendarSupplemental>
+    protected static class CalendarSupRowMapper implements RowMapper<CalendarSupplemental>
     {
         @Override
         public CalendarSupplemental mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -289,14 +289,14 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarSupIdRowMapper implements RowMapper<CalendarSupplementalId> {
+    protected static class CalendarSupIdRowMapper implements RowMapper<CalendarSupplementalId> {
         @Override
         public CalendarSupplementalId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CalendarSupplementalId(rs.getInt("calendar_no"), rs.getInt("calendar_year"), Version.of(rs.getString("sup_version")));
         }
     }
 
-    protected class CalendarSupEntryRowMapper implements RowMapper<CalendarSupplementalEntry>
+    protected static class CalendarSupEntryRowMapper implements RowMapper<CalendarSupplementalEntry>
     {
         @Override
         public CalendarSupplementalEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -314,7 +314,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarSupRowHandler implements RowCallbackHandler
+    protected static class CalendarSupRowHandler implements RowCallbackHandler
     {
         protected CalendarSupRowMapper calendarSupRowMapper;
         protected CalendarSupEntryRowMapper calendarSupEntryRowMapper;
@@ -344,7 +344,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarActiveListRowMapper implements RowMapper<CalendarActiveList>
+    protected static class CalendarActiveListRowMapper implements RowMapper<CalendarActiveList>
     {
         @Override
         public CalendarActiveList mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -358,7 +358,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarActiveListIdRowMapper implements RowMapper<CalendarActiveListId>
+    protected static class CalendarActiveListIdRowMapper implements RowMapper<CalendarActiveListId>
     {
         @Override
         public CalendarActiveListId mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -366,7 +366,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarActiveListEntryRowMapper implements RowMapper<CalendarEntry>
+    protected static class CalendarActiveListEntryRowMapper implements RowMapper<CalendarEntry>
     {
         @Override
         public CalendarEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -378,7 +378,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class ActiveListRowHandler implements RowCallbackHandler
+    protected static class ActiveListRowHandler implements RowCallbackHandler
     {
         protected CalendarActiveListRowMapper calendarActiveListRowMapper;
         protected CalendarActiveListEntryRowMapper calendarActiveListEntryRowMapper;

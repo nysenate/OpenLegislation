@@ -20,7 +20,7 @@ public class LawDocWithRefsView extends LawDocView
             this.parents = lawTreeNode.get()
                     .getAllParents().stream()
                     .map(n -> new LawDocInfoView(n.getLawDocInfo())).collect(Collectors.toList());
-            this.parentLocationIds = this.parents.stream().map(p -> p.getLocationId()).collect(Collectors.toList());
+            this.parentLocationIds = this.parents.stream().map(LawDocInfoView::getLocationId).collect(Collectors.toList());
             this.prevSibling = (lawTreeNode.get().getPrevSibling().isPresent())
                     ? new LawDocInfoView(lawTreeNode.get().getPrevSibling().get().getLawDocInfo()) : null;
             this.nextSibling = (lawTreeNode.get().getNextSibling().isPresent())

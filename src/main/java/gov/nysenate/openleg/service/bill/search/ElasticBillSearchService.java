@@ -204,7 +204,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             }
 
             // Initialize and run several BillReindexWorkers to index bills from the queue
-            CompletableFuture[] futures = new CompletableFuture[billReindexThreadCount];
+            CompletableFuture<?>[] futures = new CompletableFuture[billReindexThreadCount];
             AtomicBoolean interrupted = new AtomicBoolean(false);
             for (int workerNo = 0; workerNo < billReindexThreadCount; workerNo++) {
                 futures[workerNo] = asyncUtils.run(new BillReindexWorker(billIdQueue, interrupted));

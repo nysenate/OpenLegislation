@@ -5,7 +5,6 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.processor.law.LawProcessor;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +47,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public Map<String, LocalDate> getLastPublishedMap() {
         List<Pair<String, LocalDate>> res = jdbcNamed.query(SqlLawDataQuery.SELECT_MAX_PUB_DATE.getSql(schema()),
-            (rs, rowNum) -> {
-                return Pair.of(rs.getString("law_id"), getLocalDateFromRs(rs, "max_pub_date"));
-        });
+            (rs, rowNum) -> Pair.of(rs.getString("law_id"), getLocalDateFromRs(rs, "max_pub_date")));
         return res.stream().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
@@ -76,13 +72,13 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     }
 
     @Override
-    public List<LawDocId> getRepealedLaws(Range<LocalDateTime> dateRange) {
+    public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("startDateTime", toDate(DateUtils.startOfDateTimeRange(dateRange)))
-                .addValue("endDateTime", toDate(DateUtils.endOfDateTimeRange(dateRange))));
+                .addValue("startDateTime", toDate(dateRange.lowerEndpoint()))
+                .addValue("endDateTime", toDate(dateRange.upperEndpoint())));
 
         final String sql = SqlLawDataQuery.SELECT_REPEALED_LAWS.getSql(schema());
-        return jdbcNamed.query(sql, params, lawDocIdRowMapper);
+        return jdbcNamed.query(sql, params, repealedLawDocIdRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -137,7 +133,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs a LawTree from the result set.
      */
-    protected class LawTreeRowCallbackHandler implements RowCallbackHandler
+    protected static class LawTreeRowCallbackHandler implements RowCallbackHandler
     {
         private LinkedHashMap<String, LawTreeNode> treeNodeMap = new LinkedHashMap<>();
         private LawInfo info;
@@ -190,11 +186,11 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs LawDocId from result set.
      */
-    protected static RowMapper<LawDocId> lawDocIdRowMapper = (rs, rowNum) ->
-            new LawDocId(
+    protected static RowMapper<RepealedLawDocId> repealedLawDocIdRowMapper = (rs, rowNum) ->
+            new RepealedLawDocId(new LawDocId(
                     rs.getString("document_id"),
                     getLocalDateFromRs(rs, "published_date")
-            );
+            ), getLocalDateFromRs(rs, "repealed_date"));
 
     /**
      * Constructs LawDocInfo from result set.

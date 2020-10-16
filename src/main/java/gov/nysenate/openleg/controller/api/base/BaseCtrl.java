@@ -307,7 +307,7 @@ public abstract class BaseCtrl
         } catch (IllegalArgumentException ex) {
             String rangeString = (lowerType == BoundType.OPEN ? "(" : "[") + lower + " - " +
                     upper + (upperType == BoundType.OPEN ? ")" : "]");
-            throw new InvalidRequestParamEx( rangeString, fromName + ", " + upperName, "range",
+            throw new InvalidRequestParamEx(rangeString, fromName + ", " + upperName, "range",
                                             "Range start must not exceed range end");
         }
     }
@@ -414,7 +414,7 @@ public abstract class BaseCtrl
     protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
                                                             Function<T, String> valueFunction,
                                                             String paramName, String paramValue) {
-        T result = getEnumParameterByValue(enumType, mapFunction, paramValue, null);
+        T result = getEnumParameterByValue(mapFunction, paramValue, null);
         if (result != null) {
             return result;
         }
@@ -424,7 +424,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
      * returns a default value if the map function returns null
      */
-    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType,Function<String, T> mapFunction,
+    protected <T extends Enum<T>> T getEnumParameterByValue(Function<String, T> mapFunction,
                                                             String paramValue, T defaultValue) {
         T result = mapFunction.apply(paramValue);
         return result != null ? result : defaultValue;
