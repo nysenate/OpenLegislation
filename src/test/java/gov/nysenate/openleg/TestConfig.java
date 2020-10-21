@@ -2,8 +2,8 @@ package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.config.CacheConfigurationIT;
 import gov.nysenate.openleg.config.CacheTester;
-import gov.nysenate.openleg.dao.calendar.alert.CalendarAlertDao;
-import gov.nysenate.openleg.processor.calendar.MockCalendarAlertDao;
+import gov.nysenate.openleg.spotchecks.alert.calendar.dao.CalendarAlertDao;
+import gov.nysenate.openleg.spotchecks.alert.calendar.MockCalendarAlertDao;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

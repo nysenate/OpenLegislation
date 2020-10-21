@@ -38,7 +38,7 @@
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <skipTests>false</skipTests>
-          <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
+          <groups>gov.nysenate.openleg.config.annotation.UnitTest</groups>
         </configuration>
       </plugin>
       <!-- Failsafe Plugin -->
@@ -48,7 +48,7 @@
         <version>3.0.0-M5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
+          <groups>gov.nysenate.openleg.config.annotation.IntegrationTest</groups>
         </configuration>
         <executions>
           <execution>

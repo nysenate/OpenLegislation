@@ -2,7 +2,7 @@ package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.TestConfig;
-import gov.nysenate.openleg.annotation.IntegrationTest;
+import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;

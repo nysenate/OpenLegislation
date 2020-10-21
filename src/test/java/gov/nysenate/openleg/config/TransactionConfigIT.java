@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.annotation.IntegrationTest;
+import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;

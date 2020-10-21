@@ -1,8 +1,8 @@
 <%@tag description="Head template" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ attribute name="title" required="true" description="The title of the page" %>
-<%@ tag import="gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType" %>
-<%@ tag import="gov.nysenate.openleg.model.spotcheck.SpotCheckRefType" %>
+<%@ tag import="gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType" %>
+<%@ tag import="gov.nysenate.openleg.spotchecks.model.SpotCheckRefType" %>
 
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 <%

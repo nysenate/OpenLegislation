@@ -2,10 +2,14 @@ package gov.nysenate.openleg;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeMember;
+import gov.nysenate.openleg.legislation.member.Member;
+import gov.nysenate.openleg.legislation.member.Person;
+import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.SessionYear;
 
-import static gov.nysenate.openleg.model.entity.CommitteeMemberTitle.*;
+import static gov.nysenate.openleg.legislation.committee.CommitteeMemberTitle.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
