@@ -9,7 +9,6 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.law.*;
-import gov.nysenate.openleg.controller.api.LawCtrlTest;
 import gov.nysenate.openleg.model.law.LawDocumentType;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
@@ -24,7 +23,7 @@ import static gov.nysenate.openleg.model.law.LawChapterCode.*;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class LawGetCtrlTest extends LawCtrlTest {
+public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Autowired
     private LawGetCtrl testCtrl;

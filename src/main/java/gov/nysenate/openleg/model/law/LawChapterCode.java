@@ -2,7 +2,10 @@ package gov.nysenate.openleg.model.law;
 
 import com.google.common.collect.Sets;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,13 +170,13 @@ public enum LawChapterCode
 
     /** --- Fields --- */
 
-    private String name;
-    private LawType type;
+    private final String name;
+    private final LawType type;
 
     public static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
     private static final Set<LawChapterCode> nonNumericalVolumes= Sets.newHashSet(LawChapterCode.ACA,
             LawChapterCode.CPL, LawChapterCode.CVS, LawChapterCode.PAR, LawChapterCode.MHY, LawChapterCode.PEN);
-    private static Map<String, LawChapterCode> uniqueCitations = new HashMap<>();
+    private static final Map<String, LawChapterCode> uniqueCitations = new HashMap<>();
     static {
         uniqueCitations.put("Rec & Pks", PAR);
         uniqueCitations.put("El", ELN);

@@ -94,7 +94,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
     public static LawBuilder makeLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         String lawID = lawVersionId.getLawId();
         if (lawID.equals(CONS_STR))
-            return new ConstitutionBuilder(lawVersionId, previousTree);
+            return new ConstitutionLawBuilder(lawVersionId, previousTree);
         if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return new RulesLawBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawID))

@@ -3,21 +3,23 @@ package gov.nysenate.openleg.processor.law;
 import gov.nysenate.openleg.model.law.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A class for the special cases of the Constitution, Senate Rules, and Assembly Rules.
+ * A class for the special case of the Constitution.
  */
-public class ConstitutionBuilder extends IdBasedLawBuilder implements LawBuilder {
+public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuilder {
     private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
 
-    // Maps locationIDs to titles.
+    // Maps location IDs to titles.
     private final Map<String, String> titles = new HashMap<>();
 
-    public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
+    public ConstitutionLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
         // Replenish titles.
         if (previousTree != null) {
@@ -63,17 +65,18 @@ public class ConstitutionBuilder extends IdBasedLawBuilder implements LawBuilder
                 String matchedArticleNum = m.group(1);
                 // Adds in articles where they are supposed to be in the tree.
                 if (!matchedArticleNum.equals(currArticle)) {
-                    correctedMasterDoc.append(CONS_STR).append("A").append(matchedArticleNum);
+                    correctedMasterDoc.append(CONS_STR).append("A").append(matchedArticleNum).append("\\n");
                     currArticle = matchedArticleNum;
                 }
             }
-            correctedMasterDoc.append(docId);
+            correctedMasterDoc.append(docId).append("\\n");
         }
         super.rebuildTree(correctedMasterDoc.toString());
     }
 
     /**
      * Parses out the titles of articles and sections in the Constitution and stores them.
+     * Also adds dummy articles to simplify processing.
      * @param rootDoc chapter to parse.
      * @param isNewDoc if the chapter is new.
      */

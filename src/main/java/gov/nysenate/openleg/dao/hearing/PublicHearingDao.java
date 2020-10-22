@@ -18,14 +18,11 @@ public interface PublicHearingDao
 
     /**
      * Retrieves all PublicHearingId's.
-     * @return
      */
     List<PublicHearingId> getPublicHearingIds(SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves a {@link PublicHearing} via its {@link PublicHearingId}.
-     * @param publicHearingId
-     * @return
      */
     PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
 

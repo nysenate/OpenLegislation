@@ -3,7 +3,6 @@ package gov.nysenate.openleg.dao.transcript;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
 import gov.nysenate.openleg.util.DateUtils;
@@ -37,8 +36,8 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     /** {@inheritDoc} */
     @Override
-    public void updateTranscript(Transcript transcript, TranscriptFile transcriptFile) {
-        MapSqlParameterSource params = getTranscriptParams(transcript, transcriptFile);
+    public void updateTranscript(Transcript transcript) {
+        MapSqlParameterSource params = getTranscriptParams(transcript);
         if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_TRANSCRIPT.getSql(schema()), params);
         }
@@ -57,9 +56,9 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     /** --- Param Source Methods --- */
 
-    private MapSqlParameterSource getTranscriptParams(Transcript transcript, TranscriptFile transcriptFile) {
+    private MapSqlParameterSource getTranscriptParams(Transcript transcript) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("transcriptFilename", transcriptFile.getFileName());
+        params.addValue("transcriptFilename", transcript.getFilename());
         params.addValue("sessionType", transcript.getSessionType());
         params.addValue("dateTime", toDate(transcript.getDateTime()));
         params.addValue("location", transcript.getLocation());
@@ -90,7 +89,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
         new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"));
 
 
-    private static RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
+    private static final RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
             new TranscriptUpdateToken(new TranscriptId(getLocalDateTimeFromRs(rs, "date_time")),
                     getLocalDateTimeFromRs(rs, "modified_date_time"));
 }

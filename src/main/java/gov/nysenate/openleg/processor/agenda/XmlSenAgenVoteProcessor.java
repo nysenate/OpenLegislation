@@ -9,35 +9,24 @@ import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements LegDataProcessor
+public class XmlSenAgenVoteProcessor extends AbstractLegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenAgenVoteProcessor.class);
-
-    @Autowired private XmlHelper xml;
-
-    @PostConstruct
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -50,20 +39,20 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements Le
         DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
             Node root = getXmlRoot(legDataFragment.getText());
-            Node xmlAgendaVote = xml.getNode("senagendavote", root);
-            Integer agendaNo = xml.getInteger("@no", xmlAgendaVote);
-            SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
-            Integer year = xml.getInteger("@year", xmlAgendaVote);
+            Node xmlAgendaVote = xmlHelper.getNode("senagendavote", root);
+            Integer agendaNo = xmlHelper.getInteger("@no", xmlAgendaVote);
+            SessionYear session = new SessionYear(xmlHelper.getInteger("@sessyr", xmlAgendaVote));
+            Integer year = xmlHelper.getInteger("@year", xmlAgendaVote);
             AgendaId agendaId = new AgendaId(agendaNo, year);
             Agenda agenda = getOrCreateAgenda(agendaId, legDataFragment);
             agenda.setModifiedDateTime(modifiedDate);
 
             logger.info("Processing Votes for {} - {}", agendaId, legDataFragment);
 
-            NodeList xmlAddenda = xml.getNodeList("addendum", xmlAgendaVote);
+            NodeList xmlAddenda = xmlHelper.getNodeList("addendum", xmlAgendaVote);
             for (int i = 0; i < xmlAddenda.getLength(); i++) {
                 Node xmlAddendum = xmlAddenda.item(i);
-                String addendumId = xml.getString("@id", xmlAddendum);
+                String addendumId = xmlHelper.getString("@id", xmlAddendum);
 
                 logger.info("\tProcessing Vote Addendum {}", (addendumId.isEmpty()) ? "''" : addendumId);
 
@@ -75,11 +64,11 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements Le
                 }
                 addendum.setModifiedDateTime(modifiedDate);
 
-                NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
+                NodeList xmlCommittees = xmlHelper.getNodeList("committees/committee", xmlAddendum);
                 for (int j = 0; j < xmlCommittees.getLength(); j++) {
                     Node xmlCommittee = xmlCommittees.item(j);
-                    String action = xml.getString("@action", xmlCommittee);
-                    String name = xml.getString("name/text()", xmlCommittee);
+                    String action = xmlHelper.getString("@action", xmlCommittee);
+                    String name = xmlHelper.getString("name/text()", xmlCommittee);
                     // We only get agendas for senate committees. This may or may not change in the future.
                     CommitteeId committeeId = new CommitteeId(Chamber.SENATE, name);
                     // If the action is remove, then discard the committee and move on
@@ -88,36 +77,36 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements Le
                         continue;
                     }
                     // Otherwise, the committee is completely replaced
-                    String chair = xml.getString("chair/text()", xmlCommittee);
+                    String chair = xmlHelper.getString("chair/text()", xmlCommittee);
                     LocalDateTime meetDateTime = DateUtils.getLrsDateTime(
-                            xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
+                            xmlHelper.getString("meetdate/text()", xmlCommittee) + xmlHelper.getString("meettime/text()", xmlCommittee));
                     AgendaVoteCommittee voteCommittee = new AgendaVoteCommittee(committeeId, chair, meetDateTime);
 
-                    NodeList xmlMembers = xml.getNodeList("attendancelist/member", xmlCommittee);
+                    NodeList xmlMembers = xmlHelper.getNodeList("attendancelist/member", xmlCommittee);
                     for (int k = 0; k < xmlMembers.getLength(); k++) {
                         Node xmlMember = xmlMembers.item(k);
-                        String memberName = xml.getString("name/text()", xmlMember);
+                        String memberName = xmlHelper.getString("name/text()", xmlMember);
                         SessionMember member = getMemberFromShortName(memberName, session, Chamber.SENATE);
-                        Integer rank = xml.getInteger("rank/text()", xmlMember);
-                        String party = xml.getString("party/text()", xmlMember);
-                        String attendance = xml.getString("attendance", xmlMember);
+                        Integer rank = xmlHelper.getInteger("rank/text()", xmlMember);
+                        String party = xmlHelper.getString("party/text()", xmlMember);
+                        String attendance = xmlHelper.getString("attendance", xmlMember);
                         AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(member, rank, party, attendance);
                         voteCommittee.addAttendance(memberAttendance);
                     }
 
-                    NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
+                    NodeList xmlBills = xmlHelper.getNodeList("bills/bill", xmlCommittee);
                     for (int k = 0; k < xmlBills.getLength(); k++) {
                         Node xmlBill = xmlBills.item(k);
-                        String printNo = xml.getString("@no", xmlBill);
+                        String printNo = xmlHelper.getString("@no", xmlBill);
                         BillId billId = new BillId(printNo, session);
-                        String voteActionCode = xml.getString("action/text()", xmlBill);
+                        String voteActionCode = xmlHelper.getString("action/text()", xmlBill);
                         AgendaVoteAction voteAction = AgendaVoteAction.valueOfCode(voteActionCode);
-                        String referCommittee = xml.getString("refercomm/text()", xmlBill);
+                        String referCommittee = xmlHelper.getString("refercomm/text()", xmlBill);
                         CommitteeId referCommitteeId = null;
                         if (!referCommittee.isEmpty()) {
                             referCommitteeId = new CommitteeId(Chamber.SENATE, referCommittee);
                         }
-                        String withAmd = xml.getString("withamd/text()", xmlBill);
+                        String withAmd = xmlHelper.getString("withamd/text()", xmlBill);
                         boolean withAmdBoolean = (withAmd != null && withAmd.equalsIgnoreCase("Y"));
 
                         // The AgendaVoteBill will contain the vote as well as additional vote metadata specific
@@ -130,12 +119,12 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements Le
                         vote.setPublishedDateTime(modifiedDate);
 
                         // Add the members and their vote to the BillVote.
-                        NodeList xmlVotes = xml.getNodeList("votes/member", xmlBill);
+                        NodeList xmlVotes = xmlHelper.getNodeList("votes/member", xmlBill);
                         for (int v = 0; v < xmlVotes.getLength(); v++) {
                             Node xmlVote = xmlVotes.item(v);
-                            String voterName = xml.getString("name/text()", xmlVote);
+                            String voterName = xmlHelper.getString("name/text()", xmlVote);
                             SessionMember voterMember = getMemberFromShortName(voterName, session, Chamber.SENATE);
-                            String voteCodeStr = xml.getString("vote/text()", xmlVote).replace(" ", "").replace("/", "");
+                            String voteCodeStr = xmlHelper.getString("vote/text()", xmlVote).replace(" ", "").replace("/", "");
                             BillVoteCode voteCode = BillVoteCode.getValue(voteCodeStr);
                             vote.addMemberVote(voteCode, voterMember);
                         }

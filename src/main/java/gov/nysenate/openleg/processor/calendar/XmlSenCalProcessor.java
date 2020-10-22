@@ -7,35 +7,24 @@ import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenCalProcessor extends AbstractDataProcessor implements LegDataProcessor
+public class XmlSenCalProcessor extends AbstractLegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenCalProcessor.class);
-
-    @Autowired protected XmlHelper xml;
-
-    @PostConstruct
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -49,48 +38,48 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements LegData
         DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
             Node root = getXmlRoot(legDataFragment.getText());
-            Node xmlCalendar = xml.getNode("sencalendar", root);
-            Integer calendarNo = xml.getInteger("@no", xmlCalendar);
-            Integer sessionYear = xml.getInteger("@sessyr", xmlCalendar);
-            Integer year = xml.getInteger("@year", xmlCalendar);
+            Node xmlCalendar = xmlHelper.getNode("sencalendar", root);
+            Integer calendarNo = xmlHelper.getInteger("@no", xmlCalendar);
+            Integer sessionYear = xmlHelper.getInteger("@sessyr", xmlCalendar);
+            Integer year = xmlHelper.getInteger("@year", xmlCalendar);
             CalendarId calendarId = new CalendarId(calendarNo, year);
             Calendar calendar = getOrCreateCalendar(calendarId, legDataFragment);
             calendar.setModifiedDateTime(modifiedDate);
 
             // Actions apply to supplemental and not the whole calendar
-            String action = xml.getString("@action", xmlCalendar);
+            String action = xmlHelper.getString("@action", xmlCalendar);
 
-            NodeList xmlSupplementals = xml.getNodeList("supplemental", xmlCalendar);
+            NodeList xmlSupplementals = xmlHelper.getNodeList("supplemental", xmlCalendar);
             for (int i = 0; i < xmlSupplementals.getLength(); i++) {
                 Node xmlSupplemental = xmlSupplementals.item(i);
-                Version supVersion = Version.of(xml.getString("@id", xmlSupplemental));
+                Version supVersion = Version.of(xmlHelper.getString("@id", xmlSupplemental));
                 if (action.equalsIgnoreCase("remove")) {
                     calendar.removeSupplemental(supVersion);
                 }
                 else {
                     // Replace this supplemental
-                    LocalDate calDate = DateUtils.getLrsLocalDate(xml.getString("caldate/text()", xmlSupplemental));
-                    LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
-                            + xml.getString("releasetime/text()", xmlSupplemental));
+                    LocalDate calDate = DateUtils.getLrsLocalDate(xmlHelper.getString("caldate/text()", xmlSupplemental));
+                    LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(xmlHelper.getString("releasedate/text()", xmlSupplemental)
+                            + xmlHelper.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supVersion, calDate, releaseDateTime);
                     supplemental.setModifiedDateTime(modifiedDate);
                     supplemental.setPublishedDateTime(modifiedDate);
 
-                    NodeList xmlSections = xml.getNodeList("sections/section", xmlSupplemental);
+                    NodeList xmlSections = xmlHelper.getNodeList("sections/section", xmlSupplemental);
                     for (int j = 0; j < xmlSections.getLength(); j++) {
                         Node xmlSection = xmlSections.item(j);
-                        Integer cd = xml.getInteger("@cd", xmlSection);
+                        Integer cd = xmlHelper.getInteger("@cd", xmlSection);
                         CalendarSectionType sectionType = CalendarSectionType.valueOfCode(cd);
 
-                        NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSection);
+                        NodeList xmlCalNos = xmlHelper.getNodeList("calnos/calno", xmlSection);
                         for (int k = 0; k < xmlCalNos.getLength(); k++) {
                             Node xmlCalNo = xmlCalNos.item(k);
-                            Integer no = xml.getInteger("@no", xmlCalNo);
-                            String billPrintNo = xml.getString("bill/@no", xmlCalNo);
+                            Integer no = xmlHelper.getInteger("@no", xmlCalNo);
+                            String billPrintNo = xmlHelper.getString("bill/@no", xmlCalNo);
                             BillId billId = new BillId(billPrintNo, sessionYear);
-                            boolean billHigh = xml.getString("bill/@high", xmlCalNo).equals("true");
-                            String subBillPrintNo = xml.getString("subbill/@no", xmlCalNo);
+                            boolean billHigh = xmlHelper.getString("bill/@high", xmlCalNo).equals("true");
+                            String subBillPrintNo = xmlHelper.getString("subbill/@no", xmlCalNo);
                             BillId subBillId = (!Strings.isNullOrEmpty(subBillPrintNo))
                                                 ? new BillId(subBillPrintNo, sessionYear) : null;
                             CalendarSupplementalEntry entry =
@@ -108,7 +97,6 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements LegData
         }
         // Notify the data processor that a calendar fragment has finished processing
         postDataUnitEvent(unit);
-
         checkIngestCache();
     }
 
@@ -119,8 +107,7 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements LegData
 
     @Override
     public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || calendarIngestCache.exceedsCapacity())
             flushAllUpdates();
-        }
     }
 }

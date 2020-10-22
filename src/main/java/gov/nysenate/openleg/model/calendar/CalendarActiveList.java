@@ -54,7 +54,6 @@ public class CalendarActiveList extends BaseLegislativeContent
         this.entries.add(entry);
     }
 
-
     /** --- Overrides --- */
 
     @Override

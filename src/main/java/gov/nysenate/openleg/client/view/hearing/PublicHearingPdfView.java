@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.hearing;
 
+import gov.nysenate.openleg.client.view.base.BasePdfView;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
@@ -16,12 +17,7 @@ import java.util.List;
 /**
  * PDF representation of a Public Hearing.
  */
-public class PublicHearingPdfView
-{
-    private static Float fontSize = 12f;
-    private static Float top = 740f;
-    private static Float margin = 10f;
-
+public abstract class PublicHearingPdfView extends BasePdfView {
     public static void writePublicHearingPdf(PublicHearing publicHearing, OutputStream outputStream)
             throws IOException, COSVisitorException {
         if (publicHearing == null) {
@@ -36,8 +32,8 @@ public class PublicHearingPdfView
             PDPage pg = new PDPage();
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
             contentStream.beginText();
-            contentStream.setFont(font, fontSize);
-            contentStream.moveTextPositionByAmount(margin, top);
+            contentStream.setFont(font, FONT_SIZE);
+            contentStream.moveTextPositionByAmount(MARGIN, TOP);
             drawPage(contentStream, page);
             contentStream.endText();
             contentStream.close();
@@ -50,7 +46,7 @@ public class PublicHearingPdfView
     private static void drawPage(PDPageContentStream contentStream, List<String> page) throws IOException {
         for (String line : page) {
             contentStream.drawString(line);
-            contentStream.moveTextPositionByAmount(0, -fontSize);
+            contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
         }
     }
 }

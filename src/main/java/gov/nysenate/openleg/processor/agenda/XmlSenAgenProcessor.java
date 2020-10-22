@@ -6,11 +6,10 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -21,23 +20,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenAgenProcessor extends AbstractDataProcessor implements LegDataProcessor
+public class XmlSenAgenProcessor extends AbstractLegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenAgenProcessor.class);
 
     @Autowired private XmlHelper xml;
-
-    @PostConstruct
-    public void init() {
-        initBase();
-    }
 
     /** {@inheritDoc} */
     @Override

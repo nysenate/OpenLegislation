@@ -7,15 +7,12 @@ import gov.nysenate.openleg.model.bill.ProgramInfo;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,23 +33,12 @@ import java.util.regex.Pattern;
  * Created by Robert Bebber on 2/22/17.
  */
 @Service
-public class XmlLDSponProcessor extends AbstractBillProcessor implements LegDataProcessor {
+public class XmlLDSponProcessor extends AbstractBillProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
-
-    @Autowired
-    private XmlHelper xmlHelper;
-
-    public XmlLDSponProcessor() {
-    }
-
-    @Override
-    public void init() {
-        initBase();
-    }
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -128,13 +114,6 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements LegData
         }
     }
 
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
     /**
      * This method is responsible for setting every element regarding the sponsor to empty.
      *
@@ -147,10 +126,5 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements LegData
         amendment.setCoSponsors(empty1);
         List<SessionMember> empty2 = new ArrayList<>();
         amendment.setMultiSponsors(empty2);
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
     }
 }

@@ -15,7 +15,7 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
     private static final long serialVersionUID = -6509878885942142022L;
 
     /** The timestamp which corresponds to the transcript. */
-    private LocalDateTime dateTime;
+    private final LocalDateTime dateTime;
 
     /** --- Constructors --- */
 

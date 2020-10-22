@@ -8,8 +8,6 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -31,10 +29,7 @@ import java.util.regex.Pattern;
  * Created by uros on 3/2/17.
  */
 @Service
-public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements LegDataProcessor {
-
-    @Autowired
-    XmlHelper xmlHelper;
+public class XmlVetoMsgProcessor extends AbstractMemoProcessor {
 
     @Autowired
     private VetoDao vetoDao;
@@ -114,23 +109,6 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements LegDat
         }
     }
 
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
-    @Override
-    public void init() {
-        initBase();
-    }
-
     private String getNodeText(Node node) {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -158,31 +136,25 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements LegDat
         Matcher signerMatcher = signerPattern.matcher(line);
 
         if (dateMatcher.find()) {
-                if (dateMatcher.group(2)==null) {
+                if (dateMatcher.group(2)==null)
                     vetoMessage.setType(VetoType.STANDARD);
-                }
                 else {
                     vetoMessage.setType(VetoType.LINE_ITEM);
                     vetoMessage.setSignedDate(LocalDate.parse(dateMatcher.group(2), DateTimeFormatter.ofPattern("MMMM d, yyyy")));
                 }
             }
-        else if (chapterMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM) {
+        else if (chapterMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM)
                 vetoMessage.setChapter(Integer.parseInt(chapterMatcher.group(1)));
-        }
 
         else if (lineRefMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM) {
                 vetoMessage.setBillPage(Integer.parseInt(lineRefMatcher.group(1)));
                 vetoMessage.setLineStart(Integer.parseInt(lineRefMatcher.group(2)));
-                if (lineRefMatcher.group(4) == null) {
+                if (lineRefMatcher.group(4) == null)
                     vetoMessage.setLineEnd(vetoMessage.getLineStart());
-                }
-                else {
+                else
                     vetoMessage.setLineEnd(Integer.parseInt(lineRefMatcher.group(4)));
-                }
         }
-        else if (signerMatcher.find()) {
+        else if (signerMatcher.find())
                 vetoMessage.setSigner(signerMatcher.group(1));
-        }
     }
 }
-

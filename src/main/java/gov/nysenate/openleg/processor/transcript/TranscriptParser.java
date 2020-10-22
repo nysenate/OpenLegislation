@@ -4,8 +4,6 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +17,18 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class TranscriptParser
 {
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptParser.class);
-
     private static final String TRANSCRIPT_ENCODING = "latin1";
 
     @Autowired
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
-        transcriptFile.setTranscript(getTranscriptFromFile(transcriptFile));
-        transcriptDataService.saveTranscript(transcriptFile.getTranscript(), transcriptFile, true);
+        Transcript processed = getTranscriptFromFile(transcriptFile);
+        transcriptFile.setTranscript(processed);
+        transcriptDataService.saveTranscript(processed, true);
     }
 
-    public Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
+    protected static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
         String sessionType = null;
         String location = null;
         String date = null;
@@ -78,7 +75,7 @@ public class TranscriptParser
                 if (line.isSession())
                     sessionType = line.removeLineNumber().trim();
 
-                firstPageParsed = areWeDoneWithFirstPage(sessionType, location, date, time);
+                firstPageParsed = doneWithFirstPage(sessionType, location, date, time);
             }
 
             firstLineParsed = true;
@@ -94,7 +91,7 @@ public class TranscriptParser
         return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
     }
 
-    private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {
+    private static boolean doneWithFirstPage(String sessionType, String location, String date, String time) {
         return sessionType != null && location != null && date != null && time != null;
     }
 }

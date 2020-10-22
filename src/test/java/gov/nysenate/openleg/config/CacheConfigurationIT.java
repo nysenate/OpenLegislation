@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class CacheConfigurationTest extends BaseTests {
+public class CacheConfigurationIT extends BaseTests {
     @Autowired
     private CacheManager cacheManager;
 

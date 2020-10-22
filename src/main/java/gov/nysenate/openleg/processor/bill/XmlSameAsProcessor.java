@@ -9,9 +9,6 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
-import gov.nysenate.openleg.util.XmlHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -21,7 +18,7 @@ import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,10 +27,7 @@ import java.util.regex.Pattern;
  * Created by uros on 2/16/17.
  */
 @Service
-public class XmlSameAsProcessor extends AbstractBillProcessor implements LegDataProcessor {
-
-    @Autowired
-    XmlHelper xmlHelper;
+public class XmlSameAsProcessor extends AbstractBillProcessor {
 
     protected static final Pattern sameAsPattern =
             Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
@@ -74,7 +68,7 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements LegData
                     Matcher sameAsMatcher = sameAsPattern.matcher(sameasBillContext);
                     if (sameAsMatcher.find()) {
 
-                        List<String> sameAsMatchesBeforeSplit = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
+                        List<String> sameAsMatchesBeforeSplit = new ArrayList<>(Collections.singletonList(sameAsMatcher.group(2)));
                         for (String sameAs : sameAsMatchesBeforeSplit) {
                             if (sameAs.contains(",")) {
                                 for( String splitSameAs: sameAs.split(",") ) {
@@ -107,23 +101,6 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements LegData
             postDataUnitEvent(unit);
             checkIngestCache();
         }
-    }
-
-    @Override
-    public void checkIngestCache() {
-        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
-            flushBillUpdates();
-        }
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
-    }
-
-    @Override
-    public void init() {
-        initBase();
     }
 
     private BillId createBillId(String line, SessionYear sessionYear) {

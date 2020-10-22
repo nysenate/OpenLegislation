@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * A Transcript is a written record of Senate sessions.
@@ -63,5 +64,23 @@ public class Transcript extends BaseLegislativeContent
 
     public String getFilename() {
         return filename;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transcript that = (Transcript) o;
+        return Objects.equals(transcriptId, that.transcriptId) &&
+                Objects.equals(sessionType, that.sessionType) &&
+                Objects.equals(dateTime, that.dateTime) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(text, that.text) &&
+                Objects.equals(filename, that.filename);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), transcriptId, sessionType, dateTime, location, text, filename);
     }
 }

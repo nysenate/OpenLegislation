@@ -64,7 +64,7 @@
                   <h4>
                     <span ng-switch="doc.docType">
                       <span ng-switch-when="SECTION">&sect;</span>
-                      <span ng-switch-default>{{doc.docType}}</span>
+                      <span ng-switch-default>{{doc.docType.replace("_", " ")}}</span>
                     </span> {{doc.docLevelId}}
                   </h4>
                 </div>
@@ -86,7 +86,7 @@
                   <md-button ng-if="doc.docType !== 'SECTION'" ng-click="toggleNodeText(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
                     <i class="icon-text prefix-icon2"></i>
                     <span ng-show="!curr.showDoc[doc.locationId]">Show</span>
-                    <span ng-show="curr.showDoc[doc.locationId]">Hide</span> text for {{doc.docType}} {{doc.docLevelId}}
+                    <span ng-show="curr.showDoc[doc.locationId]">Hide</span> text for {{doc.docType.replace("_", " ")}} {{doc.docLevelId}}
                   </md-button>
                   <md-button ng-if="doc.documents.size > 0" class="md-primary md-hue-2" ng-click="expandNodesBelow(doc);">
                   <span class="text-small">

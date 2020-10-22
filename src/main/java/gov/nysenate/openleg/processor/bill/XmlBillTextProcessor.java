@@ -5,11 +5,9 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
-import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,14 +30,13 @@ import java.util.regex.Pattern;
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
-public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDataProcessor {
+public class XmlBillTextProcessor extends AbstractLegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
 
     private static final Pattern filenamePrintNoPattern = Pattern.compile(
             ".*_BILLTEXT_(?<printNo>[A-Z][0-9]+[A-Z]?)\\.XML$", Pattern.CASE_INSENSITIVE
     );
 
-    private final XmlHelper xmlHelper;
     private final EventBus eventBus;
     private final BillTextDiffProcessor textDiffProcessor;
 
@@ -48,11 +45,6 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
         this.xmlHelper = xmlHelper;
         this.eventBus = eventBus;
         this.textDiffProcessor = textDiffProcessor;
-    }
-
-    @Override
-    public void init() {
-        initBase();
     }
 
     @Override

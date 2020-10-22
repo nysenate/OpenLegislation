@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 @Service
 public class ActiveListScrapingService  {
-    ArrayList<ActiveListSpotcheckReference> actList = new ArrayList<ActiveListSpotcheckReference>();
+    ArrayList<ActiveListSpotcheckReference> actList = new ArrayList<>();
     private static final String directoryName = "/data/openleg/scraped/CALENDAR/";
     @Autowired
     SqlActiveListReferenceDAO dao;

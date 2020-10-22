@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.BasePdfView;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
@@ -27,18 +28,15 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 
 /**
  * PDF representation of a bill.
  */
-public class BillPdfView {
-    private static final Float fontSize = 12f;
-    private static final Float top = 740f;
-    private static final Float billMargin = 10f;
+public class BillPdfView extends BasePdfView {
     private static final Float resolutionMargin = 46f;
     private static final String styles = "\n" +
             "u {color: green;}\n" +
@@ -160,7 +158,7 @@ public class BillPdfView {
 
         try (PDDocument doc = new PDDocument()) {
             PDFont font = PDType1Font.COURIER;
-            Float margin = billMargin;
+            float margin = MARGIN;
             if (billId.getBillType().isResolution()) {
                 margin = resolutionMargin;
             }
@@ -168,11 +166,11 @@ public class BillPdfView {
                 PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
                 PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
                 contentStream.beginText();
-                contentStream.setFont(font, fontSize);
-                contentStream.moveTextPositionByAmount(margin, top);
+                contentStream.setFont(font, FONT_SIZE);
+                contentStream.moveTextPositionByAmount(margin, TOP);
                 for (String line : page) {
                     contentStream.drawString(line);
-                    contentStream.moveTextPositionByAmount(0, -fontSize);
+                    contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
                 }
                 contentStream.endText();
                 contentStream.close();

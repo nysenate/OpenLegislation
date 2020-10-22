@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
  * <p>
  * Created by Robert Bebber on 3/8/17.
  */
-public abstract class AbstractMemoProcessor extends AbstractDataProcessor {
+public abstract class AbstractMemoProcessor extends AbstractLegDataProcessor {
 
     /**
      * This method is responsible for pulling the content tag and if it isn't present will throw a Parsing Exception.

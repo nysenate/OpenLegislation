@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class MemberGetCtrlTest extends ApiTest {
+public class MemberGetCtrlIT extends ApiTest {
     @Autowired
     private MemberGetCtrl testCtrl;
 

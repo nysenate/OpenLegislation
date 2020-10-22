@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.SENATE_SITE_LAW;
 
 @Category(SillyTest.class)
-public class SenateSiteLawReportServiceTest extends BaseTests {
+public class SenateSiteLawReportServiceIT extends BaseTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(SenateSiteLawReportServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SenateSiteLawReportServiceIT.class);
 
     @Autowired private SenateSiteLawReportService reportService;
 

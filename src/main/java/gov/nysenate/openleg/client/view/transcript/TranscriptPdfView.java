@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.transcript;
 
+import gov.nysenate.openleg.client.view.base.BasePdfView;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.processor.transcript.TranscriptLine;
 import gov.nysenate.openleg.util.TranscriptTextUtils;
@@ -12,6 +13,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,28 +21,26 @@ import java.util.List;
  * Pdf representation of a transcript designed to match the formatting
  * of the official transcripts.
  */
-public class TranscriptPdfView
-{
+public class TranscriptPdfView extends BasePdfView {
     // Kirkland started on May 16, 2011
-    private static final LocalDateTime KIRKLAND_START_TIME = LocalDateTime.of(2011, 5, 16, 0, 0, 0);
+    private static final LocalDateTime KIRKLAND_START_TIME = LocalDate.of(2011, 5, 16).atStartOfDay();
 
     // Candyco started Jan 1st, 2005
-    private static final LocalDateTime CANDYCO_START_TIME = LocalDateTime.of(2005, 1, 1, 0, 0, 0);
+    private static final LocalDateTime CANDYCO_START_TIME = LocalDate.of(2005, 1, 1).atStartOfDay();
 
     // Candyco also did 1999-2003
-    private static final LocalDateTime CANDYCO_1999_START = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
-    private static final LocalDateTime CANDYCO_2003_END = LocalDateTime.of(2004, 1, 1, 0, 0, 0);
+    private static final LocalDateTime CANDYCO_1999_START = LocalDate.of(1999, 1, 1).atStartOfDay();
+    private static final LocalDateTime CANDYCO_2003_END = LocalDate.of(2004, 1, 1).atStartOfDay();
 
     // Pauline Williman did 1993-1998
-    private static final LocalDateTime WILLIMAN_START = LocalDateTime.of(1993, 1, 1, 0, 0, 0);
-    private static final LocalDateTime WILLIMAN_END = LocalDateTime.of(1999, 1, 1, 0, 0, 0);
+    private static final LocalDateTime WILLIMAN_START = LocalDate.of(1993, 1, 1).atStartOfDay();
+    private static final LocalDateTime WILLIMAN_END = LocalDate.of(1999, 1, 1).atStartOfDay();
 
-    private static Float bot = 90f;
-    private static Float right = 575f;
-    private static Float top = 710f;
-    private static Float left = 105f;
-    private static Float fontSize = 12f;
-    private static Float fontWidth = 7f;
+    private static final Float bot = 90f;
+    private static final Float right = 575f;
+    private static final Float top = 710f;
+    private static final Float left = 105f;
+    private static final Float fontWidth = 7f;
 
     public static final int NO_LINE_NUM_INDENT = 11;
     public static final int STENOGRAPHER_LINE_NUM = 26;
@@ -58,7 +58,7 @@ public class TranscriptPdfView
                 PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
                 drawBorder(contentStream);
                 contentStream.beginText();
-                contentStream.setFont(font, fontSize);
+                contentStream.setFont(font, FONT_SIZE);
                 moveStreamToTopOfPage(contentStream);
 
                 int lineCount = drawPageText(page, contentStream);
@@ -123,16 +123,16 @@ public class TranscriptPdfView
     }
 
     private static void drawLine(String line, float offset, PDPageContentStream contentStream) throws IOException {
-        contentStream.moveTextPositionByAmount(offset, -fontSize);
+        contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);
         contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(-offset, -fontSize);
+        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE);
     }
 
     private static void drawPageNumber(String line, PDPageContentStream contentStream) throws IOException {
         float offset = right - (line.length() + 1) * fontWidth;
         contentStream.moveTextPositionByAmount(offset, fontWidth * 2);
         contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(-offset, -fontSize * 2);
+        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * 2);
     }
 
     private static void moveStreamToTopOfPage(PDPageContentStream contentStream) throws IOException {
@@ -148,10 +148,7 @@ public class TranscriptPdfView
         if (transcript.getDateTime().isAfter(KIRKLAND_START_TIME)) {
             stenographer = "Kirkland Reporting Service";
         }
-        else if (transcript.getDateTime().isAfter(CANDYCO_START_TIME)) {
-            stenographer = "Candyco Transcription Service, Inc.";
-        }
-        else if (transcript.getDateTime().isAfter(CANDYCO_1999_START)
+        else if ((transcript.getDateTime().isAfter(CANDYCO_START_TIME)) || transcript.getDateTime().isAfter(CANDYCO_1999_START)
                  && transcript.getDateTime().isBefore(CANDYCO_2003_END)) {
             stenographer = "Candyco Transcription Service, Inc.";
         }
@@ -160,7 +157,7 @@ public class TranscriptPdfView
             stenographer = "Pauline Williman, Certified Shorthand Reporter";
         }
 
-        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * 2 * fontSize; // * 2 because of double spacing.
+        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * 2 * FONT_SIZE; // * 2 because of double spacing.
         contentStream.moveTextPositionByAmount(left + (right - left - stenographer.length() * fontWidth) / 2, offset);
         contentStream.drawString(stenographer);
     }

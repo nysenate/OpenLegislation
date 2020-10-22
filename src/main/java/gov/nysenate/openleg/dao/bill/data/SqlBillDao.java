@@ -39,7 +39,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.base.SortOrder.ASC;
-import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.SELECT_BILL_AMENDMENTS;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.SELECT_BILL_AMEND_MEMO;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
