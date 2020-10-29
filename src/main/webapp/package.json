@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "NODE_ENV='production' webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack serve"
   },
   "babel": {
     "presets": [

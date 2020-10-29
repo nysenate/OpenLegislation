@@ -6,7 +6,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'static/dist'),
         filename: 'index_bundle.js',
-        publicPath: '/static/dist/'
+        publicPath: process.env.NODE_ENV === 'production' ? '/static/dist/' : '/'
     },
     module: {
         rules: [
@@ -21,6 +21,10 @@ module.exports = {
     ],
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        historyApiFallback: true
+        historyApiFallback: true,
+        port: 3000,
+        proxy: {
+            '/api/**': 'http://localhost:8080'
+        }
     }
 }
