@@ -6,31 +6,11 @@
   },
   "license": "(BSD-2-Clause OR GPL-3.0)",
   "dependencies": {
-    "autoprefixer": "^6.7.7",
-    "bower": "^1.8.8",
-    "caniuse-db": "^1.0.30000998",
-    "cssnano": "^4.1.10",
-    "grunt": "^1.0.3",
-    "grunt-beep": "^1.0.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-file-exists": "^0.1.4",
-    "grunt-postcss": "^0.9.0",
-    "grunt-sass": "^3.1.0",
-    "grunt-shell": "^1.1.1",
-    "libxmljs": "^0.19.7",
-    "node-gyp": "^3.7.0",
-    "node-sass": "^4.13.1",
-    "pixrem": "^3.0.2",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0"
   },
   "scripts": {
-    "postinstall": "bower install && grunt process",
-    "docs": "grunt docs",
     "build": "NODE_ENV='production' webpack",
     "start": "webpack-dev-server"
   },
