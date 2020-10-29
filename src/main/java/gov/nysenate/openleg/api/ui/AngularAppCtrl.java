@@ -34,18 +34,32 @@ public class AngularAppCtrl
     @Value("${ga.tracking.id}") private String gaTrackingId;
     @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
 
-    @RequestMapping({"/",
-                     "/data/**",
-                     "/bills/**",
-                     "/calendars/**",
-                     "/agendas/**",
-                     "/transcripts/**",
-                     "/members/**",
-                     "/laws/**",
-                     "/sources/**",
-                     "/reports/**",
-                     "/manage/**"
-                     })
+//    @RequestMapping({"/",
+//                     "/data/**",
+//                     "/bills/**",
+//                     "/calendars/**",
+//                     "/agendas/**",
+//                     "/transcripts/**",
+//                     "/members/**",
+//                     "/laws/**",
+//                     "/sources/**",
+//                     "/reports/**",
+//                     "/manage/**"
+//                     })
+//    public String home(HttpServletRequest request) {
+//        String forwardedForIp = request.getHeader("x-forwarded-for");
+//        String ipAddr= forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
+//        Subject subject = SecurityUtils.getSubject();
+//        setRequestAttributes(request);
+//        // Senate staff and API users will be routed to the internal dev interface.
+//        if (subject.isPermitted("ui:view") || ipAddr.matches(ipWhitelist)) {
+//            return "home";
+//        }
+//        // Non-senate staff and un-authenticated users will see the public page.
+//        return "publichome";
+//    }
+
+    @RequestMapping("/")
     public String home(HttpServletRequest request) {
         String forwardedForIp = request.getHeader("x-forwarded-for");
         String ipAddr= forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
@@ -53,7 +67,7 @@ public class AngularAppCtrl
         setRequestAttributes(request);
         // Senate staff and API users will be routed to the internal dev interface.
         if (subject.isPermitted("ui:view") || ipAddr.matches(ipWhitelist)) {
-            return "home";
+            return "index";
         }
         // Non-senate staff and un-authenticated users will see the public page.
         return "publichome";
