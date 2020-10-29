@@ -34,7 +34,9 @@ src/main/webapp/node_modules/**
 src/main/webapp/static/bower_components/**
 src/main/webapp/static/css/**
 src/main/webapp/static/js/dest/**
+src/main/webapp/dist
 node_modules/**
+
 
 src/test/java/gov/nysenate/openleg/SillyTests.java
 
