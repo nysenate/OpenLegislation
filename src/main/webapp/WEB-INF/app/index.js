@@ -1,22 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
+import './app.scss'
+import Public from './public/Public'
 
-class App extends React.Component {
-
-  componentDidMount() {
-    fetch('/api/3/bills/updates')
-        .then((res) => res.json())
-        .then((res) => console.log(res))
-  }
-
-  render() {
-    return (
-      <div>
-        Hello World!!
-      </div>
-    )
-  }
+function App() {
+  return (
+    <div>
+      <Public />
+    </div>
+  )
 }
 
-ReactDOM.render(<App />, document.getElementById('app'))
+ReactDOM.render(<App/>, document.getElementById('app'))

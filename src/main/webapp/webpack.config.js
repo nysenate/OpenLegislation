@@ -10,8 +10,12 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] },
-            { test: /\.(js)$/, use: 'babel-loader' }
+            // Load sass files
+            { test: /\.s[ac]ss$/i, use: [ 'style-loader', 'css-loader', 'sass-loader' ] },
+            // Transpile js
+            { test: /\.(js)$/, use: 'babel-loader' },
+            // For loading icomoon fonts
+            { test: /\.(woff|eot|svg|ttf)$/, use: 'file-loader'}
         ]
     },
     plugins: [
