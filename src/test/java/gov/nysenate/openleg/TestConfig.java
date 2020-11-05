@@ -25,18 +25,18 @@ public class TestConfig
 {
     private static final Logger logger = LoggerFactory.getLogger(TestConfig.class);
 
-    public static final String PROPERTY_FILENAME = "test.app.properties";
+    private static final String PROPERTY_FILENAME = "test.app.properties";
 
     @Autowired
     CacheManager cacheManager;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
-        logger.info("Test property file loaded");
         PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
         Resource[] resources = new ClassPathResource[] { new ClassPathResource(PROPERTY_FILENAME) };
         pspc.setLocations(resources);
         pspc.setIgnoreUnresolvablePlaceholders(true);
+        logger.info("Test property file loaded");
         return pspc;
     }
 

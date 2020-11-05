@@ -7,7 +7,10 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
@@ -28,7 +31,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Data service layer for retrieving and updating bill data. This implementation makes use of
@@ -106,7 +111,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
                 if (sessionYear.equals(SessionYear.current())) {
                     logger.info("Caching Bill instances for current session year: {}", sessionYear);
                     // Don't load any text because that is not cached.
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id));
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBill);
                 }
                 else {
                     logger.info("Caching Bill Info instances for session year: {}", sessionYear);

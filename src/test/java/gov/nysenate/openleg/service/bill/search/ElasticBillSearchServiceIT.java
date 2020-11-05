@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.bill.search;
 
 import com.google.common.base.Stopwatch;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -14,6 +15,7 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ElasticBillSearchServiceTests extends BaseTests
+@Category(IntegrationTest.class)
+public class ElasticBillSearchServiceIT extends BaseTests
 {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchServiceTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchServiceIT.class);
 
     @Autowired
     BillDataService billDataService;
@@ -100,12 +103,12 @@ public class ElasticBillSearchServiceTests extends BaseTests
         }
     }
 
-
     private List<String> getRandomBillSearchTerms(int count) {
-        Random rand = new Random(12345678910L);
-
+        Random rand = new Random();
         List<String> terms = new LinkedList<>();
         List<BaseBillId> billIds = billDataService.getBillIds(SessionYear.of(2017), LimitOffset.ALL);
+        if (billIds.isEmpty())
+            return terms;
         for (int i = 0; i < count; i++) {
             int billIndex = rand.nextInt(billIds.size());
             BaseBillId billId = billIds.get(billIndex);

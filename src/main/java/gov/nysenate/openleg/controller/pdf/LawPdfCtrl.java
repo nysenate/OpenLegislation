@@ -22,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,18 +42,18 @@ public class LawPdfCtrl extends BaseCtrl {
      *
      * @param documentId of the law document to look up. If you want the root
      * node, enter just the 3 letter law id instead.
-     * @param response for HTTP.
      * @param full if you want the children to be shown.
      * @return a law document PDF.
      * @throws IOException if PDF cannot be written.
      */
     @RequestMapping("/{documentId}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId, HttpServletResponse response,
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId,
                                                    @RequestParam(defaultValue = "false") boolean full)
             throws IOException, COSVisitorException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
         if (!matcher.matches())
-            throw new InvalidRequestParamEx(documentId, "documentId", "String", "Document ID must start with a 3 letter law ID.");
+            throw new InvalidRequestParamEx(documentId, "documentId", "String",
+                    "Document ID must start with a 3 letter law ID.");
         LawTree lawTree = lawData.getLawTree(matcher.group(1));
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())
@@ -76,6 +75,8 @@ public class LawPdfCtrl extends BaseCtrl {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
     }
+
+
 
     @ExceptionHandler(LawTreeNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

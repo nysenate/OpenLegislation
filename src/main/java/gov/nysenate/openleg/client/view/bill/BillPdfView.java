@@ -36,7 +36,7 @@ import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 /**
  * PDF representation of a bill.
  */
-public class BillPdfView extends BasePdfView {
+public abstract class BillPdfView extends BasePdfView {
     private static final Float resolutionMargin = 46f;
     private static final String styles = "\n" +
             "u {color: green;}\n" +
@@ -57,8 +57,6 @@ public class BillPdfView extends BasePdfView {
      * @param bill         Bill - The bill that contains the text to write
      * @param version      Version - Identifies an amendment in the passed in bill that will have its text converted to pdf
      * @param outputStream OutputStream - The stream which will accept the pdf data
-     * @throws IOException
-     * @throws COSVisitorException
      */
     public static void writeBillPdf(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
         if (bill == null) {

@@ -20,7 +20,7 @@ import static gov.nysenate.openleg.model.law.LawChapterCode.EHC;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class LawSearchCtrlIT extends LawCtrlBaseIT {
+public class LawSearchCtrlIT extends LawCtrlBase {
 
     @Autowired
     private LawSearchCtrl testCtrl;

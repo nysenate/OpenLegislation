@@ -20,9 +20,9 @@ public abstract class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
     private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)";
-    private final static String SEPERATORS = "(-|\\.|\\s|\\\\n)+";
+    private final static String SEPARATORS = "(-|\\.|\\s|\\\\n)+";
     // The first %s will be filled with the type (ARTICLE, TITLE, and so on).
-    private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPERATORS;
+    private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPARATORS;
     private final static String SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.)";
     // Characters to discard between the docId and the title.
     private final static String IRRELEVANT_CHARS = "(\\*|\\.|\\s|\\\\n)*";
@@ -49,18 +49,10 @@ public abstract class LawTitleParser
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
     static {
-        NUMBER_WORDS.put(1, "ONE");
-        NUMBER_WORDS.put(2, "TWO");
-        NUMBER_WORDS.put(3, "THREE");
-        NUMBER_WORDS.put(4, "FOUR");
-        NUMBER_WORDS.put(5, "FIVE");
-        NUMBER_WORDS.put(6, "SIX");
-        NUMBER_WORDS.put(7, "SEVEN");
-        NUMBER_WORDS.put(8, "EIGHT");
-        NUMBER_WORDS.put(9, "NINE");
-        NUMBER_WORDS.put(10, "TEN");
-        NUMBER_WORDS.put(11, "ELEVEN");
-        NUMBER_WORDS.put(12, "TWELVE");
+        String[] nums = {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX",
+                "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE"};
+        for (int i = 1; i < nums.length; i++)
+            NUMBER_WORDS.put(i, nums[i]);
     }
 
     /** --- Methods --- */

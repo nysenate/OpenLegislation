@@ -17,13 +17,15 @@ import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.model.law.LawChapterCode.*;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class LawGetCtrlIT extends LawCtrlBaseIT {
+public class LawGetCtrlIT extends LawCtrlBase {
 
     @Autowired
     private LawGetCtrl testCtrl;
