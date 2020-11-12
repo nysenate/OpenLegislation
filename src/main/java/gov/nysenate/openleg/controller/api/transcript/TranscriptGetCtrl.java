@@ -11,7 +11,6 @@ import gov.nysenate.openleg.client.view.transcript.TranscriptInfoView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -29,11 +28,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;

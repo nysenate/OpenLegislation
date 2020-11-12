@@ -9,8 +9,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +20,6 @@ import java.util.Queue;
 public abstract class LawPdfView extends BasePdfView {
     // Marks where a title starts and ends for bolding.
     private final static String BOLD_MARKER = "%~~%";
-    private final static Logger logger = LoggerFactory.getLogger(LawPdfView.class);
 
     /**
      * Writes a law document to a PDF.
@@ -42,31 +39,30 @@ public abstract class LawPdfView extends BasePdfView {
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(MARGIN, TOP);
-            for (float currY = TOP; currY > pg.getMediaBox().getLowerLeftY() && !lines.isEmpty(); currY -= FONT_SIZE) {
+            float pageBottom = pg.getMediaBox().getLowerLeftY() + 100f;
+            for (float currY = TOP; currY > pageBottom && !lines.isEmpty(); currY -= FONT_SIZE) {
                 String line = lines.poll();
                 String[] titleSplit = line.split(BOLD_MARKER);
                 for (String text : titleSplit) {
-                    if (text.length() < 2)
+                    if (text.matches("\\s*"))
                         continue;
                     if (titleSplit.length != 1) {
                         isBold = !isBold;
+                        // If true, we're about to start writing a heading, so we should add some space.
                         if (isBold) {
                             contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
                             currY -= FONT_SIZE;
+//                            if (currY <= pageBottom) {
+//                                lines.add()
+//                                break;
+//                            }
                         }
-                        logger.info("isBold = " + isBold + ", switch at end of String " + text);
                     }
                     contentStream.setFont(isBold ? PDType1Font.COURIER_BOLD : PDType1Font.COURIER, FONT_SIZE);
                     contentStream.drawString(text);
                 }
-                if (line.endsWith(BOLD_MARKER)) {
-                    isBold = !isBold;
-                    logger.info("isBold = " + isBold + ", switch at end of line " + line);
-                }
-                contentStream.drawString("\n");
                 contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
             }
-            contentStream.drawString("\n");
             contentStream.endText();
             contentStream.close();
             doc.addPage(pg);
@@ -89,7 +85,7 @@ public abstract class LawPdfView extends BasePdfView {
             if (topDoc.getDocType() == LawDocumentType.SECTION) {
                 ret.append(BOLD_MARKER);
                 docText = docText.replaceFirst(topDoc.getTitle() + "\\.?",
-                        topDoc.getTitle() + BOLD_MARKER);
+                        topDoc.getTitle() + BOLD_MARKER + ".");
             }
             ret.append(docText);
             for (LawTreeNode currNode : topNode.getChildNodeList())
