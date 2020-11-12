@@ -12,12 +12,12 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class LawPdfView extends BasePdfView {
+    private final static int CHARS_PER_LINE = 100;
+    private final static int LINES_PER_PAGE = 60;
     // Marks where a title starts and ends for bolding.
     private final static String BOLD_MARKER = "%~~%";
 
@@ -32,34 +32,34 @@ public abstract class LawPdfView extends BasePdfView {
     public static void writeLawDocumentPdf(LawTreeNode node, OutputStream outputStream, Map<String, LawDocument> lawDocs)
             throws IOException, COSVisitorException {
         PDDocument doc = new PDDocument();
-        Queue<String> lines = new LinkedList<>(Arrays.asList(getNodeText(node, lawDocs).split("\\\\n")));
+        System.out.println(lawDocs);
+        String docString = getNodeText(node, lawDocs);
+        Queue<String> charBlocks = new LinkedList<>(getWordsAndSpaces(docString));
         boolean isBold = false;
-        while(!lines.isEmpty()) {
+        while(!charBlocks.isEmpty()) {
             PDPage pg = new PDPage();
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(MARGIN, TOP);
-            float pageBottom = pg.getMediaBox().getLowerLeftY() + 100f;
-            for (float currY = TOP; currY > pageBottom && !lines.isEmpty(); currY -= FONT_SIZE) {
-                String line = lines.poll();
-                String[] titleSplit = line.split(BOLD_MARKER);
-                for (String text : titleSplit) {
-                    if (text.matches("\\s*"))
+            // TODO: get lines per page from this.
+            float pageBottom = pg.getMediaBox().getLowerLeftY() + BOTTOM;
+            for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
+                for (int charCount = 0; charCount < CHARS_PER_LINE && !charBlocks.isEmpty();) {
+                    String curr = charBlocks.poll();
+                    if (curr == null)
                         continue;
-                    if (titleSplit.length != 1) {
-                        isBold = !isBold;
-                        // If true, we're about to start writing a heading, so we should add some space.
-                        if (isBold) {
-                            contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
-                            currY -= FONT_SIZE;
-//                            if (currY <= pageBottom) {
-//                                lines.add()
-//                                break;
-//                            }
-                        }
+                    if (curr.contains("\n")) {
+                        String[] newlineSplit = curr.split("\n");
+                        contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
+                        // TODO: Whitespace before the newline can be ignored.
+                        curr = newlineSplit[0];
                     }
-                    contentStream.setFont(isBold ? PDType1Font.COURIER_BOLD : PDType1Font.COURIER, FONT_SIZE);
-                    contentStream.drawString(text);
+                    contentStream.setFont(isBold ? PDType1Font.COURIER_BOLD :
+                            PDType1Font.COURIER, FONT_SIZE);
+                    contentStream.drawString(curr);
+                    if (curr.contains(BOLD_MARKER))
+                        isBold = !isBold;
+                    charCount += curr.length();
                 }
                 contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
             }
@@ -88,9 +88,31 @@ public abstract class LawPdfView extends BasePdfView {
                         topDoc.getTitle() + BOLD_MARKER + ".");
             }
             ret.append(docText);
+            //System.out.println("This is the appended text in getNodeText: " + docText);
             for (LawTreeNode currNode : topNode.getChildNodeList())
                 ret.append(getNodeText(currNode, lawDocs)).append("\n");
         }
-        return ret.toString();
+        return ret.toString().replaceAll("\\\\n", "\n").trim();
+    }
+
+    /**
+     * Parses document String into words and spaces for simpler parsing.
+     * @param nodeText to be parsed.
+     * @return word blocks.
+     */
+    private static List<String> getWordsAndSpaces(String nodeText) {
+        List<String> words = Arrays.stream(nodeText.split("\\s+"))
+                .filter(s -> !s.isEmpty()).collect(Collectors.toList());
+        List<String> spaces = Arrays.stream(nodeText.split("[^\\s]+"))
+                .filter(s -> !s.isEmpty()).collect(Collectors.toList());
+
+        List<String> ret = new ArrayList<>();
+        for (int i = 0; i < words.size() || i < spaces.size(); i++) {
+            if (i < words.size())
+                ret.add(words.get(i));
+            if (i < spaces.size())
+                ret.add(spaces.get(i));
+        }
+        return ret;
     }
 }
