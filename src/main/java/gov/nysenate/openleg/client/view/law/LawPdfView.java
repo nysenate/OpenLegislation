@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class LawPdfView extends BasePdfView {
-    private final static int CHARS_PER_LINE = 100;
-    private final static int LINES_PER_PAGE = 60;
+    private final static int CHARS_PER_LINE = 80;
+    private final static int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/FONT_SIZE);
     // Marks where a title starts and ends for bolding.
     private final static String BOLD_MARKER = "%~~%";
 
@@ -32,33 +32,27 @@ public abstract class LawPdfView extends BasePdfView {
     public static void writeLawDocumentPdf(LawTreeNode node, OutputStream outputStream, Map<String, LawDocument> lawDocs)
             throws IOException, COSVisitorException {
         PDDocument doc = new PDDocument();
-        System.out.println(lawDocs);
         String docString = getNodeText(node, lawDocs);
-        Queue<String> charBlocks = new LinkedList<>(getWordsAndSpaces(docString));
+        Queue<String> charBlocks = getWordsAndSpaces(docString);
         boolean isBold = false;
         while(!charBlocks.isEmpty()) {
             PDPage pg = new PDPage();
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(MARGIN, TOP);
-            // TODO: get lines per page from this.
-            float pageBottom = pg.getMediaBox().getLowerLeftY() + BOTTOM;
             for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
-                for (int charCount = 0; charCount < CHARS_PER_LINE && !charBlocks.isEmpty();) {
+                for (int charCount = 0; !charBlocks.isEmpty() && charCount + charBlocks.peek().length() < CHARS_PER_LINE;) {
                     String curr = charBlocks.poll();
                     if (curr == null)
                         continue;
-                    if (curr.contains("\n")) {
-                        String[] newlineSplit = curr.split("\n");
-                        contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
-                        // TODO: Whitespace before the newline can be ignored.
-                        curr = newlineSplit[0];
-                    }
+                    if (curr.equals("\n"))
+                        break;
+                    boolean switchBold = curr.contains(BOLD_MARKER);
+                    curr = curr.replaceAll(BOLD_MARKER, "");
                     contentStream.setFont(isBold ? PDType1Font.COURIER_BOLD :
                             PDType1Font.COURIER, FONT_SIZE);
                     contentStream.drawString(curr);
-                    if (curr.contains(BOLD_MARKER))
-                        isBold = !isBold;
+                    isBold = (switchBold != isBold);
                     charCount += curr.length();
                 }
                 contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
@@ -88,7 +82,6 @@ public abstract class LawPdfView extends BasePdfView {
                         topDoc.getTitle() + BOLD_MARKER + ".");
             }
             ret.append(docText);
-            //System.out.println("This is the appended text in getNodeText: " + docText);
             for (LawTreeNode currNode : topNode.getChildNodeList())
                 ret.append(getNodeText(currNode, lawDocs)).append("\n");
         }
@@ -100,18 +93,37 @@ public abstract class LawPdfView extends BasePdfView {
      * @param nodeText to be parsed.
      * @return word blocks.
      */
-    private static List<String> getWordsAndSpaces(String nodeText) {
+    private static Queue<String> getWordsAndSpaces(String nodeText) {
         List<String> words = Arrays.stream(nodeText.split("\\s+"))
                 .filter(s -> !s.isEmpty()).collect(Collectors.toList());
         List<String> spaces = Arrays.stream(nodeText.split("[^\\s]+"))
                 .filter(s -> !s.isEmpty()).collect(Collectors.toList());
 
-        List<String> ret = new ArrayList<>();
+        Queue<String> ret = new LinkedList<>();
         for (int i = 0; i < words.size() || i < spaces.size(); i++) {
             if (i < words.size())
                 ret.add(words.get(i));
-            if (i < spaces.size())
-                ret.add(spaces.get(i));
+            if (i < spaces.size()) {
+                String currSpace = spaces.get(i);
+                // Sometimes, newlines alone are used to separate words in the original text.
+                if (currSpace.equals("\n"))
+                    ret.add(" ");
+                else if (currSpace.contains("\n")) {
+                    String[] spaceSplit = currSpace.split("\n");
+                    for (String s : spaceSplit) {
+                        // To avoid double-counting of repeated newlines.
+                        if (!s.isEmpty())
+                            ret.add(s);
+                        // Will generate a newline during PDF writing process.
+                        ret.add("\n");
+                    }
+
+                    if (currSpace.endsWith("\n"))
+                        ret.add("\n");
+                }
+                else
+                    ret.add(spaces.get(i));
+            }
         }
         return ret;
     }

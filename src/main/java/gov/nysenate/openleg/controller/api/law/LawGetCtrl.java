@@ -115,7 +115,7 @@ public class LawGetCtrl extends BaseCtrl
         LocalDate refTreeLocalDate = (refTreeDate != null) ? parseISODate(refTreeDate, "refTreeDate") : LocalDate.now();
         Optional<LawTreeNode> lawTreeNodeOpt = lawDataService.getLawTree(lawId, refTreeLocalDate).find(documentId);
         ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, lawTreeNodeOpt));
-        response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
+        response.setMessage("Law document for location " + locationId + " in " + lawId + " law.");
         return response;
     }
 

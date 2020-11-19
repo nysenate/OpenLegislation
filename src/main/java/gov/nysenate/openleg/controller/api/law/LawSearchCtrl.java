@@ -2,8 +2,8 @@ package gov.nysenate.openleg.controller.api.law;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.law.LawDocInfoView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.law.LawDocId;
@@ -15,11 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = BaseCtrl.BASE_API_PATH + "/laws", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE_API_PATH + "/laws", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class LawSearchCtrl extends BaseCtrl
 {
     @Autowired private LawDataService lawData;
