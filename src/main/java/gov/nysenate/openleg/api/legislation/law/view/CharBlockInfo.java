@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.law.view;
 import org.elasticsearch.common.collect.Tuple;
 
 public class CharBlockInfo {
+    public static final CharBlockInfo EMPTY = new CharBlockInfo("", null);
     private final Tuple<String, CharBlockType> info;
 
     public CharBlockInfo(String match, CharBlockType type) {
@@ -24,6 +25,7 @@ public class CharBlockInfo {
     public boolean isAlphanum() {
         return info.v2() == CharBlockType.ALPHANUM;
     }
+
     public boolean isSpace() {
         return info.v2() == CharBlockType.SPACE;
     }

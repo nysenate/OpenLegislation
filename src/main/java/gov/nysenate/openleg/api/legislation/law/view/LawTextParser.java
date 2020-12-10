@@ -14,13 +14,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gov.nysenate.openleg.api.legislation.law.view.CharBlockType.LAW_CHAR_BLOCK_PATTERN;
+import static gov.nysenate.openleg.api.legislation.law.view.CharBlockType.SPACE;
 import static gov.nysenate.openleg.api.legislation.law.view.LawPdfView.FONT_SIZE;
+import static gov.nysenate.openleg.legislation.law.LawDocumentType.CHAPTER;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.SECTION;
 
 public class LawTextParser {
     // Marks where a title starts and ends for bolding.
     public static final String BOLD_MARKER = "~~~~";
-    private static final int CHARS_PER_LINE = 84;
+    private static final int CHARS_PER_LINE = 82;
     private final List<CharBlockInfo> charBlocks = new ArrayList<>();
     private final LawDocInfo info;
     private int index = 0;
@@ -28,9 +30,10 @@ public class LawTextParser {
 
     public LawTextParser(LawDocument doc) {
         this.info = doc;
-        String text = markForBolding(doc.getText(), doc.getTitle());
+        String text = markForBolding(doc.getText(), doc.getTitle(), doc.getDocType() == CHAPTER);
         Matcher m = LAW_CHAR_BLOCK_PATTERN.matcher(text);
         while (m.find()) {
+            // Finds the type associated with the matched block of text.
             Optional<CharBlockType> type = Arrays.stream(CharBlockType.values())
                     .filter(t -> m.group(t.name()) != null).findFirst();
             if (!type.isPresent())
@@ -40,6 +43,13 @@ public class LawTextParser {
         // Some extra lines for spacing.
         charBlocks.add(new CharBlockInfo("\n", CharBlockType.NEWLINE));
         charBlocks.add(new CharBlockInfo("\n", CharBlockType.NEWLINE));
+        // In sections, newlines are sometimes used as spaces.
+        if (info.getDocType() == SECTION) {
+            for (int i = 0; i < charBlocks.size(); i++) {
+                if (charBlocks.get(i).isNewline() && prev().isAlphanum() && next().isAlphanum())
+                    charBlocks.set(i, new CharBlockInfo(" ", SPACE));
+            }
+        }
     }
 
     /**
@@ -53,17 +63,13 @@ public class LawTextParser {
             CharBlockInfo block = charBlocks.get(index++);
             if (block.isNewline())
                 break;
-            if (block.isBoldMarker()) {
+            else if (block.isBoldMarker()) {
                 bold = !bold;
                 continue;
             }
             contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
                     PDType1Font.COURIER, FONT_SIZE);
 
-            // Spaces at the beginning of a section line should be ignored.
-//            boolean spacesAtStart =
-//            // Sections sometimes use newlines to put space between words.
-//            boolean newlineAsSpace = index != 0 && prev().isAlphanum() && next().isAlphanum();
             if (info.getDocType() == SECTION && charCount == 0 && block.isSpace())
                 continue;
             contentStream.drawString(block.text());
@@ -72,8 +78,10 @@ public class LawTextParser {
         contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
     }
 
-    private String markForBolding(String text, String title) {
+    private String markForBolding(String text, String title, boolean isChapter) {
         text = text.replaceAll("\\\\n", "\n");
+        if (isChapter)
+            return text;
         Matcher m = Pattern.compile("(?i)" + title + "[.]?").matcher(text);
         if (!m.find())
             return text;
@@ -81,11 +89,21 @@ public class LawTextParser {
     }
 
     private CharBlockInfo next() {
-        return charBlocks.get(index+1);
+        try {
+            return charBlocks.get(index+1);
+        }
+        catch (IndexOutOfBoundsException e) {
+            return CharBlockInfo.EMPTY;
+        }
     }
 
     private CharBlockInfo prev() {
-        return charBlocks.get(index-1);
+        try {
+            return charBlocks.get(index-1);
+        }
+        catch (IndexOutOfBoundsException e) {
+            return CharBlockInfo.EMPTY;
+        }
     }
 
     public boolean reachedEnd() {
