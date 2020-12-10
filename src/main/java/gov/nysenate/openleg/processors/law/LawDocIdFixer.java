@@ -36,7 +36,7 @@ public class LawDocIdFixer {
 
     /**
      *
-     * @param parents that should've beem included in the locationId.
+     * @param parents that should've been included in the locationId.
      * @param locId before fixing.
      */
     private static void addDocToReplace(LawChapterCode code, String parents, String locId) {
