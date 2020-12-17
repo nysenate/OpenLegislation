@@ -81,14 +81,14 @@ public class RomanNumerals {
         int tens = number/10;
         if (tens < 2 || number%10 == 0)
             return NUMBER_WORDS.getOrDefault(number, "no word");
-        else if (tens > 10)
-            return NUMBER_WORDS.get(100) + numberToWord(number-100);
+        else if (tens >= 10)
+            return NUMBER_WORDS.get(100) + " " + numberToWord(number-100);
         else
             return NUMBER_WORDS.get(10 * tens) + "-" + numberToWord(number - 10 * tens);
     }
 
     public static String allOptions(String stringNum) {
         int num = Integer.parseInt(stringNum);
-        return stringNum + "|" + intToNumeral(num) + "|" + numberToWord(num);
+        return "(" + stringNum + "|" + intToNumeral(num) + "|" + numberToWord(num) + ")";
     }
 }

@@ -3,7 +3,6 @@ package gov.nysenate.openleg.processors.law;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
-import gov.nysenate.openleg.processors.law.LawTitleParser;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 @Category(UnitTest.class)
 public class LawTitleParserTest {
 
-    // NOTE: Make sure to use '\\n' instead of '\n' for line endings to match the encoding of law files.
     private final LawDocInfo lawInfo = new LawDocInfo();
 
     // Article tests

@@ -19,9 +19,9 @@ public abstract class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
     private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)";
-    private final static String SEPERATORS = "(-|\\.|\\s|\\\\n)+";
+    private final static String SEPARATORS = "(-|\\.|\\s|\\\\n)+";
     // The first %s will be filled with the type (ARTICLE, TITLE, and so on).
-    private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPERATORS;
+    private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPARATORS;
     private final static String SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.)";
     // Characters to discard between the docId and the title.
     private final static String IRRELEVANT_CHARS = "(\\*|\\.|\\s|\\\\n)*";
@@ -33,7 +33,7 @@ public abstract class LawTitleParser
     // Matches all docId's.
     private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
     /** String to match a docType and its id, saving the latter. */
-    private final static String docTypeString = ".*?%s *(%s).*";
+    private final static String docTypeString = ".*?%s *%s.*";
     /** Pattern to match a full docTypeId, and and parse out the starting number. */
     private final static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
     private final static int MAX_WIDTH = 140;

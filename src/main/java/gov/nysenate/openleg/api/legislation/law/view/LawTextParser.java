@@ -88,7 +88,7 @@ public class LawTextParser {
     private String markForBolding(LawDocument doc) {
         String text = doc.getText().replaceAll("\\\\n", "\n");
         // In text, the title may be split by newlines.
-        String toMatch = (info.getDocType() == CHAPTER ? ".*?\n" : "(?i)" + doc.getTitle() + "[.]?");
+        String toMatch = "(?i)" + doc.getTitle() + "[.]?";
         if (doc.getDocType() == CHAPTER) {
             if (LawChapterCode.valueOf(doc.getLawId()).getType() != LawType.CONSOLIDATED)
                 toMatch = ".*?\n";
@@ -99,7 +99,7 @@ public class LawTextParser {
                 toMatch = "(?i)Chapter " + fixedDocTypeId + " of the consolidated laws";
             }
         }
-        Matcher m = Pattern.compile(toMatch).matcher(text);
+        Matcher m = Pattern.compile(toMatch.replaceAll(" ", "[ \n]+")).matcher(text);
         if (!m.find())
             return text;
         return CharBlockType.addBoldMarkers(text.substring(0, m.end())) + text.substring(m.end());
