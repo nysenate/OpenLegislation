@@ -8,9 +8,10 @@
   "dependencies": {
     "autoprefixer": "^6.7.7",
     "bower": "^1.8.8",
-    "caniuse-db": "^1.0.30000998",
+    "caniuse-db": "^1.0.30001165",
     "cssnano": "^4.1.10",
-    "grunt": "^1.0.3",
+    "fast-xml-parser": "^3.17.4",
+    "grunt": "^1.3.0",
     "grunt-beep": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
@@ -21,9 +22,8 @@
     "grunt-postcss": "^0.9.0",
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^1.1.1",
-    "libxmljs": "^0.19.7",
     "node-gyp": "^3.7.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "pixrem": "^3.0.2"
   },
   "scripts": {
