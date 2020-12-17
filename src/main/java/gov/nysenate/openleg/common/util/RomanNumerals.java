@@ -3,6 +3,7 @@ package gov.nysenate.openleg.common.util;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 
+import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
@@ -22,6 +23,21 @@ public class RomanNumerals {
         temp.put(4, "IV");
         temp.put(1, "I");
         mapping = ImmutableBiMap.copyOf(temp);
+    }
+
+    /** For use in number to word conversion. */
+    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
+    static {
+        int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9,
+                11, 12, 13, 14, 15, 16, 17, 18, 19};
+        String[] words = {"ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE",
+                "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"};
+        for (int i = 0; i < nums.length; i++)
+            NUMBER_WORDS.put(nums[i], words[i]);
+        String[] tens = {"TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY", "ONE HUNDRED"};
+        for (int i = 0; i < tens.length; i++) {
+            NUMBER_WORDS.put(10*(i+1), tens[i]);
+        }
     }
 
     /**
@@ -54,5 +70,25 @@ public class RomanNumerals {
             }
         }
         return mapping.get(next) + intToNumeral(number-next);
+    }
+
+    /**
+     * Quickly converts a number 1-199 to a word or words.
+     * @param number to convert.
+     * @return a word/phrase.
+     */
+    public static String numberToWord(int number) {
+        int tens = number/10;
+        if (tens < 2 || number%10 == 0)
+            return NUMBER_WORDS.getOrDefault(number, "no word");
+        else if (tens > 10)
+            return NUMBER_WORDS.get(100) + numberToWord(number-100);
+        else
+            return NUMBER_WORDS.get(10 * tens) + "-" + numberToWord(number - 10 * tens);
+    }
+
+    public static String allOptions(String stringNum) {
+        int num = Integer.parseInt(stringNum);
+        return stringNum + "|" + intToNumeral(num) + "|" + numberToWord(num);
     }
 }

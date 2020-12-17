@@ -1,15 +1,14 @@
 package gov.nysenate.openleg.processors.law;
 
+import gov.nysenate.openleg.common.util.RomanNumerals;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
-import gov.nysenate.openleg.common.util.RomanNumerals;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,23 +44,6 @@ public abstract class LawTitleParser
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     protected final static String NO_TITLE = "No title";
-
-    /** For use in number to word conversion. */
-    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
-    static {
-        NUMBER_WORDS.put(1, "ONE");
-        NUMBER_WORDS.put(2, "TWO");
-        NUMBER_WORDS.put(3, "THREE");
-        NUMBER_WORDS.put(4, "FOUR");
-        NUMBER_WORDS.put(5, "FIVE");
-        NUMBER_WORDS.put(6, "SIX");
-        NUMBER_WORDS.put(7, "SEVEN");
-        NUMBER_WORDS.put(8, "EIGHT");
-        NUMBER_WORDS.put(9, "NINE");
-        NUMBER_WORDS.put(10, "TEN");
-        NUMBER_WORDS.put(11, "ELEVEN");
-        NUMBER_WORDS.put(12, "TWELVE");
-    }
 
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
@@ -188,15 +170,6 @@ public abstract class LawTitleParser
     }
 
     /**
-     * Quickly converts a number 1-12 or 101-112 to a word.
-     * @param number to convert.
-     * @return a word/phrase.
-     */
-    private static String toWord(int number) {
-        return (number > 100 ? "ONE HUNDRED " : "") + NUMBER_WORDS.getOrDefault(number%100, "no word");
-    }
-
-    /**
      * Various modifications may need to be done to get the ID that is in the text.
      * @param lawDocInfo to pull data from.
      * @param bodyText to check against.
@@ -229,8 +202,7 @@ public abstract class LawTitleParser
 
         Matcher idMatch = idNumPattern.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
-            int num = Integer.parseInt(idMatch.group(1));
-            String options = idMatch.group(1) + "|" + RomanNumerals.intToNumeral(num) + "|" + toWord(num);
+            String options = RomanNumerals.allOptions(idMatch.group(1));
             Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())
