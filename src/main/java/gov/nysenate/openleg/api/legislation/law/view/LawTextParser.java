@@ -9,51 +9,44 @@ import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.api.legislation.law.view.CharBlockType.LAW_CHAR_BLOCK_PATTERN;
-import static gov.nysenate.openleg.api.legislation.law.view.CharBlockType.SPACE;
+import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.*;
 import static gov.nysenate.openleg.api.legislation.law.view.LawPdfView.FONT_SIZE;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.CHAPTER;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.SECTION;
 
+/**
+ * A parser for a single LawDocument that keeps track of state.
+ */
 public class LawTextParser {
-    private static final int CHARS_PER_LINE = 82;
-    private final List<CharBlockInfo> charBlocks = new ArrayList<>();
+    private final static int CHARS_PER_LINE = 78;
+    private final List<LawCharBlock> charBlocks;
     private final LawDocInfo info;
     private int index = 0;
     private boolean bold = false;
 
+    /**
+     * Constructs a parser from a LawDocument, with some pre-processing.
+     * @param doc to parse.
+     */
     public LawTextParser(LawDocument doc) {
         this.info = doc;
         String text = markForBolding(doc);
-        Matcher m = LAW_CHAR_BLOCK_PATTERN.matcher(text);
-        while (m.find()) {
-            // Finds the type associated with the matched block of text.
-            Optional<CharBlockType> type = Arrays.stream(CharBlockType.values())
-                    .filter(t -> m.group(t.name()) != null).findFirst();
-            if (!type.isPresent())
-                continue;
-            charBlocks.add(new CharBlockInfo(m.group(), type.get()));
-        }
-        // Some extra lines for spacing.
-        charBlocks.add(new CharBlockInfo("\n", CharBlockType.NEWLINE));
-        charBlocks.add(new CharBlockInfo("\n", CharBlockType.NEWLINE));
+        this.charBlocks = LawCharBlock.getBlocksFromText(text);
 
-        // In sections, newlines are sometimes used as spaces.
+        // In the original text of sections, newlines are sometimes used as spaces.
         if (info.getDocType() == SECTION) {
-            CharBlockInfo prev = CharBlockInfo.EMPTY;
+            LawCharBlock prev = LawCharBlock.EMPTY;
             for (int i = 0; i < charBlocks.size(); i++) {
-                CharBlockInfo curr = charBlocks.get(i);
-                CharBlockInfo next = (i == charBlocks.size()-1 ?
-                        CharBlockInfo.EMPTY : charBlocks.get(i+1));
-                if (curr.isNewline() && prev.isAlphanum() && next.isAlphanum())
-                    charBlocks.set(i, new CharBlockInfo(" ", SPACE));
+                LawCharBlock curr = charBlocks.get(i);
+                LawCharBlock next = (i == charBlocks.size()-1 ?
+                        LawCharBlock.EMPTY : charBlocks.get(i+1));
+                if (prev.type() == ALPHANUM && curr.type() == NEWLINE &&
+                        next.type() == ALPHANUM)
+                    charBlocks.set(i, new LawCharBlock(" ", SPACE));
                 prev = curr;
             }
         }
@@ -64,17 +57,19 @@ public class LawTextParser {
      * @param contentStream to write to.
      * @throws IOException if the writing was interrupted.
      */
-    public void writeLine(PDPageContentStream contentStream) throws IOException {
-        for (int charCount = 0; !reachedEnd() && charCount +
+    public void writeLine(PDPageContentStream contentStream)
+            throws IOException {
+        for (int charCount = 0; !finished() && charCount +
                 charBlocks.get(index).text().length() <= CHARS_PER_LINE;) {
-            CharBlockInfo block = charBlocks.get(index++);
-            if (block.isNewline())
+            LawCharBlock block = charBlocks.get(index++);
+            if (block.type() == NEWLINE)
                 break;
-            else if (block.isBoldMarker()) {
+            else if (block.type() == BOLDMARKER) {
                 bold = !bold;
                 continue;
             }
-            else if (block.isSpace() && info.getDocType() == SECTION && charCount == 0)
+            else if (block.type() == SPACE && info.getDocType() == SECTION
+                    && charCount == 0)
                 continue;
 
             contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
@@ -85,27 +80,43 @@ public class LawTextParser {
         contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
     }
 
-    private String markForBolding(LawDocument doc) {
+    /**
+     * Adds in markers for what to bold into the String.
+     * @param doc to process.
+     * @return a String of the text with the added markers.
+     */
+    private static String markForBolding(LawDocument doc) {
         String text = doc.getText().replaceAll("\\\\n", "\n");
         // In text, the title may be split by newlines.
-        String toMatch = "(?i)" + doc.getTitle() + "[.]?";
+        String toMatch = doc.getTitle() + "[.]?";
         if (doc.getDocType() == CHAPTER) {
-            if (LawChapterCode.valueOf(doc.getLawId()).getType() != LawType.CONSOLIDATED)
+            if (LawChapterCode.valueOf(doc.getLawId()).getType() != LawType.CONSOLIDATED ||
+            doc.isDummy())
                 toMatch = ".*?\n";
             else {
                 String[] dashSplit = doc.getDocTypeId().split("-");
                 String fixedDocTypeId = doc.getDocTypeId().replaceFirst("\\d+",
                         RomanNumerals.allOptions(dashSplit[0]));
-                toMatch = "(?i)Chapter " + fixedDocTypeId + " of the consolidated laws";
+                toMatch = "Chapter " + fixedDocTypeId + " of the consolidated laws";
+                toMatch = toMatch.toUpperCase();
             }
         }
+        // Newline characters could split up the Strings we're looking for.
         Matcher m = Pattern.compile(toMatch.replaceAll(" ", "[ \n]+")).matcher(text);
-        if (!m.find())
-            return text;
-        return CharBlockType.addBoldMarkers(text.substring(0, m.end())) + text.substring(m.end());
+        if (!m.find()) {
+            // Tries a case-insensitive match.
+            m = Pattern.compile(m.pattern().pattern(), Pattern.CASE_INSENSITIVE).matcher(text);
+            if (!m.find())
+                return text;
+        }
+        return LawCharBlockType.addBoldMarkers(m.start(), m.end(), text);
     }
 
-    public boolean reachedEnd() {
+    /**
+     * A simple method allowing other classes to access parser state.
+     * @return if the document has finished processing.
+     */
+    public boolean finished() {
         return charBlocks.size() <= index;
     }
 }

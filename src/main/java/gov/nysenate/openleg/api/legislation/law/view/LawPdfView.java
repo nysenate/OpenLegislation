@@ -35,14 +35,14 @@ public abstract class LawPdfView extends BasePdfView {
                 .collect(Collectors.toCollection(LinkedList::new));
         LawTextParser parser = new LawTextParser(lawDocQueue.remove());
         PDDocument doc = new PDDocument();
-        while(!lawDocQueue.isEmpty() || !parser.reachedEnd()) {
+        while(!lawDocQueue.isEmpty() || !parser.finished()) {
             PDPage pg = new PDPage();
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(MARGIN, TOP);
             for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
                 parser.writeLine(contentStream);
-                if (parser.reachedEnd()) {
+                if (parser.finished()) {
                     if (lawDocQueue.isEmpty())
                         break;
                     parser = new LawTextParser(lawDocQueue.poll());
