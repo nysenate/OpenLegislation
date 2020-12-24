@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,28 +89,38 @@ public class LawTextParser {
     private static String markForBolding(LawDocument doc) {
         String text = doc.getText().replaceAll("\\\\n", "\n");
         // In text, the title may be split by newlines.
-        String toMatch = doc.getTitle() + "[.]?";
-        if (doc.getDocType() == CHAPTER) {
-            if (LawChapterCode.valueOf(doc.getLawId()).getType() != LawType.CONSOLIDATED ||
-            doc.isDummy())
-                toMatch = ".*?\n";
-            else {
+        List<String> toMatch = new ArrayList<>();
+        if (doc.getDocType() != CHAPTER)
+            toMatch.add(".*?" + doc.getTitle() + "[.]?");
+        else {
+            toMatch.add(".*?\n");
+            if (LawChapterCode.valueOf(doc.getLawId()).getType() == LawType.CONSOLIDATED
+                    && !doc.isDummy()) {
                 String[] dashSplit = doc.getDocTypeId().split("-");
                 String fixedDocTypeId = doc.getDocTypeId().replaceFirst("\\d+",
                         RomanNumerals.allOptions(dashSplit[0]));
-                toMatch = "Chapter " + fixedDocTypeId + " of the consolidated laws";
-                toMatch = toMatch.toUpperCase();
+                String temp = "Chapter " + fixedDocTypeId + " of the consolidated laws";
+                toMatch.add(temp.toUpperCase());
             }
+            // Bolds the law name as well.
+            String lawName = LawChapterCode.valueOf(doc.getLawId()).getName() + "( Law)?";
+            lawName = lawName.replaceAll("(?i)(and|&)", "(and|&)");
+            toMatch.add(lawName.toUpperCase());
         }
-        // Newline characters could split up the Strings we're looking for.
-        Matcher m = Pattern.compile(toMatch.replaceAll(" ", "[ \n]+")).matcher(text);
-        if (!m.find()) {
-            // Tries a case-insensitive match.
-            m = Pattern.compile(m.pattern().pattern(), Pattern.CASE_INSENSITIVE).matcher(text);
-            if (!m.find())
-                return text;
+
+        for (String pattern : toMatch) {
+            pattern = pattern.replaceAll(" ", "[ \n]+");
+            // Newline characters could split up the Strings we're looking for.
+            Matcher m = Pattern.compile(pattern).matcher(text);
+            if (!m.find()) {
+                // Tries a case-insensitive match.
+                m = Pattern.compile(m.pattern().pattern(), Pattern.CASE_INSENSITIVE).matcher(text);
+                if (!m.find())
+                    return text;
+            }
+            text = LawCharBlockType.addBoldMarkers(m.start(), m.end(), text);
         }
-        return LawCharBlockType.addBoldMarkers(m.start(), m.end(), text);
+        return text;
     }
 
     /**

@@ -2,6 +2,9 @@ package gov.nysenate.openleg.api.legislation.law.view;
 
 import java.util.regex.Pattern;
 
+/**
+ * An enum for storing the type of a small block of law text.
+ */
 public enum LawCharBlockType {
     BOLDMARKER("~~~~"), ALPHANUM("[^\\s~]+"), SPACE("[ \t]+"), NEWLINE("\n");
 
@@ -28,8 +31,10 @@ public enum LawCharBlockType {
      * @return the "bolded" String.
      */
     public static String addBoldMarkers(int start, int end, String input) {
-        return input.substring(0, start) + BOLDMARKER.pattern +
+        String temp = input.substring(0, start) + BOLDMARKER.pattern +
                 input.substring(start, end) + BOLDMARKER.pattern +
                 input.substring(end);
+        // Ensures there's no attempt to bold things twice.
+        return temp.replaceAll("(" + BOLDMARKER.pattern + ")+", BOLDMARKER.pattern);
     }
 }

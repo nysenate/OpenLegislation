@@ -478,3 +478,26 @@ List of laws repealed during the given date/time range
 +--------------+----------------------+---------------------------------------------------------------------------+
 | toDateTime   | ISO 8601 datetime    | default now - The inclusive end time of the specified time period         |
 +--------------+----------------------+---------------------------------------------------------------------------+
+
+Get a law pdf
+------------------------
+
+**Usage**
+
+Retrieve law pdf by document id
+::
+    (GET) /pdf/laws/{docId}
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| full      | (true|false)         | Whether to get all the children of this document.      |
++-----------+----------------------+--------------------------------------------------------+
+
+**Examples**
+
+Request law document CC0A1 and its children
+::
+    /api/3/laws/CCOA1?full=true
