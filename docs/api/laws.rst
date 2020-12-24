@@ -484,7 +484,8 @@ Get a law pdf
 
 **Usage**
 
-Retrieve law pdf by document id
+Retrieve law pdf by document id.
+Inputting only the law ID will get you the root node for that chapter.
 ::
     (GET) /pdf/laws/{docId}
 

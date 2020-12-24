@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,19 +56,17 @@ public class LawPdfCtrl extends BaseCtrl {
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())
             documentId = lawTree.getRootNode().getDocumentId();
-        Optional<LawTreeNode> opNode = lawTree.find(documentId);
-        if (!opNode.isPresent())
-            throw new LawDocumentNotFoundEx(documentId, null, "");
-
+        LawDocument doc = lawData.getLawDocument(documentId, null);
+        LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
         Map<String, LawDocument> lawDocs = new HashMap<>();
-        lawDocs.put(documentId, lawData.getLawDocument(documentId, null));
+        lawDocs.put(documentId, doc);
         if (full) {
-            for (LawTreeNode node : opNode.get().getAllNodes())
+            for (LawTreeNode node : docNode.getAllNodes())
                 lawDocs.put(node.getDocumentId(), lawData.getLawDocument(node.getDocumentId(), null));
         }
 
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        LawPdfView.writeLawDocumentPdf(opNode.get(), pdfBytes, lawDocs);
+        LawPdfView.writeLawDocumentPdf(docNode, pdfBytes, lawDocs);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
