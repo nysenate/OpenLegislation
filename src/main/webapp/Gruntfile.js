@@ -1,12 +1,12 @@
 var fs = require("fs");
-var libxmljs = require("libxmljs");
+var parser = require('fast-xml-parser');
 
 var pomPath = __dirname + "/../../../pom.xml";
 var pomXml = fs.readFileSync(pomPath, 'utf8');
 
-var pomDoc = libxmljs.parseXml(pomXml);
-var artifactId = pomDoc.find("/*/*[name()='artifactId']")[0].text();
-var version = pomDoc.find("/*/*[name()='version']")[0].text();
+var pomJson = parser.parse(pomXml, {}, true);
+var artifactId = pomJson.project.artifactId;
+var version = pomJson.project.version;
 
 var sass = require('node-sass');
 
