@@ -94,6 +94,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * Handles parsing a Session member out of a sobi or xml file
      */
     protected void handlePrimaryMemberParsing(Bill baseBill, String sponsorLine, SessionYear sessionYear) {
+        if (sponsorLine.trim().isEmpty()) {
+            return;
+        }
         // Get the chamber from the Bill
         Chamber chamber = baseBill.getBillType().getChamber();
         // New Sponsor instance

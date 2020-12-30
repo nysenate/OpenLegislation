@@ -48,6 +48,22 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
     }
 
     @Test
+    public void ignoreEmptyPrimarySponsor() {
+        String xmlFilePath = "processor/bill/sponsor/2020-12-30-12.38.45.708793_LDSPON_A00818.XML";
+
+        processXmlFile(xmlFilePath);
+
+        BaseBillId baseBillId = BaseBillId.of(new BillId("A818", 2021));
+
+        String expectedSponsor = null;
+        List<String> expectedCoSponsors = Arrays.asList("FAHY", "MCDONOUGH");
+        List<String> expectedMultiSponsors = Collections.emptyList();
+
+        verifySponsors(baseBillId, expectedSponsor, false, false,
+                expectedCoSponsors, expectedMultiSponsors);
+    }
+
+    @Test
     public void multiSponsorTest() {
         String xmlFilePath = "processor/bill/sponsor/2017-01-05-15.43.14.986330_LDSPON_A00289.XML";
 
