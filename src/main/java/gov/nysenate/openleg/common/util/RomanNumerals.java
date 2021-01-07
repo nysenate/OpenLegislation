@@ -35,9 +35,8 @@ public class RomanNumerals {
         for (int i = 0; i < nums.length; i++)
             NUMBER_WORDS.put(nums[i], words[i]);
         String[] tens = {"TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY", "ONE HUNDRED"};
-        for (int i = 0; i < tens.length; i++) {
+        for (int i = 0; i < tens.length; i++)
             NUMBER_WORDS.put(10*(i+1), tens[i]);
-        }
     }
 
     /**

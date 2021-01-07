@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class MemberGetCtrlIT extends ApiTest {
@@ -46,7 +47,6 @@ public class MemberGetCtrlIT extends ApiTest {
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
         assertEquals(0, numAlternates);
 
-        addParam("limit", "all");
         listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);;
         FullMemberView testFmv = (FullMemberView) listResponse.getResult().getItems().stream().filter(fm ->
                 fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).collect(Collectors.toList()).get(0);

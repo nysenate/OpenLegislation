@@ -2,16 +2,10 @@ package gov.nysenate.openleg.search.logs;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import gov.nysenate.openleg.api.logs.ApiLogItemView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.ClearIndexEvent;
-import gov.nysenate.openleg.search.RebuildIndexEvent;
-import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.search.ElasticSearchServiceUtils;
-import gov.nysenate.openleg.api.logs.ApiLogEvent;
-import gov.nysenate.openleg.common.util.AsyncUtils;
+import gov.nysenate.openleg.search.*;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
@@ -35,9 +29,8 @@ public class ElasticApiLogSearchService implements ApiLogSearchService
 
     @Autowired private EventBus eventBus;
     @Autowired private ElasticApiLogSearchDao apiLogSearchDao;
-    @Autowired private AsyncUtils asyncUtils;
 
-    private BlockingQueue<ApiResponse> indexQueue = new ArrayBlockingQueue<>(50000);
+    private final BlockingQueue<ApiResponse> indexQueue = new ArrayBlockingQueue<>(50000);
 
 
     @PostConstruct

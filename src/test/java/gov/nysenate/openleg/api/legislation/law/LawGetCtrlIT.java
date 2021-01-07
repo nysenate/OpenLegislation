@@ -17,7 +17,9 @@ import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 import static org.junit.Assert.*;
@@ -85,7 +87,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         for (String fileId : TEST_UPDATE_FILE_PREFIX)
             loadTestData(fileId, false);
         String initialDate = "2014-09-22";
-        String[] locIds = {"A1", "1", "2", "3", "A2", "10", "11"};
+        String[] locIds = {"A1", "4", "5", "A2", "6", "7"};
         for (String locId : locIds) {
             ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ABC.name(), locId, null, initialDate);
             LawDocWithRefsView doc = ((LawDocWithRefsView) genericDocument.getResult());
@@ -98,16 +100,17 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         loadTestData(ABC.name(), true);
         for (String fileId : TEST_UPDATE_FILE_PREFIX)
             loadTestData(fileId, false);
-        LocalDate defaultStartDate = LocalDate.of(1970, 1, 1);
-        LocalDate testDate = LocalDate.of(2020, 5, 30);
-        LocalDate defaultEndDate = LocalDate.now();
+
+        LocalDate startDate = LocalDate.of(2014, 9, 22);
+        LocalDate testDate = startDate.plusDays(2);
+        LocalDate endDate = testDate.plusDays(2);
         BiMap<LocalDate, String> dateToLocId = HashBiMap.create();
-        dateToLocId.put(testDate.minusDays(1), "2");
-        dateToLocId.put(testDate, "3");
-        dateToLocId.put(testDate.plusDays(1), "10");
-        testRepealedResult(defaultStartDate, defaultEndDate, dateToLocId, 3);
-        testRepealedResult(testDate, defaultEndDate, dateToLocId, 2);
-        testRepealedResult(defaultStartDate, testDate, dateToLocId, 2);
+        dateToLocId.put(testDate.minusDays(1), "4");
+        dateToLocId.put(testDate, "5");
+        dateToLocId.put(testDate.plusDays(1), "6");
+        testRepealedResult(startDate, endDate, dateToLocId, 3);
+        testRepealedResult(testDate, endDate, dateToLocId, 2);
+        testRepealedResult(startDate, testDate, dateToLocId, 2);
         testRepealedResult(testDate, testDate, dateToLocId, 1);
     }
 

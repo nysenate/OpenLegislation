@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.EHC;
 import static org.junit.Assert.*;
-import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
 @Category(IntegrationTest.class)
 public class LawSearchCtrlIT extends LawCtrlBaseIT {
@@ -30,8 +30,9 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
         for (String fileId : TEST_LAW_IDS)
             loadTestData(fileId, true);
         try {
-            List<String> lawIds = convertResponse(testCtrl.searchLaws("locationId:1", testRequest));
             List<String> ruleLawIds = convertResponse(testCtrl.searchLaws("locationId:R1", testRequest));
+            List<String> lawIds = convertResponse(testCtrl.searchLaws("locationId:1", testRequest));
+            lawIds.sort(String::compareTo);
             for (String lawId : TEST_LAW_IDS) {
                 if (LawChapterCode.valueOf(lawId).getType() == LawType.RULES)
                     assertTrue(ruleLawIds.contains(lawId));
@@ -58,6 +59,6 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
         ListView<?> asListView = ((ListViewResponse<?>) response).getResult();
         List<SearchResultView> asSrv = asListView.getItems().stream().map(item -> ((SearchResultView) item)).collect(Collectors.toList());
         List<LawDocInfoView> asLdiv = asSrv.stream().map(srv -> ((LawDocInfoView) srv.getResult())).collect(Collectors.toList());
-        return asLdiv.stream().map(LawDocInfoView::getLawId).collect(Collectors.toList());
+        return asLdiv.stream().map(LawDocInfoView::getLawId).distinct().collect(Collectors.toList());
     }
 }

@@ -28,7 +28,7 @@ public class ApiLogFilter implements Filter
     private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog", "/api/3/admin/process/runs/"};
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) {}
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
