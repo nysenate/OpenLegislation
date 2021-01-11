@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.*;
-import static gov.nysenate.openleg.api.legislation.law.view.LawPdfView.FONT_SIZE;
+import static gov.nysenate.openleg.api.legislation.law.view.LawPdfView.*;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.CHAPTER;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.SECTION;
 
@@ -74,11 +74,11 @@ public class LawTextParser {
                 continue;
 
             contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
-                    PDType1Font.COURIER, FONT_SIZE);
+                    FONT, FONT_SIZE);
             contentStream.drawString(block.text());
             charCount += block.text().length();
         }
-        contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
+        contentStream.moveTextPositionByAmount(0, -FONT_SIZE*SPACING);
     }
 
     /**

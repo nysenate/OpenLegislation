@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.api;
 
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
 public abstract class BasePdfView {
-    public static final Float FONT_SIZE = 12f;
-    protected static final Float TOP = 740f;
-    protected static final Float BOTTOM = 60f;
-    protected static final Float MARGIN = 20f;
+    public static final float FONT_SIZE = 12f;
+    public static final PDFont FONT = PDType1Font.COURIER;
+    protected static final float TOP = 740f;
+    protected static final float BOTTOM = 60f;
 }

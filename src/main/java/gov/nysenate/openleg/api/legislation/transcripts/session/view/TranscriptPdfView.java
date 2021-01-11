@@ -1,15 +1,13 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.common.util.TranscriptTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
-import gov.nysenate.openleg.common.util.TranscriptTextUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,14 +49,13 @@ public class TranscriptPdfView extends BasePdfView {
         }
 
         try (PDDocument doc = new PDDocument()) {
-            PDFont font = PDType1Font.COURIER;
             List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
             for (List<String> page : pages) {
                 PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
                 PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
                 drawBorder(contentStream);
                 contentStream.beginText();
-                contentStream.setFont(font, FONT_SIZE);
+                contentStream.setFont(FONT, FONT_SIZE);
                 moveStreamToTopOfPage(contentStream);
 
                 int lineCount = drawPageText(page, contentStream);

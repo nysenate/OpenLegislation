@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.api.legislation.bill.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.legislation.bill.BillAmendment;
-import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +9,6 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,23 +24,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.legislation.bill.BillTextFormat.*;
+import static gov.nysenate.openleg.legislation.bill.BillTextFormat.HTML;
+import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 
 /**
  * PDF representation of a bill.
  */
 public class BillPdfView extends BasePdfView {
-    private static final Float resolutionMargin = 46f;
-    private static final String styles = "\n" +
+    private static final Float BILL_MARGIN = 10f;
+    private static final Float RESOLUTION_MARGIN = 46f;
+    private static final String STYLES = "\n" +
             "u {color: green;}\n" +
             "s {color: red;}\n" +
             "p.brk {page-break-before: always;}\n" +
             "body {font-size: 14px;}\n" +
             ".header {font-size: 1.8em; text-align: center; font-weight: bold;}\n";
-    private static final String billStyles = styles +
+    private static final String billStyles = STYLES +
             "@page {margin-left: 31.5px; margin-top: 27.5px;}\n" +
             "body {font-size: 14px;}\n";
-    private static final String resoStyles = styles +
+    private static final String resoStyles = STYLES +
             "@page {margin-left: 50px; margin-top: 30px;}\n" +
             "body {font-size: 16px;}\n";
 
@@ -156,16 +152,12 @@ public class BillPdfView extends BasePdfView {
         }
 
         try (PDDocument doc = new PDDocument()) {
-            PDFont font = PDType1Font.COURIER;
-            float margin = MARGIN;
-            if (billId.getBillType().isResolution()) {
-                margin = resolutionMargin;
-            }
+            float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
             for (List<String> page : pages) {
                 PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
                 PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
                 contentStream.beginText();
-                contentStream.setFont(font, FONT_SIZE);
+                contentStream.setFont(FONT, FONT_SIZE);
                 contentStream.moveTextPositionByAmount(margin, TOP);
                 for (String line : page) {
                     contentStream.drawString(line);

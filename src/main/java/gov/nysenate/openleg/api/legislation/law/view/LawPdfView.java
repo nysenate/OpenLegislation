@@ -17,7 +17,9 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 public abstract class LawPdfView extends BasePdfView {
-    public final static int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/FONT_SIZE);
+    public final static float SPACING = 1.5f;
+    private final static int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/(FONT_SIZE*SPACING));
+    private final static float MARGIN = 20f;
 
     /**
      * Writes a law document to a PDF.
