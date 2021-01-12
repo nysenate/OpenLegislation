@@ -5,8 +5,6 @@ import gov.nysenate.openleg.common.util.TranscriptTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 
 import java.io.IOException;
@@ -20,53 +18,44 @@ import java.util.List;
  * of the official transcripts.
  */
 public class TranscriptPdfView extends BasePdfView {
+
+    // Pauline Williman did 1993-1998
+    private static final LocalDateTime WILLIMAN_START = LocalDate.of(1993, 1, 1).atStartOfDay(),
+            WILLIMAN_END = WILLIMAN_START.plusYears(6);
+
+    // Candyco also did 1999-2003
+    private static final LocalDateTime CANDYCO_1999_START = WILLIMAN_END,
+            CANDYCO_2003_END = CANDYCO_1999_START.plusYears(5);
+
+    // Candyco started Jan 1st, 2005
+    private static final LocalDateTime CANDYCO_START_TIME = CANDYCO_2003_END.plusYears(1);
+
     // Kirkland started on May 16, 2011
     private static final LocalDateTime KIRKLAND_START_TIME = LocalDate.of(2011, 5, 16).atStartOfDay();
 
-    // Candyco started Jan 1st, 2005
-    private static final LocalDateTime CANDYCO_START_TIME = LocalDate.of(2005, 1, 1).atStartOfDay();
+    private static final float top = 710f, bot = 90f, left = 105f, right = 575f, FONT_WIDTH = 7f;
+    private static final float[] X_VALS = {left, left, right, right}, Y_VALS = {top, bot, bot, top};
 
-    // Candyco also did 1999-2003
-    private static final LocalDateTime CANDYCO_1999_START = LocalDate.of(1999, 1, 1).atStartOfDay();
-    private static final LocalDateTime CANDYCO_2003_END = LocalDate.of(2004, 1, 1).atStartOfDay();
+    private static final int NO_LINE_NUM_INDENT = 11, STENOGRAPHER_LINE_NUM = 26;
 
-    // Pauline Williman did 1993-1998
-    private static final LocalDateTime WILLIMAN_START = LocalDate.of(1993, 1, 1).atStartOfDay();
-    private static final LocalDateTime WILLIMAN_END = LocalDate.of(1999, 1, 1).atStartOfDay();
+    @Override
+    public void newPageSetup() throws IOException {
+        contentStream.drawPolygon(X_VALS, Y_VALS);
+    }
 
-    private static final Float bot = 90f;
-    private static final Float right = 575f;
-    private static final Float top = 710f;
-    private static final Float left = 105f;
-    private static final Float fontWidth = 7f;
-
-    public static final int NO_LINE_NUM_INDENT = 11;
-    public static final int STENOGRAPHER_LINE_NUM = 26;
-
-    public static void writeTranscriptPdf(Transcript transcript, OutputStream outputStream) throws IOException, COSVisitorException {
+    public void writeTranscriptPdf(Transcript transcript, OutputStream outputStream) throws IOException, COSVisitorException {
         if (transcript == null) {
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
         }
 
-        try (PDDocument doc = new PDDocument()) {
-            List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
-            for (List<String> page : pages) {
-                PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
-                PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
-                drawBorder(contentStream);
-                contentStream.beginText();
-                contentStream.setFont(FONT, FONT_SIZE);
-                moveStreamToTopOfPage(contentStream);
-
-                int lineCount = drawPageText(page, contentStream);
-                drawStenographer(transcript, contentStream, lineCount);
-
-                contentStream.endText();
-                contentStream.close();
-                doc.addPage(pg);
-            }
-            doc.save(outputStream);
+        List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
+        for (List<String> page : pages) {
+            newPage(top - FONT_WIDTH, 0, false);
+            int lineCount = drawPageText(page, contentStream);
+            drawStenographer(transcript, contentStream, lineCount);
+            endPage();
         }
+        saveDoc(outputStream);
     }
 
     /**
@@ -108,15 +97,8 @@ public class TranscriptPdfView extends BasePdfView {
             text = line.fullText();
         }
 
-        float offset = left - indent * fontWidth;
+        float offset = left - indent * FONT_WIDTH;
         drawLine(text, offset, contentStream);
-    }
-
-    private static void drawBorder(PDPageContentStream contentStream) throws IOException {
-        contentStream.drawLine(left, top, left, bot);
-        contentStream.drawLine(left, top, right, top);
-        contentStream.drawLine(left, bot, right, bot);
-        contentStream.drawLine(right, top, right, bot);
     }
 
     private static void drawLine(String line, float offset, PDPageContentStream contentStream) throws IOException {
@@ -126,14 +108,10 @@ public class TranscriptPdfView extends BasePdfView {
     }
 
     private static void drawPageNumber(String line, PDPageContentStream contentStream) throws IOException {
-        float offset = right - (line.length() + 1) * fontWidth;
-        contentStream.moveTextPositionByAmount(offset, fontWidth * 2);
+        float offset = right - (line.length() + 1) * FONT_WIDTH;
+        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH * 2);
         contentStream.drawString(line);
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * 2);
-    }
-
-    private static void moveStreamToTopOfPage(PDPageContentStream contentStream) throws IOException {
-        contentStream.moveTextPositionByAmount(0, top - fontWidth);
     }
 
     private static int lineNumberLength(TranscriptLine line) {
@@ -155,7 +133,7 @@ public class TranscriptPdfView extends BasePdfView {
         }
 
         float offset = (lineCount - STENOGRAPHER_LINE_NUM) * 2 * FONT_SIZE; // * 2 because of double spacing.
-        contentStream.moveTextPositionByAmount(left + (right - left - stenographer.length() * fontWidth) / 2, offset);
+        contentStream.moveTextPositionByAmount(left + (right - left - stenographer.length() * FONT_WIDTH) / 2, offset);
         contentStream.drawString(stenographer);
     }
 }

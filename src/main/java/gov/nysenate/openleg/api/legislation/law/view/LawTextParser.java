@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.legislation.law.view;
 
-import gov.nysenate.openleg.common.util.RomanNumerals;
+import gov.nysenate.openleg.common.util.NumberUtils;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import gov.nysenate.openleg.legislation.law.LawDocument;
@@ -98,7 +98,7 @@ public class LawTextParser {
                     && !doc.isDummy()) {
                 String[] dashSplit = doc.getDocTypeId().split("-");
                 String fixedDocTypeId = doc.getDocTypeId().replaceFirst("\\d+",
-                        RomanNumerals.allOptions(dashSplit[0]));
+                        NumberUtils.allOptions(dashSplit[0]));
                 String temp = "Chapter " + fixedDocTypeId + " of the consolidated laws";
                 toMatch.add(temp.toUpperCase());
             }

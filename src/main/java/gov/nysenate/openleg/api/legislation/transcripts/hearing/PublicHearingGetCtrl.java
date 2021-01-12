@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingView;
@@ -9,14 +10,13 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
 import gov.nysenate.openleg.search.transcripts.hearing.PublicHearingSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +128,8 @@ public class PublicHearingGetCtrl extends BaseCtrl
             throws IOException, COSVisitorException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        PublicHearingPdfView.writePublicHearingPdf(hearing, pdfBytes);
+        PublicHearingPdfView phpv = new PublicHearingPdfView();
+        phpv.writePublicHearingPdf(hearing, pdfBytes);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);

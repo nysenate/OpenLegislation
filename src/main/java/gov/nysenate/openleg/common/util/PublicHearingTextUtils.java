@@ -16,28 +16,16 @@ public class PublicHearingTextUtils
         List<List<String>> pages = new ArrayList<>();
         List<String> page = new ArrayList<>();
 
-        fullText = replaceCarriageReturns(fullText);
+        fullText = fullText.replaceAll("\r\n", "\n");
         List<String> lines = Splitter.on("\n").splitToList(fullText);
         for (String line : lines) {
             page.add(line);
-            if (endOfPage(line)) {
+            if (line.contains("\f")) {
                 pages.add(page);
                 page = new ArrayList<>();
             }
         }
         return pages;
-    }
-
-    private static String replaceCarriageReturns(String fullText) {
-        return fullText.replaceAll("\r\n", "\n");
-    }
-
-    private static boolean endOfPage(String line) {
-        // Check for form feed character.
-        if (line.contains("\f")) {
-            return true;
-        }
-        return false;
     }
 
     /**

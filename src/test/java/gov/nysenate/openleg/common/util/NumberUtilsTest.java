@@ -4,11 +4,11 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static gov.nysenate.openleg.common.util.RomanNumerals.*;
+import static gov.nysenate.openleg.common.util.NumberUtils.*;
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class RomanNumeralsTest {
+public class NumberUtilsTest {
     @Test
     public void numeralTest() {
         test("I", "ONE", 1);
@@ -24,7 +24,7 @@ public class RomanNumeralsTest {
     private static void test(String numeral, String word, int num) {
         assertEquals(numeralToInt(numeral), num);
         assertEquals(numeral, intToNumeral(num));
-        assertEquals(numberToWord(num), word);
+        assertEquals(intToWord(num), word);
         assertEquals("(" + num + "|" + numeral + "|" + word + ")", allOptions(Integer.toString(num)));
     }
 }

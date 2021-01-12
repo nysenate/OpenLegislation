@@ -66,7 +66,8 @@ public class LawPdfCtrl extends BaseCtrl {
         }
 
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        LawPdfView.writeLawDocumentPdf(docNode, pdfBytes, lawDocs);
+        LawPdfView lpv = new LawPdfView();
+        lpv.writeLawDocumentPdf(docNode, pdfBytes, lawDocs);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);

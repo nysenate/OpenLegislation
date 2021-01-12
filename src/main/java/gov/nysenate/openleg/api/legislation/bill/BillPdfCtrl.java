@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
-import gov.nysenate.openleg.api.legislation.bill.view.BillPdfView;
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.bill.view.BillPdfView;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
@@ -53,7 +53,8 @@ public class BillPdfCtrl extends BaseCtrl
             } else {
                 Bill bill = billData.getBill(BaseBillId.of(billId));
                 ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-                BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
+                BillPdfView bpv = new BillPdfView();
+                bpv.writeBillPdf(bill, billId.getVersion(), pdfBytes);
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType("application/pdf"));
                 return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);

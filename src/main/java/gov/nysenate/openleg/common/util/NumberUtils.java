@@ -9,7 +9,7 @@ import java.util.TreeMap;
 /**
  * A class that converts between Roman numerals and integers.
  */
-public class RomanNumerals {
+public class NumberUtils {
     private static final BiMap<Integer, String> mapping;
     static {
         TreeMap<Integer, String> temp = new TreeMap<>((t0, t1) -> t1-t0);
@@ -24,6 +24,8 @@ public class RomanNumerals {
         temp.put(1, "I");
         mapping = ImmutableBiMap.copyOf(temp);
     }
+
+    private NumberUtils(){}
 
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
@@ -76,18 +78,18 @@ public class RomanNumerals {
      * @param number to convert.
      * @return a word/phrase.
      */
-    public static String numberToWord(int number) {
+    public static String intToWord(int number) {
         int tens = number/10;
         if (tens < 2 || number%10 == 0)
             return NUMBER_WORDS.getOrDefault(number, "no word");
         else if (tens >= 10)
-            return NUMBER_WORDS.get(100) + " " + numberToWord(number-100);
+            return NUMBER_WORDS.get(100) + " " + intToWord(number-100);
         else
-            return NUMBER_WORDS.get(10 * tens) + "-" + numberToWord(number - 10 * tens);
+            return NUMBER_WORDS.get(10 * tens) + "-" + intToWord(number - 10 * tens);
     }
 
     public static String allOptions(String stringNum) {
         int num = Integer.parseInt(stringNum);
-        return "(" + stringNum + "|" + intToNumeral(num) + "|" + numberToWord(num) + ")";
+        return "(" + stringNum + "|" + intToNumeral(num) + "|" + intToWord(num) + ")";
     }
 }

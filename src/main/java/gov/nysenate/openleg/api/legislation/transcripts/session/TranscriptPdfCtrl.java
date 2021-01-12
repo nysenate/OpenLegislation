@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
@@ -50,7 +50,8 @@ public class TranscriptPdfCtrl extends BaseCtrl
         try {
             Transcript transcript = transcriptData.getTranscript(transcriptId);
             ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-            TranscriptPdfView.writeTranscriptPdf(transcript, pdfBytes);
+            TranscriptPdfView tpv = new TranscriptPdfView();
+            tpv.writeTranscriptPdf(transcript, pdfBytes);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);

@@ -3,8 +3,8 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingPdfView;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,8 @@ public class PublicHearingPdfCtrl
         try {
             PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
             ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-            PublicHearingPdfView.writePublicHearingPdf(hearing, pdfBytes);
+            PublicHearingPdfView phpv = new PublicHearingPdfView();
+            phpv.writePublicHearingPdf(hearing, pdfBytes);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);

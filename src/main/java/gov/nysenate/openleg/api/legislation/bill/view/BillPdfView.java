@@ -6,9 +6,6 @@ import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,18 +28,17 @@ import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
  * PDF representation of a bill.
  */
 public class BillPdfView extends BasePdfView {
-    private static final Float BILL_MARGIN = 10f;
-    private static final Float RESOLUTION_MARGIN = 46f;
+    private static final float BILL_MARGIN = 10f, RESOLUTION_MARGIN = 46f;
     private static final String STYLES = "\n" +
             "u {color: green;}\n" +
             "s {color: red;}\n" +
             "p.brk {page-break-before: always;}\n" +
             "body {font-size: 14px;}\n" +
             ".header {font-size: 1.8em; text-align: center; font-weight: bold;}\n";
-    private static final String billStyles = STYLES +
+    private static final String BILL_STYLES = STYLES +
             "@page {margin-left: 31.5px; margin-top: 27.5px;}\n" +
             "body {font-size: 14px;}\n";
-    private static final String resoStyles = STYLES +
+    private static final String RESO_STYLES = STYLES +
             "@page {margin-left: 50px; margin-top: 30px;}\n" +
             "body {font-size: 16px;}\n";
 
@@ -52,10 +48,8 @@ public class BillPdfView extends BasePdfView {
      * @param bill         Bill - The bill that contains the text to write
      * @param version      Version - Identifies an amendment in the passed in bill that will have its text converted to pdf
      * @param outputStream OutputStream - The stream which will accept the pdf data
-     * @throws IOException
-     * @throws COSVisitorException
      */
-    public static void writeBillPdf(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
+    public void writeBillPdf(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null when converting to pdf!");
         }
@@ -64,7 +58,7 @@ public class BillPdfView extends BasePdfView {
         }
         BillAmendment ba = bill.getAmendment(version);
 
-        BillTextFormat format = ba.getFullText(HTML).length() > 0 ? HTML : PLAIN;
+        BillTextFormat format = ba.getFullText(HTML).isEmpty() ? PLAIN : HTML;
         String fullText = ba.getFullText(format);
         switch (format) {
             case HTML:
@@ -97,7 +91,7 @@ public class BillPdfView extends BasePdfView {
         });
         // Add our own styles
         Element styleTag = doc.head().appendElement("style");
-        styleTag.appendText(resolution ? resoStyles : billStyles);
+        styleTag.appendText(resolution ? RESO_STYLES : BILL_STYLES);
         // Get reformatted html
         StringBuilder htmlBuilder = new StringBuilder();
         doc.children().forEach(child -> writeHtml(child, htmlBuilder, false));
@@ -140,7 +134,7 @@ public class BillPdfView extends BasePdfView {
         }
     }
 
-    private static void writePlainTextPdf(BillId billId, String fullText, OutputStream outputStream) throws IOException, COSVisitorException {
+    private void writePlainTextPdf(BillId billId, String fullText, OutputStream outputStream) throws IOException, COSVisitorException {
         List<List<String>> pages;
         if (StringUtils.isBlank(fullText)) {
             pages = Collections.singletonList(Collections.singletonList(
@@ -151,23 +145,8 @@ public class BillPdfView extends BasePdfView {
             pages = BillTextUtils.getBillPages(fullText);
         }
 
-        try (PDDocument doc = new PDDocument()) {
-            float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
-            for (List<String> page : pages) {
-                PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
-                PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
-                contentStream.beginText();
-                contentStream.setFont(FONT, FONT_SIZE);
-                contentStream.moveTextPositionByAmount(margin, TOP);
-                for (String line : page) {
-                    contentStream.drawString(line);
-                    contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
-                }
-                contentStream.endText();
-                contentStream.close();
-                doc.addPage(pg);
-            }
-            doc.save(outputStream);
-        }
+        float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
+        writePages(pages, margin);
+        saveDoc(outputStream);
     }
 }

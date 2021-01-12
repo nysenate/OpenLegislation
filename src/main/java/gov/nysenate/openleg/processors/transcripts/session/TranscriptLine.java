@@ -43,9 +43,7 @@ public class TranscriptLine
     public boolean isPageNumber() {
         String validText = stripInvalidCharacters().trim();
         if (isNumber(validText)) {
-            if (isRightAligned(validText) || greaterThanMaxPageLineNum(validText)) {
-                return true;
-            }
+            return isRightAligned(validText) || greaterThanMaxPageLineNum(validText);
         }
         return false;
     }
@@ -57,7 +55,7 @@ public class TranscriptLine
      */
     public boolean hasLineNumber() {
         // split on two spaces so time typo's don't get treated as line numbers.
-        return isNumber(text.trim().split("  ")[0]) && !isPageNumber();
+        return isNumber(text.trim().split(" {2}")[0]) && !isPageNumber();
     }
 
     /**
@@ -80,13 +78,7 @@ public class TranscriptLine
      * @return
      */
     public boolean isLocation() {
-        if (text.toUpperCase().contains("ALBANY")
-            && text.toUpperCase().contains("NEW")
-            && text.toUpperCase().contains("YORK")) {
-            return true;
-        }
-
-        return false;
+        return text.toUpperCase().matches(".*ALBANY.*NEW.*YORK.*");
     }
 
     /**
@@ -120,8 +112,8 @@ public class TranscriptLine
      * @return
      */
     public String getDateString() {
-        return WordUtils.capitalizeFully(removeLineNumber().replace(" , ", " ").replace(", ", " ")
-                .replace(",", " ").replace(".", "").replace("  ", " ").trim());
+        return WordUtils.capitalizeFully(removeLineNumber().replaceAll("[ ,]+", " ")
+                .replace(".", "").trim());
     }
 
     /**
@@ -146,12 +138,8 @@ public class TranscriptLine
      */
     public String getTimeString() {
         // remove all erroneous characters including spaces.
-        String date = removeLineNumber().replace(":", "").replace(".", "").replace(" ", "").trim();
-
-        if (date.contains("Noon"))
-            date = date.replace("Noon", "pm");
-
-        return date.toUpperCase();
+        String date = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm");
+        return date.trim().toUpperCase();
     }
 
     /**
@@ -159,14 +147,11 @@ public class TranscriptLine
      * @return
      */
     public boolean isSession() {
-        if (text.contains("SESSION"))
-            return true;
-
-        return false;
+        return text.contains("SESSION");
     }
 
     public boolean isEmpty() {
-        return text.replaceAll(invalidCharactersRegex,"").trim().isEmpty();
+        return stripInvalidCharacters().trim().isEmpty();
     }
 
     /**
@@ -174,7 +159,7 @@ public class TranscriptLine
      * @return
      */
     public boolean isStenographer() {
-        return text.contains("Candyco Transcription Service, Inc.") || text.contains("(518) 371-8910");
+        return text.matches(".*(Candyco Transcription Service, Inc.|\\(518\\) 371-8910).*");
     }
 
     /**
@@ -196,19 +181,12 @@ public class TranscriptLine
         return true;
     }
 
-
     private boolean greaterThanMaxPageLineNum(String validText) {
-        if (Integer.valueOf(validText) > MAXIMUM_PAGE_LINE_NUMBER) {
-            return true;
-        }
-        return false;
+        return Integer.parseInt(validText) > MAXIMUM_PAGE_LINE_NUMBER;
     }
 
     private boolean isRightAligned(String validText) {
         int startIndex = text.indexOf(validText);
-        if (startIndex > MAXIMUM_PAGE_LINE_INDEX) {
-            return true;
-        }
-        return false;
+        return startIndex > MAXIMUM_PAGE_LINE_INDEX;
     }
 }

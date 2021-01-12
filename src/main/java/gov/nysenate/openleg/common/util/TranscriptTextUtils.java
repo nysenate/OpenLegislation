@@ -5,8 +5,9 @@ import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranscriptTextUtils
-{
+public class TranscriptTextUtils {
+
+    private TranscriptTextUtils(){}
 
     /**
      * Generates pages from transcript text in a common format.
