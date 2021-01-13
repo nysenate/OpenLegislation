@@ -13,13 +13,12 @@ import java.time.format.DateTimeParseException;
 public class TranscriptLine
 {
     /** Regex to match any non alphanumeric or whitespace characters. */
-    private static final String invalidCharactersRegex = "[^a-zA-Z0-9 ]+";
+    private static final String INVALID_CHARACTERS_REGEX = "[^a-zA-Z0-9 ]+";
 
     /** All page numbers occur in the first 10 characters of a line. */
     private static final int MAXIMUM_PAGE_LINE_INDEX = 10;
 
-    /** The maximum number of lines on a page. A number greater than this
-     * cannot be a line number. */
+    /** The maximum number of lines on a page. */
     private static final int MAXIMUM_PAGE_LINE_NUMBER = 27;
 
     /** The actual text of the line. */
@@ -167,7 +166,7 @@ public class TranscriptLine
      * @return The line with invalid characters removed.
      */
     public String stripInvalidCharacters() {
-        return text.replaceAll(invalidCharactersRegex,"");
+        return text.replaceAll(INVALID_CHARACTERS_REGEX,"");
     }
 
     /** --- Internal Methods --- */

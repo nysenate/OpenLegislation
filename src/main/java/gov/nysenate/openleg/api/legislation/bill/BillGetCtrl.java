@@ -22,14 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -187,12 +184,7 @@ public class BillGetCtrl extends BaseCtrl
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(BaseBillId.of(billId));
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        BillPdfView bpv = new BillPdfView();
-        bpv.writeBillPdf(bill, billId.getVersion(), pdfBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new BillPdfView(bill, billId.getVersion()).writeData();
     }
 
     /**

@@ -5,7 +5,6 @@ import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,7 +14,6 @@ import org.jsoup.parser.Tag;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,37 +40,28 @@ public class BillPdfView extends BasePdfView {
             "@page {margin-left: 50px; margin-top: 30px;}\n" +
             "body {font-size: 16px;}\n";
 
-    /**
-     * Writes bill text in pdf format to the given OutputStream
-     *
-     * @param bill         Bill - The bill that contains the text to write
-     * @param version      Version - Identifies an amendment in the passed in bill that will have its text converted to pdf
-     * @param outputStream OutputStream - The stream which will accept the pdf data
-     */
-    public void writeBillPdf(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
-        if (bill == null) {
+    public BillPdfView(Bill bill, Version version) throws IOException {
+        if (bill == null)
             throw new IllegalArgumentException("Supplied bill cannot be null when converting to pdf!");
-        }
-        if (!bill.hasAmendment(version)) {
+        if (!bill.hasAmendment(version))
             throw new BillAmendNotFoundEx(bill.getBaseBillId().withVersion(version));
-        }
         BillAmendment ba = bill.getAmendment(version);
 
         BillTextFormat format = ba.getFullText(HTML).isEmpty() ? PLAIN : HTML;
         String fullText = ba.getFullText(format);
         switch (format) {
             case HTML:
-                writeHtmlPdf(bill.isResolution(), fullText, outputStream);
+                writeHtmlPdf(bill.isResolution(), fullText);
                 break;
             case PLAIN:
-                writePlainTextPdf(ba.getBillId(), fullText, outputStream);
+                writePlainTextPdf(ba.getBillId(), fullText);
                 break;
             default:
                 throw new IllegalStateException("Unable to write pdf for text format: " + format);
         }
     }
 
-    private static void writeHtmlPdf(boolean resolution, String fullTextHtml, OutputStream outputStream) {
+    private void writeHtmlPdf(boolean resolution, String fullTextHtml) {
         ITextRenderer renderer = new ITextRenderer();
         Document doc = Jsoup.parse(fullTextHtml);
         // Remove backwards html
@@ -99,7 +88,7 @@ public class BillPdfView extends BasePdfView {
         // Render and output pdf
         renderer.setDocumentFromString(formattedHtml);
         renderer.layout();
-        renderer.createPDF(outputStream);
+        renderer.createPDF(pdfBytes);
     }
 
     /**
@@ -134,7 +123,7 @@ public class BillPdfView extends BasePdfView {
         }
     }
 
-    private void writePlainTextPdf(BillId billId, String fullText, OutputStream outputStream) throws IOException, COSVisitorException {
+    private void writePlainTextPdf(BillId billId, String fullText) throws IOException {
         List<List<String>> pages;
         if (StringUtils.isBlank(fullText)) {
             pages = Collections.singletonList(Collections.singletonList(
@@ -147,6 +136,6 @@ public class BillPdfView extends BasePdfView {
 
         float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
         writePages(pages, margin);
-        saveDoc(outputStream);
+        saveDoc();
     }
 }

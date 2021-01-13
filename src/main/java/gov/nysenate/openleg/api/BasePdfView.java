@@ -6,9 +6,13 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -18,14 +22,21 @@ public abstract class BasePdfView {
     public static final float FONT_SIZE = 12f;
     public static final PDFont FONT = PDType1Font.COURIER;
     protected static final float TOP = 740f;
+    protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
     protected PDPageContentStream contentStream;
     private final PDDocument doc = new PDDocument();
     private PDPage currPage;
 
+    public ResponseEntity<byte[]> writeData() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+    }
+
     /**
      * Overridden if more setup is needed.
      */
-    public void newPageSetup() throws IOException {}
+    protected void newPageSetup() throws IOException {}
 
     /**
      * Creates and initializes a new page.
@@ -34,7 +45,7 @@ public abstract class BasePdfView {
      * @param keepFont true if the font from the end of last page should be kept.
      * @throws IOException if the page can't be written to.
      */
-    public void newPage(float top, float margin, boolean keepFont) throws IOException {
+    protected void newPage(float top, float margin, boolean keepFont) throws IOException {
         currPage = new PDPage();
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
@@ -44,7 +55,7 @@ public abstract class BasePdfView {
             contentStream.setFont(FONT, FONT_SIZE);
     }
 
-    public void writePages(List<List<String>> pages, float margin) throws IOException {
+    protected void writePages(List<List<String>> pages, float margin) throws IOException {
         for (List<String> page : pages) {
             newPage(TOP, margin, false);
             for (String line : page) {
@@ -59,7 +70,7 @@ public abstract class BasePdfView {
      * Closes the current page, and adds it to the document.
      * @throws IOException if the page can't be closed.
      */
-    public void endPage() throws IOException {
+    protected void endPage() throws IOException {
         contentStream.endText();
         contentStream.close();
         doc.addPage(currPage);
@@ -67,10 +78,13 @@ public abstract class BasePdfView {
 
     /**
      * Saves and closes the document.
-     * @param outputStream to save to.
      */
-    public void saveDoc(OutputStream outputStream) throws IOException, COSVisitorException {
-        doc.save(outputStream);
+    protected void saveDoc() throws IOException {
+        try {
+            doc.save(pdfBytes);
+        } catch (COSVisitorException e) {
+            throw new IOException("Error saving PDF.");
+        }
         doc.close();
     }
 }

@@ -21,14 +21,11 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -130,12 +127,7 @@ public class TranscriptGetCtrl extends BaseCtrl
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         TranscriptId transcriptId = new TranscriptId(localDateTime);
         Transcript transcript = transcriptData.getTranscript(transcriptId);
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        TranscriptPdfView tpv = new TranscriptPdfView();
-        tpv.writeTranscriptPdf(transcript, pdfBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new TranscriptPdfView(transcript).writeData();
     }
 
     /** --- Internal --- */

@@ -20,14 +20,11 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.PublicHearingSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -127,12 +124,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
     public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename)
             throws IOException, COSVisitorException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        PublicHearingPdfView phpv = new PublicHearingPdfView();
-        phpv.writePublicHearingPdf(hearing, pdfBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new PublicHearingPdfView(hearing).writeData();
     }
 
     /**

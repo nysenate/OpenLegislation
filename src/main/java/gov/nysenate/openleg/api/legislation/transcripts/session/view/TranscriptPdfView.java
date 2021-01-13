@@ -4,11 +4,8 @@ import gov.nysenate.openleg.api.BasePdfView;
 import gov.nysenate.openleg.common.util.TranscriptTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,24 +35,23 @@ public class TranscriptPdfView extends BasePdfView {
 
     private static final int NO_LINE_NUM_INDENT = 11, STENOGRAPHER_LINE_NUM = 26;
 
-    @Override
-    public void newPageSetup() throws IOException {
-        contentStream.drawPolygon(X_VALS, Y_VALS);
-    }
-
-    public void writeTranscriptPdf(Transcript transcript, OutputStream outputStream) throws IOException, COSVisitorException {
-        if (transcript == null) {
+    public TranscriptPdfView(Transcript transcript) throws IOException {
+        if (transcript == null)
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
-        }
 
         List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
         for (List<String> page : pages) {
             newPage(top - FONT_WIDTH, 0, false);
-            int lineCount = drawPageText(page, contentStream);
-            drawStenographer(transcript, contentStream, lineCount);
+            drawPageText(page);
+            drawStenographer(transcript, page.size()-1);
             endPage();
         }
-        saveDoc(outputStream);
+        saveDoc();
+    }
+
+    @Override
+    protected void newPageSetup() throws IOException {
+        contentStream.drawPolygon(X_VALS, Y_VALS);
     }
 
     /**
@@ -69,56 +65,43 @@ public class TranscriptPdfView extends BasePdfView {
      *     The stenographer should be centered at the bottom of the page
      * </p>
      */
-    private static int drawPageText(List<String> page, PDPageContentStream contentStream) throws IOException {
-        int lineCount = 0;
+    private void drawPageText(List<String> page) throws IOException {
         for (String ln : page) {
             TranscriptLine line = new TranscriptLine(ln);
-
             if (line.isPageNumber()) {
-                drawPageNumber(line.fullText().trim(), contentStream);
+                int indent = line.fullText().trim().length();
+                drawPageNumber(line.fullText().trim(), indent);
             }
-            else {
-                drawText(contentStream, line);
-                lineCount++;
-            }
+            else
+                drawText(line);
         }
-
-        return lineCount;
     }
 
-    private static void drawText(PDPageContentStream contentStream, TranscriptLine line) throws IOException {
-        int indent;
-        String text;
+    private void drawPageNumber(String line, int indent) throws IOException {
+        float offset = right - indent * FONT_WIDTH;
+        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH*2);
+        contentStream.drawString(line);
+        contentStream.moveTextPositionByAmount(0, -FONT_SIZE*2);
+    }
+
+    private void drawText(TranscriptLine line) throws IOException {
+        int indent = NO_LINE_NUM_INDENT;
+        String text = line.fullText();
         if (line.hasLineNumber()) {
-            indent = lineNumberLength(line) + 1;
-            text = line.fullText().trim();
-        } else {
-            indent = NO_LINE_NUM_INDENT;
-            text = line.fullText();
+            text = text.trim();
+            indent = text.split("\\s")[0].length() + 1;
         }
-
-        float offset = left - indent * FONT_WIDTH;
-        drawLine(text, offset, contentStream);
+        drawLine(text, indent);
     }
 
-    private static void drawLine(String line, float offset, PDPageContentStream contentStream) throws IOException {
+    private void drawLine(String line, int indent) throws IOException {
+        float offset = left - indent * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);
         contentStream.drawString(line);
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE);
     }
 
-    private static void drawPageNumber(String line, PDPageContentStream contentStream) throws IOException {
-        float offset = right - (line.length() + 1) * FONT_WIDTH;
-        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH * 2);
-        contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * 2);
-    }
-
-    private static int lineNumberLength(TranscriptLine line) {
-        return line.fullText().trim().split("\\s")[0].length();
-    }
-
-    private static void drawStenographer(Transcript transcript, PDPageContentStream contentStream, int lineCount) throws IOException {
+    private void drawStenographer(Transcript transcript, int lineCount) throws IOException {
         String stenographer = "";
         if (transcript.getDateTime().isAfter(KIRKLAND_START_TIME)) {
             stenographer = "Kirkland Reporting Service";

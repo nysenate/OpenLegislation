@@ -16,16 +16,13 @@ import gov.nysenate.openleg.legislation.law.dao.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,19 +55,13 @@ public class LawPdfCtrl extends BaseCtrl {
             documentId = lawTree.getRootNode().getDocumentId();
         LawDocument doc = lawData.getLawDocument(documentId, null);
         LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
-        Map<String, LawDocument> lawDocs = new HashMap<>();
-        lawDocs.put(documentId, doc);
+        Queue<LawDocument> lawDocs = new LinkedList<>();
+        lawDocs.add(doc);
         if (full) {
             for (LawTreeNode node : docNode.getAllNodes())
-                lawDocs.put(node.getDocumentId(), lawData.getLawDocument(node.getDocumentId(), null));
+                lawDocs.add(lawData.getLawDocument(node.getDocumentId(), null));
         }
-
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        LawPdfView lpv = new LawPdfView();
-        lpv.writeLawDocumentPdf(docNode, pdfBytes, lawDocs);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new LawPdfView(lawDocs).writeData();
     }
 
     @ExceptionHandler(LawTreeNotFoundEx.class)
