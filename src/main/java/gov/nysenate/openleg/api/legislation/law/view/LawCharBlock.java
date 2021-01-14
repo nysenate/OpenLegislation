@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
-import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.LAW_CHAR_BLOCK_PATTERN;
+import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.*;
 
 /**
  * Data class for information on a block of characters.
@@ -34,7 +34,7 @@ public class LawCharBlock {
      * @param text to process.
      * @return the blocks.
      */
-    public static List<LawCharBlock> getBlocksFromText(String text) {
+    public static List<LawCharBlock> getBlocksFromText(String text, boolean isSection) {
         List<LawCharBlock> ret = new ArrayList<>();
         Matcher m = LAW_CHAR_BLOCK_PATTERN.matcher(text);
         while (m.find()) {
@@ -43,8 +43,15 @@ public class LawCharBlock {
                     .filter(t -> m.group(t.name()) != null).findFirst();
             if (!type.isPresent())
                 continue;
-            ret.add(new LawCharBlock(m.group(), type.get()));
+            LawCharBlock curr = new LawCharBlock(m.group(), type.get());
+            // In sections, newlines for paragraphs are marked by two spaces after
+            // a newline at the end of the prior paragraph.
+            if (isSection && ret.size() > 1 && ret.get(ret.size()-2).type() == ALPHANUM &&
+                    ret.get(ret.size()-1).type() == NEWLINE && curr.text().equals("  "))
+                ret.add(new LawCharBlock("\n", NEWLINE));
+            ret.add(curr);
         }
+
         // Some extra lines for spacing.
         ret.add(new LawCharBlock("\n", LawCharBlockType.NEWLINE));
         ret.add(new LawCharBlock("\n", LawCharBlockType.NEWLINE));

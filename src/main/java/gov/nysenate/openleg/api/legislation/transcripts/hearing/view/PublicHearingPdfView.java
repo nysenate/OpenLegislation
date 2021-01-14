@@ -18,6 +18,5 @@ public class PublicHearingPdfView extends BasePdfView {
             throw new IllegalArgumentException("Supplied Public Hearing cannot be null when converting to pdf.");
         List<List<String>> pages = PublicHearingTextUtils.getPages(publicHearing.getText());
         writePages(pages, MARGIN);
-        saveDoc();
     }
 }

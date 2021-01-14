@@ -22,10 +22,9 @@ import java.util.regex.Pattern;
 public class BillTextUtils
 {
 
-    protected static Pattern billTextPageStartPattern =
+    private static final Pattern BILL_TEXT_PAGE_START_PATTERN =
         Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}(\\d+)(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
-
-    protected static Integer MAX_LINES_RES_PAGE = 60;
+    private static final Integer MAX_LINES_RES_PAGE = 60;
 
     /**
      * Uses the new page lines to generate a list of pages from the bill text.
@@ -92,7 +91,7 @@ public class BillTextUtils
         // looking for the last page number (e.g. A. 7461--A           2 ...)
         String[] lines = fullText.split("\n");
         for (int i = lines.length - 1; i > 10; i--) {
-            Matcher billTextPageMatcher = billTextPageStartPattern.matcher(lines[i]);
+            Matcher billTextPageMatcher = BILL_TEXT_PAGE_START_PATTERN.matcher(lines[i]);
             if (billTextPageMatcher.find()) {
                 return Integer.parseInt(billTextPageMatcher.group(3));
             }
@@ -130,7 +129,7 @@ public class BillTextUtils
      * Checks if the given line matches the new page pattern.
      */
     public static boolean isFirstLineOfNextPage(String line, int lineNum) {
-        Matcher billTextPageMatcher = billTextPageStartPattern.matcher(line);
+        Matcher billTextPageMatcher = BILL_TEXT_PAGE_START_PATTERN.matcher(line);
         // Ignore erroneous result in first 10 lines.
         return lineNum > 10 && billTextPageMatcher.find();
     }

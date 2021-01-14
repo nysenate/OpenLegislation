@@ -14,7 +14,6 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +44,7 @@ public class LawPdfCtrl extends BaseCtrl {
     @RequestMapping("/{documentId}")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId,
                                                    @RequestParam(defaultValue = "false") boolean full)
-            throws IOException, COSVisitorException {
+            throws IOException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
         if (!matcher.matches())
             throw new InvalidRequestParamEx(documentId, "documentId", "String", "Document ID must start with a 3 letter law ID.");
@@ -53,10 +52,8 @@ public class LawPdfCtrl extends BaseCtrl {
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())
             documentId = lawTree.getRootNode().getDocumentId();
-        LawDocument doc = lawData.getLawDocument(documentId, null);
         LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
         Queue<LawDocument> lawDocs = new LinkedList<>();
-        lawDocs.add(doc);
         if (full) {
             for (LawTreeNode node : docNode.getAllNodes())
                 lawDocs.add(lawData.getLawDocument(node.getDocumentId(), null));

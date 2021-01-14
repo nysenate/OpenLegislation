@@ -4,7 +4,6 @@ import gov.nysenate.openleg.api.BasePdfView;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -124,18 +123,12 @@ public class BillPdfView extends BasePdfView {
     }
 
     private void writePlainTextPdf(BillId billId, String fullText) throws IOException {
-        List<List<String>> pages;
-        if (StringUtils.isBlank(fullText)) {
+        List<List<String>> pages = billId.getBillType().isResolution() ?
+                BillTextUtils.getResolutionPages(fullText) : BillTextUtils.getBillPages(fullText);
+        if (pages.get(0).isEmpty())
             pages = Collections.singletonList(Collections.singletonList(
                     "No full text available for " + billId));
-        } else if (billId.getBillType().isResolution()) {
-            pages = BillTextUtils.getResolutionPages(fullText);
-        } else {
-            pages = BillTextUtils.getBillPages(fullText);
-        }
-
         float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
         writePages(pages, margin);
-        saveDoc();
     }
 }

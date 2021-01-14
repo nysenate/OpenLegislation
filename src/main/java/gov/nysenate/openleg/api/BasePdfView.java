@@ -55,6 +55,11 @@ public abstract class BasePdfView {
             contentStream.setFont(FONT, FONT_SIZE);
     }
 
+    /**
+     * Writes the given pages to the PDF, then saves the document.
+     * @param pages to write.
+     * @param margin on each page.
+     */
     protected void writePages(List<List<String>> pages, float margin) throws IOException {
         for (List<String> page : pages) {
             newPage(TOP, margin, false);
@@ -64,6 +69,7 @@ public abstract class BasePdfView {
             }
             endPage();
         }
+        saveDoc();
     }
 
     /**
