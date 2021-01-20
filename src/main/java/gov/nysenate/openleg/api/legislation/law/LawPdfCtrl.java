@@ -42,7 +42,7 @@ public class LawPdfCtrl extends BaseCtrl {
      * @throws IOException if PDF cannot be written.
      */
     @RequestMapping("/{documentId}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId,
+    public ResponseEntity<byte[]> getLawPdf(@PathVariable String documentId,
                                                    @RequestParam(defaultValue = "false") boolean full)
             throws IOException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
@@ -55,9 +55,11 @@ public class LawPdfCtrl extends BaseCtrl {
         LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
         Queue<LawDocument> lawDocs = new LinkedList<>();
         if (full) {
-            for (LawTreeNode node : docNode.getAllNodes())
+            for (LawTreeNode node : docNode.getChildNodeList())
                 lawDocs.add(lawData.getLawDocument(node.getDocumentId(), null));
         }
+        else
+            lawDocs.add(lawData.getLawDocument(docNode.getDocumentId(), null));
         return new LawPdfView(lawDocs).writeData();
     }
 

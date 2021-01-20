@@ -19,8 +19,8 @@ import java.util.List;
  * Contains some common constants and methods for writing PDFs.
  */
 public abstract class BasePdfView {
-    public static final float FONT_SIZE = 12f;
-    public static final PDFont FONT = PDType1Font.COURIER;
+    protected static final float FONT_SIZE = 12f;
+    protected static final PDFont FONT = PDType1Font.COURIER;
     protected static final float TOP = 740f;
     protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
     protected PDPageContentStream contentStream;

@@ -68,20 +68,18 @@ public class TranscriptPdfView extends BasePdfView {
     private void drawPageText(List<String> page) throws IOException {
         for (String ln : page) {
             TranscriptLine line = new TranscriptLine(ln);
-            if (line.isPageNumber()) {
-                int indent = line.fullText().trim().length();
-                drawPageNumber(line.fullText().trim(), indent);
-            }
+            if (line.isPageNumber())
+                drawPageNumber(line.fullText().trim());
             else
                 drawText(line);
         }
     }
 
-    private void drawPageNumber(String line, int indent) throws IOException {
-        float offset = right - indent * FONT_WIDTH;
+    private void drawPageNumber(String line) throws IOException {
+        float offset = right - (line.length() + 1) * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, FONT_WIDTH*2);
         contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(0, -FONT_SIZE*2);
+        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE*2);
     }
 
     private void drawText(TranscriptLine line) throws IOException {
@@ -91,13 +89,9 @@ public class TranscriptPdfView extends BasePdfView {
             text = text.trim();
             indent = text.split("\\s")[0].length() + 1;
         }
-        drawLine(text, indent);
-    }
-
-    private void drawLine(String line, int indent) throws IOException {
         float offset = left - indent * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);
-        contentStream.drawString(line);
+        contentStream.drawString(text);
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE);
     }
 

@@ -10,7 +10,6 @@ import java.util.Queue;
 
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.BOLDMARKER;
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEWLINE;
-import static gov.nysenate.openleg.legislation.law.LawDocumentType.SECTION;
 
 public class LawPdfView extends BasePdfView {
     public static final float SPACING = 1.5f;
@@ -21,8 +20,7 @@ public class LawPdfView extends BasePdfView {
     private boolean bold = false;
 
     public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
-        String text = LawTextParser.markForBolding(lawDocQueue.element());
-        charBlocks = LawCharBlock.getBlocksFromText(text, lawDocQueue.remove().getDocType() == SECTION);
+        charBlocks = LawCharBlock.getBlocksFromText(lawDocQueue.remove());
 
         while(!lawDocQueue.isEmpty() || index < charBlocks.size()) {
             newPage(TOP, MARGIN, true);
@@ -32,8 +30,7 @@ public class LawPdfView extends BasePdfView {
                     if (lawDocQueue.isEmpty())
                         break;
                     index = 0;
-                    text = LawTextParser.markForBolding(lawDocQueue.element());
-                    charBlocks = LawCharBlock.getBlocksFromText(text, lawDocQueue.remove().getDocType() == SECTION);
+                    charBlocks = LawCharBlock.getBlocksFromText(lawDocQueue.remove());
                 }
             }
             endPage();
