@@ -57,7 +57,7 @@ public class TranscriptPdfView extends BasePdfView {
      * @param line to write.
      */
     private void drawPageNumber(String line) throws IOException {
-        float offset = right - (line.length() - 1) * FONT_WIDTH;
+        float offset = right - (line.length() + 1) * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, FONT_WIDTH*2);
         contentStream.drawString(line);
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE*2);
