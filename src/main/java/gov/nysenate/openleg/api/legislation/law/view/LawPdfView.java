@@ -15,7 +15,7 @@ import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEW
  * Converts a LawDocument, and potentially its children in order, into a PDF.
  */
 public class LawPdfView extends BasePdfView {
-    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 30f;
+    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 40f;
     private static final int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/(FONT_SIZE*SPACING));
     private List<LawCharBlock> charBlocks;
     private int index = 0;
