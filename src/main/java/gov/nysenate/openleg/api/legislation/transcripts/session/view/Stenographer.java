@@ -3,6 +3,9 @@ package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Contains information about which Stenographer wrote different Transcripts.
+ */
 public enum Stenographer {
     KIRKLAND(LocalDate.of(2011, 5, 16), "Kirkland Reporting Service"),
     CANDYCO1(2005, "Candyco Transcription Service, Inc."),
@@ -21,11 +24,20 @@ public enum Stenographer {
         this.name = name;
     }
 
+    /**
+     * Gets the name of the stenographer who wrote at that time.
+     * @param ldt DateTime of transcript.
+     * @return their name.
+     */
     public static String getStenographer(LocalDateTime ldt) {
         for (Stenographer s : Stenographer.values()) {
             if (s.start.isBefore(ldt) || s.start.equals(ldt))
                 return s.name;
         }
-        throw new RuntimeException("There should be a Stenographer for every DateTime.");
+        throw new IllegalArgumentException("There should be a Stenographer for every DateTime.");
+    }
+
+    public String getName() {
+        return name;
     }
 }

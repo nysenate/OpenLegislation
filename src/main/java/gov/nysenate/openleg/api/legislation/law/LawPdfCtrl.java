@@ -55,7 +55,7 @@ public class LawPdfCtrl extends BaseCtrl {
         LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
         Queue<LawDocument> lawDocs = new LinkedList<>();
         if (full) {
-            for (LawTreeNode node : docNode.getChildNodeList())
+            for (LawTreeNode node : docNode.getAllNodes())
                 lawDocs.add(lawData.getLawDocument(node.getDocumentId(), null));
         }
         else

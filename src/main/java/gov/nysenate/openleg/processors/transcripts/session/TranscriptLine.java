@@ -25,7 +25,7 @@ public class TranscriptLine
     private final String text;
 
     public TranscriptLine(String text) {
-        this.text = text;
+        this.text = text.trim();
     }
 
     public String fullText() {

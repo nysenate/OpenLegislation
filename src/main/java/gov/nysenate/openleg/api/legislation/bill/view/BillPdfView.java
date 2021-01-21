@@ -31,11 +31,13 @@ public class BillPdfView extends BasePdfView {
             "s {color: red;}\n" +
             "p.brk {page-break-before: always;}\n" +
             "body {font-size: 14px;}\n" +
-            ".header {font-size: 1.8em; text-align: center; font-weight: bold;}\n";
-    private static final String BILL_STYLES = STYLES +
+            ".header {font-size: 1.8em; text-align: center; font-weight: bold;}\n",
+
+            BILL_STYLES = STYLES +
             "@page {margin-left: 31.5px; margin-top: 27.5px;}\n" +
-            "body {font-size: 14px;}\n";
-    private static final String RESO_STYLES = STYLES +
+            "body {font-size: 14px;}\n",
+
+            RESO_STYLES = STYLES +
             "@page {margin-left: 50px; margin-top: 30px;}\n" +
             "body {font-size: 16px;}\n";
 

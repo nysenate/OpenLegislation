@@ -11,9 +11,11 @@ import java.util.Queue;
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.BOLDMARKER;
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEWLINE;
 
+/**
+ * Converts a LawDocument, and potentially its children in order, into a PDF.
+ */
 public class LawPdfView extends BasePdfView {
-    public static final float SPACING = 1.5f;
-    private static final float BOTTOM = 60f, MARGIN = 20f;
+    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 30f;
     private static final int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/(FONT_SIZE*SPACING));
     private List<LawCharBlock> charBlocks;
     private int index = 0;
@@ -21,7 +23,6 @@ public class LawPdfView extends BasePdfView {
 
     public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
         charBlocks = LawCharBlock.getBlocksFromText(lawDocQueue.remove());
-
         while(!lawDocQueue.isEmpty() || index < charBlocks.size()) {
             newPage(TOP, MARGIN, true);
             for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
@@ -57,5 +58,4 @@ public class LawPdfView extends BasePdfView {
         }
         contentStream.moveTextPositionByAmount(0, -FONT_SIZE*SPACING);
     }
-
 }
