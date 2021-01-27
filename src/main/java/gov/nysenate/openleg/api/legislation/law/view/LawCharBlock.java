@@ -8,20 +8,16 @@ import gov.nysenate.openleg.legislation.law.LawType;
 import org.elasticsearch.common.collect.Tuple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.*;
-import static gov.nysenate.openleg.legislation.law.LawDocumentType.CHAPTER;
 
 /**
  * Data class for information on a block of characters.
  */
 public class LawCharBlock {
-    public final static LawCharBlock EMPTY = new LawCharBlock("", null);
     private final Tuple<String, LawCharBlockType> info;
 
     public LawCharBlock(String match, LawCharBlockType type) {
@@ -44,14 +40,10 @@ public class LawCharBlock {
     public static List<LawCharBlock> getBlocksFromText(LawDocument lawDoc) {
         List<LawCharBlock> ret = new ArrayList<>();
         String text = markForBolding(lawDoc);
-        Matcher m = LAW_CHAR_BLOCK_PATTERN.matcher(text);
+        Matcher m = getMatcher(text);
         while (m.find()) {
-            // Finds the type associated with the matched block of text.
-            Optional<LawCharBlockType> type = Arrays.stream(LawCharBlockType.values())
-                    .filter(t -> m.group(t.name()) != null).findFirst();
-            if (!type.isPresent())
-                continue;
-            LawCharBlock curr = new LawCharBlock(m.group(), type.get());
+            LawCharBlockType type = parseType(m.group());
+            LawCharBlock curr = new LawCharBlock(m.group(), type);
             // In sections, newlines for paragraphs are marked by two spaces after
             // a newline at the end of the prior paragraph.
             if (lawDoc.getDocType() == LawDocumentType.SECTION && ret.size() > 1 &&
@@ -60,10 +52,9 @@ public class LawCharBlock {
                 ret.add(new LawCharBlock("\n", NEWLINE));
             ret.add(curr);
         }
-
         // Some extra lines for spacing.
-        ret.add(new LawCharBlock("\n", LawCharBlockType.NEWLINE));
-        ret.add(new LawCharBlock("\n", LawCharBlockType.NEWLINE));
+        ret.add(new LawCharBlock("\n", NEWLINE));
+        ret.add(new LawCharBlock("\n", NEWLINE));
         return ret;
     }
 
@@ -76,7 +67,7 @@ public class LawCharBlock {
         String text = doc.getText().replaceAll("\\\\n", "\n");
         // In text, the title may be split by newlines.
         List<String> toMatch = new ArrayList<>();
-        if (doc.getDocType() != CHAPTER)
+        if (doc.getDocType() != LawDocumentType.CHAPTER)
             toMatch.add(".*?" + doc.getTitle() + "[.]?");
         else {
             toMatch.add(".*?\n");
@@ -104,7 +95,7 @@ public class LawCharBlock {
                 if (!m.find())
                     return text;
             }
-            text = LawCharBlockType.addBoldMarkers(m.start(), m.end(), text);
+            text = addBoldMarkers(m.start(), m.end(), text);
         }
         return text;
     }
