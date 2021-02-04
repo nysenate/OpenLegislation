@@ -4,12 +4,12 @@ import gov.nysenate.openleg.legislation.law.*;
 
 import java.time.LocalDate;
 
-import static gov.nysenate.openleg.legislation.law.LawDocumentType.SECTION;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
-public abstract class LawProcessorUtils {
+public class LawProcessorUtils {
     protected final static String TEST_DATA_DIRECTORY = "src/test/resources/processor/law/";
+
+    private LawProcessorUtils() {}
 
     /**
      * Creates and returns a LawDocInfo. See getLawBlock for param info.
@@ -57,7 +57,7 @@ public abstract class LawProcessorUtils {
         builder.addChildNode(new LawTreeNode(info, ++builder.sequenceNo));
         if (builder.rootNode == null)
             builder.rootNode = builder.currParent();
-        if (type != SECTION)
+        if (!type.isSection())
             assertEquals(info, builder.currParent().getLawDocInfo());
         else
             assertNotEquals(info, builder.currParent().getLawDocInfo());
@@ -71,7 +71,7 @@ public abstract class LawProcessorUtils {
      */
     public static void testHierarchy(String locId, LawDocumentType type, String expected, LawChapterCode code, IdBasedLawBuilder builder) {
         // determineHierarchy is never called on a section.
-        if (type == SECTION)
+        if (type.isSection())
             fail();
         LawDocInfo info = LawProcessorUtils.getLawDocInfo(code, locId, type);
         LawBlock block = LawProcessorUtils.getLawBlock(code, locId);

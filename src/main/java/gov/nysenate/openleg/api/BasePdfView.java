@@ -19,7 +19,7 @@ import java.util.List;
  * Contains some common constants and methods for writing PDFs.
  */
 public abstract class BasePdfView {
-    protected static final float FONT_SIZE = 12f, TOP = 740f;
+    protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f;
     protected static final PDFont FONT = PDType1Font.COURIER;
     protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
     protected PDPageContentStream contentStream;
@@ -61,7 +61,7 @@ public abstract class BasePdfView {
      */
     protected void writePages(List<List<String>> pages, float margin) throws IOException {
         for (List<String> page : pages) {
-            newPage(TOP, margin, false);
+            newPage(DEFAULT_TOP, margin, false);
             for (String line : page) {
                 contentStream.drawString(line);
                 contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
@@ -90,6 +90,9 @@ public abstract class BasePdfView {
         } catch (COSVisitorException e) {
             throw new IOException("Error saving PDF.");
         }
-        doc.close();
+        // TODO: something with initialization?
+        finally {
+            doc.close();
+        }
     }
 }

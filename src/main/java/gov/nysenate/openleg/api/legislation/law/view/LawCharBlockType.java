@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.api.legislation.law.view;
 
+import org.springframework.lang.NonNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,6 +9,7 @@ import java.util.regex.Pattern;
  * An enum for storing the type of a small block of law text.
  */
 public enum LawCharBlockType {
+    // TODO: SPACE no longer needed?
     BOLDMARKER("~~~~"), ALPHANUM("[^\\s~]+"), SPACE("[ \t]+"), NEWLINE("\n");
 
     private final String pattern;
@@ -40,11 +43,9 @@ public enum LawCharBlockType {
      * @return the marked String.
      */
     public static String addBoldMarkers(int start, int end, String input) {
-        String temp = input.substring(0, start) + BOLDMARKER.pattern +
+        return input.substring(0, start) + BOLDMARKER.pattern +
                 input.substring(start, end) + BOLDMARKER.pattern +
                 input.substring(end);
-        // Ensures there's no attempt to bold things twice.
-        return temp.replaceAll("(" + BOLDMARKER.pattern + ")+", BOLDMARKER.pattern);
     }
 
     /**
@@ -52,7 +53,7 @@ public enum LawCharBlockType {
      * @param s a matched String.
      * @return the proper type.
      */
-    protected static LawCharBlockType parseType(String s) {
+    public static LawCharBlockType parseType(@NonNull String s) {
         if (s.equals(BOLDMARKER.pattern))
             return BOLDMARKER;
         if (s.equals(NEWLINE.pattern))

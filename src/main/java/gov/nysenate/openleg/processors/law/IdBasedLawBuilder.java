@@ -62,7 +62,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder 
         if (currParent() != null)
             currParent().addChild(node);
         // Section nodes should never become parents because they are the most granular (at the moment).
-        if (!node.getDocType().equals(LawDocumentType.SECTION))
+        if (!node.getDocType().isSection())
             parentNodes.push(node);
     }
 

@@ -40,6 +40,7 @@ public class LawCharBlockTypeTest {
 
         List<LawCharBlockType> expectedTypes = new ArrayList<>();
         for (int i = 0; i < parts.length; i++) {
+            // Bolding markers should be added in-between the strings.
             if (i != 0)
                 expectedTypes.add(BOLDMARKER);
             Matcher m = getMatcher(parts[i]);
@@ -58,12 +59,12 @@ public class LawCharBlockTypeTest {
     }
 
     @Test
-    public void currTypeTest() {
+    public void parseTypeTest() {
         String[] parts = {"ABCD", " \n\t"};
         StringBuilder sb = new StringBuilder(parts[0]);
         int end = sb.length();
         sb.append(parts[1]);
-
+        // Bolding the letters.
         String bolded = addBoldMarkers(0, end, sb.toString());
         Matcher m = getMatcher(bolded);
         List<LawCharBlockType> types = new ArrayList<>();

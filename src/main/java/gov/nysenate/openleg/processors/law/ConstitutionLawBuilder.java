@@ -30,7 +30,7 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (node.getDocType() == LawDocumentType.SECTION) {
+        if (node.getDocType().isSection()) {
             String articleStr = CONS_STR + node.getLocationId().split("S")[0];
             Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
             nodeArticle.ifPresent(getNode -> getNode.addChild(node));

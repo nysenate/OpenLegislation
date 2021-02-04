@@ -16,22 +16,23 @@ import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEW
  */
 public class LawPdfView extends BasePdfView {
     private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 40f;
-    private static final int LINES_PER_PAGE = (int) ((TOP - BOTTOM)/(FONT_SIZE*SPACING));
+    private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE*SPACING));
+    // TODO: Sorted Map from DocId to List<LawCharBlock>?
     private List<LawCharBlock> charBlocks;
     private int index = 0;
     private boolean bold = false;
 
     public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
-        charBlocks = LawCharBlock.getBlocksFromText(lawDocQueue.remove());
+        charBlocks = LawCharBlock.getBlocks(lawDocQueue.remove());
         while(!lawDocQueue.isEmpty() || index < charBlocks.size()) {
-            newPage(TOP, MARGIN, true);
+            newPage(DEFAULT_TOP, MARGIN, true);
             for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
                 writeLine();
                 if (index >= charBlocks.size()) {
                     if (lawDocQueue.isEmpty())
                         break;
                     index = 0;
-                    charBlocks = LawCharBlock.getBlocksFromText(lawDocQueue.remove());
+                    charBlocks = LawCharBlock.getBlocks(lawDocQueue.remove());
                 }
             }
             endPage();
