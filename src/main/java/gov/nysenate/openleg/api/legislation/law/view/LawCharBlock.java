@@ -5,7 +5,6 @@ import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
 import gov.nysenate.openleg.legislation.law.LawType;
-import org.elasticsearch.common.collect.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +17,20 @@ import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.*;
  * Data class for information on a block of characters.
  */
 public class LawCharBlock {
-    private final Tuple<String, LawCharBlockType> info;
+    private final String text;
+    private final LawCharBlockType type;
 
     public LawCharBlock(String match) {
-        this.info = new Tuple<>(match, parseType(match));
+        this.text = match;
+        this.type = parseType(match);
     }
 
     public String text() {
-        return info.v1();
+        return text;
     }
 
     public LawCharBlockType type() {
-        return info.v2();
+        return type;
     }
 
     /**

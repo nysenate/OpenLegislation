@@ -5,10 +5,10 @@ import gov.nysenate.openleg.legislation.law.LawDocument;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Queue;
 
-import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.BOLDMARKER;
+import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.BOLD_MARKER;
 import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEWLINE;
 
 /**
@@ -17,24 +17,16 @@ import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEW
 public class LawPdfView extends BasePdfView {
     private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 40f;
     private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE*SPACING));
-    // TODO: Sorted Map from DocId to List<LawCharBlock>?
-    private List<LawCharBlock> charBlocks;
-    private int index = 0;
+    private final Queue<LawCharBlock> charBlocks = new LinkedList<>();
     private boolean bold = false;
 
     public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
-        charBlocks = LawCharBlock.getBlocks(lawDocQueue.remove());
-        while(!lawDocQueue.isEmpty() || index < charBlocks.size()) {
-            newPage(DEFAULT_TOP, MARGIN, true);
-            for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++) {
+        for (LawDocument doc : lawDocQueue)
+            charBlocks.addAll(LawCharBlock.getBlocks(doc));
+        while(!charBlocks.isEmpty()) {
+            newPage(DEFAULT_TOP, MARGIN);
+            for (int currLine = 0; currLine < LINES_PER_PAGE; currLine++)
                 writeLine();
-                if (index >= charBlocks.size()) {
-                    if (lawDocQueue.isEmpty())
-                        break;
-                    index = 0;
-                    charBlocks = LawCharBlock.getBlocks(lawDocQueue.remove());
-                }
-            }
             endPage();
         }
         saveDoc();
@@ -45,14 +37,16 @@ public class LawPdfView extends BasePdfView {
      * @throws IOException if the writing was interrupted.
      */
     private void writeLine() throws IOException {
-        while (index < charBlocks.size()) {
-            LawCharBlock block = charBlocks.get(index++);
+        while (!charBlocks.isEmpty()) {
+            LawCharBlock block = charBlocks.poll();
             if (block.type() == NEWLINE)
                 break;
-            else if (block.type() == BOLDMARKER) {
+            else if (block.type() == BOLD_MARKER) {
                 bold = !bold;
                 continue;
             }
+            // TODO: speed bolding up by moving inside if?
+            //  Would need to change new page logic.
             contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
                     FONT, FONT_SIZE);
             contentStream.drawString(block.text());

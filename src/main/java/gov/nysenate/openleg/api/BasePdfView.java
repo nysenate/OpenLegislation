@@ -41,17 +41,15 @@ public abstract class BasePdfView {
      * Creates and initializes a new page.
      * @param top of the new page.
      * @param margin of the new page.
-     * @param keepFont true if the font from the end of last page should be kept.
      * @throws IOException if the page can't be written to.
      */
-    protected void newPage(float top, float margin, boolean keepFont) throws IOException {
+    protected void newPage(float top, float margin) throws IOException {
         currPage = new PDPage();
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
         contentStream.beginText();
         contentStream.moveTextPositionByAmount(margin, top);
-        if (!keepFont)
-            contentStream.setFont(FONT, FONT_SIZE);
+        contentStream.setFont(FONT, FONT_SIZE);
     }
 
     /**
@@ -61,7 +59,7 @@ public abstract class BasePdfView {
      */
     protected void writePages(List<List<String>> pages, float margin) throws IOException {
         for (List<String> page : pages) {
-            newPage(DEFAULT_TOP, margin, false);
+            newPage(DEFAULT_TOP, margin);
             for (String line : page) {
                 contentStream.drawString(line);
                 contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
@@ -90,7 +88,6 @@ public abstract class BasePdfView {
         } catch (COSVisitorException e) {
             throw new IOException("Error saving PDF.");
         }
-        // TODO: something with initialization?
         finally {
             doc.close();
         }

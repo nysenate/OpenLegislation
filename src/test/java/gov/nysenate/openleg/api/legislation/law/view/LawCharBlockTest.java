@@ -122,7 +122,7 @@ public class LawCharBlockTest {
         List<LawCharBlockType> expectedTypes = new ArrayList<>();
         for (String part : parts) {
             if (part.isEmpty())
-                expectedTypes.add(BOLDMARKER);
+                expectedTypes.add(BOLD_MARKER);
             else {
                 Matcher m = getMatcher(part);
                 while (m.find())

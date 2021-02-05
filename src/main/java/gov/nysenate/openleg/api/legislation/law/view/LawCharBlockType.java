@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public enum LawCharBlockType {
     // TODO: SPACE no longer needed?
-    BOLDMARKER("~~~~"), ALPHANUM("[^\\s~]+"), SPACE("[ \t]+"), NEWLINE("\n");
+    BOLD_MARKER("~~~~"), ALPHANUM("[^\\s~]+"), SPACE("[ \t]+"), NEWLINE("\n");
 
     private final String pattern;
 
@@ -43,8 +43,8 @@ public enum LawCharBlockType {
      * @return the marked String.
      */
     public static String addBoldMarkers(int start, int end, String input) {
-        return input.substring(0, start) + BOLDMARKER.pattern +
-                input.substring(start, end) + BOLDMARKER.pattern +
+        return input.substring(0, start) + BOLD_MARKER.pattern +
+                input.substring(start, end) + BOLD_MARKER.pattern +
                 input.substring(end);
     }
 
@@ -54,8 +54,8 @@ public enum LawCharBlockType {
      * @return the proper type.
      */
     public static LawCharBlockType parseType(@NonNull String s) {
-        if (s.equals(BOLDMARKER.pattern))
-            return BOLDMARKER;
+        if (s.equals(BOLD_MARKER.pattern))
+            return BOLD_MARKER;
         if (s.equals(NEWLINE.pattern))
             return NEWLINE;
         if (s.contains(" ") || s.contains("\t"))

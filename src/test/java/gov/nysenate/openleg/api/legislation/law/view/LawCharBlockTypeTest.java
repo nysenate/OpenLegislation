@@ -42,7 +42,7 @@ public class LawCharBlockTypeTest {
         for (int i = 0; i < parts.length; i++) {
             // Bolding markers should be added in-between the strings.
             if (i != 0)
-                expectedTypes.add(BOLDMARKER);
+                expectedTypes.add(BOLD_MARKER);
             Matcher m = getMatcher(parts[i]);
             while (m.find())
                 expectedTypes.add(parseType(m.group()));
@@ -61,6 +61,8 @@ public class LawCharBlockTypeTest {
     @Test
     public void parseTypeTest() {
         String[] parts = {"ABCD", " \n\t"};
+        LawCharBlockType[] expectedTypes = {BOLD_MARKER, ALPHANUM, BOLD_MARKER,
+                SPACE, NEWLINE, SPACE};
         StringBuilder sb = new StringBuilder(parts[0]);
         int end = sb.length();
         sb.append(parts[1]);
@@ -71,12 +73,8 @@ public class LawCharBlockTypeTest {
         while (m.find())
             types.add(parseType(m.group()));
 
-        assertEquals(6, types.size());
-        assertEquals(BOLDMARKER, types.get(0));
-        assertEquals(ALPHANUM, types.get(1));
-        assertEquals(BOLDMARKER, types.get(2));
-        assertEquals(SPACE, types.get(3));
-        assertEquals(NEWLINE, types.get(4));
-        assertEquals(SPACE, types.get(5));
+        assertEquals(expectedTypes.length, types.size());
+        for (int i = 0; i < expectedTypes.length; i++)
+            assertEquals(expectedTypes[i], types.get(i));
     }
 }
