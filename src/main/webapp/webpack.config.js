@@ -8,6 +8,11 @@ module.exports = {
         filename: 'index_bundle.js',
         publicPath: process.env.NODE_ENV === 'production' ? '/static/dist/' : '/'
     },
+    resolve: {
+        alias: {
+            app: path.resolve(__dirname, 'WEB-INF/app')
+        }
+    },
     module: {
         rules: [
             // Load sass files

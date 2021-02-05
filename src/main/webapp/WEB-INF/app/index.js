@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './app.scss'
-import Public from './public/Public'
+import PublicView from './views/public'
 
 function App() {
   return (
     <div>
-      <Public />
+      <PublicView />
     </div>
   )
 }
