@@ -26,7 +26,6 @@ public class TranscriptPdfView extends BasePdfView {
         for (List<String> page : pages) {
             newPage(top - FONT_WIDTH, 0);
             drawPageText(page);
-            // TODO: are there different page lengths?
             drawStenographer(transcript.getDateTime(), page.size()-1);
             endPage();
         }
@@ -46,7 +45,7 @@ public class TranscriptPdfView extends BasePdfView {
         for (String ln : page) {
             TranscriptLine line = new TranscriptLine(ln);
             if (line.isPageNumber())
-                drawPageNumber(line.fullText());
+                drawPageNumber(line.getText());
             else
                 drawText(line);
         }
@@ -65,7 +64,7 @@ public class TranscriptPdfView extends BasePdfView {
 
     private void drawText(TranscriptLine line) throws IOException {
         int indent = NO_LINE_NUM_INDENT;
-        String text = line.fullText();
+        String text = line.getText();
         // Line numbers should aligned left of the left vertical border.
         if (line.hasLineNumber())
             indent = text.split("\\s")[0].length() + 1;
@@ -84,7 +83,7 @@ public class TranscriptPdfView extends BasePdfView {
      */
     private void drawStenographer(LocalDateTime ldt, int lineCount) throws IOException {
         String stenographer = Stenographer.getStenographer(ldt);
-        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * 2 * FONT_SIZE; // * 2 because of double spacing.
+        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * 2; // * 2 because of double spacing.
         contentStream.moveTextPositionByAmount((right + left - stenographer.length() * FONT_WIDTH) / 2, offset);
         contentStream.drawString(stenographer);
     }

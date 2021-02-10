@@ -1,34 +1,35 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import org.apache.commons.text.WordUtils;
+import org.springframework.lang.NonNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 /**
  * Set of methods that function on individual transcript lines to help with parsing logic.
  */
-public class TranscriptLine
-{
+public class TranscriptLine {
     /** Regex to match any non alphanumeric or whitespace characters. */
-    private static final String INVALID_CHARACTERS_REGEX = "[^a-zA-Z0-9 ]+";
+    private static final String INVALID_CHARACTERS_REGEX = "[^\\w ]+";
 
     /** All page numbers occur in the first 10 characters of a line. */
-    private static final int MAXIMUM_PAGE_LINE_INDEX = 10;
+    private static final int MAX_PAGE_NUM_INDEX = 10;
 
     /** The maximum number of lines on a page. */
-    private static final int MAXIMUM_PAGE_LINE_NUMBER = 27;
+    private static final int MAX_PAGE_LINES = 27;
 
     /** The actual text of the line. */
     private final String text;
 
-    public TranscriptLine(String text) {
-        this.text = text.trim();
+    public TranscriptLine(@NonNull String text) {
+        this.text = text.replaceAll("[\r\f]", "");
     }
 
-    public String fullText() {
+    public String getText() {
         return text;
     }
 
@@ -41,10 +42,11 @@ public class TranscriptLine
      */
     public boolean isPageNumber() {
         String validText = stripInvalidCharacters().trim();
-        if (isNumber(validText)) {
-            return isRightAligned(validText) || greaterThanMaxPageLineNum(validText);
-        }
-        return false;
+        Optional<Integer> num = getNumber(validText);
+        if (!num.isPresent())
+            return false;
+        boolean isRightAligned = text.indexOf(validText) > MAX_PAGE_NUM_INDEX;
+        return isRightAligned || num.get() > MAX_PAGE_LINES;
     }
 
     /**
@@ -53,8 +55,8 @@ public class TranscriptLine
      *         <code>false</code> otherwise.
      */
     public boolean hasLineNumber() {
-        // split on two spaces so time typo's don't get treated as line numbers.
-        return isNumber(text.trim().split(" {2}")[0]) && !isPageNumber();
+        // split on two spaces so time typos don't get treated as line numbers.
+        return getNumber(text.trim().split(" {2}")[0]).isPresent() && !isPageNumber();
     }
 
     /**
@@ -63,88 +65,53 @@ public class TranscriptLine
      * or the text unaltered if it doesn't have a line number.
      */
     public String removeLineNumber() {
-        if (hasLineNumber()) {
-            if (text.trim().length() < 2) {
-                return text.trim().substring(1);
-            }
-            return text.trim().substring(2);
-        }
+        if (hasLineNumber())
+            return text.trim().substring(text.trim().length() < 2 ? 1 : 2);
         return text;
     }
 
     /**
-     * Determine if this TranscriptLine's text contains the transcripts location.
-     * @return
-     */
-    public boolean isLocation() {
-        return text.toUpperCase().matches(".*ALBANY.*NEW.*YORK.*");
-    }
-
-    /**
      * Extracts and returns the location data from a TranscriptLine.
-     * Only use this if you know via {@link #isLocation()} that this line contains the location.
-     * @return
+     * @return the location.
      */
-    public String getLocation() {
-        return removeLineNumber().toUpperCase().trim().replaceAll("\\s+", " ");
+    public Optional<String> getLocation() {
+        String temp = removeLineNumber().toUpperCase().replaceAll("\\s+", " ").trim();
+        if (temp.matches((".*ALBANY.*NEW.*YORK.*")))
+            return Optional.of(temp);
+        return Optional.empty();
     }
 
     /**
-     * Determines if this TranscriptLine's text contains date information.
-     * @return
+     * Extracts the date information from lines which contains the date, or an
+     * empty Optional if a date can't be extracted.
+     * @return the Optional, which may have a date.
      */
-    public boolean isDate() {
+    public Optional<LocalDate> getDate() {
+        String temp = WordUtils.capitalizeFully(removeLineNumber().replaceAll("[ ,]+", " ")
+                .replace(".", "").trim());
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy");
         try {
-            LocalDate.parse(getDateString(), dtf);
-        }
-        catch (DateTimeParseException ex) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Extracts the date information from lines which containd the date.
-     * Only use if the line contains date information via {@link #isDate()}.
-     * @return
-     */
-    public String getDateString() {
-        return WordUtils.capitalizeFully(removeLineNumber().replaceAll("[ ,]+", " ")
-                .replace(".", "").trim());
-    }
-
-    /**
-     * Determines if this TranscriptLine contains the time of the transcript.
-     * @return
-     */
-    public boolean isTime() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hmma");
-        try {
-            LocalTime.parse(getTimeString(), dtf);
+            return Optional.of(LocalDate.parse(temp, dtf));
         } catch (DateTimeParseException ex) {
-            return false;
+            return Optional.empty();
         }
-
-        return true;
     }
 
     /**
-     * Returns a string with time information parsed from this TranscriptLine.
-     * Only use if {@link #isTime()} determines this line has time information.
-     * @return
+     * Returns a string with time information parsed from this TranscriptLine,
+     * or an empty Optional if no time can be parsed.
+     * @return the Optional, which may have a time.
      */
-    public String getTimeString() {
-        // remove all erroneous characters including spaces.
-        String date = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm");
-        return date.trim().toUpperCase();
+    public Optional<LocalTime> getTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hmma");
+        String date = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm").trim().toUpperCase();
+        try {
+            return Optional.of(LocalTime.parse(date, dtf));
+        } catch (DateTimeParseException ex) {
+            return Optional.empty();
+        }
     }
 
-    /**
-     * Determines if this TranscriptLine contains the Transcript's session type info.
-     * @return
-     */
     public boolean isSession() {
         return text.contains("SESSION");
     }
@@ -154,8 +121,8 @@ public class TranscriptLine
     }
 
     /**
-     * Determines if this TranscriptLine contains the stenographer information.
-     * @return
+     * Lines with Stenographers need to be treated differently.
+     * @return true if this line contains the stenographer information.
      */
     public boolean isStenographer() {
         return text.matches(".*(Candyco Transcription Service, Inc.|\\(518\\) 371-8910).*");
@@ -171,21 +138,11 @@ public class TranscriptLine
 
     /** --- Internal Methods --- */
 
-    private boolean isNumber(String text) {
+    private Optional<Integer> getNumber(String text) {
         try {
-            Integer.parseInt(text.trim());
+            return Optional.of(Integer.parseInt(text.trim()));
         } catch (NumberFormatException e) {
-            return false;
+            return Optional.empty();
         }
-        return true;
-    }
-
-    private boolean greaterThanMaxPageLineNum(String validText) {
-        return Integer.parseInt(validText) > MAXIMUM_PAGE_LINE_NUMBER;
-    }
-
-    private boolean isRightAligned(String validText) {
-        int startIndex = text.indexOf(validText);
-        return startIndex > MAXIMUM_PAGE_LINE_INDEX;
     }
 }

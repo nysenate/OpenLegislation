@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class SqlCalendarDaoIT extends BaseTests {
@@ -69,7 +69,7 @@ public class SqlCalendarDaoIT extends BaseTests {
         int initialCalCount = calendarDao.getCalendarCount();
         int numCals = 10;
         for (int i = 0; i < numCals; i++)
-            putCalendar(CalendarUtils.createGenericCalendar(new CalendarId(calSequenceNo++, 2020)));
+            putCalendar(CalendarUtils.createGenericCalendar(new CalendarId(calSequenceNo++, 2000)));
         assertEquals(initialCalCount + numCals, calendarDao.getCalendarCount());
     }
 

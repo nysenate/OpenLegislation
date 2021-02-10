@@ -57,7 +57,7 @@ abstract public class BaseLegislativeContent
         return this.getPublishedDateTime() != null;
     }
 
-    public void  setYear(int year) { // this is active year, not session year
+    public void setYear(int year) { // this is active year, not session year
         this.year = year;
     }
 
