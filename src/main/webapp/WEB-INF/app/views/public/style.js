@@ -8,7 +8,7 @@ export const HomePage = styled.div`
 
 export const PublicHeader = styled.section`
   margin-bottom: 0;
-  height: 30rem;
+  height: 300px;
   background: #008cba;
   position: relative;
 `
@@ -18,25 +18,25 @@ export const Title = styled.h1`
   font-family: 'Roboto Slab', 'sans-serif';
   font-weight: 400;
   color: #fff;
-  line-height: 20rem;
-  font-size: 8rem;
+  line-height: 200px;
+  font-size: 80px;
   text-align: center;
-  text-shadow: 0 0 0.1rem #235674;
+  text-shadow: 0 0 1px #235674;
 `
 
 export const SenateSealLogo = styled.img`
-  height: 12rem;
+  height: 120px;
   vertical-align: text-top;
-  margin-right: 2rem;
+  margin-right: 20px;
 `
 
 export const AboutCard = styled(Card)`
   position: relative;
-  max-width: 96rem;
-  padding: 5rem 3rem;
-  margin: -10rem auto 0 auto;
+  max-width: 960px;
+  padding: 50px 30px;
+  margin: -100px auto 0 auto;
   font-weight: 400;
-  font-size: 1.9rem;
+  font-size: 19px;
   text-align: center;
   
   & > a {
@@ -45,42 +45,42 @@ export const AboutCard = styled(Card)`
 `
 
 export const PublicCard = styled(Card)`
-  margin: 5rem auto 0 auto;
-  padding: 2rem 2rem;
-  max-width: 96rem;
-  font-size: 1.9rem;
+  margin: 50px auto 0 auto;
+  padding: 20px 20px;
+  max-width: 960px;
+  font-size: 19px;
   font-weight: 300;
   text-align: center;
   
   & > p {
-    margin: 1rem 0;
+    margin: 10px 0;
   }
 `
 
 export const SubTitle = styled.h3`
-  margin: 0 auto 2rem 0;
-  font-size: 2.4rem;
+  margin: 0 auto 20px 0;
+  font-size: 24px;
   font-weight: 400;
   text-align: center;
 `
 
 export const ApiKeyFormContainer = styled.div`
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 30px;
   
   & input {
     border: 0;
-    border-bottom: .05rem solid #bfbfbf;
+    border-bottom: .5px solid #bfbfbf;
     margin: 0 auto;
-    width: 50rem;
+    width: 500px;
     text-align: center;
-    font-size: 1.6rem;
+    font-size: 16px;
     font-weight: 300;
     
     :focus {
       border: 0;
-      border-bottom: .2rem solid rgb(63, 81, 181); 
-      //outline: .1rem solid rgb(63, 81, 181);
+      border-bottom: 2px solid rgb(63, 81, 181); 
+      //outline: 1px solid rgb(63, 81, 181);
       outline: none
     }
   }
@@ -91,19 +91,19 @@ export const ApiKeyFormContainer = styled.div`
 `
 
 export const Button = styled.button`
-  width: 15rem;
+  width: 150px;
   color: rgba(255,255,255,0.87);
-  box-shadow: 0 .2rem .5rem 0 rgba(0,0,0,.26);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
   background-color: rgb(57,73,171);
   font-weight: 500;
-  font-size: 1.4rem;
+  font-size: 14px;
   cursor: pointer;
-  min-height: 3.6rem;
+  min-height: 36px;
   text-align: center;
-  border-radius: .3rem;
+  border-radius: 3px;
   border: 0;
-  margin: .6rem 1.6rem;
-  padding: 0 .6rem;
+  margin: 6px 16px;
+  padding: 0 6px;
   text-transform: uppercase;  
 `
 
@@ -111,15 +111,15 @@ export const DataContainer = styled.div`
   display:flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 1.6rem;
+  padding: 16px;
   flex-wrap: wrap;
 `
 
 export const DataTypeIcon = styled.span`
-  font-size: 3rem;
-  line-height: 7.5rem;
+  font-size: 30px;
+  line-height: 75px;
   color: white;
-  padding: 1.5rem;
-  //width: 7.5rem;
+  padding: 15px;
+  //width: 75px;
   //height: auto;
 `

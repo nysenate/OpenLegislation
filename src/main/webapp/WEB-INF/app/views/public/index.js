@@ -40,6 +40,7 @@ export default function PublicView() {
           <p>
             Feel free to access it by using your API Key.
           </p>
+
           <ApiKeyFormContainer>
             <form onSubmit={() => alert(apiKeyRef.current.value)}>
               <input
