@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Basic info that is common to all pieces of legislative content.
  */
-abstract public class BaseLegislativeContent
+public abstract class BaseLegislativeContent
 {
     /** The session this object was created in. */
     protected SessionYear session;

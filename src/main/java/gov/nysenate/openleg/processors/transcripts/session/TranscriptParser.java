@@ -36,21 +36,22 @@ public class TranscriptParser {
         LocalDate date = null;
         LocalTime time = null;
         String sessionType = null, location = null;
+        boolean doneWithFirstPage = false;
 
         for (int i = 0; i < lines.size(); i++) {
             TranscriptLine line = new TranscriptLine(lines.get(i));
             // Some transcripts start with 3 incorrect lines that should be skipped.
-            if (transcriptText.length() == 0 && line.isSession()) {
+            if (i == 0 && line.getSession().isPresent()) {
                 i += 2;
                 continue;
             }
 
-            if (!doneWithFirstPage(sessionType, location, date, time)) {
+            if (!doneWithFirstPage) {
                 date = line.getDate().orElse(date);
                 time = line.getTime().orElse(time);
                 location = line.getLocation().orElse(location);
-                if (line.isSession())
-                    sessionType = line.removeLineNumber().trim();
+                sessionType = line.getSession().orElse(sessionType);
+                doneWithFirstPage = (date != null && time != null && location != null && sessionType != null);
             }
             transcriptText.append(line.getText()).append("\n");
         }
@@ -59,9 +60,5 @@ public class TranscriptParser {
             throw new ParseError("Date or time could not be parsed from TranscriptFile " + transcriptFile.getOriginalFilename());
         TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time));
         return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText.toString());
-    }
-
-    private static boolean doneWithFirstPage(String sessionType, String location, LocalDate date, LocalTime time) {
-        return sessionType != null && location != null && date != null && time != null;
     }
 }

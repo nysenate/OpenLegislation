@@ -89,7 +89,7 @@ public class TranscriptTextUtils {
                 if (line.getText().trim().matches("(NEW YORK STATE SENATE)|(.*STENOGRAPHIC RECORD.*)") ||
                 line.getTime().isPresent())
                     blankLines = 2;
-                else if (line.isSession())
+                else if (line.getSession().isPresent())
                     blankLines = 3;
                 page.addAll(Collections.nCopies(blankLines, ""));
             }

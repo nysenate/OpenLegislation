@@ -18,8 +18,8 @@ public class TranscriptLineTest {
 
     @Test
     public void constructorTest() {
-        lineTexts = new String[]{"Here's a line!", ""};
-        expected = lineTexts;
+        lineTexts = new String[]{"Here's a line!", "", "\rA", "\fB"};
+        expected = new String[]{lineTexts[0], "", "A", "B"};
         testHelper(TranscriptLine::getText);
     }
 
@@ -85,9 +85,10 @@ public class TranscriptLineTest {
 
     @Test
     public void testIsSessionType() {
-        lineTexts = new String[]{"   12           REGULAR SESSION", "               EXTRAORDINARY SESSION"};
-        expected = new Object[]{true, true};
-        testHelper(TranscriptLine::isSession);
+        lineTexts = new String[]{"   12           REGULAR SESSION", "               EXTRAORDINARY SESSION",
+        "2                      Committee notices."};
+        expected = new Object[]{true, true, false};
+        optionalTestHelper(TranscriptLine::getSession, Optional::isPresent);
     }
 
     @Test

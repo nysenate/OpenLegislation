@@ -20,7 +20,6 @@ public interface TranscriptFileDao
 
     /**
      * Retrieves a list of TranscriptFiles that are awaiting processing.
-     * i.e. {@link TranscriptFile#pendingProcessing} is true.
      *
      * @param limOff Specifies the maximum number of TranscriptFiles to fetch
      * @return List<TranscriptFile>

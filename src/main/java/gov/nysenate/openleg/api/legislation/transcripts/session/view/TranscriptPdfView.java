@@ -26,6 +26,7 @@ public class TranscriptPdfView extends BasePdfView {
         for (List<String> page : pages) {
             newPage(top - FONT_WIDTH, 0);
             drawPageText(page);
+            // TODO: different page lengths for different dates?
             drawStenographer(transcript.getDateTime(), page.size()-1);
             endPage();
         }

@@ -112,8 +112,10 @@ public class TranscriptLine {
         }
     }
 
-    public boolean isSession() {
-        return text.contains("SESSION");
+    public Optional<String> getSession() {
+        if (text.contains("SESSION"))
+            return Optional.of(removeLineNumber().trim());
+        return Optional.empty();
     }
 
     public boolean isEmpty() {
