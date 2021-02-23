@@ -6,28 +6,31 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Pdf representation of a transcript designed to match the formatting
  * of the official transcripts.
  */
 public class TranscriptPdfView extends BasePdfView {
-    private static final float top = 710f, bot = 90f, left = 105f, right = 575f, FONT_WIDTH = 7f;
-    private static final float[] X_VALS = {left, left, right, right}, Y_VALS = {top, bot, bot, top};
-    private static final int NO_LINE_NUM_INDENT = 11, STENOGRAPHER_LINE_NUM = 26;
+    private static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f, SPACING = 2;
+    private static final float[] X_VALS = {LEFT, LEFT, RIGHT, RIGHT}, Y_VALS = {TOP, BOTTOM, BOTTOM, TOP};
+    private static final int NO_LINE_NUM_INDENT = 11, STENOGRAPHER_LINE_NUM = 27;
+    private final String stenographer;
+    private final float stenographer_center;
 
     public TranscriptPdfView(Transcript transcript) throws IOException {
         if (transcript == null)
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
 
+        this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
+        this.stenographer_center = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
         List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
         for (List<String> page : pages) {
-            newPage(top - FONT_WIDTH, 0);
+            newPage(TOP - FONT_WIDTH, 0);
             drawPageText(page);
-            // TODO: different page lengths for different dates?
-            drawStenographer(transcript.getDateTime(), page.size()-1);
             endPage();
         }
         saveDoc();
@@ -46,10 +49,11 @@ public class TranscriptPdfView extends BasePdfView {
         for (String ln : page) {
             TranscriptLine line = new TranscriptLine(ln);
             if (line.isPageNumber())
-                drawPageNumber(line.getText());
+                drawPageNumber(line.getText().trim());
             else
                 drawText(line);
         }
+        drawStenographer(page.size());
     }
 
     /**
@@ -57,35 +61,31 @@ public class TranscriptPdfView extends BasePdfView {
      * @param line to write.
      */
     private void drawPageNumber(String line) throws IOException {
-        float offset = right - (line.length() + 1) * FONT_WIDTH;
-        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH*2);
+        float offset = RIGHT - (line.length() + 1) * FONT_WIDTH;
+        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH * SPACING);
         contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE*2);
+        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * SPACING);
     }
 
     private void drawText(TranscriptLine line) throws IOException {
         int indent = NO_LINE_NUM_INDENT;
-        String text = line.getText();
-        // Line numbers should aligned left of the left vertical border.
-        if (line.hasLineNumber())
-            indent = text.split("\\s")[0].length() + 1;
-        // Lines without line numbers should have their spacing between each
-        // vertical line similar to other transcripts.
-        float offset = left - indent * FONT_WIDTH;
+        Matcher m = Pattern.compile(" *\\d+").matcher(line.getText());
+        // Line numbers should align left of the left vertical border.
+        if (line.hasLineNumber() && m.find())
+            indent = m.group().length() + 1;
+        float offset = LEFT - indent * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);
-        contentStream.drawString(text);
+        contentStream.drawString(line.getText());
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE);
     }
 
     /**
      * The stenographer should be centered at the bottom of the page
-     * @param ldt when the session occurred.
      * @param lineCount of the session.
      */
-    private void drawStenographer(LocalDateTime ldt, int lineCount) throws IOException {
-        String stenographer = Stenographer.getStenographer(ldt);
-        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * 2; // * 2 because of double spacing.
-        contentStream.moveTextPositionByAmount((right + left - stenographer.length() * FONT_WIDTH) / 2, offset);
+    private void drawStenographer(int lineCount) throws IOException {
+        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * SPACING;
+        contentStream.moveTextPositionByAmount(stenographer_center, offset);
         contentStream.drawString(stenographer);
     }
 }

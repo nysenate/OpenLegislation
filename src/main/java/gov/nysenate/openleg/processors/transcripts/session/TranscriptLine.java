@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.Stenographer;
 import org.apache.commons.text.WordUtils;
 import org.springframework.lang.NonNull;
 
@@ -49,25 +50,15 @@ public class TranscriptLine {
         return isRightAligned || num.get() > MAX_PAGE_LINES;
     }
 
+
     /**
      * Determines if this TranscriptLine's text contains a line number.
      * @return <code>true</code> if this TranscriptLine contains a line number;
      *         <code>false</code> otherwise.
      */
     public boolean hasLineNumber() {
-        // split on two spaces so time typos don't get treated as line numbers.
+        // Split on two spaces so time typos don't get treated as line numbers.
         return getNumber(text.trim().split(" {2}")[0]).isPresent() && !isPageNumber();
-    }
-
-    /**
-     * Attempts to remove the line number from this line.
-     * @return Returns line text with the line number removed
-     * or the text unaltered if it doesn't have a line number.
-     */
-    public String removeLineNumber() {
-        if (hasLineNumber())
-            return text.trim().substring(text.trim().length() < 2 ? 1 : 2);
-        return text;
     }
 
     /**
@@ -127,7 +118,7 @@ public class TranscriptLine {
      * @return true if this line contains the stenographer information.
      */
     public boolean isStenographer() {
-        return text.matches(".*(Candyco Transcription Service, Inc.|\\(518\\) 371-8910).*");
+        return text.matches(".*(" + Stenographer.CANDYCO1.getName() + "|\\(518\\) 371-8910).*");
     }
 
     /**
@@ -136,6 +127,17 @@ public class TranscriptLine {
      */
     public String stripInvalidCharacters() {
         return text.replaceAll(INVALID_CHARACTERS_REGEX,"");
+    }
+
+    /**
+     * Attempts to remove the line number from this line.
+     * @return Returns line text with the line number removed
+     * or the text unaltered if it doesn't have a line number.
+     */
+    protected String removeLineNumber() {
+        if (hasLineNumber())
+            return text.trim().substring(text.trim().length() < 2 ? 1 : 2);
+        return text;
     }
 
     /** --- Internal Methods --- */

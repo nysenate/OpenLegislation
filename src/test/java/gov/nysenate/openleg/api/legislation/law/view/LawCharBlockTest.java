@@ -24,8 +24,8 @@ import static org.junit.Assert.assertTrue;
 public class LawCharBlockTest {
     @Test
     public void constructorTest() {
-        String[] matches = {"AA", "BB", " \t", "\n"};
-        LawCharBlockType[] types = {ALPHANUM, ALPHANUM, SPACE, NEWLINE};
+        String[] matches = {"AA", "BB \t", "\n"};
+        LawCharBlockType[] types = {ALPHANUM, ALPHANUM, NEWLINE};
         for (int i = 0; i < types.length; i++) {
             LawCharBlock curr = new LawCharBlock(matches[i]);
             assertEquals(matches[i], curr.text());
@@ -79,7 +79,7 @@ public class LawCharBlockTest {
     @Test
     public void unconsolidatedChapterGetBlocksTest() {
         String[] parts = {"", "First line!\n", "", "And more. ", "",
-                BAT.getName() + " Law", "", " Here's text."};
+                BAT.getChapterName() + " Law", "", " Here's text."};
         boldChapterTestHelper(parts, BAT, "2");
     }
 

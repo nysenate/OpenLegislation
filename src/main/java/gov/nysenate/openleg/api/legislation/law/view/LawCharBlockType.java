@@ -9,8 +9,7 @@ import java.util.regex.Pattern;
  * An enum for storing the type of a small block of law text.
  */
 public enum LawCharBlockType {
-    // TODO: SPACE no longer needed?
-    BOLD_MARKER("~~~~"), ALPHANUM("[^\\s~]+"), SPACE("[ \t]+"), NEWLINE("\n");
+    BOLD_MARKER("~~~~"), NEWLINE("\n"), ALPHANUM("[^\n~]+");
 
     private final String pattern;
 
@@ -58,8 +57,6 @@ public enum LawCharBlockType {
             return BOLD_MARKER;
         if (s.equals(NEWLINE.pattern))
             return NEWLINE;
-        if (s.contains(" ") || s.contains("\t"))
-            return SPACE;
         return ALPHANUM;
     }
 }

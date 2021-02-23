@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
 public class LawCharBlockTypeTest {
     @Test
     public void getMatcherTest() {
-        String toMatch = "0 2 4";
+        String toMatch = "0\n2\n4";
         Matcher m = getMatcher(toMatch);
         for (int i = 0; i < toMatch.length(); i++) {
             if (!m.find())
@@ -24,7 +24,7 @@ public class LawCharBlockTypeTest {
             if (i%2 == 0)
                 assertEquals(Integer.toString(i), m.group());
             else
-                assertEquals(" ", m.group());
+                assertEquals("\n", m.group());
         }
     }
 
@@ -62,7 +62,7 @@ public class LawCharBlockTypeTest {
     public void parseTypeTest() {
         String[] parts = {"ABCD", " \n\t"};
         LawCharBlockType[] expectedTypes = {BOLD_MARKER, ALPHANUM, BOLD_MARKER,
-                SPACE, NEWLINE, SPACE};
+                ALPHANUM, NEWLINE, ALPHANUM};
         StringBuilder sb = new StringBuilder(parts[0]);
         int end = sb.length();
         sb.append(parts[1]);

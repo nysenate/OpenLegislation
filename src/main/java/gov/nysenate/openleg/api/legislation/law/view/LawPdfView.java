@@ -15,8 +15,8 @@ import static gov.nysenate.openleg.api.legislation.law.view.LawCharBlockType.NEW
  * Converts a LawDocument, and potentially its children in order, into a PDF.
  */
 public class LawPdfView extends BasePdfView {
-    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 40f;
-    private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE*SPACING));
+    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 50f;
+    private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE * SPACING));
     private final Queue<LawCharBlock> charBlocks = new LinkedList<>();
     private boolean bold = false;
 
@@ -41,16 +41,14 @@ public class LawPdfView extends BasePdfView {
             LawCharBlock block = charBlocks.poll();
             if (block.type() == NEWLINE)
                 break;
-            else if (block.type() == BOLD_MARKER) {
+            else if (block.type() == BOLD_MARKER)
                 bold = !bold;
-                continue;
+            else {
+                contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
+                        FONT, FONT_SIZE);
+                contentStream.drawString(block.text());
             }
-            // TODO: speed bolding up by moving inside if?
-            //  Would need to change new page logic.
-            contentStream.setFont(bold ? PDType1Font.COURIER_BOLD :
-                    FONT, FONT_SIZE);
-            contentStream.drawString(block.text());
         }
-        contentStream.moveTextPositionByAmount(0, -FONT_SIZE*SPACING);
+        contentStream.moveTextPositionByAmount(0, -FONT_SIZE * SPACING);
     }
 }

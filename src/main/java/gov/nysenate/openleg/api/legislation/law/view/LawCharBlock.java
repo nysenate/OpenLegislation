@@ -64,7 +64,7 @@ public class LawCharBlock {
      * @return if we're at the start of a new paragraph in a section.
      */
     private static boolean isParagraphStart(boolean isSection, List<LawCharBlock> blockList, LawCharBlock curr) {
-        return curr.text().equals("  ") && isSection && blockList.size() > 1 &&
+        return curr.text().matches("^ {2}\\w.*") && isSection && blockList.size() > 1 &&
                 blockList.get(blockList.size()-1).type() == NEWLINE &&
                 blockList.get(blockList.size()-2).type() == ALPHANUM;
     }
@@ -82,10 +82,11 @@ public class LawCharBlock {
             toMatch.add(".*?" + doc.getTitle() + "[.]?");
         else {
             toMatch.add(".*?\n");
-            if (LawChapterCode.valueOf(doc.getLawId()).getType() == LawType.CONSOLIDATED)
+            LawChapterCode code = LawChapterCode.valueOf(doc.getLawId());
+            if (code.getType() == LawType.CONSOLIDATED)
                 toMatch.add(getConsolidatedMatch(doc));
             // Bolds the law name as well.
-            String lawName = LawChapterCode.valueOf(doc.getLawId()).getName() + "( Law)?";
+            String lawName = code.getChapterName() + "( Law)?";
             lawName = lawName.replaceAll("(?i)(and|&)", "(and|&)");
             toMatch.add(lawName);
         }
@@ -93,10 +94,11 @@ public class LawCharBlock {
         for (String pattern : toMatch) {
             // Newline characters instead of spaces could split up the Strings we're looking for.
             pattern = pattern.replaceAll(" ", "[ \n]+");
-            Matcher m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(text);
-            if (!m.find())
-                continue;
-            text = addBoldMarkers(m.start(), m.end(), text);
+            pattern = pattern.toUpperCase() + "|" + pattern;
+            Matcher m = Pattern.compile(pattern).matcher(text);
+            // TODO: prevent double bolding
+            if (m.find())
+                text = addBoldMarkers(m.start(), m.end(), text);
         }
         return text;
     }
