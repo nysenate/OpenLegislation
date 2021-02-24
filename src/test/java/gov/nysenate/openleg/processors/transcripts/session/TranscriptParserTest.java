@@ -21,8 +21,8 @@ import static org.junit.Assert.assertThrows;
 
 @Category(IntegrationTest.class)
 public class TranscriptParserTest extends BaseTests {
-    private final static String[] FILENAMES = {"simple.txt", "noDate.txt", "noTime.txt", "badStartLines.txt"};
-    private final static String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
+    private static final String[] FILENAMES = {"simple.txt", "noDate.txt", "noTime.txt", "badStartLines.txt"};
+    private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
     FILE_TEXT = "                                                              10\n" +
             "\n         1\n" +
             "\n         2                       ALBANY, NEW YORK\n" +

@@ -42,7 +42,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder 
                 // Remove parent location ID.
                 String trimLocId = StringUtils.removeStart(blockLocID, parentLocID);
                 LawDocumentType parentType = currParent().getDocType();
-                Matcher blockMatch = locationPattern.matcher(trimLocId);
+                Matcher blockMatch = LOCATION_PATTERN.matcher(trimLocId);
                 if (blockMatch.matches() && lawLevelCodes.get(blockMatch.group(1)) != parentType)
                     return trimLocId;
             }

@@ -36,7 +36,7 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
         String locationId = super.determineHierarchy(block);
         if (currParent().isRootNode()) {
             // Determine doc type
-            Matcher locMatcher = locationPattern.matcher(locationId);
+            Matcher locMatcher = LOCATION_PATTERN.matcher(locationId);
             if (locMatcher.matches()) {
                 LawDocumentType docType = lawLevelCodes.get(locMatcher.group(1));
                 if (!docType.equals(expectedOrder.getFirst())) {

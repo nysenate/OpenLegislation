@@ -17,10 +17,9 @@ import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
-public abstract class LawTitleParser
-{
-    private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-    private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)", SEPARATORS = "(-|\\.|\\s|\\\\n)+",
+public class LawTitleParser {
+    private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
+    private static final String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)", SEPARATORS = "(-|\\.|\\s|\\\\n)+",
     // The first %s will be filled with the type (ARTICLE, TITLE, and so on).
     NON_SECTION_PREFIX_PATTERN = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPARATORS,
     SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.)",
@@ -35,13 +34,15 @@ public abstract class LawTitleParser
     // String to match a docType and its id, saving the latter.
     DOC_TYPE_STRING = ".*?%s *%s.*";
     // Pattern to match a full docTypeId, and and parse out the starting number.
-    private final static Pattern ID_NUM_PATTERN = Pattern.compile("(\\d+)([-*]?.*)");
-    private final static int MAX_WIDTH = 140;
+    private static final Pattern ID_NUM_PATTERN = Pattern.compile("(\\d+)([-*]?.*)");
+    private static final int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
-    private final static List<String> NO_TITLES = Arrays.asList(LSA.name(), POA.name(),
+    private static final List<String> NO_TITLES = Arrays.asList(LSA.name(), POA.name(),
             PNY.name(), PCM.name(), BAT.name(), CCT.name());
-    protected final static String NO_TITLE = "No title";
+    protected static final String NO_TITLE = "No title";
+
+    private LawTitleParser() {}
 
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
@@ -69,7 +70,7 @@ public abstract class LawTitleParser
      */
     private static String extractTitleFromChapter(LawDocInfo docInfo) {
         try {
-            return LawChapterCode.valueOf(docInfo.getLawId()).getName();
+            return LawChapterCode.valueOf(docInfo.getLawId()).getChapterName();
         }
         catch (IllegalArgumentException ex) {
             return docInfo.getLawId() + " Law";
@@ -251,7 +252,7 @@ public abstract class LawTitleParser
      */
     private static Pattern sectionPattern(String lawId, String id) {
         // A non-unconsolidated law may have "#." or "a." or "(a)" before the title.
-        String trueBeforeTitlePattern = BEFORE_TITLE_PATTERN + (LawChapterCode.isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
+        String trueBeforeTitlePattern = BEFORE_TITLE_PATTERN + (isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
         // EPT laws end their titles with a newline (\n).
         String trueTitlePattern = TITLE_PATTERN.replace(".", lawId.equals(EPT.name()) ? "\\\\" : ".");
         String fullPattern = String.format(trueBeforeTitlePattern, id) + trueTitlePattern + ".*";

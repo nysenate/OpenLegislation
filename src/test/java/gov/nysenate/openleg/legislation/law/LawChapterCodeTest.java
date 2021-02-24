@@ -1,21 +1,15 @@
 package gov.nysenate.openleg.legislation.law;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.legislation.law.LawChapterCode;
-import gov.nysenate.openleg.legislation.law.LawType;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.junit.Assert.*;
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
+import static org.junit.Assert.*;
 
 
 @Category(UnitTest.class)
 public class LawChapterCodeTest {
-    private void test(String citation, LawChapterCode expected) {
-        assertEquals(expected, LawChapterCode.lookupCitation(citation).orElse(null));
-    }
-
     /**
      * Tests all unique citations that could not otherwise be identified.
      */
@@ -101,11 +95,15 @@ public class LawChapterCodeTest {
      */
     @Test
     public void coverageTests() {
-        assertTrue(LawChapterCode.isUnconsolidated(LSA.name()));
-        assertFalse(LawChapterCode.isUnconsolidated(CNS.name()));
+        assertTrue(isUnconsolidated(LSA.name()));
+        assertFalse(isUnconsolidated(CNS.name()));
         assertTrue(TAX.hasNumericalTitles());
         assertFalse(CVS.hasNumericalTitles());
         assertEquals(LawType.CONSOLIDATED, CCO.getType());
-        assertEquals("Cooperative Corporations", CCO.getName());
+        assertEquals("Cooperative Corporations", CCO.getChapterName());
+    }
+
+    private void test(String citation, LawChapterCode expected) {
+        assertEquals(expected, LawChapterCode.lookupCitation(citation).orElse(null));
     }
 }

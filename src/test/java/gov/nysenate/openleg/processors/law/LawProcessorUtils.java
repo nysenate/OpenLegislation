@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import static org.junit.Assert.*;
 
 public class LawProcessorUtils {
-    protected final static String TEST_DATA_DIRECTORY = "src/test/resources/processor/law/";
+    protected static final String TEST_DATA_DIRECTORY = "src/test/resources/processor/law/";
 
     private LawProcessorUtils() {}
 

@@ -20,7 +20,7 @@ public class LawDocInfoView implements ViewObject
     public LawDocInfoView(LawDocInfo docInfo) {
         if (docInfo != null) {
             this.lawId = docInfo.getLawId();
-            this.lawName = LawChapterCode.valueOf(this.lawId).getName();
+            this.lawName = LawChapterCode.valueOf(this.lawId).getChapterName();
             this.locationId = docInfo.getLocationId();
             this.title = (docInfo.getTitle() != null) ? docInfo.getTitle().replaceAll("\\\\n", " ") : null;
             this.docType = docInfo.getDocType().name();

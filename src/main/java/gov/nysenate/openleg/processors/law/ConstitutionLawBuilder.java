@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  * A class for the special case of the Constitution.
  */
 public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuilder {
-    private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*");
-    private static final Pattern FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
+    private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*"),
+    FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
 
     // Maps location IDs to titles.
     private final Map<String, String> titles = new HashMap<>();

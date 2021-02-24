@@ -19,6 +19,8 @@ import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 public class LawDocIdFixer {
     private static final Logger logger = LoggerFactory.getLogger(LawDocIdFixer.class);
 
+    private LawDocIdFixer() {}
+
     /** Hacks to fix various document id inconsistencies. */
     private static final HashMap<String, String> docIdReplacements = new HashMap<>();
     static {
