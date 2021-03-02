@@ -6,6 +6,7 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,7 +61,7 @@ public class ConstitutionLawBuilderTest {
     }
 
     private void addConDocument(String locId, String method, boolean isNewDoc) {
-        LawBlock block = LawProcessorUtils.getLawBlock(CODE, locId, method);
+        LawBlock block = LawTestUtils.getLawBlock(CODE, locId, method);
         builder.addInitialBlock(block, isNewDoc, null);
         assertTrue(builder.rootNode.findNode(CODE.name() + locId, false).isPresent());
     }
@@ -70,10 +71,11 @@ public class ConstitutionLawBuilderTest {
      * Does not initialize a root node if locId is an empty String.
      */
     private void initConstitutionBuilder() {
-        builder = (ConstitutionLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(CODE.name(), LocalDate.now()), null);
+        LawVersionId id = new LawVersionId(CODE.name(), LocalDate.now());
+        this.builder = (ConstitutionLawBuilder) AbstractLawBuilder.makeLawBuilder(id, null);
         Scanner scanner;
         try {
-            scanner = new Scanner(new File(LawProcessorUtils.TEST_DATA_DIRECTORY + "ConstitutionRootSample"));
+            scanner = new Scanner(new File(LawTestUtils.TEST_DATA_DIRECTORY + "ConstitutionRootSample"));
         }
         catch (FileNotFoundException e) {
             fail("Error! Sample data not found.");
@@ -83,11 +85,8 @@ public class ConstitutionLawBuilderTest {
         while (scanner.hasNextLine())
             text.append(scanner.nextLine()).append("\\n");
         String rootLocId = "AS";
-        LawBlock fullTextBlock = new LawBlock();
-        fullTextBlock.setLawId(CODE.name());
-        fullTextBlock.setLocationId(rootLocId);
-        fullTextBlock.setDocumentId(CODE.name() + rootLocId);
+        LawBlock fullTextBlock = LawTestUtils.getLawBlock(CODE, rootLocId);
         fullTextBlock.getText().append(text);
-        builder.addInitialBlock(fullTextBlock, true, null);
+        this.builder.addInitialBlock(fullTextBlock, true, null);
     }
 }

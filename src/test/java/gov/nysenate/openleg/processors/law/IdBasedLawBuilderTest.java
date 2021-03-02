@@ -6,11 +6,12 @@ import gov.nysenate.openleg.legislation.law.LawDocumentType;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.*;
+import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class IdBasedLawBuilderTest {
@@ -23,7 +24,7 @@ public class IdBasedLawBuilderTest {
         init(lawId, "-CH64");
 
         IdBasedLawBuilder secondBuilder = new IdBasedLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
-        secondBuilder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "-CH64"), true, null);
+        secondBuilder.addInitialBlock(LawTestUtils.getLawBlock(code, "-CH64"), true, null);
         assertEquals(builder.lawInfo.toString(), secondBuilder.lawInfo.toString());
         assertEquals(builder.sequenceNo, secondBuilder.sequenceNo);
         assertEquals(builder.rootNode.getDocumentId(), secondBuilder.rootNode.getDocumentId());
@@ -94,16 +95,16 @@ public class IdBasedLawBuilderTest {
         code = LawChapterCode.valueOf(lawId);
         builder = (IdBasedLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
         if (!locId.isEmpty()) {
-            LawBlock root = LawProcessorUtils.getLawBlock(code, locId);
+            LawBlock root = LawTestUtils.getLawBlock(code, locId);
             builder.addInitialBlock(root, true, null);
         }
     }
 
     private void testChildNode(String locId, LawDocumentType type) {
-        LawProcessorUtils.testChildNode(locId, type, code, builder);
+        LawBuilderTestHelper.testChildNode(locId, type, code, builder);
     }
 
     private void testHierarchy(String locId, LawDocumentType type, String expected) {
-        LawProcessorUtils.testHierarchy(locId, type, expected, code, builder);
+        LawBuilderTestHelper.testHierarchy(locId, type, expected, code, builder);
     }
 }

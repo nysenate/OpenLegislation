@@ -33,6 +33,30 @@ public abstract class BasePdfView {
     }
 
     /**
+     * Writes the given pages to the PDF, then saves the document.
+     * @param pages to write.
+     * @param top where to start page.
+     * @param margin on each page.
+     */
+    protected void writePages(float top, float margin, List<List<String>> pages) throws IOException {
+        for (List<String> page : pages) {
+            createPage(top, margin);
+            drawPage(page);
+            contentStream.endText();
+            contentStream.close();
+            doc.addPage(currPage);
+        }
+        try {
+            doc.save(pdfBytes);
+        } catch (COSVisitorException e) {
+            throw new IOException("Error saving PDF.");
+        }
+        finally {
+            doc.close();
+        }
+    }
+
+    /**
      * Overridden if more setup is needed.
      */
     protected void newPageSetup() throws IOException {}
@@ -43,7 +67,7 @@ public abstract class BasePdfView {
      * @param margin of the new page.
      * @throws IOException if the page can't be written to.
      */
-    protected void newPage(float top, float margin) throws IOException {
+    private void createPage(float top, float margin) throws IOException {
         currPage = new PDPage();
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
@@ -52,44 +76,10 @@ public abstract class BasePdfView {
         contentStream.setFont(FONT, FONT_SIZE);
     }
 
-    /**
-     * Writes the given pages to the PDF, then saves the document.
-     * @param pages to write.
-     * @param margin on each page.
-     */
-    protected void writePages(List<List<String>> pages, float margin) throws IOException {
-        for (List<String> page : pages) {
-            newPage(DEFAULT_TOP, margin);
-            for (String line : page) {
-                contentStream.drawString(line);
-                contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
-            }
-            endPage();
-        }
-        saveDoc();
-    }
-
-    /**
-     * Closes the current page, and adds it to the document.
-     * @throws IOException if the page can't be closed.
-     */
-    protected void endPage() throws IOException {
-        contentStream.endText();
-        contentStream.close();
-        doc.addPage(currPage);
-    }
-
-    /**
-     * Saves and closes the document.
-     */
-    protected void saveDoc() throws IOException {
-        try {
-            doc.save(pdfBytes);
-        } catch (COSVisitorException e) {
-            throw new IOException("Error saving PDF.");
-        }
-        finally {
-            doc.close();
+    protected void drawPage(List<String> page) throws IOException {
+        for (String line : page) {
+            contentStream.drawString(line);
+            contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
         }
     }
 }

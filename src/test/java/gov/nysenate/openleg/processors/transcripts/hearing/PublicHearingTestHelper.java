@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.TestUtils;
 import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import org.apache.commons.io.FileUtils;
+import testing_utils.TestUtils;
 
 import java.io.File;
 import java.io.IOException;

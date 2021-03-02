@@ -131,6 +131,6 @@ public class BillPdfView extends BasePdfView {
             pages = Collections.singletonList(Collections.singletonList(
                     "No full text available for " + billId));
         float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
-        writePages(pages, margin);
+        writePages(DEFAULT_TOP, margin, pages);
     }
 }

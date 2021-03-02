@@ -28,12 +28,7 @@ public class TranscriptPdfView extends BasePdfView {
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
         this.stenographer_center = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
         List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
-        for (List<String> page : pages) {
-            newPage(TOP - FONT_WIDTH, 0);
-            drawPageText(page);
-            endPage();
-        }
-        saveDoc();
+        writePages(TOP - FONT_WIDTH, 0, pages);
     }
 
     @Override
@@ -45,7 +40,8 @@ public class TranscriptPdfView extends BasePdfView {
      * Draw correctly aligned text along with Stenographer information.
      * @param page to draw.
      */
-    private void drawPageText(List<String> page) throws IOException {
+    @Override
+    protected void drawPage(List<String> page) throws IOException {
         for (String ln : page) {
             TranscriptLine line = new TranscriptLine(ln);
             if (line.isPageNumber())

@@ -7,12 +7,15 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.CPL;
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.EDN;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.*;
+import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class HintBasedLawBuilderTest {
@@ -21,7 +24,7 @@ public class HintBasedLawBuilderTest {
 
     @Test
     public void CPLHierarchyTest() {
-        init("CPL", "-CH11-A");
+        init(CPL.name(), "-CH11-A");
         testHierarchy("P1", PART, "P1");
         testHierarchy("P1TA", TITLE, "TA");
         testHierarchy("A1", ARTICLE, "A1");
@@ -51,7 +54,7 @@ public class HintBasedLawBuilderTest {
 
     @Test
     public void EDNHierarchyTest() {
-        init("EDN", "-CH16");
+        init(EDN.name(), "-CH16");
         testHierarchy("T1", TITLE, "T1");
         testHierarchy("A1", ARTICLE, "A1");
         testHierarchy("A1P1", PART, "P1");
@@ -62,11 +65,11 @@ public class HintBasedLawBuilderTest {
     }
 
     private void testChildNode(String locId) {
-        LawProcessorUtils.testChildNode(locId, LawDocumentType.SECTION, code, builder);
+        LawBuilderTestHelper.testChildNode(locId, LawDocumentType.SECTION, code, builder);
     }
 
     private void testHierarchy(String locId, LawDocumentType type, String expected) {
-        LawProcessorUtils.testHierarchy(locId, type, expected, code, builder);
+        LawBuilderTestHelper.testHierarchy(locId, type, expected, code, builder);
     }
 
     /**
@@ -88,11 +91,11 @@ public class HintBasedLawBuilderTest {
      * @param lawId of the builder.
      */
     private void init(String lawId, String locId) {
-        code = LawChapterCode.valueOf(lawId);
-        builder = (HintBasedLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
+        this.code = LawChapterCode.valueOf(lawId);
+        this.builder = (HintBasedLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
         if (!locId.isEmpty()) {
-            LawBlock root = LawProcessorUtils.getLawBlock(code, locId);
-            builder.addInitialBlock(root, true, null);
+            LawBlock root = LawTestUtils.getLawBlock(code, locId);
+            this.builder.addInitialBlock(root, true, null);
         }
     }
 }

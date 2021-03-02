@@ -1,4 +1,4 @@
-package gov.nysenate.openleg;
+package testing_utils;
 
 import java.io.File;
 import java.net.URISyntaxException;

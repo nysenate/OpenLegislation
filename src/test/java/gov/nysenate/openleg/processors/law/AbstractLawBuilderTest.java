@@ -4,6 +4,7 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -86,17 +87,17 @@ public class AbstractLawBuilderTest {
     public void miscAddInitialBlockTest() {
         code = LawChapterCode.CCO;
         builder = (AbstractLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(code.name(), LocalDate.now()), null);
-        LawBlock root = LawProcessorUtils.getLawBlock(code, "-CH77");
+        LawBlock root = LawTestUtils.getLawBlock(code, "-CH77");
         builder.addInitialBlock(root, false, null);
         assertTrue(builder.lawDocMap.isEmpty());
         testInitialBlock("XXX", MISC, "XXX");
 
         init("VIL", "-CH64");
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "A1"), false, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "A1"), false, null);
         assertFalse(builder.lawDocMap.containsKey(code.name() + "A1"));
         testInitialBlock("1", SECTION, "1");
         assertTrue(builder.lawDocMap.containsKey(code.name() + "1"));
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "A2"), true, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "A2"), true, null);
         assertTrue(builder.lawDocMap.containsKey(code.name() + "A2"));
         testInitialBlock("2", SECTION, "2");
         assertTrue(builder.lawDocMap.containsKey(code.name() + "2"));
@@ -155,14 +156,14 @@ public class AbstractLawBuilderTest {
     @Test
     public void repealUpdateTest() {
         initTreeToBeUpdated();
-        LawBlock repealBlock = LawProcessorUtils.getLawBlock(code, "P1", "*REPEAL*");
+        LawBlock repealBlock = LawTestUtils.getLawBlock(code, "P1", "*REPEAL*");
         builder.addUpdateBlock(repealBlock);
         Optional<LawTreeNode> foundNode = builder.rootNode.findNode(repealBlock.getDocumentId(), false);
         if (!foundNode.isPresent())
             fail("Repealed node was not present.");
         assertEquals(foundNode.get().getRepealedDate(), LocalDate.now());
 
-        repealBlock = LawProcessorUtils.getLawBlock(code, "2018", "*REPEAL*");
+        repealBlock = LawTestUtils.getLawBlock(code, "2018", "*REPEAL*");
         builder.addUpdateBlock(repealBlock);
         // This should print out a debugger line saying the node could not be found.
     }
@@ -170,7 +171,7 @@ public class AbstractLawBuilderTest {
     @Test
     public void deleteUpdateTest() {
         initTreeToBeUpdated();
-        LawBlock deleteBlock = LawProcessorUtils.getLawBlock(code, "P2", "*DELETE*");
+        LawBlock deleteBlock = LawTestUtils.getLawBlock(code, "P2", "*DELETE*");
         Optional<LawTreeNode> originalNode = builder.rootNode.findNode(deleteBlock.getDocumentId(), false);
         if (!originalNode.isPresent())
             fail("Node to test deletion was not present.");
@@ -180,14 +181,14 @@ public class AbstractLawBuilderTest {
         for (LawTreeNode child : children.values())
             assertFalse(builder.rootNode.find(child.getDocumentId()).isPresent());
         // Deleting documents that don't exist should process with no problem.
-        deleteBlock = LawProcessorUtils.getLawBlock(code, "2018", "*DELETE*");
+        deleteBlock = LawTestUtils.getLawBlock(code, "2018", "*DELETE*");
         builder.addUpdateBlock(deleteBlock);
     }
 
     @Test
     public void updateTest() {
         initTreeToBeUpdated();
-        LawBlock updateBlock = LawProcessorUtils.getLawBlock(code, "P3S1", "");
+        LawBlock updateBlock = LawTestUtils.getLawBlock(code, "P3S1", "");
         String newTitle = "New Title";
         updateBlock.getText().replace(0, 1000, "SUBPART 1\\\n" + newTitle);
         builder.addUpdateBlock(updateBlock);
@@ -202,21 +203,21 @@ public class AbstractLawBuilderTest {
     public void nullRootUpdateTest() {
         initTreeToBeUpdated();
         builder.rootNode = null;
-        LawBlock test = LawProcessorUtils.getLawBlock(code, "1", "");
+        LawBlock test = LawTestUtils.getLawBlock(code, "1", "");
         builder.addUpdateBlock(test);
     }
 
     @Test(expected = LawParseException.class)
     public void noDocumentToUpdateTest() {
         initTreeToBeUpdated();
-        LawBlock test = LawProcessorUtils.getLawBlock(code, "2018", "");
+        LawBlock test = LawTestUtils.getLawBlock(code, "2018", "");
         builder.addUpdateBlock(test);
     }
 
     @Test(expected = LawParseException.class)
     public void badMethodTest() {
         initTreeToBeUpdated();
-        LawBlock block = LawProcessorUtils.getLawBlock(code, "1", "XXX");
+        LawBlock block = LawTestUtils.getLawBlock(code, "1", "XXX");
         builder.addUpdateBlock(block);
     }
 
@@ -244,10 +245,10 @@ public class AbstractLawBuilderTest {
         assertEquals(LocalDate.now(), tree.getPublishedDates().get(0));
         assertEquals(builder.rootNode.toString(), tree.getRootNode().toString());
 
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "A1"), true, null);
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "A2"), false, null);
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "1"), false, null);
-        builder.addInitialBlock(LawProcessorUtils.getLawBlock(code, "2"), true, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "A1"), true, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "A2"), false, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "1"), false, null);
+        builder.addInitialBlock(LawTestUtils.getLawBlock(code, "2"), true, null);
         List<LawDocument> processedDocs = builder.getProcessedLawDocuments();
         processedDocs.sort(Comparator.comparing(LawDocId::getDocumentId));
         assertEquals(3, processedDocs.size());
@@ -283,7 +284,7 @@ public class AbstractLawBuilderTest {
      */
     private void testDummy(String lawId, LawTreeNode priorRoot) {
         init(lawId, "");
-        LawBlock rootBlock = LawProcessorUtils.getLawBlock(code, "1");
+        LawBlock rootBlock = LawTestUtils.getLawBlock(code, "1");
         builder.addInitialBlock(rootBlock, true, priorRoot);
         LawDocument createdRoot = builder.lawDocMap.get(code + "-ROOT");
         assertTrue(createdRoot.isDummy());
@@ -317,7 +318,7 @@ public class AbstractLawBuilderTest {
      * @param expectedDocTypeId of the processed LawDocument.
      */
     private void testInitialBlock(String locId, LawDocumentType expectedType, String expectedDocTypeId) {
-        LawBlock toTest = LawProcessorUtils.getLawBlock(code, locId);
+        LawBlock toTest = LawTestUtils.getLawBlock(code, locId);
         builder.addInitialBlock(toTest, true, null);
         LawDocument lawDoc = builder.lawDocMap.get(code.name() + locId);
         assertEquals(expectedType, lawDoc.getDocType());
@@ -333,7 +334,7 @@ public class AbstractLawBuilderTest {
         code = LawChapterCode.valueOf(lawId);
         builder = (AbstractLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
         if (!locId.isEmpty()) {
-            LawBlock root = LawProcessorUtils.getLawBlock(code, locId);
+            LawBlock root = LawTestUtils.getLawBlock(code, locId);
             builder.addInitialBlock(root, true, null);
         }
     }
@@ -347,7 +348,7 @@ public class AbstractLawBuilderTest {
         code = LawChapterCode.valueOf(lawId);
         builder = (AbstractLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
         for (String locId : locIds) {
-            LawBlock toAdd = LawProcessorUtils.getLawBlock(code, locId);
+            LawBlock toAdd = LawTestUtils.getLawBlock(code, locId);
             // Subtracts a day so that the publish time can be updated.
             toAdd.setPublishedDate(LocalDate.now().minusDays(1));
             builder.addInitialBlock(toAdd, areNewDocs, null);
@@ -358,7 +359,7 @@ public class AbstractLawBuilderTest {
         StringBuilder rebuildBlockText = new StringBuilder();
         for (String s : locIds)
             rebuildBlockText.append(code.name()).append(s).append("\\\\n");
-        LawBlock rebuildBlock = LawProcessorUtils.getLawBlock(code, "", "*MASTER*");
+        LawBlock rebuildBlock = LawTestUtils.getLawBlock(code, "", "*MASTER*");
         rebuildBlock.getText().delete(0, rebuildBlock.getText().length()).append(rebuildBlockText);
         builder.addUpdateBlock(rebuildBlock);
     }

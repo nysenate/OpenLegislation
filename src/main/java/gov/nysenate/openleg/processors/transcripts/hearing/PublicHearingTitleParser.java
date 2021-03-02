@@ -44,7 +44,7 @@ public class PublicHearingTitleParser
     }
 
     /**
-     * Turns a list of String's into a single String with
+     * Turns a list of Strings into a single String with
      * whitespace and line numbers removed.
      * @param firstPage of the hearing.
      * @return a single string of the first page.
