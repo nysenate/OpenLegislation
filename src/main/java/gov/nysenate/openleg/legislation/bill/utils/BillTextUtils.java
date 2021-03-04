@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 public class BillTextUtils
 {
-
     private static final Pattern BILL_TEXT_PAGE_START_PATTERN =
         Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}(\\d+)(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
     private static final Integer MAX_LINES_RES_PAGE = 60;
@@ -59,7 +58,7 @@ public class BillTextUtils
             return pages;
         }
         List<String> lines = Splitter.on("\n").splitToList(fullText);
-        int numPages = new Double(Math.ceil((double) lines.size() / MAX_LINES_RES_PAGE)).intValue();
+        int numPages = (int) Math.ceil((double) lines.size() / MAX_LINES_RES_PAGE);
         for (int page = 0; page < numPages; page++) {
             int pageStart = page * MAX_LINES_RES_PAGE;
             int pageEnd = Math.min(pageStart + MAX_LINES_RES_PAGE, lines.size());

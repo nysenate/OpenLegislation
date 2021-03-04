@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api.legislation.law.view;
 
-import gov.nysenate.openleg.common.util.NumberUtils;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
@@ -15,6 +14,7 @@ import java.util.regex.Pattern;
  */
 public class LawPdfUtil {
     protected static final String BOLD_MARKER = "~~~~";
+    private static final String CHAP_NUM = "\\s{2,}CHAPTER [\\w-]+( OF THE CONSOLIDATED LAWS)?";
 
     private LawPdfUtil() {}
 
@@ -52,29 +52,27 @@ public class LawPdfUtil {
     private static String markForBolding(LawDocument doc) {
         // In text, the title may be split by newlines.
         List<String> toMatch = new ArrayList<>();
-        if (doc.getDocType() != LawDocumentType.CHAPTER)
-            toMatch.add(".*?" + doc.getTitle() + "[.]?");
+        if (doc.getDocType() != LawDocumentType.CHAPTER) {
+            String titleMatch = ".*?" + doc.getTitle() + "[.]?";
+            // Newline characters instead of spaces could split up the Strings we're looking for.
+            titleMatch = titleMatch.replaceAll(" ", "[ \n]+");
+            toMatch.add(titleMatch);
+        }
         else {
             LawChapterCode code = LawChapterCode.valueOf(doc.getLawId());
-//            if (code.getType() == LawType.CONSOLIDATED)
-//                toMatch.add(getConsolidatedMatch(doc));
-            // Bolds the law name as well.
             String lawName = code.getChapterName() + "( Law)?";
             lawName = lawName.replaceAll("(?i)(and|&)", "(and|&)");
             toMatch.add(lawName.toUpperCase());
-            toMatch.add("\\s{2,}" + LawDocumentType.CHAPTER.name() + " +\\d+.*\n");
+            toMatch.add(CHAP_NUM);
         }
 
         String text = doc.getText().replaceAll("\\\\n", "\n");
+        text = text.replaceFirst(".*?\n", "");
         for (String pattern : toMatch) {
-            // Newline characters instead of spaces could split up the Strings we're looking for.
-            pattern = pattern.replaceAll(" ", "[ \n]+");
-//            pattern = pattern.toUpperCase() + "|" + pattern;
             Matcher m = Pattern.compile(pattern).matcher(text);
             while (m.find())
                 text = addBoldMarkers(m.start(), m.end(), text);
         }
-
         return text;
     }
 
@@ -91,18 +89,4 @@ public class LawPdfUtil {
                 input.substring(end);
     }
 
-    /**
-     * Gets a pattern to bold that's specific to consolidated laws.
-     * @param doc to pull info from.
-     * @return the pattern to match.
-     */
-    private static String getConsolidatedMatch(LawDocument doc) {
-        // Labels may be split by a dash, e.g. 4-D.
-        String[] dashSplit = doc.getDocTypeId().split("-");
-        String fixedDocTypeId = doc.getDocTypeId().replaceFirst("\\d+",
-                NumberUtils.allOptions(dashSplit[0]));
-        if (dashSplit.length != 1)
-            fixedDocTypeId = fixedDocTypeId + "-" + dashSplit[1];
-        return ("Chapter " + fixedDocTypeId + " of the consolidated laws[.]?").toUpperCase();
-    }
 }

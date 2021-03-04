@@ -9,6 +9,8 @@ import org.junit.experimental.categories.Category;
 import testing_utils.LawTestUtils;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gov.nysenate.openleg.api.legislation.law.view.LawPdfUtil.BOLD_MARKER;
 import static gov.nysenate.openleg.api.legislation.law.view.LawPdfUtil.getLines;
@@ -61,22 +63,30 @@ public class LawPdfUtilTest {
     }
 
     @Test
-    public void unconsolidatedChapterGetBlocksTest() {
-        String expected = BOLD_MARKER + "First line!\n" + BOLD_MARKER + "And more. " +
-                BOLD_MARKER + BAT.getChapterName() + " Law" + BOLD_MARKER + " Here's text.";
-        boldChapterTestHelper(expected, BAT, "2");
-    }
-
-    @Test
     public void consolidatedBoldTest() {
-        String expected = "Before. " + BOLD_MARKER + "Chapter III-B of the consolidated laws." + BOLD_MARKER + " After.";
+        String expected = "Before." + BOLD_MARKER + "  CHAPTER III-B OF THE CONSOLIDATED LAWS" + BOLD_MARKER + " After.";
         boldChapterTestHelper(expected, ABC, "3-B");
     }
 
     @Test
-    public void doubleBoldingTest() {
-        String expected = BOLD_MARKER + "  " + TAX.getChapterName() + " Law\n" + BOLD_MARKER;
-        boldChapterTestHelper(expected.toUpperCase(), TAX, "60");
+    public void AHHHHHtest() {
+        Pattern p = Pattern.compile("\\s{2,}CHAPTER [\\w-]+( OF THE CONSOLIDATED LAWS)?");
+        String s = """
+                CHAPTER 712
+AN ACT relating to cooperative corporations, constituting chapter
+seventy-seven of the consolidated laws
+Became a law April 11, 1951, with the approval of the Governor.  Passed
+by a majority vote, three-fifths being present.
+  The People of the State of New York, represented in Senate and
+Assembly, do enact as follows:
+                   CHAPTER 77 OF THE CONSOLIDATED LAWS
+                      COOPERATIVE CORPORATIONS LAW
+Article 1.   Short title; policy; definitions. (§§ 1-5.)
+                              2.   Formation and dissolution of cooperative corporations;
+                              """;
+        Matcher m = p.matcher(s);
+        while (m.find())
+            System.out.println(m.group());
     }
 
     /**
