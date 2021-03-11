@@ -56,7 +56,6 @@ public class LawPdfUtil {
      * @return a String of the text with the added markers.
      */
     private static String markForBolding(LawDocument doc) {
-        // In text, the title may be split by newlines.
         String toMatch;
         if (doc.getDocType() == LawDocumentType.CHAPTER)
             toMatch = getChapterPattern(doc.getLawId());
@@ -81,6 +80,11 @@ public class LawPdfUtil {
         return addBoldMarkers(indices, text);
     }
 
+    /**
+     * The Chapter patterns are more complicated.
+     * @param lawId of the Chapter document.
+     * @return the pattern of what should be bolded.
+     */
     private static String getChapterPattern(String lawId) {
         LawChapterCode code = LawChapterCode.valueOf(lawId);
         String chapLabel = code.getType() == LawType.UNCONSOLIDATED ? UNCONSOLIDATED_CHAP_LABEL : CONSOLIDATED_CHAP_LABEL;
@@ -89,10 +93,8 @@ public class LawPdfUtil {
             case CONSOLIDATED, UNCONSOLIDATED, COURT_ACTS -> {
                 var temp = code.getChapterName().replaceAll("(?i)(and|&)", "(and|&)");
                 var formattedName = CHAP_NAME.formatted(temp);
-                if (code.getType() == LawType.UNCONSOLIDATED) {
+                if (code.getType() == LawType.UNCONSOLIDATED)
                     chapterName = "(?i)" + formattedName.replaceFirst(" \\d.+", "");
-                    chapterName = chapterName.replaceAll("NY(S)?", "New York( State)?[ \n]+");
-                }
                 else
                     chapterName = formattedName.toUpperCase();
             }
