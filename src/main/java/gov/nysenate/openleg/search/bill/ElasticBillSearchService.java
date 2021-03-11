@@ -3,18 +3,17 @@ package gov.nysenate.openleg.search.bill;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
+import gov.nysenate.openleg.common.util.AsyncUtils;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
 import gov.nysenate.openleg.updates.bill.BulkBillUpdateEvent;
-import gov.nysenate.openleg.common.util.AsyncUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -107,7 +106,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
 
     private String smartSearch(String query) {
         if (query != null && !query.contains(":")) {
-            Matcher matcher = BillId.billIdPattern.matcher(query.replaceAll("\\s", ""));
+            Matcher matcher = BillId.BILL_ID_PATTERN.matcher(query.replaceAll("\\s", ""));
             if (matcher.find()) {
                 query = String.format("(printNo:%s OR basePrintNo:%s) AND session:%s",
                         matcher.group("printNo"), matcher.group("printNo"), matcher.group("year"));

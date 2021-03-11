@@ -3,18 +3,14 @@ package gov.nysenate.openleg.api;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.api.response.error.ErrorCode;
-import gov.nysenate.openleg.api.response.error.ErrorResponse;
-import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.response.error.InvalidParameterView;
-import gov.nysenate.openleg.api.response.error.ParameterView;
+import gov.nysenate.openleg.api.response.error.*;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
@@ -239,7 +235,7 @@ public abstract class BaseCtrl
         try {
             return new BillId(printNo, session);
         } catch (IllegalArgumentException ex) {
-            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.printNumberRegex);
+            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.PRINT_NUMBER_REGEX);
         }
     }
 

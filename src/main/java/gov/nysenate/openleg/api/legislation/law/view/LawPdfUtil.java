@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.law.view;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
+import gov.nysenate.openleg.legislation.law.LawType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,12 @@ import java.util.regex.Pattern;
  */
 public class LawPdfUtil {
     protected static final String BOLD_MARKER = "~~~~";
-    private static final String CHAP_NUM = "\\s{2,}CHAPTER [\\w-]+( OF THE CONSOLIDATED LAWS)?";
+    private static final String CONSOLIDATED_CHAP_LABEL = "CHAPTER [\\w-]+( OF THE CONSOLIDATED LAWS)?",
+    UNCONSOLIDATED_CHAP_LABEL = "Chapter \\d+ of the laws of \\d{4}",
+    RULES_CHAP_NAME = "RULES OF THE (SENATE|ASSEMBLY)[\n ]+OF THE STATE OF NEW YORK",
+    CONSTITUTION_CHAP_NAME = "THE CONSTITUTION OF THE STATE OF NEW YORK",
+    CHAP_NAME = "(The )?%s( Law)?[.]?",
+    NON_CHAP_TITLE = ".*?%s[.]?";
 
     private LawPdfUtil() {}
 
@@ -51,42 +57,65 @@ public class LawPdfUtil {
      */
     private static String markForBolding(LawDocument doc) {
         // In text, the title may be split by newlines.
-        List<String> toMatch = new ArrayList<>();
-        if (doc.getDocType() != LawDocumentType.CHAPTER) {
-            String titleMatch = ".*?" + doc.getTitle() + "[.]?";
-            // Newline characters instead of spaces could split up the Strings we're looking for.
-            titleMatch = titleMatch.replaceAll(" ", "[ \n]+");
-            toMatch.add(titleMatch);
-        }
+        String toMatch;
+        if (doc.getDocType() == LawDocumentType.CHAPTER)
+            toMatch = getChapterPattern(doc.getLawId());
         else {
-            LawChapterCode code = LawChapterCode.valueOf(doc.getLawId());
-            String lawName = code.getChapterName() + "( Law)?";
-            lawName = lawName.replaceAll("(?i)(and|&)", "(and|&)");
-            toMatch.add(lawName.toUpperCase());
-            toMatch.add(CHAP_NUM);
+            String titleMatch = NON_CHAP_TITLE.formatted(doc.getTitle());
+            // Newline characters instead of spaces could split up the Strings we're looking for.
+            toMatch = titleMatch.replaceAll(" ", "[ \n]+");
+            if (doc.getDocType() != LawDocumentType.SECTION)
+                toMatch = "(?i)" + toMatch;
         }
 
         String text = doc.getText().replaceAll("\\\\n", "\n");
-        text = text.replaceFirst(".*?\n", "");
-        for (String pattern : toMatch) {
-            Matcher m = Pattern.compile(pattern).matcher(text);
-            while (m.find())
-                text = addBoldMarkers(m.start(), m.end(), text);
+        Matcher m = Pattern.compile(toMatch).matcher(text);
+        List<Integer> indices = new ArrayList<>();
+        while (m.find()) {
+            indices.add(m.start());
+            indices.add(m.end());
+            // Non-chapters should only highlight titles.
+            if (doc.getDocType() != LawDocumentType.CHAPTER)
+                break;
         }
-        return text;
+        return addBoldMarkers(indices, text);
+    }
+
+    private static String getChapterPattern(String lawId) {
+        LawChapterCode code = LawChapterCode.valueOf(lawId);
+        String chapLabel = code.getType() == LawType.UNCONSOLIDATED ? UNCONSOLIDATED_CHAP_LABEL : CONSOLIDATED_CHAP_LABEL;
+        var chapterName = "";
+        switch (code.getType()) {
+            case CONSOLIDATED, UNCONSOLIDATED, COURT_ACTS -> {
+                var temp = code.getChapterName().replaceAll("(?i)(and|&)", "(and|&)");
+                var formattedName = CHAP_NAME.formatted(temp);
+                if (code.getType() == LawType.UNCONSOLIDATED) {
+                    chapterName = "(?i)" + formattedName.replaceFirst(" \\d.+", "");
+                    chapterName = chapterName.replaceAll("NY(S)?", "New York( State)?[ \n]+");
+                }
+                else
+                    chapterName = formattedName.toUpperCase();
+            }
+            case RULES -> chapterName = RULES_CHAP_NAME;
+            case MISC -> chapterName = CONSTITUTION_CHAP_NAME;
+        }
+        return chapLabel + "|" + chapterName;
     }
 
     /**
-     * Adds markers around a section of text to indicate it should be bold.
-     * @param start of bolding.
-     * @param end of bolding.
-     * @param input to marked.
-     * @return the marked String.
+     * Adds markers to text to indicate where bolding should start and end.
+     * @param indices where markers should be added.
+     * @param text to pull from.
+     * @return the text, with the markers added.
      */
-    private static String addBoldMarkers(int start, int end, String input) {
-        return input.substring(0, start) + BOLD_MARKER +
-                input.substring(start, end) + BOLD_MARKER +
-                input.substring(end);
+    private static String addBoldMarkers(List<Integer> indices, String text) {
+        StringBuilder ret = new StringBuilder();
+        int start = 0;
+        for (Integer end : indices) {
+            ret.append(text, start, end).append(BOLD_MARKER);
+            start = end;
+        }
+        ret.append(text.substring(start));
+        return ret.toString();
     }
-
 }
