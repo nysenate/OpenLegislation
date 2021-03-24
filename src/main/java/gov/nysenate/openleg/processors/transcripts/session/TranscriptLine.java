@@ -15,13 +15,10 @@ import java.util.Optional;
  */
 public class TranscriptLine {
     /** Regex to match any non alphanumeric or whitespace characters. */
-    private static final String INVALID_CHARACTERS_REGEX = "[^\\w ]+";
+    private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,]+";
 
     /** All page numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10;
-
-    /** The maximum number of lines on a page. */
-    private static final int MAX_PAGE_LINES = 27;
 
     /** The actual text of the line. */
     private final String text;
@@ -41,24 +38,24 @@ public class TranscriptLine {
      * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */
-    public boolean isPageNumber() {
-        String validText = stripInvalidCharacters().trim();
-        Optional<Integer> num = getNumber(validText);
-        if (!num.isPresent())
+    public boolean isPageNumber(int numOfLine) {
+        Optional<Integer> num = getNumber(text);
+        if (num.isEmpty())
             return false;
-        boolean isRightAligned = text.indexOf(validText) > MAX_PAGE_NUM_INDEX;
-        return isRightAligned || num.get() > MAX_PAGE_LINES;
+        boolean isRightAligned = text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
+        return !hasLineNumber(numOfLine) || isRightAligned;
     }
-
 
     /**
      * Determines if this TranscriptLine's text contains a line number.
      * @return <code>true</code> if this TranscriptLine contains a line number;
      *         <code>false</code> otherwise.
      */
-    public boolean hasLineNumber() {
+    public boolean hasLineNumber(int numOfLine) {
         // Split on two spaces so time typos don't get treated as line numbers.
-        return getNumber(text.trim().split(" {2}")[0]).isPresent() && !isPageNumber();
+        String[] split = text.trim().split(" {2}");
+        Optional<Integer> num = getNumber(split[0]);
+        return num.isPresent() && num.get() == numOfLine;
     }
 
     /**
@@ -109,8 +106,8 @@ public class TranscriptLine {
         return Optional.empty();
     }
 
-    public boolean isEmpty() {
-        return stripInvalidCharacters().trim().isEmpty();
+    public boolean isBlank() {
+        return stripInvalidCharacters().isBlank();
     }
 
     /**
@@ -135,16 +132,18 @@ public class TranscriptLine {
      * or the text unaltered if it doesn't have a line number.
      */
     protected String removeLineNumber() {
-        if (hasLineNumber())
+        // TODO: change
+        if (hasLineNumber(1000))
             return text.trim().substring(text.trim().length() < 2 ? 1 : 2);
         return text;
     }
 
     /** --- Internal Methods --- */
 
-    private Optional<Integer> getNumber(String text) {
+    public static Optional<Integer> getNumber(String text) {
+        TranscriptLine line = new TranscriptLine(text);
         try {
-            return Optional.of(Integer.parseInt(text.trim()));
+            return Optional.of(Integer.parseInt(line.stripInvalidCharacters().trim()));
         } catch (NumberFormatException e) {
             return Optional.empty();
         }

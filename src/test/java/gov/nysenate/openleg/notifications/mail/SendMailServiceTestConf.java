@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.notifications.mail;
 
 
-import gov.nysenate.openleg.notifications.mail.SendMailService;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

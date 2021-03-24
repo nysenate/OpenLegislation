@@ -23,13 +23,21 @@ import static org.junit.Assert.assertThrows;
 public class TranscriptParserTest extends BaseTests {
     private static final String[] FILENAMES = {"simple.txt", "noDate.txt", "noTime.txt", "badStartLines.txt"};
     private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
-    FILE_TEXT = "                                                              10\n" +
-            "\n         1\n" +
-            "\n         2                       ALBANY, NEW YORK\n" +
-            "\n         3                       January 1, 1992\n" +
-            "\n         4                         10:00 a.m.\n" +
-            "\n         5                       REGULAR SESSION\n" +
-            "\n         6                       Some more text here.\n";
+    FILE_TEXT = """
+                                                                          10
+
+                     1
+
+                     2                       ALBANY, NEW YORK
+
+                     3                       January 1, 1992
+
+                     4                         10:00 a.m.
+
+                     5                       REGULAR SESSION
+
+                     6                       Some more text here.
+            """;
 
     @Autowired
     private TranscriptFileDao transcriptFileDao;

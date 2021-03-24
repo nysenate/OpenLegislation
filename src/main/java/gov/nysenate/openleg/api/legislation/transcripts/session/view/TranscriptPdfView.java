@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
-import gov.nysenate.openleg.common.util.TranscriptTextUtils;
+import gov.nysenate.openleg.common.util.TranscriptPdfParser;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 
@@ -27,7 +27,7 @@ public class TranscriptPdfView extends BasePdfView {
 
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
         this.stenographer_center = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
-        List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
+        List<List<String>> pages = new TranscriptPdfParser(transcript.getText()).getPages();
         writePages(TOP - FONT_WIDTH, 0, pages);
     }
 
@@ -42,12 +42,12 @@ public class TranscriptPdfView extends BasePdfView {
      */
     @Override
     protected void drawPage(List<String> page) throws IOException {
-        for (String ln : page) {
-            TranscriptLine line = new TranscriptLine(ln);
-            if (line.isPageNumber())
+        for (int i = 0; i < page.size(); i++) {
+            TranscriptLine line = new TranscriptLine(page.get(i));
+            if (i == 0)
                 drawPageNumber(line.getText().trim());
             else
-                drawText(line);
+                drawText(line, i);
         }
         drawStenographer(page.size());
     }
@@ -63,11 +63,11 @@ public class TranscriptPdfView extends BasePdfView {
         contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * SPACING);
     }
 
-    private void drawText(TranscriptLine line) throws IOException {
+    private void drawText(TranscriptLine line, int numOfLine) throws IOException {
         int indent = NO_LINE_NUM_INDENT;
         Matcher m = Pattern.compile(" *\\d+").matcher(line.getText());
         // Line numbers should align left of the left vertical border.
-        if (line.hasLineNumber() && m.find())
+        if (line.hasLineNumber(numOfLine) && m.find())
             indent = m.group().length() + 1;
         float offset = LEFT - indent * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);

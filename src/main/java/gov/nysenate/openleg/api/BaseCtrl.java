@@ -261,7 +261,7 @@ public abstract class BaseCtrl
      */
     protected Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
         Optional<Version> optVersion = parseVersion(version);
-        if (!optVersion.isPresent()) {
+        if (optVersion.isEmpty()) {
             throw new InvalidRequestParamEx(version, versionParamName, "String",
                     Version.ORIGINAL.name() + "|[A-Z]");
         }
