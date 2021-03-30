@@ -18,13 +18,15 @@ public class TranscriptLine {
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,]+";
 
     /** All page numbers occur in the first 10 characters of a line. */
-    private static final int MAX_PAGE_NUM_INDEX = 10;
+    private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
 
     /** The actual text of the line. */
     private final String text;
 
     public TranscriptLine(@NonNull String text) {
-        this.text = text.replaceAll("[\r\f]", "");
+        if (!text.isBlank())
+            text = text.stripTrailing();
+        this.text = text.replaceAll("[\r\f\t]", "");
     }
 
     public String getText() {
@@ -42,8 +44,8 @@ public class TranscriptLine {
         Optional<Integer> num = getNumber(text);
         if (num.isEmpty())
             return false;
-        boolean isRightAligned = text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
-        return !hasLineNumber(numOfLine) || isRightAligned;
+        // Page numbers are right aligned.
+        return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
     }
 
     /**
@@ -55,7 +57,7 @@ public class TranscriptLine {
         // Split on two spaces so time typos don't get treated as line numbers.
         String[] split = text.trim().split(" {2}");
         Optional<Integer> num = getNumber(split[0]);
-        return num.isPresent() && num.get() == numOfLine;
+        return num.isPresent() && num.get() <= MAX_PAGE_LINES && !isPageNumber(-1);
     }
 
     /**

@@ -1,14 +1,17 @@
 package gov.nysenate.openleg.common.util;
 
-import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
+
+import gov.nysenate.openleg.processors.transcripts.session.OldTranscriptLine;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class TranscriptTextUtils {
-
-    private TranscriptTextUtils() {}
+// TODO: remove this class
+public class TranscriptTextUtils
+{
+    public static Set<Integer> numCheckPageLine = new HashSet<>();
 
     /**
      * Generates pages from transcript text in a common format.
@@ -32,7 +35,6 @@ public class TranscriptTextUtils {
                 formattedPages.add(parseWithOriginalSpacing(pageLines));
             }
         }
-
         return formattedPages;
     }
 
@@ -62,7 +64,7 @@ public class TranscriptTextUtils {
         // Ignore the first page number.
         if (lineNum > 10) {
             if (lineNum + 1 < pageLines.length) {
-                TranscriptLine nextLine = new TranscriptLine(pageLines[lineNum + 1]);
+                OldTranscriptLine nextLine = new OldTranscriptLine(pageLines[lineNum + 1]);
                 if (nextLine.isPageNumber()) {
                     return true;
                 }
@@ -78,20 +80,22 @@ public class TranscriptTextUtils {
     private static List<String> parseWithManualSpacing(List<String> pageLines) {
         List<String> page = new ArrayList<>();
         for (String pageLine : pageLines) {
-            TranscriptLine line = new TranscriptLine(pageLine);
+            OldTranscriptLine line = new OldTranscriptLine(pageLine);
 
             if (line.isPageNumber()) {
                 page.add(line.stripInvalidCharacters());
             } else if (!line.isEmpty() && !line.isStenographer()) {
-                page.add(line.getText());
+                page.add(line.fullText());
 
-                int blankLines = 0;
-                if (line.getText().trim().matches("(NEW YORK STATE SENATE)|(.*STENOGRAPHIC RECORD.*)") ||
-                line.getTime().isPresent())
-                    blankLines = 2;
-                else if (line.getSession().isPresent())
-                    blankLines = 3;
-                page.addAll(Collections.nCopies(blankLines, ""));
+                if (line.fullText().trim().equals("NEW YORK STATE SENATE")) {
+                    addBlankLines(page, 2);
+                } else if (line.fullText().trim().contains("STENOGRAPHIC RECORD")) {
+                    addBlankLines(page, 2);
+                } else if (line.isTime()) {
+                    addBlankLines(page, 2);
+                } else if (line.isSession()) {
+                    addBlankLines(page, 3);
+                }
             }
         }
         return page;
@@ -101,13 +105,13 @@ public class TranscriptTextUtils {
         List<String> page = new ArrayList<>();
 
         for (String pageLine : pageLines) {
-            TranscriptLine line = new TranscriptLine(pageLine);
+            OldTranscriptLine line = new OldTranscriptLine(pageLine);
 
             if (line.isPageNumber()) {
                 page.add(line.stripInvalidCharacters());
             }
             else if (!line.isEmpty() && !line.isStenographer()) {
-                page.add(line.getText());
+                page.add(line.fullText());
             }
         }
 
@@ -122,30 +126,36 @@ public class TranscriptTextUtils {
         List<String> firstPage = pages.get(0);
 
         for (int i = 0; i < firstPage.size(); i++) {
-            TranscriptLine line = new TranscriptLine(firstPage.get(i));
+            OldTranscriptLine line = new OldTranscriptLine(firstPage.get(i));
 
             if (!line.isEmpty()) {
-                if (line.getText().endsWith(",") || line.getText().endsWith(", Acting")) {
+                if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
                     // Combine two lines into one; corrects formatting. i.e. 123096.v1
-                    String nextLine = getNextLine(firstPage, i).getText().trim();
+                    String nextLine = getNextLine(firstPage, i).fullText().trim();
                     if (nextLine.equals("President") || nextLine.equals("Acting President")) {
-                        line = new TranscriptLine(line.getText() + " " + nextLine);
+                        line = new OldTranscriptLine(line.fullText() + " " + nextLine);
                         // Skip next line since we combined it with the previous line.
                         i++;
                     }
                 }
 
-                correctedFirstPage.add(line.getText());
+                correctedFirstPage.add(line.fullText());
             }
         }
 
         pages.set(pages.indexOf(firstPage), correctedFirstPage);
     }
 
+    private static void addBlankLines(List<String> page, int numLines) {
+        for (int i = 0; i < numLines; i++) {
+            page.add("");
+        }
+    }
+
     private static boolean pageHasLineNumbers(List<String> pageLines) {
         for (String pageLine : pageLines) {
-            TranscriptLine line = new TranscriptLine(pageLine);
-            if (!line.isEmpty() && !line.isPageNumber()) {
+            OldTranscriptLine line = new OldTranscriptLine(pageLine);
+            if (!line.isEmpty() && !line.isPageNumber() && !line.isSession()) {
                 return line.hasLineNumber();
             }
         }
@@ -156,9 +166,9 @@ public class TranscriptTextUtils {
         return rawPages.indexOf(pageLines) == 0;
     }
 
-    private static TranscriptLine getNextLine(List<String> pageLines, int i) {
+    private static OldTranscriptLine getNextLine(List<String> pageLines, int i) {
         if (i + 1 < pageLines.size()) {
-            return new TranscriptLine(pageLines.get(i + 1));
+            return new OldTranscriptLine(pageLines.get(i + 1));
         }
         return null;
     }
