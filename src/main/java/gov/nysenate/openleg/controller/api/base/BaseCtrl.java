@@ -536,6 +536,13 @@ public abstract class BaseCtrl
         // Do Nothing
     }
 
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,  new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf", "", Objects.toString(ex)));
+    }
+
     private void pushExceptionNotification(Exception ex) {
         LocalDateTime occurred = LocalDateTime.now();
         String summary = "Request Exception at " + occurred + " - " + ExceptionUtils.getStackFrames(ex)[0];
