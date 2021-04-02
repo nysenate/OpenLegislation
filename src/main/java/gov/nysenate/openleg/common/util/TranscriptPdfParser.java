@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TranscriptPdfParser {
@@ -17,7 +19,7 @@ public class TranscriptPdfParser {
 
     public TranscriptPdfParser(String transcriptText) {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
-                .filter(tl -> !tl.getText().isEmpty()).collect(Collectors.toCollection(ArrayList::new));
+                .filter(tl -> !tl.getText().isEmpty() && !tl.isStenographer()).collect(Collectors.toCollection(ArrayList::new));
         this.hasLineNumbers = transcriptHasLineNumbers(lineArrayList);
         this.allLines = correctLines(lineArrayList);
     }
@@ -36,7 +38,7 @@ public class TranscriptPdfParser {
             this.currPage = new ArrayList<>();
             do
                 addLine(allLines.pop());
-            while (!allLines.isEmpty() && !allLines.peek().isPageNumber(-1));
+            while (!allLines.isEmpty() && !allLines.peek().isPageNumber());
             pages.add(currPage);
         }
         return pages;
@@ -47,7 +49,7 @@ public class TranscriptPdfParser {
     private static boolean transcriptHasLineNumbers(ArrayList<TranscriptLine> lines) {
         if (lines.size() < 3)
             return false;
-        return lines.get(1).hasLineNumber(-1) || lines.get(2).hasLineNumber(-1);
+        return lines.get(1).hasLineNumber() || lines.get(2).hasLineNumber();
     }
 
     private LinkedList<TranscriptLine> correctLines(ArrayList<TranscriptLine> lines) {
@@ -55,23 +57,29 @@ public class TranscriptPdfParser {
         // The last line won't need correction.
         for (int i = 0; i < lines.size() - 1; i++) {
             TranscriptLine currLine = lines.get(i), nextLine = lines.get(i + 1);
-            if (needsCorrecting(currLine, nextLine)) {
+            Matcher m = Pattern.compile(" *((?:Acting ?|President ?){1,2})(.*)").matcher(nextLine.getText());
+            if (hasLineNumbers && !nextLine.hasLineNumber() && m.find()) {
+                currLine = new TranscriptLine(currLine.getText() + " " + m.group(1));
+                nextLine = new TranscriptLine(m.group(2));
+                lines.set(i + 1, nextLine);
+            }
+            if (needsCorrecting(nextLine)) {
                 // Spaces should be preserved for lines before incorrect page numbers.
                 currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText());
                 lines.remove(i + 1);
             }
-            toReturn.add(currLine);
+            if (!currLine.isBlank())
+                toReturn.add(currLine);
         }
         toReturn.add(lines.get(lines.size()-1));
         return toReturn;
     }
 
-    private boolean needsCorrecting(TranscriptLine currLine, TranscriptLine nextLine) {
-        boolean notProperNum = !nextLine.hasLineNumber(-1) && !nextLine.isPageNumber(-1);
+    private boolean needsCorrecting(TranscriptLine nextLine) {
+        boolean notProperNum = !nextLine.hasLineNumber() && !nextLine.isPageNumber();
         boolean lineNumError = hasLineNumbers && !nextLine.isBlank() && notProperNum;
-        String trimmed = nextLine.getText().replaceAll("[.,;]+", "").trim();
-        boolean badNumError = !hasLineNumbers && trimmed.matches("\\w+");
-        return lineNumError || badNumError;
+        boolean noLineNumError = !hasLineNumbers && !nextLine.getText().startsWith(" ");
+        return lineNumError || noLineNumError;
     }
 
     /**
@@ -81,7 +89,7 @@ public class TranscriptPdfParser {
         // The first line added is always a page number.
         if (currPage.isEmpty())
             currPage.add(currLine.stripInvalidCharacters().trim());
-        else if (!currLine.isBlank() && !currLine.isStenographer())
+        else
             currPage.add(currLine.getText());
         // Sometimes, manual spacing needs to be added.
         // TODO: Why? lol

@@ -68,7 +68,7 @@ public class TranscriptPdfView extends BasePdfView {
         int indent = NO_LINE_NUM_INDENT;
         Matcher m = Pattern.compile(" *\\d+").matcher(line.getText());
         // Line numbers should align left of the left vertical border.
-        if (line.hasLineNumber(-1) && m.find())
+        if (line.hasLineNumber() && m.find())
             indent = m.group().length() + 1;
         float offset = LEFT - indent * FONT_WIDTH;
         contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);

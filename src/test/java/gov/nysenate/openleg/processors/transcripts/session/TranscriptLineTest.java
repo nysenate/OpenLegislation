@@ -25,10 +25,10 @@ public class TranscriptLineTest {
 
     @Test
     public void testPageNumber() {
-        lineTexts = new String[]{"                                 1234", "4321", "55", "  �                               2301", "                1397."};
-        expected = new Object[]{true, true, true, true, false};
-        // TODO: this
-//        testHelper(TranscriptLine::isPageNumber);
+        lineTexts = new String[]{"                                 1234", "4321", "55",
+                "  �                               2301", "                1397."};
+        expected = new Object[]{true, false, false, true, false};
+        testHelper(TranscriptLine::isPageNumber);
     }
 
     @Test
@@ -114,8 +114,7 @@ public class TranscriptLineTest {
     @Test
     public void properlyIgnoresInvalidCharacters() {
         TranscriptLine line = new TranscriptLine("  �                               2301");
-        // TODO: this
-//        assertTrue(line.isPageNumber());
+        assertTrue(line.isPageNumber());
     }
 
     private void testHelper(Function<TranscriptLine, ?> lineFunction) {

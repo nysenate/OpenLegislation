@@ -27,6 +27,8 @@ public class TranscriptLine {
         if (!text.isBlank())
             text = text.stripTrailing();
         this.text = text.replaceAll("[\r\f\t]", "");
+        //int[] codePoints = text.chars().filter(Character::isBmpCodePoint).toArray();
+        //this.text = new String(codePoints, 0, codePoints.length);
     }
 
     public String getText() {
@@ -40,7 +42,7 @@ public class TranscriptLine {
      * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */
-    public boolean isPageNumber(int numOfLine) {
+    public boolean isPageNumber() {
         Optional<Integer> num = getNumber(text);
         if (num.isEmpty())
             return false;
@@ -53,11 +55,11 @@ public class TranscriptLine {
      * @return <code>true</code> if this TranscriptLine contains a line number;
      *         <code>false</code> otherwise.
      */
-    public boolean hasLineNumber(int numOfLine) {
+    public boolean hasLineNumber() {
         // Split on two spaces so time typos don't get treated as line numbers.
         String[] split = text.trim().split(" {2}");
-        Optional<Integer> num = getNumber(split[0]);
-        return num.isPresent() && num.get() <= MAX_PAGE_LINES && !isPageNumber(-1);
+        Optional<Integer> num = getNumber(split[0].replaceAll(INVALID_CHARACTERS_REGEX, ""));
+        return num.isPresent() && num.get() <= MAX_PAGE_LINES && !isPageNumber();
     }
 
     /**
@@ -134,18 +136,16 @@ public class TranscriptLine {
      * or the text unaltered if it doesn't have a line number.
      */
     protected String removeLineNumber() {
-        // TODO: change
-        if (hasLineNumber(1000))
+        if (hasLineNumber())
             return text.trim().substring(text.trim().length() < 2 ? 1 : 2);
         return text;
     }
 
     /** --- Internal Methods --- */
 
-    public static Optional<Integer> getNumber(String text) {
-        TranscriptLine line = new TranscriptLine(text);
+    private static Optional<Integer> getNumber(String text) {
         try {
-            return Optional.of(Integer.parseInt(line.stripInvalidCharacters().trim()));
+            return Optional.of(Integer.parseInt(text.trim()));
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
