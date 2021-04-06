@@ -4,7 +4,6 @@ import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.law.LawDocInfoView;
 import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.controller.api.LawCtrlTest;
@@ -15,7 +14,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ public class LawSearchCtrlTest extends LawCtrlTest {
 
     @Test
     public void testAllSearchLaws() {
+        addParam("limit", "all");
         for (String fileId : TEST_LAW_IDS)
             loadTestData(fileId, true);
         try {
@@ -38,8 +37,9 @@ public class LawSearchCtrlTest extends LawCtrlTest {
             for (String lawId : TEST_LAW_IDS) {
                 if (LawChapterCode.valueOf(lawId).getType() == LawType.RULES)
                     assertTrue(ruleLawIds.contains(lawId));
-                else
+                else {
                     assertTrue(lawIds.contains(lawId));
+                }
             }
         } catch (SearchException e) {
             fail();
@@ -59,8 +59,7 @@ public class LawSearchCtrlTest extends LawCtrlTest {
 
     private static List<String> convertResponse(BaseResponse response) {
         ListView<?> asListView = ((ListViewResponse<?>) response).getResult();
-        List<SearchResultView> asSrv = asListView.getItems().stream().map(item -> ((SearchResultView) item)).collect(Collectors.toList());
-        List<LawDocInfoView> asLdiv = asSrv.stream().map(srv -> ((LawDocInfoView) srv.getResult())).collect(Collectors.toList());
-        return asLdiv.stream().map(LawDocInfoView::getLawId).collect(Collectors.toList());
+        return asListView.getItems().stream().map(item -> ((SearchResultView) item)).
+                map(srv -> ((LawDocInfoView) srv.getResult())).map(LawDocInfoView::getLawId).collect(Collectors.toList());
     }
 }

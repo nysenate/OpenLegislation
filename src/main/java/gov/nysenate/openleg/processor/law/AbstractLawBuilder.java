@@ -202,6 +202,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
                 LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString().replace("├Á", "§"));
                 // Re-parse the titles
                 setLawDocTitle(lawDoc, true);
+                existingDocInfo.get().setTitle(lawDoc.getTitle());
                 lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 logger.info("Updated {}", lawDoc.getDocumentId());
                 break;
