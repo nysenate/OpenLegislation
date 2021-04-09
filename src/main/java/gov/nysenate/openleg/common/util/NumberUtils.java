@@ -25,20 +25,18 @@ public class NumberUtils {
         mapping = ImmutableBiMap.copyOf(temp);
     }
 
-    private NumberUtils(){}
+    private NumberUtils() {}
 
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
     static {
-        int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9,
-                11, 12, 13, 14, 15, 16, 17, 18, 19};
         String[] words = {"ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE",
                 "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"};
-        for (int i = 0; i < nums.length; i++)
-            NUMBER_WORDS.put(nums[i], words[i]);
+        for (int i = 1; i <= 19; i++)
+            NUMBER_WORDS.put(i, words[i-1]);
         String[] tens = {"TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY", "ONE HUNDRED"};
-        for (int i = 0; i < tens.length; i++)
-            NUMBER_WORDS.put(10*(i+1), tens[i]);
+        for (int i = 1; i < tens.length; i++)
+            NUMBER_WORDS.put(10*i, tens[i-1]);
     }
 
     /**

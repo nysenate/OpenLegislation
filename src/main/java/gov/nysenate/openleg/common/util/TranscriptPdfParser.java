@@ -4,7 +4,6 @@ import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,48 +11,30 @@ import java.util.stream.Collectors;
 
 public class TranscriptPdfParser {
     private static final String LABEL = "(\\s*NEW YORK STATE SENATE\\s*)|(.*STENOGRAPHIC RECORD.*)";
-    private final LinkedList<TranscriptLine> allLines;
-    private final boolean hasLineNumbers;
+    public final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();
 
     public TranscriptPdfParser(String transcriptText) {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
-                .filter(tl -> !tl.getText().isEmpty() && !tl.isStenographer()).collect(Collectors.toCollection(ArrayList::new));
+                .filter(tl -> !tl.getText().isEmpty() && !tl.isStenographer())
+                .collect(Collectors.toCollection(ArrayList::new));
         this.hasLineNumbers = transcriptHasLineNumbers(lineArrayList);
-        this.allLines = correctLines(lineArrayList);
+        processLines(lineArrayList);
     }
 
-    /**
-     * Split text into pages, along with some processing.
-     * This solution works for all transcript text formats.
-     * @return a list of pages, which are themselves lists of lines.
-     */
     public List<List<String>> getPages() {
-        // If pages have already been processed, just return them.
-        // TODO: trim() if there's line numbers?
-        if (!pages.isEmpty())
-            return pages;
-        while (!allLines.isEmpty()) {
-            this.currPage = new ArrayList<>();
-            do
-                addLine(allLines.pop());
-            while (!allLines.isEmpty() && !allLines.peek().isPageNumber());
-            pages.add(currPage);
-        }
         return pages;
     }
 
     // TODO: could be better, I think.
-    // TODO: Add line numbers if they don't have them?
     private static boolean transcriptHasLineNumbers(ArrayList<TranscriptLine> lines) {
         if (lines.size() < 3)
             return false;
         return lines.get(1).hasLineNumber() || lines.get(2).hasLineNumber();
     }
 
-    private LinkedList<TranscriptLine> correctLines(ArrayList<TranscriptLine> lines) {
-        LinkedList<TranscriptLine> toReturn = new LinkedList<>();
+    private void processLines(ArrayList<TranscriptLine> lines) {
         // The last line won't need correction.
         for (int i = 0; i < lines.size() - 1; i++) {
             TranscriptLine currLine = lines.get(i), nextLine = lines.get(i + 1);
@@ -64,22 +45,30 @@ public class TranscriptPdfParser {
                 lines.set(i + 1, nextLine);
             }
             if (needsCorrecting(nextLine)) {
-                // Spaces should be preserved for lines before incorrect page numbers.
                 currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText());
                 lines.remove(i + 1);
             }
+            if (currLine.isPageNumber() && !currPage.isEmpty()) {
+                pages.add(currPage);
+                currPage = new ArrayList<>();
+            }
             if (!currLine.isBlank())
-                toReturn.add(currLine);
+                addLine(currLine);
         }
-        toReturn.add(lines.get(lines.size()-1));
-        return toReturn;
+        addLine(lines.get(lines.size() - 1));
+        pages.add(currPage);
     }
 
     private boolean needsCorrecting(TranscriptLine nextLine) {
-        boolean notProperNum = !nextLine.hasLineNumber() && !nextLine.isPageNumber();
-        boolean lineNumError = hasLineNumbers && !nextLine.isBlank() && notProperNum;
-        boolean noLineNumError = !hasLineNumbers && !nextLine.getText().startsWith(" ");
-        return lineNumError || noLineNumError;
+        if (hasLineNumbers) {
+            if (nextLine.isBlank() || nextLine.isPageNumber())
+                return false;
+            if (!nextLine.hasLineNumber())
+                return true;
+            return nextLine.getText().matches("\\d+") && Integer.parseInt(nextLine.getText()) != currPage.size() + 1;
+        }
+        // Second part used to fix Transcript 1999-01-12T11:05.
+        return !nextLine.getText().startsWith(" ") || nextLine.getText().matches(" 5[5-9]");
     }
 
     /**
@@ -92,7 +81,7 @@ public class TranscriptPdfParser {
         else
             currPage.add(currLine.getText());
         // Sometimes, manual spacing needs to be added.
-        // TODO: Why? lol
+        // TODO: Better normalize first pages.
         if (pages.isEmpty() && !hasLineNumbers) {
             int blankLines = 0;
             if (currLine.getText().matches(LABEL) || currLine.getTime().isPresent())

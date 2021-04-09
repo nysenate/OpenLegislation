@@ -40,26 +40,13 @@ public abstract class AbstractLawBuilder implements LawBuilder {
     protected static final String CONS_STR = CNS.name();
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
-    private static final Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
-    static {
-        expectedLawOrdering.put(EDN.name(), Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
-        expectedLawOrdering.put(CPL.name(), Arrays.asList(PART, TITLE, ARTICLE));
-    }
+    private static final Map<String, List<LawDocumentType>> expectedLawOrdering = Map.of(
+            EDN.name(), List.of(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART), CPL.name(), List.of(PART, TITLE, ARTICLE));
 
     /** The location ids portions are prefixed with a code to indicate the different document types. */
-    protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
-    static {
-        lawLevelCodes.put("A", ARTICLE);
-        lawLevelCodes.put("SA", SUBARTICLE);
-        lawLevelCodes.put("T", TITLE);
-        lawLevelCodes.put("ST", SUBTITLE);
-        lawLevelCodes.put("P", PART);
-        lawLevelCodes.put("SP", SUBPART);
-        lawLevelCodes.put("S", SECTION);
-        lawLevelCodes.put("INDEX", INDEX);
-        lawLevelCodes.put("R", RULE);
-        lawLevelCodes.put("JR", JOINT_RULE);
-    }
+    protected static Map<String, LawDocumentType> lawLevelCodes = Map.of("A", ARTICLE, "SA", SUBARTICLE, "T", TITLE,
+            "ST", SUBTITLE, "P", PART, "SP", SUBPART, "S", SECTION, "INDEX", INDEX, "R", RULE,
+            "JR", JOINT_RULE);
 
     /** A law version id that is obtained from the law blocks. */
     private final LawVersionId lawVersionId;
@@ -101,7 +88,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
         return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 
-    /** --- Abstract Methods --- */
+    /* --- Abstract Methods --- */
 
     /**
      * The override of this method should be able to figure out which location id is the parent of the
@@ -122,7 +109,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
 
     protected abstract void clearParents();
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * {@inheritDoc}
@@ -167,41 +154,37 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * {@inheritDoc}
      */
     public void addUpdateBlock(LawBlock block) {
+        // Re-parse the titles
         switch (LawMethod.stringToMethod(block.getMethod())) {
-            case MASTER:
-                rebuildTree(block.getText().toString());
-                break;
-            case REPEAL:
+            case MASTER -> rebuildTree(block.getText().toString());
+            case REPEAL -> {
                 logger.info("{} , {}", block.getDocumentId(), rootNode);
                 Optional<LawTreeNode> node = rootNode.findNode(block.getDocumentId(), false);
                 if (node.isPresent()) {
                     logger.info("Repealing {}", block.getDocumentId());
                     node.get().setRepealedDate(block.getPublishedDate());
-                }
-                else
+                } else
                     logger.warn("Failed to repeal document {} because it could not be located within the law tree!", block.getDocumentId());
-                break;
-            case DELETE:
+            }
+            case DELETE -> {
                 logger.info("Deleting {}", block.getDocumentId());
                 rootNode.findNode(block.getDocumentId(), true);
-                break;
-            case UPDATE:
+            }
+            case UPDATE -> {
                 if (rootNode == null)
                     throw new LawParseException("Can't add law document " + block.getDocumentId() + " without a prior law tree.");
                 Optional<LawDocInfo> existingDocInfo = rootNode.find(block.getDocumentId());
-                if (!existingDocInfo.isPresent())
+                if (existingDocInfo.isEmpty())
                     throw new LawParseException("Can't add law document " + block.getDocumentId() +
                             " without a prior law tree structure including it.");
-
                 existingDocInfo.get().setPublishedDate(block.getPublishedDate());
-                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString().replace("├Á", "§"));
-                // Re-parse the titles
+                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
                 setLawDocTitle(lawDoc, true);
+                existingDocInfo.get().setTitle(lawDoc.getTitle());
                 lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 logger.info("Updated {}", lawDoc.getDocumentId());
-                break;
-            case UNKNOWN:
-                throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
+            }
+            case UNKNOWN -> throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
         }
     }
 
@@ -422,7 +405,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
             lawDoc.setDocTypeId(docTypeId);
         }
         else {
-            if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
+            if (!block.getDocumentId().matches(CUBIT + "|" + ATTN))
                 logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
             lawDoc.setDocType(MISC);
             lawDoc.setDocTypeId(block.getLocationId());

@@ -15,7 +15,8 @@ import java.util.Optional;
  */
 public class TranscriptLine {
     /** Regex to match any non alphanumeric or whitespace characters. */
-    private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,]+";
+    // TODO: unnecessary once all bad characters have been removed.
+    private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
 
     /** All page numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
@@ -26,9 +27,7 @@ public class TranscriptLine {
     public TranscriptLine(@NonNull String text) {
         if (!text.isBlank())
             text = text.stripTrailing();
-        this.text = text.replaceAll("[\r\f\t]", "");
-        //int[] codePoints = text.chars().filter(Character::isBmpCodePoint).toArray();
-        //this.text = new String(codePoints, 0, codePoints.length);
+        this.text = text.replaceAll("[\r\f\t¦«]", "");
     }
 
     public String getText() {
@@ -106,7 +105,7 @@ public class TranscriptLine {
 
     public Optional<String> getSession() {
         if (text.contains("SESSION"))
-            return Optional.of(removeLineNumber().trim());
+            return Optional.of(removeLineNumber().replaceAll(" {2,}", " ").trim());
         return Optional.empty();
     }
 
@@ -143,7 +142,7 @@ public class TranscriptLine {
 
     /** --- Internal Methods --- */
 
-    private static Optional<Integer> getNumber(String text) {
+    protected static Optional<Integer> getNumber(String text) {
         try {
             return Optional.of(Integer.parseInt(text.trim()));
         } catch (NumberFormatException e) {

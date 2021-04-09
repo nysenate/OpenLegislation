@@ -44,8 +44,7 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
     @Override
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         switch (lawDoc.getDocType()) {
-            case ARTICLE:
-            case SECTION:
+            case ARTICLE, SECTION:
                 lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
                 break;
             case CHAPTER:

@@ -40,15 +40,15 @@ public class TranscriptPdfView extends BasePdfView {
      * Draw correctly aligned text along with Stenographer information.
      * @param page to draw.
      */
-    // TODO: repetitive for sure. Also check the PDF's directly.
+    // TODO: repetitive for sure. Does everything have page numbers?
     @Override
     protected void drawPage(List<String> page) throws IOException {
         for (int i = 0; i < page.size(); i++) {
-            TranscriptLine line = new TranscriptLine(page.get(i));
-            if (i == 0 && line.getText().matches("\\d+"))
-                drawPageNumber(line.getText());
+            String line = page.get(i);
+            if (i == 0 && line.matches("\\d+"))
+                drawPageNumber(line);
             else
-                drawText(line);
+                drawText(new TranscriptLine(line));
         }
         drawStenographer(page.size());
     }
@@ -68,6 +68,7 @@ public class TranscriptPdfView extends BasePdfView {
         int indent = NO_LINE_NUM_INDENT;
         Matcher m = Pattern.compile(" *\\d+").matcher(line.getText());
         // Line numbers should align left of the left vertical border.
+        // TODO: Boolean for if transcript has lines, then assume that's always true?
         if (line.hasLineNumber() && m.find())
             indent = m.group().length() + 1;
         float offset = LEFT - indent * FONT_WIDTH;

@@ -8,7 +8,6 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +37,7 @@ public class LawTitleParser {
     private static final int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
-    private static final List<String> NO_TITLES = Arrays.asList(LSA.name(), POA.name(),
+    private static final List<String> NO_TITLES = List.of(LSA.name(), POA.name(),
             PNY.name(), PCM.name(), BAT.name(), CCT.name());
     protected static final String NO_TITLE = "No title";
 
@@ -48,21 +47,15 @@ public class LawTitleParser {
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
         if (lawDocInfo == null  || bodyText == null)
             return "";
-        switch (lawDocInfo.getDocType()) {
-            case CHAPTER:
-                return extractTitleFromChapter(lawDocInfo);
-            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE: case MISC:
-                return extractTitleFromNonSection(lawDocInfo, bodyText);
-            case SECTION:
-                return extractTitleFromSection(lawDocInfo, bodyText);
-            case INDEX:
-                return "Index of: " + lawDocInfo.getDocTypeId();
-            case PREAMBLE:
-                return "Preamble";
-            case JOINT_RULE:
-                return NO_TITLE;
-        }
-        return "";
+        return switch (lawDocInfo.getDocType()) {
+            case CHAPTER -> extractTitleFromChapter(lawDocInfo);
+            case TITLE, SUBTITLE, PART, SUBPART, RULE, ARTICLE, SUBARTICLE, MISC -> extractTitleFromNonSection(lawDocInfo, bodyText);
+            case SECTION -> extractTitleFromSection(lawDocInfo, bodyText);
+            case INDEX -> "Index of: " + lawDocInfo.getDocTypeId();
+            case PREAMBLE -> "Preamble";
+            case JOINT_RULE -> NO_TITLE;
+            default -> "";
+        };
     }
 
     /**

@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.legislation.law;
 
-import com.google.common.collect.Sets;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -174,14 +171,9 @@ public enum LawChapterCode
     private final LawType type;
 
     public static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
-    private static final Set<LawChapterCode> NON_NUMERICAL_VOLUMES = Sets.newHashSet(ACA, CPL, CVS, PAR, MHY, PEN);
-    private static final Map<String, LawChapterCode> UNIQUE_CITATIONS = new HashMap<>();
-    static {
-        UNIQUE_CITATIONS.put("Rec & Pks", PAR);
-        UNIQUE_CITATIONS.put("El", ELN);
-        UNIQUE_CITATIONS.put("NYS Med Care Fac Fin Ag Act", MCF);
-        UNIQUE_CITATIONS.put("Fin", STF);
-    }
+    private static final Set<LawChapterCode> NON_NUMERICAL_VOLUMES = Set.of(ACA, CPL, CVS, PAR, MHY, PEN);
+    private static final Map<String, LawChapterCode> UNIQUE_CITATIONS = Map.of("Rec & Pks", PAR, "El", ELN,
+            "NYS Med Care Fac Fin Ag Act", MCF, "Fin", STF);
 
     public boolean hasNumericalTitles() {
         return !NON_NUMERICAL_VOLUMES.contains(this);
