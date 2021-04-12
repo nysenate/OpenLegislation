@@ -114,7 +114,7 @@
     <eh-cache.version>2.10.6</eh-cache.version>
     <elasticsearch.version>7.3.2</elasticsearch.version>
     <flying-saucer.version>9.1.18</flying-saucer.version>
-    <guava.version>28.1-jre</guava.version>
+    <guava.version>29.0-jre</guava.version>
     <guava.jackson.version>2.9.10</guava.jackson.version>
     <http-client.version>4.5.10</http-client.version>
     <jackson.version>2.12.1</jackson.version>
