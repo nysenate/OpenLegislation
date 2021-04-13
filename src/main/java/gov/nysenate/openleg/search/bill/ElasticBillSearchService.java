@@ -191,7 +191,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             // Load all bill ids into a queue
             final LinkedBlockingQueue<BaseBillId> billIdQueue = new LinkedBlockingQueue<>();
             for (SessionYear session = sessions.get().lowerEndpoint();
-                 session.compareTo(SessionYear.current()) < 1;
+                 session.compareTo(sessions.get().upperEndpoint()) < 1;
                  session = session.next()) {
                 billIdQueue.addAll(billDataService.getBillIds(session, LimitOffset.ALL));
             }

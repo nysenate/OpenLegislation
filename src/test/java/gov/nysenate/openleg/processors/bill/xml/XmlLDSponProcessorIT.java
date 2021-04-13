@@ -7,6 +7,7 @@ import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -41,6 +42,25 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
 
         String expectedSponsor = "KRUEGER";
         List<String> expectedCoSponsors = Arrays.asList("STEWART-COUSINS", "ALCANTARA", "AVELLA", "BRESLIN");
+        List<String> expectedMultiSponsors = Collections.emptyList();
+
+        verifySponsors(baseBillId, expectedSponsor, false, false,
+                expectedCoSponsors, expectedMultiSponsors);
+    }
+
+    // Ignore for now, real data for A818 makes this test fail.
+    // These tests should be reorganized to not query the prod database.
+    @Ignore
+    @Test
+    public void ignoreEmptyPrimarySponsor() {
+        String xmlFilePath = "processor/bill/sponsor/2020-12-30-12.38.45.708793_LDSPON_A00818.XML";
+
+        processXmlFile(xmlFilePath);
+
+        BaseBillId baseBillId = BaseBillId.of(new BillId("A818", 2021));
+
+        String expectedSponsor = null;
+        List<String> expectedCoSponsors = Arrays.asList("FAHY", "MCDONOUGH");
         List<String> expectedMultiSponsors = Collections.emptyList();
 
         verifySponsors(baseBillId, expectedSponsor, false, false,

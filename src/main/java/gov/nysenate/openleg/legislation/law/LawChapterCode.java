@@ -24,6 +24,7 @@ public enum LawChapterCode
     BVO("Benevolent Orders", CONSOLIDATED),
     BSC("Business Corporation", CONSOLIDATED),
     CAL("Canal", CONSOLIDATED),
+    CAN("Cannabis", CONSOLIDATED),
     CVP("Civil Practice Law & Rules", CONSOLIDATED),
     CVR("Civil Rights", CONSOLIDATED),
     CVS("Civil Service", CONSOLIDATED),

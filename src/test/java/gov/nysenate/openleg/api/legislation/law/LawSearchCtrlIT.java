@@ -27,17 +27,18 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void testAllSearchLaws() {
+        addParam("limit", "all");
         for (String fileId : TEST_LAW_IDS)
             loadTestData(fileId, true);
         try {
-            List<String> ruleLawIds = convertResponse(testCtrl.searchLaws("locationId:R1", testRequest));
             List<String> lawIds = convertResponse(testCtrl.searchLaws("locationId:1", testRequest));
-            lawIds.sort(String::compareTo);
+            List<String> ruleLawIds = convertResponse(testCtrl.searchLaws("locationId:R1", testRequest));
             for (String lawId : TEST_LAW_IDS) {
                 if (LawChapterCode.valueOf(lawId).getType() == LawType.RULES)
                     assertTrue(ruleLawIds.contains(lawId));
-                else
+                else {
                     assertTrue(lawIds.contains(lawId));
+                }
             }
         } catch (SearchException e) {
             fail();
@@ -57,8 +58,7 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
 
     private static List<String> convertResponse(BaseResponse response) {
         ListView<?> asListView = ((ListViewResponse<?>) response).getResult();
-        List<SearchResultView> asSrv = asListView.getItems().stream().map(item -> ((SearchResultView) item)).collect(Collectors.toList());
-        List<LawDocInfoView> asLdiv = asSrv.stream().map(srv -> ((LawDocInfoView) srv.getResult())).collect(Collectors.toList());
-        return asLdiv.stream().map(LawDocInfoView::getLawId).distinct().collect(Collectors.toList());
+        return asListView.getItems().stream().map(item -> ((SearchResultView) item)).
+                map(srv -> ((LawDocInfoView) srv.getResult())).map(LawDocInfoView::getLawId).collect(Collectors.toList());
     }
 }
