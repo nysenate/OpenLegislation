@@ -27,7 +27,7 @@ public class TranscriptPdfView extends BasePdfView {
 
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
         this.stenographer_center = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
-        List<List<String>> pages = new TranscriptPdfParser(transcript.getText()).getPages();
+        List<List<String>> pages = new TranscriptPdfParser(transcript.getDateTime(), transcript.getText()).getPages();
         writePages(TOP - FONT_WIDTH, 0, pages);
     }
 
