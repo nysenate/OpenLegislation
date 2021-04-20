@@ -21,6 +21,9 @@ public class TranscriptLine {
     /** All page numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hmma"),
+            DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d yyyy");
+
     /** The actual text of the line. */
     private final String text;
 
@@ -35,9 +38,7 @@ public class TranscriptLine {
     }
 
     /**
-     * Page number is usually right aligned at the top of each page.
-     * However, sometimes it's left aligned on the next line instead.
-     * e.g. 082895.v1, 011299.v1
+     * Page numbers are right aligned at the top of each page.
      * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */
@@ -45,7 +46,6 @@ public class TranscriptLine {
         Optional<Integer> num = getNumber(text);
         if (num.isEmpty())
             return false;
-        // Page numbers are right aligned.
         return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
     }
 
@@ -73,31 +73,27 @@ public class TranscriptLine {
     }
 
     /**
-     * Extracts the date information from lines which contains the date, or an
-     * empty Optional if a date can't be extracted.
-     * @return the Optional, which may have a date.
+     * Extracts the date from the line if possible.
+     * @return the Optional, which will have a date if one was found.
      */
     public Optional<LocalDate> getDate() {
         String temp = WordUtils.capitalizeFully(removeLineNumber().replaceAll("[ ,]+", " ")
                 .replace(".", "").trim());
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy");
         try {
-            return Optional.of(LocalDate.parse(temp, dtf));
+            return Optional.of(LocalDate.parse(temp, DATE_FORMATTER));
         } catch (DateTimeParseException ex) {
             return Optional.empty();
         }
     }
 
     /**
-     * Returns a string with time information parsed from this TranscriptLine,
-     * or an empty Optional if no time can be parsed.
-     * @return the Optional, which may have a time.
+     * Extracts the time from the line if possible.
+     * @return the Optional, which will have a time if one was found.
      */
     public Optional<LocalTime> getTime() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hmma");
-        String date = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm").trim().toUpperCase();
+        String time = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm").trim().toUpperCase();
         try {
-            return Optional.of(LocalTime.parse(date, dtf));
+            return Optional.of(LocalTime.parse(time, TIME_FORMATTER));
         } catch (DateTimeParseException ex) {
             return Optional.empty();
         }
@@ -122,7 +118,7 @@ public class TranscriptLine {
     }
 
     /**
-     * Removes invalid characters from a line of text, such as broken pipe or binary.
+     * Removes invalid characters from a line of text.
      * @return The line with invalid characters removed.
      */
     public String stripInvalidCharacters() {
@@ -142,7 +138,7 @@ public class TranscriptLine {
 
     /** --- Internal Methods --- */
 
-    protected static Optional<Integer> getNumber(String text) {
+    private static Optional<Integer> getNumber(String text) {
         try {
             return Optional.of(Integer.parseInt(text.trim()));
         } catch (NumberFormatException e) {

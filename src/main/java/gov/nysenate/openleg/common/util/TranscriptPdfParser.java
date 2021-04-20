@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 
 public class TranscriptPdfParser {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptPdfParser.class);
-    public final boolean hasLineNumbers;
+    private final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();
 
     // Maps Strings to the number of blank lines to add.
-    private static final Map<String, Integer> BLANK_LINES = Map.of("NEW YORK STATE SENATE", 2, "THE STENOGRAPHIC RECORD", 4,
-            "STENOGRAPHIC RECORD",  3, "Secretary", 6);
+    private static final Map<String, Integer> BLANK_LINES = Map.of("NEW YORK STATE SENATE", 2,
+            "THE STENOGRAPHIC RECORD", 4, "STENOGRAPHIC RECORD",  3, "Secretary", 6);
     private static final Pattern BLANK_LINE_PATTERN = Pattern.compile(".*?(" +
             // First pipe is trimmed off.
             BLANK_LINES.keySet().stream().reduce("", (one, two) -> one + "|" + two).substring(1) + ").*");
@@ -33,11 +33,14 @@ public class TranscriptPdfParser {
         // Second line may be a page number after whitespace, so 3rd line is used.
         this.hasLineNumbers = lineArrayList.size() >= 3 && lineArrayList.get(2).hasLineNumber();
         processLines(lineArrayList);
-        int lastPageLength = pages.get(0).size();
+        if (!pages.get(0).get(0).matches("\\d+"))
+            logger.warn("Transcript " + id + " doesn't have a page number on the first page.");
+        int firstPageLength = pages.get(0).size();
         for (int i = 1; i < pages.size() - 1; i++) {
-            if (pages.get(i).size() != lastPageLength)
-                logger.warn("In Transcript " + id + ", pages " + (i - 1) + " and " + i + " don't match in length.");
-            lastPageLength = pages.get(i).size();
+            if (pages.get(i).size() != firstPageLength) {
+                logger.warn("In Transcript " + id + ", there is a page length mismatch");
+                break;
+            }
         }
     }
 
@@ -45,6 +48,14 @@ public class TranscriptPdfParser {
         return pages;
     }
 
+    public boolean hasLineNumbers() {
+        return hasLineNumbers;
+    }
+
+    /**
+     * Various problems with Transcripts require corrections to lines.
+     * @param lines to process and save.
+     */
     private void processLines(ArrayList<TranscriptLine> lines) {
         // The last line won't need correction.
         for (int i = 0; i < lines.size() - 1; i++) {
@@ -69,6 +80,11 @@ public class TranscriptPdfParser {
         pages.add(currPage);
     }
 
+    /**
+     * Tests for certain common formatting issues.
+     * @param nextLine to check.
+     * @return if this line needs to be combined with the last one.
+     */
     private boolean needsCorrecting(TranscriptLine nextLine) {
         if (hasLineNumbers) {
             if (nextLine.isBlank() || nextLine.isPageNumber())
@@ -77,7 +93,7 @@ public class TranscriptPdfParser {
                 return true;
             return nextLine.getText().matches("\\d+") && Integer.parseInt(nextLine.getText()) != currPage.size() + 1;
         }
-        // Second part used to fix Transcript 1999-01-12T11:05.
+        // TODO: second part is to address Transcript 1999-01-12T11:05. Just fix it in database?
         return !nextLine.getText().startsWith(" ") || nextLine.getText().matches(" 5[5-9]");
     }
 
@@ -94,7 +110,6 @@ public class TranscriptPdfParser {
             currPage.add(currLine.getText());
         // Sometimes, manual spacing needs to be added.
         if (pages.isEmpty() && !hasLineNumbers) {
-            // TODO: eliminate some spaces, and have alignment happen in PDF?
             int blankLines = 0;
             Matcher m = BLANK_LINE_PATTERN.matcher(currLine.getText());
             if (m.matches())
