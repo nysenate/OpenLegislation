@@ -18,7 +18,7 @@ public class TranscriptLine {
     // TODO: unnecessary once all bad characters have been removed.
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
 
-    /** All page numbers occur in the first 10 characters of a line. */
+    /** All line numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hmma"),
@@ -38,18 +38,6 @@ public class TranscriptLine {
     }
 
     /**
-     * Page numbers are right aligned at the top of each page.
-     * @return <code>true</code> if line contains a page number;
-     *         <code>false</code> otherwise.
-     */
-    public boolean isPageNumber() {
-        Optional<Integer> num = getNumber(text);
-        if (num.isEmpty())
-            return false;
-        return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
-    }
-
-    /**
      * Determines if this TranscriptLine's text contains a line number.
      * @return <code>true</code> if this TranscriptLine contains a line number;
      *         <code>false</code> otherwise.
@@ -59,6 +47,18 @@ public class TranscriptLine {
         String[] split = text.trim().split(" {2}");
         Optional<Integer> num = getNumber(split[0].replaceAll(INVALID_CHARACTERS_REGEX, ""));
         return num.isPresent() && num.get() <= MAX_PAGE_LINES && !isPageNumber();
+    }
+
+    /**
+     * Page numbers are right aligned at the top of each page.
+     * @return <code>true</code> if line contains a page number;
+     *         <code>false</code> otherwise.
+     */
+    public boolean isPageNumber() {
+        Optional<Integer> num = getNumber(text);
+        if (num.isEmpty())
+            return false;
+        return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
     }
 
     /**
@@ -106,7 +106,7 @@ public class TranscriptLine {
     }
 
     public boolean isBlank() {
-        return stripInvalidCharacters().isBlank();
+        return text.replaceAll(INVALID_CHARACTERS_REGEX,"").isBlank();
     }
 
     /**
@@ -115,14 +115,6 @@ public class TranscriptLine {
      */
     public boolean isStenographer() {
         return text.matches(".*(" + Stenographer.CANDYCO1.getName() + "|\\(518\\) 371-8910).*");
-    }
-
-    /**
-     * Removes invalid characters from a line of text.
-     * @return The line with invalid characters removed.
-     */
-    public String stripInvalidCharacters() {
-        return text.replaceAll(INVALID_CHARACTERS_REGEX,"");
     }
 
     /**

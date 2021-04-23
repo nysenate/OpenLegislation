@@ -1,56 +1,65 @@
 package gov.nysenate.openleg.common.util;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
+import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-// TODO: to UnitTest
-@Category(IntegrationTest.class)
+@Category(UnitTest.class)
 public class TranscriptPdfParserTest extends BaseTests {
-    private static final String TEST_FILE_DIR = "src/test/resources/transcriptFiles/";
-    private static final String NORMAL_TRANSCRIPT = "2020-01-01T1100.v1";
+    private static final String TEST_FILE_DIR = "src/test/resources/transcriptFiles/forPdfParser/",
+            NORMAL_LINE_NUM = "2020-01-01T11:00", BLANK_LINE_BEFORE_PAGE_NUM = "1993-03-10T12:10",
+            NORMAL_NO_LINE_NUM = "2000-01-05T12:10", ACTING_PRES_ERROR = "1995-03-16T10:00",
+            MISPLACED_NUM = "1998-03-10T15:10", ACTING_PRES_ERROR_MISPLACED_LINE_NUM = "1996-06-26T10:00",
+            NORMAL_NO_LINE_NUM_1998 = "1998-01-07T12:15";
 
-    @Autowired
-    private TranscriptDataService transcriptDataService;
+    private boolean expectedNumberedLines;
 
     @Test
-    public void spacingTest() {
-        var ids = transcriptDataService.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL);
-        for (var id : ids) {
-            Transcript t = transcriptDataService.getTranscript(id);
-            var parser = new TranscriptPdfParser(t.getDateTime(), t.getText());
-            if (parser.getPages().get(1).size() != 26)
-                System.out.println(t.getDateTime());
-        }
+    public void numberedTranscriptTest() throws IOException {
+        expectedNumberedLines = true;
+        testTranscript(NORMAL_LINE_NUM, 3, 26);
+        testTranscript(BLANK_LINE_BEFORE_PAGE_NUM, 12, 24);
+        testTranscript(ACTING_PRES_ERROR, 3, 24);
+        testTranscript(MISPLACED_NUM, 62, 26);
+        testTranscript(ACTING_PRES_ERROR_MISPLACED_LINE_NUM, 3, 24);
     }
 
     @Test
-    public void normalTranscriptText() throws IOException {
-        var dateTime = LocalDate.of(2020, 1, 1).atStartOfDay();
-        List<List<String>> pages = new TranscriptPdfParser(dateTime, getText(NORMAL_TRANSCRIPT)).getPages();
-        assertEquals(3, pages.size());
-        for (var page : pages) {
+    public void nonNumberedTranscriptText() throws IOException {
+        expectedNumberedLines = false;
+        testTranscript(NORMAL_NO_LINE_NUM, 21, 26);
+        testTranscript(NORMAL_NO_LINE_NUM_1998, 14, 26, Map.of(1, 18, 2, 20));
+    }
+
+    private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength) throws IOException {
+        testTranscript(dateTime, expectedPageCount, defaultPageLength, Map.of());
+    }
+
+    private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength,
+                                Map<Integer, Integer> badPageLengths) throws IOException {
+        String text = Files.readString(Paths.get(TEST_FILE_DIR + dateTime.replaceAll(":", "")));
+        var pdfParser = new TranscriptPdfParser(LocalDateTime.parse(dateTime), text);
+        assertEquals(expectedNumberedLines, pdfParser.hasLineNumbers());
+        List<List<String>> pages = pdfParser.getPages();
+        assertEquals(expectedPageCount, pages.size());
+
+        // The last page may end short, so it's ignored.
+        for (int i = 0; i < pages.size() - 1; i++) {
+            var page = pages.get(i);
             assertTrue(page.get(0).matches("\\d+"));
-            assertEquals(26, page.size());
+            int expectedPageLength = badPageLengths.getOrDefault(i + 1, defaultPageLength);
+            assertEquals(expectedPageLength, page.size());
         }
-    }
-
-    private static String getText(String filename) throws IOException {
-        return Files.readString(Paths.get(TEST_FILE_DIR + filename));
     }
 }
