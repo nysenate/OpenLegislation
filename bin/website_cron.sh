@@ -25,6 +25,7 @@
 # Revised: 2019-12-06 - Add nys_petitions to Drupal maintenance tasks
 # Revised: 2019-12-16 - Remove feeds from Drupal maintenance tasks
 # Revised: 2020-04-10 - Add nys_sage to Drupal maintenance tasks
+# Revised: 2021-04-23 - Add accumulator-archive drush task
 #
 
 PATH=$PATH:/usr/local/bin
@@ -132,6 +133,7 @@ elif [ "$mode" = "accum" ]; then
 
   echo "About to run website accumulator integrity check"
   pdrush @$penv accumulator-integrity all
+  pdrush @$penv accumulator-archive
 
 elif [ "$mode" = "uas" ]; then
 
