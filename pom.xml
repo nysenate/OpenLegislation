@@ -107,7 +107,7 @@
   <properties>
     <c3p0.version>0.9.5.4</c3p0.version>
     <commons-cli.version>1.4</commons-cli.version>
-    <commons-io.version>2.6</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
     <commons-text.version>1.8</commons-text.version>
     <commons-validator.version>1.6</commons-validator.version>
