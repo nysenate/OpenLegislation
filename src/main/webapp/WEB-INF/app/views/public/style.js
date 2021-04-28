@@ -37,6 +37,7 @@ export const TitleSmall = styled.h4`
   font-weight: 700;
   text-align: left;
   color: rgba(0,0,0,0.87);
+  font-family: Open Sans,sans-serif;
 `
 
 export const SenateSealLogo = styled.img`
@@ -63,7 +64,7 @@ export const PublicCard = styled(Card)`
   margin: 50px auto 0 auto;
   padding: 20px 20px;
   max-width: 960px;
-  font-size: 19px;
+  //font-size: 19px;
   font-weight: 300;
   text-align: center;
   
@@ -76,26 +77,31 @@ export const ApiKeyFormContainer = styled.div`
   text-align: center;
   margin-top: 30px;
   
-  & input {
-    border: 0;
-    border-bottom: .5px solid #bfbfbf;
-    margin: 0 auto;
-    width: 500px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 300;
-    
-    :focus {
-      border: 0;
-      border-bottom: 2px solid rgb(63, 81, 181); 
-      //outline: 1px solid rgb(63, 81, 181);
-      outline: none
-    }
-  }
-  
   & > button {
     font-weight: 600;
   }
+`
+
+export const Input = styled.input`
+  border: 0;
+  border-bottom: .5px solid #bfbfbf;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 300;
+  :focus {
+    border: 0;
+    border-bottom: 2px solid rgb(63, 81, 181); 
+    outline: none
+  }
+`
+
+export const ApiKeyInput = styled(Input)`
+  width: 500px;
+`
+
+export const SignUpInput = styled(Input)`
+  width: 200px;
 `
 
 export const Button = styled.button`
@@ -144,5 +150,17 @@ export const DataTypeIcon = styled.span`
 export const Paragraph = styled.p`
   font-size: 14px;
   text-align: left;
-  font-weight: 400;
+  font-weight: 300;
+`
+
+export const TwoColumns = styled.div`
+  display: flex;
+  flex-wrap: wrap;  
+`
+
+export const DocsIframe = styled.iframe`
+  height: 95vh;
+  border: 0;
+  overflow: visible; 
+  margin-top: 20px;
 `
