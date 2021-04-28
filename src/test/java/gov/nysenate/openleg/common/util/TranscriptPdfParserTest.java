@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.common.util;
 
-import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
-public class TranscriptPdfParserTest extends BaseTests {
+public class TranscriptPdfParserTest {
     private static final String TEST_FILE_DIR = "src/test/resources/transcriptFiles/forPdfParser/",
             NORMAL_LINE_NUM = "2020-01-01T11:00", BLANK_LINE_BEFORE_PAGE_NUM = "1993-03-10T12:10",
             NORMAL_NO_LINE_NUM = "2000-01-05T12:10", ACTING_PRES_ERROR = "1995-03-16T10:00",

@@ -4,9 +4,10 @@ import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class PublicHearingTextUtils
-{
+public class PublicHearingTextUtils {
+    private static final Pattern BLANK_LINE = Pattern.compile("^\\s*(\\d+)?\\s*$");
 
     /**
      * Groups public hearing text into pages.
@@ -18,12 +19,15 @@ public class PublicHearingTextUtils
 
         fullText = fullText.replaceAll("\r\n", "\n");
         List<String> lines = Splitter.on("\n").splitToList(fullText);
+        boolean lastLineBlank = true;
         for (String line : lines) {
-            page.add(line);
             if (line.contains("\f")) {
                 pages.add(page);
                 page = new ArrayList<>();
             }
+            else if (!line.isBlank() || !lastLineBlank)
+                page.add(line);
+            lastLineBlank = line.isBlank();
         }
         return pages;
     }
@@ -35,8 +39,7 @@ public class PublicHearingTextUtils
      * <code>false</code> otherwise.
      */
     public static boolean hasContent(String line) {
-        String blankLine = "^\\s*(\\d+)?\\s*$";
-        return !line.matches(blankLine);
+        return !BLANK_LINE.matcher(line).matches();
     }
 
     /**

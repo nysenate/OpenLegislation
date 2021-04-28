@@ -4,7 +4,6 @@ import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -60,7 +59,6 @@ public class PublicHearingAddressParser
     }
 
     private boolean matchesLastAddressLine(String line) {
-        Matcher addressMatcher = LAST_ADDRESS_LINE.matcher(line);
-        return addressMatcher.find();
+        return LAST_ADDRESS_LINE.matcher(line).find();
     }
 }

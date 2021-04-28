@@ -3,8 +3,10 @@ package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.transcripts.hearing.*;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingCommittee;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +18,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlPublicHearingQuery.*;
 import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 import static gov.nysenate.openleg.common.util.DateUtils.toTime;
+import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlPublicHearingQuery.*;
 
 @Repository
 public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
@@ -30,9 +32,8 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
     @Override
     public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("filename", order);
-        List<PublicHearingId> ids = jdbcNamed.query(
+        return jdbcNamed.query(
                 SELECT_PUBLIC_HEARING_IDS.getSql(schema(), orderBy, limOff), publicHearingIdRowMapper);
-        return ids;
     }
 
     /** {@inheritDoc} */
@@ -148,10 +149,9 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
 
     static RowMapper<PublicHearingCommittee> committeeRowMapper = (rs, rowNum) -> {
-        PublicHearingCommittee committee = new PublicHearingCommittee();
-        committee.setName(rs.getString("committee_name"));
-        committee.setChamber(Chamber.valueOf(rs.getString("committee_chamber").toUpperCase()));
-        return committee;
+        String name = rs.getString("committee_name");
+        String chamber = rs.getString("committee_chamber");
+        return new PublicHearingCommittee(name, chamber);
     };
 
     static RowMapper<PublicHearingUpdateToken> publicHearingTokenRowMapper = (rs, rowNum) ->

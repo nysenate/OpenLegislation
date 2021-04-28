@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
-import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,9 +35,6 @@ public class PublicHearingParser
     @Autowired
     private PublicHearingDateParser dateTimeParser;
 
-    @Autowired
-    private PublicHearingCommitteeParser committeeParser;
-
     /**
      * Parses a {@link PublicHearingFile}, extracting a
      * {@link PublicHearing PublicHearing}.
@@ -56,7 +53,7 @@ public class PublicHearingParser
         LocalTime startTime = dateTimeParser.parseStartTime(firstPage);
         LocalTime endTime = dateTimeParser.parseEndTime(firstPage, lastPage);
 
-        List<PublicHearingCommittee> committees = committeeParser.parse(firstPage);
+        List<PublicHearingCommittee> committees = PublicHearingCommitteeParser.parse(firstPage);
         String text = textParser.parse(pages);
 
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());

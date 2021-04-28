@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
 public class PublicHearingAddressParserTest
@@ -83,6 +82,6 @@ public class PublicHearingAddressParserTest
     private void testHearingAddress(String filename, String expected) throws IOException, URISyntaxException {
         List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(filename);
         String actual = addressParser.parse(pages.get(0));
-        assertThat(actual, is(expected));
+        assertEquals(expected, actual);
     }
 }

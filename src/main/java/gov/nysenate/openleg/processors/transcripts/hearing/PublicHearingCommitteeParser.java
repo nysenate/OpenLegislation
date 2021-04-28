@@ -1,152 +1,59 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingCommittee;
-import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PublicHearingCommitteeParser
-{
-    /* matches lines only containing "-" characters which divide up content. */
-    private static final Pattern SEPARATOR = Pattern.compile("^\\s*(\\d+)?\\s*-+$");
-
-    private static final Pattern CHECK_FOR_COMMITTEES = Pattern.compile("BEFORE THE NEW YORK STATE (SENATE|ASSEMBLY)");
-
-    private static final Pattern COMMITTEE_SPLIT = Pattern.compile("(, )?(?=AND(( THE)? SENATE|( THE)? ASSEMBLY))");
-
-    private static final Pattern FIRST_COMMITTEE = Pattern.compile(
-            "BEFORE THE NEW YORK STATE (?<chamber>SENATE|ASSEMBLY) ?(MAJORITY COALITION JOINT TASK FORCE ON |STANDING COMMITTEE ON )?(?<name>.*)");
-
-    // Additional committee pattern for hearing files obtained from the Senate.
-    private static final Pattern SENATE_ADDITIONAL_COMMITTEE_PATTERN = Pattern.compile(
-            "AND (THE )?(?<chamber>SENATE|ASSEMBLY) (STANDING COMMITTEE|TASK FORCE) ON (?<name>.+)");
-
-    // Additional committee pattern for hearing files obtained from the Assembly.
-    private static final Pattern ASSEMBLY_ADDITIONAL_COMMITTEE_PATTERN = Pattern.compile(
-            "AND (?<chamber>SENATE|ASSEMBLY) (?<name>.+) COMMITTEE"
-    );
-
-    /**
-     * Extracts PublicHearingCommittee's from the first page of a PublicHearingFile.
-     * @param firstPage
-     * @return
-     */
-    public List<PublicHearingCommittee> parse(List<String> firstPage) {
-        String committeeBlock = parseCommitteeBlock(firstPage);
-        return parse(committeeBlock);
-    }
+public class PublicHearingCommitteeParser {
+    private static final String CHAMBER = "(?<chamber>" + Chamber.SENATE.name() + "|" + Chamber.ASSEMBLY.name() + ")",
+            COMMITTEE_CHECK = "BEFORE THE NEW YORK STATE " + CHAMBER,
+            COMMITTEE_OR_TASK_FORCE = "(MAJORITY COALITION JOINT|STANDING COMMITTEE ON|COMMITTEES?|TASK FORCE ON) ?";
+    // Matches lines only containing "-" characters which divide up content.
+    private static final Pattern SEPARATOR = Pattern.compile("^\\s*(\\d+)?\\s*-+$"),
+            COMMITTEE_SPLIT = Pattern.compile("([,;] )?(?=AND( THE)? " + CHAMBER + ")"),
+            COMMITTEE_PATTERN = Pattern.compile(CHAMBER + "(?<name>.+)");
 
     /**
      * Extracts PublicHearingCommittee's from a string containing the committee info.
-     * @param committeeBlock
-     * @return
      */
-    public List<PublicHearingCommittee> parse(String committeeBlock) {
-        if (!committeeExists(committeeBlock)) {
-            return null;
-        }
-        if (multipleCommittees(committeeBlock)) {
-            return parseMultipleCommittees(committeeBlock);
-        } else {
-            return Arrays.asList(parseSingleCommittee(committeeBlock));
-        }
-    }
-
-    /**
-     * Checks if any PublicHearingCommittee information is present in this committeeBlock.
-     * @param committeeBlock text to search for PublicHearingCommittee info.
-     * @return
-     */
-    private boolean committeeExists(String committeeBlock) {
-        Matcher committeeMatcher = CHECK_FOR_COMMITTEES.matcher(committeeBlock);
-        return committeeMatcher.find();
-    }
-
-    /** Determines if a String contains info for multiple committees. */
-    private boolean multipleCommittees(String committeeBlock) {
-        Matcher committeeSplitMatcher = COMMITTEE_SPLIT.matcher(committeeBlock);
-        return committeeSplitMatcher.find();
-    }
-
-    /**
-     * Extract the PublicHearingCommittee's from a String when the String contains
-     * multiple PublicHearingCommittee's
-     * @param committeeBlock
-     * @return
-     */
-    private List<PublicHearingCommittee> parseMultipleCommittees(String committeeBlock) {
+    public static List<PublicHearingCommittee> parse(List<String> firstPage) {
+        String committeeBlock = parseCommitteeBlock(firstPage);
         List<PublicHearingCommittee> committees = new ArrayList<>();
-
-        // Parse the first committee.
+        if (!Pattern.compile(COMMITTEE_CHECK).matcher(committeeBlock).find())
+            return committees;
         String[] committeeStrings = committeeBlock.split(COMMITTEE_SPLIT.toString());
-        committees.add(parseSingleCommittee(committeeStrings[0]));
-
-        // Parse the additional committees.
-        for (int i = 1; i < committeeStrings.length; i++) {
-            if (!committeeStrings[i].isEmpty()) {
-                committees.add(parseAdditionalCommittee(committeeStrings[i]));
-            }
+        // Parse committees.
+        for (String committeeString : committeeStrings) {
+            String comStr = committeeString.replaceAll(COMMITTEE_OR_TASK_FORCE, "");
+            Matcher matcher = COMMITTEE_PATTERN.matcher(comStr);
+            if (!matcher.find())
+                continue;
+            var committee = new PublicHearingCommittee(matcher.group("name"), matcher.group("chamber"));
+            committees.add(committee);
         }
-
         return committees;
     }
 
     /**
-     * Extracts the nth PublicHearingCommittee from a String where n > 1.
-     * @param committeeString The String containing PublicHearingCommittee information.
-     * @return
+     * Parses out the block of text containing committee info from the first page of the PublicHearing.
      */
-    private PublicHearingCommittee parseAdditionalCommittee(String committeeString) {
-        PublicHearingCommittee committee = new PublicHearingCommittee();
-        Matcher senateAdditionalCommitteeMatcher = SENATE_ADDITIONAL_COMMITTEE_PATTERN.matcher(committeeString);
-        Matcher assemblyAdditionalCommiteeMatcher = ASSEMBLY_ADDITIONAL_COMMITTEE_PATTERN.matcher(committeeString);
-        if (senateAdditionalCommitteeMatcher.find()) {
-            committee.setName(senateAdditionalCommitteeMatcher.group("name"));
-            committee.setChamber(Chamber.valueOf(senateAdditionalCommitteeMatcher.group("chamber")));
-        }
-        else if (assemblyAdditionalCommiteeMatcher.find()) {
-            committee.setName(assemblyAdditionalCommiteeMatcher.group("name"));
-            committee.setChamber(Chamber.valueOf(assemblyAdditionalCommiteeMatcher.group("chamber")));
-        }
-
-        return committee;
-    }
-
-    /**
-     * Extracts the first PublicHearingCommittee from a String.
-     * @param committeeBlock
-     * @return
-     */
-    private PublicHearingCommittee parseSingleCommittee(String committeeBlock) {
-        PublicHearingCommittee committee = new PublicHearingCommittee();
-        Matcher matchFirstCommittee = FIRST_COMMITTEE.matcher(committeeBlock);
-        matchFirstCommittee.find();
-
-        committee.setName(matchFirstCommittee.group("name").trim());
-        committee.setChamber(Chamber.valueOf(matchFirstCommittee.group("chamber").toUpperCase()));
-        return committee;
-    }
-
-    /** Parses out the block of text containing committee info from the first page of the PublicHearing. */
-    private String parseCommitteeBlock(List<String> firstPage) {
-        String committeeBlock = "";
+    private static String parseCommitteeBlock(List<String> firstPage) {
+        StringBuilder committeeBlock = new StringBuilder();
         for (String line : firstPage) {
             // Committee is the first piece of information on page.
             Matcher endOfCommittee = SEPARATOR.matcher(line);
-            if (endOfCommittee.matches()) {
+            if (endOfCommittee.matches())
                 break;
-            }
-            if (PublicHearingTextUtils.hasContent(line)) {
-                committeeBlock += " " + PublicHearingTextUtils.stripLineNumber(line);
-            }
+            if (PublicHearingTextUtils.hasContent(line))
+                committeeBlock.append(" ").append(PublicHearingTextUtils.stripLineNumber(line));
         }
-        return committeeBlock;
+        return committeeBlock.toString();
     }
 }
