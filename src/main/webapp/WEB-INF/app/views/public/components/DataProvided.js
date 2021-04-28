@@ -3,8 +3,11 @@ import 'app/icons.scss'
 import {
   PublicCard,
   SubTitle,
+  TitleSmall,
   DataContainer,
+  DataCard,
   DataTypeIcon,
+  Paragraph,
 } from "../style"
 
 const dataWeProvide = [
@@ -45,39 +48,37 @@ const dataWeProvide = [
 
 export default function DataProvided() {
 
+  function createDataCard(index) {
+    return (
+      <DataCard>
+        <DataIcon icon={dataWeProvide[index].icon} bgClass={dataWeProvide[index].bgclass}/>
+        <div>
+          <TitleSmall>{dataWeProvide[index].type}</TitleSmall>
+          <Paragraph>{dataWeProvide[index].blurb}</Paragraph>
+        </div>
+      </DataCard>)
+  }
+
   return (
     <PublicCard>
       <header>
         <SubTitle>Data We Provide</SubTitle>
       </header>
       <DataContainer>
-        <DataIcon icon={dataWeProvide[0].icon} bgClass='blue3-bg' />
-        <SubTitle>{dataWeProvide[0].type}</SubTitle>
+        {createDataCard(0)}
+        {createDataCard(1)}
+        {createDataCard(2)}
+        {createDataCard(3)}
+        {createDataCard(4)}
+        {createDataCard(5)}
       </DataContainer>
-      {/*<DataContainer>*/}
-      {/*  {dataWeProvide.map((data) => {*/}
-      {/*    return (*/}
-      {/*      <div key={data.type} style={{width: '50%'}}>*/}
-      {/*        <div>*/}
-      {/*          <DataIcon icon={data.icon} bgColor={data.bgclass} />*/}
-      {/*        </div>*/}
-      {/*        /!*<div>*!/*/}
-      {/*        /!*  <h3>*!/*/}
-      {/*        /!*    {data.type}*!/*/}
-      {/*        /!*  </h3>*!/*/}
-      {/*        /!*  <p>{data.blurb}</p>*!/*/}
-      {/*        /!*</div>*!/*/}
-      {/*      </div>*/}
-      {/*    )*/}
-      {/*  })}*/}
-      {/*</DataContainer>*/}
     </PublicCard>
   )
 }
 
-function DataIcon({ icon, bgClass }) {
+function DataIcon({icon, bgClass}) {
   const classes = icon + ' ' + bgClass;
   return (
-    <DataTypeIcon className={classes} />
+    <DataTypeIcon className={classes}/>
   )
 }

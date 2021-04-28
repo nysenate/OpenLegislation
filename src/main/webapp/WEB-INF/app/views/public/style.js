@@ -24,6 +24,21 @@ export const Title = styled.h1`
   text-shadow: 0 0 1px #235674;
 `
 
+export const SubTitle = styled.h3`
+  margin: 0 auto 20px 0;
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+`
+
+export const TitleSmall = styled.h4`
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+  color: rgba(0,0,0,0.87);
+`
+
 export const SenateSealLogo = styled.img`
   height: 120px;
   vertical-align: text-top;
@@ -55,13 +70,6 @@ export const PublicCard = styled(Card)`
   & > p {
     margin: 10px 0;
   }
-`
-
-export const SubTitle = styled.h3`
-  margin: 0 auto 20px 0;
-  font-size: 24px;
-  font-weight: 400;
-  text-align: center;
 `
 
 export const ApiKeyFormContainer = styled.div`
@@ -108,18 +116,33 @@ export const Button = styled.button`
 `
 
 export const DataContainer = styled.div`
-  display:flex;
-  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+`
+
+export const DataCard = styled.div`
+  display: flex;
   justify-content: flex-start;
   padding: 16px;
-  flex-wrap: wrap;
+  width: 460px;
+  cursor: pointer;
+  :hover {
+    background: rgba(158,158,158,0.2);
+  }
+  transition: background-color 0.4s ease;
 `
 
 export const DataTypeIcon = styled.span`
   font-size: 30px;
-  line-height: 75px;
+  line-height: 55px;
   color: white;
   padding: 15px;
-  //width: 75px;
-  //height: auto;
+  margin-right: 15px;
+`
+
+export const Paragraph = styled.p`
+  font-size: 14px;
+  text-align: left;
+  font-weight: 400;
 `
