@@ -1,5 +1,6 @@
 import React from 'react'
 import DataProvided from "./components/DataProvided"
+import Footer from "./components/Footer"
 import {
   HomePage,
   PublicHeader,
@@ -10,7 +11,7 @@ import {
   SubTitle,
   ApiKeyFormContainer,
   Button,
-  Paragraph,
+  PublicWrapper,
   Input,
   ApiKeyInput,
   SignUpInput,
@@ -32,6 +33,7 @@ export default function PublicView() {
       </PublicHeader>
 
       <main>
+        <PublicWrapper>
         <AboutCard>
           Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>,
           Open Legislation is a public web service that provides access to NYS legislative data
@@ -120,13 +122,8 @@ export default function PublicView() {
           <DocsIframe width="100%" className="docs-iframe" src="/static/docs/html/index.html"/>
         </PublicCard>
 
-        <div>
-          <img src="//licensebuttons.net/l/by-nc-nd/3.0/us/88x31.png"/>
-          <p>
-            This content is licensed under Creative Commons BY-NC-ND 3.0.
-            The software and services provided under this site are offered under the BSD License and the GPL v3 License.
-          </p>
-        </div>
+       <Footer/>
+        </PublicWrapper>
       </main>
     </HomePage>
   )

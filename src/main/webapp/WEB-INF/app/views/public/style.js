@@ -24,6 +24,11 @@ export const Title = styled.h1`
   text-shadow: 0 0 1px #235674;
 `
 
+export const PublicWrapper = styled.div`
+  margin: 0 auto;
+  max-width: 960px;
+`
+
 export const SubTitle = styled.h3`
   margin: 0 auto 20px 0;
   font-size: 24px;
@@ -48,7 +53,6 @@ export const SenateSealLogo = styled.img`
 
 export const AboutCard = styled(Card)`
   position: relative;
-  max-width: 960px;
   padding: 50px 30px;
   margin: -100px auto 0 auto;
   font-weight: 400;
@@ -63,7 +67,6 @@ export const AboutCard = styled(Card)`
 export const PublicCard = styled(Card)`
   margin: 50px auto 0 auto;
   padding: 20px 20px;
-  max-width: 960px;
   //font-size: 19px;
   font-weight: 300;
   text-align: center;
@@ -163,4 +166,14 @@ export const DocsIframe = styled.iframe`
   border: 0;
   overflow: visible; 
   margin-top: 20px;
+`
+
+export const Center = styled.div`
+  margin: 20px;
+  text-align: center;
+`
+
+export const TextSmall = styled.span`
+  font-size: 14px;
+  font-weight: 100; 
 `
