@@ -16,6 +16,18 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+  
+  p {
+    line-height: 1.6;
+  }
+  
+  address {
+    font-style: normal
+  }
+  
+  a {
+    color: #008cba;
+  }
 `
 
 export default GlobalStyle;

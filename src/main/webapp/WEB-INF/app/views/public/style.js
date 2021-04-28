@@ -51,44 +51,34 @@ export const SenateSealLogo = styled.img`
   margin-right: 20px;
 `
 
-export const AboutCard = styled(Card)`
-  position: relative;
-  padding: 50px 30px;
-  margin: -100px auto 0 auto;
-  font-weight: 400;
-  font-size: 19px;
-  text-align: center;
-  
-  & > a {
-    color: #008cba;
-  }
-`
-
 export const PublicCard = styled(Card)`
-  margin: 50px auto 0 auto;
+  margin-top: 50px;
   padding: 20px 20px;
-  //font-size: 19px;
-  font-weight: 300;
+  font-weight: 400;
   text-align: center;
   
-  & > p {
+  & p {
+    font-weight: 100;
     margin: 10px 0;
   }
 `
 
+export const AboutCard = styled(PublicCard)`
+  position: relative;
+  padding: 50px 30px;
+  margin: -100px auto 0 auto;
+  font-size: 19px;
+`
+
 export const ApiKeyFormContainer = styled.div`
-  text-align: center;
   margin-top: 30px;
-  
-  & > button {
-    font-weight: 600;
-  }
 `
 
 export const Input = styled.input`
+  width: ${props => props.width ? props.width : "100px"};
   border: 0;
   border-bottom: .5px solid #bfbfbf;
-  margin: 0 auto;
+  margin: 0 10px;
   text-align: center;
   font-size: 16px;
   font-weight: 300;
@@ -99,20 +89,12 @@ export const Input = styled.input`
   }
 `
 
-export const ApiKeyInput = styled(Input)`
-  width: 500px;
-`
-
-export const SignUpInput = styled(Input)`
-  width: 200px;
-`
-
 export const Button = styled.button`
   width: 150px;
   color: rgba(255,255,255,0.87);
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
   background-color: rgb(57,73,171);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   min-height: 36px;
@@ -124,13 +106,13 @@ export const Button = styled.button`
   text-transform: uppercase;  
 `
 
-export const DataContainer = styled.div`
+export const DataProvidedContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
 `
 
-export const DataCard = styled.div`
+export const DataProvidedListItem = styled.div`
   display: flex;
   justify-content: flex-start;
   padding: 16px;
@@ -140,6 +122,11 @@ export const DataCard = styled.div`
     background: rgba(158,158,158,0.2);
   }
   transition: background-color 0.4s ease;
+  & p {
+    font-size: 14px;
+    text-align: left;
+    font-weight: 300;  
+  }
 `
 
 export const DataTypeIcon = styled.span`
@@ -150,15 +137,13 @@ export const DataTypeIcon = styled.span`
   margin-right: 15px;
 `
 
-export const Paragraph = styled.p`
-  font-size: 14px;
-  text-align: left;
-  font-weight: 300;
-`
-
-export const TwoColumns = styled.div`
+export const Column = styled.div`
   display: flex;
-  flex-wrap: wrap;  
+  flex-direction: column;
+  
+  & > div {
+    margin: 10px;
+  }
 `
 
 export const DocsIframe = styled.iframe`

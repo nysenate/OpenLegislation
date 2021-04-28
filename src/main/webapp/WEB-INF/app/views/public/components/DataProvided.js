@@ -4,10 +4,9 @@ import {
   PublicCard,
   SubTitle,
   TitleSmall,
-  DataContainer,
-  DataCard,
+  DataProvidedContainer,
+  DataProvidedListItem,
   DataTypeIcon,
-  Paragraph,
 } from "../style"
 
 const dataWeProvide = [
@@ -50,13 +49,13 @@ export default function DataProvided() {
 
   function createDataCard(index) {
     return (
-      <DataCard>
+      <DataProvidedListItem>
         <DataIcon icon={dataWeProvide[index].icon} bgClass={dataWeProvide[index].bgclass}/>
         <div>
           <TitleSmall>{dataWeProvide[index].type}</TitleSmall>
-          <Paragraph>{dataWeProvide[index].blurb}</Paragraph>
+          <p>{dataWeProvide[index].blurb}</p>
         </div>
-      </DataCard>)
+      </DataProvidedListItem>)
   }
 
   return (
@@ -64,14 +63,14 @@ export default function DataProvided() {
       <header>
         <SubTitle>Data We Provide</SubTitle>
       </header>
-      <DataContainer>
+      <DataProvidedContainer>
         {createDataCard(0)}
         {createDataCard(1)}
         {createDataCard(2)}
         {createDataCard(3)}
         {createDataCard(4)}
         {createDataCard(5)}
-      </DataContainer>
+      </DataProvidedContainer>
     </PublicCard>
   )
 }
