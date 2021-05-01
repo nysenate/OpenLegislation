@@ -9,13 +9,19 @@ export const HomePage = styled.div`
 export const PublicHeader = styled.section`
   margin-bottom: 0;
   height: 300px;
-  background: #008cba;
+  //background: #008cba;
+  background: ${props => props.theme.colors.blue6};
   position: relative;
+`
+
+export const SenateSealLogo = styled.img`
+  height: 110px;
+  vertical-align: text-top;
+  margin-right: 20px;
 `
 
 export const Title = styled.h1`
   margin: 0;
-  font-family: 'Roboto Slab', 'sans-serif';
   font-weight: 400;
   color: #fff;
   line-height: 200px;
@@ -43,12 +49,6 @@ export const TitleSmall = styled.h4`
   text-align: left;
   color: rgba(0,0,0,0.87);
   font-family: Open Sans,sans-serif;
-`
-
-export const SenateSealLogo = styled.img`
-  height: 120px;
-  vertical-align: text-top;
-  margin-right: 20px;
 `
 
 export const PublicCard = styled(Card)`
@@ -91,9 +91,9 @@ export const Input = styled.input`
 
 export const Button = styled.button`
   width: 150px;
-  color: rgba(255,255,255,0.87);
+  color: #ffffff;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-  background-color: rgb(57,73,171);
+  background-color: ${props => props.theme.colors.blue5};
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -103,7 +103,6 @@ export const Button = styled.button`
   border: 0;
   margin: 6px 16px;
   padding: 0 6px;
-  text-transform: uppercase;  
 `
 
 export const DataProvidedContainer = styled.div`
@@ -135,6 +134,7 @@ export const DataTypeIcon = styled.span`
   color: white;
   padding: 15px;
   margin-right: 15px;
+  background-color: ${props => props.bgColor}
 `
 
 export const Column = styled.div`

@@ -7,10 +7,12 @@ const GlobalStyle = createGlobalStyle`
   // You can continue writing global styles here
   body {
     height: 100%;
+    // TODO are any of these Helvetica fonts install on Windows/Linux?
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 300;
     font-size: 16px;
-    font-family: 'Roboto Slab', 'Open Sans', 'sans-serif';
+    color: #333;
     background: #f5f5f5;
-    color: #444;
      
     p {
       line-height: 1.6;
