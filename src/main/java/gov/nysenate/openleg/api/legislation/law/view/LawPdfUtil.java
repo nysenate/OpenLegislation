@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 public class LawPdfUtil {
     protected static final String BOLD_MARKER = "~~~~";
     private static final String CONSOLIDATED_CHAP_LABEL = "CHAPTER [\\w-]+( OF THE CONSOLIDATED LAWS)?",
-    UNCONSOLIDATED_CHAP_LABEL = "Chapter \\d+ of the laws of \\d{4}",
-    RULES_CHAP_NAME = "RULES OF THE (SENATE|ASSEMBLY)[\n ]+OF THE STATE OF NEW YORK",
-    CONSTITUTION_CHAP_NAME = "THE CONSTITUTION OF THE STATE OF NEW YORK",
-    CHAP_NAME = "(The )?%s( Law)?[.]?",
-    NON_CHAP_TITLE = ".*?%s[.]?";
+            UNCONSOLIDATED_CHAP_LABEL = "Chapter \\d+ of the laws of \\d{4}",
+            RULES_CHAP_NAME = "RULES OF THE (SENATE|ASSEMBLY)[\n ]+OF THE STATE OF NEW YORK",
+            CONSTITUTION_CHAP_NAME = "THE CONSTITUTION OF THE STATE OF NEW YORK",
+            CHAP_NAME = "(The )?%s( Law)?[.]?",
+            NON_CHAP_TITLE = ".*?%s[.]?";
 
     private LawPdfUtil() {}
 

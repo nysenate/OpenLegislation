@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
-import gov.nysenate.openleg.common.util.TranscriptPdfParser;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class TranscriptPdfView extends BasePdfView {
     private static final float[] X_VALS = {LEFT, LEFT, RIGHT, RIGHT}, Y_VALS = {TOP, BOTTOM, BOTTOM, TOP};
     private static final int STENOGRAPHER_LINE_NUM = 27;
     private final String stenographer;
-    private final float stenographer_center;
+    private final float stenographerCenter;
     private final boolean hasLineNumbers;
 
     public TranscriptPdfView(Transcript transcript) throws IOException {
@@ -26,7 +25,7 @@ public class TranscriptPdfView extends BasePdfView {
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
 
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
-        this.stenographer_center = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
+        this.stenographerCenter = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
         var parser = new TranscriptPdfParser(transcript.getDateTime(), transcript.getText());
         this.hasLineNumbers = parser.hasLineNumbers();
         writePages(TOP - FONT_WIDTH, 0, parser.getPages());
@@ -76,7 +75,7 @@ public class TranscriptPdfView extends BasePdfView {
      */
     private void drawStenographer(int lineCount) throws IOException {
         float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * SPACING;
-        contentStream.moveTextPositionByAmount(stenographer_center, offset);
+        contentStream.moveTextPositionByAmount(stenographerCenter, offset);
         contentStream.drawString(stenographer);
     }
 }

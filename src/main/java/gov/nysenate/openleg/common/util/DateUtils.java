@@ -19,11 +19,11 @@ public abstract class DateUtils
 
     /** --- Date Formats --- */
 
-    public final static DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
-    public final static DateTimeFormatter LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy");
-    public final static DateTimeFormatter LRS_DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    public final static DateTimeFormatter LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'");
-    public final static DateTimeFormatter LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
+    public final static DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd"),
+            LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy"),
+            LRS_DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'"),
+            LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
 
     public final static DateTimeFormatter PUBLIC_WEBSITE_DUMP_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -152,7 +152,7 @@ public abstract class DateUtils
     public static Duration getDuration(PGInterval interval) {
         if (interval == null) return null;
         return Duration.ofMillis(
-                (long) (interval.getSeconds() * 1000) + interval.getMinutes() * 60000 + interval.getHours() * 3600000);
+                (long) (interval.getSeconds() * 1000) + interval.getMinutes() * 60000L + interval.getHours() * 3600000L);
     }
 
     /** --- Date Range methods --- */

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.common.util;
+package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
 import org.slf4j.Logger;
@@ -24,9 +24,8 @@ public class TranscriptPdfParser {
             "THE STENOGRAPHIC RECORD", 4, "STENOGRAPHIC RECORD",  3, ":", 2,
             "SESSION", 3, "Secretary", 6);
     private static final Pattern BLANK_LINE_PATTERN = Pattern.compile(".*?(" +
-            // First pipe is trimmed off.
-            BLANK_LINES.keySet().stream().reduce("", (one, two) -> one + "|" + two).substring(1) + ").*"),
-    PRES_ERROR_PATTERN = Pattern.compile(" *((?:Acting ?|President ?){1,2}) *(\\d+.*)");
+            String.join("|", BLANK_LINES.keySet()) + ").*"),
+        PRES_ERROR_PATTERN = Pattern.compile(" *((?:Acting ?|President ?){1,2}) *(\\d+.*)");
 
     public TranscriptPdfParser(LocalDateTime id, String transcriptText) {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)

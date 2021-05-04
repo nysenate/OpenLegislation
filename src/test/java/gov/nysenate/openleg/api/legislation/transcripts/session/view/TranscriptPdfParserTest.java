@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.common.util;
+package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;

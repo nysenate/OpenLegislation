@@ -12,28 +12,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
-public class PublicHearingParser
-{
+public class PublicHearingParser {
     @Autowired
     private PublicHearingDataService dataService;
-
-    @Autowired
-    private PublicHearingTextParser textParser;
 
     @Autowired
     private PublicHearingTitleParser titleParser;
 
     @Autowired
     private PublicHearingAddressParser addressParser;
-
-    @Autowired
-    private PublicHearingDateParser dateTimeParser;
 
     /**
      * Parses a {@link PublicHearingFile}, extracting a
@@ -45,23 +36,19 @@ public class PublicHearingParser
         final List<List<String>> pages = PublicHearingTextUtils.getPages(
                 FileUtils.readFileToString(publicHearingFile.getFile(), Charset.defaultCharset()));
         final List<String> firstPage = pages.get(0);
-        final List<String> lastPage = pages.get(pages.size()-1);
+        final List<String> lastPage = pages.get(pages.size() - 1);
 
         String title = titleParser.parse(firstPage);
         String address = addressParser.parse(firstPage);
-        LocalDate date = dateTimeParser.parseDate(firstPage);
-        LocalTime startTime = dateTimeParser.parseStartTime(firstPage);
-        LocalTime endTime = dateTimeParser.parseEndTime(firstPage, lastPage);
+        var dateTimeParser = new PublicHearingDateParser(firstPage, lastPage);
 
         List<PublicHearingCommittee> committees = PublicHearingCommitteeParser.parse(firstPage);
-        String text = textParser.parse(pages);
-
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
-        PublicHearing publicHearing = new PublicHearing(id, date, text);
+        PublicHearing publicHearing = new PublicHearing(id, dateTimeParser.getDate(), parse(pages));
         publicHearing.setTitle(title);
         publicHearing.setAddress(address);
-        publicHearing.setStartTime(startTime);
-        publicHearing.setEndTime(endTime);
+        publicHearing.setStartTime(dateTimeParser.getStartTime());
+        publicHearing.setEndTime(dateTimeParser.getEndTime());
         publicHearing.setCommittees(committees);
 
         LocalDateTime now = LocalDateTime.now();
@@ -69,5 +56,13 @@ public class PublicHearingParser
         publicHearing.setPublishedDateTime(now);
 
         dataService.savePublicHearing(publicHearing, publicHearingFile, true);
+    }
+
+    /** Extracts the text of a PublicHearing. */
+    private String parse(List<List<String>> pages) {
+        StringBuilder text = new StringBuilder();
+        for (List<String> page : pages)
+            text.append(String.join("\n", page)).append("\n");
+        return text.toString();
     }
 }

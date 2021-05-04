@@ -236,7 +236,7 @@ public enum LawChapterCode
             else
                 toMatch.append("(,| |&|\\.|and|of)+");
         }
-        return Pattern.compile(".*?" + toMatch.append(".*").toString());
+        return Pattern.compile(".*?" + toMatch.append(".*"));
     }
 
     /**

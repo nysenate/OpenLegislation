@@ -26,18 +26,18 @@ import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
  */
 public class BillPdfView extends BasePdfView {
     private static final float BILL_MARGIN = 10f, RESOLUTION_MARGIN = 46f;
-    private static final String STYLES = "\n" +
-            "u {color: green;}\n" +
-            "s {color: red;}\n" +
-            "p.brk {page-break-before: always;}\n" +
-            "body {font-size: 14px;}\n" +
-            ".header {font-size: 1.8em; text-align: center; font-weight: bold;}\n",
+    private static final String STYLES = """
 
+            u {color: green;}
+            s {color: red;}
+            p.brk {page-break-before: always;}
+            body {font-size: 14px;}
+            .header {font-size: 1.8em; text-align: center; font-weight: bold;}
+            """,
             BILL_STYLES = STYLES +
             "@page {margin-left: 31.5px; margin-top: 27.5px;}\n" +
             "body {font-size: 14px;}\n",
-
-            RESO_STYLES = STYLES +
+            RESOLUTION_STYLES = STYLES +
             "@page {margin-left: 50px; margin-top: 30px;}\n" +
             "body {font-size: 16px;}\n";
 
@@ -51,14 +51,9 @@ public class BillPdfView extends BasePdfView {
         BillTextFormat format = ba.getFullText(HTML).isEmpty() ? PLAIN : HTML;
         String fullText = ba.getFullText(format);
         switch (format) {
-            case HTML:
-                writeHtmlPdf(bill.isResolution(), fullText);
-                break;
-            case PLAIN:
-                writePlainTextPdf(ba.getBillId(), fullText);
-                break;
-            default:
-                throw new IllegalStateException("Unable to write pdf for text format: " + format);
+            case HTML -> writeHtmlPdf(bill.isResolution(), fullText);
+            case PLAIN -> writePlainTextPdf(ba.getBillId(), fullText);
+            default -> throw new IllegalStateException("Unable to write pdf for text format: " + format);
         }
     }
 
@@ -81,7 +76,7 @@ public class BillPdfView extends BasePdfView {
         });
         // Add our own styles
         Element styleTag = doc.head().appendElement("style");
-        styleTag.appendText(resolution ? RESO_STYLES : BILL_STYLES);
+        styleTag.appendText(resolution ? RESOLUTION_STYLES : BILL_STYLES);
         // Get reformatted html
         StringBuilder htmlBuilder = new StringBuilder();
         doc.children().forEach(child -> writeHtml(child, htmlBuilder, false));
