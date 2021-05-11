@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processors.bill;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import gov.nysenate.openleg.common.util.NumberUtils;
+import gov.nysenate.openleg.common.util.NumberConversionUtils;
 import gov.nysenate.openleg.legislation.law.LawActionType;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
@@ -196,7 +196,7 @@ public class BillLawCodeParser {
             nonNumerical = !chapter.hasNumericalTitles() && context.peekLast().equals("T");
         // Only convert Roman Numerals to numbers when the names of the levels are numerical (eg Title 5 not Title E)
         if (isRomanNumeral(splitToken[0]) && !nonNumerical){
-            splitToken[0] = Integer.toString(NumberUtils.numeralToInt(splitToken[0]));
+            splitToken[0] = Integer.toString(NumberConversionUtils.numeralToInt(splitToken[0]));
             token = String.join("-", splitToken);
         }
         return token;

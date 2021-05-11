@@ -59,7 +59,6 @@ public class PublicHearingDateParser {
         return Arrays.stream(enums).map(Enum::name).collect(Collectors.joining("|"));
     }
 
-    /** Capitalize a.m./p.m and remove the all '.' characters. */
     private LocalTime formatAmPm(String time) {
         if (time == null)
             return null;

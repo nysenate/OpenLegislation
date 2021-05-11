@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * A class that converts between Roman numerals and integers.
+ * A class that converts between Roman numerals, word for numbers, and integers.
  */
-public class NumberUtils {
+public class NumberConversionUtils {
     private static final BiMap<Integer, String> mapping;
     static {
         TreeMap<Integer, String> temp = new TreeMap<>((t0, t1) -> t1-t0);
@@ -25,7 +25,7 @@ public class NumberUtils {
         mapping = ImmutableBiMap.copyOf(temp);
     }
 
-    private NumberUtils() {}
+    private NumberConversionUtils() {}
 
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();

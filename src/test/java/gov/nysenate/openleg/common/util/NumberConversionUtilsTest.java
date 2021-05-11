@@ -4,11 +4,11 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static gov.nysenate.openleg.common.util.NumberUtils.*;
+import static gov.nysenate.openleg.common.util.NumberConversionUtils.*;
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class NumberUtilsTest {
+public class NumberConversionUtilsTest {
     @Test
     public void numeralTest() {
         test("I", "ONE", 1);

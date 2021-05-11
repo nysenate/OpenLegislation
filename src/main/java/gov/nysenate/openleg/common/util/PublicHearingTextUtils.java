@@ -2,34 +2,38 @@ package gov.nysenate.openleg.common.util;
 
 import com.google.common.base.Splitter;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class PublicHearingTextUtils {
-    private static final Pattern BLANK_LINE = Pattern.compile("^\\s*(\\d+)?\\s*$");
-
     /**
      * Groups public hearing text into pages.
      * @param fullText
      */
     public static List<List<String>> getPages(String fullText) {
-        List<List<String>> pages = new ArrayList<>();
-        List<String> page = new ArrayList<>();
-
         fullText = fullText.replaceAll("\r\n", "\n");
-        List<String> lines = Splitter.on("\n").splitToList(fullText);
-        boolean lastLineBlank = true;
-        for (String line : lines) {
-            if (line.contains("\f")) {
-                pages.add(page);
-                page = new ArrayList<>();
-            }
-            else if (!line.isBlank() || !lastLineBlank)
-                page.add(line);
-            lastLineBlank = line.isBlank();
-        }
-        return pages;
+        return Splitter.on("\f").splitToList(fullText).stream().map(PublicHearingTextUtils::getLines)
+                .filter(page -> !page.isEmpty()).collect(Collectors.toList());
+    }
+
+    private static List<String> getLines(String page) {
+        List<String> ret = Splitter.on("\n").trimResults().splitToList(page)
+                .stream().dropWhile(String::isEmpty).collect(Collectors.toList());
+        // Drops empty Strings from the end of the list as well.
+        Collections.reverse(ret);
+        ret = ret.stream().dropWhile(String::isEmpty).collect(Collectors.toList());
+        Collections.reverse(ret);
+        return ret;
+    }
+
+    public static String parseTitle(List<String> firstPage) {
+        String pageText = firstPage.stream().map(PublicHearingTextUtils::stripLineNumber)
+                .collect(Collectors.joining(" "));
+        String[] dashSplit = pageText.split("-{10,}");
+        if (dashSplit.length < 2)
+            return "No title.";
+        return dashSplit[dashSplit.length - 2].replaceAll(" {2,}", " ").trim();
     }
 
     /**
@@ -39,7 +43,7 @@ public class PublicHearingTextUtils {
      * <code>false</code> otherwise.
      */
     public static boolean hasContent(String line) {
-        return !BLANK_LINE.matcher(line).matches();
+        return !stripLineNumber(line).isEmpty();
     }
 
     /**
@@ -48,6 +52,6 @@ public class PublicHearingTextUtils {
      * @return
      */
     public static String stripLineNumber(String line) {
-        return line.replaceAll("^\\s*(\\d+)?\\s{2,}(\\w*)", "$2");
+        return line.replaceFirst("^\\s*\\d{0,2}(\\s+|$)", "");
     }
 }

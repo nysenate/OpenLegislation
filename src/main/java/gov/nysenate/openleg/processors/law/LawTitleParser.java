@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.common.util.NumberUtils;
+import gov.nysenate.openleg.common.util.NumberConversionUtils;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -194,7 +194,7 @@ public class LawTitleParser {
 
         Matcher idMatch = ID_NUM_PATTERN.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
-            String options = NumberUtils.allOptions(idMatch.group(1));
+            String options = NumberConversionUtils.allOptions(idMatch.group(1));
             Pattern docTypePattern = Pattern.compile(String.format(DOC_TYPE_STRING, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())

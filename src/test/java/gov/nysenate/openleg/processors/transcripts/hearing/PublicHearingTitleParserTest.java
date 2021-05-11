@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -9,20 +9,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class PublicHearingTitleParserTest
-{
-
-    private PublicHearingTitleParser titleParser;
-
-    @Before
-    public void setup() {
-        titleParser = new PublicHearingTitleParser();
-    }
-
+public class PublicHearingTitleParserTest {
     @Test
     public void basicTitleParses() throws URISyntaxException, IOException {
         testTitle("03-12-14 Roundtable on the Compassionate Care Act_Savino_FINAL.txt",
@@ -39,7 +29,7 @@ public class PublicHearingTitleParserTest
     @Test
     public void newYorkStateForumTownHallTitleParses() throws URISyntaxException, IOException {
         testTitle("05-18-11 ValeskyAgingCommitteeRoundtableFINAL.txt",
-                "FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
+                "NEW YORK STATE FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
                           "PROPOSAL TO MERGE THE NYS OFFICE FOR THE AGING WITH THE DEPARTMENT OF HEALTH");
     }
 
@@ -79,7 +69,7 @@ public class PublicHearingTitleParserTest
 
     private void testTitle(String filename, String expected) throws URISyntaxException, IOException{
         List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(filename);
-        String actual = titleParser.parse(pages.get(0));
-        assertThat(actual, is(expected));
+        String actual = PublicHearingTextUtils.parseTitle(pages.get(0));
+        assertEquals(expected, actual);
     }
 }
