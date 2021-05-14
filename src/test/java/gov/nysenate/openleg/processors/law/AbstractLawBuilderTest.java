@@ -116,7 +116,7 @@ public class AbstractLawBuilderTest {
         createAndAddUpdateBlock(locIds);
         for (String s : locIds) {
             Optional<LawTreeNode> currNode = builder.rootNode.findNode(code.name() + s, false);
-            if (!currNode.isPresent())
+            if (currNode.isEmpty())
                 fail("Rebuilt tree is missing node with location ID" + s);
             boolean isNew = currNode.get().getDocumentId().matches(code.name() + "(9|24)");
             assertEquals(LocalDate.now().minusDays(isNew ? 0 : 1), currNode.get().getPublishDate());
@@ -134,7 +134,7 @@ public class AbstractLawBuilderTest {
 
         Optional<LawTreeNode> articleOne = builder.rootNode.findNode("SOSA1", false);
         Optional<LawTreeNode> articleTwo = builder.rootNode.findNode("SOSA2", false);
-        if (!articleOne.isPresent() || !articleTwo.isPresent())
+        if (articleOne.isEmpty() || articleTwo.isEmpty())
             fail("Articles should be present.");
         assertTrue(articleOne.get().find("SOS2").isPresent());
         assertFalse(articleTwo.get().find("SOS2").isPresent());
@@ -159,7 +159,7 @@ public class AbstractLawBuilderTest {
         LawBlock repealBlock = LawTestUtils.getLawBlock(code, "P1", "*REPEAL*");
         builder.addUpdateBlock(repealBlock);
         Optional<LawTreeNode> foundNode = builder.rootNode.findNode(repealBlock.getDocumentId(), false);
-        if (!foundNode.isPresent())
+        if (foundNode.isEmpty())
             fail("Repealed node was not present.");
         assertEquals(foundNode.get().getRepealedDate(), LocalDate.now());
 
@@ -173,7 +173,7 @@ public class AbstractLawBuilderTest {
         initTreeToBeUpdated();
         LawBlock deleteBlock = LawTestUtils.getLawBlock(code, "P2", "*DELETE*");
         Optional<LawTreeNode> originalNode = builder.rootNode.findNode(deleteBlock.getDocumentId(), false);
-        if (!originalNode.isPresent())
+        if (originalNode.isEmpty())
             fail("Node to test deletion was not present.");
         LinkedHashMap<String, LawTreeNode> children = originalNode.get().getChildren();
         builder.addUpdateBlock(deleteBlock);
@@ -193,7 +193,7 @@ public class AbstractLawBuilderTest {
         updateBlock.getText().replace(0, 1000, "SUBPART 1\\\n" + newTitle);
         builder.addUpdateBlock(updateBlock);
         Optional<LawTreeNode> foundNode = builder.rootNode.findNode(updateBlock.getDocumentId(), false);
-        if (!foundNode.isPresent())
+        if (foundNode.isEmpty())
             fail("Node to update was not present.");
         assertEquals(LocalDate.now(), foundNode.get().getPublishDate());
         assertEquals(newTitle, builder.lawDocMap.get(updateBlock.getDocumentId()).getTitle());

@@ -49,7 +49,8 @@ public class LawTitleParser {
             return "";
         return switch (lawDocInfo.getDocType()) {
             case CHAPTER -> extractTitleFromChapter(lawDocInfo);
-            case TITLE, SUBTITLE, PART, SUBPART, RULE, ARTICLE, SUBARTICLE, MISC -> extractTitleFromNonSection(lawDocInfo, bodyText);
+            case TITLE, SUBTITLE, PART, SUBPART, RULE, ARTICLE, SUBARTICLE, MISC ->
+                    extractTitleFromNonSection(lawDocInfo, bodyText);
             case SECTION -> extractTitleFromSection(lawDocInfo, bodyText);
             case INDEX -> "Index of: " + lawDocInfo.getDocTypeId();
             case PREAMBLE -> "Preamble";

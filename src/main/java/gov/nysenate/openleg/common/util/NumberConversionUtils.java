@@ -30,13 +30,13 @@ public class NumberConversionUtils {
     /** For use in number to word conversion. */
     private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
     static {
-        String[] words = {"ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE",
+        String[] words = {"ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN",
                 "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"};
-        for (int i = 1; i <= 19; i++)
-            NUMBER_WORDS.put(i, words[i-1]);
+        for (int i = 1; i <= words.length; i++)
+            NUMBER_WORDS.put(i, words[i - 1]);
         String[] tens = {"TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY", "ONE HUNDRED"};
-        for (int i = 1; i < tens.length; i++)
-            NUMBER_WORDS.put(10*i, tens[i-1]);
+        for (int i = 1; i <= tens.length; i++)
+            NUMBER_WORDS.put(10 * i, tens[i - 1]);
     }
 
     /**

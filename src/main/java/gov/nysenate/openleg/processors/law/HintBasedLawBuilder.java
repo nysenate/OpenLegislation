@@ -31,9 +31,9 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
 
     @SuppressWarnings("unchecked")
     @Override
-    protected String determineHierarchy(LawBlock block) {
+    protected String determineHierarchy(String docId) {
         Stack<LawTreeNode> backup = (Stack<LawTreeNode>) parentNodes.clone();
-        String locationId = super.determineHierarchy(block);
+        String locationId = super.determineHierarchy(docId);
         if (currParent().isRootNode()) {
             // Determine doc type
             Matcher locMatcher = LOCATION_PATTERN.matcher(locationId);

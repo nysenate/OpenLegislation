@@ -18,13 +18,14 @@ public class NumberConversionUtilsTest {
         test("XXXV", "THIRTY-FIVE", 35);
         test("XL", "FORTY", 40);
         test("XCIX", "NINETY-NINE", 99);
+        test("C", "ONE HUNDRED", 100);
         test("CLXIX", "ONE HUNDRED SIXTY-NINE", 169);
     }
 
     private static void test(String numeral, String word, int num) {
-        assertEquals(numeralToInt(numeral), num);
+        assertEquals(num, numeralToInt(numeral));
         assertEquals(numeral, intToNumeral(num));
-        assertEquals(intToWord(num), word);
+        assertEquals(word, intToWord(num));
         assertEquals("(" + num + "|" + numeral + "|" + word + ")", allOptions(Integer.toString(num)));
     }
 }

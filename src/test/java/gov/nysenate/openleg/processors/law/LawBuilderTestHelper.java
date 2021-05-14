@@ -37,7 +37,7 @@ public class LawBuilderTestHelper {
             fail();
         LawDocInfo info = LawTestUtils.getLawDocInfo(code, locId, type);
         LawBlock block = LawTestUtils.getLawBlock(code, locId);
-        assertEquals(expected, builder.determineHierarchy(block));
+        assertEquals(expected, builder.determineHierarchy(block.getDocumentId()));
         builder.addChildNode(new LawTreeNode(info, ++builder.sequenceNo));
     }
 }
