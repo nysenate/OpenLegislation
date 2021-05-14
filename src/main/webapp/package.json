@@ -6,9 +6,11 @@
   },
   "license": "(BSD-2-Clause OR GPL-3.0)",
   "dependencies": {
+    "core-js": "^3.12.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "regenerator-runtime": "^0.13.7",
     "styled-components": "^5.2.0",
     "styled-normalize": "^8.0.7"
   },
@@ -36,5 +38,6 @@
     "webpack": "^5.3.2",
     "webpack-cli": "^4.1.0",
     "webpack-dev-server": "^3.11.0"
-  }
+  },
+  "browserslist": "defaults"
 }
