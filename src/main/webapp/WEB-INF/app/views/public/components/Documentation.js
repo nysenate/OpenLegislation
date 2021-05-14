@@ -12,7 +12,7 @@ export default function Documentation() {
         <SubTitle>How to use the API</SubTitle>
       </header>
       <a target="_blank" href="/docs">View docs in new window</a>
-      <DocsIframe width="100%" className="docs-iframe" src="/static/docs/html/index.html"/>
+      <DocsIframe width="100%" src="/static/docs/html/index.html"/>
     </PublicCard>
   )
 }

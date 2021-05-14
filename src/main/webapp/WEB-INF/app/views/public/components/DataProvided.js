@@ -15,7 +15,7 @@ const dataWeProvide = [
     type: 'New York State Bills and Resolutions',
     blurb: 'Discover current and prior legislation that impacts New York State.',
     icon: 'icon-documents white',
-    bgclass: theme.colors.blue3,
+    bgclass: theme.colors.blue5,
     docsPage: 'bills.html'
   },
   {
@@ -29,7 +29,7 @@ const dataWeProvide = [
     type: 'Senate Session/Hearing Transcripts',
     blurb: 'Records of Senate session floor discussion since 1993.',
     icon: 'icon-text white',
-    bgclass: theme.colors.blue5,
+    bgclass: theme.colors.blue7,
     docsPage: 'transcripts_floor.html'
   },
   {
@@ -43,7 +43,7 @@ const dataWeProvide = [
     type: 'Senate Floor Calendars',
     blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
     icon: 'icon-calendar white',
-    bgclass: theme.colors.blue8,
+    bgclass: theme.colors.blue9,
     docsPage: 'calendars.html'
   },
   {

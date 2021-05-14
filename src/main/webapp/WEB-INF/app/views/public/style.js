@@ -10,7 +10,7 @@ export const PublicHeader = styled.section`
   margin-bottom: 0;
   height: 300px;
   //background: #008cba;
-  background: ${props => props.theme.colors.blue6};
+  background: ${props => props.theme.colors.blue5};
   position: relative;
 `
 
@@ -93,7 +93,7 @@ export const Button = styled.button`
   width: 150px;
   color: #ffffff;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-  background-color: ${props => props.theme.colors.blue5};
+  background-color: ${props => props.theme.colors.blue6};
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;

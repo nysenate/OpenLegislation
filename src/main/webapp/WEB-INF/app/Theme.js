@@ -2,15 +2,15 @@
 // Theme for Open Legislation
 const theme = {
   colors: {
-    blue1: '#f1f7fd',
-    blue2: '#adcdf5',
-    blue3: '#68a4ed',
-    blue4: '#3283e7',
-    blue5: '#186acd',
-    blue6: '#1355a4',
-    blue7: '#11498d',
-    blue8: '#0e3d77',
-    blue9: '#0c3464',
+    blue1: '#e4f6fb',
+    blue2: '#9ddcf1',
+    blue3: '#56c2e6',
+    blue4: '#1ea5d2',
+    blue5: '#008CBA',
+    blue6: '#00779e',
+    blue7: '#00678a',
+    blue8: '#005875',
+    blue9: '#00435c',
 
     green3: '#5abf7f',
     green5: '#40a565',
