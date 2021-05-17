@@ -1,12 +1,37 @@
 package gov.nysenate.openleg.common.util;
 
 import com.google.common.base.Splitter;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingAddressParser;
+import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingCommitteeParser;
+import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingDateParser;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PublicHearingTextUtils {
+    public static PublicHearing getHearingFromText(PublicHearingId id, String fullText) {
+        List<List<String>> pages = getPages(fullText);
+        List<String> firstPage = pages.get(0);
+        String pageText = firstPage.stream().map(PublicHearingTextUtils::stripLineNumber)
+                .filter(str -> !str.isEmpty()).collect(Collectors.joining(" "));
+        // Split on being before PRESENT or PRESIDING instead? Then split on other divisions?
+        String[] dashSplit = pageText.split("-{10,}");
+
+        String dateTimePart = dashSplit.length == 1 ? dashSplit[0] : dashSplit[dashSplit.length - 1];
+        var dateTimeParser = new PublicHearingDateParser(dateTimePart, pages.get(pages.size() - 1));
+        var hearing = new PublicHearing(id, dateTimeParser.getDate(), fullText);
+        hearing.setStartTime(dateTimeParser.getStartTime());
+        hearing.setEndTime(dateTimeParser.getEndTime());
+        hearing.setCommittees(PublicHearingCommitteeParser.parse(dashSplit[0]));
+        hearing.setAddress(PublicHearingAddressParser.parse(firstPage));
+        hearing.setTitle(dashSplit.length < 2 ? "No title" :
+                dashSplit[dashSplit.length - 2].replaceAll(" {2,}", " ").trim());
+        return hearing;
+    }
+
     /**
      * Groups public hearing text into pages.
      * @param fullText
@@ -25,15 +50,6 @@ public class PublicHearingTextUtils {
         ret = ret.stream().dropWhile(String::isEmpty).collect(Collectors.toList());
         Collections.reverse(ret);
         return ret;
-    }
-
-    public static String parseTitle(List<String> firstPage) {
-        String pageText = firstPage.stream().map(PublicHearingTextUtils::stripLineNumber)
-                .collect(Collectors.joining(" "));
-        String[] dashSplit = pageText.split("-{10,}");
-        if (dashSplit.length < 2)
-            return "No title.";
-        return dashSplit[dashSplit.length - 2].replaceAll(" {2,}", " ").trim();
     }
 
     /**

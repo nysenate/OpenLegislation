@@ -30,10 +30,11 @@ public class PublicHearingDateParser {
     private final LocalDate date;
     private final LocalTime startTime, endTime;
 
-    public PublicHearingDateParser(List<String> firstPage, List<String> lastPage) {
-        String wholeFirstPage = firstPage.stream().map(PublicHearingDateParser::formatLine)
-                .collect(Collectors.joining(" ")).replaceAll("\\s+", " ");
-        Matcher matcher = DATE_TIME.matcher(wholeFirstPage);
+    public PublicHearingDateParser(String fullFirstPage, List<String> lastPage) {
+        fullFirstPage = fullFirstPage.replaceAll("(\\n|- |\\s*(?:Date|Time):?\\s*)", " ")
+                .replaceAll(", at", "").replace(String.valueOf((char) 65533), "to")
+                .replaceAll("\\s+", " ");
+        Matcher matcher = DATE_TIME.matcher(fullFirstPage);
         if (!matcher.find())
             throw new ParseError("No date found in public hearing!");
         this.date = LocalDate.parse(matcher.group("date"), DATE_FORMATTER);

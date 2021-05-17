@@ -7,9 +7,9 @@ import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
 public class PublicHearingDateParserTest {
@@ -83,16 +83,9 @@ public class PublicHearingDateParserTest {
 
     private void testHearingDate(String filename, LocalDate expectedDate, LocalTime expectedStartTime,
                                  LocalTime expectedEndTime) {
-        List<List<String>> pages = null;
-        try {
-            pages = PublicHearingTestHelper.getPagesFromFileName(filename);
-        } catch (Exception e) {
-            fail("Unexpected error during testing.");
-        }
-        var parser = new PublicHearingDateParser(pages.get(0), pages.get(pages.size() - 1));
-
-        assertEquals(parser.getDate(), expectedDate);
-        assertEquals(parser.getStartTime(), expectedStartTime);
-        assertEquals(parser.getEndTime(), expectedEndTime);
+        var hearing = PublicHearingTestHelper.getHearingFromFilename(filename);
+        assertEquals(hearing.getDate(), expectedDate);
+        assertEquals(hearing.getStartTime(), expectedStartTime);
+        assertEquals(hearing.getEndTime(), expectedEndTime);
     }
 }

@@ -1,19 +1,18 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
-import com.google.common.collect.ComparisonChain;
-
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Uniquely identifies public hearing objects.
  */
-public class PublicHearingId implements Serializable, Comparable<PublicHearingId>
-{
-
+public class PublicHearingId implements Serializable, Comparable<PublicHearingId> {
+    @Serial
     private static final long serialVersionUID = -1772963995918679372L;
 
     /** The public hearing's file name */
-    private String fileName;
+    private final String fileName;
 
     /** --- Constructors --- */
 
@@ -25,9 +24,7 @@ public class PublicHearingId implements Serializable, Comparable<PublicHearingId
 
     @Override
     public int compareTo(PublicHearingId o) {
-        return ComparisonChain.start()
-                .compare(this.fileName, o.getFileName())
-                .result();
+        return Objects.compare(fileName, o.getFileName(), String::compareTo);
     }
 
     @Override
@@ -35,9 +32,7 @@ public class PublicHearingId implements Serializable, Comparable<PublicHearingId
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublicHearingId hearingId = (PublicHearingId) o;
-        if (fileName != null ? !fileName.equals(hearingId.fileName) : hearingId.fileName != null) return false;
-
-        return true;
+        return Objects.equals(fileName, hearingId.fileName);
     }
 
     @Override

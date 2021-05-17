@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import org.apache.commons.io.FileUtils;
 import testing_utils.TestUtils;
 
@@ -10,10 +12,24 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-public class PublicHearingTestHelper
-{
+import static org.junit.Assert.fail;
+
+public class PublicHearingTestHelper {
     public static List<List<String>> getPagesFromFileName(String filename) throws URISyntaxException, IOException {
         File file = TestUtils.openTestResource("hearing/" + filename);
         return PublicHearingTextUtils.getPages(FileUtils.readFileToString(file, Charset.defaultCharset()));
+    }
+
+    public static PublicHearing getHearingFromFilename(String filename) {
+        String fullText = "";
+        try {
+            File file = TestUtils.openTestResource("hearing/" + filename);
+            fullText = FileUtils.readFileToString(file, Charset.defaultCharset());
+        }
+        catch (Exception e) {
+            fail();
+        }
+        var id = new PublicHearingId(filename);
+        return PublicHearingTextUtils.getHearingFromText(id, fullText);
     }
 }
