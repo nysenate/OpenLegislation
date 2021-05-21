@@ -2,8 +2,8 @@ package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,8 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlPublicHearingFileQuery.*;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlPublicHearingFileQuery.*;
 
 @Repository
 public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHearingFileDao
@@ -67,7 +67,7 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
     @Override
     public void archivePublicHearingFile(PublicHearingFile publicHearingFile) throws IOException {
         File stagedFile = publicHearingFile.getFile();
-        if (stagedFile.getParentFile().compareTo(incomingPublicHearingDir) == 0) {
+        if (stagedFile.getParentFile().equals(incomingPublicHearingDir)) {
             File archiveFile = new File(archivePublicHearingDir, publicHearingFile.getFileName());
             FileIOUtils.moveFile(stagedFile, archiveFile);
 

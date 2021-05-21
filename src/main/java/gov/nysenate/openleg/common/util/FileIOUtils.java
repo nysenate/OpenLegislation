@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.common.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 
@@ -13,7 +12,7 @@ import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 public class FileIOUtils {
-    private static final Set<PosixFilePermission> filePermissions = ImmutableSet.of(
+    private static final Set<PosixFilePermission> filePermissions = Set.of(
             PosixFilePermission.OWNER_READ,
             PosixFilePermission.OWNER_WRITE,
             PosixFilePermission.GROUP_READ,
@@ -32,11 +31,7 @@ public class FileIOUtils {
     public static Collection<File> getSortedFiles(File directory, boolean recursive, String[] excludeDirs)
             throws IOException {
         Collection<File> files = safeListFiles(directory, recursive, excludeDirs);
-        Collections.sort((List<File>) files, new Comparator<File>() {
-            public int compare(File a, File b) {
-                return a.getName().compareTo(b.getName());
-            }
-        });
+        ((List<File>) files).sort(Comparator.comparing(File::getName));
         return files;
     }
 
@@ -103,22 +98,6 @@ public class FileIOUtils {
             FileUtils.deleteQuietly(destFile);
         }
         FileUtils.moveFile(sourceFile, destFile);
-    }
-
-    /**
-     * Moves a file, deleting the destination file if it already exists.
-     *
-     * @param file            File
-     * @param directory       File
-     * @param createDirectory ?
-     * @throws IOException
-     */
-    public static void moveFileToDirectory(File file, File directory, boolean createDirectory) throws IOException {
-        File newFile = new File(directory, file.getName());
-        if (newFile.exists()) {
-            newFile.delete();
-        }
-        FileUtils.moveFileToDirectory(file, directory, true);
     }
 
     /**
@@ -273,7 +252,7 @@ public class FileIOUtils {
      */
     public static File getResourceFile(String relativePath) {
         return new File(
-                FileIOUtils.class.getClassLoader().getResource(relativePath).getFile()
+                Objects.requireNonNull(FileIOUtils.class.getClassLoader().getResource(relativePath)).getFile()
         );
     }
 

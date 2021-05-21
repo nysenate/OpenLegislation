@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.Assert.fail;
@@ -24,7 +25,7 @@ public class PublicHearingTestHelper {
         String fullText = "";
         try {
             File file = TestUtils.openTestResource("hearing/" + filename);
-            fullText = FileUtils.readFileToString(file, Charset.defaultCharset());
+            fullText = Files.readString(file.toPath());
         }
         catch (Exception e) {
             fail();
