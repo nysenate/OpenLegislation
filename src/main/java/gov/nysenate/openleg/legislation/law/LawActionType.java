@@ -17,7 +17,7 @@ public enum LawActionType
     // rename §126 to be §127 -> RENAME 126, REN_TO 127
     REN_TO(Sets.newHashSet("RENTO"));
 
-    private static Map<String, LawActionType> lookupMap = new HashMap<>();
+    private static final Map<String, LawActionType> lookupMap = new HashMap<>();
     static {
         Arrays.stream(values())
                 .forEach(action -> action.getTokens()
@@ -26,7 +26,7 @@ public enum LawActionType
                                 lookupMap.put(token.toUpperCase().trim(), action);
                         }));
     }
-    private Set<String> tokens;
+    private final Set<String> tokens;
     LawActionType(Set<String> tokens) {
         this.tokens = tokens;
     }

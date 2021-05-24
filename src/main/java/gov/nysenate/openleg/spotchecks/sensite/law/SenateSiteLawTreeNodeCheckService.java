@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.spotchecks.sensite.law;
 
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
-import gov.nysenate.openleg.spotchecks.sensite.bill.LawSpotCheckId;
 import gov.nysenate.openleg.legislation.law.LawTreeNode;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
+import gov.nysenate.openleg.spotchecks.sensite.bill.LawSpotCheckId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -81,7 +81,7 @@ public class SenateSiteLawTreeNodeCheckService implements SpotCheckService<LawSp
         // Get an array of codes of the same type
         final ArrayList<LawChapterCode> typeCodes = Arrays.stream(LawChapterCode.values())
                 .filter(c -> c.getType() == code.getType())
-                .sorted(Comparator.comparing(LawChapterCode::getName))
+                .sorted(Comparator.comparing(LawChapterCode::getChapterName))
                 .collect(Collectors.toCollection(ArrayList::new));
         int codeIndex = typeCodes.indexOf(code);
         int adjIndex = codeIndex + (next ? 1 : -1);

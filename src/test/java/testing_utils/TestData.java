@@ -1,22 +1,24 @@
-package gov.nysenate.openleg;
+package testing_utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeMember;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.Person;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.SessionYear;
-
-import static gov.nysenate.openleg.legislation.committee.CommitteeMemberTitle.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class TestData {
+import static gov.nysenate.openleg.legislation.committee.CommitteeMemberTitle.MEMBER;
+
+public class TestData {
+
+    private TestData() {}
 
     public final static Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
             .put(188, new Person(188, "John L. Sampson", "John", "L.", "Sampson",

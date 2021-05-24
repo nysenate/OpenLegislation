@@ -1,37 +1,35 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.bill.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.common.util.StringDiffer;
 import gov.nysenate.openleg.legislation.bill.*;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.search.bill.BillSearchService;
-import gov.nysenate.openleg.common.util.StringDiffer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
@@ -186,11 +184,7 @@ public class BillGetCtrl extends BaseCtrl
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(BaseBillId.of(billId));
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new BillPdfView(bill, billId.getVersion()).writeData();
     }
 
     /**

@@ -1,87 +1,62 @@
 package gov.nysenate.openleg.processors.law;
 
+import gov.nysenate.openleg.common.util.NumberConversionUtils;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
-import gov.nysenate.openleg.common.util.RomanNumerals;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class LawTitleParser
-{
-    private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-    private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)";
-    private final static String SEPERATORS = "(-|\\.|\\s|\\\\n)+";
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
+
+public class LawTitleParser {
+    private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
+    private static final String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)", SEPARATORS = "(-|\\.|\\s|\\\\n)+",
     // The first %s will be filled with the type (ARTICLE, TITLE, and so on).
-    private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPERATORS;
-    private final static String SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.)";
+    NON_SECTION_PREFIX_PATTERN = "(?i)(\\s|\\*)*(?<type>%s)\\s+(?<docId>%s)" + SEPARATORS,
+    SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.)",
     // Characters to discard between the docId and the title.
-    private final static String IRRELEVANT_CHARS = "(\\*|\\.|\\s|\\\\n)*";
+    IRRELEVANT_CHARS = "(\\*|\\.|\\s|\\\\n)*",
     // The %s here will be filled with the docId.
-    private final static String beforeTitlePattern = "(?i).*?(?<docId>%s)" + IRRELEVANT_CHARS;
+    BEFORE_TITLE_PATTERN = "(?i).*?(?<docId>%s)" + IRRELEVANT_CHARS,
     // The title is just everything before the first period.
-    private final static String titlePattern = "(?<title>[^.]+)";
-    private final static String SUBSECTION = "(1\\.|[(]a[)]|a\\.)";
+    TITLE_PATTERN = "(?<title>[^.]+)", SUBSECTION = "(1\\.|[(]a[)]|a\\.)",
     // Matches all docId's.
-    private final static String DUMMY_ID = "[a-zA-Z0-9.-]+";
-    /** String to match a docType and its id, saving the latter. */
-    private final static String docTypeString = ".*?%s *(%s).*";
-    /** Pattern to match a full docTypeId, and and parse out the starting number. */
-    private final static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
-    private final static int MAX_WIDTH = 140;
+    DUMMY_ID = "[\\w.-]+",
+    // String to match a docType and its id, saving the latter.
+    DOC_TYPE_STRING = ".*?%s *%s.*";
+    // Pattern to match a full docTypeId, and and parse out the starting number.
+    private static final Pattern ID_NUM_PATTERN = Pattern.compile("(\\d+)([-*]?.*)");
+    private static final int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
-    private final static List<String> NO_TITLES = Arrays.asList(
-            LawChapterCode.LSA.name(), LawChapterCode.POA.name(),
-            LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
-            LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
-    protected final static String NO_TITLE = "No title";
+    private static final List<String> NO_TITLES = List.of(LSA.name(), POA.name(),
+            PNY.name(), PCM.name(), BAT.name(), CCT.name());
+    protected static final String NO_TITLE = "No title";
 
-    /** For use in number to word conversion. */
-    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
-    static {
-        NUMBER_WORDS.put(1, "ONE");
-        NUMBER_WORDS.put(2, "TWO");
-        NUMBER_WORDS.put(3, "THREE");
-        NUMBER_WORDS.put(4, "FOUR");
-        NUMBER_WORDS.put(5, "FIVE");
-        NUMBER_WORDS.put(6, "SIX");
-        NUMBER_WORDS.put(7, "SEVEN");
-        NUMBER_WORDS.put(8, "EIGHT");
-        NUMBER_WORDS.put(9, "NINE");
-        NUMBER_WORDS.put(10, "TEN");
-        NUMBER_WORDS.put(11, "ELEVEN");
-        NUMBER_WORDS.put(12, "TWELVE");
-    }
+    private LawTitleParser() {}
 
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
         if (lawDocInfo == null  || bodyText == null)
             return "";
-        switch (lawDocInfo.getDocType()) {
-            case CHAPTER:
-                return extractTitleFromChapter(lawDocInfo);
-            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE: case MISC:
-                return extractTitleFromNonSection(lawDocInfo, bodyText);
-            case SECTION:
-                return extractTitleFromSection(lawDocInfo, bodyText);
-            case INDEX:
-                return "Index of: " + lawDocInfo.getDocTypeId();
-            case PREAMBLE:
-                return "Preamble";
-            case JOINT_RULE:
-                return NO_TITLE;
-        }
-        return "";
+        return switch (lawDocInfo.getDocType()) {
+            case CHAPTER -> extractTitleFromChapter(lawDocInfo);
+            case TITLE, SUBTITLE, PART, SUBPART, RULE, ARTICLE, SUBARTICLE, MISC ->
+                    extractTitleFromNonSection(lawDocInfo, bodyText);
+            case SECTION -> extractTitleFromSection(lawDocInfo, bodyText);
+            case INDEX -> "Index of: " + lawDocInfo.getDocTypeId();
+            case PREAMBLE -> "Preamble";
+            case JOINT_RULE -> NO_TITLE;
+            default -> "";
+        };
     }
 
     /**
@@ -89,7 +64,7 @@ public abstract class LawTitleParser
      */
     private static String extractTitleFromChapter(LawDocInfo docInfo) {
         try {
-            return LawChapterCode.valueOf(docInfo.getLawId()).getName();
+            return LawChapterCode.valueOf(docInfo.getLawId()).getChapterName();
         }
         catch (IllegalArgumentException ex) {
             return docInfo.getLawId() + " Law";
@@ -102,7 +77,7 @@ public abstract class LawTitleParser
     private static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
         String realID = getRealID(lawDocInfo, bodyText);
         String typeLabel = lawDocInfo.getDocType().name();
-        String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
+        String label = String.format(NON_SECTION_PREFIX_PATTERN, typeLabel, realID);
         String title = bodyText.replaceAll("\\* NB.*?\\\\n ", "").replaceFirst(".*?" + label, "")
                 // Removes division names that might come after, and converts
                 // whitespace into single spaces.
@@ -188,15 +163,6 @@ public abstract class LawTitleParser
     }
 
     /**
-     * Quickly converts a number 1-12 or 101-112 to a word.
-     * @param number to convert.
-     * @return a word/phrase.
-     */
-    private static String toWord(int number) {
-        return (number > 100 ? "ONE HUNDRED " : "") + NUMBER_WORDS.getOrDefault(number%100, "no word");
-    }
-
-    /**
      * Various modifications may need to be done to get the ID that is in the text.
      * @param lawDocInfo to pull data from.
      * @param bodyText to check against.
@@ -206,7 +172,7 @@ public abstract class LawTitleParser
         String docTypeInText = getTextLabel(lawDocInfo, bodyText);
         String realID = docTypeInText.replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
         // A couple documents separate the number and letter of a Part like 2A.
-        if (lawDocInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
+        if (lawDocInfo.getDocumentId().startsWith(FCT.name() + "A5-BP") && realID.length() > 1)
             realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
         return realID;
     }
@@ -227,11 +193,10 @@ public abstract class LawTitleParser
         if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CITY_TAX_STR + "P1"))
             return "I";
 
-        Matcher idMatch = idNumPattern.matcher(docTypeId);
+        Matcher idMatch = ID_NUM_PATTERN.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
-            int num = Integer.parseInt(idMatch.group(1));
-            String options = idMatch.group(1) + "|" + RomanNumerals.intToNumeral(num) + "|" + toWord(num);
-            Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
+            String options = NumberConversionUtils.allOptions(idMatch.group(1));
+            Pattern docTypePattern = Pattern.compile(String.format(DOC_TYPE_STRING, lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())
                 return docTypeMatcher.group(1) + idMatch.group(2);
@@ -249,10 +214,10 @@ public abstract class LawTitleParser
     private static String textAdjustment(LawDocInfo docInfo, String text) {
         text = text.replaceFirst("^[ *]*", "");
         // UCC docs have 2 dashes in the text while the section name only has one.
-        if (docInfo.getLawId().equals(LawChapterCode.UCC.name()))
+        if (docInfo.getLawId().equals(UCC.name()))
             text = text.replaceFirst("--", "-").replaceFirst("\\\\n {2}", " ");
         // The first section of unconsolidated laws may have an introduction to the chapter.
-        if (docInfo.getDocTypeId().equals("1") && LawChapterCode.isUnconsolidated(docInfo.getLawId()))
+        if (docInfo.getDocTypeId().equals("1") && isUnconsolidated(docInfo.getLawId()))
             text = text.replaceFirst(".*?(Section|§) +1", "Section 1");
         return text;
     }
@@ -268,7 +233,7 @@ public abstract class LawTitleParser
                 docInfo.getDocTypeId().substring(0, asteriskLoc))
                 .toLowerCase();
         // PEP sections like 302-A sometimes don't have the - in the text.
-        if (docInfo.getLawId().equals(LawChapterCode.PEP.name()))
+        if (docInfo.getLawId().equals(PEP.name()))
             id = id.replace("-", "-?");
         return id;
     }
@@ -281,9 +246,9 @@ public abstract class LawTitleParser
      */
     private static Pattern sectionPattern(String lawId, String id) {
         // A non-unconsolidated law may have "#." or "a." or "(a)" before the title.
-        String trueBeforeTitlePattern = beforeTitlePattern + (LawChapterCode.isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
+        String trueBeforeTitlePattern = BEFORE_TITLE_PATTERN + (isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
         // EPT laws end their titles with a newline (\n).
-        String trueTitlePattern = titlePattern.replace(".", lawId.equals(LawChapterCode.EPT.name()) ? "\\\\" : ".");
+        String trueTitlePattern = TITLE_PATTERN.replace(".", lawId.equals(EPT.name()) ? "\\\\" : ".");
         String fullPattern = String.format(trueBeforeTitlePattern, id) + trueTitlePattern + ".*";
         return Pattern.compile(fullPattern);
     }

@@ -11,12 +11,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RulesLawBuilder extends IdBasedLawBuilder implements LawBuilder {
-    private static final String RULE_PATTERN = "((?:JOINT )?RULE [IVX]+\\\\n)";
-    private static final String SPLIT_STR = "(PERMANENT JOINT RULES OF THE SENATE AND " +
-            "ASSEMBLY\\\\n )|(INDEX TO ASSEMBLY RULES\\\\n)|(INDEX TO RULES OF THE SENATE\\\\n)";
-    private static final Pattern INDEX_PATTERN = Pattern.compile("( {4,}[A-Z]\\\\n)");
+    private static final String RULE_PATTERN = "((?:JOINT )?RULE [IVX]+\\\\n)",
+    SPLIT_STR = "(PERMANENT JOINT RULES OF THE SENATE AND " +
+            "ASSEMBLY\\\\n )|(INDEX TO ASSEMBLY RULES\\\\n)|(INDEX TO RULES OF THE SENATE\\\\n)",
     // A unique deliminator for use with String manipulation.
-    private static final String DELIM = "~#~";
+    DELIM = "~#~";
+    private static final Pattern INDEX_PATTERN = Pattern.compile("( {4,}[A-Z]\\\\n)");
 
     public RulesLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);

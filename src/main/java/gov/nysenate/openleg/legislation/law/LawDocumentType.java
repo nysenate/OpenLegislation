@@ -37,5 +37,9 @@ public enum LawDocumentType
     PARAGRAPH,
     SUB_PARAGRAPH,
     CLAUSE,
-    ITEM
+    ITEM;
+
+    public boolean isSection() {
+        return this == SECTION;
+    }
 }

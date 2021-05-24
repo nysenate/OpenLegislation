@@ -1,34 +1,31 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
-import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
+import gov.nysenate.openleg.search.SearchException;
+import gov.nysenate.openleg.search.SearchResults;
+import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -130,11 +127,7 @@ public class TranscriptGetCtrl extends BaseCtrl
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         TranscriptId transcriptId = new TranscriptId(localDateTime);
         Transcript transcript = transcriptData.getTranscript(transcriptId);
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        TranscriptPdfView.writeTranscriptPdf(transcript, pdfBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        return new TranscriptPdfView(transcript).writeData();
     }
 
     /** --- Internal --- */

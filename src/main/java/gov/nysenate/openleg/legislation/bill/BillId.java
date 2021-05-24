@@ -20,10 +20,10 @@ public class BillId implements Serializable, Comparable<BillId>
 {
     private static final long serialVersionUID = 6494036869654732240L;
 
-    public static final String printNumberRegex = "([ASLREJKBC])(\\d+)([A-Z]?)";
+    public static final String PRINT_NUMBER_REGEX = "([ASLREJKBC])(\\d+)([A-Z]?)";
 
-    public static final Pattern printNumberPattern = Pattern.compile(printNumberRegex);
-    public static final Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>\\d{4})");
+    private static final Pattern PRINT_NUMBER_PATTERN = Pattern.compile(PRINT_NUMBER_REGEX);
+    public static final Pattern BILL_ID_PATTERN = Pattern.compile("(?<printNo>" + PRINT_NUMBER_REGEX + ")-?(?<year>\\d{4})");
 
     /** The default amendment version letter. */
     public static final Version DEFAULT_VERSION = Version.ORIGINAL;
@@ -181,7 +181,7 @@ public class BillId implements Serializable, Comparable<BillId>
      */
     @JsonIgnore
     public String getPaddedPrintNumber() {
-        Matcher billIdMatcher = printNumberPattern.matcher(this.getPrintNo());
+        Matcher billIdMatcher = PRINT_NUMBER_PATTERN.matcher(this.getPrintNo());
         if (billIdMatcher.find()) {
             return String.format("%s%05d%s", billIdMatcher.group(1), Integer.parseInt(billIdMatcher.group(2)),
                                              billIdMatcher.group(3));
@@ -263,11 +263,11 @@ public class BillId implements Serializable, Comparable<BillId>
         // Remove all non-alphanumeric characters from the printNo.
         printNo = printNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
         // Check that printNo matches the pattern
-        if (!printNumberPattern.matcher(printNo).matches()) {
+        if (!PRINT_NUMBER_PATTERN.matcher(printNo).matches()) {
             throw new IllegalArgumentException(
                     "PrintNo (" + printNo + ") " +
                             "does not match print no pattern " +
-                            "(" + printNumberPattern.pattern() + ")"
+                            "(" + PRINT_NUMBER_PATTERN.pattern() + ")"
             );
         }
         // Check that printNo starts with a valid bill type designator

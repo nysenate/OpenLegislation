@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.legislation.law;
 
-import com.google.common.collect.Sets;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +24,7 @@ public enum LawChapterCode
     BVO("Benevolent Orders", CONSOLIDATED),
     BSC("Business Corporation", CONSOLIDATED),
     CAL("Canal", CONSOLIDATED),
+    CAN("Cannabis", CONSOLIDATED),
     CVP("Civil Practice Law & Rules", CONSOLIDATED),
     CVR("Civil Rights", CONSOLIDATED),
     CVS("Civil Service", CONSOLIDATED),
@@ -170,22 +168,16 @@ public enum LawChapterCode
 
     /** --- Fields --- */
 
-    private final String name;
+    private final String chapterName;
     private final LawType type;
 
     public static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
-    private static final Set<LawChapterCode> nonNumericalVolumes= Sets.newHashSet(LawChapterCode.ACA,
-            LawChapterCode.CPL, LawChapterCode.CVS, LawChapterCode.PAR, LawChapterCode.MHY, LawChapterCode.PEN);
-    private static final Map<String, LawChapterCode> uniqueCitations = new HashMap<>();
-    static {
-        uniqueCitations.put("Rec & Pks", PAR);
-        uniqueCitations.put("El", ELN);
-        uniqueCitations.put("NYS Med Care Fac Fin Ag Act", MCF);
-        uniqueCitations.put("Fin", STF);
-    }
+    private static final Set<LawChapterCode> NON_NUMERICAL_VOLUMES = Set.of(ACA, CPL, CVS, PAR, MHY, PEN);
+    private static final Map<String, LawChapterCode> UNIQUE_CITATIONS = Map.of("Rec & Pks", PAR, "El", ELN,
+            "NYS Med Care Fac Fin Ag Act", MCF, "Fin", STF);
 
     public boolean hasNumericalTitles() {
-        return !nonNumericalVolumes.contains(this);
+        return !NON_NUMERICAL_VOLUMES.contains(this);
     }
 
     /**
@@ -200,17 +192,15 @@ public enum LawChapterCode
             return Optional.empty();
         // Many citations end in " L", which doesn't belong.
         citation = citation.replaceFirst("[ ]?L(aw)?[.]?$", "").trim().replaceAll("(\\s{2,})", " ");
-        if (uniqueCitations.containsKey(citation))
-            return Optional.of(uniqueCitations.get(citation));
+        if (UNIQUE_CITATIONS.containsKey(citation))
+            return Optional.of(UNIQUE_CITATIONS.get(citation));
         citation = citation.replaceAll(" (and|&) ", " ");
         Pattern lawChapterNamePattern = makePatternFromCitation(citation);
 
         LawChapterCode ret = null;
         for (LawChapterCode code : values()) {
-            String name = code.name;
-            if (lawChapterNamePattern.matcher(name).matches()) {
+            if (lawChapterNamePattern.matcher(code.chapterName).matches())
                 ret = chooseCode(ret, code, citation);
-            }
         }
         // If no result is found, try dropping a letter. But if it starts with "Chap", it's an
         // unconsolidated law we don't have. If it starts or ends with digits, it's a malformed citation.
@@ -246,7 +236,7 @@ public enum LawChapterCode
             else
                 toMatch.append("(,| |&|\\.|and|of)+");
         }
-        return Pattern.compile(".*?" + toMatch.append(".*").toString());
+        return Pattern.compile(".*?" + toMatch.append(".*"));
     }
 
     /**
@@ -261,8 +251,8 @@ public enum LawChapterCode
             return next;
         if (citation.isEmpty())
             return curr;
-        String currStr = curr.name;
-        String nextStr = next.name;
+        String currStr = curr.chapterName;
+        String nextStr = next.chapterName;
         // If the citation is an abbreviation, abbreviates the law chapter names as well.
         if (citation.toUpperCase().equals(citation)) {
             currStr = currStr.replaceAll("[a-z0-9/ ]", "");
@@ -285,8 +275,8 @@ public enum LawChapterCode
 
     /** --- Constructor --- */
 
-    LawChapterCode(String name, LawType type) {
-        this.name = name;
+    LawChapterCode(String chapterName, LawType type) {
+        this.chapterName = chapterName;
         this.type = type;
     }
 
@@ -301,8 +291,8 @@ public enum LawChapterCode
 
     /** --- Basic Getters --- */
 
-    public String getName() {
-        return name;
+    public String getChapterName() {
+        return chapterName;
     }
 
     public LawType getType() {

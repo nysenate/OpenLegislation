@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  * A class for the special case of the Constitution.
  */
 public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuilder {
-    private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*");
-    private static final Pattern FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
+    private static final Pattern ARTICLE_NUM_PATTERN = Pattern.compile(CONS_STR + "A(\\d+)S.*"),
+    FOR_ARTICLE = Pattern.compile("(?<numerals>[IVX]+)\\\\n\\s+(?<title>[A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(?<text>.*)");
 
     // Maps location IDs to titles.
     private final Map<String, String> titles = new HashMap<>();
@@ -30,7 +30,7 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (node.getDocType() == LawDocumentType.SECTION) {
+        if (node.getDocType().isSection()) {
             String articleStr = CONS_STR + node.getLocationId().split("S")[0];
             Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
             nodeArticle.ifPresent(getNode -> getNode.addChild(node));
@@ -42,16 +42,15 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
     }
 
     @Override
-    protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
+    protected void setLawDocTitle(LawDocument lawDoc) {
         switch (lawDoc.getDocType()) {
-            case ARTICLE:
-            case SECTION:
+            case ARTICLE, SECTION:
                 lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
                 break;
             case CHAPTER:
-                parseTitles(lawDoc, isNewDoc);
+                parseTitles(lawDoc);
             default:
-                super.setLawDocTitle(lawDoc, isNewDoc);
+                super.setLawDocTitle(lawDoc);
         }
     }
 
@@ -78,9 +77,8 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
      * Parses out the titles of articles and sections in the Constitution and stores them.
      * Also adds dummy articles to simplify processing.
      * @param rootDoc chapter to parse.
-     * @param isNewDoc if the chapter is new.
      */
-    private void parseTitles(final LawDocument rootDoc, boolean isNewDoc) {
+    private void parseTitles(final LawDocument rootDoc) {
         // Creating empty space in sequence for Preamble later if initial.
         if (rootNode.getChildNodeList().isEmpty())
             sequenceNo++;
@@ -103,10 +101,10 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
             if (oldArticle.isPresent()) {
                 oldArticle.get().setPublishedDate(rootDoc.getPublishedDate());
                 currDoc.setTitle(articleTitle);
-                lawDocMap.put(currDoc.getDocumentId(), currDoc);
             }
             else
-                super.addDocument(currDoc, isNewDoc);
+                super.addDocument(currDoc);
+            lawDocMap.put(currDoc.getDocumentId(), currDoc);
 
             // Section info.
             String[] sectionTitlesArray = articleMatch.group("text").split("\\.\\)?\\\\n");

@@ -5,11 +5,9 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
-import gov.nysenate.openleg.processors.law.AbstractLawBuilder;
-import gov.nysenate.openleg.processors.law.LawBlock;
-import gov.nysenate.openleg.processors.law.RulesLawBuilder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +50,7 @@ public class RulesLawBuilderTest {
     private static RulesLawBuilder initRulesBuilder(Chamber chamber) {
         String lawId = (chamber == Chamber.SENATE ? LawChapterCode.CMS : LawChapterCode.CMA).name();
         RulesLawBuilder builder = (RulesLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(lawId, LocalDate.now()), null);
-        String fileName = LawProcessorUtils.TEST_DATA_DIRECTORY + chamber.name().substring(0, 1).toUpperCase() +
+        String fileName = LawTestUtils.TEST_DATA_DIRECTORY + chamber.name().substring(0, 1).toUpperCase() +
                 chamber.name().substring(1).toLowerCase() + "RulesSample";
         Scanner scanner;
         try {

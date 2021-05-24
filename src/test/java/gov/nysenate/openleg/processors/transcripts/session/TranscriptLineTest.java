@@ -1,150 +1,114 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
-import org.apache.commons.text.WordUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class TranscriptLineTest {
+    private String[] lineTexts;
+    private Object[] expected;
+
+    @Test
+    public void constructorTest() {
+        lineTexts = new String[]{"Here's a line!", "", "\rA", "\fB"};
+        expected = new String[]{lineTexts[0], "", "A", "B"};
+        testHelper(TranscriptLine::getText);
+    }
 
     @Test
     public void testPageNumber() {
-        TranscriptLine line = new TranscriptLine("                                 1234");
-        assertTrue(line.isPageNumber());
+        lineTexts = new String[]{"                                 1234", "4321", "55",
+                "  �                               2301", "                1397."};
+        expected = new Object[]{true, false, false, true, false};
+        testHelper(TranscriptLine::isPageNumber);
+    }
 
-        line = new TranscriptLine("4321");
-        assertTrue(line.isPageNumber());
-
-        // Sometimes page number starts the second line. e.g. 011299.v1, 020597.v1
-        line = new TranscriptLine("55");
-        assertTrue(line.isPageNumber());
-
-        // Remove broken pipe character. e.g. 122099.v1
-        line = new TranscriptLine("  �                               2301");
-        assertTrue(line.isPageNumber());
+    @Test
+    public void testHasLineNumber() {
+        // TODO: check for lines like "55".
     }
 
     @Test
     public void testRemoveLineNumber() {
-        TranscriptLine line = new TranscriptLine("        21   NEW YORK STATE SENATE ");
-        assertEquals("   NEW YORK STATE SENATE", line.removeLineNumber());
-
-        line = new TranscriptLine("    22");
-        assertEquals("", line.removeLineNumber().trim());
-
-        line = new TranscriptLine("    2");
-        assertEquals("", line.removeLineNumber().trim());
-
-        line = new TranscriptLine("       THE NEW YORK SENATE");
-        assertEquals("       THE NEW YORK SENATE", line.removeLineNumber());
-
-        line = new TranscriptLine("               833");
-        assertEquals("               833", line.removeLineNumber());
+        lineTexts = new String[]{"        21   NEW YORK STATE SENATE ", "    22", "    2", "       THE NEW YORK SENATE", "               833"};
+        expected = new Object[]{"   NEW YORK STATE SENATE", "", "", "       THE NEW YORK SENATE", "               833"};
+        testHelper(TranscriptLine::removeLineNumber);
     }
 
     @Test
     public void timeTypoNotInterpretedAsLineNumber() {
         TranscriptLine line = new TranscriptLine("           10 00 a.m.");
-        assertEquals("1000AM", line.getTimeString());
+        assertTrue(line.getTime().isPresent());
+        assertEquals(LocalTime.of(10, 0), line.getTime().get());
     }
 
     @Test
-    public void testIsLocation() {
-        TranscriptLine line = new TranscriptLine("  10      ALBANY, NEW YORK");
-        assertTrue(line.isLocation());
+    public void testLocation() {
+        lineTexts = new String[]{"  10      ALBANY, NEW YORK", "               ALBANY, NEW   YORK",
+        "Something about New York and Albany"};
+        expected = new Object[]{true, true, false};
+        optionalTestHelper(TranscriptLine::getLocation, Optional::isPresent);
 
-        // e.g. 021197.v1
-        line = new TranscriptLine("               ALBANY, NEW   YORK");
-        assertTrue(line.isLocation());
+        lineTexts = new String[]{lineTexts[0], lineTexts[1]};
+        expected = new Object[]{"ALBANY, NEW YORK", "ALBANY, NEW YORK"};
+        optionalTestHelper(TranscriptLine::getLocation, Optional::get);
     }
 
     @Test
     public void testDateHandling() {
-        TranscriptLine line = new TranscriptLine("    11          March 26, 2011");
-        assertTrue(line.isDate());
-        assertEquals("March 26 2011", line.getDateString());
-
         // e.g 031699.v1
-        line = new TranscriptLine("   22             Albany NEW YORK");
-        assertFalse(line.isDate());
-
-        // e.g 031699.v1
-        line = new TranscriptLine("                March 16, 1999.");
-        assertTrue(line.isDate());
-        assertEquals("March 16 1999", line.getDateString());
-
-        // e.g. 022894.v1
-        line = new TranscriptLine("                February 28 , 1994");
-        assertTrue(line.isDate());
-        assertEquals("February 28 1994", line.getDateString());
-
-        // e.g. 033193.v1
-        line = new TranscriptLine("                March 31,1993");
-        assertTrue(line.isDate());
-        assertEquals("March 31 1993", line.getDateString());
+        TranscriptLine line = new TranscriptLine("   22             Albany NEW YORK");
+        assertFalse(line.getDate().isPresent());
+        lineTexts = new String[]{"    11          March 26, 2011", "                March 16, 1999.",
+                "                February 28 , 1994", "                March 31,1993"};
+        expected = new Object[]{LocalDate.of(2011, 3, 26), LocalDate.of(1999, 3, 16),
+                LocalDate.of(1994, 2, 28), LocalDate.of(1993, 3, 31)};
+        optionalTestHelper(TranscriptLine::getDate, Optional::get);
     }
 
     @Test
     public void testIsTime() {
-        TranscriptLine line = new TranscriptLine("   13       26, 2011");
-        assertFalse(line.isTime());
-
-        line = new TranscriptLine("   9            9:55 am");
-        assertTrue(line.isTime());
-
-        // e.g. 032611v1.TXT
-        line = new TranscriptLine("                10 00 a.m.");
-        assertTrue(line.isTime());
-
-        line = new TranscriptLine("                2:00 p.m.");
-        assertTrue(line.isTime());
-
-        line = new TranscriptLine("   9            12:55 pm");
-        assertTrue(line.isTime());
-
-        // e.g. 030393.v1
-        line = new TranscriptLine("             12:00 Noon");
-        assertTrue(line.isTime());
+        lineTexts = new String[]{"   13       26, 2011", "   9            9:55 am", "                10 00 a.m.",
+                "                2:00 p.m.", "   9            12:55 pm", "             12:00 Noon"};
+        expected = new Object[]{false, true, true, true, true, true};
+        optionalTestHelper(TranscriptLine::getTime, Optional::isPresent);
     }
 
     @Test
     public void testGetTime() {
         TranscriptLine line = new TranscriptLine(" 10:15 a.m.");
-        assertEquals("1015AM", line.getTimeString());
+        assertTrue(line.getTime().isPresent());
+        assertEquals(LocalTime.of(10, 15), line.getTime().get());
     }
 
     @Test
     public void testIsSessionType() {
-        TranscriptLine line = new TranscriptLine("   12           REGULAR SESSION");
-        assertTrue(line.isSession());
-
-        line = new TranscriptLine("               EXTRAORDINARY SESSION");
-        assertTrue(line.isSession());
+        lineTexts = new String[]{"   12           REGULAR SESSION", "               EXTRAORDINARY SESSION",
+        "2                      Committee notices."};
+        expected = new Object[]{true, true, false};
+        optionalTestHelper(TranscriptLine::getSession, Optional::isPresent);
     }
 
     @Test
     public void testIsEmpty() {
-        TranscriptLine line = new TranscriptLine("\t    \n");
-        assertTrue(line.isEmpty());
-
-        line = new TranscriptLine("       ");
-        assertTrue(line.isEmpty());
+        lineTexts = new String[]{"\t    \n", "       "};
+        expected = new Object[]{true, true};
+        testHelper(TranscriptLine::isBlank);
     }
 
     @Test
     public void testIsStenographer() {
-        TranscriptLine line = new TranscriptLine("  Candyco Transcription Service, Inc. ");
-        assertTrue(line.isStenographer());
-
-        line = new TranscriptLine(" (518) 371-8910 ");
-        assertTrue(line.isStenographer());
+        lineTexts = new String[]{"  Candyco Transcription Service, Inc. ", " (518) 371-8910 "};
+        expected = new Object[]{true, true};
+        testHelper(TranscriptLine::isStenographer);
     }
 
     @Test
@@ -153,13 +117,25 @@ public class TranscriptLineTest {
         assertTrue(line.isPageNumber());
     }
 
-    @Test
-    public void dateTests() {
-        String date = "NOVEMBER 15 2005";
-        String time = "1000am";
+    private void testHelper(Function<TranscriptLine, ?> lineFunction) {
+        assertEquals(lineTexts.length, expected.length);
+        for (int i = 0; i < lineTexts.length; i++) {
+            TranscriptLine line = new TranscriptLine(lineTexts[i]);
+            assertEquals(expected[i], lineFunction.apply(line));
+        }
+    }
 
-        date = WordUtils.capitalizeFully(date);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy hhmma");
-        LocalDateTime dt = LocalDateTime.parse(date + " " + time.toUpperCase(), dtf);
+    /**
+     * For use with any functions that return options.
+     * @param lineFunction to apply to the TranscriptLine.
+     * @param optionalFunction to apply to the result of f.
+     */
+    private void optionalTestHelper(Function<TranscriptLine, ?> lineFunction, Function<Optional<?>, ?> optionalFunction) {
+        assertEquals(lineTexts.length, expected.length);
+        for (int i = 0; i < lineTexts.length; i++) {
+            TranscriptLine line = new TranscriptLine(lineTexts[i]);
+            Optional<?> result = (Optional<?>) lineFunction.apply(line);
+            assertEquals(expected[i], optionalFunction.apply(result));
+        }
     }
 }

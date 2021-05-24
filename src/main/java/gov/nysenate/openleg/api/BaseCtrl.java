@@ -3,18 +3,14 @@ package gov.nysenate.openleg.api;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.api.response.error.ErrorCode;
-import gov.nysenate.openleg.api.response.error.ErrorResponse;
-import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.response.error.InvalidParameterView;
-import gov.nysenate.openleg.api.response.error.ParameterView;
+import gov.nysenate.openleg.api.response.error.*;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
@@ -32,6 +28,7 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -239,7 +236,7 @@ public abstract class BaseCtrl
         try {
             return new BillId(printNo, session);
         } catch (IllegalArgumentException ex) {
-            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.printNumberRegex);
+            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.PRINT_NUMBER_REGEX);
         }
     }
 
@@ -265,7 +262,7 @@ public abstract class BaseCtrl
      */
     protected Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
         Optional<Version> optVersion = parseVersion(version);
-        if (!optVersion.isPresent()) {
+        if (optVersion.isEmpty()) {
             throw new InvalidRequestParamEx(version, versionParamName, "String",
                     Version.ORIGINAL.name() + "|[A-Z]");
         }
@@ -534,6 +531,13 @@ public abstract class BaseCtrl
     public void handleClientAbortException(ClientAbortException ex) {
         logger.debug("Client aborted", ex);
         // Do Nothing
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,  new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf", "", Objects.toString(ex)));
     }
 
     private void pushExceptionNotification(Exception ex) {

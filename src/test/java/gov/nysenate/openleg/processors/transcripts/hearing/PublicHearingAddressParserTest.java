@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -9,20 +8,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class PublicHearingAddressParserTest
-{
-
-    private PublicHearingAddressParser addressParser;
-
-    @Before
-    public void setup() {
-        addressParser = new PublicHearingAddressParser();
-    }
-
+public class PublicHearingAddressParserTest {
     @Test
     public void basicAddressParses() throws IOException, URISyntaxException {
         testHearingAddress("01-17-13 NYSenateHearing_Marcellino_Final.txt",
@@ -82,7 +71,7 @@ public class PublicHearingAddressParserTest
 
     private void testHearingAddress(String filename, String expected) throws IOException, URISyntaxException {
         List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(filename);
-        String actual = addressParser.parse(pages.get(0));
-        assertThat(actual, is(expected));
+        String actual = PublicHearingAddressParser.parse(pages.get(0));
+        assertEquals(expected, actual);
     }
 }

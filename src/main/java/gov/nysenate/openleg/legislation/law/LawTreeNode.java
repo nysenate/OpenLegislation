@@ -242,7 +242,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      * @return LawTreeNode of the first immediate section (reference to self if this is a section node), or null if none.
      */
     private LawTreeNode findFirstSection(LawTreeNode node) {
-        if (node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (node.getDocType().isSection()) {
             return node;
         }
         LinkedList<LawTreeNode> children = new LinkedList<>(node.getChildren().values());
@@ -262,7 +262,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      * @return LawTreeNode of the last immediate section (reference to self if this is a section node), or null if none.
      */
     private LawTreeNode findLastSection(LawTreeNode node) {
-        if (node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (node.getDocType().isSection()) {
             return node;
         }
         LinkedList<LawTreeNode> children = new LinkedList<>(node.getChildren().values());

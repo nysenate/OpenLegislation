@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.legislation.committee.dao;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.TestData;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import testing_utils.TestData;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

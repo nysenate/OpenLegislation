@@ -1,7 +1,85 @@
 package gov.nysenate.openleg.api;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Contains some common constants and methods for writing PDFs.
+ */
 public abstract class BasePdfView {
-    protected static final Float FONT_SIZE = 12f;
-    protected static final Float TOP = 740f;
-    protected static final Float MARGIN = 10f;
+    protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f;
+    protected static final PDFont FONT = PDType1Font.COURIER;
+    protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
+    protected PDPageContentStream contentStream;
+    private final PDDocument doc = new PDDocument();
+    private PDPage currPage;
+
+    public ResponseEntity<byte[]> writeData() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * Writes the given pages to the PDF, then saves the document.
+     * @param pages to write.
+     * @param top where to start page.
+     * @param margin on each page.
+     */
+    protected void writePages(float top, float margin, List<List<String>> pages) throws IOException {
+        for (List<String> page : pages) {
+            createPage(top, margin);
+            drawPage(page);
+            contentStream.endText();
+            contentStream.close();
+            doc.addPage(currPage);
+        }
+        try {
+            doc.save(pdfBytes);
+        } catch (COSVisitorException e) {
+            throw new IOException("Error saving PDF.");
+        }
+        finally {
+            doc.close();
+        }
+    }
+
+    /**
+     * Overridden if more setup is needed.
+     */
+    protected void newPageSetup() throws IOException {}
+
+    /**
+     * Creates and initializes a new page.
+     * @param top of the new page.
+     * @param margin of the new page.
+     * @throws IOException if the page can't be written to.
+     */
+    private void createPage(float top, float margin) throws IOException {
+        currPage = new PDPage();
+        contentStream = new PDPageContentStream(doc, currPage);
+        newPageSetup();
+        contentStream.beginText();
+        contentStream.moveTextPositionByAmount(margin, top);
+        contentStream.setFont(FONT, FONT_SIZE);
+    }
+
+    protected void drawPage(List<String> page) throws IOException {
+        for (String line : page) {
+            contentStream.drawString(line);
+            contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
+        }
+    }
 }

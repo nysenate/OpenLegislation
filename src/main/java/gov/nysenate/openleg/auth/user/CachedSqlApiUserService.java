@@ -4,18 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.auth.exception.UsernameExistsException;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
-import gov.nysenate.openleg.auth.exception.UsernameExistsException;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.*;
+import gov.nysenate.openleg.notifications.mail.SendMailService;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
-import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.notifications.mail.SendMailService;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -32,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,7 +48,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private final CacheManager cacheManager;
     private final Environment environment;
 
-//    private static final String apiUserCacheName = ;
     private EhCacheCache apiUserCache;
 
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
@@ -91,7 +86,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(apiUserCache.getNativeCache());
+        return Collections.singletonList(apiUserCache.getNativeCache());
     }
 
     @Override

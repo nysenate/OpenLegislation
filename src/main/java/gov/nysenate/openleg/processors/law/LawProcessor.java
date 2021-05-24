@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.processors.law;
 
 import gov.nysenate.openleg.legislation.law.LawTree;
+import gov.nysenate.openleg.legislation.law.LawType;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
+import gov.nysenate.openleg.processors.AbstractDataProcessor;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
 import org.slf4j.Logger;
@@ -175,11 +176,10 @@ public class LawProcessor extends AbstractDataProcessor
                 block.setHeader(line);
                 block.setLawId(headerMatcher.group(2).trim());
                 block.setPublishedDate(lawFile.getPublishedDate());
-                block.setDocumentId(
-                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim()));
+                block.setDocumentId(LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim()));
                 block.setLocationId(block.getDocumentId().substring(3));
                 block.setMethod(headerMatcher.group(4).trim());
-                block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
+                block.setConsolidated(headerMatcher.group(6).equals(LawType.CONSOLIDATED.name()));
             }
             else {
                 if (block == null)

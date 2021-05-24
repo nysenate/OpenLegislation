@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.law;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.law.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
@@ -8,7 +9,6 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
@@ -30,8 +30,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/laws", method = RequestMethod.GET)
-public class LawGetCtrl extends BaseCtrl
-{
+public class LawGetCtrl extends BaseCtrl {
     @Autowired private LawDataService lawDataService;
 
     /** --- Request Handlers --- */
@@ -52,8 +51,8 @@ public class LawGetCtrl extends BaseCtrl
         LimitOffset limOff = getLimitOffset(webRequest, 0);
         List<LawInfo> lawInfoList = lawDataService.getLawInfos();
         ListViewResponse<LawInfoView> response = ListViewResponse.of(
-            LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).collect(toList()), limOff),
-            lawInfoList.size(), limOff);
+                LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).collect(toList()), limOff),
+                lawInfoList.size(), limOff);
         response.setMessage("Listing of consolidated and unconsolidated NYS Laws");
         return response;
     }
@@ -83,9 +82,9 @@ public class LawGetCtrl extends BaseCtrl
         LocalDate publishedDate = (date != null) ? parseISODate(date, "date") : null;
         LawTree lawTree = lawDataService.getLawTree(lawId, publishedDate);
         ViewObjectResponse<LawTreeView> response =
-            (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth,
-                                                              lawDataService.getLawDocuments(lawId, publishedDate)))
-                   : new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth));
+                (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth,
+                        lawDataService.getLawDocuments(lawId, publishedDate)))
+                        : new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth));
         response.setMessage("The document structure for " + lawId + " law");
         return response;
     }
@@ -115,7 +114,7 @@ public class LawGetCtrl extends BaseCtrl
         LocalDate refTreeLocalDate = (refTreeDate != null) ? parseISODate(refTreeDate, "refTreeDate") : LocalDate.now();
         Optional<LawTreeNode> lawTreeNodeOpt = lawDataService.getLawTree(lawId, refTreeLocalDate).find(documentId);
         ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, lawTreeNodeOpt));
-        response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
+        response.setMessage("Law document for location " + locationId + " in " + lawId + " law.");
         return response;
     }
 

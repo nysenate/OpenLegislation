@@ -11,13 +11,13 @@ public class PublicHearing extends BaseLegislativeContent
 {
 
     /** The Public Hearing id. */
-    private PublicHearingId id;
+    private final PublicHearingId id;
 
     /** The title of the public hearing. */
     private String title;
 
     /** The date of the public hearing. */
-    private LocalDate date;
+    private final LocalDate date;
 
     /** The location of this Public Hearing. */
     private String address;
@@ -27,7 +27,7 @@ public class PublicHearing extends BaseLegislativeContent
     private List<PublicHearingCommittee> committees;
 
     /** The raw text of the Public Hearing. */
-    private String text;
+    private final String text;
 
     /** The start time of the public hearing. */
     private LocalTime startTime;

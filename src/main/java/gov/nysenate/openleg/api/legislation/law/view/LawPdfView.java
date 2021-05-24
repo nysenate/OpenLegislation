@@ -2,67 +2,68 @@ package gov.nysenate.openleg.api.legislation.law.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
 import gov.nysenate.openleg.legislation.law.LawDocument;
-import gov.nysenate.openleg.legislation.law.LawTreeNode;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
-public abstract class LawPdfView extends BasePdfView {
-    /**
-     * Writes a law document to a PDF.
-     * @param node of the appropriate law document.
-     * @param outputStream to write to,
-     * @param lawDocs to lookup law document text.
-     * @throws IOException if there was a problem making the pdf.
-     * @throws COSVisitorException if there was a problem saving the PDF.
-     */
-    public static void writeLawDocumentPdf(LawTreeNode node, OutputStream outputStream, Map<String, LawDocument> lawDocs)
-            throws IOException, COSVisitorException {
-        PDDocument doc = new PDDocument();
-        PDFont font = PDType1Font.COURIER;
-        LinkedList<String> lines = new LinkedList<>(Arrays.asList(getNodeText(node, lawDocs).split("\\\\n")));
-        while(!lines.isEmpty()) {
-            PDPage pg = new PDPage();
-            PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
-            contentStream.beginText();
-            contentStream.setFont(font, FONT_SIZE);
-            contentStream.moveTextPositionByAmount(MARGIN, TOP);
-            for (float currY = TOP; currY > pg.getMediaBox().getLowerLeftY() && !lines.isEmpty(); currY -= FONT_SIZE) {
-                contentStream.drawString(lines.poll() + "\n");
-                contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
-            }
-            contentStream.endText();
-            contentStream.close();
-            doc.addPage(pg);
-        }
-        doc.save(outputStream);
-        doc.close();
+/**
+ * Converts a LawDocument, and potentially its children in order, into a PDF.
+ */
+public class LawPdfView extends BasePdfView {
+    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 50f;
+    private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE * SPACING));
+    private boolean bold = false;
+
+    public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
+        List<String> lines = new ArrayList<>();
+        for (LawDocument doc : lawDocQueue)
+            lines.addAll(LawPdfUtil.getLines(doc));
+        writePages(DEFAULT_TOP, MARGIN, getPages(lines));
+    }
+
+    @Override
+    protected void drawPage(List<String> page) throws IOException {
+        for (String line : page)
+            writeLine(line);
     }
 
     /**
-     * Gets the text for a law document and all of its children in the proper order.
-     * @param topNode to build String of.
-     * @param lawDocs to get text from.
-     * @return a full String of a law document.
+     * Writes a single line from the document, after splitting it into sections marked by bold markers.
+     * @throws IOException if the writing was interrupted.
      */
-    private static String getNodeText(LawTreeNode topNode, Map<String, LawDocument> lawDocs) {
-        StringBuilder ret = new StringBuilder();
-        LawDocument topDoc = lawDocs.remove(topNode.getDocumentId());
-        // Ensures something is being removed every time, so you can't go into an infinite loop.
-        if (topDoc != null) {
-            ret.append(topDoc.getText());
-            for (LawTreeNode currNode : topNode.getChildNodeList())
-                ret.append(getNodeText(currNode, lawDocs));
+    private void writeLine(String line) throws IOException {
+        // Used to avoid split() erasing a marker at the end.
+        if (line.endsWith(LawPdfUtil.BOLD_MARKER))
+            line += " ";
+        List<String> sections = Arrays.asList(line.split(LawPdfUtil.BOLD_MARKER));
+        for (int i = 0; i < sections.size(); i++) {
+            contentStream.setFont(bold ? PDType1Font.COURIER_BOLD : FONT, FONT_SIZE);
+            contentStream.drawString(sections.get(i));
+            if (i != sections.size()-1)
+                bold = !bold;
         }
-        return ret.toString();
+        contentStream.moveTextPositionByAmount(0, -FONT_SIZE * SPACING);
+    }
+
+    /**
+     * Converts lines into pages using a set page length.
+     * Necessary so that multiple documents can be on the same page.
+     * @param lines of the full text.
+     * @return the pages, formatted as in other PDFs.
+     */
+    private static List<List<String>> getPages(List<String> lines) {
+        // Even with no text, a page should still be generated.
+        if (lines.isEmpty())
+            return Collections.singletonList(new ArrayList<>());
+        int numPages = (int) Math.ceil((double)lines.size()/LINES_PER_PAGE);
+        List<List<String>> pages = new ArrayList<>(numPages);
+        for (int page = 1; page <= numPages; page++) {
+            // All pages, except potentially the last, will have the same number of lines.
+            int endIndex = Math.min(page * LINES_PER_PAGE, lines.size());
+            List<String> currPage = lines.subList((page-1) * LINES_PER_PAGE, endIndex);
+            pages.add(currPage);
+        }
+        return pages;
     }
 }

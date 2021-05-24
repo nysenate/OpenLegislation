@@ -31,7 +31,7 @@ public enum Chamber
 
     public static Chamber getValue(String value) {
         if (value != null) {
-            return Chamber.valueOf(value.toUpperCase());
+            return valueOf(value.trim().toUpperCase());
         }
         throw new IllegalArgumentException("Supplied value cannot be null when mapping to Chamber.");
     }

@@ -31,12 +31,12 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
 
     @SuppressWarnings("unchecked")
     @Override
-    protected String determineHierarchy(LawBlock block) {
+    protected String determineHierarchy(String docId) {
         Stack<LawTreeNode> backup = (Stack<LawTreeNode>) parentNodes.clone();
-        String locationId = super.determineHierarchy(block);
+        String locationId = super.determineHierarchy(docId);
         if (currParent().isRootNode()) {
             // Determine doc type
-            Matcher locMatcher = locationPattern.matcher(locationId);
+            Matcher locMatcher = LOCATION_PATTERN.matcher(locationId);
             if (locMatcher.matches()) {
                 LawDocumentType docType = lawLevelCodes.get(locMatcher.group(1));
                 if (!docType.equals(expectedOrder.getFirst())) {
@@ -66,14 +66,14 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
     protected void addChildNode(LawTreeNode node) {
         // CPL sections should be of the form precedingArticleNumber.anotherNumber, but some aren't and should be removed.
         if (lawInfo.getLawId().equals(LawChapterCode.CPL.name()) &&
-                node.getDocType() == LawDocumentType.SECTION &&
+                node.getDocType().isSection() &&
             !(currParent().getLocationId().substring(1).equals(node.getLocationId().split("\\.")[0]))) {
             logger.debug("Removing CPL section {}.", node.getLocationId());
             lawDocMap.remove(node.getDocumentId());
             return;
         }
         super.addChildNode(node);
-        if (!node.isRootNode() && node.getDocType() != LawDocumentType.SECTION)
+        if (!node.isRootNode() && !node.getDocType().isSection())
             lastParentNodeOfType.put(node.getDocType(), node);
     }
 }

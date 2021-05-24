@@ -21,7 +21,7 @@ public class LawCtrlBaseIT extends ApiTest {
 
     protected static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
     protected static final List<String> TEST_LAW_IDS = Arrays.asList(EHC.name(), ETP.name(), CMA.name(), CMS.name(), ABC.name());
-    protected static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20200529", "20200530", "20200531");
+    protected static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20140923", "20140924", "20140925");
 
     protected void loadTestData(String fileId, boolean isInitial) {
         LawFile file;

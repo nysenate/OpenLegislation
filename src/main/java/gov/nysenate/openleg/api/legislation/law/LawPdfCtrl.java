@@ -14,20 +14,14 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,15 +37,14 @@ public class LawPdfCtrl extends BaseCtrl {
      *
      * @param documentId of the law document to look up. If you want the root
      * node, enter just the 3 letter law id instead.
-     * @param response for HTTP.
      * @param full if you want the children to be shown.
      * @return a law document PDF.
      * @throws IOException if PDF cannot be written.
      */
     @RequestMapping("/{documentId}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String documentId, HttpServletResponse response,
+    public ResponseEntity<byte[]> getLawPdf(@PathVariable String documentId,
                                                    @RequestParam(defaultValue = "false") boolean full)
-            throws IOException, COSVisitorException {
+            throws IOException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
         if (!matcher.matches())
             throw new InvalidRequestParamEx(documentId, "documentId", "String", "Document ID must start with a 3 letter law ID.");
@@ -59,22 +52,15 @@ public class LawPdfCtrl extends BaseCtrl {
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())
             documentId = lawTree.getRootNode().getDocumentId();
-        Optional<LawTreeNode> opNode = lawTree.find(documentId);
-        if (!opNode.isPresent())
-            throw new LawDocumentNotFoundEx(documentId, null, "");
-
-        Map<String, LawDocument> lawDocs = new HashMap<>();
-        lawDocs.put(documentId, lawData.getLawDocument(documentId, null));
+        LawTreeNode docNode = lawTree.find(documentId).orElse(lawTree.getRootNode());
+        Queue<LawDocument> lawDocs = new LinkedList<>();
         if (full) {
-            for (LawTreeNode node : opNode.get().getAllNodes())
-                lawDocs.put(node.getDocumentId(), lawData.getLawDocument(node.getDocumentId(), null));
+            for (LawTreeNode node : docNode.getAllNodes())
+                lawDocs.add(lawData.getLawDocument(node.getDocumentId(), null));
         }
-
-        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
-        LawPdfView.writeLawDocumentPdf(opNode.get(), pdfBytes, lawDocs);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
+        else
+            lawDocs.add(lawData.getLawDocument(docNode.getDocumentId(), null));
+        return new LawPdfView(lawDocs).writeData();
     }
 
     @ExceptionHandler(LawTreeNotFoundEx.class)

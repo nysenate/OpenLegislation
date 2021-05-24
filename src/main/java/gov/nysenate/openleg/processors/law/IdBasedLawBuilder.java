@@ -28,21 +28,21 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder 
      * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find its parent 'A2P1'
      * or reach the root node. The new portion 'SP3' would be the returned value which serves as the docTypeId.
      *
-     * @param block LawBlock
+     * @param docId String
      * @return String
      */
     @Override
-    protected String determineHierarchy(LawBlock block) {
-        if (block.getDocumentId().startsWith(CITY_TAX_STR + "P"))
-            return block.getDocumentId().replace(CITY_TAX_STR, "");
-        String blockLocID = block.getDocumentId().substring(3);
+    protected String determineHierarchy(String docId) {
+        if (docId.startsWith(CITY_TAX_STR + "P"))
+            return docId.replace(CITY_TAX_STR, "");
+        String blockLocID = docId.substring(3);
         while (!currParent().isRootNode()) {
             String parentLocID = currParent().getLocationId();
             if (StringUtils.startsWith(blockLocID, parentLocID)) {
                 // Remove parent location ID.
                 String trimLocId = StringUtils.removeStart(blockLocID, parentLocID);
                 LawDocumentType parentType = currParent().getDocType();
-                Matcher blockMatch = locationPattern.matcher(trimLocId);
+                Matcher blockMatch = LOCATION_PATTERN.matcher(trimLocId);
                 if (blockMatch.matches() && lawLevelCodes.get(blockMatch.group(1)) != parentType)
                     return trimLocId;
             }
@@ -62,7 +62,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder 
         if (currParent() != null)
             currParent().addChild(node);
         // Section nodes should never become parents because they are the most granular (at the moment).
-        if (!node.getDocType().equals(LawDocumentType.SECTION))
+        if (!node.getDocType().isSection())
             parentNodes.push(node);
     }
 

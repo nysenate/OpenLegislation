@@ -11,11 +11,10 @@ public abstract class ApiTest extends BaseTests {
     @Before
     public void setup() {
         testRequest = Mockito.mock(WebRequest.class);
-        Mockito.when(testRequest.getParameter(Mockito.anyString())).thenReturn(null);
+        Mockito.when(testRequest.getParameter("limit")).thenReturn("all");
     }
 
     protected void addParam(String key, String value) {
         Mockito.when(testRequest.getParameter(key)).thenReturn(value);
     }
 }
- 

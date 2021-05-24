@@ -3,10 +3,10 @@ package gov.nysenate.openleg.processors.bill;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import gov.nysenate.openleg.common.util.NumberConversionUtils;
 import gov.nysenate.openleg.legislation.law.LawActionType;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
-import gov.nysenate.openleg.common.util.RomanNumerals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ public class BillLawCodeParser {
     }
 
     // We don't have these law chapters.
-    private static final Set<String> unlinkable = Sets.newHashSet("ADC", "NYC");
-    private static final String altGenPattern = "(?i)(Chap \\d+ of \\d+)";
+    private static final Set<String> UNLINKABLE = Sets.newHashSet("ADC", "NYC");
+    private static final String ALT_GEN_PATTERN = "(?i)(Chap \\d+ of \\d+)";
 
     /* --- Methods --- */
 
@@ -71,7 +71,7 @@ public class BillLawCodeParser {
                 continue;
             }
 
-            if (chapter.matches(actionString + " " + altGenPattern))
+            if (chapter.matches(actionString + " " + ALT_GEN_PATTERN))
                 chapter += ", generally";
             // Can't match a list of unconsolidated chapters.
             if (chapter.contains(" Chaps "))
@@ -90,7 +90,8 @@ public class BillLawCodeParser {
                     general = true;
                     chapterName = chapterName.replaceFirst(actionString, "").trim();
                 }
-                // Sometimes, the chapter name comes with a separate action. For example, Rpld §101, amd UJCA, generally;
+                // Sometimes, the chapter name comes with a separate action.
+                // For example, Rpld §101, amd UJCA, generally;
                 else {
                     chapterList.add((chapterName + ", generally").trim());
                     chapter = chapter.replaceAll(", " + chapterName + ".*", "");
@@ -195,7 +196,7 @@ public class BillLawCodeParser {
             nonNumerical = !chapter.hasNumericalTitles() && context.peekLast().equals("T");
         // Only convert Roman Numerals to numbers when the names of the levels are numerical (eg Title 5 not Title E)
         if (isRomanNumeral(splitToken[0]) && !nonNumerical){
-            splitToken[0] = Integer.toString(RomanNumerals.numeralToInt(splitToken[0]));
+            splitToken[0] = Integer.toString(NumberConversionUtils.numeralToInt(splitToken[0]));
             token = String.join("-", splitToken);
         }
         return token;
@@ -257,7 +258,7 @@ public class BillLawCodeParser {
     private static void putLawEffect(LawActionType action, String section, Map<LawActionType, TreeSet<String>> mapping) {
         // Add a new value to one of the actions in this.mapping
         // Ignore the new names of renamed laws
-        if (!unlinkable.contains(section.substring(0, 3)) && action != LawActionType.REN_TO) {
+        if (!UNLINKABLE.contains(section.substring(0, 3)) && action != LawActionType.REN_TO) {
             mapping.putIfAbsent(action, new TreeSet<>());
             mapping.get(action).add(section);
         }

@@ -12,7 +12,7 @@ public class LawDocument extends LawDocInfo
 
     public LawDocument(LawDocInfo info, String text) {
         super(info);
-        this.text = text;
+        this.text = text.replace("├Á", "§");
     }
 
     /**

@@ -1,41 +1,56 @@
 package gov.nysenate.openleg.processors.law;
 
+
+import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
 /**
  * Some of the law document ids that are sent to us break the usual convention of
  * prefixing with the parent doc's id. This class can be used to patch the document
  * ids with ids that reflect the proper document structure.
  */
-public class LawDocIdFixer
-{
+public class LawDocIdFixer {
     private static final Logger logger = LoggerFactory.getLogger(LawDocIdFixer.class);
+
+    private LawDocIdFixer() {}
 
     /** Hacks to fix various document id inconsistencies. */
     private static final HashMap<String, String> docIdReplacements = new HashMap<>();
     static {
-        docIdReplacements.put("PARA43", "PARTGA43");
-        docIdReplacements.put("PENA470", "PENP4TXA470");
-        docIdReplacements.put("PENA480", "PENP4TXA480");
-        docIdReplacements.put("VATA19-B", "VATT5A19-B");
-        docIdReplacements.put("VATA34-C", "VATT7A34-C");
-        docIdReplacements.put("VATA44-A", "VATT8A44-A");
-        docIdReplacements.put("VATA48-C", "VATT11A48-C");
-        docIdReplacements.put("MHYA47", "MHYTEA47");
-        docIdReplacements.put("LEH1", "LEH-CH21-1962");
-        docIdReplacements.put("NNY1", "NNY-CH649-1992");
+        addDocToReplace(PAR, "TG", "A43");
+        addDocToReplace(PEN, "P4TX", "A470");
+        addDocToReplace(PEN, "P4TX", "A480");
+        addDocToReplace(VAT, "T5", "A19-B");
+        addDocToReplace(VAT, "T7", "A34-C");
+        addDocToReplace(VAT, "T8", "A44-A");
+        addDocToReplace(VAT, "T11", "A48-C");
+        addDocToReplace(MHY, "TE", "A47");
+        docIdReplacements.put(LEH.name() + "1", LEH.name() + "-CH21-1962");
+        docIdReplacements.put(NNY.name() + "1", NNY.name() + "-CH649-1992");
+    }
+
+    /**
+     *
+     * @param parents that should've been included in the locationId.
+     * @param locId before fixing.
+     */
+    private static void addDocToReplace(LawChapterCode code, String parents, String locId) {
+        docIdReplacements.put(code.name() + locId, code.name() + parents + locId);
     }
 
     /** Ignore these document ids since they cause issues with constructing the trees properly. */
     private static final Set<String> ignoreDocIds = new HashSet<>();
     static {
-        ignoreDocIds.add("SOSA2-A*");
-        ignoreDocIds.add("SOS41*");
-        ignoreDocIds.add("SOS42*");
-        ignoreDocIds.add("SOS43*");
+        String[] locIdsToIgnore = {"A2-A*", "41*", "42*", "43*"};
+        for (String locId : locIdsToIgnore)
+            ignoreDocIds.add(SOS.name() + locId);
     }
 
     public static String applyReplacement(String documentId) {

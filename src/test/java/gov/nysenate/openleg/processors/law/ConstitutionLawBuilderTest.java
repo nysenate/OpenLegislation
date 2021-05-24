@@ -6,11 +6,11 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import testing_utils.LawTestUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
@@ -23,16 +23,10 @@ public class ConstitutionLawBuilderTest {
     private ConstitutionLawBuilder builder;
     private static final LawChapterCode CODE = LawChapterCode.CNS;
     private static final int NUM_ARTICLES = 2, SECTIONS_PER_ARTICLE = 2;
-    private static final Map<String, String> LOC_ID_TO_TITLE = new HashMap<>();
-    static {
-        LOC_ID_TO_TITLE.put("AA1", "Preamble");
-        LOC_ID_TO_TITLE.put("A1", "Bill of Rights");
-        LOC_ID_TO_TITLE.put("A1S1", "Rights, privileges and franchise secured; uncontested primary elections");
-        LOC_ID_TO_TITLE.put("A1S2", "Trial by jury; how waived");
-        LOC_ID_TO_TITLE.put("A2", "Suffrage");
-        LOC_ID_TO_TITLE.put("A2S1", "Qualifications of voters");
-        LOC_ID_TO_TITLE.put("A2S2", "Absentee voting");
-    }
+    private static final Map<String, String> LOC_ID_TO_TITLE = Map.of("AA1", "Preamble",
+        "A1", "Bill of Rights", "A1S1", "Rights, privileges and franchise secured; uncontested primary elections",
+        "A1S2", "Trial by jury; how waived", "A2", "Suffrage",
+        "A2S1", "Qualifications of voters", "A2S2", "Absentee voting");
 
     @Test
     public void testConBuilder() {
@@ -60,7 +54,7 @@ public class ConstitutionLawBuilderTest {
     }
 
     private void addConDocument(String locId, String method, boolean isNewDoc) {
-        LawBlock block = LawProcessorUtils.getLawBlock(CODE, locId, method);
+        LawBlock block = LawTestUtils.getLawBlock(CODE, locId, method);
         builder.addInitialBlock(block, isNewDoc, null);
         assertTrue(builder.rootNode.findNode(CODE.name() + locId, false).isPresent());
     }
@@ -70,10 +64,11 @@ public class ConstitutionLawBuilderTest {
      * Does not initialize a root node if locId is an empty String.
      */
     private void initConstitutionBuilder() {
-        builder = (ConstitutionLawBuilder) AbstractLawBuilder.makeLawBuilder(new LawVersionId(CODE.name(), LocalDate.now()), null);
+        LawVersionId id = new LawVersionId(CODE.name(), LocalDate.now());
+        this.builder = (ConstitutionLawBuilder) AbstractLawBuilder.makeLawBuilder(id, null);
         Scanner scanner;
         try {
-            scanner = new Scanner(new File(LawProcessorUtils.TEST_DATA_DIRECTORY + "ConstitutionRootSample"));
+            scanner = new Scanner(new File(LawTestUtils.TEST_DATA_DIRECTORY + "ConstitutionRootSample"));
         }
         catch (FileNotFoundException e) {
             fail("Error! Sample data not found.");
@@ -83,11 +78,8 @@ public class ConstitutionLawBuilderTest {
         while (scanner.hasNextLine())
             text.append(scanner.nextLine()).append("\\n");
         String rootLocId = "AS";
-        LawBlock fullTextBlock = new LawBlock();
-        fullTextBlock.setLawId(CODE.name());
-        fullTextBlock.setLocationId(rootLocId);
-        fullTextBlock.setDocumentId(CODE.name() + rootLocId);
+        LawBlock fullTextBlock = LawTestUtils.getLawBlock(CODE, rootLocId);
         fullTextBlock.getText().append(text);
-        builder.addInitialBlock(fullTextBlock, true, null);
+        this.builder.addInitialBlock(fullTextBlock, true, null);
     }
 }

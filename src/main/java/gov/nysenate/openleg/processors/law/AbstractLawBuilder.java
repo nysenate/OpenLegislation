@@ -10,57 +10,43 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.*;
 
 public abstract class AbstractLawBuilder implements LawBuilder {
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static final Pattern locationPattern = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
+    protected static final Pattern LOCATION_PATTERN = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
-    private static final Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
-
-    private static final String ROOT = "ROOT";
+    private static final Pattern SPECIAL_CHAPTER_PATTERN = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
-    protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
+    protected static final String CITY_TAX_STR = GCT.name() + "25-A";
 
+    private static final String ROOT = "ROOT",
     /** Document ID for special document that's just a list of notwithstanding clauses. */
-    private static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
+    ATTN = ACA.name() + "ATTN",
 
     /** Document ID for special tax law. */
-    private static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
+    CUBIT = GCM.name() + "CUBIT",
 
     /** Location Id for Constitution Preamble. */
-    private static final String PREAMBLE_LOC_ID = "AA1";
+    PREAMBLE_LOC_ID = "AA1",
 
     /** Special law IDs. */
-    protected static final String CONS_STR = LawChapterCode.CNS.name();
-    private static final String A_RULES = LawChapterCode.CMA.name();
-    private static final String S_RULES = LawChapterCode.CMS.name();
+    A_RULES = CMA.name(), S_RULES = CMS.name();
+    protected static final String CONS_STR = CNS.name();
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
-    private static final Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
-    static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
-        expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
-    }
+    private static final Map<String, List<LawDocumentType>> EXPECTED_LAW_ORDERING = Map.of(
+            EDN.name(), List.of(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART), CPL.name(), List.of(PART, TITLE, ARTICLE));
 
     /** The location ids portions are prefixed with a code to indicate the different document types. */
-    protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
-    static {
-        lawLevelCodes.put("A", ARTICLE);
-        lawLevelCodes.put("SA", SUBARTICLE);
-        lawLevelCodes.put("T", TITLE);
-        lawLevelCodes.put("ST", SUBTITLE);
-        lawLevelCodes.put("P", PART);
-        lawLevelCodes.put("SP", SUBPART);
-        lawLevelCodes.put("S", SECTION);
-        lawLevelCodes.put("INDEX", INDEX);
-        lawLevelCodes.put("R", RULE);
-        lawLevelCodes.put("JR", JOINT_RULE);
-    }
+    protected static Map<String, LawDocumentType> lawLevelCodes = Map.of("A", ARTICLE, "SA", SUBARTICLE, "T", TITLE,
+            "ST", SUBTITLE, "P", PART, "SP", SUBPART, "S", SECTION, "INDEX", INDEX, "R", RULE,
+            "JR", JOINT_RULE);
 
     /** A law version id that is obtained from the law blocks. */
     private final LawVersionId lawVersionId;
@@ -97,21 +83,21 @@ public abstract class AbstractLawBuilder implements LawBuilder {
             return new ConstitutionLawBuilder(lawVersionId, previousTree);
         if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return new RulesLawBuilder(lawVersionId, previousTree);
-        if (expectedLawOrdering.containsKey(lawID))
-            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
+        if (EXPECTED_LAW_ORDERING.containsKey(lawID))
+            return new HintBasedLawBuilder(lawVersionId, previousTree, EXPECTED_LAW_ORDERING.get(lawID));
         return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 
-    /** --- Abstract Methods --- */
+    /* --- Abstract Methods --- */
 
     /**
      * The override of this method should be able to figure out which location id is the parent of the
      * given law document.
      *
-     * @param block LawBlock
+     * @param docId String
      * @return String
      */
-    protected abstract String determineHierarchy(LawBlock block);
+    protected abstract String determineHierarchy(String docId);
 
     /**
      * Handles any behaviors relating to adding a new child to the hierarchy.
@@ -123,7 +109,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
 
     protected abstract void clearParents();
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * {@inheritDoc}
@@ -138,75 +124,72 @@ public abstract class AbstractLawBuilder implements LawBuilder {
             logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
             LawDocument chapterDoc;
             // If the block seems to be a chapter node, we'll treat this document as the root.
-            Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
+            Matcher specialChapter = SPECIAL_CHAPTER_PATTERN.matcher(lawDoc.getLocationId());
             if (specialChapter.matches() || isChapterDoc(lawDoc)) {
-                lawDoc.setDocType(LawDocumentType.CHAPTER);
+                lawDoc.setDocType(CHAPTER);
                 String docTypeId = (specialChapter.matches() ? "" : lawDoc.getLocationId().replace("-CH", ""));
                 lawDoc.setDocTypeId(docTypeId);
                 chapterDoc = lawDoc;
                 isRootDoc = true;
             }
             // Otherwise we have to create our own root node and process the current document as a child of it.
-            else
+            else {
                 chapterDoc = createRootDocument(block, priorRoot);
+                if (isNewDoc)
+                    lawDocMap.put(chapterDoc.getDocumentId(), chapterDoc);
+            }
             lawInfo = deriveLawInfo(chapterDoc.getLawId(), isRootDoc ? chapterDoc.getDocTypeId() : "");
-            addRootDocument(chapterDoc, isNewDoc);
+            addRootDocument(chapterDoc);
         }
 
         if (!isRootDoc) {
             if (isNodeListEmpty())
                 throw new IllegalStateException("Failed to add node because it's parent node was not added!");
             if (isSectionDoc(lawDoc))
-                processSection(lawDoc, isNewDoc);
+                processSection(lawDoc);
             else
-                processNonSection(lawDoc, block, isNewDoc);
+                processNonSection(lawDoc);
         }
-        setLawDocTitle(lawDoc, isNewDoc);
+        if (isNewDoc)
+            lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+        setLawDocTitle(lawDoc);
     }
 
     /**
      * {@inheritDoc}
      */
     public void addUpdateBlock(LawBlock block) {
-        switch (block.getMethod()) {
-            // Rebuild the law tree
-            case "*MASTER*":
-                rebuildTree(block.getText().toString());
-                break;
-            // Repeal the document
-            case "*REPEAL*" :
+        // Re-parse the titles
+        switch (LawMethod.stringToMethod(block.getMethod())) {
+            case MASTER -> rebuildTree(block.getText().toString());
+            case REPEAL -> {
                 logger.info("{} , {}", block.getDocumentId(), rootNode);
                 Optional<LawTreeNode> node = rootNode.findNode(block.getDocumentId(), false);
                 if (node.isPresent()) {
                     logger.info("Repealing {}", block.getDocumentId());
                     node.get().setRepealedDate(block.getPublishedDate());
-                }
-                else
+                } else
                     logger.warn("Failed to repeal document {} because it could not be located within the law tree!", block.getDocumentId());
-                break;
-            // Delete the document
-            case "*DELETE*" :
+            }
+            case DELETE -> {
                 logger.info("Deleting {}", block.getDocumentId());
                 rootNode.findNode(block.getDocumentId(), true);
-                break;
-            // Update the document
-            case "" :
+            }
+            case UPDATE -> {
                 if (rootNode == null)
                     throw new LawParseException("Can't add law document " + block.getDocumentId() + " without a prior law tree.");
                 Optional<LawDocInfo> existingDocInfo = rootNode.find(block.getDocumentId());
-                if (!existingDocInfo.isPresent())
+                if (existingDocInfo.isEmpty())
                     throw new LawParseException("Can't add law document " + block.getDocumentId() +
                             " without a prior law tree structure including it.");
-
                 existingDocInfo.get().setPublishedDate(block.getPublishedDate());
-                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString().replace("├Á", "§"));
-                // Re-parse the titles
-                setLawDocTitle(lawDoc, true);
+                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
+                setLawDocTitle(lawDoc);
+                existingDocInfo.get().setTitle(lawDoc.getTitle());
                 lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 logger.info("Updated {}", lawDoc.getDocumentId());
-                break;
-            default :
-                throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
+            }
+            case UNKNOWN -> throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
         }
     }
 
@@ -277,13 +260,10 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * Add the root document which does not have to be associated with a parent.
      *
      * @param rootDoc LawDocument
-     * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
-    private void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
+    private void addRootDocument(LawDocument rootDoc) {
         sequenceNo = 0;
         rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
-        if (isNewDoc)
-            lawDocMap.put(rootDoc.getDocumentId(), rootDoc);
         addChildNode(this.rootNode);
     }
 
@@ -292,12 +272,9 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * current parent node to point to this document.
      *
      * @param lawDoc LawDocument
-     * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
-    protected void addDocument(LawDocument lawDoc, boolean isNewDoc) {
-        if (isNewDoc)
-            lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-        LawTreeNode node = new LawTreeNode(lawDoc, lawDoc.getDocType() == LawDocumentType.PREAMBLE ? 2 : ++sequenceNo);
+    protected void addDocument(LawDocument lawDoc) {
+        LawTreeNode node = new LawTreeNode(lawDoc, lawDoc.getDocType() == PREAMBLE ? 2 : ++sequenceNo);
         addChildNode(node);
     }
 
@@ -314,7 +291,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
         chapter.setChapterId(chapterId);
         try {
             LawChapterCode chapterType = LawChapterCode.valueOf(lawId);
-            chapter.setName(chapterType.getName());
+            chapter.setName(chapterType.getChapterName());
             chapter.setType(chapterType.getType());
         }
         catch (IllegalArgumentException ex) {
@@ -336,7 +313,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
         String locId = doc.getLocationId();
         return (locId.startsWith("-CH") ||
                 (!locId.equals("1") && !locId.equals(PREAMBLE_LOC_ID) &&
-                        !locationPattern.matcher(locId).matches()));
+                        !LOCATION_PATTERN.matcher(locId).matches()));
     }
 
     /**
@@ -346,9 +323,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * @return boolean - true if this block is a section.
      */
     private static boolean isSectionDoc(LawDocument lawDoc) {
-        String docID = lawDoc.getDocumentId();
-        String lawID = lawDoc.getLawId();
-        String locId = lawDoc.getLocationId();
+        String docID = lawDoc.getDocumentId(), lawID = lawDoc.getLawId(), locId = lawDoc.getLocationId();
         if (docID.matches(CITY_TAX_STR + ".+"))
             return !docID.contains("P");
         if (lawID.equals(CONS_STR) || lawID.equals(A_RULES) || lawID.equals(S_RULES))
@@ -373,15 +348,15 @@ public abstract class AbstractLawBuilder implements LawBuilder {
         dummyParent.setLawId(block.getLawId());
         dummyParent.setDocumentId(block.getLawId() + "-" + ROOT);
         dummyParent.setLocationId("-" + ROOT);
-        dummyParent.setDocType(LawDocumentType.CHAPTER);
+        dummyParent.setDocType(CHAPTER);
         dummyParent.setDocTypeId(ROOT);
         dummyParent.setPublishedDate(block.getPublishedDate());
         dummyParent.setText("");
-        setLawDocTitle(dummyParent, true);
+        setLawDocTitle(dummyParent);
         return dummyParent;
     }
 
-    protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
+    protected void setLawDocTitle(LawDocument lawDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
     }
 
@@ -389,49 +364,44 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * Section docs are easy, since their location ids are simply numbers (if it's not the
      * Constitution) and they do not have any children.
      * @param lawDoc to process.
-     * @param isNewDoc if the document is new or already exists.
      */
-    private void processSection(LawDocument lawDoc, boolean isNewDoc) {
+    private void processSection(LawDocument lawDoc) {
         logger.debug("Processing section {}", lawDoc.getDocumentId());
         String lawId = lawDoc.getLawId();
-        lawDoc.setDocType(LawDocumentType.SECTION);
+        lawDoc.setDocType(SECTION);
         String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR.substring(3) + "-", "");
         if (lawId.equals(CONS_STR) || lawId.equals(A_RULES) || lawId.equals(S_RULES))
             docTypeId = docTypeId.replaceAll("[AJR]+\\d+S", "");
         lawDoc.setDocTypeId(docTypeId);
-        if (isNewDoc)
-            lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
         addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
     }
 
     /**
      * Processes documents that aren't sections, with various exceptions to normal parsing rules.
      * @param lawDoc to process.
-     * @param block to pull some information from.
-     * @param isNewDoc if the document is new or already exists.
      */
-    private void processNonSection(LawDocument lawDoc, LawBlock block, boolean isNewDoc) {
-        String specificLocId = determineHierarchy(block);
-        Matcher locMatcher = locationPattern.matcher(specificLocId);
+    private void processNonSection(LawDocument lawDoc) {
+        String specificLocId = determineHierarchy(lawDoc.getDocumentId());
+        Matcher locMatcher = LOCATION_PATTERN.matcher(specificLocId);
         if (specificLocId.equals(PREAMBLE_LOC_ID)) {
             lawDoc.setDocType(PREAMBLE);
             lawDoc.setDocTypeId("");
         }
-        else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
+        else if (locMatcher.matches() && !lawDoc.getDocumentId().equals(ATTN)) {
             LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
             // GCM has some Subparts labeled with an S.
-            if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
+            if (lawDoc.getLawId().equals(GCM.name()) && locMatcher.group(1).equals("S"))
                 type = SUBPART;
             lawDoc.setDocType(type);
             String docTypeId = locMatcher.group(2);
             lawDoc.setDocTypeId(docTypeId);
         }
         else {
-            if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
+            if (!lawDoc.getDocumentId().matches(CUBIT + "|" + ATTN))
                 logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
-            lawDoc.setDocType(LawDocumentType.MISC);
-            lawDoc.setDocTypeId(block.getLocationId());
+            lawDoc.setDocType(MISC);
+            lawDoc.setDocTypeId(lawDoc.getLocationId());
         }
-        addDocument(lawDoc, isNewDoc);
+        addDocument(lawDoc);
     }
 }
