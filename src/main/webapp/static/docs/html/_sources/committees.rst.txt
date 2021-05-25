@@ -1,5 +1,5 @@
 **Senate Committee API**
-=================
+========================
 
 In OpenLegislation, committee data is processed in a way that tracks the membership of each committee over time.
 Committees are stored as committee versions, each of which represent a time period where there were no changes in
