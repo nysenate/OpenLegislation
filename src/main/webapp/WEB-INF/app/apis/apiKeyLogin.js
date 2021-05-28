@@ -10,5 +10,10 @@ export async function apiKeyLogin(apiKey) {
     },
     body: JSON.stringify({apiKey: apiKey})
   });
+  const data = await response.json();
+  if (!data.success) {
+    throw new Error(data.message)
+  }
+  return data;
 }
 

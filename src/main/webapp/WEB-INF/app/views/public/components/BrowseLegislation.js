@@ -11,15 +11,20 @@ import {IconWarning} from "app/components/icons"
 import {apiKeyLogin} from "app/apis/apiKeyLogin"
 
 export default function BrowseLegislation() {
-  const apiKeyRef = React.useRef();
-  const [error, setError] = React.useState(false);
+  const apiKeyRef = React.useRef()
+  const [error, setError] = React.useState(false)
 
   const handleSubmit = e => {
     e.preventDefault()
-    console.log(apiKeyRef.current.value)
 
-    let apiKey = apiKeyRef.current.value.trim();
-    apiKeyLogin(apiKey);
+    const apiKey = apiKeyRef.current.value.trim();
+    apiKeyLogin(apiKey)
+      .then((result) => {
+        setError(false)
+      })
+      .catch((error) => {
+        setError(true)
+      });
   }
 
   return (
