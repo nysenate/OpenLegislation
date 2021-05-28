@@ -15,6 +15,8 @@ const theme = {
     green3: '#5abf7f',
     green5: '#40a565',
     green7: '#2f794a',
+
+    red5: '#B5002A',
   },
 }
 export default theme;

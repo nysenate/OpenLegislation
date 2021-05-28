@@ -4,11 +4,23 @@ import {
   Input,
   Button,
   PublicCard,
-  SubTitle
+  SubTitle,
+  ErrorMessage
 } from "../style"
+import {IconWarning} from "app/components/icons"
+import {apiKeyLogin} from "app/apis/apiKeyLogin"
 
 export default function BrowseLegislation() {
   const apiKeyRef = React.useRef();
+  const [error, setError] = React.useState(false);
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    console.log(apiKeyRef.current.value)
+
+    let apiKey = apiKeyRef.current.value.trim();
+    apiKeyLogin(apiKey);
+  }
 
   return (
     <PublicCard>
@@ -23,7 +35,7 @@ export default function BrowseLegislation() {
       </p>
 
       <ApiKeyFormContainer>
-        <form onSubmit={() => alert(apiKeyRef.current.value)}>
+        <form onSubmit={handleSubmit}>
           <Input
             width="500px"
             ref={apiKeyRef}
@@ -33,6 +45,11 @@ export default function BrowseLegislation() {
           <Button type="submit">View Legislation</Button>
         </form>
       </ApiKeyFormContainer>
+      {error === true &&
+        <div>
+          <ErrorMessage><IconWarning/>Please enter a valid api key, or sign up for one below.</ErrorMessage>
+        </div>
+      }
     </PublicCard>
   )
 }

@@ -84,7 +84,7 @@ export const Input = styled.input`
   font-weight: 300;
   :focus {
     border: 0;
-    border-bottom: 2px solid rgb(63, 81, 181); 
+    border-bottom: 2px solid ${props => props.theme.colors.blue6}; 
     outline: none
   }
 `
@@ -161,4 +161,10 @@ export const Center = styled.div`
 export const TextSmall = styled.span`
   font-size: 14px;
   font-weight: 100; 
+`
+
+export const ErrorMessage = styled.h4`
+  color: ${props => props.theme.colors.red5};
+  font-weight: 600;
+  font-size: 16px;
 `

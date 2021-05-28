@@ -1,5 +1,4 @@
 import React from 'react'
-import 'app/icons.scss'
 import theme from 'app/Theme';
 import {
   PublicCard,
