@@ -30,11 +30,12 @@ module.exports = {
     ],
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        historyApiFallback: true,
         port: 3000,
-        proxy: {
-            '/api': 'http://localhost:8080',
-            '/*': 'http://localhost:8080'
-        }
+        proxy: [
+            {
+                context: ['/api', '/loginapikey', '/register/signup'],
+                target: 'http://localhost:8080',
+            }
+        ]
     }
 }
