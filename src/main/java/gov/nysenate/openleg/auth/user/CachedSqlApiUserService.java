@@ -153,12 +153,15 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         newUser.setRegistrationToken(RandomStringUtils.randomAlphanumeric(32));
         newUser.setActive(true);
 
+        // Try to send the registration email before saving the user's info into the DB.
+        // If sending the email fails, the use should be able to try signing up again with the same info.
+        sendRegistrationEmail(newUser);
+
         apiUserDao.insertUser(newUser);
 
         newUser.setSubscriptions(subscriptions);
         apiUserDao.updateUser(newUser);
 
-        sendRegistrationEmail(newUser);
         return newUser;
     }
 

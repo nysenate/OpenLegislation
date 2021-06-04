@@ -46,7 +46,6 @@ export const TitleSmall = styled.h4`
   margin: 0;
   font-size: 16px;
   font-weight: 700;
-  text-align: left;
   color: rgba(0,0,0,0.87);
   font-family: Open Sans,sans-serif;
 `
@@ -75,25 +74,29 @@ export const ApiKeyFormContainer = styled.div`
 `
 
 export const Input = styled.input`
-  width: ${props => props.width ? props.width : "100px"};
+  min-width: ${props => props.width ? props.width : "100px"};
   border: 0;
-  border-bottom: .5px solid #bfbfbf;
+  border-bottom: .5px solid ${props => props.invalid ? props.theme.colors.red5 : '#bfbfbf'};
   margin: 0 10px;
   text-align: center;
   font-size: 16px;
   font-weight: 300;
   :focus {
     border: 0;
-    border-bottom: 2px solid ${props => props.theme.colors.blue6}; 
+    border-bottom: 2px solid ${props => props.invalid ? props.theme.colors.red5 : props.theme.colors.blue6}; 
     outline: none
   }
+`
+
+export const Checkbox = styled(Input)`
+  min-width: 0px;
 `
 
 export const Button = styled.button`
   width: 150px;
   color: #ffffff;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-  background-color: ${props => props.theme.colors.blue6};
+  background-color: ${props => props.theme.colors.blue5};
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -103,6 +106,9 @@ export const Button = styled.button`
   border: 0;
   margin: 6px 16px;
   padding: 0 6px;
+  :active {
+    transform: translateY(2px);
+  }
 `
 
 export const DataProvidedContainer = styled.div`
@@ -117,6 +123,7 @@ export const DataProvidedListItem = styled.div`
   padding: 16px;
   width: 460px;
   cursor: pointer;
+  text-align: left;
   :hover {
     background: rgba(158,158,158,0.2);
   }
