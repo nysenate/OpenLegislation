@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 
 @Service
@@ -30,8 +28,10 @@ public class PublicHearingParser {
     public void process(PublicHearingFile publicHearingFile) throws IOException {
         String fullText = Files.readString(publicHearingFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
         // Corrects bad characters.
+        // TODO: automatically generate these files instead.
         fullText = fullText.replaceAll(QUOTE, "'").replaceAll(BAD_HYPHEN + "|" + SOFT_HYPHEN, "-");
-        Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
+        // Would overwrite the bad file.
+        //  Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
         PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText);
 

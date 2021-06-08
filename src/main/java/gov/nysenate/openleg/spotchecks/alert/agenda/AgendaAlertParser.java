@@ -1,16 +1,16 @@
 package gov.nysenate.openleg.spotchecks.alert.agenda;
 
-import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.ScrapeUtils;
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
+import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,7 +71,7 @@ public class AgendaAlertParser {
 
         List<AgendaAlertInfoCommittee> alertInfoCommittees = new ArrayList<>();
 
-        String fileContents = FileUtils.readFileToString(agendaAlert, "ISO-8859-1")
+        String fileContents = FileUtils.readFileToString(agendaAlert, StandardCharsets.ISO_8859_1)
                         .replaceAll("\u001A", "");  // Replace unknown characters with a blank
 
         Document document = Jsoup.parse(fileContents);

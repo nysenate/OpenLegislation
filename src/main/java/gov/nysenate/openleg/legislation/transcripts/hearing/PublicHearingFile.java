@@ -1,29 +1,18 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
+import gov.nysenate.openleg.processors.BaseSourceData;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 
 /**
  * A file containing the raw Public Hearing text.
  */
-public class PublicHearingFile
+public class PublicHearingFile extends BaseSourceData
 {
 
     /** A reference to the actual file. */
     private File file;
-
-    /** The date time this Public Hearing File was recorded into the backing store. */
-    private LocalDateTime stagedDateTime;
-
-    /** The date time this Public Hearing File was last processed. */
-    private LocalDateTime processedDateTime;
-
-    /** The number of times this Public Hearing File has been processed. */
-    private int processedCount;
-
-    /** Indicates if this file has been processed. */
-    private boolean pendingProcessing;
 
     /** Indicates if the underlying file reference has been moved into the archive directory. */
     private boolean archived;
@@ -33,6 +22,8 @@ public class PublicHearingFile
     public PublicHearingFile(File file) throws FileNotFoundException {
         if (file.exists()) {
             this.file = file;
+            // TODO: change String to a constant in BaseSourceData that everyone can use?
+            setManualFix(file.getName().endsWith(".fixed"));
         }
         else {
             throw new FileNotFoundException(file.getAbsolutePath());
@@ -53,38 +44,6 @@ public class PublicHearingFile
 
     public void setFile(File file) {
         this.file = file;
-    }
-
-    public LocalDateTime getStagedDateTime() {
-        return stagedDateTime;
-    }
-
-    public void setStagedDateTime(LocalDateTime stagedDateTime) {
-        this.stagedDateTime = stagedDateTime;
-    }
-
-    public LocalDateTime getProcessedDateTime() {
-        return processedDateTime;
-    }
-
-    public void setProcessedDateTime(LocalDateTime processedDateTime) {
-        this.processedDateTime = processedDateTime;
-    }
-
-    public int getProcessedCount() {
-        return processedCount;
-    }
-
-    public void setProcessedCount(int processedCount) {
-        this.processedCount = processedCount;
-    }
-
-    public boolean isPendingProcessing() {
-        return pendingProcessing;
-    }
-
-    public void setPendingProcessing(boolean pendingProcessing) {
-        this.pendingProcessing = pendingProcessing;
     }
 
     public boolean isArchived() {

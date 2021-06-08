@@ -29,16 +29,6 @@ public class PublicHearingTitleParserTest {
                           "PROPOSAL TO MERGE THE NYS OFFICE FOR THE AGING WITH THE DEPARTMENT OF HEALTH");
     }
 
-    // TODO: This should not even be in the database.
-    @Test
-    public void senateHearingTitleParses() {
-        testTitle("05-23-11 NY Senate Flanagan Education Hearing FINAL_AMENDED COVER SHEET ONLY.txt",
-                "A NEW YORK STATE SENATE HEARING " +
-                          "DUE PROCESS TEACHER DISCIPLINE WITHOUT DELAY: " +
-                          "REFORMING SECTION 3020-A OF THE EDUCATION LAW " +
-                          "TO MEET THE NEEDS OF THE 21st CENTURY");
-    }
-
     @Test
     public void titleFoundIfCommitteeMissing() {
         testTitle("01-03-13 HurricaneSandy_NYS TaskForce Roundtable_Final.txt",
