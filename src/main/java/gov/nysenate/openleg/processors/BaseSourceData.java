@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
  * Contains general housekeeping details for objects that represent source data that is consumed by the
  * data processors.
  */
-public abstract class BaseSourceData
-{
+public abstract class BaseSourceData {
     /** The date/time when the source data was recorded into the backing store. */
     private LocalDateTime stagedDateTime;
 

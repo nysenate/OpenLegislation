@@ -19,23 +19,22 @@ import java.util.regex.Matcher;
  * into two SOBIFragments, one containing the portion for just the bill data and the other with
  * just the agenda data.
  */
-public class LegDataFragment extends BaseSourceData
-{
+public class LegDataFragment extends BaseSourceData {
     /** Reference to the original SobiFile object that created this fragment. */
-    private SourceFile parentSourceFile;
+    private final SourceFile parentSourceFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
-    private LegDataFragmentType type;
+    private final LegDataFragmentType type;
 
     /** The unique id of the fragment which is derived from the other fields.
      *  The fragmentId is created such that it can be used for sorting. */
-    private String fragmentId;
+    private final String fragmentId;
 
     /** A number used to provide a means of ordering fragments within the same SobiFile. */
-    private int sequenceNo;
+    private final int sequenceNo;
 
     /** The actual text body of the fragment. */
-    private String text;
+    private final String text;
 
     /** The last time processing was initiated for the fragment */
     private LocalDateTime processStartDateTime = null;
@@ -55,7 +54,7 @@ public class LegDataFragment extends BaseSourceData
         this.sequenceNo = sequenceNo;
     }
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * Indicates if given fragment is in the SOBI block format, based on the type.
