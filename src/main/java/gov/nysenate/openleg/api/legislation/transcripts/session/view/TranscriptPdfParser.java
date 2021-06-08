@@ -20,7 +20,8 @@ public class TranscriptPdfParser {
     private List<String> currPage = new ArrayList<>();
 
     // Maps Strings to the number of blank lines to add.
-    private static final Map<String, Integer> BLANK_LINES = Map.of("NEW YORK STATE SENATE", 2,
+    private static final String SENATE_LINE = "NEW YORK STATE SENATE";
+    private static final Map<String, Integer> BLANK_LINES = Map.of(SENATE_LINE, 2,
             "THE STENOGRAPHIC RECORD", 4, "STENOGRAPHIC RECORD",  3, ":", 2,
             "SESSION", 3, "Secretary", 6);
     private static final Pattern BLANK_LINE_PATTERN = Pattern.compile(".*?(" +
@@ -31,7 +32,7 @@ public class TranscriptPdfParser {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
                 .filter(tl -> !(tl.isBlank() && !tl.getText().matches(" {10,}")) && !tl.isStenographer())
                 .collect(Collectors.toCollection(ArrayList::new));
-        // Second line may be a page number after whitespace, so 3rd line is used.
+        // Second line may be a page number after a line of whitespace, so the 3rd line is used.
         this.hasLineNumbers = lineArrayList.size() >= 3 && lineArrayList.get(2).hasLineNumber();
         processLines(lineArrayList);
         int firstPageLength = pages.get(0).size();
@@ -78,7 +79,7 @@ public class TranscriptPdfParser {
             addLine(currLine);
         }
         addLine(lines.get(lines.size() - 1));
-        pages.add(currPage);
+        addCurrPage();
     }
 
     /**
@@ -108,8 +109,21 @@ public class TranscriptPdfParser {
         // Sometimes, manual spacing needs to be added.
         if (pages.isEmpty() && !hasLineNumbers) {
             Matcher m = BLANK_LINE_PATTERN.matcher(currLine.getText());
-            int blankLines = m.find() ? BLANK_LINES.get(m.group(1)) : 0;
-            currPage.addAll(Collections.nCopies(blankLines, ""));
+            if (m.find())
+                currPage.addAll(Collections.nCopies(BLANK_LINES.get(m.group(1)), ""));
         }
+    }
+
+    /**
+     * 26 transcripts without line numbers lack the proper heading, making actual error detection harder.
+     * This corrects that by adding blank lines, so the page length is what it should be.
+     */
+    private void addCurrPage() {
+        if (!hasLineNumbers) {
+            boolean hasSenateLine = currPage.stream().anyMatch(str -> str.contains(SENATE_LINE));
+            if (!hasSenateLine)
+                currPage.addAll(Collections.nCopies(3, ""));
+        }
+        pages.add(currPage);
     }
 }

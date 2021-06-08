@@ -32,6 +32,7 @@ public class TranscriptFile extends BaseSourceData
         if (file.exists()) {
             this.file = file;
             this.originalFilename = file.getName();
+            setManualFix(originalFilename.endsWith(".fixed"));
         }
         else {
             throw new FileNotFoundException(file.getAbsolutePath());
