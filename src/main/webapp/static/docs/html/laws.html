@@ -1,38 +1,44 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>NYS Laws API &mdash; Open Legislation 2.0-alpha documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Senate Floor Transcripts API" href="transcripts_floor.html" />
@@ -77,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -98,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#get-law-document-updates">Get law document updates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-law-tree-updates">Get law tree updates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-repealed-laws">Get repealed laws</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-law-pdf">Get a law pdf</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
@@ -110,6 +118,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -144,18 +153,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="reference.html">Docs</a> &raquo;</li>
+      <li><a href="reference.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><strong>NYS Laws API</strong></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/laws.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -224,10 +235,10 @@ It’s possible to retrieve law documents roughly as they were represented durin
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Listing of consolidated and unconsolidated NYS Laws&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-info list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">134</span><span class="p">,</span>
-    <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">134</span><span class="p">,</span>
-    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mf">134</span><span class="p">,</span>
+    <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mf">134</span><span class="p">,</span>
+    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="p">{</span>
@@ -312,7 +323,7 @@ The following call will provide the structure of the law.</p>
                                                        <span class="c1">// and docLevelId is 1, it means this is Article 1.</span>
 
         <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>                    <span class="c1">// Date this particular document was updated</span>
-        <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                               <span class="c1">// Preserves ordering of sub documents</span>
+        <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                               <span class="c1">// Preserves ordering of sub documents</span>
         <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                          <span class="c1">// Date this document was repealed (if applicable)</span>
         <span class="s2">&quot;repealed&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                             <span class="c1">// This will be true if the document was repealed,</span>
                                                        <span class="c1">// &#39;repealedDate&#39; will be set with the date.</span>
@@ -326,7 +337,7 @@ The following call will provide the structure of the law.</p>
                 <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">2</span><span class="p">,</span>
                 <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
                 <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
                 <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -338,12 +349,12 @@ The following call will provide the structure of the law.</p>
                             <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;SECTION&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+                            <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">3</span><span class="p">,</span>
                             <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
                             <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
                             <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>              <span class="c1">// Note there are no sub documents for this doc</span>
                                 <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
-                                <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">0</span>
+                                <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
                             <span class="p">},</span>
                             <span class="s2">&quot;repealed&quot;</span><span class="o">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
@@ -432,7 +443,7 @@ You can discover the locationId when you make an API request for the law structu
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The requested law document was not found&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;errorCode&quot;</span><span class="o">:</span> <span class="mi">21</span><span class="p">,</span>
+    <span class="s2">&quot;errorCode&quot;</span><span class="o">:</span> <span class="mf">21</span><span class="p">,</span>
     <span class="s2">&quot;errorData&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;lawDocId&quot;</span><span class="o">:</span> <span class="s2">&quot;EDNA22&quot;</span><span class="p">,</span>
         <span class="s2">&quot;endDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2015-01-09&quot;</span>
@@ -575,10 +586,10 @@ You can discover the locationId when you make an API request for the law structu
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
-    <span class="nx">total</span><span class="o">:</span> <span class="mi">33</span><span class="p">,</span>
-    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">33</span><span class="p">,</span>
-    <span class="nx">limit</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">total</span><span class="o">:</span> <span class="mf">33</span><span class="p">,</span>
+    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mf">33</span><span class="p">,</span>
+    <span class="nx">limit</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
     <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>
@@ -602,10 +613,10 @@ You can discover the locationId when you make an API request for the law structu
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
-    <span class="nx">total</span><span class="o">:</span> <span class="mi">431</span><span class="p">,</span>
-    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
-    <span class="nx">limit</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">total</span><span class="o">:</span> <span class="mf">431</span><span class="p">,</span>
+    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
+    <span class="nx">limit</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
     <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>
@@ -621,7 +632,7 @@ You can discover the locationId when you make an API request for the law structu
             <span class="nx">action</span><span class="o">:</span> <span class="s2">&quot;Insert&quot;</span><span class="p">,</span>
             <span class="nx">scope</span><span class="o">:</span> <span class="s2">&quot;Law Document&quot;</span><span class="p">,</span>
             <span class="nx">fields</span><span class="o">:</span> <span class="p">{</span> <span class="p">},</span>
-            <span class="nx">fieldCount</span><span class="o">:</span> <span class="mi">0</span>
+            <span class="nx">fieldCount</span><span class="o">:</span> <span class="mf">0</span>
         <span class="p">},</span>
 </pre></div>
 </div>
@@ -682,10 +693,10 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
-    <span class="nx">total</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
-    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
-    <span class="nx">limit</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">total</span><span class="o">:</span> <span class="mf">23</span><span class="p">,</span>
+    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mf">23</span><span class="p">,</span>
+    <span class="nx">limit</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
     <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
             <span class="p">{</span>
@@ -736,6 +747,40 @@ The date/time range applies to the processed date of the law document, not the o
 </tbody>
 </table>
 </div>
+<div class="section" id="get-a-law-pdf">
+<h2>Get a law pdf<a class="headerlink" href="#get-a-law-pdf" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<p>Retrieve law pdf by document id.
+Inputting only the law ID will get you the root node for that chapter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">docId</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 25%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>full</p></td>
+<td><p>(true|false)</p></td>
+<td><p>Whether to get all the children of this document.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>Request law document CC0A1 and its children</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/CCOA1?full=true
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -743,29 +788,29 @@ The date/time range applies to the processed date of the law document, not the o
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="committees.html" class="btn btn-neutral float-left" title="Senate Committee API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="committees.html" class="btn btn-neutral float-left" title="Senate Committee API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &#169; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -773,7 +818,6 @@ The date/time range applies to the processed date of the law document, not the o
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
