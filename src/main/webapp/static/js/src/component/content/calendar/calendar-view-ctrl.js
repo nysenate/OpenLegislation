@@ -21,7 +21,7 @@ calendarModule.controller('CalendarViewCtrl', ['$scope', '$rootScope', '$routePa
             sectionFilter: {}
         };
 
-        // Page types
+        // PageWrapper types
         $scope.pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
         $scope.highlightValue = 'none';

@@ -6,33 +6,10 @@ export const HomePage = styled.div`
   overflow: auto;
 `
 
-export const PublicHeader = styled.section`
-  margin-bottom: 0;
-  height: 300px;
-  //background: #008cba;
-  background: ${props => props.theme.colors.blue5};
-  position: relative;
-`
-
 export const SenateSealLogo = styled.img`
   height: 110px;
   vertical-align: text-top;
   margin-right: 20px;
-`
-
-export const Title = styled.h1`
-  margin: 0;
-  font-weight: 400;
-  color: #fff;
-  line-height: 200px;
-  font-size: 80px;
-  text-align: center;
-  text-shadow: 0 0 1px #235674;
-`
-
-export const PublicWrapper = styled.div`
-  margin: 0 auto;
-  max-width: 960px;
 `
 
 export const SubTitle = styled.h3`
@@ -67,10 +44,6 @@ export const AboutCard = styled(PublicCard)`
   padding: 50px 30px;
   margin: -100px auto 0 auto;
   font-size: 19px;
-`
-
-export const ApiKeyFormContainer = styled.div`
-  margin-top: 30px;
 `
 
 export const Input = styled.input`

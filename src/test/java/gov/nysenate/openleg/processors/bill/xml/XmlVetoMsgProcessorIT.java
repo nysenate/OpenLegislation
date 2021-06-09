@@ -121,7 +121,7 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
                 " \n" +
                 "                          STATE OPERATIONS BUDGET\"\n" +
                 " \n" +
-                "Bill Page 124, Line 31 through Line 35, inclusive\n" +
+                "Bill PageWrapper 124, Line 31 through Line 35, inclusive\n" +
                 " \n" +
                 "NOT APPROVED\n" +
                 "____________\n" +

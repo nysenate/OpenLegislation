@@ -58,6 +58,6 @@
         window.mismatchMap = <%= mismatchMap %>;
     </script>
 
-    <!-- Page specific css and pre-load js can be added below by the consumer -->
+    <!-- PageWrapper specific css and pre-load js can be added below by the consumer -->
     <jsp:doBody/>
 </head>

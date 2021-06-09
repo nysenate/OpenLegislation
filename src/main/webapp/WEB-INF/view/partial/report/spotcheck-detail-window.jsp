@@ -33,7 +33,7 @@
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
             <md-checkbox ng-model="textControls.removeLinePageNums" ng-change="formatDisplayData()">
-              Strip Line/Page Numbers
+              Strip Line/PageWrapper Numbers
             </md-checkbox>
             <md-checkbox ng-model="textControls.capitalize" ng-change="formatDisplayData()">All Caps</md-checkbox>
           </md-card>

@@ -9,12 +9,12 @@ import theme from './Theme';
 
 function App() {
   return (
-    <div>
+    <>
       <ThemeProvider theme={theme}>
         <GlobalStyle/>
         <PublicView/>
       </ThemeProvider>
-    </div>
+    </>
   )
 }
 

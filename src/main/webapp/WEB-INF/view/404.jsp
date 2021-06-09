@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Page Does Not Exist</title>
+    <title>PageWrapper Does Not Exist</title>
 </head>
 <body style="margin:0;background:#006b80;">
   <div style="margin:100px auto;text-align:center;font-family:sans-serif;

@@ -50,7 +50,7 @@ public class TranscriptLine {
     }
 
     /**
-     * Page numbers are right aligned at the top of each page.
+     * PageWrapper numbers are right aligned at the top of each page.
      * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */

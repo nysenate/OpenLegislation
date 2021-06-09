@@ -84,7 +84,7 @@ public enum SqlDaybreakQuery implements BasicSqlQuery
         "WHERE report_date = :reportDate"
     ),
 
-    /** --- Page File Entry --- */
+    /** --- PageWrapper File Entry --- */
 
     SELECT_PAGE_FILE_ENTRIES_BY_BILL(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_PAGE_FILE_ENTRY + "\n" +
