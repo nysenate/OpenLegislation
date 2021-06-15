@@ -30,7 +30,7 @@ public class TranscriptLine {
     public TranscriptLine(@NonNull String text) {
         if (!text.isBlank())
             text = text.stripTrailing();
-        this.text = text.replaceAll("[\r\f\t¦«]", "");
+        this.text = text.replaceAll("\f", "");
     }
 
     public String getText() {

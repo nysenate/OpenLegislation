@@ -10,9 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PublicHearing extends BaseLegislativeContent
-{
-
+public class PublicHearing extends BaseLegislativeContent {
     /** The Public Hearing id. */
     private final PublicHearingId id;
 
