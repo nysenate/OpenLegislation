@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.api;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +27,7 @@ public abstract class BasePdfView {
 
     public ResponseEntity<byte[]> writeData() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
     }
 
@@ -41,19 +40,13 @@ public abstract class BasePdfView {
     protected void writePages(float top, float margin, List<List<String>> pages) throws IOException {
         for (List<String> page : pages) {
             createPage(top, margin);
-            drawPage(page);
+            writePage(page);
             contentStream.endText();
             contentStream.close();
             doc.addPage(currPage);
         }
-        try {
-            doc.save(pdfBytes);
-        } catch (COSVisitorException e) {
-            throw new IOException("Error saving PDF.");
-        }
-        finally {
-            doc.close();
-        }
+        doc.save(pdfBytes);
+        doc.close();
     }
 
     /**
@@ -72,14 +65,14 @@ public abstract class BasePdfView {
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(margin, top);
+        contentStream.newLineAtOffset(margin, top);
         contentStream.setFont(FONT, FONT_SIZE);
     }
 
-    protected void drawPage(List<String> page) throws IOException {
+    protected void writePage(List<String> page) throws IOException {
         for (String line : page) {
-            contentStream.drawString(line);
-            contentStream.moveTextPositionByAmount(0, -FONT_SIZE);
+            contentStream.showText(line);
+            contentStream.newLineAtOffset(0, -FONT_SIZE);
         }
     }
 }

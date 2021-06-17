@@ -28,7 +28,7 @@ public class PublicHearingTextUtils {
         // Retrieves information from text.
         String[] addrDateTime = getAddrDateTime(dashSplit.get(dashSplit.size() - 1), isWrongFormat);
         boolean hasAddress = addrDateTime.length > 1;
-        var dateTimeParser = new PublicHearingDateParser(addrDateTime[hasAddress ? 1 : 0],
+        var dateTimeParser = new PublicHearingDateTimeParser(addrDateTime[hasAddress ? 1 : 0],
                 pages.get(pages.size() - 1));
         var hearing = new PublicHearing(id, dateTimeParser.getDate(), fullText);
         hearing.setStartTime(dateTimeParser.getStartTime());

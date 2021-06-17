@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
-public class PublicHearingDateParserTest {
+public class PublicHearingDateTimeParserTest {
 
     /** Parses the date time string: June 4, 2014 1:00 p.m. to 3:00 p.m. */
     @Test

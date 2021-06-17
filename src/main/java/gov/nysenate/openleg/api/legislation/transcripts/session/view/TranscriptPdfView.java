@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 import gov.nysenate.openleg.api.BasePdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,7 +15,6 @@ import java.util.regex.Pattern;
  */
 public class TranscriptPdfView extends BasePdfView {
     private static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f, SPACING = 2;
-    private static final float[] X_VALS = {LEFT, LEFT, RIGHT, RIGHT}, Y_VALS = {TOP, BOTTOM, BOTTOM, TOP};
     private static final int STENOGRAPHER_LINE_NUM = 27;
     private final String stenographer;
     private final float stenographerCenter;
@@ -33,7 +33,9 @@ public class TranscriptPdfView extends BasePdfView {
 
     @Override
     protected void newPageSetup() throws IOException {
-        contentStream.drawPolygon(X_VALS, Y_VALS);
+        contentStream.addRect(LEFT, BOTTOM, RIGHT - LEFT, TOP - BOTTOM);
+        contentStream.setStrokingColor(Color.BLACK);
+        contentStream.stroke();
     }
 
     /**
@@ -41,10 +43,10 @@ public class TranscriptPdfView extends BasePdfView {
      * @param page to draw.
      */
     @Override
-    protected void drawPage(List<String> page) throws IOException {
+    protected void writePage(List<String> page) throws IOException {
         drawPageNumber(page.get(0));
         for (int i = 1; i < page.size(); i++)
-            drawText(page.get(i));
+            drawLine(page.get(i));
         drawStenographer(page.size());
     }
 
@@ -54,19 +56,19 @@ public class TranscriptPdfView extends BasePdfView {
      */
     private void drawPageNumber(String line) throws IOException {
         float offset = RIGHT - (line.length() + 1) * FONT_WIDTH;
-        contentStream.moveTextPositionByAmount(offset, FONT_WIDTH * SPACING);
-        contentStream.drawString(line);
-        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE * SPACING);
+        contentStream.newLineAtOffset(offset, FONT_WIDTH * SPACING);
+        contentStream.showText(line);
+        contentStream.newLineAtOffset(-offset, -FONT_SIZE * SPACING);
     }
 
-    private void drawText(String line) throws IOException {
+    private void drawLine(String line) throws IOException {
         Matcher m = Pattern.compile(" {0,11}((\\d*).*)").matcher(line);
         // Line numbers should align left of the left vertical border.
         int indent = m.find() && hasLineNumbers ? m.group(2).length() + 1 : 0;
         float offset = LEFT - indent * FONT_WIDTH;
-        contentStream.moveTextPositionByAmount(offset, -FONT_SIZE);
-        contentStream.drawString(m.group(1));
-        contentStream.moveTextPositionByAmount(-offset, -FONT_SIZE);
+        contentStream.newLineAtOffset(offset, -FONT_SIZE);
+        contentStream.showText(m.group(1));
+        contentStream.newLineAtOffset(-offset, -FONT_SIZE);
     }
 
     /**
@@ -75,7 +77,7 @@ public class TranscriptPdfView extends BasePdfView {
      */
     private void drawStenographer(int lineCount) throws IOException {
         float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * SPACING;
-        contentStream.moveTextPositionByAmount(stenographerCenter, offset);
-        contentStream.drawString(stenographer);
+        contentStream.newLineAtOffset(stenographerCenter, offset);
+        contentStream.showText(stenographer);
     }
 }

@@ -4,20 +4,21 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
+import org.apache.commons.io.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 
 @Service
 public class PublicHearingParser {
-    private final static String QUOTE = Character.toString(146), BAD_HYPHEN = Character.toString(150),
-            SOFT_HYPHEN = Character.toString(173);
     @Autowired
     private PublicHearingDataService dataService;
+    private final static Charset CP_1252 = Charsets.toCharset("CP1252");
 
     /**
      * Parses a {@link PublicHearingFile}, extracting a
@@ -26,12 +27,8 @@ public class PublicHearingParser {
      * @throws IOException
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
-        String fullText = Files.readString(publicHearingFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
-        // Corrects bad characters.
-        // TODO: automatically generate these files instead.
-        fullText = fullText.replaceAll(QUOTE, "'").replaceAll(BAD_HYPHEN + "|" + SOFT_HYPHEN, "-");
-        // Would overwrite the bad file.
-        //  Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
+        String fullText = Files.readString(publicHearingFile.getFile().toPath(), CP_1252);
+        Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
         PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText);
 

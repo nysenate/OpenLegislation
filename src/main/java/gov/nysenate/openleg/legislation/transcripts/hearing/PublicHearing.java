@@ -57,7 +57,7 @@ public class PublicHearing extends BaseLegislativeContent {
     }
 
     private static List<String> getLines(String page) {
-        List<String> ret = Splitter.on("\n").trimResults().splitToList(page)
+        List<String> ret = Splitter.on("\n").splitToList(page)
                 .stream().dropWhile(String::isEmpty).collect(Collectors.toList());
         // Drops empty Strings from the end of the list as well.
         Collections.reverse(ret);

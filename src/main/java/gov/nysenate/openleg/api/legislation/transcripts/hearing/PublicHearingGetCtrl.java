@@ -18,7 +18,6 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDat
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.PublicHearingSearchService;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -122,7 +121,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{filename}.pdf")
     public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename)
-            throws IOException, COSVisitorException {
+            throws IOException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
         return new PublicHearingPdfView(hearing).writeData();
     }

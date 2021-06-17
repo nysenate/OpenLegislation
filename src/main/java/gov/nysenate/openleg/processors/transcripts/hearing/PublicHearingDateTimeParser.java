@@ -13,8 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PublicHearingDateParser {
-    private final static String TIME_STR =  "\\d{1,2}:\\d{2} (a.m.|p.m.)",
+public class PublicHearingDateTimeParser {
+    private final static String TIME_STR = "\\d{1,2}:\\d{2} (a.m.|p.m.)",
             DAYS_OF_THE_WEEK = toOptionString(DayOfWeek.values()),
             MONTHS = toOptionString(Month.values());
     private final static Pattern DATE = Pattern.compile("(?i)(" + DAYS_OF_THE_WEEK + ")?(, )?" +
@@ -35,7 +35,7 @@ public class PublicHearingDateParser {
     private final LocalDate date;
     private final LocalTime startTime, endTime;
 
-    public PublicHearingDateParser(String dateTimeText, List<String> lastPage) {
+    public PublicHearingDateTimeParser(String dateTimeText, List<String> lastPage) {
         dateTimeText = dateTimeText.replaceAll("(\\n|\\s*(Date|Time):?\\s*)", " ")
                 .replaceAll(", at", "").replaceAll("\\s+", " ");
         Matcher dateMatcher = DATE.matcher(dateTimeText);

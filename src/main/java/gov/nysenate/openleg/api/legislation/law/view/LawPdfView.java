@@ -23,7 +23,7 @@ public class LawPdfView extends BasePdfView {
     }
 
     @Override
-    protected void drawPage(List<String> page) throws IOException {
+    protected void writePage(List<String> page) throws IOException {
         for (String line : page)
             writeLine(line);
     }
@@ -39,11 +39,11 @@ public class LawPdfView extends BasePdfView {
         List<String> sections = Arrays.asList(line.split(LawPdfUtil.BOLD_MARKER));
         for (int i = 0; i < sections.size(); i++) {
             contentStream.setFont(bold ? PDType1Font.COURIER_BOLD : FONT, FONT_SIZE);
-            contentStream.drawString(sections.get(i));
-            if (i != sections.size()-1)
+            contentStream.showText(sections.get(i));
+            if (i != sections.size() - 1)
                 bold = !bold;
         }
-        contentStream.moveTextPositionByAmount(0, -FONT_SIZE * SPACING);
+        contentStream.newLineAtOffset(0, -FONT_SIZE * SPACING);
     }
 
     /**
@@ -61,7 +61,7 @@ public class LawPdfView extends BasePdfView {
         for (int page = 1; page <= numPages; page++) {
             // All pages, except potentially the last, will have the same number of lines.
             int endIndex = Math.min(page * LINES_PER_PAGE, lines.size());
-            List<String> currPage = lines.subList((page-1) * LINES_PER_PAGE, endIndex);
+            List<String> currPage = lines.subList((page - 1) * LINES_PER_PAGE, endIndex);
             pages.add(currPage);
         }
         return pages;

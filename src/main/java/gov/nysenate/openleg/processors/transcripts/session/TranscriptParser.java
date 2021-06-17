@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,19 +23,20 @@ public class TranscriptParser {
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
+        String fullText = Files.readString(transcriptFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
+        Files.writeString(transcriptFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
         Transcript processed = getTranscriptFromFile(transcriptFile);
         transcriptFile.setTranscript(processed);
         transcriptDataService.saveTranscript(processed, true);
     }
 
     protected static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
-        List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
+        List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath());
         LocalDate date = null;
         LocalTime time = null;
         String sessionType = null, location = null;
 
-        // Some transcripts start with 3 incorrect lines that should be skipped.
-        int index = new TranscriptLine(lines.get(0)).getSession().isPresent() ? 3 : 0;
+        int index = 0;
         while (index < lines.size() && (date == null || time == null || location == null || sessionType == null)) {
             TranscriptLine line = new TranscriptLine(lines.get(index++));
             date = line.getDate().orElse(date);
