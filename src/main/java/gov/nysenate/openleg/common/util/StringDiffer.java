@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.common.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +63,7 @@ public class StringDiffer
     /**
      * The number of bits in an int.
      */
-    private short Match_MaxBits = 32;
+    private final short Match_MaxBits = 32;
 
     /**
      * Internal class for returning results from diff_linesToChars().
@@ -99,8 +99,8 @@ public class StringDiffer
     /**
      * Find the differences between two texts.
      * Run a faster, slightly less optimal diff.
-     * This method allows the 'checklines' of diff_main() to be optional.
-     * Most of the time checklines is wanted, so default to true.
+     * This method allows the 'checkLines' of diff_main() to be optional.
+     * Most of the time checkLines is wanted, so default to true.
      * @param text1 Old string to be diffed.
      * @param text2 New string to be diffed.
      * @return Linked List of Diff objects.
@@ -113,13 +113,13 @@ public class StringDiffer
      * Find the differences between two texts.
      * @param text1 Old string to be diffed.
      * @param text2 New string to be diffed.
-     * @param checklines Speedup flag.  If false, then don't run a
+     * @param checkLines Speedup flag.  If false, then don't run a
      *     line-level diff first to identify the changed areas.
      *     If true, then run a faster slightly less optimal diff.
      * @return Linked List of Diff objects.
      */
     public LinkedList<Diff> diff_main(String text1, String text2,
-                                      boolean checklines) {
+                                      boolean checkLines) {
         // Set a deadline by which time the diff must be complete.
         long deadline;
         if (Diff_Timeout <= 0) {
@@ -127,7 +127,7 @@ public class StringDiffer
         } else {
             deadline = System.currentTimeMillis() + (long) (Diff_Timeout * 1000);
         }
-        return diff_main(text1, text2, checklines, deadline);
+        return diff_main(text1, text2, checkLines, deadline);
     }
 
     /**
@@ -135,7 +135,7 @@ public class StringDiffer
      * stripping any common prefix or suffix off the texts before diffing.
      * @param text1 Old string to be diffed.
      * @param text2 New string to be diffed.
-     * @param checklines Speedup flag.  If false, then don't run a
+     * @param checkLines Speedup flag.  If false, then don't run a
      *     line-level diff first to identify the changed areas.
      *     If true, then run a faster slightly less optimal diff.
      * @param deadline Time when the diff should be complete by.  Used
@@ -143,7 +143,7 @@ public class StringDiffer
      * @return Linked List of Diff objects.
      */
     private LinkedList<Diff> diff_main(String text1, String text2,
-                                       boolean checklines, long deadline) {
+                                       boolean checkLines, long deadline) {
         // Check for null inputs.
         if (text1 == null || text2 == null) {
             throw new IllegalArgumentException("Null inputs. (diff_main)");
@@ -152,7 +152,7 @@ public class StringDiffer
         // Check for equality (speedup).
         LinkedList<Diff> diffs;
         if (text1.equals(text2)) {
-            diffs = new LinkedList<Diff>();
+            diffs = new LinkedList<>();
             if (text1.length() != 0) {
                 diffs.add(new Diff(Operation.EQUAL, text1));
             }
@@ -160,26 +160,26 @@ public class StringDiffer
         }
 
         // Trim off common prefix (speedup).
-        int commonlength = diff_commonPrefix(text1, text2);
-        String commonprefix = text1.substring(0, commonlength);
-        text1 = text1.substring(commonlength);
-        text2 = text2.substring(commonlength);
+        int commonLength = diff_commonPrefix(text1, text2);
+        String commonPrefix = text1.substring(0, commonLength);
+        text1 = text1.substring(commonLength);
+        text2 = text2.substring(commonLength);
 
         // Trim off common suffix (speedup).
-        commonlength = diff_commonSuffix(text1, text2);
-        String commonsuffix = text1.substring(text1.length() - commonlength);
-        text1 = text1.substring(0, text1.length() - commonlength);
-        text2 = text2.substring(0, text2.length() - commonlength);
+        commonLength = diff_commonSuffix(text1, text2);
+        String commonSuffix = text1.substring(text1.length() - commonLength);
+        text1 = text1.substring(0, text1.length() - commonLength);
+        text2 = text2.substring(0, text2.length() - commonLength);
 
         // Compute the diff on the middle block.
-        diffs = diff_compute(text1, text2, checklines, deadline);
+        diffs = diff_compute(text1, text2, checkLines, deadline);
 
         // Restore the prefix and suffix.
-        if (commonprefix.length() != 0) {
-            diffs.addFirst(new Diff(Operation.EQUAL, commonprefix));
+        if (commonPrefix.length() != 0) {
+            diffs.addFirst(new Diff(Operation.EQUAL, commonPrefix));
         }
-        if (commonsuffix.length() != 0) {
-            diffs.addLast(new Diff(Operation.EQUAL, commonsuffix));
+        if (commonSuffix.length() != 0) {
+            diffs.addLast(new Diff(Operation.EQUAL, commonSuffix));
         }
 
         diff_cleanupMerge(diffs);
@@ -191,15 +191,15 @@ public class StringDiffer
      * have any common prefix or suffix.
      * @param text1 Old string to be diffed.
      * @param text2 New string to be diffed.
-     * @param checklines Speedup flag.  If false, then don't run a
+     * @param checkLines Speedup flag.  If false, then don't run a
      *     line-level diff first to identify the changed areas.
      *     If true, then run a faster slightly less optimal diff.
      * @param deadline Time when the diff should be complete by.
      * @return Linked List of Diff objects.
      */
     private LinkedList<Diff> diff_compute(String text1, String text2,
-                                          boolean checklines, long deadline) {
-        LinkedList<Diff> diffs = new LinkedList<Diff>();
+                                          boolean checkLines, long deadline) {
+        LinkedList<Diff> diffs = new LinkedList<>();
 
         if (text1.length() == 0) {
             // Just add some text (speedup).
@@ -213,20 +213,20 @@ public class StringDiffer
             return diffs;
         }
 
-        String longtext = text1.length() > text2.length() ? text1 : text2;
-        String shorttext = text1.length() > text2.length() ? text2 : text1;
-        int i = longtext.indexOf(shorttext);
+        String longText = text1.length() > text2.length() ? text1 : text2;
+        String shortText = text1.length() > text2.length() ? text2 : text1;
+        int i = longText.indexOf(shortText);
         if (i != -1) {
             // Shorter text is inside the longer text (speedup).
             Operation op = (text1.length() > text2.length()) ?
                     Operation.DELETE : Operation.INSERT;
-            diffs.add(new Diff(op, longtext.substring(0, i)));
-            diffs.add(new Diff(Operation.EQUAL, shorttext));
-            diffs.add(new Diff(op, longtext.substring(i + shorttext.length())));
+            diffs.add(new Diff(op, longText.substring(0, i)));
+            diffs.add(new Diff(Operation.EQUAL, shortText));
+            diffs.add(new Diff(op, longText.substring(i + shortText.length())));
             return diffs;
         }
 
-        if (shorttext.length() == 1) {
+        if (shortText.length() == 1) {
             // Single character string.
             // After the previous speedup, the character can't be an equality.
             diffs.add(new Diff(Operation.DELETE, text1));
@@ -245,9 +245,9 @@ public class StringDiffer
             String mid_common = hm[4];
             // Send both pairs off for separate processing.
             LinkedList<Diff> diffs_a = diff_main(text1_a, text2_a,
-                    checklines, deadline);
+                    checkLines, deadline);
             LinkedList<Diff> diffs_b = diff_main(text1_b, text2_b,
-                    checklines, deadline);
+                    checkLines, deadline);
             // Merge the results.
             diffs = diffs_a;
             diffs.add(new Diff(Operation.EQUAL, mid_common));
@@ -255,7 +255,7 @@ public class StringDiffer
             return diffs;
         }
 
-        if (checklines && text1.length() > 100 && text2.length() > 100) {
+        if (checkLines && text1.length() > 100 && text2.length() > 100) {
             return diff_lineMode(text1, text2, deadline);
         }
 
@@ -277,12 +277,12 @@ public class StringDiffer
         LinesToCharsResult b = diff_linesToChars(text1, text2);
         text1 = b.chars1;
         text2 = b.chars2;
-        List<String> linearray = b.lineArray;
+        List<String> lineArray = b.lineArray;
 
         LinkedList<Diff> diffs = diff_main(text1, text2, false, deadline);
 
         // Convert the diff back to original text.
-        diff_charsToLines(diffs, linearray);
+        diff_charsToLines(diffs, lineArray);
         // Eliminate freak matches (e.g. blank lines)
         diff_cleanupSemantic(diffs);
 
@@ -291,21 +291,21 @@ public class StringDiffer
         diffs.add(new Diff(Operation.EQUAL, ""));
         int count_delete = 0;
         int count_insert = 0;
-        String text_delete = "";
-        String text_insert = "";
+        StringBuilder text_delete = new StringBuilder();
+        StringBuilder text_insert = new StringBuilder();
         ListIterator<Diff> pointer = diffs.listIterator();
         Diff thisDiff = pointer.next();
         while (thisDiff != null) {
             switch (thisDiff.operation) {
-                case INSERT:
+                case INSERT -> {
                     count_insert++;
-                    text_insert += thisDiff.text;
-                    break;
-                case DELETE:
+                    text_insert.append(thisDiff.text);
+                }
+                case DELETE -> {
                     count_delete++;
-                    text_delete += thisDiff.text;
-                    break;
-                case EQUAL:
+                    text_delete.append(thisDiff.text);
+                }
+                case EQUAL -> {
                     // Upon reaching an equality, check for prior redundancies.
                     if (count_delete >= 1 && count_insert >= 1) {
                         // Delete the offending records and add the merged ones.
@@ -314,16 +314,16 @@ public class StringDiffer
                             pointer.previous();
                             pointer.remove();
                         }
-                        for (Diff newDiff : diff_main(text_delete, text_insert, false,
+                        for (Diff newDiff : diff_main(text_delete.toString(), text_insert.toString(), false,
                                 deadline)) {
                             pointer.add(newDiff);
                         }
                     }
                     count_insert = 0;
                     count_delete = 0;
-                    text_delete = "";
-                    text_insert = "";
-                    break;
+                    text_delete = new StringBuilder();
+                    text_insert = new StringBuilder();
+                }
             }
             thisDiff = pointer.hasNext() ? pointer.next() : null;
         }
@@ -448,7 +448,7 @@ public class StringDiffer
         }
         // Diff took too long and hit the deadline or
         // number of diffs equals number of characters, no commonality at all.
-        LinkedList<Diff> diffs = new LinkedList<Diff>();
+        LinkedList<Diff> diffs = new LinkedList<>();
         diffs.add(new Diff(Operation.DELETE, text1));
         diffs.add(new Diff(Operation.INSERT, text2));
         return diffs;
@@ -489,10 +489,10 @@ public class StringDiffer
      *     unique strings is intentionally blank.
      */
     protected LinesToCharsResult diff_linesToChars(String text1, String text2) {
-        List<String> lineArray = new ArrayList<String>();
-        Map<String, Integer> lineHash = new HashMap<String, Integer>();
-        // e.g. linearray[4] == "Hello\n"
-        // e.g. linehash.get("Hello\n") == 4
+        List<String> lineArray = new ArrayList<>();
+        Map<String, Integer> lineHash = new HashMap<>();
+        // e.g. lineArray[4] == "Hello\n"
+        // e.g. lineHash.get("Hello\n") == 4
 
         // "\x00" is a valid character, but various debuggers don't like it.
         // So we'll insert a junk entry to avoid generating a null character.
@@ -529,11 +529,11 @@ public class StringDiffer
             lineStart = lineEnd + 1;
 
             if (lineHash.containsKey(line)) {
-                chars.append(String.valueOf((char) (int) lineHash.get(line)));
+                chars.append((char) (int) lineHash.get(line));
             } else {
                 lineArray.add(line);
                 lineHash.put(line, lineArray.size() - 1);
-                chars.append(String.valueOf((char) (lineArray.size() - 1)));
+                chars.append((char) (lineArray.size() - 1));
             }
         }
         return chars.toString();
@@ -655,18 +655,18 @@ public class StringDiffer
             // Don't risk returning a non-optimal diff if we have unlimited time.
             return null;
         }
-        String longtext = text1.length() > text2.length() ? text1 : text2;
-        String shorttext = text1.length() > text2.length() ? text2 : text1;
-        if (longtext.length() < 4 || shorttext.length() * 2 < longtext.length()) {
+        String longText = text1.length() > text2.length() ? text1 : text2;
+        String shortText = text1.length() > text2.length() ? text2 : text1;
+        if (longText.length() < 4 || shortText.length() * 2 < longText.length()) {
             return null;  // Pointless.
         }
 
         // First check if the second quarter is the seed for a half-match.
-        String[] hm1 = diff_halfMatchI(longtext, shorttext,
-                (longtext.length() + 3) / 4);
+        String[] hm1 = diff_halfMatchI(longText, shortText,
+                (longText.length() + 3) / 4);
         // Check again based on the third quarter.
-        String[] hm2 = diff_halfMatchI(longtext, shorttext,
-                (longtext.length() + 1) / 2);
+        String[] hm2 = diff_halfMatchI(longText, shortText,
+                (longText.length() + 1) / 2);
         String[] hm;
         if (hm1 == null && hm2 == null) {
             return null;
@@ -689,39 +689,39 @@ public class StringDiffer
     }
 
     /**
-     * Does a substring of shorttext exist within longtext such that the
-     * substring is at least half the length of longtext?
-     * @param longtext Longer string.
-     * @param shorttext Shorter string.
-     * @param i Start index of quarter length substring within longtext.
-     * @return Five element String array, containing the prefix of longtext, the
-     *     suffix of longtext, the prefix of shorttext, the suffix of shorttext
+     * Does a substring of shortText exist within longText such that the
+     * substring is at least half the length of longText?
+     * @param longText Longer string.
+     * @param shortText Shorter string.
+     * @param i Start index of quarter length substring within longText.
+     * @return Five element String array, containing the prefix of longText, the
+     *     suffix of longText, the prefix of shortText, the suffix of shortText
      *     and the common middle.  Or null if there was no match.
      */
-    private String[] diff_halfMatchI(String longtext, String shorttext, int i) {
+    private String[] diff_halfMatchI(String longText, String shortText, int i) {
         // Start with a 1/4 length substring at position i as a seed.
-        String seed = longtext.substring(i, i + longtext.length() / 4);
+        String seed = longText.substring(i, i + longText.length() / 4);
         int j = -1;
         String best_common = "";
-        String best_longtext_a = "", best_longtext_b = "";
-        String best_shorttext_a = "", best_shorttext_b = "";
-        while ((j = shorttext.indexOf(seed, j + 1)) != -1) {
-            int prefixLength = diff_commonPrefix(longtext.substring(i),
-                    shorttext.substring(j));
-            int suffixLength = diff_commonSuffix(longtext.substring(0, i),
-                    shorttext.substring(0, j));
+        String bestLongTextA = "", bestLongTextB = "";
+        String bestShortTextA = "", bestShortTextB = "";
+        while ((j = shortText.indexOf(seed, j + 1)) != -1) {
+            int prefixLength = diff_commonPrefix(longText.substring(i),
+                    shortText.substring(j));
+            int suffixLength = diff_commonSuffix(longText.substring(0, i),
+                    shortText.substring(0, j));
             if (best_common.length() < suffixLength + prefixLength) {
-                best_common = shorttext.substring(j - suffixLength, j)
-                        + shorttext.substring(j, j + prefixLength);
-                best_longtext_a = longtext.substring(0, i - suffixLength);
-                best_longtext_b = longtext.substring(i + prefixLength);
-                best_shorttext_a = shorttext.substring(0, j - suffixLength);
-                best_shorttext_b = shorttext.substring(j + prefixLength);
+                best_common = shortText.substring(j - suffixLength, j)
+                        + shortText.substring(j, j + prefixLength);
+                bestLongTextA = longText.substring(0, i - suffixLength);
+                bestLongTextB = longText.substring(i + prefixLength);
+                bestShortTextA = shortText.substring(0, j - suffixLength);
+                bestShortTextB = shortText.substring(j + prefixLength);
             }
         }
-        if (best_common.length() * 2 >= longtext.length()) {
-            return new String[]{best_longtext_a, best_longtext_b,
-                    best_shorttext_a, best_shorttext_b, best_common};
+        if (best_common.length() * 2 >= longText.length()) {
+            return new String[]{bestLongTextA, bestLongTextB,
+                    bestShortTextA, bestShortTextB, best_common};
         } else {
             return null;
         }
@@ -736,8 +736,8 @@ public class StringDiffer
             return;
         }
         boolean changes = false;
-        Stack<Diff> equalities = new Stack<Diff>();  // Stack of qualities.
-        String lastequality = null; // Always equal to equalities.lastElement().text
+        Stack<Diff> equalities = new Stack<>();  // Stack of qualities.
+        String lastEquality = null; // Always equal to equalities.lastElement().text
         ListIterator<Diff> pointer = diffs.listIterator();
         // Number of characters that changed prior to the equality.
         int length_insertions1 = 0;
@@ -754,7 +754,7 @@ public class StringDiffer
                 length_deletions1 = length_deletions2;
                 length_insertions2 = 0;
                 length_deletions2 = 0;
-                lastequality = thisDiff.text;
+                lastEquality = thisDiff.text;
             } else {
                 // An insertion or deletion.
                 if (thisDiff.operation == Operation.INSERT) {
@@ -764,11 +764,11 @@ public class StringDiffer
                 }
                 // Eliminate an equality that is smaller or equal to the edits on both
                 // sides of it.
-                if (lastequality != null && (lastequality.length()
+                if (lastEquality != null && (lastEquality.length()
                         <= Math.max(length_insertions1, length_deletions1))
-                        && (lastequality.length()
+                        && (lastEquality.length()
                         <= Math.max(length_insertions2, length_deletions2))) {
-                    //System.out.println("Splitting: '" + lastequality + "'");
+                    //System.out.println("Splitting: '" + lastEquality + "'");
                     // Walk back to offending equality.
                     while (thisDiff != equalities.lastElement()) {
                         thisDiff = pointer.previous();
@@ -776,9 +776,9 @@ public class StringDiffer
                     pointer.next();
 
                     // Replace equality with a delete.
-                    pointer.set(new Diff(Operation.DELETE, lastequality));
+                    pointer.set(new Diff(Operation.DELETE, lastEquality));
                     // Insert a corresponding an insert.
-                    pointer.add(new Diff(Operation.INSERT, lastequality));
+                    pointer.add(new Diff(Operation.INSERT, lastEquality));
 
                     equalities.pop();  // Throw away the equality we just deleted.
                     if (!equalities.empty()) {
@@ -802,7 +802,7 @@ public class StringDiffer
                     length_insertions2 = 0;
                     length_deletions1 = 0;
                     length_deletions2 = 0;
-                    lastequality = null;
+                    lastEquality = null;
                     changes = true;
                 }
             }
@@ -988,8 +988,8 @@ public class StringDiffer
                 && Character.getType(char1) == Character.CONTROL;
         boolean lineBreak2 = whitespace2
                 && Character.getType(char2) == Character.CONTROL;
-        boolean blankLine1 = lineBreak1 && BLANKLINEEND.matcher(one).find();
-        boolean blankLine2 = lineBreak2 && BLANKLINESTART.matcher(two).find();
+        boolean blankLine1 = lineBreak1 && BLANK_LINE_END.matcher(one).find();
+        boolean blankLine2 = lineBreak2 && BLANK_LINE_START.matcher(two).find();
 
         if (blankLine1 || blankLine2) {
             // Five points for blank lines.
@@ -1011,10 +1011,9 @@ public class StringDiffer
     }
 
     // Define some regex patterns for matching boundaries.
-    private Pattern BLANKLINEEND
-            = Pattern.compile("\\n\\r?\\n\\Z", Pattern.DOTALL);
-    private Pattern BLANKLINESTART
-            = Pattern.compile("\\A\\r?\\n\\r?\\n", Pattern.DOTALL);
+    private final Pattern BLANK_LINE_START
+            = Pattern.compile("\\A\\r?\\n\\r?\\n", Pattern.DOTALL),
+    BLANK_LINE_END = Pattern.compile("\\n\\r?\\n\\Z", Pattern.DOTALL);
 
     /**
      * Reduce the number of edits by eliminating operationally trivial equalities.
@@ -1025,8 +1024,8 @@ public class StringDiffer
             return;
         }
         boolean changes = false;
-        Stack<Diff> equalities = new Stack<Diff>();  // Stack of equalities.
-        String lastequality = null; // Always equal to equalities.lastElement().text
+        Stack<Diff> equalities = new Stack<>();  // Stack of equalities.
+        String lastEquality = null; // Always equal to equalities.lastElement().text
         ListIterator<Diff> pointer = diffs.listIterator();
         // Is there an insertion operation before the last equality.
         boolean pre_ins = false;
@@ -1037,7 +1036,7 @@ public class StringDiffer
         // Is there a deletion operation after the last equality.
         boolean post_del = false;
         Diff thisDiff = pointer.next();
-        Diff safeDiff = thisDiff;  // The last Diff that is known to be unsplitable.
+        Diff safeDiff = thisDiff;  // The last Diff that is known to be non-splittable.
         while (thisDiff != null) {
             if (thisDiff.operation == Operation.EQUAL) {
                 // Equality found.
@@ -1046,11 +1045,11 @@ public class StringDiffer
                     equalities.push(thisDiff);
                     pre_ins = post_ins;
                     pre_del = post_del;
-                    lastequality = thisDiff.text;
+                    lastEquality = thisDiff.text;
                 } else {
                     // Not a candidate, and can never become one.
                     equalities.clear();
-                    lastequality = null;
+                    lastEquality = null;
                     safeDiff = thisDiff;
                 }
                 post_ins = post_del = false;
@@ -1069,12 +1068,12 @@ public class StringDiffer
          * <ins>A</del>X<ins>C</ins><del>D</del>
          * <ins>A</ins><del>B</del>X<del>C</del>
          */
-                if (lastequality != null
+                if (lastEquality != null
                         && ((pre_ins && pre_del && post_ins && post_del)
-                        || ((lastequality.length() < Diff_EditCost / 2)
+                        || ((lastEquality.length() < Diff_EditCost / 2)
                         && ((pre_ins ? 1 : 0) + (pre_del ? 1 : 0)
                         + (post_ins ? 1 : 0) + (post_del ? 1 : 0)) == 3))) {
-                    //System.out.println("Splitting: '" + lastequality + "'");
+                    //System.out.println("Splitting: '" + lastEquality + "'");
                     // Walk back to offending equality.
                     while (thisDiff != equalities.lastElement()) {
                         thisDiff = pointer.previous();
@@ -1082,12 +1081,12 @@ public class StringDiffer
                     pointer.next();
 
                     // Replace equality with a delete.
-                    pointer.set(new Diff(Operation.DELETE, lastequality));
+                    pointer.set(new Diff(Operation.DELETE, lastEquality));
                     // Insert a corresponding an insert.
-                    pointer.add(thisDiff = new Diff(Operation.INSERT, lastequality));
+                    pointer.add(thisDiff = new Diff(Operation.INSERT, lastEquality));
 
                     equalities.pop();  // Throw away the equality we just deleted.
-                    lastequality = null;
+                    lastEquality = null;
                     if (pre_ins && pre_del) {
                         // No changes made which could affect previous entry, keep going.
                         post_ins = post_del = true;
@@ -1140,17 +1139,17 @@ public class StringDiffer
         int commonlength;
         while (thisDiff != null) {
             switch (thisDiff.operation) {
-                case INSERT:
+                case INSERT -> {
                     count_insert++;
                     text_insert += thisDiff.text;
                     prevEqual = null;
-                    break;
-                case DELETE:
+                }
+                case DELETE -> {
                     count_delete++;
                     text_delete += thisDiff.text;
                     prevEqual = null;
-                    break;
-                case EQUAL:
+                }
+                case EQUAL -> {
                     if (count_delete + count_insert > 1) {
                         boolean both_types = count_delete != 0 && count_insert != 0;
                         // Delete the offending records.
@@ -1164,7 +1163,7 @@ public class StringDiffer
                             pointer.remove();
                         }
                         if (both_types) {
-                            // Factor out any common prefixies.
+                            // Factor out any common prefixes.
                             commonlength = diff_commonPrefix(text_insert, text_delete);
                             if (commonlength != 0) {
                                 if (pointer.hasPrevious()) {
@@ -1180,7 +1179,7 @@ public class StringDiffer
                                 text_insert = text_insert.substring(commonlength);
                                 text_delete = text_delete.substring(commonlength);
                             }
-                            // Factor out any common suffixies.
+                            // Factor out any common suffixes.
                             commonlength = diff_commonSuffix(text_insert, text_delete);
                             if (commonlength != 0) {
                                 thisDiff = pointer.next();
@@ -1214,7 +1213,7 @@ public class StringDiffer
                     text_delete = "";
                     text_insert = "";
                     prevEqual = thisDiff;
-                    break;
+                }
             }
             thisDiff = pointer.hasNext() ? pointer.next() : null;
         }
@@ -1323,17 +1322,11 @@ public class StringDiffer
             String text = aDiff.text.replace("&", "&amp;").replace("<", "&lt;")
                     .replace(">", "&gt;").replace("\n", "&para;<br>");
             switch (aDiff.operation) {
-                case INSERT:
-                    html.append("<ins style=\"background:#e6ffe6;\">").append(text)
-                            .append("</ins>");
-                    break;
-                case DELETE:
-                    html.append("<del style=\"background:#ffe6e6;\">").append(text)
-                            .append("</del>");
-                    break;
-                case EQUAL:
-                    html.append("<span>").append(text).append("</span>");
-                    break;
+                case INSERT -> html.append("<ins style=\"background:#e6ffe6;\">").append(text)
+                        .append("</ins>");
+                case DELETE -> html.append("<del style=\"background:#ffe6e6;\">").append(text)
+                        .append("</del>");
+                case EQUAL -> html.append("<span>").append(text).append("</span>");
             }
         }
         return html.toString();
@@ -1381,18 +1374,14 @@ public class StringDiffer
         int deletions = 0;
         for (Diff aDiff : diffs) {
             switch (aDiff.operation) {
-                case INSERT:
-                    insertions += aDiff.text.length();
-                    break;
-                case DELETE:
-                    deletions += aDiff.text.length();
-                    break;
-                case EQUAL:
+                case INSERT -> insertions += aDiff.text.length();
+                case DELETE -> deletions += aDiff.text.length();
+                case EQUAL -> {
                     // A deletion and an insertion is one substitution.
                     levenshtein += Math.max(insertions, deletions);
                     insertions = 0;
                     deletions = 0;
-                    break;
+                }
             }
         }
         levenshtein += Math.max(insertions, deletions);
@@ -1411,21 +1400,10 @@ public class StringDiffer
         StringBuilder text = new StringBuilder();
         for (Diff aDiff : diffs) {
             switch (aDiff.operation) {
-                case INSERT:
-                    try {
-                        text.append("+").append(URLEncoder.encode(aDiff.text, "UTF-8")
-                                .replace('+', ' ')).append("\t");
-                    } catch (UnsupportedEncodingException e) {
-                        // Not likely on modern system.
-                        throw new Error("This system does not support UTF-8.", e);
-                    }
-                    break;
-                case DELETE:
-                    text.append("-").append(aDiff.text.length()).append("\t");
-                    break;
-                case EQUAL:
-                    text.append("=").append(aDiff.text.length()).append("\t");
-                    break;
+                case INSERT -> text.append("+").append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8)
+                        .replace('+', ' ')).append("\t");
+                case DELETE -> text.append("-").append(aDiff.text.length()).append("\t");
+                case EQUAL -> text.append("=").append(aDiff.text.length()).append("\t");
             }
         }
         String delta = text.toString();
@@ -1447,7 +1425,7 @@ public class StringDiffer
      */
     public LinkedList<Diff> diff_fromDelta(String text1, String delta)
             throws IllegalArgumentException {
-        LinkedList<Diff> diffs = new LinkedList<Diff>();
+        LinkedList<Diff> diffs = new LinkedList<>();
         int pointer = 0;  // Cursor in text1
         String[] tokens = delta.split("\t");
         for (String token : tokens) {
@@ -1459,24 +1437,20 @@ public class StringDiffer
             // operation of this token (delete, insert, equality).
             String param = token.substring(1);
             switch (token.charAt(0)) {
-                case '+':
+                case '+' -> {
                     // decode would change all "+" to " "
                     param = param.replace("+", "%2B");
                     try {
-                        param = URLDecoder.decode(param, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        // Not likely on modern system.
-                        throw new Error("This system does not support UTF-8.", e);
+                        param = URLDecoder.decode(param, StandardCharsets.UTF_8);
                     } catch (IllegalArgumentException e) {
                         // Malformed URI sequence.
                         throw new IllegalArgumentException(
                                 "Illegal escape in diff_fromDelta: " + param, e);
                     }
                     diffs.add(new Diff(Operation.INSERT, param));
-                    break;
-                case '-':
-                    // Fall through.
-                case '=':
+                }
+                // Fall through.
+                case '-', '=' -> {
                     int n;
                     try {
                         n = Integer.parseInt(param);
@@ -1501,11 +1475,11 @@ public class StringDiffer
                     } else {
                         diffs.add(new Diff(Operation.DELETE, text));
                     }
-                    break;
-                default:
-                    // Anything else is an error.
-                    throw new IllegalArgumentException(
-                            "Invalid diff operation in diff_fromDelta: " + token.charAt(0));
+                }
+                default ->
+                        // Anything else is an error.
+                        throw new IllegalArgumentException(
+                                "Invalid diff operation in diff_fromDelta: " + token.charAt(0));
             }
         }
         if (pointer != text1.length()) {
@@ -1541,7 +1515,7 @@ public class StringDiffer
             // Nothing to match.
             return -1;
         } else if (loc + pattern.length() <= text.length()
-                && text.substring(loc, loc + pattern.length()).equals(pattern)) {
+                && text.startsWith(pattern, loc)) {
             // Perfect match at the perfect spot!  (Includes case of null pattern)
             return loc;
         } else {
@@ -1559,7 +1533,7 @@ public class StringDiffer
      * @return Best match index or -1.
      */
     protected int match_bitap(String text, String pattern, int loc) {
-        assert (Match_MaxBits == 0 || pattern.length() <= Match_MaxBits)
+        assert pattern.length() <= Match_MaxBits
                 : "Pattern too long for this application.";
 
         // Initialise the alphabet.
@@ -1581,7 +1555,7 @@ public class StringDiffer
         }
 
         // Initialise the bit arrays.
-        int matchmask = 1 << (pattern.length() - 1);
+        int matchMask = 1 << (pattern.length() - 1);
         best_loc = -1;
 
         int bin_min, bin_mid;
@@ -1618,15 +1592,12 @@ public class StringDiffer
                 } else {
                     charMatch = s.get(text.charAt(j - 1));
                 }
-                if (d == 0) {
-                    // First pass: exact match.
-                    rd[j] = ((rd[j + 1] << 1) | 1) & charMatch;
-                } else {
+                rd[j] = ((rd[j + 1] << 1) | 1) & charMatch;
+                if (d != 0) {
                     // Subsequent passes: fuzzy match.
-                    rd[j] = (((rd[j + 1] << 1) | 1) & charMatch)
-                            | (((last_rd[j + 1] | last_rd[j]) << 1) | 1) | last_rd[j + 1];
+                    rd[j] |= (((last_rd[j + 1] | last_rd[j]) << 1) | 1) | last_rd[j + 1];
                 }
-                if ((rd[j] & matchmask) != 0) {
+                if ((rd[j] & matchMask) != 0) {
                     double score = match_bitapScore(d, j - 1, loc, pattern);
                     // This match will almost certainly be better than any existing
                     // match.  But check anyway.
@@ -1677,7 +1648,7 @@ public class StringDiffer
      * @return Hash of character locations.
      */
     protected Map<Character, Integer> match_alphabet(String pattern) {
-        Map<Character, Integer> s = new HashMap<Character, Integer>();
+        Map<Character, Integer> s = new HashMap<>();
         char[] char_pattern = pattern.toCharArray();
         for (char c : char_pattern) {
             s.put(c, 0);
@@ -1776,20 +1747,6 @@ public class StringDiffer
 
     /**
      * Compute a list of patches to turn text1 into text2.
-     * text2 is ignored, diffs are the delta between text1 and text2.
-     * @param text1 Old text
-     * @param text2 Ignored.
-     * @param diffs Array of Diff objects for text1 to text2.
-     * @return LinkedList of Patch objects.
-     * @deprecated Prefer patch_make(String text1, LinkedList<Diff> diffs).
-     */
-    public LinkedList<Patch> patch_make(String text1, String text2,
-                                        LinkedList<Diff> diffs) {
-        return patch_make(text1, diffs);
-    }
-
-    /**
-     * Compute a list of patches to turn text1 into text2.
      * text2 is not provided, diffs are the delta between text1 and text2.
      * @param text1 Old text.
      * @param diffs Array of Diff objects for text1 to text2.
@@ -1800,18 +1757,18 @@ public class StringDiffer
             throw new IllegalArgumentException("Null inputs. (patch_make)");
         }
 
-        LinkedList<Patch> patches = new LinkedList<Patch>();
+        LinkedList<Patch> patches = new LinkedList<>();
         if (diffs.isEmpty()) {
             return patches;  // Get rid of the null case.
         }
         Patch patch = new Patch();
         int char_count1 = 0;  // Number of characters into the text1 string.
         int char_count2 = 0;  // Number of characters into the text2 string.
-        // Start with text1 (prepatch_text) and apply the diffs until we arrive at
-        // text2 (postpatch_text). We recreate the patches one by one to determine
+        // Start with text1 (prePatchText) and apply the diffs until we arrive at
+        // text2 (postPatchText). We recreate the patches one by one to determine
         // context info.
-        String prepatch_text = text1;
-        String postpatch_text = text1;
+        String prePatchText = text1;
+        String postPatchText = text1;
         for (Diff aDiff : diffs) {
             if (patch.diffs.isEmpty() && aDiff.operation != Operation.EQUAL) {
                 // A new patch starts here.
@@ -1820,19 +1777,19 @@ public class StringDiffer
             }
 
             switch (aDiff.operation) {
-                case INSERT:
+                case INSERT -> {
                     patch.diffs.add(aDiff);
                     patch.length2 += aDiff.text.length();
-                    postpatch_text = postpatch_text.substring(0, char_count2)
-                            + aDiff.text + postpatch_text.substring(char_count2);
-                    break;
-                case DELETE:
+                    postPatchText = postPatchText.substring(0, char_count2)
+                            + aDiff.text + postPatchText.substring(char_count2);
+                }
+                case DELETE -> {
                     patch.length1 += aDiff.text.length();
                     patch.diffs.add(aDiff);
-                    postpatch_text = postpatch_text.substring(0, char_count2)
-                            + postpatch_text.substring(char_count2 + aDiff.text.length());
-                    break;
-                case EQUAL:
+                    postPatchText = postPatchText.substring(0, char_count2)
+                            + postPatchText.substring(char_count2 + aDiff.text.length());
+                }
+                case EQUAL -> {
                     if (aDiff.text.length() <= 2 * Patch_Margin
                             && !patch.diffs.isEmpty() && aDiff != diffs.getLast()) {
                         // Small equality inside a patch.
@@ -1840,22 +1797,21 @@ public class StringDiffer
                         patch.length1 += aDiff.text.length();
                         patch.length2 += aDiff.text.length();
                     }
-
                     if (aDiff.text.length() >= 2 * Patch_Margin) {
                         // Time for a new patch.
                         if (!patch.diffs.isEmpty()) {
-                            patch_addContext(patch, prepatch_text);
+                            patch_addContext(patch, prePatchText);
                             patches.add(patch);
                             patch = new Patch();
                             // Unlike Unidiff, our patch lists have a rolling context.
                             // http://code.google.com/p/google-diff-match-patch/wiki/Unidiff
                             // Update prepatch text & pos to reflect the application of the
                             // just completed patch.
-                            prepatch_text = postpatch_text;
+                            prePatchText = postPatchText;
                             char_count1 = char_count2;
                         }
                     }
-                    break;
+                }
             }
 
             // Update the current character count.
@@ -1868,7 +1824,7 @@ public class StringDiffer
         }
         // Pick up the leftover patch if not empty.
         if (!patch.diffs.isEmpty()) {
-            patch_addContext(patch, prepatch_text);
+            patch_addContext(patch, prePatchText);
             patches.add(patch);
         }
 
@@ -1881,7 +1837,7 @@ public class StringDiffer
      * @return Array of Patch objects.
      */
     public LinkedList<Patch> patch_deepCopy(LinkedList<Patch> patches) {
-        LinkedList<Patch> patchesCopy = new LinkedList<Patch>();
+        LinkedList<Patch> patchesCopy = new LinkedList<>();
         for (Patch aPatch : patches) {
             Patch patchCopy = new Patch();
             for (Diff aDiff : aPatch.diffs) {
@@ -2016,9 +1972,9 @@ public class StringDiffer
      */
     public String patch_addPadding(LinkedList<Patch> patches) {
         short paddingLength = this.Patch_Margin;
-        String nullPadding = "";
+        StringBuilder nullPadding = new StringBuilder();
         for (short x = 1; x <= paddingLength; x++) {
-            nullPadding += String.valueOf((char) x);
+            nullPadding.append((char) x);
         }
 
         // Bump all the patches forward.
@@ -2032,7 +1988,7 @@ public class StringDiffer
         LinkedList<Diff> diffs = patch.diffs;
         if (diffs.isEmpty() || diffs.getFirst().operation != Operation.EQUAL) {
             // Add nullPadding equality.
-            diffs.addFirst(new Diff(Operation.EQUAL, nullPadding));
+            diffs.addFirst(new Diff(Operation.EQUAL, nullPadding.toString()));
             patch.start1 -= paddingLength;  // Should be 0.
             patch.start2 -= paddingLength;  // Should be 0.
             patch.length1 += paddingLength;
@@ -2054,7 +2010,7 @@ public class StringDiffer
         diffs = patch.diffs;
         if (diffs.isEmpty() || diffs.getLast().operation != Operation.EQUAL) {
             // Add nullPadding equality.
-            diffs.addLast(new Diff(Operation.EQUAL, nullPadding));
+            diffs.addLast(new Diff(Operation.EQUAL, nullPadding.toString()));
             patch.length1 += paddingLength;
             patch.length2 += paddingLength;
         } else if (paddingLength > diffs.getLast().text.length()) {
@@ -2066,7 +2022,7 @@ public class StringDiffer
             patch.length2 += extraLength;
         }
 
-        return nullPadding;
+        return nullPadding.toString();
     }
 
     /**
@@ -2084,18 +2040,18 @@ public class StringDiffer
         Operation diff_type;
         String diff_text;
         ListIterator<Patch> pointer = patches.listIterator();
-        Patch bigpatch = pointer.hasNext() ? pointer.next() : null;
-        while (bigpatch != null) {
-            if (bigpatch.length1 <= Match_MaxBits) {
-                bigpatch = pointer.hasNext() ? pointer.next() : null;
+        Patch bigPatch = pointer.hasNext() ? pointer.next() : null;
+        while (bigPatch != null) {
+            if (bigPatch.length1 <= Match_MaxBits) {
+                bigPatch = pointer.hasNext() ? pointer.next() : null;
                 continue;
             }
             // Remove the big old patch.
             pointer.remove();
-            start1 = bigpatch.start1;
-            start2 = bigpatch.start2;
+            start1 = bigPatch.start1;
+            start2 = bigPatch.start2;
             precontext = "";
-            while (!bigpatch.diffs.isEmpty()) {
+            while (!bigPatch.diffs.isEmpty()) {
                 // Create one of several smaller patches.
                 patch = new Patch();
                 empty = true;
@@ -2105,15 +2061,15 @@ public class StringDiffer
                     patch.length1 = patch.length2 = precontext.length();
                     patch.diffs.add(new Diff(Operation.EQUAL, precontext));
                 }
-                while (!bigpatch.diffs.isEmpty()
+                while (!bigPatch.diffs.isEmpty()
                         && patch.length1 < patch_size - Patch_Margin) {
-                    diff_type = bigpatch.diffs.getFirst().operation;
-                    diff_text = bigpatch.diffs.getFirst().text;
+                    diff_type = bigPatch.diffs.getFirst().operation;
+                    diff_text = bigPatch.diffs.getFirst().text;
                     if (diff_type == Operation.INSERT) {
                         // Insertions are harmless.
                         patch.length2 += diff_text.length();
                         start2 += diff_text.length();
-                        patch.diffs.addLast(bigpatch.diffs.removeFirst());
+                        patch.diffs.addLast(bigPatch.diffs.removeFirst());
                         empty = false;
                     } else if (diff_type == Operation.DELETE && patch.diffs.size() == 1
                             && patch.diffs.getFirst().operation == Operation.EQUAL
@@ -2123,7 +2079,7 @@ public class StringDiffer
                         start1 += diff_text.length();
                         empty = false;
                         patch.diffs.add(new Diff(diff_type, diff_text));
-                        bigpatch.diffs.removeFirst();
+                        bigPatch.diffs.removeFirst();
                     } else {
                         // Deletion or equality.  Only take as much as we can stomach.
                         diff_text = diff_text.substring(0, Math.min(diff_text.length(),
@@ -2137,10 +2093,10 @@ public class StringDiffer
                             empty = false;
                         }
                         patch.diffs.add(new Diff(diff_type, diff_text));
-                        if (diff_text.equals(bigpatch.diffs.getFirst().text)) {
-                            bigpatch.diffs.removeFirst();
+                        if (diff_text.equals(bigPatch.diffs.getFirst().text)) {
+                            bigPatch.diffs.removeFirst();
                         } else {
-                            bigpatch.diffs.getFirst().text = bigpatch.diffs.getFirst().text
+                            bigPatch.diffs.getFirst().text = bigPatch.diffs.getFirst().text
                                     .substring(diff_text.length());
                         }
                     }
@@ -2150,10 +2106,10 @@ public class StringDiffer
                 precontext = precontext.substring(Math.max(0, precontext.length()
                         - Patch_Margin));
                 // Append the end context for this patch.
-                if (diff_text1(bigpatch.diffs).length() > Patch_Margin) {
-                    postcontext = diff_text1(bigpatch.diffs).substring(0, Patch_Margin);
+                if (diff_text1(bigPatch.diffs).length() > Patch_Margin) {
+                    postcontext = diff_text1(bigPatch.diffs).substring(0, Patch_Margin);
                 } else {
-                    postcontext = diff_text1(bigpatch.diffs);
+                    postcontext = diff_text1(bigPatch.diffs);
                 }
                 if (postcontext.length() != 0) {
                     patch.length1 += postcontext.length();
@@ -2169,7 +2125,7 @@ public class StringDiffer
                     pointer.add(patch);
                 }
             }
-            bigpatch = pointer.hasNext() ? pointer.next() : null;
+            bigPatch = pointer.hasNext() ? pointer.next() : null;
         }
     }
 
@@ -2189,18 +2145,18 @@ public class StringDiffer
     /**
      * Parse a textual representation of patches and return a List of Patch
      * objects.
-     * @param textline Text representation of patches.
+     * @param textLine Text representation of patches.
      * @return List of Patch objects.
      * @throws IllegalArgumentException If invalid input.
      */
-    public List<Patch> patch_fromText(String textline)
+    public List<Patch> patch_fromText(String textLine)
             throws IllegalArgumentException {
-        List<Patch> patches = new LinkedList<Patch>();
-        if (textline.length() == 0) {
+        List<Patch> patches = new LinkedList<>();
+        if (textLine.isEmpty()) {
             return patches;
         }
-        List<String> textList = Arrays.asList(textline.split("\n"));
-        LinkedList<String> text = new LinkedList<String>(textList);
+        List<String> textList = Arrays.asList(textLine.split("\n"));
+        LinkedList<String> text = new LinkedList<>(textList);
         Patch patch;
         Pattern patchHeader
                 = Pattern.compile("^@@ -(\\d+),?(\\d*) \\+(\\d+),?(\\d*) @@$");
@@ -2249,10 +2205,7 @@ public class StringDiffer
                 line = text.getFirst().substring(1);
                 line = line.replace("+", "%2B");  // decode would change all "+" to " "
                 try {
-                    line = URLDecoder.decode(line, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    // Not likely on modern system.
-                    throw new Error("This system does not support UTF-8.", e);
+                    line = URLDecoder.decode(line, StandardCharsets.UTF_8);
                 } catch (IllegalArgumentException e) {
                     // Malformed URI sequence.
                     throw new IllegalArgumentException(
@@ -2349,13 +2302,8 @@ public class StringDiffer
                 return false;
             }
             if (text == null) {
-                if (other.text != null) {
-                    return false;
-                }
-            } else if (!text.equals(other.text)) {
-                return false;
-            }
-            return true;
+                return other.text == null;
+            } else return text.equals(other.text);
         }
     }
 
@@ -2374,13 +2322,13 @@ public class StringDiffer
          * Constructor.  Initializes with an empty list of diffs.
          */
         public Patch() {
-            this.diffs = new LinkedList<Diff>();
+            this.diffs = new LinkedList<>();
         }
 
         /**
-         * Emmulate GNU diff's format.
+         * Emulate GNU diff's format.
          * Header: @@ -382,8 +481,9 @@
-         * Indicies are printed as 1-based, not 0-based.
+         * Indices are printed as 1-based, not 0-based.
          * @return The GNU diff string.
          */
         public String toString() {
@@ -2405,23 +2353,12 @@ public class StringDiffer
             // Escape the body of the patch with %xx notation.
             for (Diff aDiff : this.diffs) {
                 switch (aDiff.operation) {
-                    case INSERT:
-                        text.append('+');
-                        break;
-                    case DELETE:
-                        text.append('-');
-                        break;
-                    case EQUAL:
-                        text.append(' ');
-                        break;
+                    case INSERT -> text.append('+');
+                    case DELETE -> text.append('-');
+                    case EQUAL -> text.append(' ');
                 }
-                try {
-                    text.append(URLEncoder.encode(aDiff.text, "UTF-8").replace('+', ' '))
-                            .append("\n");
-                } catch (UnsupportedEncodingException e) {
-                    // Not likely on modern system.
-                    throw new Error("This system does not support UTF-8.", e);
-                }
+                text.append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8).replace('+', ' '))
+                        .append("\n");
             }
             return unescapeForEncodeUriCompatability(text.toString());
         }
