@@ -1,16 +1,5 @@
 import React from 'react'
-import {
-  Button,
-  Input,
-  PublicCard,
-  SubTitle,
-  Column,
-  ErrorMessage,
-  TitleSmall,
-  Checkbox
-} from "../style"
 import apiSignup from "app/apis/apiSignup";
-import {IconWarning} from "app/components/icons";
 
 const breakingChangesSub = {
   title: 'Breaking Changes', enumVal: 'BREAKING_CHANGES', checked: true,
@@ -93,19 +82,21 @@ export default function SignUp() {
   }
 
   return (
-    <PublicCard>
+    <section className="card mt-12 text-center">
       <header>
-        <SubTitle>Sign up for an API Key</SubTitle>
+        <h2 className="h3 mb-3">Sign up for an API Key</h2>
       </header>
-      <p>
-        By signing up for a key you can access the API to power your own legislative apps.<br/>
+      <p className="mb-2 text text-left md:text-center">
+        By signing up for a key you can access the API to power your own legislative apps.
+      </p>
+      <p className="mb-2 text text-left md:text-center">
         Simply provide a name and a valid email and we'll send over the credentials.
       </p>
       <form onSubmit={handleSubmit}>
-        <Column>
-          <div>
-            <Input
-              width="200px"
+        <div className="flex flex-col">
+          <div className="">
+            <input
+              className="input m-2"
               type="text"
               name="name"
               placeholder="Name"
@@ -116,8 +107,8 @@ export default function SignUp() {
               })}
               value={state.name}
             />
-            <Input
-              width="200px"
+            <input
+              className="input m-2"
               type="text"
               name="email"
               placeholder="Email"
@@ -129,8 +120,9 @@ export default function SignUp() {
               value={state.email}
             />
           </div>
-          <div>
-            <Checkbox
+          <div className="mt-3 text-left md:text-center">
+            <input
+              className="mr-2"
               type="checkbox"
               name="breakingChanges"
               onChange={(e) => dispatch({
@@ -142,8 +134,9 @@ export default function SignUp() {
             />
             <label htmlFor="breakingChanges">{breakingChangesSub.desc}</label>
           </div>
-          <div>
-            <Checkbox
+          <div className="mt-3 text-left md:text-center">
+            <input
+              className="mr-2"
               type="checkbox"
               name="newFeatures"
               onChange={(e) => dispatch({
@@ -155,18 +148,18 @@ export default function SignUp() {
             />
             <label htmlFor="newFeatures">{newFeaturesSub.desc}</label>
           </div>
-        </Column>
-        <Button type="submit">Get API Key</Button>
+        </div>
+        <button className="btn my-3 w-36" type="submit">Get API Key</button>
       </form>
       {state.errorMsg &&
-      <ErrorMessage><IconWarning/>{state.errorMsg}</ErrorMessage>
+      <h3 className="h5 text text--error"><i className="icon-warning mx-1"/>{state.errorMsg}</h3>
       }
       {state.registeredMsg &&
-      <TitleSmall>Thanks for signing up, please check your email to receive your API key.</TitleSmall>
+      <h3 className="h5">Thanks for signing up, please check your email to receive your API key.</h3>
       }
       {state.loading &&
-      <TitleSmall>Your API key is being created, one sec.</TitleSmall>
+      <h3 className="h5">Your API key is being created, one sec.</h3>
       }
-    </PublicCard>
+    </section>
   )
 }
