@@ -5,21 +5,27 @@ import {ThemeContext} from 'styled-components'
 import {SenateSealLogo} from 'app/views/public/style'
 import Title from 'app/shared/Title'
 
+
 export default function PublicHeader() {
 
   const themeContext = useContext(ThemeContext)
 
   return (
-    <HeaderBackground>
-      <HeaderContainer>
-        <SenateSealLogo src="/static/img/nys_logo224x224.png"/>
-        <Title
-          fontSize={themeContext.fontSizes.huge}
-          color={themeContext.colors.white}
-          text='Open Legislation' />
-      </HeaderContainer>
-    </HeaderBackground>
+    <div className="bg-blue-400 h-80">
+      Open Legislation tailwind test
+    </div>
   )
+  // return (
+  //   <HeaderBackground>
+  //     <HeaderContainer>
+  //       <SenateSealLogo src="/static/img/nys_logo224x224.png"/>
+  //       <Title
+  //         fontSize={themeContext.fontSizes.huge}
+  //         color={themeContext.colors.white}
+  //         text='Open Legislation' />
+  //     </HeaderContainer>
+  //   </HeaderBackground>
+  // )
 }
 
 const HeaderBackground = styled.div`

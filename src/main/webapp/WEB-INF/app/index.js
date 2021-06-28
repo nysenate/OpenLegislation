@@ -6,6 +6,7 @@ import './icons.scss'
 import PublicView from './views/public'
 import {ThemeProvider} from 'styled-components';
 import theme from './Theme';
+import "tailwindcss/tailwind.css"
 
 function App() {
   return (
