@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
-import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.api.legislation.transcripts.AbstractTranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,8 +12,7 @@ import java.util.regex.Pattern;
  * Pdf representation of a transcript designed to match the formatting
  * of the official transcripts.
  */
-public class TranscriptPdfView extends BasePdfView {
-    private static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f, SPACING = 2;
+public class TranscriptPdfView extends AbstractTranscriptPdfView {
     private static final int STENOGRAPHER_LINE_NUM = 27;
     private final String stenographer;
     private final float stenographerCenter;
@@ -31,12 +29,7 @@ public class TranscriptPdfView extends BasePdfView {
         writePages(TOP - FONT_WIDTH, 0, parser.getPages());
     }
 
-    @Override
-    protected void newPageSetup() throws IOException {
-        contentStream.addRect(LEFT, BOTTOM, RIGHT - LEFT, TOP - BOTTOM);
-        contentStream.setStrokingColor(Color.BLACK);
-        contentStream.stroke();
-    }
+
 
     /**
      * Draw correctly aligned text along with Stenographer information.

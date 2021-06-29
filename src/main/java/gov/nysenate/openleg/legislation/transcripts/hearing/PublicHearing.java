@@ -23,9 +23,9 @@ public class PublicHearing extends BaseLegislativeContent {
     /** The location of this Public Hearing. */
     private String address;
 
-    /** The {@link PublicHearingCommittee}
+    /** The {@link HearingHost}
      * holding this PublicHearing. */
-    private List<PublicHearingCommittee> committees;
+    private List<HearingHost> hosts;
 
     /** The raw text of the Public Hearing. */
     private final String text;
@@ -96,12 +96,12 @@ public class PublicHearing extends BaseLegislativeContent {
         this.address = address;
     }
 
-    public List<PublicHearingCommittee> getCommittees() {
-        return committees;
+    public List<HearingHost> getHosts() {
+        return hosts;
     }
 
-    public void setCommittees(List<PublicHearingCommittee> committees) {
-        this.committees = committees;
+    public void setHosts(List<HearingHost> hosts) {
+        this.hosts = hosts;
     }
 
     public LocalTime getStartTime() {

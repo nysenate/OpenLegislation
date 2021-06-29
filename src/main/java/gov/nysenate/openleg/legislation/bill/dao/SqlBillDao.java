@@ -4,25 +4,24 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.legislation.PublishStatus;
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.agenda.AgendaId;
+import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.BillVoteRowHandler;
 import gov.nysenate.openleg.legislation.bill.*;
+import gov.nysenate.openleg.legislation.bill.dao.service.ApprovalDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.VetoDataService;
+import gov.nysenate.openleg.legislation.bill.exception.ApprovalNotFoundException;
+import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
+import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
-import gov.nysenate.openleg.legislation.agenda.dao.BillVoteRowHandler;
-import gov.nysenate.openleg.legislation.agenda.AgendaId;
-import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.PublishStatus;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.legislation.bill.dao.service.ApprovalDataService;
-import gov.nysenate.openleg.legislation.bill.exception.ApprovalNotFoundException;
-import gov.nysenate.openleg.legislation.bill.dao.service.VetoDataService;
-import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +42,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.dao.SortOrder.ASC;
-import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.*;
 import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.SELECT_BILL_AMENDMENTS;
+import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.SELECT_BILL_AMEND_MEMO;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao {
@@ -841,7 +841,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             BillAction billAction = new BillAction();
             billAction.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                     rs.getString("bill_amend_version")));
-            billAction.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
+            billAction.setChamber(Chamber.getValue(rs.getString("chamber")));
             billAction.setSequenceNo(rs.getInt("sequence_no"));
             billAction.setDate(getLocalDateFromRs(rs, "effect_date"));
             billAction.setText(rs.getString("text"));

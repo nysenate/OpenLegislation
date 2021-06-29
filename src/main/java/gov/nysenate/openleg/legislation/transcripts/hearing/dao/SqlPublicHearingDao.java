@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
 
-import com.google.common.collect.MapDifference;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateToken;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 import static gov.nysenate.openleg.common.util.DateUtils.toTime;
 import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlPublicHearingQuery.*;
@@ -42,7 +42,8 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         PublicHearing publicHearing = jdbcNamed.queryForObject(
                 SELECT_PUBLIC_HEARING_BY_ID.getSql(schema()), params, publicHearingRowMapper);
-        publicHearing.setCommittees(getPublicHearingCommittees(publicHearingId));
+        // TODO: update
+        //publicHearing.setHosts(getPublicHearingCommittees(publicHearingId));
         return publicHearing;
     }
 
@@ -68,35 +69,35 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
     }
 
     /**
-     * Updates the backing store with this PublicHearings PublicHearingCommittee information, or inserts
+     * Updates the backing store with this PublicHearings HearingHost information, or inserts
      * it if it doesn't exist.
      * @param publicHearing
      */
     private void updatePublicHearingCommittees(PublicHearing publicHearing) {
-        List<PublicHearingCommittee> existingCommittees = getPublicHearingCommittees(publicHearing.getId());
-
-        if (existingCommittees != null && publicHearing.getCommittees() != null) {
-            if (!existingCommittees.equals(publicHearing.getCommittees())) {
-                MapDifference<PublicHearingCommittee, Integer> diff = difference(existingCommittees, publicHearing.getCommittees(), 1);
-
-                diff.entriesOnlyOnLeft().forEach((member, ordinal) -> {
-                    jdbcNamed.update(DELETE_PUBLIC_HEARING_COMMITTEE.getSql(schema()),
-                            getCommitteeParams(publicHearing.getId(), member));
-                });
-                diff.entriesOnlyOnRight().forEach((member, ordinal) -> {
-                    jdbcNamed.update(INSERT_PUBLIC_HEARING_COMMITTEES.getSql(schema()),
-                            getCommitteeParams(publicHearing.getId(), member));
-                });
-            }
-        }
+        List<CommitteeId> existingCommittees = getPublicHearingCommittees(publicHearing.getId());
+// TODO: update
+//        if (existingCommittees != null && publicHearing.getHosts() != null) {
+//            if (!existingCommittees.equals(publicHearing.getHosts())) {
+//                MapDifference<HearingHost, Integer> diff = difference(existingCommittees, publicHearing.getHosts(), 1);
+//
+//                diff.entriesOnlyOnLeft().forEach((member, ordinal) -> {
+//                    jdbcNamed.update(DELETE_PUBLIC_HEARING_COMMITTEE.getSql(schema()),
+//                            getCommitteeParams(publicHearing.getId(), member));
+//                });
+//                diff.entriesOnlyOnRight().forEach((member, ordinal) -> {
+//                    jdbcNamed.update(INSERT_PUBLIC_HEARING_COMMITTEES.getSql(schema()),
+//                            getCommitteeParams(publicHearing.getId(), member));
+//                });
+//            }
+//        }
     }
 
     /**
-     * Get a list of {@link PublicHearingCommittee} belonging to a PublicHearing.
+     * Get a list of {@link HearingHost} belonging to a PublicHearing.
      * @param publicHearingId
      * @return
      */
-    private List<PublicHearingCommittee> getPublicHearingCommittees(PublicHearingId publicHearingId) {
+    private List<CommitteeId> getPublicHearingCommittees(PublicHearingId publicHearingId) {
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         return jdbcNamed.query(SELECT_PUBLIC_HEARING_COMMITTEES.getSql(schema()), params, committeeRowMapper);
     }
@@ -122,7 +123,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         return params;
     }
 
-    private MapSqlParameterSource getCommitteeParams(PublicHearingId id, PublicHearingCommittee committee) {
+    private MapSqlParameterSource getCommitteeParams(PublicHearingId id, CommitteeId committee) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("filename", id.getFileName());
         params.addValue("committeeName", committee.getName());
@@ -148,10 +149,10 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
             new PublicHearingId(rs.getString("filename"));
 
 
-    static RowMapper<PublicHearingCommittee> committeeRowMapper = (rs, rowNum) -> {
+    static RowMapper<CommitteeId> committeeRowMapper = (rs, rowNum) -> {
         String name = rs.getString("committee_name");
-        String chamber = rs.getString("committee_chamber");
-        return new PublicHearingCommittee(name, chamber);
+        var chamber = Chamber.getValue(rs.getString("committee_chamber"));
+        return new CommitteeId(chamber, name);
     };
 
     static RowMapper<PublicHearingUpdateToken> publicHearingTokenRowMapper = (rs, rowNum) ->

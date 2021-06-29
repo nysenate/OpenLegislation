@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDao;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
@@ -13,11 +15,15 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PublicHearingParser {
     @Autowired
-    private PublicHearingDataService dataService;
+    private PublicHearingDataService hearingDataService;
+    @Autowired
+    private CommitteeDao committeeDao;
+
     private final static Charset CP_1252 = Charsets.toCharset("CP1252");
 
     /**
@@ -28,14 +34,16 @@ public class PublicHearingParser {
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
         String fullText = Files.readString(publicHearingFile.getFile().toPath(), CP_1252);
+        // Writes file in UTF-8.
         Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
+        List<CommitteeSessionId> comSessionIds = committeeDao.getAllSessionIds();
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
-        PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText);
+        PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText, comSessionIds);
 
         LocalDateTime now = LocalDateTime.now();
         hearing.setModifiedDateTime(now);
         hearing.setPublishedDateTime(now);
 
-        dataService.savePublicHearing(hearing, publicHearingFile, true);
+        hearingDataService.savePublicHearing(hearing, publicHearingFile, true);
     }
 }

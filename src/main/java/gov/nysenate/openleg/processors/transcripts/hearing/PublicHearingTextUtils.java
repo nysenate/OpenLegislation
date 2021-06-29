@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.processors.ParseError;
@@ -13,31 +15,41 @@ public class PublicHearingTextUtils {
     // This is a utility class.
     private PublicHearingTextUtils() {}
 
-    public static PublicHearing getHearingFromText(PublicHearingId id, String fullText) {
+    public static PublicHearing getHearingFromText(PublicHearingId hearingId, String fullText, List<CommitteeSessionId> comSessionIds) {
         List<List<String>> pages = PublicHearing.getPages(fullText);
-        List<String> firstPage = pages.get(0);
         if (pages.size() < 2)
-            throw new ParseError("Public hearing in file " + id.getFileName() + " is too short.");
+            throw new ParseError("Public hearing in file " + hearingId.getFileName() + " is too short.");
         boolean isWrongFormat = pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
-        // Splits up the data.
-        String pageText = firstPage.stream().map(str -> str.replaceAll(LINE_NUM, ""))
-                .collect(Collectors.joining("\n")).split("PRESIDING|PRESENT|SPONSORS")[0];
-        String splitPattern = isWrongFormat ? "\n{5,}" : "-{10,}";
-        List<String> dashSplit = Arrays.stream(pageText.split(splitPattern, 3)).map(String::trim)
-                .filter(str -> !str.isEmpty()).collect(Collectors.toList());
+        List<String> dataList = getDataList(pages.get(0), isWrongFormat);
         // Retrieves information from text.
-        String[] addrDateTime = getAddrDateTime(dashSplit.get(dashSplit.size() - 1), isWrongFormat);
+        String[] addrDateTime = getAddrDateTime(dataList.get(dataList.size() - 1), isWrongFormat);
         boolean hasAddress = addrDateTime.length > 1;
         var dateTimeParser = new PublicHearingDateTimeParser(addrDateTime[hasAddress ? 1 : 0],
                 pages.get(pages.size() - 1));
-        var hearing = new PublicHearing(id, dateTimeParser.getDate(), fullText);
+        // Set the data.
+        var hearing = new PublicHearing(hearingId, dateTimeParser.getDate(), fullText);
         hearing.setStartTime(dateTimeParser.getStartTime());
         hearing.setEndTime(dateTimeParser.getEndTime());
-        hearing.setCommittees(PublicHearingCommitteeParser.parse(dashSplit.get(0)));
-        String title = dashSplit.size() < 2 ? "No title" : dashSplit.get(dashSplit.size() - 2);
+        SessionYear sessionYear = SessionYear.of(hearing.getYear());
+        hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
+        String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2);
         hearing.setTitle(title.replaceAll("\\s+", " ").trim());
         setAddress(hasAddress, addrDateTime[0], hearing);
         return hearing;
+    }
+
+    /**
+     * The first page should be split into parts, for easier data processing.
+     * @param firstPage to pull data sections from.
+     * @param isWrongFormat to indicate a different stenographer that uses a different format.
+     * @return the list of data sections.
+     */
+    private static List<String> getDataList(List<String> firstPage, boolean isWrongFormat) {
+        String pageText = firstPage.stream().map(str -> str.replaceAll(LINE_NUM, ""))
+                .collect(Collectors.joining("\n")).split("PRESIDING|PRESENT|SPONSORS")[0];
+        String splitPattern = isWrongFormat ? "\n{5,}" : "-{10,}";
+        return Arrays.stream(pageText.split(splitPattern, 3)).map(String::trim)
+                .filter(str -> !str.isEmpty()).collect(Collectors.toList());
     }
 
     /**

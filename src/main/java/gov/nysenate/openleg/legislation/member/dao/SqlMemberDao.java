@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.Person;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.SessionYear;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -120,7 +120,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             sessionMember.setAlternate(rs.getBoolean("alternate"));
 
             Member member = new Member(rs.getInt("member_id"));
-            member.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
+            member.setChamber(Chamber.getValue(rs.getString("chamber")));
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
             member.setFullName(rs.getString("full_name"));
