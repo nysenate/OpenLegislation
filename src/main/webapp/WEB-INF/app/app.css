@@ -22,7 +22,7 @@
     }
 
     .h2 {
-        @apply text-gray-700 text-2xl md:text-3xl lg:text-4xl;
+        @apply text-gray-700 text-2xl lg:text-3xl;
     }
 
     .h3 {
