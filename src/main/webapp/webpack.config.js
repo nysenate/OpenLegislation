@@ -45,11 +45,13 @@ module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   devServer: {
     port: 3000,
+    // Send api requests for these paths to the target base url while in dev mode.
     proxy: [
       {
         context: ['/api', '/loginapikey', '/register/signup'],
         target: 'http://localhost:8080',
       }
-    ]
+    ],
+    historyApiFallback: true,
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
 
 const fakeTitle = "New York State Laws";
 
@@ -8,37 +9,44 @@ export default function LegislationView({children}) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="bg-gray-100 h-screen w-screen">
-      <Header title={title} />
+    <Router>
+      <div className="bg-gray-100 h-screen w-screen">
+        <Header open={open} setOpen={setOpen} title={title}/>
 
-      <div className="">
-        <div>
-          <Menu open={open}/>
-        </div>
-        <div className="pl-0 xl:pl-80">
-          content here
-          {open && " Open"}
+        <div className="">
+          <div>
+            <Menu open={open}/>
+          </div>
+          <div className="pl-0 xl:pl-80">
+            <Switch>
+              <Route exact path="/bills" component={Bills}/>
+            </Switch>
+          </div>
         </div>
       </div>
-    </div>
+    </Router>
   )
 }
 
-function Header({ title }) {
+function Bills() {
+  return "BILLS"
+}
+
+function Header({open, setOpen, title}) {
   return (
     <div className="h-16 w-full bg-blue-500">
       <div className="block xl:hidden">
-        <MobileHeader title={title} />
+        <MobileHeader open={open} setOpen={setOpen} title={title}/>
       </div>
 
       <div className="hidden xl:block">
-        <XLHeader title={title} />
+        <XLHeader title={title}/>
       </div>
     </div>
   )
 }
 
-function MobileHeader({ title }) {
+function MobileHeader({open, setOpen, title}) {
   return (
     <div className="flex h-16 items-center space-x-3 pl-3">
       <i className="icon-menu text-5xl text-white cursor-pointer"
@@ -48,7 +56,7 @@ function MobileHeader({ title }) {
   )
 }
 
-function XLHeader({ title }) {
+function XLHeader({title}) {
   return (
     <div className="flex">
       <div className="flex w-80 h-16 bg-blue-500 items-center justify-center space-x-2">
@@ -78,22 +86,24 @@ function Menu({open}) {
   return (
     <div className={className}>
       <ul>
-        <MenuItem>Senate Calendars</MenuItem>
-        <MenuItem>Senate Agendas / Meetings</MenuItem>
-        <MenuItem>Bills and Resolutions</MenuItem>
-        <MenuItem>New York State Laws</MenuItem>
-        <MenuItem>Session / Hearing Transcripts</MenuItem>
-        <MenuItem>JSON API Docs</MenuItem>
-        <MenuItem>Logout</MenuItem>
+        <MenuItem to="/calendars">Senate Calendars</MenuItem>
+        <MenuItem to="/agendas">Senate Agendas / Meetings</MenuItem>
+        <MenuItem to="/bills">Bills and Resolutions</MenuItem>
+        <MenuItem to="/laws">New York State Laws</MenuItem>
+        <MenuItem to="/transcripts">Session / Hearing Transcripts</MenuItem>
+        <MenuItem to="/docs">JSON API Docs</MenuItem>
+        <MenuItem to="/logout">Logout</MenuItem>
       </ul>
     </div>
   )
 }
 
-function MenuItem({children}) {
+function MenuItem({to, children}) {
   return (
     <li className="p-3">
-      {children}
+      <NavLink to={to} activeClassName="bg-blue-200">
+        {children}
+      </NavLink>
     </li>
   )
 }
