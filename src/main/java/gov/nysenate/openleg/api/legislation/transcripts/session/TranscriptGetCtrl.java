@@ -19,7 +19,6 @@ import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataSe
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -123,7 +122,7 @@ public class TranscriptGetCtrl extends BaseCtrl
      */
     @RequestMapping("/{dateTime}.pdf")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
-            throws IOException, COSVisitorException {
+            throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         TranscriptId transcriptId = new TranscriptId(localDateTime);
         Transcript transcript = transcriptData.getTranscript(transcriptId);

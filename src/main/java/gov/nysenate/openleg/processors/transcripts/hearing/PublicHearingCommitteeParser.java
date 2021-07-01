@@ -22,7 +22,7 @@ public class PublicHearingCommitteeParser {
      */
     public static List<PublicHearingCommittee> parse(String committeeBlock) {
         List<PublicHearingCommittee> committees = new ArrayList<>();
-        String[] committeeStrings = committeeBlock.split(COMMITTEE_SPLIT);
+        String[] committeeStrings = committeeBlock.replaceAll("\n", " ").split(COMMITTEE_SPLIT);
         // Parse committees.
         for (String committeeString : committeeStrings) {
             String comStr = committeeString.replaceAll(COMMITTEE_OR_TASK_FORCE, "");

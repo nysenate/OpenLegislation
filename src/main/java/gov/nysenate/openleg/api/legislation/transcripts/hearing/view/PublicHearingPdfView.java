@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing.view;
 
 import gov.nysenate.openleg.api.BasePdfView;
-import gov.nysenate.openleg.common.util.PublicHearingTextUtils;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class PublicHearingPdfView extends BasePdfView {
     public PublicHearingPdfView(PublicHearing publicHearing) throws IOException {
         if (publicHearing == null)
             throw new IllegalArgumentException("Supplied Public Hearing cannot be null when converting to pdf.");
-        List<List<String>> pages = PublicHearingTextUtils.getPages(publicHearing.getText());
+        List<List<String>> pages = PublicHearing.getPages(publicHearing.getText());
         writePages(DEFAULT_TOP, MARGIN, pages);
     }
 }

@@ -2,12 +2,12 @@ package gov.nysenate.openleg.common.dao;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
@@ -176,7 +176,7 @@ public abstract class SqlBaseDao
         return hstoreMap.entrySet().stream()
             .map(kv -> kv.getKey() + "=>" +
                     (kv.getValue() == null ? "NULL"
-                            : StringUtils.isEmpty(kv.getValue()) ? "\"\""
+                            : !StringUtils.hasLength(kv.getValue()) ? "\"\""
                             : kv.getValue().replaceAll("([,=> ])", "\\\\$1").replaceAll("'", "''")))
             .collect(Collectors.joining(","));
     }

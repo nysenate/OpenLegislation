@@ -1,38 +1,44 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Bills and Resolutions API &mdash; Open Legislation 2.0-alpha documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Senate Calendar API" href="calendars.html" />
@@ -77,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,6 +115,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -142,18 +150,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="reference.html">Docs</a> &raquo;</li>
+      <li><a href="reference.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><strong>Bills and Resolutions API</strong></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/bills.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -260,7 +270,7 @@ the base print no (e.g. S1234).</p>
    <span class="s2">&quot;result&quot;</span><span class="o">:</span>
    <span class="p">{</span>                                           <span class="c1">// Actual data of bill contained in &#39;result&#39;</span>
    <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                     <span class="c1">// Print no of bill (not including amendment version)</span>
-   <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>                            <span class="c1">// Session year bill is active in</span>
+   <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                            <span class="c1">// Session year bill is active in</span>
    <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                         <span class="c1">// Print no of bill (may include amendment version)</span>
    <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
      <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                      <span class="c1">// Which chamber the bill was introduced (SENATE or ASSEMBLY)</span>
@@ -269,19 +279,19 @@ the base print no (e.g. S1234).</p>
    <span class="p">},</span>
    <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Provides enhanced..&quot;</span><span class="p">,</span>             <span class="c1">// Title of the bill</span>
    <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Current amendment version (&quot;&quot; for initial version)</span>
-   <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>                               <span class="c1">// Year the bill was introduced on</span>
+   <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                               <span class="c1">// Year the bill was introduced on</span>
    <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-14T10:36:22&quot;</span><span class="p">,</span> <span class="c1">// Date/Time this bill was first published via LBDC</span>
    <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If the bill was substituted, the bill id will be contained</span>
      <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                   <span class="c1">// The base print no of the substituted bill</span>
-     <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>                           <span class="c1">// Session year of the substituted bill</span>
+     <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span>                           <span class="c1">// Session year of the substituted bill</span>
    <span class="p">},</span>
    <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>                                <span class="c1">// Contains sponsor information</span>
      <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Contains sponsor member details (can be null)</span>
-       <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">422</span><span class="p">,</span>                        <span class="c1">// Id of the sponsor</span>
+       <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">422</span><span class="p">,</span>                        <span class="c1">// Id of the sponsor</span>
        <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;GOLDEN&quot;</span><span class="p">,</span>                  <span class="c1">// Last name of sponsor (unique within a session year)</span>
-       <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>                    <span class="c1">// Session year this sponsor was active in</span>
+       <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                    <span class="c1">// Session year this sponsor was active in</span>
        <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Martin J. Golden&quot;</span><span class="p">,</span>         <span class="c1">// Full name of sponsor</span>
-       <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">22</span>                      <span class="c1">// Legislative district code of this sponsor</span>
+       <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">22</span>                      <span class="c1">// Legislative district code of this sponsor</span>
      <span class="p">},</span>
      <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                          <span class="c1">// True if this is a budget bill</span>
      <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>                            <span class="c1">// True if this bill was sponsored by the rules committee</span>
@@ -305,18 +315,18 @@ the base print no (e.g. S1234).</p>
          <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span>
        <span class="p">}</span>
      <span class="p">],</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;programInfo&quot;</span><span class="o">:</span> <span class="p">{</span>                            <span class="c1">// Some bills are introduced as part of a program by the governor or an agency</span>
      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Department of Motor Vehicles&quot;</span><span class="p">,</span>   <span class="c1">// The name of the program/agency</span>
-     <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">2</span>                           <span class="c1">// The position of this bill within that program/agency list</span>
+     <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">2</span>                           <span class="c1">// The position of this bill within that program/agency list</span>
    <span class="p">},</span>
    <span class="c1">// ---- Bill summary view ends here --- //</span>
    <span class="s2">&quot;amendments&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// Contains info specific to an amendment (base version is &quot;&quot;)</span>
      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
        <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="p">{</span>                                   <span class="c1">// Map of Amendment versions</span>
          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>               <span class="c1">// Bill print no/session details duplicated here</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
          <span class="s2">&quot;basePrintNoStr&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180-2013&quot;</span><span class="p">,</span>
          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>
          <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Amendment version</span>
@@ -324,11 +334,11 @@ the base print no (e.g. S1234).</p>
          <span class="s2">&quot;sameAs&quot;</span><span class="o">:</span> <span class="p">{</span>                           <span class="c1">// List of bill that are identical to this within the same session year</span>
             <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
                <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+               <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
                <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
                <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
             <span class="p">}],</span>
-            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
          <span class="p">},</span>
          <span class="s2">&quot;memo&quot;</span><span class="o">:</span> <span class="s2">&quot;BILL NUMBER:S2180&quot;</span><span class="p">,</span>        <span class="c1">// The sponsor&#39;s memo which explains the bill. Only available for senate bills.</span>
          <span class="s2">&quot;lawSection&quot;</span><span class="o">:</span> <span class="s2">&quot;Penal Law&quot;</span><span class="p">,</span>            <span class="c1">// The primary section of law this bill impacts.</span>
@@ -341,24 +351,24 @@ the base print no (e.g. S1234).</p>
          <span class="s2">&quot;coSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                       <span class="c1">// List of co sponsors</span>
            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="p">{</span>
-             <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">391</span><span class="p">,</span>
+             <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">391</span><span class="p">,</span>
              <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;AVELLA&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+             <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
              <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Tony Avella&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">11</span>
+             <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">11</span>
             <span class="p">}</span>
            <span class="p">],</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
          <span class="p">},</span>
          <span class="s2">&quot;multiSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of multi sponsors (only for assembly bills)</span>
            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">0</span>
+           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
          <span class="p">},</span>
          <span class="s2">&quot;uniBill&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                     <span class="c1">// Indicates if this is a uni bill</span>
          <span class="s2">&quot;stricken&quot;</span><span class="o">:</span> <span class="kc">false</span>                     <span class="c1">// Indicates if this amendment has been stricken</span>
        <span class="p">}</span>
      <span class="p">},</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">}</span>
    <span class="s2">&quot;votes&quot;</span><span class="o">:</span> <span class="p">{</span>                                  <span class="c1">// Votes will be stored here if there are any</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -375,120 +385,120 @@ the base print no (e.g. S1234).</p>
              <span class="s2">&quot;EXC&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Map by vote codes</span>
                 <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                     <span class="c1">// List of members that voted with this code</span>
                   <span class="p">{</span>
-                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">424</span><span class="p">,</span>
+                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">424</span><span class="p">,</span>
                     <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;HANNON&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span>
+                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span>
                   <span class="p">}</span>
                 <span class="p">],</span>
-                 <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+                 <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
              <span class="p">},</span>
              <span class="s2">&quot;AYEWR&quot;</span><span class="o">:</span> <span class="p">{..},</span>                    <span class="c1">// Other votes truncated here for brevity</span>
              <span class="s2">&quot;NAY&quot;</span><span class="o">:</span> <span class="p">{..},</span>
              <span class="s2">&quot;AYE&quot;</span><span class="o">:</span> <span class="p">{..}</span>
            <span class="p">},</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">4</span>
+           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">4</span>
          <span class="p">}</span>
        <span class="p">},</span>
      <span class="p">],</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;vetoMessages&quot;</span> <span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If a veto memo from the governor was sent, it will show up here</span>
        <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
          <span class="s2">&quot;billId&quot;</span> <span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Bill id replicated here</span>
            <span class="s2">&quot;basePrintNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;session&quot;</span> <span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+           <span class="s2">&quot;session&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
            <span class="s2">&quot;printNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
            <span class="s2">&quot;version&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span>
          <span class="p">},</span>
-         <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                        <span class="c1">// Year this veto was sent</span>
-         <span class="s2">&quot;vetoNumber&quot;</span> <span class="o">:</span> <span class="mi">511</span><span class="p">,</span>                   <span class="c1">// Veto number (unique to a single year)</span>
+         <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                        <span class="c1">// Year this veto was sent</span>
+         <span class="s2">&quot;vetoNumber&quot;</span> <span class="o">:</span> <span class="mf">511</span><span class="p">,</span>                   <span class="c1">// Veto number (unique to a single year)</span>
          <span class="s2">&quot;memoText&quot;</span> <span class="o">:</span> <span class="s2">&quot;.....&quot;</span><span class="p">,</span>                 <span class="c1">// The content of the veto memo</span>
          <span class="s2">&quot;vetoType&quot;</span> <span class="o">:</span> <span class="s2">&quot;STANDARD&quot;</span><span class="p">,</span>              <span class="c1">// The type of veto</span>
-         <span class="s2">&quot;chapter&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                        <span class="c1">// The chapter (if applicable)</span>
-         <span class="s2">&quot;billPage&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                       <span class="c1">// For line vetos, a page number may be specified</span>
-         <span class="s2">&quot;lineStart&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-         <span class="s2">&quot;lineEnd&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s2">&quot;chapter&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                        <span class="c1">// The chapter (if applicable)</span>
+         <span class="s2">&quot;billPage&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                       <span class="c1">// For line vetos, a page number may be specified</span>
+         <span class="s2">&quot;lineStart&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+         <span class="s2">&quot;lineEnd&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
          <span class="s2">&quot;signer&quot;</span> <span class="o">:</span> <span class="s2">&quot;ANDREW M. CUOMO&quot;</span><span class="p">,</span>         <span class="c1">// Governor Name</span>
          <span class="s2">&quot;signedDate&quot;</span> <span class="o">:</span> <span class="kc">null</span>                   <span class="c1">// Date Signed (if present)</span>
        <span class="p">}</span> <span class="p">],</span>
-       <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">1</span>
+       <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;approvalMessage&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Approval message from the governor (if present)</span>
       <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// Bill id the approval message was sent for</span>
          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830A&quot;</span><span class="p">,</span>
          <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span>
       <span class="p">},</span>
-      <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// Year this approval message was sent</span>
-      <span class="s2">&quot;approvalNumber&quot;</span><span class="o">:</span> <span class="mi">11</span><span class="p">,</span>                     <span class="c1">// Approval number (unique to a single year)</span>
-      <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="mi">476</span><span class="p">,</span>                           <span class="c1">// The chapter (if applicable)</span>
+      <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                             <span class="c1">// Year this approval message was sent</span>
+      <span class="s2">&quot;approvalNumber&quot;</span><span class="o">:</span> <span class="mf">11</span><span class="p">,</span>                     <span class="c1">// Approval number (unique to a single year)</span>
+      <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="mf">476</span><span class="p">,</span>                           <span class="c1">// The chapter (if applicable)</span>
       <span class="s2">&quot;signer&quot;</span><span class="o">:</span> <span class="s2">&quot;ANDREW M. CUOMO&quot;</span><span class="p">,</span>              <span class="c1">// Governor Name</span>
       <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;....&quot;</span>                            <span class="c1">// Text of the approval message</span>
    <span class="p">},</span>
    <span class="s2">&quot;additionalSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                      <span class="c1">// If there are additional sponsors, the members will be listed here</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">0</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
    <span class="p">},</span>
    <span class="s2">&quot;pastCommittees&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Lists out all the committees this bill was in</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
          <span class="p">{</span>
          <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>                 <span class="c1">// Committee Chamber</span>
          <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;GOVERNMENTAL OPERATIONS&quot;</span><span class="p">,</span>     <span class="c1">// Name of committee</span>
-         <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>                   <span class="c1">// Session year it was referenced by the committee</span>
+         <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                   <span class="c1">// Session year it was referenced by the committee</span>
          <span class="s2">&quot;referenceDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-10T00:00&quot;</span>    <span class="c1">// Date it was referenced by the committee</span>
          <span class="p">}],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;actions&quot;</span><span class="o">:</span> <span class="p">{</span>                                 <span class="c1">// The actions that have occurred on a bill</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
          <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
             <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
             <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>                       <span class="c1">// Specifies which amendment version of the bill the action affects</span>
          <span class="p">},</span>
          <span class="s2">&quot;date&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-03-17&quot;</span><span class="p">,</span>                  <span class="c1">// Date of the action</span>
          <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                   <span class="c1">// Chamber this action occurred in</span>
-         <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                       <span class="c1">// Number used to order the actions sequentially</span>
+         <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                       <span class="c1">// Number used to order the actions sequentially</span>
          <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;REFERRED TO INVESTIGATIONS..&quot;</span> <span class="c1">// The text describing the action</span>
       <span class="p">},</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;previousVersions&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Lists the previous versions of this bill from prior session years.</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
          <span class="p">{</span>
          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                <span class="c1">// Bill id of the previous bill</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>
          <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
          <span class="p">}</span>
       <span class="p">],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;committeeAgendas&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// If this bill was on a committee agenda, they will be referenced here</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
         <span class="s2">&quot;agendaId&quot;</span><span class="o">:</span> <span class="p">{</span>                           <span class="c1">// Id of the agenda</span>
-          <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
-          <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span>
+          <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="mf">2</span><span class="p">,</span>
+          <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span>
         <span class="p">},</span>
         <span class="s2">&quot;committeeId&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Id of the committee</span>
           <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
           <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Health&quot;</span>
         <span class="p">}</span>
       <span class="p">}],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">},</span>
    <span class="s2">&quot;calendars&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// If the bill was on a senate calendar, the calendars will be</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                                <span class="c1">// referenced here</span>
          <span class="p">{</span>
-         <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>                          <span class="c1">// Calendar year</span>
-         <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">4</span>                    <span class="c1">// Calendar number</span>
+         <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                          <span class="c1">// Calendar year</span>
+         <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">4</span>                    <span class="c1">// Calendar number</span>
          <span class="p">}</span>
       <span class="p">],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -502,7 +512,7 @@ the base print no (e.g. S1234).</p>
        <span class="c1">// hidden here for brevity</span>
     <span class="p">}</span>
    <span class="p">}</span>
-  <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">1</span>
+  <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -591,13 +601,13 @@ the results will be in ascending order by the bill’s published date time (sort
    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                     <span class="c1">// True if the request was fine</span>
    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;bill-info list&quot;</span><span class="p">,</span>
-   <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">25568</span><span class="p">,</span>                      <span class="c1">// Total bills in the listing</span>
-   <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                    <span class="c1">// Offset value</span>
-   <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>                     <span class="c1">// To paginate, set query param offset={offsetEnd + 1}</span>
-   <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>                         <span class="c1">// Max number of results shown</span>
+   <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mf">25568</span><span class="p">,</span>                      <span class="c1">// Total bills in the listing</span>
+   <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                    <span class="c1">// Offset value</span>
+   <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>                     <span class="c1">// To paginate, set query param offset={offsetEnd + 1}</span>
+   <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>                         <span class="c1">// Max number of results shown</span>
    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span> <span class="p">...</span> <span class="p">}],</span>                <span class="c1">// Array of bill responses (either summary or full view)</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">50</span>
+     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">50</span>
    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -757,16 +767,16 @@ Multiple formats can be requested.</p></td>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
-    <span class="nx">total</span><span class="o">:</span> <span class="mi">74</span><span class="p">,</span>
-    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
-    <span class="nx">limit</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">total</span><span class="o">:</span> <span class="mf">74</span><span class="p">,</span>
+    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
+    <span class="nx">limit</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="p">{</span>
                <span class="nx">id</span><span class="o">:</span> <span class="p">{</span>
                     <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;S1826&quot;</span><span class="p">,</span>
-                    <span class="nx">session</span><span class="o">:</span> <span class="mi">2019</span><span class="p">,</span>
+                    <span class="nx">session</span><span class="o">:</span> <span class="mf">2019</span><span class="p">,</span>
                     <span class="nx">basePrintNoStr</span><span class="o">:</span> <span class="s2">&quot;S1826-2019&quot;</span>
                 <span class="p">},</span>
                 <span class="nx">contentType</span><span class="o">:</span> <span class="s2">&quot;BILL&quot;</span><span class="p">,</span>
@@ -876,16 +886,16 @@ may only want to know which bills have had status updates, or which bills had fu
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
-    <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
-    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mf">23</span><span class="p">,</span>
+    <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mf">23</span><span class="p">,</span>
+    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mf">50</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>
         <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S1234&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span>
         <span class="p">},</span>
         <span class="s2">&quot;contentType&quot;</span> <span class="o">:</span> <span class="s2">&quot;BILL&quot;</span><span class="p">,</span>
         <span class="s2">&quot;sourceId&quot;</span><span class="o">:</span> <span class="s2">&quot;SOBI.D121220.T160535.TXT-0-BILL&quot;</span><span class="p">,</span>  <span class="c1">// The source file that made the change</span>
@@ -909,7 +919,7 @@ may only want to know which bills have had status updates, or which bills had fu
             <span class="s2">&quot;Active Version&quot;</span><span class="o">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
             <span class="s2">&quot;Status&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span>
         <span class="p">}</span>
-        <span class="s2">&quot;fieldCount&quot;</span> <span class="o">:</span> <span class="mi">14</span>
+        <span class="s2">&quot;fieldCount&quot;</span> <span class="o">:</span> <span class="mf">14</span>
     <span class="p">},</span>
     <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
 </pre></div>
@@ -926,29 +936,29 @@ may only want to know which bills have had status updates, or which bills had fu
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation v2.0 API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation v2.0 API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &#169; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -956,7 +966,6 @@ may only want to know which bills have had status updates, or which bills had fu
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

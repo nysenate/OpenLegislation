@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar;
 
-import gov.nysenate.openleg.processors.BaseSourceData;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.processors.BaseSourceData;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -57,7 +57,7 @@ public class CalendarAlertFile extends BaseSourceData {
      */
     public int getActiveListSeqNum() {
         String seqNum = filenameMatcher.group("activeListSup");
-        return StringUtils.isEmpty(seqNum) ? 0 : Integer.valueOf(seqNum);
+        return StringUtils.hasLength(seqNum) ? Integer.parseInt(seqNum) : 0;
     }
 
     public LocalDateTime getPublishedDateTime() {

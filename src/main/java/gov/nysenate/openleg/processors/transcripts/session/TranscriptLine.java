@@ -30,7 +30,7 @@ public class TranscriptLine {
     public TranscriptLine(@NonNull String text) {
         if (!text.isBlank())
             text = text.stripTrailing();
-        this.text = text.replaceAll("[\r\f\t¦«]", "");
+        this.text = text.replaceAll("\f", "");
     }
 
     public String getText() {
@@ -66,9 +66,9 @@ public class TranscriptLine {
      * @return the location.
      */
     public Optional<String> getLocation() {
-        String temp = removeLineNumber();
+        String temp = removeLineNumber().replaceAll("\\s+", " ");
         if (temp.matches(("(?i).*ALBANY.*NEW.*YORK.*")))
-            return Optional.of(temp);
+            return Optional.of(temp.trim());
         return Optional.empty();
     }
 

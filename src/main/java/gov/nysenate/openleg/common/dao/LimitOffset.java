@@ -12,15 +12,12 @@ import java.util.List;
 public class LimitOffset
 {
     /** Use this reference when no limit is desired. */
-    public static final LimitOffset ALL = new LimitOffset(0,0);
+    public static final LimitOffset ALL = new LimitOffset(0,0),
 
     /** Some references for convenience. */
-    public static final LimitOffset ONE = new LimitOffset(1);
-    public static final LimitOffset TEN = new LimitOffset(10);
-    public static final LimitOffset TWENTY_FIVE = new LimitOffset(25);
-    public static final LimitOffset FIFTY = new LimitOffset(50);
-    public static final LimitOffset HUNDRED = new LimitOffset(100);
-    public static final LimitOffset THOUSAND = new LimitOffset(1000);
+            ONE = new LimitOffset(1), TEN = new LimitOffset(10),
+            TWENTY_FIVE = new LimitOffset(25), FIFTY = new LimitOffset(50),
+            HUNDRED = new LimitOffset(100), THOUSAND = new LimitOffset(1000);
 
     /** Number of elements to limit the result set to. */
     private final int limit;
@@ -40,7 +37,7 @@ public class LimitOffset
         this.offset = Math.max(offset, 1);
     }
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * If the 'limitOffset' is valid, return a new sub-list according to the given 'limitOffset'.

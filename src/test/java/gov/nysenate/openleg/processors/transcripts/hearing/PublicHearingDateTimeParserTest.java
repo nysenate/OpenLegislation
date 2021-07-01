@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
-public class PublicHearingDateParserTest {
+public class PublicHearingDateTimeParserTest {
 
     /** Parses the date time string: June 4, 2014 1:00 p.m. to 3:00 p.m. */
     @Test
@@ -49,7 +49,6 @@ public class PublicHearingDateParserTest {
                 LocalDate.of(2012, 1, 25), null,null);
     }
 
-
     /** Parses the date time string: August 22, 2013 11:00 a.m. <96> 4:00 p.m. */
     @Test
     public void invalidCharactersParse() {
@@ -77,6 +76,12 @@ public class PublicHearingDateParserTest {
     }
 
     @Test
+    public void wrongFormatTest() {
+        testHearingDate("8-25-20 MTA Transcript.txt", LocalDate.of(2020, 8, 25), LocalTime.of(10, 0),
+                LocalTime.of(15, 30));
+    }
+
+    @Test
     public void noDateTest() {
         assertThrows(ParseError.class, () -> testHearingDate("noDate.txt", null, null, null));
     }
@@ -84,8 +89,8 @@ public class PublicHearingDateParserTest {
     private void testHearingDate(String filename, LocalDate expectedDate, LocalTime expectedStartTime,
                                  LocalTime expectedEndTime) {
         var hearing = PublicHearingTestHelper.getHearingFromFilename(filename);
-        assertEquals(hearing.getDate(), expectedDate);
-        assertEquals(hearing.getStartTime(), expectedStartTime);
-        assertEquals(hearing.getEndTime(), expectedEndTime);
+        assertEquals(expectedDate, hearing.getDate());
+        assertEquals(expectedStartTime, hearing.getStartTime());
+        assertEquals(expectedEndTime, hearing.getEndTime());
     }
 }

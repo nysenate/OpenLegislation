@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,12 +19,12 @@ import java.util.List;
 
 @Service
 public class TranscriptParser {
-    private final static String BAD_CHARACTER = Character.toString(160);
-
     @Autowired
     private TranscriptDataService transcriptDataService;
 
     public void process(TranscriptFile transcriptFile) throws IOException {
+        String fullText = Files.readString(transcriptFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
+        Files.writeString(transcriptFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
         Transcript processed = getTranscriptFromFile(transcriptFile);
         transcriptFile.setTranscript(processed);
         transcriptDataService.saveTranscript(processed, true);
@@ -34,8 +36,7 @@ public class TranscriptParser {
         LocalTime time = null;
         String sessionType = null, location = null;
 
-        // Some transcripts start with 3 incorrect lines that should be skipped.
-        int index = new TranscriptLine(lines.get(0)).getSession().isPresent() ? 3 : 0;
+        int index = 0;
         while (index < lines.size() && (date == null || time == null || location == null || sessionType == null)) {
             TranscriptLine line = new TranscriptLine(lines.get(index++));
             date = line.getDate().orElse(date);
@@ -47,18 +48,7 @@ public class TranscriptParser {
         if (date == null || time == null)
             throw new ParseError("Date or time could not be parsed from TranscriptFile " + transcriptFile.getOriginalFilename());
         TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time));
-        String transcriptText = getTranscriptText(lines, date.getYear());
+        String transcriptText = String.join("\n", lines) + "\n";
         return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText);
-    }
-
-    private static String getTranscriptText(List<String> lines, int year) {
-        boolean needsTextCorrection = year >= 2003 && year <= 2005;
-        var sb = new StringBuilder();
-        for (String line : lines) {
-            if (needsTextCorrection)
-                line = line.replaceAll(BAD_CHARACTER, "á");
-            sb.append(line).append("\n");
-        }
-        return sb.toString();
     }
 }

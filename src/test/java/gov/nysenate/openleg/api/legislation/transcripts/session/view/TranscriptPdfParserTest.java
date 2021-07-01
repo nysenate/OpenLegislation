@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class TranscriptPdfParserTest {
@@ -25,7 +24,7 @@ public class TranscriptPdfParserTest {
     private boolean expectedNumberedLines;
 
     @Test
-    public void numberedTranscriptTest() throws IOException {
+    public void numberedTranscriptTest() {
         expectedNumberedLines = true;
         testTranscript(NORMAL_LINE_NUM, 3, 26);
         testTranscript(BLANK_LINE_BEFORE_PAGE_NUM, 12, 24);
@@ -35,19 +34,25 @@ public class TranscriptPdfParserTest {
     }
 
     @Test
-    public void nonNumberedTranscriptText() throws IOException {
+    public void nonNumberedTranscriptText() {
         expectedNumberedLines = false;
         testTranscript(NORMAL_NO_LINE_NUM, 21, 26);
         testTranscript(NORMAL_NO_LINE_NUM_1998, 14, 26, Map.of(1, 18, 2, 20));
     }
 
-    private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength) throws IOException {
+    private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength) {
         testTranscript(dateTime, expectedPageCount, defaultPageLength, Map.of());
     }
 
     private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength,
-                                Map<Integer, Integer> badPageLengths) throws IOException {
-        String text = Files.readString(Paths.get(TEST_FILE_DIR + dateTime.replaceAll(":", "")));
+                                Map<Integer, Integer> badPageLengths) {
+        String text = "";
+        try {
+            text = Files.readString(Paths.get(TEST_FILE_DIR + dateTime.replaceAll(":", "")));
+        }
+        catch (IOException e) {
+            fail();
+        }
         var pdfParser = new TranscriptPdfParser(LocalDateTime.parse(dateTime), text);
         assertEquals(expectedNumberedLines, pdfParser.hasLineNumbers());
         List<List<String>> pages = pdfParser.getPages();

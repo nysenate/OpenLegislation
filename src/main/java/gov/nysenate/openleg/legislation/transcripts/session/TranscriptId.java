@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
-import com.google.common.collect.ComparisonChain;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -12,6 +11,7 @@ import java.util.Objects;
  */
 public class TranscriptId implements Serializable, Comparable<TranscriptId>
 {
+    @Serial
     private static final long serialVersionUID = -6509878885942142022L;
 
     /** The timestamp which corresponds to the transcript. */
@@ -49,9 +49,7 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
 
     @Override
     public int compareTo(TranscriptId o) {
-        return ComparisonChain.start()
-                .compare(this.dateTime, o.dateTime)
-                .result();
+        return dateTime.compareTo(o.dateTime);
     }
 
     @Override

@@ -1,21 +1,20 @@
 package gov.nysenate.openleg.processors.law;
 
 import com.google.common.collect.ComparisonChain;
-import gov.nysenate.openleg.processors.BaseSourceData;
 import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.processors.BaseSourceData;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LawFile extends BaseSourceData implements Comparable<LawFile>
-{
+public class LawFile extends BaseSourceData implements Comparable<LawFile> {
     /** Pattern for the file names of the initial dumps. */
-    private static final Pattern INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+");
+    private static final Pattern INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+"),
 
     /** Pattern for the file names of law updates. */
-    private static final Pattern UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE");
+    UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE");
 
     /** Received the initial data dumps from LBDC on this date. */
     private static final LocalDate INITIAL_PUBLISH_DATE = LocalDate.of(2014, 9, 22);
@@ -32,7 +31,7 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile>
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     /**
      * Construct the law file using a valid file handler to a source law file. If the file does not have the
