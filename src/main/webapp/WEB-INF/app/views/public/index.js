@@ -10,16 +10,16 @@ import PublicHeader from "./components/PublicHeader";
 export default function PublicView() {
   return (
     <div className="bg-gray-100 overflow-auto">
-      <PublicHeader/>
+      <PublicHeader />
       <main>
         <div className="max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-4xl mx-auto">
-          <About/>
-          <BrowseLegislation/>
-          <DataProvided/>
-          <SignUp/>
-          <OpenSource/>
-          <Documentation/>
-          <Footer/>
+          <About />
+          <BrowseLegislation />
+          <DataProvided />
+          <SignUp />
+          <OpenSource />
+          <Documentation />
+          <Footer />
         </div>
       </main>
     </div>

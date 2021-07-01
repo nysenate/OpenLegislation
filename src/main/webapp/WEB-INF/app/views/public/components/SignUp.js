@@ -52,11 +52,11 @@ const registerReducer = function (state, action) {
 }
 
 export default function SignUp() {
-  const [state, dispatch] = React.useReducer(registerReducer, initialState)
+  const [ state, dispatch ] = React.useReducer(registerReducer, initialState)
 
   const handleSubmit = e => {
     e.preventDefault();
-    dispatch({type: 'submit'})
+    dispatch({ type: 'submit' })
 
     let subs = [];
     if (state.breakingChanges) {
@@ -152,7 +152,7 @@ export default function SignUp() {
         <button className="btn my-3 w-36" type="submit">Get API Key</button>
       </form>
       {state.errorMsg &&
-      <h3 className="h5 text text--error"><i className="icon-warning mx-1"/>{state.errorMsg}</h3>
+      <h3 className="h5 text text--error"><i className="icon-warning mx-1" />{state.errorMsg}</h3>
       }
       {state.registeredMsg &&
       <h3 className="h5">Thanks for signing up, please check your email to receive your API key.</h3>

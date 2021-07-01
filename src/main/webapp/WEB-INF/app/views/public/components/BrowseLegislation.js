@@ -1,9 +1,9 @@
-import React, {useContext} from 'react'
-import {apiKeyLogin} from "app/apis/apiKeyLogin"
+import React, { useContext } from 'react'
+import { apiKeyLogin } from "app/apis/apiKeyLogin"
 
 export default function BrowseLegislation() {
   const apiKeyRef = React.useRef()
-  const [error, setError] = React.useState(false)
+  const [ error, setError ] = React.useState(false)
 
   const handleSubmit = e => {
     e.preventDefault()
