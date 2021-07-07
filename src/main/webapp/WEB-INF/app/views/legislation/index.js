@@ -1,30 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   NavLink,
   Route,
   Switch
 } from "react-router-dom";
+import Bills from "app/views/bills"
 
 const fakeTitle = "New York State Laws";
 
 export default function LegislationView({ children }) {
 
   const [ title, setTitle ] = React.useState(fakeTitle);
-  const [ open, setOpen ] = React.useState(false);
+  const [ isMenuOpen, setMenuOpen ] = React.useState(false);
 
   return (
     <Router>
-      <div className="bg-gray-100 h-screen w-screen">
-        <Header open={open} setOpen={setOpen} title={title} />
+      <div className="bg-gray-100 h-auto w-screen">
+        <Header isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} title={title} />
 
-        <div className="">
+        <div>
           <div>
-            <Menu open={open} />
+            <Menu isMenuOpen={isMenuOpen} />
           </div>
-          <div className="pl-0 xl:pl-80">
+          <div className="pl-0 xl:pl-80 pt-16 md:min-h-screen">
             <Switch>
-              <Route exact path="/bills" component={Bills} />
+              <Route path="/bills" render={(props) => (
+                <Bills {... props} setTitle={setTitle} />
+              )}
+              />
             </Switch>
           </div>
         </div>
@@ -33,15 +37,11 @@ export default function LegislationView({ children }) {
   )
 }
 
-function Bills() {
-  return "BILLS"
-}
-
-function Header({ open, setOpen, title }) {
+function Header({ isMenuOpen, setMenuOpen, title }) {
   return (
-    <div className="h-16 w-full bg-blue-500">
+    <div className="fixed h-16 w-full bg-blue-500 z-10">
       <div className="block xl:hidden">
-        <MobileHeader open={open} setOpen={setOpen} title={title} />
+        <MobileHeader isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} title={title} />
       </div>
 
       <div className="hidden xl:block">
@@ -51,11 +51,11 @@ function Header({ open, setOpen, title }) {
   )
 }
 
-function MobileHeader({ open, setOpen, title }) {
+function MobileHeader({ isMenuOpen, setMenuOpen, title }) {
   return (
     <div className="flex h-16 items-center space-x-3 pl-3">
       <i className="icon-menu text-5xl text-white cursor-pointer"
-         onClick={() => setOpen((open) => !open)} />
+         onClick={() => setMenuOpen((isMenuOpen) => !isMenuOpen)} />
       <h1 className="h3 text-white">{title}</h1>
     </div>
   )
@@ -69,20 +69,20 @@ function XLHeader({ title }) {
         <h1 className="h3 text-white">Open Legislation</h1>
       </div>
       <div className="flex items-center">
-        <h2 className="ml-8 h4 text-white">{title}</h2>
+        <h2 className="ml-6 h4 text-white">{title}</h2>
       </div>
     </div>
   )
 }
 
 
-function Menu({ open }) {
+function Menu({ isMenuOpen }) {
   /*
    * If the viewport is < xl, open the menu when open = true, hide when open = false.
    * If the viewport is > xl, always show the menu regardless of the value of open.
    */
-  let className = "absolute transform bg-gray-200 w-80 h-full";
-  if (open) {
+  let className = "fixed top-16 transform bg-gray-200 w-80 h-full z-10";
+  if (isMenuOpen) {
     className += " translate-x-0 xl:translate-x-0"
   } else {
     className += " -translate-x-80 xl:translate-x-0"

@@ -11,8 +11,6 @@ function App() {
       {/*<PublicView/>*/}
 
       <LegislationView>
-        {/* bills */}
-        {/* calendars, etc */}
       </LegislationView>
     </>
   )

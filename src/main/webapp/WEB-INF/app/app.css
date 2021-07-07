@@ -55,7 +55,7 @@
 
     .btn {
         @apply py-1 px-2 text-white bg-blue-700 shadow-md text-base font-medium cursor-pointer
-               text-center rounded border-none transform active:translate-y-0.5;
+        text-center rounded border-none transform active:translate-y-0.5;
     }
 
     .btn--state-danger {
@@ -63,8 +63,8 @@
     }
 
     .input {
-        @apply text-center outline-none border-solid border-gray-300 border-b font-light
-                   focus:border-b-2 focus:border-blue-400 ;
+        @apply outline-none border-solid border-gray-300 border-b focus:border-b-2 focus:border-blue-400
+        placeholder-gray-500 placeholder-opacity-60;
     }
 
 }

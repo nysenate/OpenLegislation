@@ -96,7 +96,7 @@ export default function SignUp() {
         <div className="flex flex-col">
           <div className="">
             <input
-              className="input m-2"
+              className="input text-center m-2"
               type="text"
               name="name"
               placeholder="Name"
@@ -108,7 +108,7 @@ export default function SignUp() {
               value={state.name}
             />
             <input
-              className="input m-2"
+              className="input text-center m-2"
               type="text"
               name="email"
               placeholder="Email"
