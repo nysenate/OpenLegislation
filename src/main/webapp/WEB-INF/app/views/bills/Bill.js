@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { getBillApi } from "app/apis/billGetApi";
 import { sessionYear } from "app/lib/dateUtils";
 import { Link } from "react-router-dom";
+import MemberThumbnail from "app/shared/MemberThumbnail";
 
 export default function Bill({ setHeaderText, match }) {
 
@@ -75,7 +76,7 @@ function Summary({ bill }) {
 
   return (
     <div className="flex">
-      <img className="h-24 mr-3" src={`/static/img/business_assets/members/mini/${bill.sponsor.member.imgName}`} />
+      <MemberThumbnail member={bill.sponsor.member} />
       {sponsorEls}
 
       <div>
