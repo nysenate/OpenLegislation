@@ -6,11 +6,11 @@ import {
 import Bill from "app/views/bills/Bill";
 import Search from "app/views/bills/Search";
 
-export default function Bills({ location, setTitle }) {
+export default function Bills({ location, setHeaderText }) {
 
   useEffect(() => {
     if (location.pathname === '/bills') {
-      setTitle("Search NYS Legislation")
+      setHeaderText("Search NYS Legislation")
     }
   }, [location]) // TODO title needs to be reset to this when back nav is used yet not override titles set by children.
 
@@ -20,7 +20,7 @@ export default function Bills({ location, setTitle }) {
       <div className="w-full lg:w-10/12 bg-white">
         <Switch>
           <Route path="/bills/:sessionYear/:printNo" render={(props) => (
-            <Bill {...props} setTitle={setTitle} />
+            <Bill {...props} setHeaderText={setHeaderText} />
           )} />
           <Route path="/bills" render={() => (
             <Search />

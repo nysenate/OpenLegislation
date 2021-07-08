@@ -62,7 +62,7 @@ function Results({ results }) {
   const resultEls = results.length > 0
     ? results.map((r) =>
       <li key={r.result.basePrintNoStr} className='m-2'>
-        <Link to={`/bills/${r.result.session}/${r.result.printNo}`}>
+        <Link to={`/bills/${r.result.session}/${r.result.basePrintNo}`}>
           {r.result.basePrintNoStr}
         </Link>
       </li>)

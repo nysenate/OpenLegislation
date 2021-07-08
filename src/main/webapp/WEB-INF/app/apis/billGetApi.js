@@ -1,16 +1,15 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-export default function billGetApi(sessionYear, printNo) {
-  return printNo ? fetchBill(sessionYear, printNo)
-    : fetchSession(sessionYear);
+export function getBillApi(sessionYear, printNo, view) {
+  let url = `/api/3/bills/${sessionYear}/${printNo}`
+  if (view) {
+    url += `?view=${view}`
+  }
+  return fetchUrl(url)
 }
 
-function fetchBill(sessionYear, printNo) {
-  return fetchUrl(`/api/3/bills/${sessionYear}/${printNo}`)
-}
-
-function fetchSession(sessionYear) {
+export function getBillsApi(sessionYear) {
   return fetchUrl(`/api/3/bills/${sessionYear}`)
 }
 
