@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import MemberThumbnail from "app/shared/MemberThumbnail";
 import FullDate from "app/shared/FullDate";
 import BillStatusDesc from "app/shared/BillStatusDesc";
+import BillMilestones from "app/shared/BillMilestones";
 
 export default function Search() {
   const [ results, setResults ] = React.useState([]);
@@ -93,7 +94,8 @@ function BillSummary({ bill }) {
             {bill.basePrintNo}-{bill.session}
           </div>
           <div className="text text--small">
-            {bill.sponsor.member.fullName}
+            {bill.sponsor && bill.sponsor.member &&
+            bill.sponsor.member.fullName}
           </div>
         </div>
       </div>
@@ -106,6 +108,9 @@ function BillSummary({ bill }) {
           <FullDate date={bill.status.actionDate} /> - <BillStatusDesc status={bill.status} />
         </div>
         }
+        <BillMilestones milestones={bill.milestones.items}
+                        chamber={bill.billType.chamber}
+                        className="py-3" />
       </div>
     </div>
   )

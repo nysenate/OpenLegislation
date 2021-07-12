@@ -53,6 +53,14 @@
         @apply text-red-600 font-semibold;
     }
 
+    .tooltip {
+        @apply bg-gray-500 rounded-lg
+    }
+
+    .tooltip__text {
+        @apply text-xs lg:text-sm text-white
+    }
+
     .btn {
         @apply py-1 px-2 text-white bg-blue-700 shadow-md text-base font-medium cursor-pointer
         text-center rounded border-none transform active:translate-y-0.5;
