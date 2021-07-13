@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +33,6 @@ public class PublicHearingParser {
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
         String fullText = Files.readString(publicHearingFile.getFile().toPath(), CP_1252);
-        // Writes file in UTF-8.
-        Files.writeString(publicHearingFile.getFile().toPath(), fullText, StandardOpenOption.TRUNCATE_EXISTING);
         List<CommitteeSessionId> comSessionIds = committeeDao.getAllSessionIds();
         PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
         PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText, comSessionIds);
