@@ -6,7 +6,7 @@ import {
 import Bill from "app/views/bills/Bill";
 import Search from "app/views/bills/Search";
 
-export default function Bills({ location, setHeaderText }) {
+export default function Bills({ setHeaderText }) {
 
   useEffect(() => {
     if (location.pathname === '/bills') {

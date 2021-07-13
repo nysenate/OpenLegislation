@@ -1,44 +1,83 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import billSearch from "app/apis/billSearch";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useHistory
+} from "react-router-dom";
 import MemberThumbnail from "app/shared/MemberThumbnail";
 import FullDate from "app/shared/FullDate";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
+import * as queryString from "query-string";
 
 export default function Search() {
-  const [ results, setResults ] = React.useState([]);
+  // TODO implement pagination
+  const [ response, setResponse ] = React.useState({ result: { items: [] } })
+  const [ loading, setLoading ] = React.useState(true)
+  const location = useLocation()
+  const history = useHistory()
+  const params = queryString.parse(location.search)
+  const limit = 6
+
+  // When the url changes, perform a new search using the term from the query string.
+  React.useEffect(() => {
+    const term = params.term || '*'
+    const page = params.page || 1
+    const offset = (page - 1) * limit + 1
+    doSearch(term, limit, offset)
+  }, [ location ])
+
+  // Updates the queryString with the new search term.
+  const submitSearch = term => {
+    params.term = term
+    params.page = 1
+    history.push({ search: queryString.stringify(params) })
+  }
+
+  const doSearch = (term, limit, offset) => {
+    setLoading(true)
+    billSearch(term, limit, offset)
+      .then((response) => {
+        setResponse(response)
+        console.log(response)
+      })
+      .catch((error) => {
+        // TODO properly handle errors
+        console.warn(`${error}`)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  const onPageChange = page => {
+    params.page = page
+    history.push({ search: queryString.stringify(params) })
+  }
+
+  const pageCount = () => {
+    return Math.ceil(response.total / limit)
+  }
 
   return (
     <div className="p-3">
-      <BillSearch setResults={setResults} />
-      <Results results={results} />
+      <BillSearch submitSearch={submitSearch} />
+      {!loading &&
+      <>
+        <Results results={response.result.items} />
+      </>
+      }
     </div>
   )
 }
 
-function BillSearch({ setResults }) {
+function BillSearch({ submitSearch }) {
   const termRef = React.useRef();
-
-  useEffect(() => {
-    search("*")
-  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    search(termRef.current.value)
-  }
-
-  const search = term => {
-    billSearch(term)
-      .then((response) => {
-        setResults(response.result.items);
-      })
-      .catch((error) => {
-        // TODO properly handle errors
-        console.warn(`${error}`);
-      })
+    submitSearch(termRef.current.value)
   }
 
   return (
@@ -77,14 +116,15 @@ function Results({ results }) {
       {results.map((r) =>
         <Link to={`/bills/${r.result.session}/${r.result.basePrintNo}`}
               key={r.result.basePrintNoStr}>
-          <BillSummary bill={r.result} />
+          <SearchResult result={r} />
         </Link>
       )}
     </div>
   )
 }
 
-function BillSummary({ bill }) {
+function SearchResult({ result }) {
+  const bill = result.result
   return (
     <div className="p-3 hover:bg-gray-200 flex flex-wrap">
       <div className="flex items-center w-full md:w-1/3">
@@ -99,9 +139,13 @@ function BillSummary({ bill }) {
           </div>
         </div>
       </div>
+
       <div className="w-full md:w-2/3 mt-2 md:mt-0">
         <div className="text">
-          {bill.title}
+          {result.highlights.title
+            ? <span className="highlight" dangerouslySetInnerHTML={{ __html: result.highlights.title }} />
+            : <span>{bill.title}</span>
+          }
         </div>
         {bill.status.actionDate &&
         <div className="mt-1 text text-blue-600">

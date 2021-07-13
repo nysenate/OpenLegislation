@@ -74,5 +74,10 @@
         @apply outline-none border-solid border-gray-300 border-b focus:border-b-2 focus:border-blue-400
         placeholder-gray-500 placeholder-opacity-60;
     }
+}
 
+/* Other styles */
+
+.highlight > em {
+    background-color: #fff6b4;
 }

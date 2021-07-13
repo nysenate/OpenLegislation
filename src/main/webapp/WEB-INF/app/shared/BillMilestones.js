@@ -11,19 +11,19 @@ const createMilestone = (desc) => {
 
 const senateMilestones = [
   createMilestone("In Senate Committee"),
-  createMilestone("On Senate Floor"),
+  createMilestone("Senate Floor Calendar"),
   createMilestone("Passed Senate"),
 ]
 
 const assemblyMilestones = [
   createMilestone("In Assembly Committee"),
-  createMilestone("On Assembly Floor"),
+  createMilestone("Assembly Floor Calendar"),
   createMilestone("Passed Assembly"),
 ]
 
 const otherMilestones = [
-  createMilestone("Sent to Governor"),
-  createMilestone("Signed Into Law"),
+  createMilestone("Delivered to Governor"),
+  createMilestone("Signed by Governor"),
 ]
 
 /**
@@ -87,7 +87,7 @@ function Milestone({ milestone }) {
   return (
     <Tippy content={<MilestoneTooltipText milestone={milestone} />}
            placement="bottom"
-           maxWidth="24rem"
+           maxWidth="28rem"
            className="py-1 px-2 tooltip tooltip__text">
       <div className={className}>
       </div>
