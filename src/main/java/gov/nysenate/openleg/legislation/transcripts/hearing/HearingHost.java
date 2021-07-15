@@ -1,25 +1,23 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.committee.Committee;
 
 import java.util.Objects;
 
 /**
- * A Committee, Task Force, or other group that can hold Public Hearings.
- * Not necessarily a valid {@link Committee}.
+ * Contains data about what group is hosting a public hearing.
  */
 public class HearingHost {
+    private static final String IRRELEVANT_TEXT = "^(\\s?(ON|FOR|THE|AND))+|((,|THE|AND|;)\\s?)+$";
     private final Chamber chamber;
     private final HearingHostType type;
     private final String name;
 
-    public HearingHost(String chamber, HearingHostType type, String name) {
-        this.chamber = Chamber.getValue(chamber);
+    public HearingHost(Chamber chamber, HearingHostType type, String name) {
+        this.chamber = chamber;
         this.type = type;
-        // TODO: test these
-        this.name = name.replaceAll("(?i)^ *and,? *|(,|AND)\\s*$", "").replaceAll("\\s+", " ")
-                .replaceAll(", AND| &", " AND").trim();
+        this.name = name.toUpperCase().replaceAll("\\s+", " ").replaceAll(", AND| &", " AND")
+                .replaceAll(IRRELEVANT_TEXT, "").trim();
     }
 
     /** --- Basic Getters/Setters --- */

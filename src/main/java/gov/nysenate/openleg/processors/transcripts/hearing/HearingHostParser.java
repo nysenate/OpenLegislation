@@ -1,24 +1,31 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.common.util.RegexUtils;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType;
+import org.elasticsearch.common.collect.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class HearingHostParser {
-    private static final String CHAMBERS = Chamber.SENATE + "|" + Chamber.ASSEMBLY;
-    private static final Pattern hostPattern = Pattern.compile("(?<chamber>" + CHAMBERS + ")(?!.*(" + CHAMBERS + "))" +
-            "(?<hostTitles>.*)", Pattern.DOTALL);
+    private static final String CHAMBERS = Chamber.SENATE + "|" + Chamber.ASSEMBLY,
+            BUDGET_COMMITTEE_PATTERN = "(?s).*(FORECASTING CONFERENCE.*|FINANCE.*WAYS AND MEANS COMMITTEE(S?)$)";
+    private static final List<HearingHost> BUDGET_COMMITTEES = List.of(
+            new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "Finance"),
+            new HearingHost(Chamber.ASSEMBLY, HearingHostType.COMMITTEE, "WAYS AND MEANS"));
+
+    // TODO: remove this.
     public static final TreeSet<HearingHost> hosts = new TreeSet<>((o1, o2) -> {
         int chamberCompare = o1.getChamber().compareTo(o2.getChamber());
-        if (chamberCompare == 0)
-            return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
-        return chamberCompare;
+        if (chamberCompare != 0)
+            return chamberCompare;
+        int typeCompare = o1.getType().compareTo(o2.getType());
+        if (typeCompare != 0)
+            return typeCompare;
+        return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
     });
 
     private HearingHostParser() {}
@@ -26,30 +33,25 @@ public class HearingHostParser {
     /**
      * Extracts HearingHost's from a string containing the committee info.
      */
-    public static List<HearingHost> parse(String committeeBlock) {
-        // Strips the line number and extra spaces
-        committeeBlock = committeeBlock.replaceAll(" +\\d? +", "")
-                // Removes text before the chamber is identified.
-                .replaceFirst("^.*?(" + CHAMBERS + ")\\s+", "$1 ");
+    public static List<HearingHost> parse(String hostBlock) {
+        if (hostBlock.matches(BUDGET_COMMITTEE_PATTERN))
+            return BUDGET_COMMITTEES;
+        hostBlock = HearingHostType.standardizeHostBlock(hostBlock);
         var ret = new ArrayList<HearingHost>();
+        // Default chamber.
+        Chamber chamber = Chamber.SENATE;
 
-        // TODO: see other hearing hosts. May have multiple types.
-        if (!committeeBlock.contains("COMMITTEE"))
-            return ret;
-
-        Matcher m = hostPattern.matcher(committeeBlock);
-        while (m.find()) {
-            String currChamber = m.group("chamber");
-            String hostTitles = m.group("hostTitles");
-            String[] hostSplit = m.group("hostTitles").trim().split(";|\nAND\n|(STANDING )?(SUB)?COMMITTEE(S)?\\s+ON ");
-            for (var s : hostSplit) {
-                var currHost = new HearingHost(currChamber, HearingHostType.COMMITTEE, s);
-                if (currHost.getName().isEmpty())
-                    continue;
-                hosts.add(currHost);
-                ret.add(currHost);
+        for (var chamberTuple : RegexUtils.specialSplit(hostBlock, CHAMBERS)) {
+            chamber = Chamber.getValue(chamberTuple.v1());
+            var typeTuples = RegexUtils.specialSplit(chamberTuple.v2(), HearingHostType.TYPE_LABELS);
+            for (Tuple<String, String> typeTuple : typeTuples) {
+                var type = HearingHostType.toType(typeTuple.v1());
+                var host = new HearingHost(chamber, type, typeTuple.v2());
+                ret.add(host);
             }
         }
+        if (ret.isEmpty())
+            ret.add(new HearingHost(chamber, HearingHostType.WHOLE_CHAMBER, ""));
         return ret;
     }
 }

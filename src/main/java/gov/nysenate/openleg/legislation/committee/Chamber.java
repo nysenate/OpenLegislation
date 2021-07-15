@@ -3,18 +3,17 @@ package gov.nysenate.openleg.legislation.committee;
 /**
  * Enumeration of the different legislative chambers.
  */
-public enum Chamber
-{
+public enum Chamber {
     SENATE  ('S'),
     ASSEMBLY('A');
 
     private final char abbreviation;
 
-    Chamber(char abbreviation){
+    Chamber(char abbreviation) {
         this.abbreviation = abbreviation;
     }
 
-    public char getAbbreviation(){
+    public char getAbbreviation() {
         return abbreviation;
     }
 
@@ -26,13 +25,12 @@ public enum Chamber
      * Returns the chamber that is opposite to this one.
      */
     public Chamber opposite() {
-        return (this.equals(SENATE)) ? ASSEMBLY : SENATE;
+        return this == SENATE ? ASSEMBLY : SENATE;
     }
 
     public static Chamber getValue(String value) {
-        if (value != null) {
+        if (value != null)
             return valueOf(value.trim().toUpperCase());
-        }
         throw new IllegalArgumentException("Supplied value cannot be null when mapping to Chamber.");
     }
 }

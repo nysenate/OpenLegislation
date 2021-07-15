@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
@@ -26,15 +25,23 @@ public class PublicHearingTextUtils {
         boolean hasAddress = addrDateTime.length > 1;
         var dateTimeParser = new PublicHearingDateTimeParser(addrDateTime[hasAddress ? 1 : 0],
                 pages.get(pages.size() - 1));
+
         // Set the data.
         var hearing = new PublicHearing(hearingId, dateTimeParser.getDate(), fullText);
         hearing.setStartTime(dateTimeParser.getStartTime());
         hearing.setEndTime(dateTimeParser.getEndTime());
-        SessionYear sessionYear = SessionYear.of(hearing.getYear());
-        hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
         String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2);
         hearing.setTitle(title.replaceAll("\\s+", " ").trim());
+        hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
         setAddress(hasAddress, addrDateTime[0], hearing);
+
+        // TODO: remove
+        System.out.println("**********");
+        System.out.println(dataList.get(0));
+        System.out.println(hearing.getHosts());
+        System.out.println("**********");
+        System.out.println();
+
         return hearing;
     }
 

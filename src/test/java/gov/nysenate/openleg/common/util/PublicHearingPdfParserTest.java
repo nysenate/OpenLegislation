@@ -24,7 +24,16 @@ public class PublicHearingPdfParserTest extends BaseTests {
     private TranscriptDataService transcripts;
 
     @Test
-    public void hearingFirstLine() {
+    public void regexTest() {
+        String testStr = " ON LABOR; AND\n";
+        testStr = testStr.replaceAll("\\s+", " ");
+        String regex = "((,|AND|;)\\s?)+$";
+        String replacement = "";
+        System.out.println(testStr.replaceAll(regex, replacement));
+    }
+
+    @Test
+    public void fullHearingHostTest() {
         var ids = hearings.getPublicHearingIds(SortOrder.ASC, LimitOffset.ALL);
         for (var id : ids) {
             PublicHearing hearing = hearings.getPublicHearing(id);
