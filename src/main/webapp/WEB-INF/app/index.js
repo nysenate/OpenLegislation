@@ -10,8 +10,7 @@ function App() {
     <>
       {/*<PublicView/>*/}
 
-      <LegislationView>
-      </LegislationView>
+      <LegislationView />
     </>
   )
 }

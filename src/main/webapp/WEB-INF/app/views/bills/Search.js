@@ -10,6 +10,7 @@ import FullDate from "app/shared/FullDate";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
 import * as queryString from "query-string";
+import Pagination from "app/shared/Pagination";
 
 export default function Search() {
   // TODO implement pagination
@@ -51,22 +52,31 @@ export default function Search() {
       })
   }
 
-  const onPageChange = page => {
-    params.page = page
+  const onPageChange = pageInfo => {
+    params.page = pageInfo.selectedPage
     history.push({ search: queryString.stringify(params) })
-  }
-
-  const pageCount = () => {
-    return Math.ceil(response.total / limit)
+    console.log(pageInfo)
   }
 
   return (
     <div className="p-3">
       <BillSearch submitSearch={submitSearch} />
       {!loading &&
-      <>
+      <div className="pt-3">
+        <Pagination
+          limit={limit}
+          currentPage={params.page}
+          onPageChange={onPageChange}
+          total={response.total}
+        />
         <Results results={response.result.items} />
-      </>
+        <Pagination
+          limit={limit}
+          currentPage={params.page}
+          onPageChange={onPageChange}
+          total={response.total}
+        />
+      </div>
       }
     </div>
   )
