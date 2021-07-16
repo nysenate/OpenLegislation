@@ -60,7 +60,7 @@ export default function Search() {
 
   return (
     <div className="p-3">
-      <BillSearch submitSearch={submitSearch} />
+      <BillSearch searchTerm={params.term} submitSearch={submitSearch} />
       {!loading &&
       <div className="pt-3">
         <Pagination
@@ -82,12 +82,16 @@ export default function Search() {
   )
 }
 
-function BillSearch({ submitSearch }) {
-  const termRef = React.useRef();
+function BillSearch({ searchTerm = "", submitSearch }) {
+  const [term, setTerm] = React.useState(searchTerm)
+
+  React.useEffect(() => {
+    setTerm(searchTerm)
+  }, [searchTerm])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitSearch(termRef.current.value)
+    submitSearch(term)
   }
 
   return (
@@ -99,7 +103,8 @@ function BillSearch({ submitSearch }) {
           </label>
         </div>
         <div className="flex items-baseline">
-          <input ref={termRef}
+          <input onChange={(e) => setTerm(e.target.value)}
+                 value={term}
                  tabIndex="1"
                  name="billsearch"
                  type="text"
