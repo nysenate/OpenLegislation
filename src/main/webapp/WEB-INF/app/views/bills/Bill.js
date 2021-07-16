@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { getBillApi } from "app/apis/billGetApi";
 import { sessionYear } from "app/lib/dateUtils";
-import { Link } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import MemberThumbnail from "app/shared/MemberThumbnail";
 
-export default function Bill({ setHeaderText, match }) {
+export default function Bill({ setHeaderText }) {
 
   const [ bill, setBill ] = React.useState({})
   const [ loading, setLoading ] = React.useState(true)
+  const match = useRouteMatch()
 
   useEffect(() => {
     getBillApi(match.params.sessionYear, match.params.printNo, "with_refs_no_fulltext")
