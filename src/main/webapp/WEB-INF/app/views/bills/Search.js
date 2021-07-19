@@ -1,19 +1,14 @@
 import React from 'react';
 import billSearch from "app/apis/billSearch";
 import {
-  Link,
   useLocation,
   useHistory
 } from "react-router-dom";
-import MemberThumbnail from "app/shared/MemberThumbnail";
-import FullDate from "app/shared/FullDate";
-import BillStatusDesc from "app/shared/BillStatusDesc";
-import BillMilestones from "app/shared/BillMilestones";
 import * as queryString from "query-string";
-import Pagination from "app/shared/Pagination";
+import SearchResults from "app/views/bills/SearchResults";
 
 export default function Search() {
-  // TODO implement pagination
+
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
   const [ loading, setLoading ] = React.useState(true)
   const location = useLocation()
@@ -29,10 +24,15 @@ export default function Search() {
     doSearch(term, limit, offset)
   }, [ location ])
 
-  // Updates the queryString with the new search term.
+  // Updates the queryString with the new search term and restarts at page 1.
   const submitSearch = term => {
     params.term = term
     params.page = 1
+    history.push({ search: queryString.stringify(params) })
+  }
+
+  const onPageChange = pageInfo => {
+    params.page = pageInfo.selectedPage
     history.push({ search: queryString.stringify(params) })
   }
 
@@ -41,7 +41,6 @@ export default function Search() {
     billSearch(term, limit, offset)
       .then((response) => {
         setResponse(response)
-        console.log(response)
       })
       .catch((error) => {
         // TODO properly handle errors
@@ -52,42 +51,21 @@ export default function Search() {
       })
   }
 
-  const onPageChange = pageInfo => {
-    params.page = pageInfo.selectedPage
-    history.push({ search: queryString.stringify(params) })
-    console.log(pageInfo)
-  }
-
   return (
     <div className="p-3">
-      <BillSearch searchTerm={params.term} submitSearch={submitSearch} />
+      <SearchForm searchTerm={params.term} submitSearch={submitSearch} />
+
       {!loading &&
-      <div className="mt-8">
-        <div className="flex justify-center">
-          <span className="font-semibold">{response.total.toLocaleString()}</span>&nbsp;matching bills were found.
-        </div>
-        <div className="pt-3">
-          <Pagination
-            limit={limit}
-            currentPage={params.page}
-            onPageChange={onPageChange}
-            total={response.total}
-          />
-          <Results results={response.result.items} />
-          <Pagination
-            limit={limit}
-            currentPage={params.page}
-            onPageChange={onPageChange}
-            total={response.total}
-          />
-        </div>
-      </div>
+      <SearchResults response={response}
+                     limit={limit}
+                     page={params.page}
+                     onPageChange={onPageChange} />
       }
     </div>
   )
 }
 
-function BillSearch({ searchTerm = "", submitSearch }) {
+function SearchForm({ searchTerm = "", submitSearch }) {
   const [ term, setTerm ] = React.useState(searchTerm)
 
   React.useEffect(() => {
@@ -118,64 +96,6 @@ function BillSearch({ searchTerm = "", submitSearch }) {
           <button className="btn my-3 w-28 md:w-36" type="submit">Search</button>
         </div>
       </form>
-    </div>
-  )
-}
-
-function Results({ results }) {
-  if (results.length === 0) {
-    return (
-      <div>
-        No results found
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      {results.map((r) =>
-        <Link to={`/bills/${r.result.session}/${r.result.basePrintNo}`}
-              key={r.result.basePrintNoStr}>
-          <SearchResult result={r} />
-        </Link>
-      )}
-    </div>
-  )
-}
-
-function SearchResult({ result }) {
-  const bill = result.result
-  return (
-    <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-      <div className="flex items-center w-full md:w-1/3">
-        <MemberThumbnail member={bill.sponsor.member} />
-        <div>
-          <div className="text">
-            {bill.basePrintNo}-{bill.session}
-          </div>
-          <div className="text text--small">
-            {bill.sponsor && bill.sponsor.member &&
-            bill.sponsor.member.fullName}
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full md:w-2/3 mt-2 md:mt-0">
-        <div className="text">
-          {result.highlights.title
-            ? <span className="highlight" dangerouslySetInnerHTML={{ __html: result.highlights.title }} />
-            : <span>{bill.title}</span>
-          }
-        </div>
-        {bill.status.actionDate &&
-        <div className="mt-1 text text-blue-600">
-          <FullDate date={bill.status.actionDate} /> - <BillStatusDesc status={bill.status} />
-        </div>
-        }
-        <BillMilestones milestones={bill.milestones.items}
-                        chamber={bill.billType.chamber}
-                        className="py-3" />
-      </div>
     </div>
   )
 }
