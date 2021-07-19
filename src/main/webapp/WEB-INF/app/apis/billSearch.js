@@ -6,7 +6,7 @@ import * as queryString from "query-string";
 export default async function billSearch(term, limit = 6, offset = 1) {
   const response = await fetch(`/api/3/bills/search?` + queryString.stringify({
     term: term,
-    // sort: "_score:desc,session:desc", // TODO does this work? is it working on prod?
+    sort: "_score:desc,session:desc",
     limit: limit,
     offset: offset
   }))

@@ -62,20 +62,25 @@ export default function Search() {
     <div className="p-3">
       <BillSearch searchTerm={params.term} submitSearch={submitSearch} />
       {!loading &&
-      <div className="pt-3">
-        <Pagination
-          limit={limit}
-          currentPage={params.page}
-          onPageChange={onPageChange}
-          total={response.total}
-        />
-        <Results results={response.result.items} />
-        <Pagination
-          limit={limit}
-          currentPage={params.page}
-          onPageChange={onPageChange}
-          total={response.total}
-        />
+      <div className="mt-8">
+        <div className="flex justify-center">
+          <span className="font-semibold">{response.total.toLocaleString()}</span>&nbsp;matching bills were found.
+        </div>
+        <div className="pt-3">
+          <Pagination
+            limit={limit}
+            currentPage={params.page}
+            onPageChange={onPageChange}
+            total={response.total}
+          />
+          <Results results={response.result.items} />
+          <Pagination
+            limit={limit}
+            currentPage={params.page}
+            onPageChange={onPageChange}
+            total={response.total}
+          />
+        </div>
       </div>
       }
     </div>
@@ -83,11 +88,11 @@ export default function Search() {
 }
 
 function BillSearch({ searchTerm = "", submitSearch }) {
-  const [term, setTerm] = React.useState(searchTerm)
+  const [ term, setTerm ] = React.useState(searchTerm)
 
   React.useEffect(() => {
     setTerm(searchTerm)
-  }, [searchTerm])
+  }, [ searchTerm ])
 
   const handleSubmit = (e) => {
     e.preventDefault();
