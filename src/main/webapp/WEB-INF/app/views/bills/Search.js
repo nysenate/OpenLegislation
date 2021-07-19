@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import SearchResults from "app/views/bills/SearchResults";
+import LoadingIndicator from "app/shared/LoadingIndicator";
 
 export default function Search() {
 
@@ -54,7 +55,9 @@ export default function Search() {
   return (
     <div className="p-3">
       <SearchForm searchTerm={params.term} submitSearch={submitSearch} />
-
+      {loading &&
+      <LoadingIndicator />
+      }
       {!loading &&
       <SearchResults response={response}
                      limit={limit}
