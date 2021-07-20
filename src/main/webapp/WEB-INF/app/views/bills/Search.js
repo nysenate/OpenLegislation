@@ -9,7 +9,6 @@ import SearchResults from "app/views/bills/SearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 
 export default function Search() {
-
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
   const [ loading, setLoading ] = React.useState(true)
   const location = useLocation()
@@ -17,29 +16,23 @@ export default function Search() {
   const params = queryString.parse(location.search)
   const limit = 6
 
-  // When the url changes, perform a new search using the term from the query string.
   React.useEffect(() => {
+    search()
+  }, [ location ])
+
+  // Perform a search using the query string parameters.
+  const search = () => {
+    const params = queryString.parse(location.search)
     const term = params.term || '*'
     const page = params.page || 1
     const offset = (page - 1) * limit + 1
-    doSearch(term, limit, offset)
-  }, [ location ])
-
-  // Updates the queryString with the new search term and restarts at page 1.
-  const submitSearch = term => {
-    params.term = term
-    params.page = 1
-    history.push({ search: queryString.stringify(params) })
+    const sort = params.sort
+    doSearch(term, limit, offset, sort)
   }
 
-  const onPageChange = pageInfo => {
-    params.page = pageInfo.selectedPage
-    history.push({ search: queryString.stringify(params) })
-  }
-
-  const doSearch = (term, limit, offset) => {
+  const doSearch = (term, limit, offset, sort) => {
     setLoading(true)
-    billSearch(term, limit, offset)
+    billSearch(term, limit, offset, sort)
       .then((response) => {
         setResponse(response)
       })
@@ -52,9 +45,14 @@ export default function Search() {
       })
   }
 
+  const onPageChange = pageInfo => {
+    params.page = pageInfo.selectedPage
+    history.push({ search: queryString.stringify(params) })
+  }
+
   return (
     <div className="p-3">
-      <SearchForm searchTerm={params.term} submitSearch={submitSearch} />
+      <SearchForm searchTerm={params.term} />
       {loading &&
       <LoadingIndicator />
       }
@@ -68,21 +66,39 @@ export default function Search() {
   )
 }
 
-function SearchForm({ searchTerm = "", submitSearch }) {
-  const [ term, setTerm ] = React.useState(searchTerm)
+/**
+ * Triggers a bill search API call by the parent <Search> component whenever it updates a search param.
+ */
+function SearchForm() {
+  const [ term, setTerm ] = React.useState("")
+  const [ sort, setSort ] = React.useState("_score:desc,session:desc")
+  const location = useLocation()
+  const history = useHistory()
 
+  // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
-    setTerm(searchTerm)
-  }, [ searchTerm ])
+    const params = queryString.parse(location.search)
+      setTerm(params.term)
+      setSort(params.sort)
+  }, [ location ])
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    submitSearch(term)
+  // Updates the term query param when the form is submitted.
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const params = queryString.parse(location.search)
+    params.term = term
+    history.push({ search: queryString.stringify(params) })
+  }
+
+  const onSortChange = (e) => {
+    const params = queryString.parse(location.search)
+    params.sort = e.target.value
+    history.push({ search: queryString.stringify(params) })
   }
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="billsearch">
             Search for legislation by print number or term:
@@ -99,6 +115,16 @@ function SearchForm({ searchTerm = "", submitSearch }) {
           <button className="btn my-3 w-28 md:w-36" type="submit">Search</button>
         </div>
       </form>
+      <div>
+        <label htmlFor="sort-by-select">Sort By:</label>
+        <select id="sort-by-select" value={sort} onChange={onSortChange}>
+          <option value="_score:desc,session:desc">Relevant</option>
+          <option value="status.actionDate:desc,_score:desc">Recent Status Update</option>
+          <option value="printNo:asc,session:desc">Print No</option>
+          <option value="milestones.size:desc,_score:desc">Most Progress</option>
+          <option value="amendments.size:desc,_score:desc">Most Amendments</option>
+        </select>
+      </div>
     </div>
   )
 }
