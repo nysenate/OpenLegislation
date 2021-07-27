@@ -20,12 +20,12 @@ export default function Bills({ setHeaderText }) {
   return (
     <ContentContainer>
       <Switch>
-        <Route path="/bills/:sessionYear/:printNo" render={(props) => (
+        <Route path="/bills/:sessionYear/:printNo">
           <Bill setHeaderText={setHeaderText} />
-        )} />
-        <Route path="/bills" render={() => (
+        </Route>
+        <Route path="/bills">
           <Search />
-        )} />
+        </Route>
       </Switch>
     </ContentContainer>
   )

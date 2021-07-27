@@ -66,19 +66,27 @@ export default function Search() {
   )
 }
 
+const sortOptions = {
+  relevant: "_score:desc,session:desc",
+  recentStatusUpdate: "status.actionDate:desc,_score:desc",
+  printNo: "printNo:asc,session:desc",
+  mostProgress: "milestones.size:desc,_score:desc",
+  mostAmendments: "amendments.size:desc,_score:desc",
+}
+
 /**
  * Triggers a bill search API call by the parent <Search> component whenever it updates a search param.
  */
 function SearchForm() {
   const [ term, setTerm ] = React.useState("")
-  const [ sort, setSort ] = React.useState("_score:desc,session:desc")
+  const [ sort, setSort ] = React.useState(sortOptions.relevant)
   const location = useLocation()
   const history = useHistory()
 
   // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search)
-      setTerm(params.term)
+      setTerm(params.term || "")
       setSort(params.sort)
   }, [ location ])
 
@@ -118,11 +126,11 @@ function SearchForm() {
       <div>
         <label htmlFor="sort-by-select">Sort By:</label>
         <select id="sort-by-select" value={sort} onChange={onSortChange}>
-          <option value="_score:desc,session:desc">Relevant</option>
-          <option value="status.actionDate:desc,_score:desc">Recent Status Update</option>
-          <option value="printNo:asc,session:desc">Print No</option>
-          <option value="milestones.size:desc,_score:desc">Most Progress</option>
-          <option value="amendments.size:desc,_score:desc">Most Amendments</option>
+          <option value={sortOptions.relevant}>Relevant</option>
+          <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
+          <option value={sortOptions.printNo}>Print No</option>
+          <option value={sortOptions.mostProgress}>Most Progress</option>
+          <option value={sortOptions.mostAmendments}>Most Amendments</option>
         </select>
       </div>
     </div>

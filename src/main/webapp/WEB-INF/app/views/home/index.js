@@ -1,39 +1,43 @@
 import React, { useEffect } from 'react';
 import {
-  BrowserRouter as Router,
   NavLink,
   Route,
   Switch
 } from "react-router-dom";
 import Bills from "app/views/bills"
+import Laws from "app/views/laws"
+import Transcripts from "app/views/transcripts";
 
 const fakeHeaderText = "New York State Laws";
 
-export default function LegislationView() {
+export default function Home() {
 
   const [ headerText, setHeaderText ] = React.useState(fakeHeaderText);
   const [ isMenuOpen, setMenuOpen ] = React.useState(false);
 
   return (
-    <Router>
-      <div className="bg-gray-100 h-auto w-screen">
-        <Header isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} headerText={headerText} />
+    <div className="bg-gray-100 h-auto w-screen">
+      <Header isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} headerText={headerText} />
 
+      <div>
         <div>
-          <div>
-            <Menu isMenuOpen={isMenuOpen} />
-          </div>
-          <div className="pl-0 xl:pl-80 pt-16 md:min-h-screen">
-            <Switch>
-              <Route path="/bills" render={(props) => (
-                <Bills {... props} setHeaderText={setHeaderText} />
-              )}
-              />
-            </Switch>
-          </div>
+          <Menu isMenuOpen={isMenuOpen} />
+        </div>
+        <div className="pl-0 xl:pl-80 pt-16 md:min-h-screen">
+          <Switch>
+            <Route path="/bills">
+              <Bills setHeaderText={setHeaderText} />
+            </Route>
+            <Route path="/laws">
+              <Laws />
+            </Route>
+            <Route path="/transcripts">
+              <Transcripts />
+            </Route>
+          </Switch>
         </div>
       </div>
-    </Router>
+    </div>
   )
 }
 

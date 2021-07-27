@@ -76,7 +76,10 @@
     }
 }
 
-/* Other styles */
+/*
+ * Other styles
+ * Only put styles here if its very inconvenient or impossible to describe them with @apply like above.
+*/
 
 .highlight > em {
     background-color: #fff6b4;

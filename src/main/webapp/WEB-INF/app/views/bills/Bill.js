@@ -14,17 +14,15 @@ export default function Bill({ setHeaderText }) {
     getBillApi(match.params.sessionYear, match.params.printNo, "with_refs_no_fulltext")
       .then((bill) => {
         setBill(bill)
+        setHeaderText(headerTextForBill(bill))
         setLoading(false)
       })
   }, [])
 
-  useEffect(() => {
-    if (bill && bill.billType) {
-      setHeaderText(headerTextForBill(bill))
-    }
-  }, [ bill ])
-
   function headerTextForBill(bill) {
+    if (!bill.billType) {
+      return ""
+    }
     const type = bill.billType.resolution ? "Resolution" : "Bill"
     const isActiveText = bill.session === sessionYear() ? "" : "(Inactive)"
     return `NYS ${bill.billType.desc} ${type} ${bill.printNo}-${bill.session} ${isActiveText}`
