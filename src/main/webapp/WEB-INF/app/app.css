@@ -71,8 +71,12 @@
     }
 
     .input {
-        @apply outline-none border-solid border-gray-300 border-b focus:border-b-2 focus:border-blue-400
+        @apply bg-gray-100 rounded p-1 outline-none border-solid focus:border-1 focus:border-blue-400
         placeholder-gray-500 placeholder-opacity-60;
+    }
+
+    .select {
+        @apply bg-gray-100 rounded p-1 outline-none;
     }
 }
 

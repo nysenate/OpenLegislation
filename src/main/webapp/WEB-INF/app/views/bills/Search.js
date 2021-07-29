@@ -7,6 +7,7 @@ import {
 import * as queryString from "query-string";
 import SearchResults from "app/views/bills/SearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
+import { billSessionYears } from "app/lib/dateUtils"
 
 export default function Search() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
@@ -74,20 +75,30 @@ const sortOptions = {
   mostAmendments: "amendments.size:desc,_score:desc",
 }
 
+const defaultSession = "Any"
+
+const billSessionYearEls = () => {
+  return billSessionYears().map((y) => {
+    return <option key={y} value={y}>{y}</option>
+  })
+}
+
 /**
  * Triggers a bill search API call by the parent <Search> component whenever it updates a search param.
  */
 function SearchForm() {
   const [ term, setTerm ] = React.useState("")
   const [ sort, setSort ] = React.useState(sortOptions.relevant)
+  const [ session, setSession ] = React.useState(defaultSession)
   const location = useLocation()
   const history = useHistory()
 
   // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search)
-      setTerm(params.term || "")
-      setSort(params.sort)
+    setTerm(params.term || "")
+    setSort(params.sort)
+    setSession(params.session)
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -104,11 +115,17 @@ function SearchForm() {
     history.push({ search: queryString.stringify(params) })
   }
 
+  const onSessionChange = (e) => {
+    const params = queryString.parse(location.search)
+    params.session = e.target.value
+    history.push({ search: queryString.stringify(params) })
+  }
+
   return (
     <div>
       <form onSubmit={onSubmit}>
         <div>
-          <label htmlFor="billsearch">
+          <label htmlFor="billsearch" className="">
             Search for legislation by print number or term:
           </label>
         </div>
@@ -123,15 +140,24 @@ function SearchForm() {
           <button className="btn my-3 w-28 md:w-36" type="submit">Search</button>
         </div>
       </form>
-      <div>
-        <label htmlFor="sort-by-select">Sort By:</label>
-        <select id="sort-by-select" value={sort} onChange={onSortChange}>
-          <option value={sortOptions.relevant}>Relevant</option>
-          <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
-          <option value={sortOptions.printNo}>Print No</option>
-          <option value={sortOptions.mostProgress}>Most Progress</option>
-          <option value={sortOptions.mostAmendments}>Most Amendments</option>
-        </select>
+      <div className="flex space-x-0 flex-wrap">
+        <div className="">
+          <label htmlFor="session-year-select" className="w-28 inline-block">Session Year:</label>
+          <select id="session-year-select" value={session} onChange={onSessionChange} className="select">
+            <option value="Any">Any</option>
+            {billSessionYearEls()}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="sort-by-select" className="w-28 inline-block md:text-right">Sort By:</label>
+          <select id="sort-by-select" value={sort} onChange={onSortChange} className="select">
+            <option value={sortOptions.relevant}>Relevant</option>
+            <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
+            <option value={sortOptions.printNo}>Print No</option>
+            <option value={sortOptions.mostProgress}>Most Progress</option>
+            <option value={sortOptions.mostAmendments}>Most Amendments</option>
+          </select>
+        </div>
       </div>
     </div>
   )
