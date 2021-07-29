@@ -97,7 +97,8 @@ public class HearingHostParserTest {
 
     @Test
     public void noCommitteesTest() {
-        // TODO: add
+        String block = "BEFORE THE NEW YORK STATE SENATE";
+        hearingHostTestHelper(block, new HearingHost(SENATE, WHOLE_CHAMBER, ""));
     }
 
     @Test
@@ -109,10 +110,16 @@ public class HearingHostParserTest {
 
     @Test
     public void legislativeCommissionTest() {
-        String block = "BEFORE THE NEW YORK STATE\n" +
-                "LEGISLATIVE COMMISSION ON RURAL RESOURCES";
-        // TODO: should be both chambers
-        var expected = new HearingHost(SENATE, LEGISLATIVE_COMMISSION, "Rural Resources");
+        String block = """
+                NEW YORK JOINT LEGISLATURE
+                LEGISLATIVE TASK FORCE ON
+                DEMOGRAPHIC RESEARCH AND REAPPORTIONMENT
+                SENATE STANDING COMMITTEE ON THE JUDICIARY
+                ASSEMBLY STANDING COMMITTEE ON GOVERNMENTAL OPERATIONS""";
+        hearingHostTestHelper(block, new HearingHost(SENATE, TASK_FORCE, "DEMOGRAPHIC RESEARCH AND REAPPORTIONMENT"),
+                new HearingHost(ASSEMBLY, TASK_FORCE, "DEMOGRAPHIC RESEARCH AND REAPPORTIONMENT"),
+                new HearingHost(SENATE, COMMITTEE, "JUDICIARY"),
+                new HearingHost(ASSEMBLY, COMMITTEE, "GOVERNMENTAL OPERATIONS"));
     }
 
     private void hearingHostTestHelper(String block, HearingHost... expected) {

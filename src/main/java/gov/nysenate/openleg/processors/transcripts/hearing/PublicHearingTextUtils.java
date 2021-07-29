@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.processors.ParseError;
@@ -14,7 +13,7 @@ public class PublicHearingTextUtils {
     // This is a utility class.
     private PublicHearingTextUtils() {}
 
-    public static PublicHearing getHearingFromText(PublicHearingId hearingId, String fullText, List<CommitteeSessionId> comSessionIds) {
+    public static PublicHearing getHearingFromText(PublicHearingId hearingId, String fullText) {
         List<List<String>> pages = PublicHearing.getPages(fullText);
         if (pages.size() < 2)
             throw new ParseError("Public hearing in file " + hearingId.getFileName() + " is too short.");
@@ -34,13 +33,6 @@ public class PublicHearingTextUtils {
         hearing.setTitle(title.replaceAll("\\s+", " ").trim());
         hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
         setAddress(hasAddress, addrDateTime[0], hearing);
-
-        // TODO: remove
-        System.out.println("**********");
-        System.out.println(dataList.get(0));
-        System.out.println(hearing.getHosts());
-        System.out.println("**********");
-        System.out.println();
 
         return hearing;
     }

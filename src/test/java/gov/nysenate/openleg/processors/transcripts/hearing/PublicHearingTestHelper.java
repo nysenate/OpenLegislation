@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.fail;
@@ -30,6 +29,6 @@ public class PublicHearingTestHelper {
         }
         var id = new PublicHearingId(filename);
         // TODO: fix
-        return PublicHearingTextUtils.getHearingFromText(id, fullText, new ArrayList<>());
+        return PublicHearingTextUtils.getHearingFromText(id, fullText);
     }
 }

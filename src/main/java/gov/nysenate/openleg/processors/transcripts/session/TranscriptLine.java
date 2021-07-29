@@ -68,7 +68,7 @@ public class TranscriptLine {
     public Optional<String> getLocation() {
         String temp = removeLineNumber().replaceAll("\\s+", " ");
         if (temp.matches(("(?i).*ALBANY.*NEW.*YORK.*")))
-            return Optional.of(temp.trim());
+            return Optional.of(temp.trim().toUpperCase());
         return Optional.empty();
     }
 

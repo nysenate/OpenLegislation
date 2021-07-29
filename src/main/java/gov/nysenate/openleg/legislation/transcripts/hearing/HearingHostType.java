@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
  * The type of group hosting a PublicHearing.
  */
 public enum HearingHostType {
-    COMMITTEE, LEGISLATIVE_COMMISSION, TASK_FORCE, MAJORITY_COALITION, WHOLE_CHAMBER, UNKNOWN;
+    COMMITTEE, LEGISLATIVE_COMMISSION, TASK_FORCE, MAJORITY_COALITION, WHOLE_CHAMBER;
 
     public static final String TYPE_LABELS = Arrays.stream(values())
             .map(type -> type.match).collect(Collectors.joining("|"));
     private static final String COMMITTEE_LABEL = "(STANDING\\s*)?(SUB)?" + COMMITTEE.name() + "(S)?",
-            COALITION_AND_TASK_FORCE = "MAJORITY COALITION\\s+JOINT TASK FORCE";
+            COALITION_AND_TASK_FORCE = MAJORITY_COALITION.match + "\\sJOINT " + TASK_FORCE.match;
 
     private final String match;
 
@@ -21,12 +21,7 @@ public enum HearingHostType {
     }
 
     public static HearingHostType toType(String typeStr) {
-        try {
-            return valueOf(typeStr.trim().replaceAll(" ", "_").toUpperCase());
-        }
-        catch (IllegalArgumentException e) {
-            return UNKNOWN;
-        }
+        return valueOf(typeStr.trim().replaceAll(" ", "_").toUpperCase());
     }
 
     public static String standardizeHostBlock(String block) {

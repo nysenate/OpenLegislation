@@ -1,32 +1,21 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
+import gov.nysenate.openleg.common.util.Pair;
 import gov.nysenate.openleg.common.util.RegexUtils;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType;
-import org.elasticsearch.common.collect.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class HearingHostParser {
-    private static final String CHAMBERS = Chamber.SENATE + "|" + Chamber.ASSEMBLY,
-            BUDGET_COMMITTEE_PATTERN = "(?s).*(FORECASTING CONFERENCE.*|FINANCE.*WAYS AND MEANS COMMITTEE(S?)$)";
     private static final List<HearingHost> BUDGET_COMMITTEES = List.of(
-            new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "Finance"),
+            new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "FINANCE"),
             new HearingHost(Chamber.ASSEMBLY, HearingHostType.COMMITTEE, "WAYS AND MEANS"));
-
-    // TODO: remove this.
-    public static final TreeSet<HearingHost> hosts = new TreeSet<>((o1, o2) -> {
-        int chamberCompare = o1.getChamber().compareTo(o2.getChamber());
-        if (chamberCompare != 0)
-            return chamberCompare;
-        int typeCompare = o1.getType().compareTo(o2.getType());
-        if (typeCompare != 0)
-            return typeCompare;
-        return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
-    });
+    private static final String JOINT = "JOINT LEGISLATURE", CHAMBERS = Chamber.SENATE + "|" + Chamber.ASSEMBLY +
+            "|" + JOINT, BUDGET_COMMITTEE_PATTERN = "(?s).*(FORECASTING CONFERENCE.*|" +
+            "FINANCE.*WAYS AND MEANS COMMITTEE(S?)$)";
 
     private HearingHostParser() {}
 
@@ -40,15 +29,13 @@ public class HearingHostParser {
         var ret = new ArrayList<HearingHost>();
         // Default chamber.
         Chamber chamber = Chamber.SENATE;
-
-        for (var chamberTuple : RegexUtils.specialSplit(hostBlock, CHAMBERS)) {
-            chamber = Chamber.getValue(chamberTuple.v1());
-            var typeTuples = RegexUtils.specialSplit(chamberTuple.v2(), HearingHostType.TYPE_LABELS);
-            for (Tuple<String, String> typeTuple : typeTuples) {
-                var type = HearingHostType.toType(typeTuple.v1());
-                var host = new HearingHost(chamber, type, typeTuple.v2());
-                ret.add(host);
-            }
+        for (var chamberPair : RegexUtils.specialSplit(hostBlock, CHAMBERS)) {
+            // Splits out the Chamber.
+            boolean isJoint = chamberPair.v1().equals(JOINT);
+            chamber = isJoint ? null : Chamber.getValue(chamberPair.v1());
+            var typePairs = RegexUtils.specialSplit(chamberPair.v2(), HearingHostType.TYPE_LABELS);
+            for (Pair<String> typePair : typePairs)
+                ret.addAll(HearingHost.getHosts(typePair.v1(), typePair.v2(), chamber));
         }
         if (ret.isEmpty())
             ret.add(new HearingHost(chamber, HearingHostType.WHOLE_CHAMBER, ""));
