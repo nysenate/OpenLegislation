@@ -63,7 +63,8 @@
 
     .btn {
         @apply py-1 px-2 text-white bg-blue-700 shadow-md text-base font-medium cursor-pointer
-        text-center rounded border-none transform active:translate-y-0.5;
+        text-center rounded border-none transform active:translate-y-0.5 outline-none
+        hover:bg-blue-500 transition-colors;
     }
 
     .btn--state-danger {
@@ -71,12 +72,21 @@
     }
 
     .input {
-        @apply bg-gray-100 rounded p-1 outline-none border-solid focus:border-1 focus:border-blue-400
-        placeholder-gray-500 placeholder-opacity-60;
+        @apply bg-gray-100 rounded p-1 h-8 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400 placeholder-gray-500 placeholder-opacity-60;
     }
 
     .select {
-        @apply bg-gray-100 rounded p-1 outline-none;
+        @apply bg-gray-100 h-8 rounded p-1 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400;
+    }
+
+    .label {
+        @apply font-light;
+    }
+
+    .label--top {
+        @apply block leading-7;
     }
 }
 

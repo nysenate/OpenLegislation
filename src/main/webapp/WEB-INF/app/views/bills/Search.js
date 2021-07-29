@@ -97,8 +97,8 @@ function SearchForm() {
   React.useEffect(() => {
     const params = queryString.parse(location.search)
     setTerm(params.term || "")
-    setSort(params.sort)
-    setSession(params.session)
+    setSort(params.sort || sortOptions.relevant)
+    setSession(params.session || defaultSession)
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -106,59 +106,58 @@ function SearchForm() {
     e.preventDefault()
     const params = queryString.parse(location.search)
     params.term = term
-    history.push({ search: queryString.stringify(params) })
-  }
-
-  const onSortChange = (e) => {
-    const params = queryString.parse(location.search)
-    params.sort = e.target.value
-    history.push({ search: queryString.stringify(params) })
-  }
-
-  const onSessionChange = (e) => {
-    const params = queryString.parse(location.search)
-    params.session = e.target.value
+    params.sort = sort
+    params.session = session
     history.push({ search: queryString.stringify(params) })
   }
 
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <div>
-          <label htmlFor="billsearch" className="">
-            Search for legislation by print number or term:
-          </label>
+        <div className="flex flex-wrap">
+          <div className="flex-grow mr-8">
+            <label htmlFor="billsearch" className="label label--top">
+              Print number or term:
+            </label>
+            <input onChange={(e) => setTerm(e.target.value)}
+                   value={term}
+                   tabIndex="1"
+                   name="billsearch"
+                   type="text"
+                   className="input w-full"
+                   placeholder="e.g. S1234-2015 or yogurt" />
+          </div>
+          <div className="mr-8">
+            <label htmlFor="session-year-select" className="label label--top">Session Year:</label>
+            <select id="session-year-select"
+                    tabIndex="2"
+                    value={session}
+                    onChange={(e) => setSession(e.target.value)}
+                    className="select w-full">
+              <option value="Any">Any</option>
+              {billSessionYearEls()}
+            </select>
+          </div>
+          <div className="">
+            <label htmlFor="sort-by-select" className="label label--top">Sort By:</label>
+            <select id="sort-by-select"
+                    tabIndex="3"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    className="select w-full">
+              <option value={sortOptions.relevant}>Relevant</option>
+              <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
+              <option value={sortOptions.printNo}>Print No</option>
+              <option value={sortOptions.mostProgress}>Most Progress</option>
+              <option value={sortOptions.mostAmendments}>Most Amendments</option>
+            </select>
+          </div>
         </div>
-        <div className="flex items-baseline">
-          <input onChange={(e) => setTerm(e.target.value)}
-                 value={term}
-                 tabIndex="1"
-                 name="billsearch"
-                 type="text"
-                 className="input ml-2 mr-8 flex-grow"
-                 placeholder="e.g. S1234-2015 or yogurt" />
-          <button className="btn my-3 w-28 md:w-36" type="submit">Search</button>
+
+        <div className="flex justify-end">
+          <button className="btn my-3 w-36" type="submit" tabIndex="4">Search</button>
         </div>
       </form>
-      <div className="flex space-x-0 flex-wrap">
-        <div className="">
-          <label htmlFor="session-year-select" className="w-28 inline-block">Session Year:</label>
-          <select id="session-year-select" value={session} onChange={onSessionChange} className="select">
-            <option value="Any">Any</option>
-            {billSessionYearEls()}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="sort-by-select" className="w-28 inline-block md:text-right">Sort By:</label>
-          <select id="sort-by-select" value={sort} onChange={onSortChange} className="select">
-            <option value={sortOptions.relevant}>Relevant</option>
-            <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
-            <option value={sortOptions.printNo}>Print No</option>
-            <option value={sortOptions.mostProgress}>Most Progress</option>
-            <option value={sortOptions.mostAmendments}>Most Amendments</option>
-          </select>
-        </div>
-      </div>
     </div>
   )
 }
