@@ -15,11 +15,6 @@ module.exports = {
   },
   module: {
     rules: [
-      // Load sass files
-      {
-        test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader']
-      },
       // load css files, including tailwindcss
       {
         test: /\.css$/i,
@@ -30,11 +25,6 @@ module.exports = {
         test: /\.(js)$/,
         use: 'babel-loader'
       },
-      // Loading icomoon fonts
-      {
-        test: /\.(woff|eot|svg|ttf)$/,
-        use: 'file-loader'
-      }
     ]
   },
   plugins: [
