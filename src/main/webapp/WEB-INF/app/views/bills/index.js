@@ -5,7 +5,7 @@ import {
   useLocation
 } from "react-router-dom";
 import Bill from "app/views/bills/Bill";
-import Search from "app/views/bills/Search";
+import BillSearch from "app/views/bills/BillSearch";
 import ContentContainer from "app/shared/ContentContainer";
 
 export default function Bills({ setHeaderText }) {
@@ -24,7 +24,7 @@ export default function Bills({ setHeaderText }) {
           <Bill setHeaderText={setHeaderText} />
         </Route>
         <Route path="/bills">
-          <Search />
+          <BillSearch />
         </Route>
       </Switch>
     </ContentContainer>

@@ -6,7 +6,7 @@ import FullDate from "app/shared/FullDate";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
 
-export default function SearchResults({ response, limit, page, onPageChange }) {
+export default function BillSearchResults({ response, limit, page, onPageChange }) {
 
   if (response.result.items.length === 0) {
     return (
