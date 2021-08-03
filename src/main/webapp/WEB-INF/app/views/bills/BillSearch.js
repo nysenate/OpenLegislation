@@ -10,7 +10,9 @@ import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/BillSearchForm";
 import {
   billTypeSearchTerm,
-  chamberSearchTerm
+  chamberSearchTerm,
+  sponsorSearchTerm,
+  statusTypeTerm
 } from "app/views/bills/billSearchUtils";
 
 export default function BillSearch() {
@@ -21,6 +23,10 @@ export default function BillSearch() {
   const params = queryString.parse(location.search)
   const limit = 6
 
+  /**
+   * Whenever the query params are changed perform a new search.
+   * Query params are changed by the BillSearchForm component whenever the search form is submitted.
+   */
   React.useEffect(() => {
     search()
   }, [ location ])
@@ -35,7 +41,10 @@ export default function BillSearch() {
     const session = params.session
     const chamber = params.chamber
     const billType = params.billType
+    const sponsor = params.sponsor
+    const statusType = params.statusType
 
+    // Some search fields need to be added to the lucene search term
     let searchTerm = term
     if (chamber) {
       searchTerm += ` AND ${chamberSearchTerm(chamber)}`
@@ -43,14 +52,19 @@ export default function BillSearch() {
     if (billType) {
       searchTerm += ` AND ${billTypeSearchTerm(billType)}`
     }
+    if (sponsor) {
+      searchTerm += ` AND ${sponsorSearchTerm(sponsor)}`
+    }
+    if (statusType) {
+      searchTerm += ` AND ${statusTypeTerm(statusType)}`
+    }
 
-    doSearch(searchTerm, limit, offset, sort)
+    doSearch(searchTerm, session, limit, offset, sort)
   }
 
-  const doSearch = (term, limit, offset, sort) => {
-    // TODO create full term from other filter fields
+  const doSearch = (term, session, limit, offset, sort) => {
     setLoading(true)
-    billSearch(term, limit, offset, sort)
+    billSearch(term, session, limit, offset, sort)
       .then((response) => {
         setResponse(response)
       })

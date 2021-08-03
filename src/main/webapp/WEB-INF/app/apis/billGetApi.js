@@ -21,3 +21,7 @@ async function fetchUrl(url) {
   }
   return data.result
 }
+
+export function getBillStatusTypes() {
+  return fetchUrl('/api/3/bills/status-types')
+}

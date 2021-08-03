@@ -3,8 +3,9 @@ import "regenerator-runtime/runtime";
 import * as queryString from "query-string";
 
 // TODO add more search options for this endpoint
-export default async function billSearch(term, limit = 6, offset = 1, sort = "_score:desc,session:desc") {
-  const response = await fetch(`/api/3/bills/search?` + queryString.stringify({
+export default async function billSearch(term, session, limit = 6, offset = 1, sort = "_score:desc,session:desc") {
+  const path = session ? `/api/3/bills/${session}/search?` : '/api/3/bills/search?'
+  const response = await fetch(path + queryString.stringify({
     term: term,
     sort: sort,
     limit: limit,
@@ -15,8 +16,4 @@ export default async function billSearch(term, limit = 6, offset = 1, sort = "_s
     throw new Error(data.message)
   }
   return data
-}
-
-const sortByOptions = {
-
 }

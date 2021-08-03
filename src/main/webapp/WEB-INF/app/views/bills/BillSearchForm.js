@@ -5,31 +5,17 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import Accordion from "app/shared/Accordion";
-import { billSessionYears } from "app/lib/dateUtils";
 import { Sliders } from "phosphor-react";
 import {
   billTypeOptions,
-  chamberOptions
+  chamberOptions,
+  fetchMembers,
+  fetchStatusTypes,
+  SelectOption,
+  sessionOptions,
+  sortOptions
 } from "app/views/bills/billSearchUtils";
 
-
-const sortOptions = {
-  relevant: "_score:desc,session:desc",
-  recentStatusUpdate: "status.actionDate:desc,_score:desc",
-  printNo: "printNo:asc,session:desc",
-  mostProgress: "milestones.size:desc,_score:desc",
-  mostAmendments: "amendments.size:desc,_score:desc",
-}
-
-const defaultSession = "Any"
-
-const sessionYearEls = () => {
-  return billSessionYears().map((y) => {
-    return <option key={y} value={y}>{y}</option>
-  })
-}
-
-const sponsorOptions = [ "Any", "John", "Bill", "Jill" ]
 
 const advancedSearchTitleEls = (
   <div className="flex items-center">
@@ -40,22 +26,43 @@ const advancedSearchTitleEls = (
 
 export default function BillSearchForm() {
   const [ term, setTerm ] = React.useState("")
-  const [ sort, setSort ] = React.useState(sortOptions.relevant)
-  const [ session, setSession ] = React.useState(defaultSession)
+  const [ sort, setSort ] = React.useState(sortOptions[0].value)
+  const [ session, setSession ] = React.useState(sessionOptions()[0].value)
   const [ chamber, setChamber ] = React.useState(chamberOptions[0].value)
   const [ billType, setBillType ] = React.useState(billTypeOptions[0].value)
-  const [ sponsor, setSponsor ] = React.useState(sponsorOptions[0])
+  const [ sponsor, setSponsor ] = React.useState()
+  const [ sponsorOptions, setSponsorOptions ] = React.useState()
+  const [ statusType, setStatusType ] = React.useState()
+  const [ statusTypeOptions, setStatusTypeOptions ] = React.useState()
   const location = useLocation()
   const history = useHistory()
+
+  React.useEffect(() => {
+    fetchStatusTypes().then((types) => {
+      setStatusTypeOptions(types)
+    })
+  }, [])
+
+  React.useEffect(() => {
+    fetchMembers(session).then((members) => {
+      setSponsorOptions(members)
+    })
+  }, [ session ])
 
   // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search)
     setTerm(params.term || "")
-    setSort(params.sort || sortOptions.relevant)
-    setSession(params.session || defaultSession)
+    setSort(params.sort || sortOptions[0].value)
+    setSession(params.session || sessionOptions()[0].value)
     setChamber(params.chamber || chamberOptions[0].value)
     setBillType(params.billType || billTypeOptions[0].value)
+    if (sponsorOptions) {
+      setSponsor(params.sponsor || sponsorOptions[0].value)
+    }
+    if (statusTypeOptions) {
+      setStatusType(params.statusType || statusTypeOptions[0].value)
+    }
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -67,7 +74,8 @@ export default function BillSearchForm() {
     params.session = session
     params.chamber = chamber
     params.billType = billType
-    console.log(params)
+    params.sponsor = sponsor
+    params.statusType = statusType
     history.push({ search: queryString.stringify(params) })
   }
 
@@ -88,51 +96,50 @@ export default function BillSearchForm() {
                    placeholder="e.g. S1234-2015 or yogurt" />
           </div>
           <div className="mr-8">
-            <label htmlFor="session-year-select" className="label label--top">Session Year</label>
-            <select id="session-year-select"
-                    tabIndex="2"
-                    value={session}
-                    onChange={(e) => setSession(e.target.value)}
-                    className="select w-full">
-              <option value="Any">Any</option>
-              {sessionYearEls()}
-            </select>
+            <SearchSelect label="Session Year"
+                          tabindex={2}
+                          value={session}
+                          onChange={(e) => setSession(e.target.value)}
+                          options={sessionOptions()} />
           </div>
           <div className="">
-            <label htmlFor="sort-by-select" className="label label--top">Sort By</label>
-            <select id="sort-by-select"
-                    tabIndex="3"
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                    className="select w-full">
-              <option value={sortOptions.relevant}>Relevant</option>
-              <option value={sortOptions.recentStatusUpdate}>Recent Status Update</option>
-              <option value={sortOptions.printNo}>Print No</option>
-              <option value={sortOptions.mostProgress}>Most Progress</option>
-              <option value={sortOptions.mostAmendments}>Most Amendments</option>
-            </select>
+            <SearchSelect label="Sort By"
+                          tabindex={3}
+                          value={sort}
+                          onChange={(e) => setSort(e.target.value)}
+                          options={sortOptions} />
           </div>
         </div>
 
         <div className="m-4">
           <Accordion title={advancedSearchTitleEls}>
             <div>
+              <div className="w-2/12 m-2">
+                <SearchSelect label="Chamber"
+                              value={chamber}
+                              onChange={(e) => setChamber(e.target.value)}
+                              options={chamberOptions} />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchSelect label="Bill/Resolution"
+                              value={billType}
+                              onChange={(e) => setBillType(e.target.value)}
+                              options={billTypeOptions} />
+              </div>
 
-              {/*// TODO how do these modify the api call when set?*/}
-              <SearchSelect label="Chamber"
-                                    value={chamber}
-                                    onChange={(e) => setChamber(e.target.value)}
-                                    options={chamberOptions} />
+              <div className="w-2/12 m-2">
+                <SearchSelect label="Primary Sponsor"
+                              value={sponsor}
+                              onChange={(e) => setSponsor(e.target.value)}
+                              options={sponsorOptions} />
+              </div>
 
-              <SearchSelect label="Bill/Resolution"
-                                    value={billType}
-                                    onChange={(e) => setBillType(e.target.value)}
-                                    options={billTypeOptions} />
-
-              {/*<AdvancedSearchSelect label="Primary Sponsor"*/}
-              {/*                      value={sponsor}*/}
-              {/*                      onChange={(e) => setSponsor(e.target.value)}*/}
-              {/*                      options={sponsorOptions} />*/}
+              <div className="w-2/12 m-2">
+                <SearchSelect label="Current Status"
+                              value={statusType}
+                              onChange={(e) => setStatusType(e.target.value)}
+                              options={statusTypeOptions} />
+              </div>
 
             </div>
           </Accordion>
@@ -146,17 +153,16 @@ export default function BillSearchForm() {
   )
 }
 
-function SearchSelect({ label, value, onChange, options }) {
+function SearchSelect({ label, value, onChange, options, tabindex }) {
   return (
-    <div className="w-2/12 m-2">
-      <label className="label label--top">{label}
-        <select value={value}
-                onChange={onChange}
-                className="select w-full">
-          {options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
-        </select>
-      </label>
-    </div>
+    <label className="label label--top">{label}
+      <select value={value}
+              tabIndex={tabindex}
+              onChange={onChange}
+              className="select w-full">
+        {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
+      </select>
+    </label>
   )
 }
 
