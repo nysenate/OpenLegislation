@@ -23,7 +23,6 @@ export const sessionOptions = () => {
  * Sort Utils
  */
 
-// TODO finish converting sort options to use this data
 export const sortOptions = [
   new SelectOption("_score:desc,session:desc", "Relavent"),
   new SelectOption("status.actionDate:desc,_score:desc", "Recent Status Update"),
@@ -42,10 +41,7 @@ export const chamberOptions = [
 ]
 
 export const chamberSearchTerm = (value) => {
-  if (!value) {
-    return "";
-  }
-  return `billType.chamber:(${value})`
+  return handleEmptyValue(value, `billType.chamber:(${value})`)
 }
 
 
@@ -59,10 +55,7 @@ export const billTypeOptions = [
 ]
 
 export const billTypeSearchTerm = (value) => {
-  if (!value) {
-    return ""
-  }
-  return `billType.resolution:(${value === "Resolution" ? "true" : "false"})`
+  return handleEmptyValue(value, `billType.resolution:(${value === "Resolution" ? "true" : "false"})`)
 }
 
 /**
@@ -78,10 +71,7 @@ export const fetchMembers = (session) => {
 }
 
 export const sponsorSearchTerm = (value) => {
-  if (!value) {
-    return ""
-  }
-  return `sponsor.member.memberId:(${value})`
+  return handleEmptyValue(value, `sponsor.member.memberId:(${value})`)
 }
 
 /**
@@ -97,8 +87,95 @@ export const fetchStatusTypes = () => {
 }
 
 export const statusTypeTerm = (value) => {
+  return handleEmptyValue(value, `status.statusType:(${value})`)
+}
+
+
+/**
+ * PrintNo
+ */
+
+export const printNoTerm = (value) => {
+  return handleEmptyValue(value, `printNo:(${value})`)
+}
+
+/**
+ * Memo
+ */
+
+export const memoTerm = (value) => {
+  return handleEmptyValue(value, `amendments.\\*.memo:(${value})`)
+}
+
+/**
+ * ActionText
+ */
+
+export const actionTextTerm = (value) => {
+  return handleEmptyValue(value, `actions.\\*.text:(${value})`)
+}
+
+
+/**
+ * Calendar Number
+ */
+
+export const calendarNoTerm = (value) => {
+  return handleEmptyValue(value, `\\*.billCalNo:(${value})`)
+}
+
+/**
+ * Law Section
+ */
+
+export const lawSectionTerm = (value) => {
+  return handleEmptyValue(value, `amendments.\\*.lawSection:(${value})`)
+}
+
+/**
+ * Title
+ */
+
+export const titleTerm = (value) => {
+  return handleEmptyValue(value, `title:(${value})`)
+}
+
+/**
+ * Full Text
+ */
+
+export const fullTextTerm = (value) => {
+  return handleEmptyValue(value, `amendments.\\*.fullText:(${value})`)
+}
+
+/**
+ * Committee
+ */
+export const committeeTerm = (value) => {
+  return handleEmptyValue(value, `status.committeeName:(${value})`)
+}
+
+/**
+ * Agenda Number
+ */
+export const agendaNoTerm = (value) => {
+  return handleEmptyValue(value, `\\*.agendaId.number:(${value})`)
+}
+
+/**
+ * Law Code
+ */
+export const lawCodeTerm = (value) => {
+  return handleEmptyValue(value, `amendments.\\*.lawCode:(${value})`)
+}
+
+/**
+ * Misc
+ */
+
+const handleEmptyValue = (value, termString) => {
   if (!value) {
     return ""
   }
-  return `status.statusType:(${value})`
+  return termString
 }

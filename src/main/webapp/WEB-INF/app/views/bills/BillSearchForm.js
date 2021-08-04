@@ -11,7 +11,6 @@ import {
   chamberOptions,
   fetchMembers,
   fetchStatusTypes,
-  SelectOption,
   sessionOptions,
   sortOptions
 } from "app/views/bills/billSearchUtils";
@@ -34,6 +33,16 @@ export default function BillSearchForm() {
   const [ sponsorOptions, setSponsorOptions ] = React.useState()
   const [ statusType, setStatusType ] = React.useState()
   const [ statusTypeOptions, setStatusTypeOptions ] = React.useState()
+  const [ printNo, setPrintNo ] = React.useState()
+  const [ memo, setMemo ] = React.useState()
+  const [ actionText, setActionText ] = React.useState()
+  const [ calendarNo, setCalendarNo ] = React.useState()
+  const [ lawSection, setLawSection ] = React.useState()
+  const [ title, setTitle ] = React.useState()
+  const [ fullText, setFullText ] = React.useState()
+  const [ committee, setCommittee ] = React.useState()
+  const [ agendaNo, setAgendaNo ] = React.useState()
+  const [ lawCode, setLawCode ] = React.useState()
   const location = useLocation()
   const history = useHistory()
 
@@ -63,6 +72,16 @@ export default function BillSearchForm() {
     if (statusTypeOptions) {
       setStatusType(params.statusType || statusTypeOptions[0].value)
     }
+    setPrintNo(params.printNo || "")
+    setMemo(params.memo || "")
+    setActionText(params.actionText || "")
+    setCalendarNo(params.calendarNo || "")
+    setLawSection(params.lawSection || "")
+    setTitle(params.title || "")
+    setFullText(params.fullText || "")
+    setCommittee(params.committee || "")
+    setAgendaNo(params.agendaNo || "")
+    setLawCode(params.lawCode || "")
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -76,6 +95,16 @@ export default function BillSearchForm() {
     params.billType = billType
     params.sponsor = sponsor
     params.statusType = statusType
+    params.printNo = printNo
+    params.memo = memo
+    params.actionText = actionText
+    params.calendarNo = calendarNo
+    params.lawSection = lawSection
+    params.title = title
+    params.fullText = fullText
+    params.committee = committee
+    params.agendaNo = agendaNo
+    params.lawCode = lawCode
     history.push({ search: queryString.stringify(params) })
   }
 
@@ -141,7 +170,71 @@ export default function BillSearchForm() {
                               options={statusTypeOptions} />
               </div>
 
+
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Print no"
+                                 value={printNo}
+                                 onChange={(e) => setPrintNo(e.target.value)}
+                                 placeholder="S1234" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Memo"
+                                 value={memo}
+                                 onChange={(e) => setMemo(e.target.value)}
+                                 placeholder="" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Contains Action Text"
+                                 value={actionText}
+                                 onChange={(e) => setActionText(e.target.value)}
+                                 placeholder="Substituted For *" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Bill Calendar Number"
+                                 value={calendarNo}
+                                 onChange={(e) => setCalendarNo(e.target.value)}
+                                 placeholder="123" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Law Section"
+                                 value={lawSection}
+                                 onChange={(e) => setLawSection(e.target.value)}
+                                 placeholder="Education" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Title"
+                                 value={title}
+                                 onChange={(e) => setTitle(e.target.value)}
+                                 placeholder="Title of the bill/reso" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Full Text"
+                                 value={fullText}
+                                 onChange={(e) => setFullText(e.target.value)}
+                                 placeholder="" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="In Committee (Name)"
+                                 value={committee}
+                                 onChange={(e) => setCommittee(e.target.value)}
+                                 placeholder="Aging" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Agenda Number"
+                                 value={agendaNo}
+                                 onChange={(e) => setAgendaNo(e.target.value)}
+                                 placeholder="4" />
+              </div>
+              <div className="w-2/12 m-2">
+                <SearchTextInput label="Law Code"
+                                 value={lawCode}
+                                 onChange={(e) => setLawCode(e.target.value)}
+                                 placeholder="236 Town L" />
+              </div>
+
             </div>
+
+
           </Accordion>
         </div>
 
@@ -166,3 +259,15 @@ function SearchSelect({ label, value, onChange, options, tabindex }) {
   )
 }
 
+function SearchTextInput({ label, value, onChange, placeholder }) {
+  return (
+    <label className="label label--top">{label}
+      <input value={value}
+             onChange={onChange}
+             type="text"
+             placeholder={placeholder}
+             className="input w-full"
+      />
+    </label>
+  )
+}

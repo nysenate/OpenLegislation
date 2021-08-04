@@ -9,10 +9,20 @@ import BillSearchResults from "app/views/bills/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/BillSearchForm";
 import {
+  actionTextTerm,
+  agendaNoTerm,
   billTypeSearchTerm,
+  calendarNoTerm,
   chamberSearchTerm,
+  committeeTerm,
+  fullTextTerm,
+  lawCodeTerm,
+  lawSectionTerm,
+  memoTerm,
+  printNoTerm,
   sponsorSearchTerm,
-  statusTypeTerm
+  statusTypeTerm,
+  titleTerm
 } from "app/views/bills/billSearchUtils";
 
 export default function BillSearch() {
@@ -43,6 +53,16 @@ export default function BillSearch() {
     const billType = params.billType
     const sponsor = params.sponsor
     const statusType = params.statusType
+    const printNo = params.printNo
+    const memo = params.memo
+    const actionText = params.actionText
+    const calendarNo = params.calendarNo
+    const lawSection = params.lawSection
+    const title = params.title
+    const fullText = params.fullText
+    const committee = params.committee
+    const agendaNo = params.agendaNo
+    const lawCode = params.lawCode
 
     // Some search fields need to be added to the lucene search term
     let searchTerm = term
@@ -57,6 +77,36 @@ export default function BillSearch() {
     }
     if (statusType) {
       searchTerm += ` AND ${statusTypeTerm(statusType)}`
+    }
+    if (printNo) {
+      searchTerm += ` AND ${printNoTerm(printNo)}`
+    }
+    if (memo) {
+      searchTerm += ` AND ${memoTerm(memo)}`
+    }
+    if (actionText) {
+      searchTerm += ` AND ${actionTextTerm(actionText)}`
+    }
+    if (calendarNo) {
+      searchTerm += ` AND ${calendarNoTerm(calendarNo)}`
+    }
+    if (lawSection) {
+      searchTerm += ` AND ${lawSectionTerm(lawSection)}`
+    }
+    if (title) {
+      searchTerm += ` AND ${titleTerm(title)}`
+    }
+    if (fullText) {
+      searchTerm += ` AND ${fullTextTerm(fullText)}`
+    }
+    if (committee) {
+      searchTerm += ` AND ${committeeTerm(committee)}`
+    }
+    if (agendaNo) {
+      searchTerm += ` AND ${agendaNoTerm(agendaNo)}`
+    }
+    if (lawCode) {
+      searchTerm += ` AND ${lawCodeTerm(lawCode)}`
     }
 
     doSearch(searchTerm, session, limit, offset, sort)
