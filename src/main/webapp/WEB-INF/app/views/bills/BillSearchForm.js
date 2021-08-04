@@ -43,6 +43,14 @@ export default function BillSearchForm() {
   const [ committee, setCommittee ] = React.useState()
   const [ agendaNo, setAgendaNo ] = React.useState()
   const [ lawCode, setLawCode ] = React.useState()
+  const [ isSigned, setIsSigned ] = React.useState(false)
+  const [ isGovernorBill, setIsGovernorBill ] = React.useState(false)
+  const [ hasVotes, setHasVotes ] = React.useState(false)
+  const [ hasApVetoMemo, setHasApVetoMemo ] = React.useState(false)
+  const [ isSubstituted, setIsSubstituted ] = React.useState(false)
+  const [ isUniBill, setIsUniBill ] = React.useState(false)
+  const [ isBudgetBill, setIsBudgetBill ] = React.useState(false)
+  const [ isRulesSponsored, setIsRulesSponsored ] = React.useState(false)
   const location = useLocation()
   const history = useHistory()
 
@@ -60,7 +68,7 @@ export default function BillSearchForm() {
 
   // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
-    const params = queryString.parse(location.search)
+    const params = queryString.parse(location.search, { parseBooleans: true })
     setTerm(params.term || "")
     setSort(params.sort || sortOptions[0].value)
     setSession(params.session || sessionOptions()[0].value)
@@ -82,6 +90,14 @@ export default function BillSearchForm() {
     setCommittee(params.committee || "")
     setAgendaNo(params.agendaNo || "")
     setLawCode(params.lawCode || "")
+    setIsSigned(params.isSigned)
+    setIsGovernorBill(params.isGovernorBill)
+    setHasVotes(params.hasVotes)
+    setHasApVetoMemo(params.hasApVetoMemo)
+    setIsSubstituted(params.isSubstituted)
+    setIsUniBill(params.isUniBill)
+    setIsBudgetBill(params.isBudgetBill)
+    setIsRulesSponsored(params.isRulesSponsored)
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -105,8 +121,19 @@ export default function BillSearchForm() {
     params.committee = committee
     params.agendaNo = agendaNo
     params.lawCode = lawCode
+    params.isSigned = isSigned
+    params.isGovernorBill = isGovernorBill
+    params.hasVotes = hasVotes
+    params.hasApVetoMemo = hasApVetoMemo
+    params.isSubstituted = isSubstituted
+    params.isUniBill = isUniBill
+    params.isBudgetBill = isBudgetBill
+    params.isRulesSponsored = isRulesSponsored
     history.push({ search: queryString.stringify(params) })
   }
+
+  const filterWrapperClass = "mx-4 my-2"
+  const advancedFilterColumnClass = "flex flex-col w-12/12 sm:w-6/12 lg:w-3/12"
 
   return (
     <div>
@@ -142,96 +169,146 @@ export default function BillSearchForm() {
 
         <div className="m-4">
           <Accordion title={advancedSearchTitleEls}>
-            <div>
-              <div className="w-2/12 m-2">
-                <SearchSelect label="Chamber"
-                              value={chamber}
-                              onChange={(e) => setChamber(e.target.value)}
-                              options={chamberOptions} />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchSelect label="Bill/Resolution"
-                              value={billType}
-                              onChange={(e) => setBillType(e.target.value)}
-                              options={billTypeOptions} />
+            <div className="flex justify-between flex-wrap">
+              <div className={advancedFilterColumnClass}>
+                <div className={filterWrapperClass}>
+                  <SearchSelect label="Chamber"
+                                value={chamber}
+                                onChange={(e) => setChamber(e.target.value)}
+                                options={chamberOptions} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchSelect label="Bill/Resolution"
+                                value={billType}
+                                onChange={(e) => setBillType(e.target.value)}
+                                options={billTypeOptions} />
+                </div>
+
+                <div className={filterWrapperClass}>
+                  <SearchSelect label="Primary Sponsor"
+                                value={sponsor}
+                                onChange={(e) => setSponsor(e.target.value)}
+                                options={sponsorOptions} />
+                </div>
+
+                <div className={filterWrapperClass}>
+                  <SearchSelect label="Current Status"
+                                value={statusType}
+                                onChange={(e) => setStatusType(e.target.value)}
+                                options={statusTypeOptions} />
+                </div>
               </div>
 
-              <div className="w-2/12 m-2">
-                <SearchSelect label="Primary Sponsor"
-                              value={sponsor}
-                              onChange={(e) => setSponsor(e.target.value)}
-                              options={sponsorOptions} />
+
+              <div className={advancedFilterColumnClass}>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Print no"
+                                   value={printNo}
+                                   onChange={(e) => setPrintNo(e.target.value)}
+                                   placeholder="S1234" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Memo"
+                                   value={memo}
+                                   onChange={(e) => setMemo(e.target.value)}
+                                   placeholder="" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Contains Action Text"
+                                   value={actionText}
+                                   onChange={(e) => setActionText(e.target.value)}
+                                   placeholder="Substituted For *" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Bill Calendar Number"
+                                   value={calendarNo}
+                                   onChange={(e) => setCalendarNo(e.target.value)}
+                                   placeholder="123" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Law Section"
+                                   value={lawSection}
+                                   onChange={(e) => setLawSection(e.target.value)}
+                                   placeholder="Education" />
+                </div>
               </div>
 
-              <div className="w-2/12 m-2">
-                <SearchSelect label="Current Status"
-                              value={statusType}
-                              onChange={(e) => setStatusType(e.target.value)}
-                              options={statusTypeOptions} />
+              <div className={advancedFilterColumnClass}>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Title"
+                                   value={title}
+                                   onChange={(e) => setTitle(e.target.value)}
+                                   placeholder="Title of the bill/reso" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Full Text"
+                                   value={fullText}
+                                   onChange={(e) => setFullText(e.target.value)}
+                                   placeholder="" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="In Committee (Name)"
+                                   value={committee}
+                                   onChange={(e) => setCommittee(e.target.value)}
+                                   placeholder="Aging" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Agenda Number"
+                                   value={agendaNo}
+                                   onChange={(e) => setAgendaNo(e.target.value)}
+                                   placeholder="4" />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchTextInput label="Law Code"
+                                   value={lawCode}
+                                   onChange={(e) => setLawCode(e.target.value)}
+                                   placeholder="236 Town L" />
+                </div>
               </div>
 
 
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Print no"
-                                 value={printNo}
-                                 onChange={(e) => setPrintNo(e.target.value)}
-                                 placeholder="S1234" />
+              <div className={advancedFilterColumnClass}>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Signed / Adopted"
+                                  value={isSigned}
+                                  onChange={(e) => setIsSigned(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Governor's Bill"
+                                  value={isGovernorBill}
+                                  onChange={(e) => setIsGovernorBill(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Has Votes"
+                                  value={hasVotes}
+                                  onChange={(e) => setHasVotes(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Has Appr/Veto Memo"
+                                  value={hasApVetoMemo}
+                                  onChange={(e) => setHasApVetoMemo(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Substituted By"
+                                  value={isSubstituted}
+                                  onChange={(e) => setIsSubstituted(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Uni Bill"
+                                  value={isUniBill}
+                                  onChange={(e) => setIsUniBill(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Budget Bill"
+                                  value={isBudgetBill}
+                                  onChange={(e) => setIsBudgetBill(e.target.checked)} />
+                </div>
+                <div className={filterWrapperClass}>
+                  <SearchCheckbox label="Is Rules Sponsored"
+                                  value={isRulesSponsored}
+                                  onChange={(e) => setIsRulesSponsored(e.target.checked)} />
+                </div>
               </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Memo"
-                                 value={memo}
-                                 onChange={(e) => setMemo(e.target.value)}
-                                 placeholder="" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Contains Action Text"
-                                 value={actionText}
-                                 onChange={(e) => setActionText(e.target.value)}
-                                 placeholder="Substituted For *" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Bill Calendar Number"
-                                 value={calendarNo}
-                                 onChange={(e) => setCalendarNo(e.target.value)}
-                                 placeholder="123" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Law Section"
-                                 value={lawSection}
-                                 onChange={(e) => setLawSection(e.target.value)}
-                                 placeholder="Education" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Title"
-                                 value={title}
-                                 onChange={(e) => setTitle(e.target.value)}
-                                 placeholder="Title of the bill/reso" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Full Text"
-                                 value={fullText}
-                                 onChange={(e) => setFullText(e.target.value)}
-                                 placeholder="" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="In Committee (Name)"
-                                 value={committee}
-                                 onChange={(e) => setCommittee(e.target.value)}
-                                 placeholder="Aging" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Agenda Number"
-                                 value={agendaNo}
-                                 onChange={(e) => setAgendaNo(e.target.value)}
-                                 placeholder="4" />
-              </div>
-              <div className="w-2/12 m-2">
-                <SearchTextInput label="Law Code"
-                                 value={lawCode}
-                                 onChange={(e) => setLawCode(e.target.value)}
-                                 placeholder="236 Town L" />
-              </div>
-
             </div>
 
 
@@ -269,5 +346,20 @@ function SearchTextInput({ label, value, onChange, placeholder }) {
              className="input w-full"
       />
     </label>
+  )
+}
+
+function SearchCheckbox({ label, value, onChange }) {
+  return (
+    <React.Fragment>
+      <input id={label}
+             name={label}
+             onChange={onChange}
+             checked={value}
+             type="checkbox"
+             className="cursor-pointer"
+      />
+      <label htmlFor={label} className="label ml-2 cursor-pointer">{label}</label>
+    </React.Fragment>
   )
 }

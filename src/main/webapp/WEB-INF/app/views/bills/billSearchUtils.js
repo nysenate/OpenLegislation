@@ -9,10 +9,38 @@ export class SelectOption {
   }
 }
 
+export const REFINE = {
+  PATHS: {
+    actionText: "actions.\\*.text",
+    agendaNo: "\\*.agendaId.number",
+    calendarNo: "\\*.billCalNo",
+    chamber: "billType.chamber",
+    committee: "status.committeeName",
+    fullText: "amendments.\\*.fullText",
+    lawCode: "amendments.\\*.lawCode",
+    lawSection: "amendments.\\*.lawSection",
+    memo: "amendments.\\*.memo",
+    printNo: "printNo",
+    sponsor: "sponsor.member.memberId",
+    statusType: "status.statusType",
+    title: "title"
+  },
+  FIXED_PATHS: {
+    isSigned: '(signed:true OR adopted:true)',
+    hasVotes: '(votes.size:>0)',
+    hasApVetoMemo: '(vetoMessages.size:>0 OR !_empty_:approvalMessage)',
+    isGovernorBill: '(programInfo.name:*Governor*)',
+    isSubstituted: '(_exists_:substitutedBy)',
+    isUniBill: '(amendments.\\*.uniBill:true)',
+    isBudgetBill: '(sponsor.budget:true)',
+    isRulesSponsored: '(sponsor.rules:true)',
+    billType: 'billType.resolution:(true)'
+  }
+}
+
 /**
  * Session year Utils
  */
-
 export const sessionOptions = () => {
   let sessions = billSessionYears().map((year) => new SelectOption(year, year))
   sessions.unshift(new SelectOption("", "Any"))
@@ -40,10 +68,6 @@ export const chamberOptions = [
   new SelectOption("ASSEMBLY", "Assembly")
 ]
 
-export const chamberSearchTerm = (value) => {
-  return handleEmptyValue(value, `billType.chamber:(${value})`)
-}
-
 
 /**
  * Bill Type Utils
@@ -53,10 +77,6 @@ export const billTypeOptions = [
   new SelectOption("Bill", "Bill"),
   new SelectOption("Resolution", "Resolution")
 ]
-
-export const billTypeSearchTerm = (value) => {
-  return handleEmptyValue(value, `billType.resolution:(${value === "Resolution" ? "true" : "false"})`)
-}
 
 /**
  * Members/Sponsors
@@ -70,10 +90,6 @@ export const fetchMembers = (session) => {
   })
 }
 
-export const sponsorSearchTerm = (value) => {
-  return handleEmptyValue(value, `sponsor.member.memberId:(${value})`)
-}
-
 /**
  * Bill Status Types
  */
@@ -84,98 +100,4 @@ export const fetchStatusTypes = () => {
       return new SelectOption(status.name, status.description)
     }))
   })
-}
-
-export const statusTypeTerm = (value) => {
-  return handleEmptyValue(value, `status.statusType:(${value})`)
-}
-
-
-/**
- * PrintNo
- */
-
-export const printNoTerm = (value) => {
-  return handleEmptyValue(value, `printNo:(${value})`)
-}
-
-/**
- * Memo
- */
-
-export const memoTerm = (value) => {
-  return handleEmptyValue(value, `amendments.\\*.memo:(${value})`)
-}
-
-/**
- * ActionText
- */
-
-export const actionTextTerm = (value) => {
-  return handleEmptyValue(value, `actions.\\*.text:(${value})`)
-}
-
-
-/**
- * Calendar Number
- */
-
-export const calendarNoTerm = (value) => {
-  return handleEmptyValue(value, `\\*.billCalNo:(${value})`)
-}
-
-/**
- * Law Section
- */
-
-export const lawSectionTerm = (value) => {
-  return handleEmptyValue(value, `amendments.\\*.lawSection:(${value})`)
-}
-
-/**
- * Title
- */
-
-export const titleTerm = (value) => {
-  return handleEmptyValue(value, `title:(${value})`)
-}
-
-/**
- * Full Text
- */
-
-export const fullTextTerm = (value) => {
-  return handleEmptyValue(value, `amendments.\\*.fullText:(${value})`)
-}
-
-/**
- * Committee
- */
-export const committeeTerm = (value) => {
-  return handleEmptyValue(value, `status.committeeName:(${value})`)
-}
-
-/**
- * Agenda Number
- */
-export const agendaNoTerm = (value) => {
-  return handleEmptyValue(value, `\\*.agendaId.number:(${value})`)
-}
-
-/**
- * Law Code
- */
-export const lawCodeTerm = (value) => {
-  return handleEmptyValue(value, `amendments.\\*.lawCode:(${value})`)
-}
-
-/**
- * Misc
- */
-
-const handleEmptyValue = (value, termString) => {
-  if (!value) {
-    return ""
-  }
-  return termString
 }

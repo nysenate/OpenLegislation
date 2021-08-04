@@ -9,20 +9,7 @@ import BillSearchResults from "app/views/bills/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/BillSearchForm";
 import {
-  actionTextTerm,
-  agendaNoTerm,
-  billTypeSearchTerm,
-  calendarNoTerm,
-  chamberSearchTerm,
-  committeeTerm,
-  fullTextTerm,
-  lawCodeTerm,
-  lawSectionTerm,
-  memoTerm,
-  printNoTerm,
-  sponsorSearchTerm,
-  statusTypeTerm,
-  titleTerm
+  REFINE,
 } from "app/views/bills/billSearchUtils";
 
 export default function BillSearch() {
@@ -43,72 +30,24 @@ export default function BillSearch() {
 
   // Perform a search using the query string parameters.
   const search = () => {
-    const params = queryString.parse(location.search)
+    const params = queryString.parse(location.search, {parseBooleans: true})
     const page = params.page || 1
     const offset = (page - 1) * limit + 1
     const term = params.term || '*'
     const sort = params.sort
     const session = params.session
-    const chamber = params.chamber
-    const billType = params.billType
-    const sponsor = params.sponsor
-    const statusType = params.statusType
-    const printNo = params.printNo
-    const memo = params.memo
-    const actionText = params.actionText
-    const calendarNo = params.calendarNo
-    const lawSection = params.lawSection
-    const title = params.title
-    const fullText = params.fullText
-    const committee = params.committee
-    const agendaNo = params.agendaNo
-    const lawCode = params.lawCode
 
-    // Some search fields need to be added to the lucene search term
     let searchTerm = term
-    if (chamber) {
-      searchTerm += ` AND ${chamberSearchTerm(chamber)}`
-    }
-    if (billType) {
-      searchTerm += ` AND ${billTypeSearchTerm(billType)}`
-    }
-    if (sponsor) {
-      searchTerm += ` AND ${sponsorSearchTerm(sponsor)}`
-    }
-    if (statusType) {
-      searchTerm += ` AND ${statusTypeTerm(statusType)}`
-    }
-    if (printNo) {
-      searchTerm += ` AND ${printNoTerm(printNo)}`
-    }
-    if (memo) {
-      searchTerm += ` AND ${memoTerm(memo)}`
-    }
-    if (actionText) {
-      searchTerm += ` AND ${actionTextTerm(actionText)}`
-    }
-    if (calendarNo) {
-      searchTerm += ` AND ${calendarNoTerm(calendarNo)}`
-    }
-    if (lawSection) {
-      searchTerm += ` AND ${lawSectionTerm(lawSection)}`
-    }
-    if (title) {
-      searchTerm += ` AND ${titleTerm(title)}`
-    }
-    if (fullText) {
-      searchTerm += ` AND ${fullTextTerm(fullText)}`
-    }
-    if (committee) {
-      searchTerm += ` AND ${committeeTerm(committee)}`
-    }
-    if (agendaNo) {
-      searchTerm += ` AND ${agendaNoTerm(agendaNo)}`
-    }
-    if (lawCode) {
-      searchTerm += ` AND ${lawCodeTerm(lawCode)}`
-    }
-
+    Object.entries(params).forEach(([ key, value ]) => {
+      if (value) {
+        if (key in REFINE.PATHS) {
+          searchTerm += ` AND ${REFINE.PATHS[key]}:(${value})`
+        } else if (key in REFINE.FIXED_PATHS) {
+          searchTerm += ` AND ${REFINE.FIXED_PATHS[key]}`
+        }
+      }
+    })
+    console.log(searchTerm)
     doSearch(searchTerm, session, limit, offset, sort)
   }
 
