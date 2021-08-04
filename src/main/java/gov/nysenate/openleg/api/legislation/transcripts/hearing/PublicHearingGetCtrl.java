@@ -56,12 +56,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
     public BaseResponse getAllHearings(@RequestParam(defaultValue = "date:desc") String sort,
                                        @RequestParam(defaultValue = "false") boolean full,
                                        WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(sort, limOff);
-        return ListViewResponse.of(results.getResults().stream().map(r ->
-                        (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                                : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
+        return getHearingsByYear(-1, sort, full, webRequest);
     }
 
     /**
@@ -83,30 +78,33 @@ public class PublicHearingGetCtrl extends BaseCtrl
                                           WebRequest webRequest)
                                           throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(year, sort, limOff);
+        // Can instead get all hearings.
+        SearchResults<PublicHearingId> results = year == -1 ? hearingSearch.searchPublicHearings(sort, limOff) :
+                hearingSearch.searchPublicHearings(year, sort, limOff);
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
                                 : new PublicHearingIdView(r.getResult()))
                         .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
+    // TODO: change API's.
     /**
      * Single Public Hearing Retrieval API.
      * ------------------------------------
      *
      * Retrieve a singe public hearing by its filename.
-     * (GET) /api/3/hearings/{filename}
+     * (GET) /api/3/hearings/{id}
      *
      * Request Parameters: None
      *
      * Expected Output: PublicHearingView
      *
      */
-    @RequestMapping(value = "/{filename:.*}")
-    public BaseResponse getHearing(@PathVariable String filename) {
+    @RequestMapping(value = "/{id:\\d+}")
+    public BaseResponse getHearing(@PathVariable String id) {
         return new ViewObjectResponse<>(
-                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(filename))),
-        "Data for public hearing " + filename);
+                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)))),
+        "Data for public hearing with id #" + id);
     }
 
     /**
@@ -119,10 +117,10 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping(value = "/{filename}.pdf")
-    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename)
+    @RequestMapping(value = "/{id:\\d+}.pdf")
+    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id)
             throws IOException {
-        PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
+        PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));
         return new PublicHearingPdfView(hearing).writeData();
     }
 

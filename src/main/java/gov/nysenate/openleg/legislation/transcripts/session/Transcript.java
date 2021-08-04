@@ -11,23 +11,9 @@ import java.util.Objects;
  */
 public class Transcript extends BaseLegislativeContent
 {
-    /** The transcript id. */
     private final TranscriptId transcriptId;
-
-    /** A transcripts session type. */
-    private final String sessionType;
-
-    /** The date time of this transcript. */
     private final LocalDateTime dateTime;
-
-    /** Location of meeting recorded in transcript. */
-    private final String location;
-
-    /** The raw text of the transcript. */
-    private final String text;
-
-    /** The filename of this transcript. */
-    private final String filename;
+    private final String sessionType, location, text, filename;
 
     /** --- Constructors --- */
 

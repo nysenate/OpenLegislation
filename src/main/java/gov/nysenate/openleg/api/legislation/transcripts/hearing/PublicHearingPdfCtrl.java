@@ -36,11 +36,11 @@ public class PublicHearingPdfCtrl
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping(value = "/{filename}")
-    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename, HttpServletResponse response)
+    @RequestMapping(value = "/{id:\\d+}")
+    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id, HttpServletResponse response)
             throws IOException {
         try {
-            PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
+            PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));
             return new PublicHearingPdfView(hearing).writeData();
         } catch (PublicHearingNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

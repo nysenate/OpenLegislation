@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.processors.ParseError;
 
 import java.util.Arrays;
@@ -13,10 +12,10 @@ public class PublicHearingTextUtils {
     // This is a utility class.
     private PublicHearingTextUtils() {}
 
-    public static PublicHearing getHearingFromText(PublicHearingId hearingId, String fullText) {
+    public static PublicHearing getHearingFromText(String filename, String fullText) {
         List<List<String>> pages = PublicHearing.getPages(fullText);
         if (pages.size() < 2)
-            throw new ParseError("Public hearing in file " + hearingId.getFileName() + " is too short.");
+            throw new ParseError("Public hearing in file " + filename + " is too short.");
         boolean isWrongFormat = pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
         List<String> dataList = getDataList(pages.get(0), isWrongFormat);
         // Retrieves information from text.
@@ -26,14 +25,11 @@ public class PublicHearingTextUtils {
                 pages.get(pages.size() - 1));
 
         // Set the data.
-        var hearing = new PublicHearing(hearingId, dateTimeParser.getDate(), fullText);
-        hearing.setStartTime(dateTimeParser.getStartTime());
-        hearing.setEndTime(dateTimeParser.getEndTime());
-        String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2);
-        hearing.setTitle(title.replaceAll("\\s+", " ").trim());
+        String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2)
+                .replaceAll("\\s+", " ").trim();
+        var hearing = new PublicHearing(filename, fullText, title, getAddress(hasAddress, addrDateTime[0], title), dateTimeParser.getDate(),
+                dateTimeParser.getStartTime(), dateTimeParser.getEndTime());
         hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
-        setAddress(hasAddress, addrDateTime[0], hearing);
-
         return hearing;
     }
 
@@ -66,14 +62,11 @@ public class PublicHearingTextUtils {
         return toSplit.split("\n{2,}");
     }
 
-    private static void setAddress(boolean hasAddress, String possibleAddress, PublicHearing hearing) {
-        String address;
+    private static String getAddress(boolean hasAddress, String possibleAddress, String title) {
         if (hasAddress)
-            address = possibleAddress;
-        else if (hearing.getTitle().contains("(VIRTUAL|ONLINE).+HEARING"))
-            address =  "Virtual Hearing";
-        else
-            address = "No address";
-        hearing.setAddress(address);
+            return possibleAddress;
+        else if (title.contains("(VIRTUAL|ONLINE).+HEARING"))
+            return "Virtual Hearing";
+        return "No address";
     }
 }

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import org.apache.commons.io.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,7 @@ public class PublicHearingParser {
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
         String fullText = Files.readString(publicHearingFile.getFile().toPath(), CP_1252);
-        PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
-        PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(id, fullText);
+        PublicHearing hearing = PublicHearingTextUtils.getHearingFromText(publicHearingFile.getFileName(), fullText);
 
         LocalDateTime now = LocalDateTime.now();
         hearing.setModifiedDateTime(now);

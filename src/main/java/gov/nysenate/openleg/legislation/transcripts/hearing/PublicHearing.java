@@ -8,46 +8,34 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PublicHearing extends BaseLegislativeContent {
-    /** The Public Hearing id. */
-    private final PublicHearingId id;
-
-    /** The title of the public hearing. */
-    private String title;
-
-    /** The date of the public hearing. */
+    // Uniquely identifies a hearing, but may not be available if the hearing is not in the database yet.
+    private PublicHearingId id;
+    private final String filename, text, title, address;
     private final LocalDate date;
+    private final LocalTime startTime, endTime;
 
-    /** The location of this Public Hearing. */
-    private String address;
-
-    /** The {@link HearingHost}
-     * holding this PublicHearing. */
+    /** The {@link HearingHost}s holding this PublicHearing. */
     private List<HearingHost> hosts;
 
-    /** The raw text of the Public Hearing. */
-    private final String text;
-
-    /** The start time of the public hearing. */
-    private LocalTime startTime;
-
-    /** The end time of the public hearing. */
-    private LocalTime endTime;
-
-    /** --- Constructor --- */
-
-    public PublicHearing(PublicHearingId publicHearingId, LocalDate date, String text) {
-        this.id = publicHearingId;
+    public PublicHearing(String filename, String text, String title, String address,
+                         LocalDate date, LocalTime startTime, LocalTime endTime) {
+        this.filename = filename;
         this.date = date;
         this.text = text;
+        this.title = title;
+        this.address = address;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.year = this.date.getYear();
         this.session = SessionYear.of(this.getYear());
     }
 
     /**
-     * Groups public hearing text into pages, which are lists of lines..
+     * Groups public hearing text into pages, which are lists of lines.
      * @param fullText of the hearing.
      */
     public static List<List<String>> getPages(String fullText) {
@@ -66,7 +54,26 @@ public class PublicHearing extends BaseLegislativeContent {
         return ret;
     }
 
-    /** --- Basic Getters/Setters --- */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PublicHearing that = (PublicHearing) o;
+        return Objects.equals(id, that.id) && Objects.equals(filename, that.filename) &&
+                Objects.equals(text, that.text) && Objects.equals(title, that.title) &&
+                Objects.equals(address, that.address) && Objects.equals(date, that.date) &&
+                Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime) &&
+                Objects.equals(hosts, that.hosts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, filename, text, title, address, date, startTime, endTime, hosts);
+    }
+
+    public void setId(PublicHearingId id) {
+        this.id = id;
+    }
 
     public PublicHearingId getId() {
         return id;
@@ -84,16 +91,8 @@ public class PublicHearing extends BaseLegislativeContent {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getAddress() {
         return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public List<HearingHost> getHosts() {
@@ -108,15 +107,11 @@ public class PublicHearing extends BaseLegislativeContent {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
     public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
+    public String getFilename() {
+        return filename;
     }
 }

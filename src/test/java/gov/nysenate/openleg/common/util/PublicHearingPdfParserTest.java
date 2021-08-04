@@ -5,18 +5,15 @@ import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptP
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.SillyTest;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
-import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingTextUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 // TODO: Make into unit test. Stop extending.
@@ -93,46 +90,4 @@ public class PublicHearingPdfParserTest extends BaseTests {
         System.err.println(count);
     }
 
-    static class Quadruplet<A, B, C, D> {
-        final A v1;
-        final B v2;
-        final C v3;
-        final D v4;
-
-        Quadruplet(A v1, B v2, C v3, D v4) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
-            this.v4 = v4;
-        }
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Quadruplet<?, ?, ?, ?> quadruplet = (Quadruplet<?, ?, ?, ?>) o;
-            return Objects.equals(v1, quadruplet.v1) && Objects.equals(v2, quadruplet.v2) &&
-                    Objects.equals(v3, quadruplet.v3) && Objects.equals(v4, quadruplet.v4);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(v1, v2, v3, v4);
-        }
-    }
-
-    @Test
-    public void fullHearingHostTest() {
-        Set<Quadruplet<LocalDate, LocalTime, LocalTime, String>> dateTitles = new HashSet<>();
-        var ids = hearings.getPublicHearingIds(SortOrder.ASC, LimitOffset.ALL);
-        for (var id : ids) {
-            PublicHearing hearing = hearings.getPublicHearing(id);
-//            var title = hearing.getTitle();
-//            if (!dateTitles.add(new Quadruplet<>(hearing.getDate(), hearing.getStartTime(),
-//                    hearing.getEndTime(), hearing.getAddress())))
-//                System.out.println(title + " is a repeat!");
-            PublicHearingTextUtils.getHearingFromText(id, hearing.getText());
-        }
-    }
 }

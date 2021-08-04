@@ -6,8 +6,8 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
-import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
+import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
         if (publicHearing == null) {
             throw new IllegalArgumentException("publicHearing cannot be null");
         }
-        publicHearingDao.updatePublicHearing(publicHearing, publicHearingFile);
+        publicHearingDao.updatePublicHearing(publicHearing);
         if (postUpdateEvent) {
             eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
         }

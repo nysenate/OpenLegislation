@@ -120,7 +120,8 @@ public enum SqlTable
 
     PUBLIC_HEARING               ("public_hearing"),
     PUBLIC_HEARING_ATTENDANCE    ("public_hearing_attendance"),
-    PUBLIC_HEARING_COMMITTEE     ("public_hearing_committee"),
+    HEARING_HOST                 ("hearing_host"),
+    HEARING_HOST_PUBLIC_HEARINGS ("hearing_host_public_hearings"),
     PUBLIC_HEARING_FILE          ("public_hearing_file");
 
     String tableName;

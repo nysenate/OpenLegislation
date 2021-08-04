@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import testing_utils.TestUtils;
 
 import java.io.File;
@@ -27,8 +26,7 @@ public class PublicHearingTestHelper {
         catch (URISyntaxException | IOException e) {
             fail();
         }
-        var id = new PublicHearingId(filename);
         // TODO: fix
-        return PublicHearingTextUtils.getHearingFromText(id, fullText);
+        return PublicHearingTextUtils.getHearingFromText(filename, fullText);
     }
 }
