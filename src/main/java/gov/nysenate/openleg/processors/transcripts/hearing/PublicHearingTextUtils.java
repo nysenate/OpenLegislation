@@ -65,7 +65,7 @@ public class PublicHearingTextUtils {
     private static String getAddress(boolean hasAddress, String possibleAddress, String title) {
         if (hasAddress)
             return possibleAddress;
-        else if (title.contains("(VIRTUAL|ONLINE).+HEARING"))
+        else if (title.matches(".*(VIRTUAL|ONLINE).+HEARING.*"))
             return "Virtual Hearing";
         return "No address";
     }

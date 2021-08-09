@@ -32,8 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class PublicHearingGetCtrl extends BaseCtrl
-{
+public class PublicHearingGetCtrl extends BaseCtrl {
     @Autowired
     private PublicHearingDataService hearingData;
 
@@ -41,29 +40,11 @@ public class PublicHearingGetCtrl extends BaseCtrl
     private PublicHearingSearchService hearingSearch;
 
     /**
-     * Public Hearing Listing API
-     * --------------------------
-     *
-     * Retrieve all public hearings: (GET) /api/3/hearings/
-     * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
-     *                      full - If true, the full public hearing view is returned. Otherwise just its filename.
-     *                      limit - Limit the number of results
-     *                      offset - Start results from an offset.
-     *
-     * Expected Output: List of PublicHearingView or PublicHearingIdView.
-     */
-    @RequestMapping(value = "")
-    public BaseResponse getAllHearings(@RequestParam(defaultValue = "date:desc") String sort,
-                                       @RequestParam(defaultValue = "false") boolean full,
-                                       WebRequest webRequest) throws SearchException {
-        return getHearingsByYear(-1, sort, full, webRequest);
-    }
-
-    /**
      * Public Hearing Listing API.
      * --------------------------
      *
      * Retrieve public hearings for a year: (GET) /api/3/hearings/{year}
+     * Retrieve all public hearings: (GET) /api/3/hearings/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
      *                      full - If true, the full public hearing view is returned. Otherwise just its filename.
      *                      limit - Limit the number of results
@@ -71,23 +52,22 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingIdView or PublicHearingView.
      */
-    @RequestMapping(value = "/{year:\\d{4}}")
-    public BaseResponse getHearingsByYear(@PathVariable int year,
+    @RequestMapping(value = "/{strYear:\\d{4}|^$}")
+    public BaseResponse getHearingsByYear(@PathVariable String strYear,
                                           @RequestParam(defaultValue = "date:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest)
                                           throws SearchException {
+        // A null year will return all hearings.
+        Integer year = strYear.isEmpty() ? null : Integer.parseInt(strYear);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        // Can instead get all hearings.
-        SearchResults<PublicHearingId> results = year == -1 ? hearingSearch.searchPublicHearings(sort, limOff) :
-                hearingSearch.searchPublicHearings(year, sort, limOff);
+        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(year, sort, limOff);
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
                                 : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
+                .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
-    // TODO: change API's.
     /**
      * Single Public Hearing Retrieval API.
      * ------------------------------------
@@ -100,10 +80,11 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * Expected Output: PublicHearingView
      *
      */
-    @RequestMapping(value = "/{id:\\d+}")
+    // TODO: what about when we get to 4 digits?
+    @RequestMapping(value = "/{id:\\d{1,3}}")
     public BaseResponse getHearing(@PathVariable String id) {
-        return new ViewObjectResponse<>(
-                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)))),
+        return new ViewObjectResponse<>(new PublicHearingView(
+                hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)))),
         "Data for public hearing with id #" + id);
     }
 
@@ -117,7 +98,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping(value = "/{id:\\d+}.pdf")
+    @RequestMapping(value = "/{id:\\d{1,3}}.pdf")
     public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id)
             throws IOException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));

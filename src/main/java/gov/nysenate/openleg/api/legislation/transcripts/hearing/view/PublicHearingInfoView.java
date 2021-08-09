@@ -12,7 +12,7 @@ public class PublicHearingInfoView extends PublicHearingIdView
     /** Time format to match our Elasticsearch mappings.*/
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
-    private final String title, address, startTime, endTime;
+    private final String title, address, filename, startTime, endTime;
     protected LocalDate date;
     protected List<HearingHost> hosts;
 
@@ -22,6 +22,7 @@ public class PublicHearingInfoView extends PublicHearingIdView
         this.date = publicHearing.getDate();
         this.hosts = publicHearing.getHosts();
         this.address = publicHearing.getAddress();
+        this.filename = publicHearing.getFilename();
         this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);
         this.endTime = publicHearing.getEndTime() == null ? null : publicHearing.getEndTime().format(TIME_FORMAT);
     }
@@ -53,5 +54,9 @@ public class PublicHearingInfoView extends PublicHearingIdView
 
     public String getEndTime() {
         return endTime;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }
