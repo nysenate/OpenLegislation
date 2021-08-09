@@ -58,7 +58,7 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
         if (publicHearing == null) {
             throw new IllegalArgumentException("publicHearing cannot be null");
         }
-        publicHearingDao.updatePublicHearing(publicHearing);
+        publicHearingDao.updatePublicHearing(publicHearing, publicHearingFile.isManualFix());
         if (postUpdateEvent) {
             eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
         }

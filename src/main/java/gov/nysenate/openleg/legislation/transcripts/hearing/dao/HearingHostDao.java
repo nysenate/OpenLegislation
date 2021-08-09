@@ -18,4 +18,10 @@ public interface HearingHostDao {
      * @param hosts from new hearing.
      */
     void updateHearingHosts(PublicHearingId id, List<HearingHost> hosts);
+
+    /**
+     * Deletes all hosts associated with the given hearing, from both the hearing_host and junction table.
+     * @param id of associated hearing.
+     */
+    void deleteHearingHosts(PublicHearingId id);
 }

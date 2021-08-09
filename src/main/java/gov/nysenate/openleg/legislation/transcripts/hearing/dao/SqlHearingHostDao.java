@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlHearingHostQuery.*;
 
@@ -19,7 +20,7 @@ public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {
     @Override
     public List<HearingHost> getHearingHosts(PublicHearingId id) {
         return jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
-                new MapSqlParameterSource("public_hearing_id", id.getId()), hearingHostRowMapper);
+                new MapSqlParameterSource("public_hearing_id", id.getId()), HEARING_HOST_ROW_MAPPER);
     }
 
     @Override
@@ -42,14 +43,29 @@ public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {
         }
     }
 
+    @Override
+    public void deleteHearingHosts(PublicHearingId id) {
+        List<Integer> hostIds = jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
+                new MapSqlParameterSource("public_hearing_id", id.getId()), ID_HOST_ROW_MAPPER);
+        jdbcNamed.update(DELETE_HOSTS_WITH_HEARING_ID.getSql(schema()), Map.of("hearing_id", id.getId()));
+        for (int hostId : hostIds) {
+            // If a host no longer has any associated hearings, it should be deleted.
+            String sql = SELECT_HEARING_ID_BY_HOST_ID.getSql(schema());
+            if (jdbcNamed.queryForList(sql, Map.of("hearing_host_id", hostId)).isEmpty())
+                jdbcNamed.update(DELETE_HOST_BY_ID.getSql(schema()), Map.of("id", hostId));
+        }
+    }
+
     private Integer getHostId(MapSqlParameterSource params) {
         return jdbcNamed.queryForObject(SELECT_HOST_ID.getSql(schema()), params, Integer.class);
     }
 
-    private static final RowMapper<HearingHost> hearingHostRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<HearingHost> HEARING_HOST_ROW_MAPPER = (rs, rowNum) -> {
         String name = rs.getString("name");
         var chamber = Chamber.getValue(rs.getString("chamber"));
         var type = HearingHostType.toType(rs.getString("type"));
         return new HearingHost(chamber, type, name);
     };
+
+    private static final RowMapper<Integer> ID_HOST_ROW_MAPPER = (rs, rowNum) -> rs.getInt("id");
 }
