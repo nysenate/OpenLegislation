@@ -29,7 +29,7 @@ export default function Home() {
               <Bills setHeaderText={setHeaderText} />
             </Route>
             <Route path="/laws">
-              <Laws />
+              <Laws setHeaderText={setHeaderText} />
             </Route>
             <Route path="/transcripts">
               <Transcripts />
