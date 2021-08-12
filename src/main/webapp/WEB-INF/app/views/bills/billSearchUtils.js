@@ -2,13 +2,10 @@ import { billSessionYears } from "app/lib/dateUtils";
 import { getBillStatusTypes } from "app/apis/billGetApi";
 import { getMembersApi } from "app/apis/memberApi";
 
-export class SelectOption {
-  constructor(value, label) {
-    this.value = value;
-    this.label = label;
-  }
-}
-
+/**
+ * To filter by advanced search fields, a lucene query string has to be added to the search term.
+ * These are the templates for how each should be added.
+ */
 export const REFINE = {
   PATHS: {
     actionText: "actions.\\*.text",
@@ -38,18 +35,22 @@ export const REFINE = {
   }
 }
 
+class SelectOption {
+  constructor(value, label) {
+    this.value = value;
+    this.label = label;
+  }
+}
+
 /**
- * Session year Utils
+ * Option values for many of the fields in the Advanced Search section.
  */
+
 export const sessionOptions = () => {
   let sessions = billSessionYears().map((year) => new SelectOption(year, year))
   sessions.unshift(new SelectOption("", "Any"))
   return sessions
 }
-
-/**
- * Sort Utils
- */
 
 export const sortOptions = [
   new SelectOption("_score:desc,session:desc", "Relavent"),
@@ -59,28 +60,17 @@ export const sortOptions = [
   new SelectOption("amendments.size:desc,_score:desc", "Most Amendments")
 ]
 
-/**
- * Chamber Utils
- */
 export const chamberOptions = [
   new SelectOption("", "Any"),
   new SelectOption("SENATE", "Senate"),
   new SelectOption("ASSEMBLY", "Assembly")
 ]
 
-
-/**
- * Bill Type Utils
- */
 export const billTypeOptions = [
   new SelectOption("", "Any"),
   new SelectOption("Bill", "Bill"),
   new SelectOption("Resolution", "Resolution")
 ]
-
-/**
- * Members/Sponsors
- */
 
 export const fetchMembers = (session) => {
   return getMembersApi(session).then((res) => {
@@ -89,10 +79,6 @@ export const fetchMembers = (session) => {
     }))
   })
 }
-
-/**
- * Bill Status Types
- */
 
 export const fetchStatusTypes = () => {
   return getBillStatusTypes().then((res) => {

@@ -66,7 +66,7 @@ export default function BillSearchForm() {
     })
   }, [ session ])
 
-  // Update search fields when back/forward navigation is used.
+  // Update search fields on initial load and when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
     setTerm(params.term || "")
@@ -100,7 +100,7 @@ export default function BillSearchForm() {
     setIsRulesSponsored(params.isRulesSponsored)
   }, [ location ])
 
-  // Updates the term query param when the form is submitted.
+  // Updates query params when the form is submitted. This triggers a search in the parent.
   const onSubmit = (e) => {
     e.preventDefault()
     const params = queryString.parse(location.search)

@@ -30,7 +30,7 @@ export default function BillSearch() {
 
   // Perform a search using the query string parameters.
   const search = () => {
-    const params = queryString.parse(location.search, {parseBooleans: true})
+    const params = queryString.parse(location.search, { parseBooleans: true })
     const page = params.page || 1
     const offset = (page - 1) * limit + 1
     const term = params.term || '*'
