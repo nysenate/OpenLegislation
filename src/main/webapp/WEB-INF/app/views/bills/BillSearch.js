@@ -47,7 +47,7 @@ export default function BillSearch() {
         }
       }
     })
-    console.log(searchTerm)
+
     doSearch(searchTerm, session, limit, offset, sort)
   }
 

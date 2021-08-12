@@ -55,6 +55,7 @@ function ResultList({ results }) {
 
 function ResultItem({ result }) {
   const bill = result.result
+  console.log(bill)
   return (
     <div className="p-3 hover:bg-gray-200 flex flex-wrap">
       <div className="flex items-center w-full md:w-1/3">
@@ -82,9 +83,11 @@ function ResultItem({ result }) {
           <FullDate date={bill.status.actionDate} /> - <BillStatusDesc status={bill.status} />
         </div>
         }
+        {!bill.billType.resolution &&
         <BillMilestones milestones={bill.milestones.items}
                         chamber={bill.billType.chamber}
                         className="py-3" />
+        }
       </div>
     </div>
   )
