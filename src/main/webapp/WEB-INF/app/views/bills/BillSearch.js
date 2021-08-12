@@ -12,6 +12,7 @@ import {
   REFINE,
 } from "app/views/bills/billSearchUtils";
 import QuickSearchTips from "app/views/bills/QuickSearchTips";
+import AdvancedSearchTips from "app/views/bills/AdvancedSearchTips";
 
 export default function BillSearch() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
@@ -82,7 +83,12 @@ export default function BillSearch() {
                              page={params.page}
                              onPageChange={onPageChange} />
       }
-      <QuickSearchTips />
+      <div className="m-3">
+        <QuickSearchTips />
+      </div>
+      <div className="m-3">
+        <AdvancedSearchTips />
+      </div>
     </div>
   )
 }
