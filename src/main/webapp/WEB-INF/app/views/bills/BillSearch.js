@@ -11,6 +11,7 @@ import BillSearchForm from "app/views/bills/BillSearchForm";
 import {
   REFINE,
 } from "app/views/bills/billSearchUtils";
+import QuickSearchTips from "app/views/bills/QuickSearchTips";
 
 export default function BillSearch() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
@@ -81,6 +82,7 @@ export default function BillSearch() {
                              page={params.page}
                              onPageChange={onPageChange} />
       }
+      <QuickSearchTips />
     </div>
   )
 }
