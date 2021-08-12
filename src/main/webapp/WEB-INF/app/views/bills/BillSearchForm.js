@@ -104,6 +104,7 @@ export default function BillSearchForm() {
   const onSubmit = (e) => {
     e.preventDefault()
     const params = queryString.parse(location.search)
+    params.page = 1 // Reset to page 1.
     params.term = term
     params.sort = sort
     params.session = session
