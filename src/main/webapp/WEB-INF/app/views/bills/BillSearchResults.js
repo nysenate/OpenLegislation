@@ -55,7 +55,6 @@ function ResultList({ results }) {
 
 function ResultItem({ result }) {
   const bill = result.result
-  console.log(bill)
   return (
     <div className="p-3 hover:bg-gray-200 flex flex-wrap">
       <div className="flex items-center w-full md:w-1/3">

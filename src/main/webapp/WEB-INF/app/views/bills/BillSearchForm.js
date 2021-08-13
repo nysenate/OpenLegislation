@@ -1,20 +1,50 @@
 import React from 'react'
 import {
-  useHistory,
-  useLocation
-} from "react-router-dom";
-import * as queryString from "query-string";
-import Accordion from "app/shared/Accordion";
-import { Sliders } from "phosphor-react";
-import {
-  billTypeOptions,
-  chamberOptions,
   fetchMembers,
   fetchStatusTypes,
+  initialRefineState,
   sessionOptions,
   sortOptions
 } from "app/views/bills/billSearchUtils";
+import * as queryString from "query-string";
+import Accordion from "app/shared/Accordion";
+import {
+  useHistory,
+  useLocation
+} from "react-router-dom";
+import { Sliders } from "phosphor-react";
 
+
+/**
+ * Action {
+ *   type:
+ *   value:
+ *   key:
+ * }
+ * @param state
+ * @param action
+ * @returns {*}
+ */
+const registerReducer = function (state, action) {
+  switch (action.type) {
+    case "update":
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          value: action.value
+        }
+      }
+    case "setOptions" :
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          options: action.value
+        }
+      }
+  }
+}
 
 const advancedSearchTitleEls = (
   <div className="flex items-center">
@@ -27,114 +57,117 @@ export default function BillSearchForm() {
   const [ term, setTerm ] = React.useState("")
   const [ sort, setSort ] = React.useState(sortOptions[0].value)
   const [ session, setSession ] = React.useState(sessionOptions()[0].value)
-  const [ chamber, setChamber ] = React.useState(chamberOptions[0].value)
-  const [ billType, setBillType ] = React.useState(billTypeOptions[0].value)
-  const [ sponsor, setSponsor ] = React.useState()
-  const [ sponsorOptions, setSponsorOptions ] = React.useState()
-  const [ statusType, setStatusType ] = React.useState()
-  const [ statusTypeOptions, setStatusTypeOptions ] = React.useState()
-  const [ printNo, setPrintNo ] = React.useState()
-  const [ memo, setMemo ] = React.useState()
-  const [ actionText, setActionText ] = React.useState()
-  const [ calendarNo, setCalendarNo ] = React.useState()
-  const [ lawSection, setLawSection ] = React.useState()
-  const [ title, setTitle ] = React.useState()
-  const [ fullText, setFullText ] = React.useState()
-  const [ committee, setCommittee ] = React.useState()
-  const [ agendaNo, setAgendaNo ] = React.useState()
-  const [ lawCode, setLawCode ] = React.useState()
-  const [ isSigned, setIsSigned ] = React.useState(false)
-  const [ isGovernorBill, setIsGovernorBill ] = React.useState(false)
-  const [ hasVotes, setHasVotes ] = React.useState(false)
-  const [ hasApVetoMemo, setHasApVetoMemo ] = React.useState(false)
-  const [ isSubstituted, setIsSubstituted ] = React.useState(false)
-  const [ isUniBill, setIsUniBill ] = React.useState(false)
-  const [ isBudgetBill, setIsBudgetBill ] = React.useState(false)
-  const [ isRulesSponsored, setIsRulesSponsored ] = React.useState(false)
+  const [ refine, dispatch ] = React.useReducer(registerReducer, initialRefineState)
   const location = useLocation()
   const history = useHistory()
 
   React.useEffect(() => {
     fetchStatusTypes().then((types) => {
-      setStatusTypeOptions(types)
+      dispatch({
+        type: "setOptions",
+        key: "statusType",
+        value: types
+      })
     })
   }, [])
 
   React.useEffect(() => {
     fetchMembers(session).then((members) => {
-      setSponsorOptions(members)
+      dispatch({
+        type: "setOptions",
+        key: "sponsor",
+        value: members
+      })
     })
   }, [ session ])
 
-  // Update search fields on initial load and when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
     setTerm(params.term || "")
-    setSort(params.sort || sortOptions[0].value)
     setSession(params.session || sessionOptions()[0].value)
-    setChamber(params.chamber || chamberOptions[0].value)
-    setBillType(params.billType || billTypeOptions[0].value)
-    if (sponsorOptions) {
-      setSponsor(params.sponsor || sponsorOptions[0].value)
-    }
-    if (statusTypeOptions) {
-      setStatusType(params.statusType || statusTypeOptions[0].value)
-    }
-    setPrintNo(params.printNo || "")
-    setMemo(params.memo || "")
-    setActionText(params.actionText || "")
-    setCalendarNo(params.calendarNo || "")
-    setLawSection(params.lawSection || "")
-    setTitle(params.title || "")
-    setFullText(params.fullText || "")
-    setCommittee(params.committee || "")
-    setAgendaNo(params.agendaNo || "")
-    setLawCode(params.lawCode || "")
-    setIsSigned(params.isSigned)
-    setIsGovernorBill(params.isGovernorBill)
-    setHasVotes(params.hasVotes)
-    setHasApVetoMemo(params.hasApVetoMemo)
-    setIsSubstituted(params.isSubstituted)
-    setIsUniBill(params.isUniBill)
-    setIsBudgetBill(params.isBudgetBill)
-    setIsRulesSponsored(params.isRulesSponsored)
+    setSort(params.sort || sortOptions[0].value)
+    Object.entries(refine).forEach(([ key, value ]) => {
+      dispatch({
+        type: "update",
+        key: key,
+        value: params[key] || ""
+      })
+    })
   }, [ location ])
 
-  // Updates query params when the form is submitted. This triggers a search in the parent.
   const onSubmit = (e) => {
     e.preventDefault()
     const params = queryString.parse(location.search)
-    params.page = 1 // Reset to page 1.
     params.term = term
-    params.sort = sort
     params.session = session
-    params.chamber = chamber
-    params.billType = billType
-    params.sponsor = sponsor
-    params.statusType = statusType
-    params.printNo = printNo
-    params.memo = memo
-    params.actionText = actionText
-    params.calendarNo = calendarNo
-    params.lawSection = lawSection
-    params.title = title
-    params.fullText = fullText
-    params.committee = committee
-    params.agendaNo = agendaNo
-    params.lawCode = lawCode
-    params.isSigned = isSigned
-    params.isGovernorBill = isGovernorBill
-    params.hasVotes = hasVotes
-    params.hasApVetoMemo = hasApVetoMemo
-    params.isSubstituted = isSubstituted
-    params.isUniBill = isUniBill
-    params.isBudgetBill = isBudgetBill
-    params.isRulesSponsored = isRulesSponsored
+    params.sort = sort
+    Object.entries(refine).forEach(([ key, value ]) => {
+      params[key] = value.value
+    })
     history.push({ search: queryString.stringify(params) })
   }
 
   const filterWrapperClass = "mx-4 my-2"
   const advancedFilterColumnClass = "flex flex-col w-12/12 sm:w-6/12 lg:w-3/12"
+
+  const advancedSelectEls = () => {
+    return Object.entries(refine).filter(([ key, value ]) => {
+        return value.type === "select"
+      })
+      .map(([ key, value ]) => {
+        return (
+          <div className={filterWrapperClass} key={key}>
+            <SearchSelect label={value.label}
+                          value={value.value}
+                          onChange={(e) => dispatch({
+                            type: "update",
+                            value: e.target.value,
+                            key: key
+                          })}
+                          options={value.options} />
+          </div>
+        )
+      })
+  }
+
+  const advancedInputEls = () => {
+    return Object.entries(refine).filter(([ key, value ]) => {
+        return value.type === "input"
+      })
+      .map(([ key, value ]) => {
+        return (
+          <div className={filterWrapperClass} key={key}>
+            <SearchTextInput label={value.label}
+                             value={value.value}
+                             onChange={(e) => dispatch({
+                               type: "update",
+                               value: e.target.value,
+                               key: key
+                             })}
+                             placeholder={value.placeholder} />
+          </div>
+        )
+      })
+  }
+
+  const advancedCheckboxEls = () => {
+    return Object.entries(refine).filter(([ key, value ]) => {
+        return value.type === "checkbox"
+      })
+      .map(([ key, value ]) => {
+        return (
+          <div className={filterWrapperClass} key={key}>
+            <SearchCheckbox label={value.label}
+                            value={value.value}
+                            onChange={(e) => dispatch({
+                              type: "update",
+                              value: e.target.value,
+                              key: key
+                            })} />
+          </div>
+        )
+      })
+  }
 
   return (
     <div>
@@ -172,147 +205,18 @@ export default function BillSearchForm() {
           <Accordion title={advancedSearchTitleEls}>
             <div className="flex justify-between flex-wrap">
               <div className={advancedFilterColumnClass}>
-                <div className={filterWrapperClass}>
-                  <SearchSelect label="Chamber"
-                                value={chamber}
-                                onChange={(e) => setChamber(e.target.value)}
-                                options={chamberOptions} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchSelect label="Bill/Resolution"
-                                value={billType}
-                                onChange={(e) => setBillType(e.target.value)}
-                                options={billTypeOptions} />
-                </div>
-
-                <div className={filterWrapperClass}>
-                  <SearchSelect label="Primary Sponsor"
-                                value={sponsor}
-                                onChange={(e) => setSponsor(e.target.value)}
-                                options={sponsorOptions} />
-                </div>
-
-                <div className={filterWrapperClass}>
-                  <SearchSelect label="Current Status"
-                                value={statusType}
-                                onChange={(e) => setStatusType(e.target.value)}
-                                options={statusTypeOptions} />
-                </div>
+                {advancedSelectEls()}
               </div>
-
-
               <div className={advancedFilterColumnClass}>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Print no"
-                                   value={printNo}
-                                   onChange={(e) => setPrintNo(e.target.value)}
-                                   placeholder="S1234" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Memo"
-                                   value={memo}
-                                   onChange={(e) => setMemo(e.target.value)}
-                                   placeholder="" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Contains Action Text"
-                                   value={actionText}
-                                   onChange={(e) => setActionText(e.target.value)}
-                                   placeholder="Substituted For *" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Bill Calendar Number"
-                                   value={calendarNo}
-                                   onChange={(e) => setCalendarNo(e.target.value)}
-                                   placeholder="123" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Law Section"
-                                   value={lawSection}
-                                   onChange={(e) => setLawSection(e.target.value)}
-                                   placeholder="Education" />
-                </div>
+                {advancedInputEls().slice(0, 5)}
               </div>
-
               <div className={advancedFilterColumnClass}>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Title"
-                                   value={title}
-                                   onChange={(e) => setTitle(e.target.value)}
-                                   placeholder="Title of the bill/reso" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Full Text"
-                                   value={fullText}
-                                   onChange={(e) => setFullText(e.target.value)}
-                                   placeholder="" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="In Committee (Name)"
-                                   value={committee}
-                                   onChange={(e) => setCommittee(e.target.value)}
-                                   placeholder="Aging" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Agenda Number"
-                                   value={agendaNo}
-                                   onChange={(e) => setAgendaNo(e.target.value)}
-                                   placeholder="4" />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchTextInput label="Law Code"
-                                   value={lawCode}
-                                   onChange={(e) => setLawCode(e.target.value)}
-                                   placeholder="236 Town L" />
-                </div>
+                {advancedInputEls().slice(5, 10)}
               </div>
-
-
               <div className={advancedFilterColumnClass}>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Signed / Adopted"
-                                  value={isSigned}
-                                  onChange={(e) => setIsSigned(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Governor's Bill"
-                                  value={isGovernorBill}
-                                  onChange={(e) => setIsGovernorBill(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Has Votes"
-                                  value={hasVotes}
-                                  onChange={(e) => setHasVotes(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Has Appr/Veto Memo"
-                                  value={hasApVetoMemo}
-                                  onChange={(e) => setHasApVetoMemo(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Substituted By"
-                                  value={isSubstituted}
-                                  onChange={(e) => setIsSubstituted(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Uni Bill"
-                                  value={isUniBill}
-                                  onChange={(e) => setIsUniBill(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Budget Bill"
-                                  value={isBudgetBill}
-                                  onChange={(e) => setIsBudgetBill(e.target.checked)} />
-                </div>
-                <div className={filterWrapperClass}>
-                  <SearchCheckbox label="Is Rules Sponsored"
-                                  value={isRulesSponsored}
-                                  onChange={(e) => setIsRulesSponsored(e.target.checked)} />
-                </div>
+                {advancedCheckboxEls()}
               </div>
             </div>
-
-
           </Accordion>
         </div>
 
