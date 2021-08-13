@@ -16,13 +16,12 @@ import { Sliders } from "phosphor-react";
 
 
 /**
- * Action {
- *   type:
- *   value:
- *   key:
- * }
- * @param state
- * @param action
+ * This reducer handles updating the refine object which contains all the advanced filter objects.
+ *
+ * @param state the current state.
+ * @param action Describes the action being performed. Has type, value, and key fields. type is the type of
+ * action being performed, value is the new value, and key is the name of a field on the refine object - this
+ * controls which filter on refine is modified by the action.
  * @returns {*}
  */
 const registerReducer = function (state, action) {
@@ -35,7 +34,7 @@ const registerReducer = function (state, action) {
           value: action.value
         }
       }
-    case "setOptions" :
+    case "setOptions":
       return {
         ...state,
         [action.key]: {
@@ -46,12 +45,6 @@ const registerReducer = function (state, action) {
   }
 }
 
-const advancedSearchTitleEls = (
-  <div className="flex items-center">
-    <Sliders size="1.25rem" className="inline-block mr-2" />
-    <h4 className="inline-block">Advanced Search Options</h4>
-  </div>
-)
 
 export default function BillSearchForm() {
   const [ term, setTerm ] = React.useState("")
@@ -60,6 +53,8 @@ export default function BillSearchForm() {
   const [ refine, dispatch ] = React.useReducer(registerReducer, initialRefineState)
   const location = useLocation()
   const history = useHistory()
+
+  console.log(refine)
 
   React.useEffect(() => {
     fetchStatusTypes().then((types) => {
@@ -81,6 +76,10 @@ export default function BillSearchForm() {
     })
   }, [ session ])
 
+  /**
+   * Whenever the URL changes, update all filters to the values from the url params.
+   * This allows back/forward browser navigation and sharing of links to specific search results.
+   */
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
     setTerm(params.term || "")
@@ -95,17 +94,39 @@ export default function BillSearchForm() {
     })
   }, [ location ])
 
+  /**
+   * Update the url params when a search is performed.
+   * A search will be triggered in the parent Component, BillSearch, when the url is updated.
+   */
   const onSubmit = (e) => {
     e.preventDefault()
     const params = queryString.parse(location.search)
     params.term = term
     params.session = session
     params.sort = sort
+    params.page = 1 // Reset page
     Object.entries(refine).forEach(([ key, value ]) => {
       params[key] = value.value
     })
     history.push({ search: queryString.stringify(params) })
   }
+
+  const resetFilters = () => {
+    Object.entries(refine).forEach(([ key, value ]) => {
+      dispatch({
+        type: "update",
+        key: key,
+        value: ""
+      })
+    })
+  }
+
+  const advancedSearchTitleEls = (
+    <div className="flex items-center">
+      <Sliders size="1.25rem" className="inline-block mr-2" />
+      <h4 className="inline-block">Advanced Search Options</h4>
+    </div>
+  )
 
   const filterWrapperClass = "mx-4 my-2"
   const advancedFilterColumnClass = "flex flex-col w-12/12 sm:w-6/12 lg:w-3/12"
@@ -161,7 +182,7 @@ export default function BillSearchForm() {
                             value={value.value}
                             onChange={(e) => dispatch({
                               type: "update",
-                              value: e.target.value,
+                              value: e.target.checked,
                               key: key
                             })} />
           </div>
@@ -190,6 +211,7 @@ export default function BillSearchForm() {
                           tabindex={2}
                           value={session}
                           onChange={(e) => setSession(e.target.value)}
+                          highlight={false}
                           options={sessionOptions()} />
           </div>
           <div className="">
@@ -197,6 +219,7 @@ export default function BillSearchForm() {
                           tabindex={3}
                           value={sort}
                           onChange={(e) => setSort(e.target.value)}
+                          highlight={false}
                           options={sortOptions} />
           </div>
         </div>
@@ -217,6 +240,17 @@ export default function BillSearchForm() {
                 {advancedCheckboxEls()}
               </div>
             </div>
+            <div className="m-3">
+              <p className="text text--small">
+                Tip: To match an entire phrase, surround your query with double quotes.
+              </p>
+            </div>
+            {Object.entries(refine).some(([ key, value ]) => value.value) &&
+            <div className="m-3">
+              <span onClick={resetFilters}
+                    className="text-blue-500 font-medium cursor-pointer">Reset Advanced Filters</span>
+            </div>
+            }
           </Accordion>
         </div>
 
@@ -228,9 +262,14 @@ export default function BillSearchForm() {
   )
 }
 
-function SearchSelect({ label, value, onChange, options, tabindex }) {
+function SearchSelect({ label, value, onChange, options, tabindex, highlight = true }) {
+  let className = "label label--top"
+  if (highlight) {
+    // If highlight and value are truthy, highlight the label.
+    className += value ? " highlight" : ""
+  }
   return (
-    <label className="label label--top">{label}
+    <label className={className}>{label}
       <select value={value}
               tabIndex={tabindex}
               onChange={onChange}
@@ -242,19 +281,25 @@ function SearchSelect({ label, value, onChange, options, tabindex }) {
 }
 
 function SearchTextInput({ label, value, onChange, placeholder }) {
+  let className = "label label--top"
+  className += value ? " highlight" : ""
   return (
-    <label className="label label--top">{label}
-      <input value={value}
-             onChange={onChange}
-             type="text"
-             placeholder={placeholder}
-             className="input w-full"
-      />
-    </label>
+    <div>
+      <label className={className}>{label}
+        <input value={value}
+               onChange={onChange}
+               type="text"
+               placeholder={placeholder}
+               className="input w-full"
+        />
+      </label>
+    </div>
   )
 }
 
 function SearchCheckbox({ label, value, onChange }) {
+  let className = "label cursor-pointer m-2 p-2"
+  className += value ? " highlight" : ""
   return (
     <React.Fragment>
       <input id={label}
@@ -264,7 +309,7 @@ function SearchCheckbox({ label, value, onChange }) {
              type="checkbox"
              className="cursor-pointer"
       />
-      <label htmlFor={label} className="label ml-2 cursor-pointer">{label}</label>
+      <label htmlFor={label} className={className}>{label}</label>
     </React.Fragment>
   )
 }

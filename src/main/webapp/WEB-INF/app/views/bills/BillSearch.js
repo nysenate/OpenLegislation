@@ -9,7 +9,7 @@ import BillSearchResults from "app/views/bills/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/BillSearchForm";
 import {
-  REFINE,
+  initialRefineState,
 } from "app/views/bills/billSearchUtils";
 import QuickSearchTips from "app/views/bills/QuickSearchTips";
 import AdvancedSearchTips from "app/views/bills/AdvancedSearchTips";
@@ -41,15 +41,15 @@ export default function BillSearch() {
 
     let searchTerm = term
     Object.entries(params).forEach(([ key, value ]) => {
-      if (value) {
-        if (key in REFINE.PATHS) {
-          searchTerm += ` AND ${REFINE.PATHS[key]}:(${value})`
-        } else if (key in REFINE.FIXED_PATHS) {
-          searchTerm += ` AND ${REFINE.FIXED_PATHS[key]}`
+      if (value && initialRefineState[key]) {
+        const filterTerm = initialRefineState[key].searchTerm(value);
+        if (filterTerm) {
+          searchTerm += ` AND ${filterTerm}`
         }
       }
     })
 
+    console.log(searchTerm)
     doSearch(searchTerm, session, limit, offset, sort)
   }
 

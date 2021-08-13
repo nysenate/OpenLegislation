@@ -88,6 +88,10 @@
     .label--top {
         @apply block leading-7;
     }
+
+    .highlight {
+        @apply bg-yellow-100;
+    }
 }
 
 /*
