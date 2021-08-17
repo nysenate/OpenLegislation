@@ -33,6 +33,7 @@ export default function LawSearchForm() {
         history.push({ search: queryString.stringify(params) })
     }
 
+    //TODO 2 forms for 2 search boxes
     return (
         <div>
             <form onSubmit={onSubmit}>

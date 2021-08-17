@@ -1,5 +1,6 @@
 import React from 'react'
 import Pagination from "app/shared/Pagination";
+import { Link } from "react-router-dom";
 
 export default function LawVolumeSearchResults({response, limit, page, onPageChange}) {
 
@@ -14,19 +15,19 @@ export default function LawVolumeSearchResults({response, limit, page, onPageCha
     return (
         <div className="mt-8">
             <div className="pt-3">
-                <Pagination
-                    limit={limit}
-                    currentPage={page}
-                    onPageChange={onPageChange}
-                    total={response.size}
-                />
+                {/*<Pagination*/}
+                {/*    limit={limit}*/}
+                {/*    currentPage={page}*/}
+                {/*    onPageChange={onPageChange}*/}
+                {/*    total={response.size}*/}
+                {/*/>*/}
                 <ResultList results={response.items}/>
-                <Pagination
-                    limit={limit}
-                    currentPage={page}
-                    onPageChange={onPageChange}
-                    total={response.size}
-                />
+                {/*<Pagination*/}
+                {/*    limit={limit}*/}
+                {/*    currentPage={page}*/}
+                {/*    onPageChange={onPageChange}*/}
+                {/*    total={response.size}*/}
+                {/*/>*/}
             </div>
         </div>
     )
@@ -36,7 +37,10 @@ function ResultList({results}) {
     return (
         <div>
             {results.map((r) =>
+                <Link to={`/laws/${r.lawId}`}
+                      key={r.lawId}>
                 <ResultItem result={r} key={r.lawId}/>
+                </Link>
             )}
         </div>
     )

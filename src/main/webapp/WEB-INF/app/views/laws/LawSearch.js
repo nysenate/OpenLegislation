@@ -22,7 +22,7 @@ export default function LawSearch() {
     React.useEffect(() => {
         // search()
         doInitialSearch()
-    }, [location])
+    }, [])
 
     // Perform a search using the query string parameters.
     const search = () => {

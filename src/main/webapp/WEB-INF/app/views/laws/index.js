@@ -4,8 +4,8 @@ import {
     Switch,
     useLocation
 } from "react-router-dom";
-// import Bill from "app/views/bills/Bill";
 import LawSearch from "app/views/laws/LawSearch";
+import SpecifiedLaw from "app/views/laws/SpecifiedLaw";
 import ContentContainer from "app/shared/ContentContainer";
 
 export default function Laws({ setHeaderText }) {
@@ -20,8 +20,11 @@ export default function Laws({ setHeaderText }) {
     return (
         <ContentContainer>
             <Switch>
-                <Route path="/laws">
-                    <LawSearch />
+                <Route path="/laws/:lawId">
+                    <SpecifiedLaw setHeaderText={ setHeaderText } />
+                </Route>
+                <Route exact path="/laws">
+                    <LawSearch/>
                 </Route>
             </Switch>
         </ContentContainer>
