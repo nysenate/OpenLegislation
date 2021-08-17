@@ -61,7 +61,6 @@ export default function DataProvided() {
       <div className="p-4 flex justify-start cursor-pointer text-white text-left hover:bg-gray-200 w-full lg:w-6/12">
         <div className={`flex justify-center items-center ${dataWeProvide[index].bgclass} p-3 mr-3`}>
           {dataWeProvide[index].icon}
-          {/*<i className={`${dataWeProvide[index].icon} ${dataWeProvide[index].bgclass} h-auto p-4 mr-3 text-4xl`} />*/}
         </div>
         <div>
           <h3 className="h5">{dataWeProvide[index].type}</h3>

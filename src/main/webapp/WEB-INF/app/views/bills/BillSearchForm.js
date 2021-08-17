@@ -54,8 +54,6 @@ export default function BillSearchForm() {
   const location = useLocation()
   const history = useHistory()
 
-  console.log(refine)
-
   React.useEffect(() => {
     fetchStatusTypes().then((types) => {
       dispatch({

@@ -2,18 +2,25 @@ import React, { useEffect } from 'react';
 import {
   NavLink,
   Route,
-  Switch
+  Switch,
+  useLocation
 } from "react-router-dom";
 import Bills from "app/views/bills"
 import Laws from "app/views/laws"
 import Transcripts from "app/views/transcripts";
+import { List } from "phosphor-react";
 
 const fakeHeaderText = "New York State Laws";
 
 export default function Home() {
-
   const [ headerText, setHeaderText ] = React.useState(fakeHeaderText);
   const [ isMenuOpen, setMenuOpen ] = React.useState(false);
+  const location = useLocation()
+
+  // Close the mobile menu whenever a link is clicked.
+  React.useEffect(() => {
+    setMenuOpen(false)
+  }, [location])
 
   return (
     <div className="bg-gray-100 h-auto w-screen">
@@ -21,8 +28,9 @@ export default function Home() {
 
       <div>
         <div>
-          <Menu isMenuOpen={isMenuOpen} />
+          <Menu isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen}/>
         </div>
+
         <div className="pl-0 xl:pl-80 pt-16 md:min-h-screen">
           <Switch>
             <Route path="/bills">
@@ -58,7 +66,7 @@ function Header({ isMenuOpen, setMenuOpen, headerText }) {
 function MobileHeader({ isMenuOpen, setMenuOpen, headerText }) {
   return (
     <div className="flex h-16 items-center space-x-3 pl-3">
-      <i className="icon-menu text-5xl text-white cursor-pointer"
+      <List color="white" size="2.5rem"
          onClick={() => setMenuOpen((isMenuOpen) => !isMenuOpen)} />
       <h1 className="h3 text-white">{headerText}</h1>
     </div>
