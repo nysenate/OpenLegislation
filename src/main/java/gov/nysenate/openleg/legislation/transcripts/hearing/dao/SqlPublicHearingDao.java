@@ -44,17 +44,18 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
 
     /** {@inheritDoc} */
     @Override
-    public void updatePublicHearing(PublicHearing publicHearing, boolean isManualFix) {
+    public void updatePublicHearing(PublicHearing publicHearing) {
         // TODO: just have SQL for this.
         boolean noHearings = getPublicHearingIds(SortOrder.NONE, LimitOffset.ALL).isEmpty();
         if (noHearings)
             jdbc.execute(RESET_ID);
         MapSqlParameterSource params = getPublicHearingParams(publicHearing);
-        if (jdbcNamed.update(UPDATE_PUBLIC_HEARING, params) == 0)
+        boolean isNew = jdbcNamed.update(UPDATE_PUBLIC_HEARING, params) == 0;
+        if (isNew)
             jdbcNamed.update(INSERT_PUBLIC_HEARING, params);
         var hearingId = new PublicHearingId(jdbcNamed.queryForObject(SELECT_HEARING_ID_BY_FILENAME,
                 new MapSqlParameterSource("filename", publicHearing.getFilename()), Integer.class));
-        if (isManualFix)
+        if (!isNew)
             hearingHostDao.deleteHearingHosts(hearingId);
         hearingHostDao.updateHearingHosts(hearingId, publicHearing.getHosts());
         publicHearing.setId(hearingId);

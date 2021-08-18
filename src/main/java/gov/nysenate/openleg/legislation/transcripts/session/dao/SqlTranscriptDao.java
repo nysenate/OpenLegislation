@@ -2,11 +2,10 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptQuery.*;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptQuery.*;
 
 @Repository
 public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
@@ -69,9 +68,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     }
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("dateTime", DateUtils.toDate(transcriptId.getDateTime()));
-        return params;
+        return new MapSqlParameterSource("dateTime", DateUtils.toDate(transcriptId.getDateTime()));
     }
 
     /** --- Row Mapper Instances --- */

@@ -10,7 +10,7 @@ public abstract class AbstractTranscriptsFile extends BaseSourceData {
     protected File file;
 
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
-    protected boolean archived;
+    protected boolean archived = false;
 
     protected AbstractTranscriptsFile(File file) throws FileNotFoundException {
         if (file.exists()) {

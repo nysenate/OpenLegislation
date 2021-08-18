@@ -3,10 +3,7 @@ package gov.nysenate.openleg.processors.transcripts.session;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
-import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.processors.ParseError;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,16 +13,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-@Service
 public class TranscriptParser {
-    @Autowired
-    private TranscriptDataService transcriptDataService;
-
-    public void process(TranscriptFile transcriptFile) throws IOException {
-        Transcript processed = getTranscriptFromFile(transcriptFile);
-        transcriptFile.setTranscript(processed);
-        transcriptDataService.saveTranscript(processed, true);
-    }
+    private TranscriptParser() {}
 
     protected static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
         List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath(), StandardCharsets.ISO_8859_1);

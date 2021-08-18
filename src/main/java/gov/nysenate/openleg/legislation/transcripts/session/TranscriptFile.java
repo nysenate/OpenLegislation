@@ -13,10 +13,7 @@ public class TranscriptFile extends AbstractTranscriptsFile {
     /** Saves original filename for use in database. */
     private String originalFilename;
 
-    /** Used to extract the dateTime, then reused later to not repeat processing. */
-    private Transcript transcript;
-
-    /** Used to rename file, and identify unique files. */
+    /** Should be updated once Transcript is parsed. */
     private LocalDateTime dateTime;
 
     /** --- Constructors --- */
@@ -36,13 +33,8 @@ public class TranscriptFile extends AbstractTranscriptsFile {
         this.originalFilename = originalFilename;
     }
 
-    public Transcript getTranscript() {
-        return transcript;
-    }
-
-    public void setTranscript(Transcript transcript) {
-        this.transcript = transcript;
-        this.dateTime = transcript.getDateTime();
+    public void setDateTime(LocalDateTime ldt) {
+        this.dateTime = ldt;
     }
 
     public LocalDateTime getDateTime() {

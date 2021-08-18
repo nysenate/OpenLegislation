@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
@@ -17,10 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CachedPublicHearingDataService implements PublicHearingDataService
-{
-    private static final String publicHearingCache = "publicHearingCache";
-
+public class SqlPublicHearingDataService implements PublicHearingDataService {
     @Autowired
     private EventBus eventBus;
 
@@ -54,11 +50,11 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent) {
+    public void savePublicHearing(PublicHearing publicHearing, boolean postUpdateEvent) {
         if (publicHearing == null) {
             throw new IllegalArgumentException("publicHearing cannot be null");
         }
-        publicHearingDao.updatePublicHearing(publicHearing, publicHearingFile.isManualFix());
+        publicHearingDao.updatePublicHearing(publicHearing);
         if (postUpdateEvent) {
             eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
         }

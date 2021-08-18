@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class PublicHearingDateTimeParser {
-    private final static String TIME_STR = "\\d{1,2}:\\d{2} (a.m.|p.m.)",
+    private static final String TIME_STR = "\\d{1,2}:\\d{2} (a.m.|p.m.)",
             DAYS_OF_THE_WEEK = toOptionString(DayOfWeek.values()),
             MONTHS = toOptionString(Month.values());
-    private final static Pattern DATE = Pattern.compile("(?i)(" + DAYS_OF_THE_WEEK + ")?(, )?" +
+    private static final Pattern DATE = Pattern.compile("(?i)(" + DAYS_OF_THE_WEEK + ")?(, )?" +
                 "(?<date>(" + MONTHS + ") \\d{1,2}, \\d{4})"), TIME = Pattern.compile(TIME_STR),
             ALT_END_TIME = Pattern.compile("Whereupon.+at.+?(?<altTime>" + TIME_STR +")");
-    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d, yyyy"),
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d, yyyy"),
             TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
     /**

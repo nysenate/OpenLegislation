@@ -29,9 +29,9 @@ public interface PublicHearingDao
      * Updates the hearing info in the database, or inserts it if necessary.
      * Also assigns the hearing an ID.
      * @param publicHearing The {@link PublicHearing} to update.
-     * @param isManualFix If the file this hearing comes from fixes an earlier file.
+     *
      */
-    void updatePublicHearing(PublicHearing publicHearing, boolean isManualFix);
+    void updatePublicHearing(PublicHearing publicHearing);
 
     /**
      * Fetches new and updated public hearings from a specified date range.

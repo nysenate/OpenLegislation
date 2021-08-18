@@ -14,8 +14,7 @@ import java.util.Optional;
  * Set of methods that function on individual transcript lines to help with parsing logic.
  */
 public class TranscriptLine {
-    /** Regex to match any non alphanumeric or whitespace characters. */
-    // TODO: unnecessary once all bad characters have been removed.
+    /** Regex to match any non-alphanumeric or whitespace characters. */
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
 
     /** All line numbers occur in the first 10 characters of a line. */

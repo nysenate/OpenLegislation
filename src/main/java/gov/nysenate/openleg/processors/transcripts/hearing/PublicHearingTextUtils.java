@@ -27,8 +27,8 @@ public class PublicHearingTextUtils {
         // Set the data.
         String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2)
                 .replaceAll("\\s+", " ").trim();
-        var hearing = new PublicHearing(filename, fullText, title, getAddress(hasAddress, addrDateTime[0], title), dateTimeParser.getDate(),
-                dateTimeParser.getStartTime(), dateTimeParser.getEndTime());
+        var hearing = new PublicHearing(filename, fullText, title, getAddress(hasAddress, addrDateTime[0], title),
+                dateTimeParser.getDate(), dateTimeParser.getStartTime(), dateTimeParser.getEndTime());
         hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
         return hearing;
     }

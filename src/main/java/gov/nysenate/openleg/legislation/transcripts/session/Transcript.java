@@ -13,17 +13,18 @@ public class Transcript extends BaseLegislativeContent
 {
     private final TranscriptId transcriptId;
     private final LocalDateTime dateTime;
-    private final String sessionType, location, text, filename;
+    private final String sessionType, location, text;
+    private String filename;
 
     /** --- Constructors --- */
 
     public Transcript(TranscriptId transcriptId, String filename, String sessionType, String location, String text) {
         this.transcriptId = transcriptId;
-        this.filename = filename;
         this.sessionType = sessionType;
         this.dateTime = transcriptId.getDateTime();
         this.location = location;
         this.text =  text;
+        this.filename = filename;
         this.year = this.dateTime.getYear();
         this.session = SessionYear.of(this.year);
     }
@@ -50,6 +51,10 @@ public class Transcript extends BaseLegislativeContent
 
     public String getFilename() {
         return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     @Override
