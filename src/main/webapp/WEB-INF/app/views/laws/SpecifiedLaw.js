@@ -20,7 +20,7 @@ export default function SpecifiedLaw({ setHeaderText }) {
 
     React.useEffect(() => {
         getLaw(match.params.lawId)
-    }, [location])
+    }, [])
 
     const getLaw = (lawId) => {
         setLoading(true)

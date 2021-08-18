@@ -19,14 +19,17 @@ export default function SpecifiedLawArticleSections({response}) {
 function Section({results}) {
     // console.log(results)
     const [section, setSection] = React.useState({result: {items: []}})
-    getLawsApi(results.lawId, results.locationId)
+
+    React.useEffect(() => {
+      getLawsApi(results.lawId, results.locationId)
         .then((response) => {
-            setSection(response)
+          setSection(response)
         })
         .catch((error) => {
-            // TODO properly handle errors
-            console.warn(`${error}`)
+          // TODO properly handle errors
+          console.warn(`${error}`)
         })
+    }, [results])
 
     // console.log(section)
 
