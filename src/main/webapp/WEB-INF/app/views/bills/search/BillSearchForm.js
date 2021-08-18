@@ -5,7 +5,7 @@ import {
   initialRefineState,
   sessionOptions,
   sortOptions
-} from "app/views/bills/billSearchUtils";
+} from "app/views/bills/search/billSearchUtils";
 import * as queryString from "query-string";
 import Accordion from "app/shared/Accordion";
 import {
@@ -264,7 +264,7 @@ function SearchSelect({ label, value, onChange, options, tabindex, highlight = t
   let className = "label label--top"
   if (highlight) {
     // If highlight and value are truthy, highlight the label.
-    className += value ? " highlight" : ""
+    className += value ? " bg-yellow-100" : ""
   }
   return (
     <label className={className}>{label}
@@ -280,7 +280,7 @@ function SearchSelect({ label, value, onChange, options, tabindex, highlight = t
 
 function SearchTextInput({ label, value, onChange, placeholder }) {
   let className = "label label--top"
-  className += value ? " highlight" : ""
+  className += value ? "bg-yellow-100" : ""
   return (
     <div>
       <label className={className}>{label}
@@ -297,7 +297,7 @@ function SearchTextInput({ label, value, onChange, placeholder }) {
 
 function SearchCheckbox({ label, value, onChange }) {
   let className = "label cursor-pointer m-2 p-2"
-  className += value ? " highlight" : ""
+  className += value ? " bg-yellow-100" : ""
   return (
     <React.Fragment>
       <input id={label}

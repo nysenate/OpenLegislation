@@ -5,14 +5,14 @@ import {
   useHistory
 } from "react-router-dom";
 import * as queryString from "query-string";
-import BillSearchResults from "app/views/bills/BillSearchResults";
+import BillSearchResults from "app/views/bills/search/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import BillSearchForm from "app/views/bills/BillSearchForm";
+import BillSearchForm from "app/views/bills/search/BillSearchForm";
 import {
   initialRefineState,
-} from "app/views/bills/billSearchUtils";
-import QuickSearchTips from "app/views/bills/QuickSearchTips";
-import AdvancedSearchTips from "app/views/bills/AdvancedSearchTips";
+} from "app/views/bills/search/billSearchUtils";
+import QuickSearchTips from "app/views/bills/search/QuickSearchTips";
+import AdvancedSearchTips from "app/views/bills/search/AdvancedSearchTips";
 
 export default function BillSearch() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })

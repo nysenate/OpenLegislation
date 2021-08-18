@@ -12,12 +12,14 @@
           </a>
         </h4>
       </div>
+
       <h2 class="text-normal margin-10">{{bill.title}}</h2>
       <div ng-if="bill.programInfo">
         <p class="text-medium margin-left-10 no-margin">
           Bill #{{bill.programInfo.sequenceNo}} on the program for <span class="bold">{{bill.programInfo.name}}</span>
         </p>
       </div>
+
       <%-- Bill sponsor,and status --%>
       <md-toolbar class="md-primary md-hue-3">
         <div layout="row" layout-sm="column"
@@ -57,6 +59,7 @@
           </div>
         </div>
       </md-toolbar>
+
       <%-- Bill amendments switcher --%>
       <div ng-if="bill.amendments.size > 1">
         <md-toolbar style="padding:15px;" class="md-toolbar-tools md-hue-3 auto-height">
