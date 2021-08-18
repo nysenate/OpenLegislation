@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class SqlPublicHearingDaoIT extends BaseTests {
-    private final static String DIRECTORY = "src/test/resources/hearing/";
+    private static final String DIRECTORY = "src/test/resources/hearing/";
 
     @Autowired
     private PublicHearingFileDao hearingFileDao;
@@ -37,7 +37,7 @@ public class SqlPublicHearingDaoIT extends BaseTests {
         testHearing.setHosts(List.of(sampleHost1, sampleHost2));
 
         hearingFileDao.updatePublicHearingFile(new PublicHearingFile(new File(DIRECTORY + testHearing.getFilename())));
-        hearingDao.updatePublicHearing(testHearing, false);
+        hearingDao.updatePublicHearing(testHearing);
 
         PublicHearingId id = hearingDao.getPublicHearingIds(SortOrder.DESC, LimitOffset.ONE).get(0);
         testHearing.setId(id);

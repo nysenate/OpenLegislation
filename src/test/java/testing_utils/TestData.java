@@ -20,7 +20,7 @@ public class TestData {
 
     private TestData() {}
 
-    public final static Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
+    public static final Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
             .put(188, new Person(188, "John L. Sampson", "John", "L.", "Sampson",
                     "sampson@senate.state.ny.us", "Senator", null, "369_john_l._sampson.jpg"))
             .put(263, new Person(263, "Thomas P. Morahan", "Thomas", "P.", "Morahan",
@@ -42,7 +42,7 @@ public class TestData {
             .build();
 
     // TODO: test members should never be incumbents, for future-proofing, because no one is an incumbent forever.
-    public final static Map<Integer, Member> MEMBER_DATA = new ImmutableMap.Builder<Integer, Member>()
+    public static final Map<Integer, Member> MEMBER_DATA = new ImmutableMap.Builder<Integer, Member>()
             .put(369, new Member(PERSON_DATA.get(188), 369, Chamber.SENATE, false))
             .put(441, new Member(PERSON_DATA.get(263), 441, Chamber.SENATE, false))
             .put(371, new Member(PERSON_DATA.get(190), 371, Chamber.SENATE, true))
@@ -55,7 +55,7 @@ public class TestData {
             .put(667,  new Member(PERSON_DATA.get(499), 667,  Chamber.ASSEMBLY, false))
             .build();
 
-    public final static ImmutableMap<Integer, SessionMember> SESSION_MEMBER_DATA = new ImmutableMap.Builder<Integer, SessionMember>()
+    public static final ImmutableMap<Integer, SessionMember> SESSION_MEMBER_DATA = new ImmutableMap.Builder<Integer, SessionMember>()
             .put(1, new SessionMember(1, MEMBER_DATA.get(369), "SAMPSON",
                     SessionYear.of(2009), 19, false))
             .put(2, new SessionMember(2, MEMBER_DATA.get(441), "MORAHAN",
@@ -84,7 +84,7 @@ public class TestData {
                     SessionYear.of(2013), 3, true))
             .build();
 
-    public final static ImmutableSet<CommitteeMember> COMMITTEE_MEMBER_DATA = createCommitteeMemberData();
+    public static final ImmutableSet<CommitteeMember> COMMITTEE_MEMBER_DATA = createCommitteeMemberData();
 
     private static ImmutableSet<CommitteeMember> createCommitteeMemberData() {
         Map<Integer, List<Integer>> temp = new HashMap<>();

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import static gov.nysenate.openleg.processors.transcripts.session.TranscriptParser.getTranscriptFromFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -45,9 +46,6 @@ public class TranscriptParserTest extends BaseTests {
     @Autowired
     private TranscriptDataService transcriptDataService;
 
-    @Autowired
-    private TranscriptParser parser;
-
     @Test
     public void testProcess() throws IOException {
         TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0));
@@ -56,7 +54,7 @@ public class TranscriptParserTest extends BaseTests {
         TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[0]));
 
         transcriptFileDao.updateTranscriptFile(transcriptFile);
-        parser.process(transcriptFile);
+        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
         Transcript actualTranscript = transcriptDataService.getTranscript(testId);
         assertEquals(expectedTranscript, actualTranscript);
     }
@@ -64,10 +62,12 @@ public class TranscriptParserTest extends BaseTests {
     @Test
     public void testParseError() throws IOException {
         final TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[1]));
-        assertThrows(ParseError.class, () -> parser.process(transcriptFile));
+        assertThrows(ParseError.class, () ->
+                transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true));
 
         final TranscriptFile transcriptFile2 = new TranscriptFile(new File(TEST_DIR + FILENAMES[2]));
-        assertThrows(ParseError.class, () -> parser.process(transcriptFile2));
+        assertThrows(ParseError.class, () ->
+                transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile2), true));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TranscriptParserTest extends BaseTests {
         TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[3]));
 
         transcriptFileDao.updateTranscriptFile(transcriptFile);
-        parser.process(transcriptFile);
+        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
         Transcript actualTranscript = transcriptDataService.getTranscript(testId);
         assertEquals(expectedTranscript, actualTranscript);
     }

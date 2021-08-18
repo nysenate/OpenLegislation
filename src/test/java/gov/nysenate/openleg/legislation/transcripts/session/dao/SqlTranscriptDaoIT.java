@@ -25,18 +25,17 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
-public class SqlTranscriptDaoIT extends BaseTests
-{
+public class SqlTranscriptDaoIT extends BaseTests {
     @Autowired
     private TranscriptDao dao;
     @Autowired
     private TranscriptFileDao fileDao;
 
     // Generates Transcript test data.
-    private final static int NUM_TRANSCRIPTS = 3;
-    private final static String FILEPATH = "src/test/resources/transcriptFiles/";
-    private final static List<LocalDateTime> LDTS = new ArrayList<>();
-    private final static List<Transcript> TRANSCRIPTS = new ArrayList<>();
+    private static final int NUM_TRANSCRIPTS = 3;
+    private static final String FILEPATH = "src/test/resources/transcriptFiles/";
+    private static final List<LocalDateTime> LDTS = new ArrayList<>();
+    private static final List<Transcript> TRANSCRIPTS = new ArrayList<>();
     private static final Transcript UPDATE;
     private static final List<TranscriptFile> TRANSCRIPT_FILES = new ArrayList<>();
     private static TranscriptFile UPDATE_FILE;

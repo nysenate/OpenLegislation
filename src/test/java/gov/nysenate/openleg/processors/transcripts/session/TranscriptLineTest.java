@@ -18,16 +18,15 @@ public class TranscriptLineTest {
 
     @Test
     public void constructorTest() {
-        lineTexts = new String[]{"Here's a line!", "", "\rA", "\fB"};
+        lineTexts = new String[]{"Here's a line!", "", "A", "\fB"};
         expected = new String[]{lineTexts[0], "", "A", "B"};
         testHelper(TranscriptLine::getText);
     }
 
     @Test
     public void testPageNumber() {
-        lineTexts = new String[]{"                                 1234", "4321", "55",
-                "  �                               2301", "                1397."};
-        expected = new Object[]{true, false, false, true, false};
+        lineTexts = new String[]{"                                 1234", "4321", "55", "                1397."};
+        expected = new Object[]{true, false, false, false};
         testHelper(TranscriptLine::isPageNumber);
     }
 
@@ -38,8 +37,10 @@ public class TranscriptLineTest {
 
     @Test
     public void testRemoveLineNumber() {
-        lineTexts = new String[]{"        21   NEW YORK STATE SENATE ", "    22", "    2", "       THE NEW YORK SENATE", "               833"};
-        expected = new Object[]{"   NEW YORK STATE SENATE", "", "", "       THE NEW YORK SENATE", "               833"};
+        lineTexts = new String[]{"        21   NEW YORK STATE SENATE ", "    22", "    2",
+                "       THE NEW YORK SENATE", "               833"};
+        expected = new Object[]{"NEW YORK STATE SENATE", "", "",
+                "       THE NEW YORK SENATE", "               833"};
         testHelper(TranscriptLine::removeLineNumber);
     }
 
@@ -109,12 +110,6 @@ public class TranscriptLineTest {
         lineTexts = new String[]{"  Candyco Transcription Service, Inc. ", " (518) 371-8910 "};
         expected = new Object[]{true, true};
         testHelper(TranscriptLine::isStenographer);
-    }
-
-    @Test
-    public void properlyIgnoresInvalidCharacters() {
-        TranscriptLine line = new TranscriptLine("  �                               2301");
-        assertTrue(line.isPageNumber());
     }
 
     private void testHelper(Function<TranscriptLine, ?> lineFunction) {
