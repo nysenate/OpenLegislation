@@ -2,20 +2,10 @@ import React, { useEffect } from 'react';
 import { getBillApi } from "app/apis/billGetApi";
 import { sessionYear } from "app/lib/dateUtils";
 import {
-  Link,
   useRouteMatch
 } from "react-router-dom";
-import MemberThumbnail from "app/shared/MemberThumbnail";
-import {
-  Check,
-  CheckCircle,
-  FileDotted,
-  XCircle
-} from "phosphor-react";
-import FullDate from "app/shared/FullDate";
-import BillStatusDesc from "app/shared/BillStatusDesc";
-import BillMilestones from "app/shared/BillMilestones";
 import BillSummary from "app/views/bills/info/BillSummary";
+import BillDetails from "app/views/bills/info/BillDetails";
 
 export default function BillInfo({ setHeaderText }) {
 
@@ -37,7 +27,10 @@ export default function BillInfo({ setHeaderText }) {
   }
 
   return (
-    <BillSummary bill={bill} />
+    <div className="p-5">
+      <BillSummary bill={bill} />
+      <BillDetails bill={bill} />
+    </div>
   )
 }
 

@@ -2,9 +2,10 @@ import React from 'react'
 import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
 import MemberThumbnail from "app/shared/MemberThumbnail";
-import FullDate from "app/shared/FullDate";
+import Date from "app/shared/Date";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
+import { DateTime } from "luxon";
 
 export default function BillSearchResults({ response, limit, page, onPageChange }) {
 
@@ -79,7 +80,7 @@ function ResultItem({ result }) {
         </div>
         {bill.status.actionDate &&
         <div className="mt-1 text text-blue-600">
-          <FullDate date={bill.status.actionDate} /> - <BillStatusDesc status={bill.status} />
+          <Date date={bill.status.actionDate} format={DateTime.DATE_FULL} /> - <BillStatusDesc status={bill.status} />
         </div>
         }
         {!bill.billType.resolution &&

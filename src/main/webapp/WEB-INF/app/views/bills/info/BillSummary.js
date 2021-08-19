@@ -6,14 +6,15 @@ import {
   XCircle
 } from "phosphor-react";
 import { Link } from "react-router-dom";
-import FullDate from "app/shared/FullDate";
+import Date from "app/shared/Date";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
+import { DateTime } from "luxon";
 
 
 export default function BillSummary({ bill }) {
   return (
-    <div className="p-5">
+    <div>
       <SubstitutedByMsg bill={bill} />
       <h3 className="h3">{bill.title}</h3>
       <ProgramInfoMsg bill={bill} />
@@ -100,7 +101,7 @@ function BillStatus({ bill }) {
   return (
     <React.Fragment>
       <div className="text text--small">
-        Status as of <FullDate date={bill.status.actionDate} />&nbsp;
+        Status as of <Date date={bill.status.actionDate} format={DateTime.DATE_FULL} />&nbsp;
         <span className="font-semibold">({bill.basePrintNo})</span>
       </div>
       <div className="flex items-center">

@@ -77,6 +77,7 @@
         </md-toolbar>
         <md-divider></md-divider>
       </div>
+
       <%-- Bill Tabs --%>
       <md-tabs md-selected="curr.selectedView" class="md-hue-2 margin-top-10"
                md-dynamic-height="true" md-no-ink md-stretch-tabs="always">

@@ -16,3 +16,13 @@ export function billSessionYears() {
   }
   return sessionYears;
 }
+
+/**
+ * Converts an ISO date or datetime into the specified format.
+ * @param date An ISO date or datetime.
+ * @param format The format to convert to - a format object from luxon, see https://moment.github.io/luxon/#/formatting?id=presets
+ * @returns {string}
+ */
+export function formatDateTime(date, format) {
+  return DateTime.fromISO(date).toLocaleString(format)
+}
