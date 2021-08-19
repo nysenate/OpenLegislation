@@ -19,7 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
@@ -42,20 +42,18 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         archiveTranscriptDir = new File(environment.getArchiveDir(), "session_transcripts");
     }
 
-    /** --- Implemented Methods --- */
+    /* --- Implemented Methods --- */
 
     /** {@inheritDoc} */
     @Override
     public List<TranscriptFile> getIncomingTranscriptFiles(LimitOffset limOff) throws IOException {
         List<File> files = new ArrayList<>(FileIOUtils.safeListFiles(incomingTranscriptDir, false, null));
-        files = LimitOffset.limitList(files, limOff);
-
         List<TranscriptFile> transcriptFiles = new ArrayList<>();
-        for (File file : files) {
+        for (File file : files)
             transcriptFiles.add(new TranscriptFile(file));
-        }
-        transcriptFiles.sort(Comparator.comparing(TranscriptFile::getFileName));
-        return transcriptFiles;
+        // Sort files for consistent processing.
+        Collections.sort(transcriptFiles);
+        return LimitOffset.limitList(transcriptFiles, limOff);
     }
 
     @Override
@@ -72,18 +70,14 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
             }
         }
         catch (EmptyResultDataAccessException ignored) {}
-        // TODO: check that updates work correctly, with ir without same filename.
         if (jdbcNamed.update(UPDATE_TRANSCRIPT_FILE.getSql(schema()), params) == 0)
             jdbcNamed.update(INSERT_TRANSCRIPT_FILE.getSql(schema()), params);
     }
 
-    private int pastVersions(TranscriptFile transcriptFile) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("dateTime", transcriptFile.getDateTime());
-        Integer ret = jdbcNamed.queryForObject(OLD_FILE_COUNT.getSql(schema()), params, Integer.class);
-        return ret == null ? 0 : ret;
-    }
-
+    /**
+     * Used to ensure a consistent and useful naming convention.
+     * @param transcriptFile to be renamed.
+     */
     private void renameFile(TranscriptFile transcriptFile) {
         String currVersion = Integer.toString(pastVersions(transcriptFile) + 1);
         LocalDateTime dateTime = transcriptFile.getDateTime();
@@ -97,6 +91,13 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         catch (IOException e) {
             logger.error("TranscriptFile " + transcriptFile.getFileName() + " could not be properly renamed.");
         }
+    }
+
+    private int pastVersions(TranscriptFile transcriptFile) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("dateTime", transcriptFile.getDateTime());
+        Integer ret = jdbcNamed.queryForObject(OLD_FILE_COUNT.getSql(schema()), params, Integer.class);
+        return ret == null ? 0 : ret;
     }
 
     /** {@inheritDoc} */
@@ -118,7 +119,9 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
     /** {@inheritDoc} */
     @Override
     public List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limOff) {
-        return jdbcNamed.query(GET_PENDING_TRANSCRIPT_FILES.getSql(schema(), limOff), new TranscriptFileRowMapper());
+        var temp = jdbcNamed.query(GET_PENDING_TRANSCRIPT_FILES.getSql(schema()), new TranscriptFileRowMapper());
+        Collections.sort(temp);
+        return LimitOffset.limitList(temp, limOff);
     }
 
     /** --- Helper Classes --- */

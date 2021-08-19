@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Service
 public class ManagedTranscriptProcessService implements TranscriptProcessService
@@ -83,19 +83,26 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
-        SortedSet<Transcript> parsedTranscripts = new TreeSet<>(Comparator.comparing(Transcript::getDateTime));
+        // Ensures transcripts are saved in a reliable order, with manual fixes processed last.
+        SortedMap<TranscriptFile, Transcript> processed = new TreeMap<>(
+                Comparator.comparing(TranscriptFile::isManualFix)
+                        .thenComparing(TranscriptFile::getDateTime)
+                        .thenComparing(TranscriptFile::getFileName));
+
         int processCount = 0;
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
                 var currTranscript = TranscriptParser.getTranscriptFromFile(file);
-                parsedTranscripts.add(currTranscript);
+
                 file.setDateTime(currTranscript.getDateTime());
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
                 transcriptFileDao.updateTranscriptFile(file);
+
                 currTranscript.setFilename(file.getFileName());
+                processed.put(file, currTranscript);
                 processCount++;
             }
             catch (IOException ex) {
@@ -103,7 +110,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
             }
         }
         logger.info("Saving {} processed transcripts", processCount);
-        for (var transcript : parsedTranscripts)
+        for (var transcript : processed.values())
             transcriptDataService.saveTranscript(transcript, true);
         return processCount;
     }
