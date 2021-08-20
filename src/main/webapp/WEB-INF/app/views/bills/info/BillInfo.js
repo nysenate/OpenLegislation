@@ -27,7 +27,7 @@ export default function BillInfo({ setHeaderText }) {
   }
 
   return (
-    <div className="p-5">
+    <div>
       <BillSummary bill={bill} />
       <BillDetails bill={bill} />
     </div>

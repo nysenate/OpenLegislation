@@ -14,7 +14,7 @@ import { DateTime } from "luxon";
 
 export default function BillSummary({ bill }) {
   return (
-    <div>
+    <div className="px-5 pt-5">
       <SubstitutedByMsg bill={bill} />
       <h3 className="h3">{bill.title}</h3>
       <ProgramInfoMsg bill={bill} />
@@ -40,7 +40,7 @@ function SubstitutedByMsg({ bill }) {
     return null
   }
   return (
-    <div className="bg-yellow-50 py-2 mb-2 flex items-center">
+    <div className="bg-yellow-50 py-2 mb-2 flex items-center rounded">
       <FileDotted size="1.2rem" className="mx-1" />
       <p>
         This bill has been substituted by&nbsp;
