@@ -1,6 +1,7 @@
 import React from 'react'
 import { DateTime } from "luxon";
 import { formatDateTime } from "app/lib/dateUtils";
+import { List } from "phosphor-react";
 
 export default function BillDetails({ bill }) {
   const [ version, setVersion ] = React.useState(bill.activeVersion)
@@ -93,9 +94,43 @@ function AmendmentSwitcher({ bill, version, setVersion }) {
 }
 
 function Tabs({ tabs, activeTab, setActiveTab }) {
+  if (window.innerWidth >= 768) {
+    return <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+  } else {
+    return <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+  }
+}
+
+/**
+ * "Tab" component for mobile or small displays
+ */
+function MobileTabs({ tabs, activeTab, setActiveTab }) {
+  return (
+    <div className="mx-5">
+      <label className="label label--top font-semibold">
+        Go to
+      </label>
+      <div className="flex items-center border-2 border-blue-500 rounded">
+        <List size="1.5rem" className="mx-2" />
+        <select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="py-1 w-full">
+          {tabs.map((tab) =>
+            <option key={tab.name} value={tab.name} disabled={tab.isDisabled}>
+              {tab.name}
+            </option>
+          )}
+        </select>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * The default tab component, rendered on medium to large size screens.
+ */
+function DefaultTabs({ tabs, activeTab, setActiveTab }) {
   return (
     <div className="flex mt-5 pl-5 border-b-1 border-blue-600">
-      {tabs.map((tab, index) => {
+      {tabs.map((tab) => {
         return (
           <Tab key={tab.name}
                tab={tab}
