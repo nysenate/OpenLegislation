@@ -32,7 +32,7 @@ function MobileTabs({ tabs, activeTab, setActiveTab }) {
         <select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="py-1 w-full">
           {tabs.map((tab) =>
             <option key={tab.name} value={tab.name} disabled={tab.isDisabled}>
-              {tab.name}
+              {tabLabel(tab)}
             </option>
           )}
         </select>
@@ -73,7 +73,11 @@ function Tab({ tab, isActive, setActiveTab }) {
   return (
     <div className={tabClass}
          onClick={tab.isDisabled ? undefined : () => setActiveTab(tab.name)}>
-      {tab.name}{tab.quantity ? ` (${tab.quantity})` : ""}
+      {tabLabel(tab)}
     </div>
   )
+}
+
+const tabLabel = (tab) => {
+  return tab.name + (tab.quantity ? ` (${tab.quantity})` : "")
 }
