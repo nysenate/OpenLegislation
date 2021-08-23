@@ -2,6 +2,7 @@ import React from 'react'
 import { DateTime } from "luxon";
 import { formatDateTime } from "app/lib/dateUtils";
 import { List } from "phosphor-react";
+import useWindowSize from "app/shared/useWindowSize";
 
 export default function BillDetails({ bill }) {
   const [ version, setVersion ] = React.useState(bill.activeVersion)
@@ -94,7 +95,8 @@ function AmendmentSwitcher({ bill, version, setVersion }) {
 }
 
 function Tabs({ tabs, activeTab, setActiveTab }) {
-  if (window.innerWidth >= 768) {
+  const windowSize = useWindowSize()
+  if (windowSize[0] >= 768) {
     return <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
   } else {
     return <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
