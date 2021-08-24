@@ -86,6 +86,7 @@
             <span><i class="icon-back prefix-icon2"></i>Search</span>
           </md-tab-label>
         </md-tab>
+
         <md-tab label="Details">
           <%-- Same As Bills --%>
           <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0">

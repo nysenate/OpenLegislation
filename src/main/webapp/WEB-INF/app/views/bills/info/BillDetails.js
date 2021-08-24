@@ -6,6 +6,11 @@ import Tabs from "app/shared/Tabs";
 export default function BillDetails({ bill }) {
   const [ version, setVersion ] = React.useState(bill.activeVersion)
   const [ activeTab, setActiveTab ] = React.useState("Details")
+  const [ tabs, setTabs ] = React.useState([])
+
+  React.useEffect(() => {
+    setTabs(billInfoTabs(bill, version))
+  }, [bill, version])
 
   return (
     <div>
@@ -14,10 +19,15 @@ export default function BillDetails({ bill }) {
       </div>
 
       <div className="mb-5">
-        <Tabs tabs={billInfoTabs(bill, version)} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
-      {activeTab}
     </div>
+  )
+}
+
+function Details() {
+  return (
+    "Hello bill details"
   )
 }
 
@@ -27,6 +37,7 @@ const billInfoTabs = (bill, version) => {
       name: "Details",
       quantity: undefined,
       isDisabled: false,
+      component: <Details/>
     },
     {
       name: "Votes",

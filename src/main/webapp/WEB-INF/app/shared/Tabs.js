@@ -5,61 +5,101 @@ import { List } from "phosphor-react";
 /**
  * Renders tabs responsively. On screens >= 768px a typical tab like component is rendered, on smaller screens
  * an alternative select element is rendered.
- * @param tabs An array of tabs, each tab should be an object with 'name', 'quantity', and 'isDisable' fields.
+ * @param tabs An array of tabs, each tab should be an object with 'name', 'quantity', 'isDisable',
+ * and 'component' fields. The 'component' is the component to render when this tab is active.
  * @param activeTab The 'name' of the currently active tab.
  * @param setActiveTab A callback to set the 'name' of the selected tab.
  */
 export default function Tabs({ tabs, activeTab, setActiveTab }) {
+  const [ tabComponent, setTabComponent ] = React.useState()
   const windowSize = useWindowSize()
+
+  React.useEffect(() => {
+    tabs.forEach((tab) => {
+      if (tab.name === activeTab) {
+        setTabComponent(tab.component)
+      }
+    })
+  }, [ tabs, activeTab ])
+
   if (windowSize[0] >= 768) {
-    return <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+    return (
+      <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}>
+        {tabComponent}
+      </DefaultTabs>
+    )
   } else {
-    return <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+    return (
+      <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}>
+        {tabComponent}
+      </MobileTabs>
+    )
   }
 }
 
 /**
- * "Tab" component for mobile or small displays
- */
-function MobileTabs({ tabs, activeTab, setActiveTab }) {
+* "Tab" component for mobile or small displays
+*/
+function MobileTabs(
+{
+  tabs, activeTab, setActiveTab, children
+}
+)
+{
   return (
-    <div className="mx-5">
-      <label className="label label--top font-semibold">
-        Go to
-      </label>
-      <div className="flex items-center border-2 border-blue-500 rounded">
-        <List size="1.5rem" className="mx-2" />
-        <select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="py-1 w-full">
-          {tabs.map((tab) =>
-            <option key={tab.name} value={tab.name} disabled={tab.isDisabled}>
-              {tabLabel(tab)}
-            </option>
-          )}
-        </select>
+    <React.Fragment>
+      <div className="mx-5">
+        <label className="label label--top font-semibold">
+          Go to
+        </label>
+        <div className="flex items-center border-2 border-blue-500 rounded">
+          <List size="1.5rem" className="mx-2" />
+          <select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="py-1 w-full">
+            {tabs.map((tab) =>
+              <option key={tab.name} value={tab.name} disabled={tab.isDisabled}>
+                {tabLabel(tab)}
+              </option>
+            )}
+          </select>
+        </div>
       </div>
-    </div>
+      {children}
+    </React.Fragment>
   )
 }
 
 /**
- * The default tab component, rendered on medium to large size screens.
- */
-function DefaultTabs({ tabs, activeTab, setActiveTab }) {
+* The default tab component, rendered on medium to large size screens.
+*/
+function DefaultTabs(
+{
+  tabs, activeTab, setActiveTab, children
+}
+)
+{
   return (
-    <div className="flex mt-5 pl-5 border-b-1 border-blue-600">
-      {tabs.map((tab) => {
-        return (
-          <Tab key={tab.name}
-               tab={tab}
-               isActive={tab.name === activeTab}
-               setActiveTab={setActiveTab} />
-        )
-      })}
-    </div>
+    <React.Fragment>
+      <div className="flex mt-5 pl-5 border-b-1 border-blue-600">
+        {tabs.map((tab) => {
+          return (
+            <Tab key={tab.name}
+                 tab={tab}
+                 isActive={tab.name === activeTab}
+                 setActiveTab={setActiveTab} />
+          )
+        })}
+      </div>
+      {children}
+    </React.Fragment>
   )
 }
 
-function Tab({ tab, isActive, setActiveTab }) {
+function Tab(
+{
+  tab, isActive, setActiveTab
+}
+)
+{
   let tabClass = "px-3 py-1 mr-3 whitespace-nowrap border-t-1 border-l-1 border-r-1"
 
   if (tab.isDisabled) {
@@ -78,6 +118,7 @@ function Tab({ tab, isActive, setActiveTab }) {
   )
 }
 
-const tabLabel = (tab) => {
+const tabLabel = (tab) =>
+{
   return tab.name + (tab.quantity ? ` (${tab.quantity})` : "")
 }
