@@ -51,27 +51,30 @@ function ResultItem({result}) {
     // console.log(result)
     const location = useLocation()
     const history = useHistory()
-    const params = queryString.parse(location.search, { parseBooleans: true })
+    const params = queryString.parse(location.search, {parseBooleans: true})
 
     return (
         <div className="p-3 hover:bg-gray-200 flex flex-wrap" onClick={() => expandArticle()}>
-            <div className="flex items-center w-full md:w-1/3">
-                <div>
+            <div className=" py-4 w-full md:w-1/3">
+                <div className="">{/*<div className="flex items-center">*/}
 
-                    <div className="text">
-                        {result.docType} {result.docLevelId}
+                    <div className="text mr-20">
+                        <p>{result.docType}&nbsp;{result.docLevelId}</p>
                     </div>
 
                     <div className="text text--small">
-                        <b>Sections (&sect;{result.fromSection} - &sect;{result.toSection}) - Location ID: {result.locationId}</b>
-                        <p> {result.title} </p>
+                        <b>Sections&nbsp;(&sect;{result.fromSection}&nbsp;-&nbsp;&sect;{result.toSection})&nbsp;-&nbsp;Location&nbsp;ID:&nbsp;{result.locationId}</b>
+                        <p>{result.title}</p>
                     </div>
 
-                    {params.location === result.locationId &&
-                    (<div>
-                        <SpecifiedLawArticleSections response={result}/>
-                    </div>)
-                    }
+                    <div className="flex-flow:column-wrap flex-end">
+                        {params.location === result.locationId &&
+                        (<div>
+                            <SpecifiedLawArticleSections response={result}/>
+                        </div>)
+                        }
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -80,7 +83,7 @@ function ResultItem({result}) {
     function expandArticle() {
         const params = queryString.parse(location.search)
         params.location = result.locationId
-        history.push({ search: queryString.stringify(params) })
+        history.push({search: queryString.stringify(params)})
     }
 }
 

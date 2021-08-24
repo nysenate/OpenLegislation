@@ -4,17 +4,12 @@ import {
     useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
-import { Sliders } from "phosphor-react";
+import lawSearchApi from "app/apis/lawSearchApi";
 
-const advancedSearchTitleEls = (
-    <div className="flex items-center">
-        <Sliders size="1.25rem" className="inline-block mr-2" />
-        <h4 className="inline-block">Advanced Search Options</h4>
-    </div>
-)
 
-export default function LawSearchForm() {
+export default function LawSearchForm({handleVolumeSearchFilter}) {
     const [ term, setTerm ] = React.useState("")
+    const [ filter, setFilter ] = React.useState("")
     const location = useLocation()
     const history = useHistory()
 
@@ -25,18 +20,26 @@ export default function LawSearchForm() {
     }, [ location ])
 
     // Updates the term query param when the form is submitted.
-    const onSubmit = (e) => {
+    const onSubmitLawSearch = (e) => {
         e.preventDefault()
+        const input = document.getElementById("lawsearch");
+        console.log(input.value)
         const params = queryString.parse(location.search)
-        params.term = term
+        // params.term = term
         console.log(params)
-        history.push({ search: queryString.stringify(params) })
+        // history.push({ search: queryString.stringify(params) })
     }
 
-    //TODO 2 forms for 2 search boxes
+    const onSubmitLawVolumeSearch = (e) => {
+        e.preventDefault()
+        const input = document.getElementById("lawvolumesearch")
+        console.log(input.value)
+        handleVolumeSearchFilter(input.value)
+    }
+
     return (
         <div>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmitLawSearch}>
                 <div className="flex flex-wrap">
                     <div className="flex-grow mr-8">
                         <label htmlFor="lawsearch" className="label label--top">
@@ -46,6 +49,7 @@ export default function LawSearchForm() {
                                value={term}
                                tabIndex="1"
                                name="lawsearch"
+                               id="lawsearch"
                                type="text"
                                className="input w-full"
                                placeholder="e.g. official state muffin , STL 84" />
@@ -55,16 +59,19 @@ export default function LawSearchForm() {
                     <div className="flex justify-end">
                         <button className="btn my-3 w-36" type="submit" tabIndex="2">Search</button>
                     </div>
+            </form>
 
+            <form onSubmit={onSubmitLawVolumeSearch}>
                 <div className="flex flex-wrap">
                     <div className="flex-grow mr-8">
                         <label htmlFor="lawvolumesearch" className="label label--top">
                             Browse By Law Volume
                         </label>
-                        <input onChange={(e) => setTerm(e.target.value)}
-                               value={term}
+                        <input onChange={(e) => setFilter(e.target.value)}
+                               value={filter}
                                tabIndex="3"
                                name="lawvolumesearch"
+                               id="lawvolumesearch"
                                type="text"
                                className="input w-half"
                                placeholder="e.g. TAX" />
@@ -75,6 +82,7 @@ export default function LawSearchForm() {
                     <button className="btn my-3 w-36" type="submit" tabIndex="4">Search</button>
                 </div>
             </form>
+
         </div>
     )
 }

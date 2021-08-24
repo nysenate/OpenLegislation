@@ -13,6 +13,7 @@ import LawVolumeSearchResults from "app/views/laws/LawVolumeSearchResults";
 export default function LawSearch() {
     const [response, setResponse] = React.useState({result: {items: []}})
     const [loading, setLoading] = React.useState(true)
+    const [ filter, setFilter ] = React.useState("")
     const location = useLocation()
     const history = useHistory()
     const params = queryString.parse(location.search)
@@ -22,7 +23,7 @@ export default function LawSearch() {
     React.useEffect(() => {
         // search()
         doInitialSearch()
-    }, [])
+    }, [filter])
 
     // Perform a search using the query string parameters.
     const search = () => {
@@ -73,13 +74,12 @@ export default function LawSearch() {
 
     return (
         <div className="p-3">
-            <LawSearchForm searchTerm={params.term}/>
+            <LawSearchForm searchTerm={params.term} handleVolumeSearchFilter={setFilter}/>
             {loading
                 ? <LoadingIndicator/>
                 : <LawVolumeSearchResults response={response}
-                                          limit={limit}
-                                          page={params.page}
-                                          onPageChange={onPageChange}/>
+                                          filter={filter}
+                                          />
             }
         </div>
     )

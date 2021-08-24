@@ -31,26 +31,24 @@ function Section({results}) {
         })
     }, [results])
 
-    // console.log(section)
-
     return (
-        // <div>
-        //     TEST
-        // </div>
         <div>
              {/*<Link to={`/laws/${documents.lawId}?location=${documents.locationId}`} key={documents.lawId}>*/}
             <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-                <div className="flex items-center w-full md:w-1/3">
-                    <div>
+                <div className="py-3 w-full md:w-1/3">
+                    <div className="flex items-center">
 
-                        <div className="text">
-                            § {section.locationId}
+                        <div className="text mr-5">
+                            <p>§&nbsp;{section.locationId}</p>
                         </div>
 
-                        <div className="text text--small">
-                            Location Id: {section.locationId}
-                            {section.title}
+                        <div>
+                            <div className="text text--small">
+                                <p>Location&nbsp;Id:&nbsp;{section.locationId}</p>
+                                <p>{section.title}</p>
+                            </div>
                         </div>
+
 
                         {/*<div className="text text--small">*/}
                         {/*    {section.text}*/}
