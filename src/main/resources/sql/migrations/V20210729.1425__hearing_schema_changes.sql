@@ -5,6 +5,8 @@ ALTER TABLE master.public_hearing
     ADD COLUMN id SERIAL;
 ALTER TABLE master.public_hearing
     ADD PRIMARY KEY (id);
+ALTER TABLE master.public_hearing
+    ADD UNIQUE (filename);
 
 -- Changes public_hearing_committee table to now store HearingHosts.
 ALTER TABLE master.public_hearing_committee

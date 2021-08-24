@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.api.legislation.transcripts.AbstractTranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
+import gov.nysenate.openleg.processors.transcripts.session.Stenographer;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
+package gov.nysenate.openleg.legislation.transcripts.hearing.dao.host;
 
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
 import gov.nysenate.openleg.legislation.committee.Chamber;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
-import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlHearingHostQuery.*;
+import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.host.SqlHearingHostQuery.*;
 
 @Repository
 public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.api.legislation.transcripts.session.view;
+package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
@@ -7,7 +7,7 @@ import org.junit.experimental.categories.Category;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static gov.nysenate.openleg.api.legislation.transcripts.session.view.Stenographer.*;
+import static gov.nysenate.openleg.processors.transcripts.session.Stenographer.*;
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)

@@ -31,11 +31,6 @@ public class TranscriptLineTest {
     }
 
     @Test
-    public void testHasLineNumber() {
-        // TODO: check for lines like "55".
-    }
-
-    @Test
     public void testRemoveLineNumber() {
         lineTexts = new String[]{"        21   NEW YORK STATE SENATE ", "    22", "    2",
                 "       THE NEW YORK SENATE", "               833"};

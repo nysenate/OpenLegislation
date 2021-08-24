@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
+package gov.nysenate.openleg.legislation.transcripts.hearing.dao.host;
 
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;

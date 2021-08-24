@@ -70,38 +70,44 @@ public class PublicHearingGetCtrl extends BaseCtrl {
 
     /**
      * Single Public Hearing Retrieval API.
-     * ------------------------------------
-     *
-     * Retrieve a singe public hearing by its filename.
-     * (GET) /api/3/hearings/{id}
-     *
+     * Retrieve a singe public hearing by its id or filename.
+     * (GET) /api/3/hearings/{id OR filename}
      * Request Parameters: None
-     *
      * Expected Output: PublicHearingView
-     *
      */
     // TODO: what about when we get to 4 digits?
     @RequestMapping(value = "/{id:\\d{1,3}}")
-    public BaseResponse getHearing(@PathVariable String id) {
+    public BaseResponse getHearingById(@PathVariable String id) {
         return new ViewObjectResponse<>(new PublicHearingView(
                 hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)))),
         "Data for public hearing with id #" + id);
     }
 
+    @RequestMapping(value = "/{filename}")
+    public BaseResponse getHearingByFilename(@PathVariable String filename) {
+        return new ViewObjectResponse<>(new PublicHearingView(
+                hearingData.getPublicHearing(filename)),
+                "Data for public hearing with filename " + filename);
+    }
+
     /**
      * Single Public Hearing PDF retrieval API.
-     * ----------------------------------------
-     *
-     * Retrieve a single public hearing text pdf: (GET) /api/3/hearings/{filename}.pdf
-     *
+     * Retrieve a single public hearing text pdf:
+     * (GET) /api/3/hearings/{id OR filename}.pdf or
      * Request Parameters: None.
-     *
      * Expected Output: PDF response.
      */
     @RequestMapping(value = "/{id:\\d{1,3}}.pdf")
-    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id)
+    public ResponseEntity<byte[]> getHearingPdfFromId(@PathVariable String id)
             throws IOException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));
+        return new PublicHearingPdfView(hearing).writeData();
+    }
+
+    @RequestMapping(value = "/{filename}.pdf")
+    public ResponseEntity<byte[]> getHearingPdfFromFilename(@PathVariable String filename)
+            throws IOException {
+        PublicHearing hearing = hearingData.getPublicHearing(filename);
         return new PublicHearingPdfView(hearing).writeData();
     }
 

@@ -10,29 +10,29 @@ public class SqlPublicHearingQuery implements BasicSqlQuery {
 
         RESET_ID = "ALTER SEQUENCE " + SCHEMA + ".public_hearing_id_seq RESTART",
 
-        SELECT_PUBLIC_HEARING_IDS = "SELECT id FROM " + TABLE,
-    // TODO: no unique constraint on filename
+        SELECT_HEARING_IDS = "SELECT id FROM " + TABLE,
+
         SELECT_HEARING_ID_BY_FILENAME =
             "SELECT id FROM " + TABLE + "\n" +
             "WHERE filename = :filename",
 
-        SELECT_PUBLIC_HEARING_BY_ID =
+        SELECT_HEARING_BY_ID =
             "SELECT * FROM " + TABLE + "\n" +
             "WHERE id = :id",
 
-        UPDATE_PUBLIC_HEARING =
+        UPDATE_HEARING =
             "UPDATE " + TABLE + "\n" +
             "SET filename = :filename, title = :title, date = :date, address = :address, text = :text, " +
                 "start_time = :startTime, end_time = :endTime, modified_date_time = :modifiedDateTime," +
                 "published_date_time = :publishedDateTime" + "\n" +
             "WHERE filename LIKE :filenameStart",
 
-        INSERT_PUBLIC_HEARING =
+        INSERT_HEARING =
             "INSERT INTO " + TABLE + "\n" +
                 "(filename, date, title, address, text, start_time, end_time)" + "\n" +
             "VALUES (:filename, :date, :title, :address, :text, :startTime, :endTime)",
 
-        SELECT_PUBLIC_HEARING_UPDATES =
+        SELECT_HEARING_UPDATES =
             "SELECT filename, modified_date_time, COUNT(*) OVER() as total_updated " +
             "FROM " + TABLE + "\n" +
             "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime";

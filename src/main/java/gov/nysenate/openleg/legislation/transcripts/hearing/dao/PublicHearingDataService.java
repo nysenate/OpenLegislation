@@ -12,10 +12,17 @@ public interface PublicHearingDataService
 {
     /**
      * Retrieves a {@link PublicHearing} instance from a {@link PublicHearingId}.
-     * @param publicHearingId
+     * @param publicHearingId primary key for hearing.
      * @return
      */
     PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx;
+
+    /**
+     * Used to maintain backward compatibility after hearing ID changes.
+     * @param filename of a public hearing.
+     * @return the relevant hearing.
+     */
+    PublicHearing getPublicHearing(String filename) throws PublicHearingNotFoundEx;
 
     /**
      * Retrieves a List of {@link PublicHearingId}.

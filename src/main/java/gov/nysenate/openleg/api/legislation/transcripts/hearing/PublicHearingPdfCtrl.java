@@ -18,29 +18,36 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/pdf/hearings")
-public class PublicHearingPdfCtrl
-{
-
+public class PublicHearingPdfCtrl {
     private static final Logger logger = LoggerFactory.getLogger(PublicHearingPdfCtrl.class);
 
     @Autowired
     private PublicHearingDataService hearingData;
 
-    /**
-     * Single Public Hearing PDF retrieval.
-     * -----------------------------------
-     *
-     * Retrieve a single public hearing text pdf: (GET) /pdf/hearings/{filename}/
-     *
-     * Request Parameters: None.
-     *
-     * Expected Output: PDF response.
-     */
     @RequestMapping(value = "/{id:\\d+}")
     public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id, HttpServletResponse response)
             throws IOException {
+        return getHearingPdf(id, response, true);
+    }
+
+    @RequestMapping(value = "/{filename}")
+    public ResponseEntity<byte[]> getHearingPdfByFilename(@PathVariable String filename, HttpServletResponse response)
+            throws IOException {
+        return getHearingPdf(filename, response, false);
+    }
+
+    /**
+     * Single Public Hearing PDF retrieval.
+     * Retrieve a single public hearing text pdf:
+     * (GET) /pdf/hearings/{filename}/ or (GET) /pdf/hearings/{id}/
+     * Request Parameters: None.
+     * Expected Output: PDF response.
+     */
+    private ResponseEntity<byte[]> getHearingPdf(String data, HttpServletResponse response, boolean isId)
+            throws IOException {
         try {
-            PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));
+            PublicHearing hearing = isId ? hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(data))) :
+                    hearingData.getPublicHearing(data);
             return new PublicHearingPdfView(hearing).writeData();
         } catch (PublicHearingNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

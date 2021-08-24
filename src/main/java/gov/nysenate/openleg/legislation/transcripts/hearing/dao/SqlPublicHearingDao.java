@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.host.HearingHostDao;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,7 +28,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     @Override
     public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("id", order);
-        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_PUBLIC_HEARING_IDS, orderBy, limOff);
+        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_IDS, orderBy, limOff);
         return jdbcNamed.query(sql, ID_ROW_MAPPER);
     }
 
@@ -36,7 +37,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
         var params = new MapSqlParameterSource("id", publicHearingId.getId());
         PublicHearing publicHearing = jdbcNamed.queryForObject(
-                SELECT_PUBLIC_HEARING_BY_ID, params, HEARING_ROW_MAPPER);
+                SELECT_HEARING_BY_ID, params, HEARING_ROW_MAPPER);
         if (publicHearing != null)
             publicHearing.setHosts(hearingHostDao.getHearingHosts(publicHearingId));
         return publicHearing;
@@ -44,17 +45,26 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
 
     /** {@inheritDoc} */
     @Override
+    public PublicHearing getPublicHearing(String filename) throws EmptyResultDataAccessException {
+        return getPublicHearing(getId(filename));
+    }
+
+
+    private PublicHearingId getId(String filename) throws EmptyResultDataAccessException {
+        return new PublicHearingId(jdbcNamed.queryForObject(SELECT_HEARING_ID_BY_FILENAME,
+                new MapSqlParameterSource("filename", filename), Integer.class));
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void updatePublicHearing(PublicHearing publicHearing) {
-        // TODO: just have SQL for this.
-        boolean noHearings = getPublicHearingIds(SortOrder.NONE, LimitOffset.ALL).isEmpty();
-        if (noHearings)
+        if (jdbc.queryForList(SELECT_HEARING_IDS, Integer.class).isEmpty())
             jdbc.execute(RESET_ID);
         MapSqlParameterSource params = getPublicHearingParams(publicHearing);
-        boolean isNew = jdbcNamed.update(UPDATE_PUBLIC_HEARING, params) == 0;
+        boolean isNew = jdbcNamed.update(UPDATE_HEARING, params) == 0;
         if (isNew)
-            jdbcNamed.update(INSERT_PUBLIC_HEARING, params);
-        var hearingId = new PublicHearingId(jdbcNamed.queryForObject(SELECT_HEARING_ID_BY_FILENAME,
-                new MapSqlParameterSource("filename", publicHearing.getFilename()), Integer.class));
+            jdbcNamed.update(INSERT_HEARING, params);
+        var hearingId = getId(publicHearing.getFilename());
         if (!isNew)
             hearingHostDao.deleteHearingHosts(hearingId);
         hearingHostDao.updateHearingHosts(hearingId, publicHearing.getHosts());
@@ -71,7 +81,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
         PaginatedRowHandler<PublicHearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated",
                 TOKEN_ROW_MAPPER);
-        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_PUBLIC_HEARING_UPDATES, orderBy, limOff);
+        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_UPDATES, orderBy, limOff);
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
     }

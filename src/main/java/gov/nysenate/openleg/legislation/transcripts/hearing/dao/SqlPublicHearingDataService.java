@@ -34,11 +34,22 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
         if (publicHearingId == null) {
             throw new IllegalArgumentException("PublicHearingId cannot be null");
         }
-
         try {
             return publicHearingDao.getPublicHearing(publicHearingId);
         } catch (EmptyResultDataAccessException ex) {
             throw new PublicHearingNotFoundEx(publicHearingId, ex);
+        }
+    }
+
+    @Override
+    public PublicHearing getPublicHearing(String filename) throws PublicHearingNotFoundEx {
+        if (filename == null) {
+            throw new IllegalArgumentException("PublicHearingId cannot be null");
+        }
+        try {
+            return publicHearingDao.getPublicHearing(filename);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new PublicHearingNotFoundEx(null, ex);
         }
     }
 

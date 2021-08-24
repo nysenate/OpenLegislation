@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.Stenographer;
 import org.apache.commons.text.WordUtils;
 import org.springframework.lang.NonNull;
 

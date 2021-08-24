@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.api.legislation.transcripts.session.view;
+package gov.nysenate.openleg.processors.transcripts.session;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

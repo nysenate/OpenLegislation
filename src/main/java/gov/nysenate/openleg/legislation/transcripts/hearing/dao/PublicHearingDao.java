@@ -26,6 +26,11 @@ public interface PublicHearingDao
     PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
 
     /**
+     * Retrieves a {@link PublicHearing} via its filename.
+     */
+    PublicHearing getPublicHearing(String filename) throws EmptyResultDataAccessException;
+
+    /**
      * Updates the hearing info in the database, or inserts it if necessary.
      * Also assigns the hearing an ID.
      * @param publicHearing The {@link PublicHearing} to update.

@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import java.io.Serial;
 
 public class PublicHearingNotFoundEx extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 6022069225508859290L;
 
     protected PublicHearingId publicHearingId;
@@ -10,7 +11,7 @@ public class PublicHearingNotFoundEx extends RuntimeException {
     public PublicHearingNotFoundEx(PublicHearingId publicHearingId, Throwable ex) {
         super(
                 publicHearingId != null
-                        ? "Public hearing " + publicHearingId.toString() + " could not be retrieved."
+                        ? "Public hearing " + publicHearingId + " could not be retrieved."
                         : "Public hearing could not be retrieved since the given public hearing id was null",
                 ex
         );
