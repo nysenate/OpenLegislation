@@ -6,6 +6,7 @@ import Date from "app/shared/Date";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
 import { DateTime } from "luxon";
+import BillListing from "app/shared/BillListing";
 
 export default function BillSearchResults({ response, limit, page, onPageChange }) {
 
@@ -45,50 +46,11 @@ function ResultList({ results }) {
   return (
     <div>
       {results.map((r) =>
-        <Link to={`/bills/${r.result.session}/${r.result.basePrintNo}`}
-              key={r.result.basePrintNoStr}>
-          <ResultItem result={r} />
-        </Link>
+          <BillListing bill={r.result}
+                       highlights={r.highlights.title}
+                       to={`/bills/${r.result.session}/${r.result.basePrintNo}`}
+                       key={r.result.basePrintNoStr} />
       )}
-    </div>
-  )
-}
-
-function ResultItem({ result }) {
-  const bill = result.result
-  return (
-    <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-      <div className="flex items-center w-full md:w-1/3">
-        <MemberThumbnail member={bill.sponsor.member} />
-        <div>
-          <div className="text">
-            {bill.basePrintNo}-{bill.session}
-          </div>
-          <div className="text text--small">
-            {bill.sponsor && bill.sponsor.member &&
-            bill.sponsor.member.fullName}
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full md:w-2/3 mt-2 md:mt-0">
-        <div className="text">
-          {result.highlights.title
-            ? <span className="highlight" dangerouslySetInnerHTML={{ __html: result.highlights.title }} />
-            : <span>{bill.title}</span>
-          }
-        </div>
-        {bill.status.actionDate &&
-        <div className="mt-1 text text-blue-600">
-          <Date date={bill.status.actionDate} format={DateTime.DATE_FULL} /> - <BillStatusDesc status={bill.status} />
-        </div>
-        }
-        {!bill.billType.resolution &&
-        <BillMilestones milestones={bill.milestones.items}
-                        chamber={bill.billType.chamber}
-                        className="py-3" />
-        }
-      </div>
     </div>
   )
 }
