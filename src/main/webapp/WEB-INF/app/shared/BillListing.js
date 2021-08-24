@@ -35,7 +35,7 @@ function BillListingDetail({ bill, highlights }) {
   return (
     <div className="p-3 flex flex-wrap">
       <div className="flex items-center w-full md:w-1/3">
-        <MemberThumbnail member={bill.sponsor.member} />
+        <MemberThumbnail member={bill?.sponsor?.member} />
         <div>
           <div className="text">
             {bill.basePrintNo}-{bill.session}

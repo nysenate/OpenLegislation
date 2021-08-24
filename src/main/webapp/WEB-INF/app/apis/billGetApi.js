@@ -1,6 +1,13 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+/**
+ *
+ * @param sessionYear
+ * @param printNo
+ * @param view The level of detail to return. See BillGetCtrl.getBill for more details.
+ * @returns {Promise<*>}
+ */
 export function getBillApi(sessionYear, printNo, view) {
   let url = `/api/3/bills/${sessionYear}/${printNo}`
   if (view) {

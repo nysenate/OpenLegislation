@@ -81,6 +81,7 @@
       <%-- Bill Tabs --%>
       <md-tabs md-selected="curr.selectedView" class="md-hue-2 margin-top-10"
                md-dynamic-height="true" md-no-ink md-stretch-tabs="always">
+
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-back prefix-icon2"></i>Search</span>
@@ -208,6 +209,7 @@
             </md-content>
           </md-card>
         </md-tab>
+
         <%-- Votes --%>
         <md-tab ng-disabled="bill.votes.size == 0">
           <md-tab-label>
