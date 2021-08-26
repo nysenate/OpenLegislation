@@ -7,26 +7,21 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.List;
 
 import static org.junit.Assert.fail;
 
 public class PublicHearingTestHelper {
-    public static List<List<String>> getPagesFromFileName(String filename) throws URISyntaxException, IOException {
-        File file = TestUtils.openTestResource("hearing/" + filename);
-        return PublicHearing.getPages(Files.readString(file.toPath()));
-    }
+    private PublicHearingTestHelper() {};
 
     public static PublicHearing getHearingFromFilename(String filename) {
         String fullText = "";
         try {
-            File file = TestUtils.openTestResource("hearing/" + filename);
+            File file = TestUtils.openTestResource("hearing_transcripts/" + filename);
             fullText = Files.readString(file.toPath());
         }
         catch (URISyntaxException | IOException e) {
             fail();
         }
-        // TODO: fix
         return PublicHearingTextUtils.getHearingFromText(filename, fullText);
     }
 }
