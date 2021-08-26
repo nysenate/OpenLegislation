@@ -16,7 +16,7 @@ public class PublicHearingDateTimeParserTest {
 
     @Test
     public void singleDigitHoursParse() {
-        testHearingDate("06-04-14 NYsenate Heroin-Opioid Addiction Special Task Force_Seneca Nation_FINAL.txt",
+        testHearingDate("06-04-14 Opioid Addiction Test.txt",
                 LocalDate.of(2014, 6, 4), LocalTime.of(13, 0), LocalTime.of(15, 0));
     }
 
@@ -35,31 +35,31 @@ public class PublicHearingDateTimeParserTest {
     // TODO: what invalid chars?
     @Test
     public void invalidCharactersParse() {
-        testHearingDate("08-22-13 NYSSenateHearing_Buffalo_Martins_FINAL.txt",
+        testHearingDate("08-22-13 Buffalo Martins Test.txt",
                 LocalDate.of(2013, 8, 22), LocalTime.of(11, 0), LocalTime.of(16, 0));
     }
 
     @Test
     public void dateTimeLabelsTest() {
-        testHearingDate("04-26-19 NYS Joint Farmworkers Hearing Long Island FINAL.txt",
+        testHearingDate("04-26-19 Joint Farmworkers Test.txt",
                 LocalDate.of(2019, 4, 26), LocalTime.of(14, 30),null);
     }
 
     @Test
     public void alternateEndTimeTest() {
-        testHearingDate("05-18-11 ValeskyAgingCommitteeRoundtableFINAL.txt",
+        testHearingDate("05-18-11 Valesky Aging Test.txt",
                 LocalDate.of(2011, 5, 18), LocalTime.of(9, 0), LocalTime.of(10, 29));
     }
 
     @Test
     public void wrongFormatTest() {
-        testHearingDate("8-25-20 MTA Transcript.txt", LocalDate.of(2020, 8, 25), LocalTime.of(10, 0),
+        testHearingDate("8-25-20 MTA Transcript Test.txt", LocalDate.of(2020, 8, 25), LocalTime.of(10, 0),
                 LocalTime.of(15, 30));
     }
 
     @Test
     public void noDateTest() {
-        assertThrows(ParseError.class, () -> testHearingDate("noDate.txt", null, null, null));
+        assertThrows(ParseError.class, () -> testHearingDate("No Date Test.txt", null, null, null));
     }
 
     private void testHearingDate(String filename, LocalDate expectedDate, LocalTime expectedStartTime,

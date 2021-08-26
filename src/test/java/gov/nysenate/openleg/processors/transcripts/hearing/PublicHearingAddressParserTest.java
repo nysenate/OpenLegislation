@@ -24,20 +24,20 @@ public class PublicHearingAddressParserTest {
     //
     @Test
     public void zipPlusFiveParses() {
-        testHearingAddress("09-17-13 Carlucci_Mental Health_Ogdensburg_FINAL.txt",
+        testHearingAddress("09-17-13 Mental Health Test.txt",
                 "Ogdensburg City Hall\nCity Council Chambers\n330 Ford Street\nOgdensburg, New York 13669-1626");
     }
 
     @Test
     public void parsesWithoutStateZipInfo() {
-        testHearingAddress("06-04-14 NYsenate Heroin-Opioid Addiction Special Task Force_Seneca Nation_FINAL.txt",
+        testHearingAddress("06-04-14 Opioid Addiction Test.txt",
                 "Seneca Nation of Indians'\nCattaraugus County Reservation");
     }
 
     //
     @Test
     public void withDashesParses() {
-        testHearingAddress("10-19-16 NYS Senate Hudson River Barge Hearing FINAL.txt",
+        testHearingAddress("10-19-16 Hudson Barge Test.txt",
                 "Croton-on-Hudson Town Hall\n1 Van Wyck Street\nCroton-on-Hudson, New York 10520");
     }
 

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class SqlPublicHearingDaoIT extends BaseTests {
-    private static final String DIRECTORY = "src/test/resources/hearing/";
+    private static final String DIRECTORY = "src/test/resources/hearing_transcripts/";
 
     @Autowired
     private PublicHearingFileDao hearingFileDao;
@@ -32,7 +32,7 @@ public class SqlPublicHearingDaoIT extends BaseTests {
         var sampleHost1 = new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "Labor");
         var sampleHost2 = new HearingHost(Chamber.ASSEMBLY, HearingHostType.WHOLE_CHAMBER, "");
         var now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-        var testHearing = new PublicHearing("noDate.txt", "sample text", "sample title", "sample address", now.toLocalDate(),
+        var testHearing = new PublicHearing("No Date Test.txt", "sample text", "sample title", "sample address", now.toLocalDate(),
                 now.toLocalTime(), now.plusHours(1).toLocalTime());
         testHearing.setHosts(List.of(sampleHost1, sampleHost2));
 

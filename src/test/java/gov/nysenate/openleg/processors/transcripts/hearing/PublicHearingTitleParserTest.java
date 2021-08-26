@@ -17,7 +17,7 @@ public class PublicHearingTitleParserTest {
 
     @Test
     public void forumTest() {
-        testTitle("05-18-11 ValeskyAgingCommitteeRoundtableFINAL.txt",
+        testTitle("05-18-11 Valesky Aging Test.txt",
                 "NEW YORK STATE FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
                           "PROPOSAL TO MERGE THE NYS OFFICE FOR THE AGING WITH THE DEPARTMENT OF HEALTH");
     }
