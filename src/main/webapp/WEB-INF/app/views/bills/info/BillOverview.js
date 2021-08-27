@@ -1,67 +1,37 @@
 import React from 'react'
 import MemberThumbnail from "app/shared/MemberThumbnail";
+import Date from "app/shared/Date";
+import { DateTime } from "luxon";
 import {
   CheckCircle,
-  FileDotted,
   XCircle
 } from "phosphor-react";
-import { Link } from "react-router-dom";
-import Date from "app/shared/Date";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
-import { DateTime } from "luxon";
 
-
-export default function BillSummary({ bill }) {
+export default function BillOverview({ bill }) {
   return (
-    <div className="px-5 pt-5">
-      <SubstitutedByMsg bill={bill} />
-      <h3 className="h3">{bill.title}</h3>
-      <ProgramInfoMsg bill={bill} />
-
-      <div className="flex justify-start flex-wrap w-11/12 mt-2">
-        <div className="flex my-3 mr-10">
-          <MemberThumbnail member={bill.sponsor.member} />
-          <SponsorInfo sponsor={bill.sponsor} />
-        </div>
-        {billStatusMessages(bill).map((s) =>
-          <div className="my-3 mr-10" key={s.printNo}>
-            <BillStatus bill={s} />
-          </div>
-        )}
+    <div className="flex justify-start flex-wrap w-10/12 mt-2">
+      <div className="flex py-3 pr-10">
+        <MemberThumbnail member={bill.sponsor.member} />
+        <SponsorInfo sponsor={bill.sponsor} />
       </div>
+      {billStatusMessages(bill).map((s) =>
+        <div className="my-3 mr-10" key={s.printNo}>
+          <BillStatus bill={s} />
+        </div>
+      )}
     </div>
   )
 }
 
-
-function SubstitutedByMsg({ bill }) {
-  if (!bill.substitutedBy) {
-    return null
+function billStatusMessages(bill) {
+  let statuses = [ bill ]
+  const sameAsBill = bill?.billInfoRefs?.items?.[bill?.substitutedBy?.basePrintNoStr]
+  if (sameAsBill) {
+    statuses.push(sameAsBill)
   }
-  return (
-    <div className="bg-yellow-50 py-2 mb-2 flex items-center rounded">
-      <FileDotted size="1.2rem" className="mx-1" />
-      <p>
-        This bill has been substituted by&nbsp;
-        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`}>
-          {bill.substitutedBy.basePrintNo} - {bill.substitutedBy.session}
-        </Link>
-      </p>
-    </div>
-  )
-}
-
-function ProgramInfoMsg({ bill }) {
-  if (!bill.programInfo) {
-    return null
-  }
-  return (
-    <div className="pb-3 text">
-      Bill #{bill.programInfo.sequenceNo} on the program
-      for <span className="font-medium">{bill.programInfo.name}</span>
-    </div>
-  )
+  return statuses;
 }
 
 function SponsorInfo({ sponsor }) {
@@ -86,15 +56,6 @@ function SponsorInfo({ sponsor }) {
       </div>
     )
   }
-}
-
-function billStatusMessages(bill) {
-  let statuses = [ bill ]
-  const sameAsBill = bill?.billInfoRefs?.items?.[bill?.substitutedBy?.basePrintNoStr]
-  if (sameAsBill) {
-    statuses.push(sameAsBill)
-  }
-  return statuses;
 }
 
 function BillStatus({ bill }) {
