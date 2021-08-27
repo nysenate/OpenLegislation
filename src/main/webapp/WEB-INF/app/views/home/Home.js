@@ -5,9 +5,9 @@ import {
   Switch,
   useLocation
 } from "react-router-dom";
-import Bills from "app/views/bills"
+import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws"
-import Transcripts from "app/views/transcripts";
+import Transcripts from "app/views/transcripts/Transcripts";
 import { List } from "phosphor-react";
 
 const fakeHeaderText = "New York State Laws";
