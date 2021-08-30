@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import BillListingQueried from "app/shared/BillListingQueried";
 
 
-export default function BillDetailsTab({ bill, selectedAmd }) {
+export default function BillSummaryTab({ bill, selectedAmd }) {
   return (
     <div className="m-5">
       <SameAs bill={bill} selectedAmd={selectedAmd} />

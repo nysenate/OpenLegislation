@@ -40,12 +40,7 @@ export default function Tabs({ tabs, activeTab, setActiveTab }) {
 /**
 * "Tab" component for mobile or small displays
 */
-function MobileTabs(
-{
-  tabs, activeTab, setActiveTab, children
-}
-)
-{
+function MobileTabs({ tabs, activeTab, setActiveTab, children}) {
   return (
     <React.Fragment>
       <div className="mx-5">
@@ -71,12 +66,7 @@ function MobileTabs(
 /**
 * The default tab component, rendered on medium to large size screens.
 */
-function DefaultTabs(
-{
-  tabs, activeTab, setActiveTab, children
-}
-)
-{
+function DefaultTabs({ tabs, activeTab, setActiveTab, children }) {
   return (
     <React.Fragment>
       <div className="flex mt-5 pl-5 border-b-1 border-blue-600">
@@ -94,12 +84,7 @@ function DefaultTabs(
   )
 }
 
-function Tab(
-{
-  tab, isActive, setActiveTab
-}
-)
-{
+function Tab({ tab, isActive, setActiveTab }) {
   let tabClass = "px-3 py-1 mr-3 whitespace-nowrap border-t-1 border-l-1 border-r-1"
 
   if (tab.isDisabled) {
@@ -118,7 +103,6 @@ function Tab(
   )
 }
 
-const tabLabel = (tab) =>
-{
+const tabLabel = (tab) => {
   return tab.name + (tab.quantity ? ` (${tab.quantity})` : "")
 }

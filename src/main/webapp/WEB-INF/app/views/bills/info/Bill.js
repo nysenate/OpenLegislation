@@ -14,7 +14,8 @@ import {
 import BillOverview from "app/views/bills/info/BillOverview";
 import { DateTime } from "luxon";
 import Tabs from "app/shared/Tabs";
-import BillSummaryTab from "app/views/bills/info/BillDetailsTab";
+import BillSummaryTab from "app/views/bills/info/BillSummaryTab";
+import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -26,7 +27,7 @@ export default function Bill({ setHeaderText }) {
   const match = useRouteMatch()
 
   React.useEffect(() => {
-    if (bill && selectedAmd) {
+    if (bill && (selectedAmd != null)) {
       setTabs(billInfoTabs(bill, selectedAmd))
     }
   }, [ bill, selectedAmd ])
@@ -138,6 +139,14 @@ const billInfoTabs = (bill, selectedAmd) => {
       quantity: undefined,
       isDisabled: false,
       component: <BillSummaryTab bill={bill} selectedAmd={selectedAmd} />
+    },
+    {
+      name: "Sponsors",
+      quantity: undefined,
+      isDisabled: (bill.additionalSponsors.size
+        + bill.amendments.items[selectedAmd].coSponsors.size
+        + bill.amendments.items[selectedAmd].multiSponsors.size) === 0,
+      component: <BillSponsorsTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
       name: "Votes",

@@ -6,19 +6,40 @@ import {
 } from "phosphor-react";
 
 
-// TODO WIP
-
-
-function AmendmentSponsors({ bill, selectedAmd }) {
-  console.log(bill)
+export default function BillSponsorsTab({ bill, selectedAmd }) {
   return (
-    <React.Fragment>
-      <AmendmentCoSponsors amendment={bill.amendments.items[selectedAmd]} />
-    </React.Fragment>
+    <div className="m-5">
+      <div>
+        <CoPrimeList bill={bill} />
+      </div>
+      <div className="mt-8">
+        <CoSponsorsList amendment={bill.amendments.items[selectedAmd]} />
+      </div>
+      <div className="mt-8">
+        <MultiSponsorList amendment={bill.amendments.items[selectedAmd]} />
+      </div>
+    </div>
   )
 }
 
-function AmendmentCoSponsors({ amendment }) {
+function CoPrimeList({ bill }) {
+  if (bill.additionalSponsors.size === 0) {
+    return null
+  }
+
+  const coPrimeComponents = bill.additionalSponsors.items.map((coPrime) => <MemberListing member={coPrime} />)
+
+  return (
+    <section className="mt-3">
+      <header>
+        <h3 className="h4 mb-1">Co Prime Sponsors</h3>
+      </header>
+      <TruncatedList components={coPrimeComponents} />
+    </section>
+  )
+}
+
+function CoSponsorsList({ amendment }) {
   if (amendment.coSponsors.size === 0) {
     return null
   }
@@ -32,56 +53,63 @@ function AmendmentCoSponsors({ amendment }) {
   return (
     <section className="mt-3">
       <header>
-        <h3 className="h4 mb-2">Co Sponsors</h3>
+        <h3 className="h4 mb-1">Co Sponsors</h3>
       </header>
       <TruncatedList components={coSponsorComponents} />
     </section>
   )
 }
 
+function MultiSponsorList({ amendment }) {
+  if (amendment.multiSponsors.size === 0) {
+    return null
+  }
+
+  const multiSponsorEls = amendment.multiSponsors.items.map((multiSponsor) => <MemberListing member={multiSponsor} />)
+
+  return (
+    <section className="mt-3">
+      <header>
+        <h3 className="h4 mb-1">Multi Sponsors</h3>
+      </header>
+      <TruncatedList components={multiSponsorEls} />
+    </section>
+  )
+}
+
 function TruncatedList({ components }) {
+  const displaySize = 3
+  const requiresTruncation = components.length > displaySize
   const [ isExpanded, setIsExpanded ] = React.useState(false)
   const [ displayedComponents, setDisplayedComponents ] = React.useState([])
 
   React.useEffect(() => {
     if (isExpanded) {
       setDisplayedComponents(components)
+    } else {
+      setDisplayedComponents(components.slice(0, displaySize))
     }
-    else {
-      setDisplayedComponents(components.slice(0, 3))
-    }
-  }, [isExpanded])
+  }, [ isExpanded ])
 
   return (
     <div className="px-5">
-      {displayedComponents.map((d, index) =>
+      {displayedComponents.map((el, index) =>
         <div className="py-1" key={index}>
-          {d}
+          {el}
         </div>
       )}
-      {!isExpanded &&
+      {!isExpanded && requiresTruncation &&
       <div className="pt-1 flex items-center" onClick={() => setIsExpanded(true)}>
         <CaretDown size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
-        <a>See {components.length - 3} more</a>
+        <a>Show {components.length - displaySize} more</a>
       </div>
       }
-      {isExpanded &&
+      {isExpanded && requiresTruncation &&
       <div className="pt-1 flex items-center" onClick={() => setIsExpanded(false)}>
         <CaretUp size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
         <a>Show less</a>
       </div>
       }
     </div>
-  )
-}
-
-// TODO Implement
-function AmendmentCoPrimeSponsors({ bill, selectedAmd }) {
-  if (bill.additionalSponsors.size === 0) {
-    return null
-  }
-
-  return (
-    ""
   )
 }
