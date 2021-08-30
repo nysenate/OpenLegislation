@@ -10,21 +10,23 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.host.SqlHearingHostQuery.*;
 
 @Repository
 public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {
     @Override
-    public List<HearingHost> getHearingHosts(PublicHearingId id) {
-        return jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
-                new MapSqlParameterSource("public_hearing_id", id.getId()), HEARING_HOST_ROW_MAPPER);
+    public Set<HearingHost> getHearingHosts(PublicHearingId id) {
+        return new HashSet<>(jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
+                new MapSqlParameterSource("public_hearing_id", id.getId()), HEARING_HOST_ROW_MAPPER));
     }
 
     @Override
-    public void updateHearingHosts(PublicHearingId hearingId, List<HearingHost> hosts) {
+    public void updateHearingHosts(PublicHearingId hearingId, Set<HearingHost> hosts) {
         for (var host : hosts) {
             MapSqlParameterSource params = new MapSqlParameterSource("name", host.getName())
                     .addValue("chamber", host.getChamber().name().toLowerCase())

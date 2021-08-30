@@ -5,12 +5,13 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.List;
+import java.util.Set;
 
 import static gov.nysenate.openleg.legislation.committee.Chamber.ASSEMBLY;
 import static gov.nysenate.openleg.legislation.committee.Chamber.SENATE;
 import static gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
 public class HearingHostParserTest {
@@ -123,9 +124,9 @@ public class HearingHostParserTest {
     }
 
     private void hearingHostTestHelper(String block, HearingHost... expected) {
-        List<HearingHost> actual = HearingHostParser.parse(block);
+        Set<HearingHost> actual = HearingHostParser.parse(block);
         assertEquals(expected.length, actual.size());
-        for (int i = 0; i < actual.size(); i++)
-            assertEquals(expected[i], actual.get(i));
+        for (var host : expected)
+            assertTrue(actual.contains(host));
     }
 }

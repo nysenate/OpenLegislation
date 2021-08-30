@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +34,7 @@ public class SqlPublicHearingDaoIT extends BaseTests {
         var now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         var testHearing = new PublicHearing("No Date Test.txt", "sample text", "sample title", "sample address", now.toLocalDate(),
                 now.toLocalTime(), now.plusHours(1).toLocalTime());
-        testHearing.setHosts(List.of(sampleHost1, sampleHost2));
+        testHearing.setHosts(Set.of(sampleHost1, sampleHost2));
 
         hearingFileDao.updatePublicHearingFile(new PublicHearingFile(new File(DIRECTORY + testHearing.getFilename())));
         hearingDao.updatePublicHearing(testHearing);

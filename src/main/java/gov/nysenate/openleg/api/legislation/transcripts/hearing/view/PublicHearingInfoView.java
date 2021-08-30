@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PublicHearingInfoView extends PublicHearingIdView
@@ -20,7 +21,7 @@ public class PublicHearingInfoView extends PublicHearingIdView
         super(publicHearing.getId());
         this.title = publicHearing.getTitle();
         this.date = publicHearing.getDate();
-        this.hosts = publicHearing.getHosts();
+        this.hosts = new ArrayList<>(publicHearing.getHosts());
         this.address = publicHearing.getAddress();
         this.filename = publicHearing.getFilename();
         this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);

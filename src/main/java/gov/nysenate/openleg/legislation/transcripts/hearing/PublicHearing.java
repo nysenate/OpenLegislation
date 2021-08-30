@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PublicHearing extends BaseLegislativeContent {
@@ -19,7 +20,7 @@ public class PublicHearing extends BaseLegislativeContent {
     private final LocalTime startTime, endTime;
 
     /** The {@link HearingHost}s holding this PublicHearing. */
-    private List<HearingHost> hosts;
+    private Set<HearingHost> hosts;
 
     public PublicHearing(String filename, String text, String title, String address,
                          LocalDate date, LocalTime startTime, LocalTime endTime) {
@@ -95,11 +96,11 @@ public class PublicHearing extends BaseLegislativeContent {
         return address;
     }
 
-    public List<HearingHost> getHosts() {
+    public Set<HearingHost> getHosts() {
         return hosts;
     }
 
-    public void setHosts(List<HearingHost> hosts) {
+    public void setHosts(Set<HearingHost> hosts) {
         this.hosts = hosts;
     }
 

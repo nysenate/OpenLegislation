@@ -5,10 +5,12 @@ import gov.nysenate.openleg.processors.ParseError;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class PublicHearingTextUtils {
     private static final String LINE_NUM = "^\\s*\\d{0,2}(\\s+|$)";
+    private static final Pattern VIRTUAL_HEARING = Pattern.compile("(VIRTUAL|ONLINE).+HEARING");
     // This is a utility class.
     private PublicHearingTextUtils() {}
 
@@ -18,16 +20,21 @@ public class PublicHearingTextUtils {
             throw new ParseError("Public hearing in file " + filename + " is too short.");
         boolean isWrongFormat = pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
         List<String> dataList = getDataList(pages.get(0), isWrongFormat);
-        // Retrieves information from text.
-        String[] addrDateTime = getAddrDateTime(dataList.get(dataList.size() - 1), isWrongFormat);
-        boolean hasAddress = addrDateTime.length > 1;
-        var dateTimeParser = new PublicHearingDateTimeParser(addrDateTime[hasAddress ? 1 : 0],
+        // Retrieves address, date, and time data from text.
+        String[] placeTimeData = getAddressAndDateTime(dataList.get(dataList.size() - 1), isWrongFormat);
+        boolean hasAddress = placeTimeData.length > 1;
+        var dateTimeParser = new PublicHearingDateTimeParser(placeTimeData[hasAddress ? 1 : 0],
                 pages.get(pages.size() - 1));
 
         // Set the data.
         String title = dataList.size() < 2 ? "No title" : dataList.get(dataList.size() - 2)
                 .replaceAll("\\s+", " ").trim();
-        var hearing = new PublicHearing(filename, fullText, title, getAddress(hasAddress, addrDateTime[0], title),
+        String address = "No address";
+        if (hasAddress)
+            address = placeTimeData[0];
+        else if (VIRTUAL_HEARING.matcher(title).find())
+            address = "Virtual Hearing";
+        var hearing = new PublicHearing(filename, fullText, title, address,
                 dateTimeParser.getDate(), dateTimeParser.getStartTime(), dateTimeParser.getEndTime());
         hearing.setHosts(HearingHostParser.parse(dataList.get(0)));
         return hearing;
@@ -53,20 +60,12 @@ public class PublicHearingTextUtils {
      * @param isWrongFormat if corrections need to be made.
      * @return an array with the address, date, and time.
      */
-    private static String[] getAddrDateTime(String toSplit, boolean isWrongFormat) {
+    private static String[] getAddressAndDateTime(String toSplit, boolean isWrongFormat) {
         if (isWrongFormat) {
             String reversed = new StringBuilder(toSplit).reverse().toString();
             reversed = reversed.replaceFirst("\n", "");
             toSplit = new StringBuilder(reversed).reverse().toString();
         }
         return toSplit.split("\n{2,}");
-    }
-
-    private static String getAddress(boolean hasAddress, String possibleAddress, String title) {
-        if (hasAddress)
-            return possibleAddress;
-        else if (title.matches(".*(VIRTUAL|ONLINE).+HEARING.*"))
-            return "Virtual Hearing";
-        return "No address";
     }
 }

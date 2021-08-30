@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Service
 public class ManagedPublicHearingProcessService implements PublicHearingProcessService
@@ -82,12 +82,14 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
     /** {@inheritDoc} */
     @Override
     public int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
-        SortedSet<PublicHearing> parsedHearings = new TreeSet<>(Comparator.comparing(PublicHearing::getDate));
+        SortedMap<PublicHearingFile, PublicHearing> processed = new TreeMap<>(
+                Comparator.comparing(PublicHearingFile::isManualFix)
+                        .thenComparing(PublicHearingFile::getFileName));
         int processCount = 0;
         for (PublicHearingFile file : publicHearingFiles) {
             try {
                 logger.info("Processing public hearing file {}", file.getFileName());
-                parsedHearings.add(PublicHearingParser.process(file));
+                processed.put(file, PublicHearingParser.process(file));
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
@@ -99,7 +101,7 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
             }
         }
         logger.info("Saving {} public hearings", processCount);
-        for (var hearing : parsedHearings)
+        for (var hearing : processed.values())
             hearingDataService.savePublicHearing(hearing, true);
         return processCount;
     }

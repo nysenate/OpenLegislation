@@ -6,11 +6,11 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class HearingHostParser {
-    private static final List<HearingHost> BUDGET_COMMITTEES = List.of(
+    private static final Set<HearingHost> BUDGET_COMMITTEES = Set.of(
             new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "FINANCE"),
             new HearingHost(Chamber.ASSEMBLY, HearingHostType.COMMITTEE, "WAYS AND MEANS"));
     private static final String JOINT = "JOINT LEGISLATURE", CHAMBERS = Chamber.SENATE + "|" + Chamber.ASSEMBLY +
@@ -22,11 +22,11 @@ public class HearingHostParser {
     /**
      * Extracts HearingHost's from a string containing the committee info.
      */
-    public static List<HearingHost> parse(String hostBlock) {
+    public static Set<HearingHost> parse(String hostBlock) {
         if (hostBlock.matches(BUDGET_COMMITTEE_PATTERN))
             return BUDGET_COMMITTEES;
         hostBlock = HearingHostType.standardizeHostBlock(hostBlock);
-        var ret = new ArrayList<HearingHost>();
+        var ret = new HashSet<HearingHost>();
         // Default chamber.
         Chamber chamber = Chamber.SENATE;
         for (var chamberPair : RegexUtils.specialSplit(hostBlock, CHAMBERS)) {
