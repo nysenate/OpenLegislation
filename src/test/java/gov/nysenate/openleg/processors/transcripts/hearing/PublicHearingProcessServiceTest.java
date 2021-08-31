@@ -39,7 +39,7 @@ public class PublicHearingProcessServiceTest extends AbstractProcessServiceTest 
 
     @Override
     protected boolean isTestFile(File file) {
-        return file.getName().contains(" Test.");
+        return file.getName().matches(".+Test[.](txt|fixed)");
     }
 
     @Test
@@ -59,5 +59,17 @@ public class PublicHearingProcessServiceTest extends AbstractProcessServiceTest 
         expectedHearing.setHosts(Set.of(new HearingHost(SENATE, COMMITTEE, "FINANCE"),
                 new HearingHost(ASSEMBLY, COMMITTEE, "WAYS AND MEANS")));
         assertEquals(expectedHearing, actualHearing);
+    }
+
+    @Test
+    public void fixedTest() {
+        String filename = "01-25-12 Young Roundtable Test.txt";
+        String fixedFilename = filename.replace(".txt", ".fixed");
+        processFiles(filename);
+        PublicHearing unfixedHearing = dataService.getPublicHearing(filename);
+        processFiles(fixedFilename);
+        PublicHearing fixedHearing = dataService.getPublicHearing(fixedFilename);
+        assertEquals(unfixedHearing.getId(), fixedHearing.getId());
+        assertEquals("FIXED " + unfixedHearing.getTitle(), fixedHearing.getTitle());
     }
 }

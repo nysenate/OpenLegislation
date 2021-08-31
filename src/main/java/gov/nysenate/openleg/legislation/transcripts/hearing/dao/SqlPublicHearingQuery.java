@@ -23,13 +23,12 @@ public class SqlPublicHearingQuery implements BasicSqlQuery {
         UPDATE_HEARING =
             "UPDATE " + TABLE + "\n" +
             "SET filename = :filename, title = :title, date = :date, address = :address, text = :text, " +
-                "start_time = :startTime, end_time = :endTime, modified_date_time = :modifiedDateTime," +
-                "published_date_time = :publishedDateTime" + "\n" +
-            "WHERE filename LIKE :filenameStart",
+                "start_time = :startTime, end_time = :endTime, modified_date_time = :modifiedDateTime\n" +
+            "WHERE filename LIKE :filenameRegex",
 
         INSERT_HEARING =
             "INSERT INTO " + TABLE + "\n" +
-                "(filename, date, title, address, text, start_time, end_time)" + "\n" +
+                "(filename, date, title, address, text, start_time, end_time)\n" +
             "VALUES (:filename, :date, :title, :address, :text, :startTime, :endTime)",
 
         SELECT_HEARING_UPDATES =

@@ -20,12 +20,13 @@ public class HearingHostParser {
     private HearingHostParser() {}
 
     /**
-     * Extracts HearingHost's from a string containing the committee info.
+     * Extracts HearingHosts from a string containing the committee info.
      */
     public static Set<HearingHost> parse(String hostBlock) {
         if (hostBlock.matches(BUDGET_COMMITTEE_PATTERN))
             return BUDGET_COMMITTEES;
-        hostBlock = HearingHostType.standardizeHostBlock(hostBlock);
+        hostBlock = HearingHostType.standardizeHostBlock(hostBlock)
+                .replaceAll("(NYS|NEW YORK STATE) (" + CHAMBERS + ")", "$2");
         var ret = new HashSet<HearingHost>();
         // Default chamber.
         Chamber chamber = Chamber.SENATE;

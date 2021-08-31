@@ -39,7 +39,7 @@ public enum SqlHearingHostQuery implements BasicSqlQuery {
     ),
     DELETE_HOSTS_WITH_HEARING_ID (
             "DELETE FROM ${schema}." + HEARING_HOST_PUBLIC_HEARINGS + "\n" +
-                "WHERE hearing_id = :hearing_id"
+                "WHERE public_hearing_id = :hearing_id"
     );
 
     private final String sql;

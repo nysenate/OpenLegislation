@@ -91,7 +91,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     private MapSqlParameterSource getPublicHearingParams(PublicHearing publicHearing) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         // Matches the filename regardless of file type.
-        params.addValue("filenameStart", publicHearing.getFilename().split("[.]")[0]);
+        params.addValue("filenameRegex", publicHearing.getFilename().split("[.]")[0] + ".%");
         params.addValue("filename", publicHearing.getFilename());
         params.addValue("date", toDate(publicHearing.getDate()));
         params.addValue("title", publicHearing.getTitle());
@@ -99,7 +99,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
         params.addValue("text", publicHearing.getText());
         params.addValue("startTime", toTime(publicHearing.getStartTime()));
         params.addValue("endTime", toTime(publicHearing.getEndTime()));
-        addModPubDateParams(publicHearing.getModifiedDateTime(), publicHearing.getPublishedDateTime(), params);
+        params.addValue("modifiedDateTime", toDate(LocalDateTime.now()));
         return params;
     }
 

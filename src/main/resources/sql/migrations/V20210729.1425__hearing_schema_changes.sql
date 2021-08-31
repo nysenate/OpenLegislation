@@ -21,11 +21,11 @@ ALTER TABLE master.public_hearing_committee
     RENAME committee_name TO name;
 ALTER TABLE master.public_hearing_committee
     ADD CONSTRAINT hearing_host_pkey PRIMARY KEY (chamber, type, name);
--- Adds column to link to one-to-many table.
-ALTER TABLE master.public_hearing_committee
-    ADD COLUMN id SERIAL UNIQUE;
 ALTER TABLE master.public_hearing_committee
     RENAME TO hearing_host;
+-- Adds column to link to one-to-many table.
+ALTER TABLE master.hearing_host
+    ADD COLUMN id SERIAL UNIQUE;
 
 -- Creates junction table to link hosts and hearings.
 CREATE TABLE master.hearing_host_public_hearings (
@@ -39,4 +39,3 @@ CREATE TABLE master.hearing_host_public_hearings (
         REFERENCES master.public_hearing(id)
         ON DELETE CASCADE
 );
-

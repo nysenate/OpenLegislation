@@ -36,8 +36,13 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
                 fail("Staging directory should be empty.");
             File testDir = new File(TEST_STR, getName());
             // Move files into the staging directory, so they can be processed.
-            for (var filename : filenames)
-                FileUtils.copyFile(new File(testDir, filename), new File(stagingDir, filename));
+            for (var filename : filenames) {
+                var testFile = new File(testDir, filename);
+                if (!isTestFile(testFile))
+                    fail("File " + testFile + " must be marked as a test file!");
+                else
+                    FileUtils.copyFile(testFile, new File(stagingDir, filename));
+            }
         }
         catch (IOException e) {
             fail(e.getMessage());

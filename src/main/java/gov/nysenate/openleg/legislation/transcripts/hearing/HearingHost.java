@@ -9,6 +9,7 @@ import java.util.Objects;
 /**
  * Contains data about what group is hosting a public hearing.
  */
+// TODO: Convert to record in Java 16.
 public class HearingHost {
     private static final String IRRELEVANT_TEXT = "^(\\s?(ON|FOR|THE|AND|,))+|((,|THE|AND|;)\\s?)+$";
     private final Chamber chamber;

@@ -123,6 +123,23 @@ public class HearingHostParserTest {
                 new HearingHost(ASSEMBLY, COMMITTEE, "GOVERNMENTAL OPERATIONS"));
     }
 
+    @Test
+    public void stateLabelTest() {
+        String block = """
+                BEFORE THE NEW YORK STATE SENATE
+                STANDING COMMITTEE ON HOUSING, CONSTRUCTION, AND
+                COMMUNITY DEVELOPMENT
+                AND
+                STANDING COMMITTEE ON INVESTIGATIONS AND
+                GOVERNMENT OPERATIONS
+                AND
+                NYS SENATE STANDING COMMITTEE ON CONSUMER PROTECTION""";
+        HearingHost[] hosts = {new HearingHost(SENATE, COMMITTEE, "HOUSING, CONSTRUCTION, AND COMMUNITY DEVELOPMENT"),
+        new HearingHost(SENATE, COMMITTEE, "INVESTIGATIONS AND GOVERNMENT OPERATIONS"),
+        new HearingHost(SENATE, COMMITTEE, "CONSUMER PROTECTION")};
+        hearingHostTestHelper(block, hosts);
+    }
+
     private void hearingHostTestHelper(String block, HearingHost... expected) {
         Set<HearingHost> actual = HearingHostParser.parse(block);
         assertEquals(expected.length, actual.size());
