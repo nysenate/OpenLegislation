@@ -1,7 +1,5 @@
 import React from 'react'
-import Pagination from "app/shared/Pagination";
 import {Link, useHistory, useLocation, useRouteMatch} from "react-router-dom";
-import getLawsApi from "app/apis/getLawsApi";
 import SpecifiedLawArticleSections from "app/views/laws/SpecifiedLawArticleSections";
 import * as queryString from "query-string";
 

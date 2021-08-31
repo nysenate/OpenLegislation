@@ -5,7 +5,6 @@ import * as queryString from "query-string";
 export default async function lawSearchApi(term, limit = 6, offset = 1, sort = "_score:desc,session:desc") {
     const response = await fetch(`/api/3/laws/search?` + queryString.stringify({
         term: term,
-        sort: sort,
         limit: limit,
         offset: offset
     }))

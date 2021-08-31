@@ -15,6 +15,7 @@ export default function LawVolumeSearchResults({response, filter}) {
     return (
         <div className="mt-8">
             <div className="pt-3">
+
                 <ResultList results={response.items} filter={filter}/>
             </div>
         </div>

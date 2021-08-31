@@ -4,10 +4,9 @@ import {
     useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
-import lawSearchApi from "app/apis/lawSearchApi";
 
 
-export default function LawSearchForm({handleVolumeSearchFilter}) {
+export default function LawSearchForm({handleVolumeSearchFilter, handleSearchTerm}) {
     const [ term, setTerm ] = React.useState("")
     const [ filter, setFilter ] = React.useState("")
     const location = useLocation()
@@ -23,11 +22,10 @@ export default function LawSearchForm({handleVolumeSearchFilter}) {
     const onSubmitLawSearch = (e) => {
         e.preventDefault()
         const input = document.getElementById("lawsearch");
-        console.log(input.value)
         const params = queryString.parse(location.search)
-        // params.term = term
-        console.log(params)
-        // history.push({ search: queryString.stringify(params) })
+        params.term = term
+        history.push({ search: queryString.stringify(params) })
+        handleSearchTerm(term)
     }
 
     const onSubmitLawVolumeSearch = (e) => {

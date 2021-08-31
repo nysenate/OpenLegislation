@@ -9,11 +9,15 @@ import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import LawSearchForm from "app/views/laws/LawSearchForm";
 import LawVolumeSearchResults from "app/views/laws/LawVolumeSearchResults";
+import LawSearchResults from "app/views/laws/LawSearchResults";
 
 export default function LawSearch() {
     const [response, setResponse] = React.useState({result: {items: []}})
+    const [searchResponse, setSearchResponse] = React.useState({result: {items: []}})
     const [loading, setLoading] = React.useState(true)
     const [ filter, setFilter ] = React.useState("")
+    const [term, setTerm] = React.useState('*')
+    const [searching, setSearching] = React.useState(true)
     const location = useLocation()
     const history = useHistory()
     const params = queryString.parse(location.search)
@@ -21,35 +25,40 @@ export default function LawSearch() {
 
 
     React.useEffect(() => {
-        // search()
+        search()
         doInitialSearch()
-    }, [filter])
+    }, [filter, term])
 
     // Perform a search using the query string parameters.
-    const search = () => {
+    function search() {
         const params = queryString.parse(location.search)
         const page = params.page || 1
         const offset = (page - 1) * limit + 1
-        const term = params.term || '*'
         const sort = params.sort
         let searchTerm = term
-
         doSearch(searchTerm, limit, offset, sort)
     }
 
     const doSearch = (term, limit, offset, sort) => {
         setLoading(true)
-        lawSearchApi(term, limit, offset, sort)
-            .then((response) => {
-                setResponse(response)
-            })
-            .catch((error) => {
-                // TODO properly handle errors
-                console.warn(`${error}`)
-            })
-            .finally(() => {
-                setLoading(false)
-            })
+        if (term !== '*' && !isEmpty(term)) {
+            setSearching(true)
+            lawSearchApi(term, limit, offset, sort)
+                .then((response) => {
+                    setSearchResponse(response)
+                })
+                .catch((error) => {
+                    // TODO properly handle errors
+                    console.warn(`${error}`)
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
+        }
+        else {
+            setLoading(false)
+            setSearching(false)
+        }
     }
 
     const onPageChange = pageInfo => {
@@ -74,14 +83,23 @@ export default function LawSearch() {
 
     return (
         <div className="p-3">
-            <LawSearchForm searchTerm={params.term} handleVolumeSearchFilter={setFilter}/>
+            <LawSearchForm searchTerm={params.term} handleVolumeSearchFilter={setFilter} handleSearchTerm={setTerm}/>
             {loading
                 ? <LoadingIndicator/>
-                : <LawVolumeSearchResults response={response}
-                                          filter={filter}
-                                          />
+                :
+                <div>
+                    { searching
+                        ? <LawSearchResults response={searchResponse} limit={limit} page={params.page} onPageChange={onPageChange} />
+                        : <div> </div>
+                    }
+                    <LawVolumeSearchResults response={response} filter={filter}/>
+                </div>
             }
         </div>
     )
+
+    function isEmpty(str) {
+        return (!str || str.length === 0 );
+    }
 }
 
