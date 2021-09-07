@@ -15,7 +15,6 @@ export default function LawVolumeSearchResults({response, filter}) {
     return (
         <div className="mt-8">
             <div className="pt-3">
-
                 <ResultList results={response.items} filter={filter}/>
             </div>
         </div>
@@ -44,15 +43,22 @@ function ResultItem({result , filter}) {
             { doFilterResult &&
             <div className="p-3 hover:bg-gray-200 flex flex-wrap">
                 <div className="py-3 w-full md:w-1/3">
-                    <div className="flex items-center">
-                        <div className="text mr-5">
-                            {volume.lawId}
+
+                    <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
+
+                        <div className="flex items-center text mr-5">
+                            <b>{volume.lawId}</b>
                         </div>
-                        <div className="text text--small">
-                            <b>{volume.name}</b>
-                            <p> {volume.lawType} | Chapter {volume.chapter} </p>
+
+                        <div className="row-start-1 col-start-2 col-span-2">
+                            <div className="flex items-center text text--small">
+
+                                <p><b>{volume.name}</b> {volume.lawType}&nbsp;|&nbsp;Chapter&nbsp;{volume.chapter}</p>
+                            </div>
                         </div>
+
                     </div>
+
                 </div>
             </div> }
         </div>

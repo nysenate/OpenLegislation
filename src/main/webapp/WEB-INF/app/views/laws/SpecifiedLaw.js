@@ -12,6 +12,7 @@ import SpecifiedLawSearchForm from "app/views/laws/SpecifiedLawSearchForm";
 export default function SpecifiedLaw({ setHeaderText }) {
     const [response, setResponse] = React.useState({result: {items: []}})
     const [loading, setLoading] = React.useState(true)
+    const [ term, setTerm ] = React.useState("*")
     const location = useLocation()
     const history = useHistory()
     const params = queryString.parse(location.search)
@@ -20,7 +21,11 @@ export default function SpecifiedLaw({ setHeaderText }) {
 
     React.useEffect(() => {
         getLaw(match.params.lawId)
-    }, [])
+    }, [match])
+
+    React.useEffect(() => {
+
+    }, [term])
 
     const getLaw = (lawId) => {
         setLoading(true)
@@ -45,10 +50,11 @@ export default function SpecifiedLaw({ setHeaderText }) {
 
     return (
         <div className="p-3">
-            <SpecifiedLawSearchForm searchTerm={params.term} />
+            <SpecifiedLawSearchForm searchTerm={setTerm} />
             {loading
                 ? <LoadingIndicator/>
                 : <SpecifiedLawArticles response={response}
+                                        term={term}
                                         limit={limit}
                                         page={params.page}
                                         onPageChange={onPageChange}/>

@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 
-export default function LawSearchForm() {
+export default function LawSearchForm({searchTerm}) {
     const [ term, setTerm ] = React.useState("")
     const location = useLocation()
     const history = useHistory()
@@ -19,10 +19,13 @@ export default function LawSearchForm() {
     // Updates the term query param when the form is submitted.
     const onSubmit = (e) => {
         e.preventDefault()
+        console.log(location)
         const params = queryString.parse(location.search)
         params.term = term
+        const path = location.pathname+'?location=A'+term
         console.log(params)
-        history.push({ search: queryString.stringify(params) })
+        // history.push(path)
+        searchTerm(term)
     }
 
     return (

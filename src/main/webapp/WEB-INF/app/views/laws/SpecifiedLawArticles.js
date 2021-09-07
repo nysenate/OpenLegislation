@@ -3,7 +3,7 @@ import {Link, useHistory, useLocation, useRouteMatch} from "react-router-dom";
 import SpecifiedLawArticleSections from "app/views/laws/SpecifiedLawArticleSections";
 import * as queryString from "query-string";
 
-export default function SpecifiedLawArticles({response, limit, page, onPageChange}) {
+export default function SpecifiedLawArticles({response, term, limit, page, onPageChange}) {
 
     if (response.success === false) {
         return (
@@ -16,64 +16,57 @@ export default function SpecifiedLawArticles({response, limit, page, onPageChang
     return (
         <div className="mt-8">
             <div className="pt-3">
-                {/*<Pagination*/}
-                {/*    limit={limit}*/}
-                {/*    currentPage={page}*/}
-                {/*    onPageChange={onPageChange}*/}
-                {/*    total={response.documents.documents.items.length}*/}
-                {/*/>*/}
-                <ResultList results={response}/>
-                {/*<Pagination*/}
-                {/*    limit={limit}*/}
-                {/*    currentPage={page}*/}
-                {/*    onPageChange={onPageChange}*/}
-                {/*    total={response.documents.documents.items.length}*/}
-                {/*/>*/}
+                <ResultList results={response} term={term}/>
             </div>
         </div>
     )
 }
 
-function ResultList({results}) {
+function ResultList({results, term}) {
     const documents = results.documents.documents.items
     return (
         <div>
             {documents.map((documents) =>
-                <ResultItem result={documents} key={documents.locationId}/>
+                <ResultItem result={documents} term={term} key={documents.locationId}/>
             )}
         </div>
     )
 }
 
-function ResultItem({result}) {
-    // console.log(result)
+function ResultItem({result, term}) {
     const location = useLocation()
     const history = useHistory()
     const params = queryString.parse(location.search, {parseBooleans: true})
 
     return (
-        <div className="p-3 hover:bg-gray-200 flex flex-wrap" onClick={() => expandArticle()}>
-            <div className=" py-4 w-full md:w-1/3">
-                <div className="">{/*<div className="flex items-center">*/}
+        <div className="p-1 hover:bg-gray-200 flex" onClick={() => expandArticle()}>
+            <div className=" py-6 w-full">
 
-                    <div className="text mr-20">
-                        <p>{result.docType}&nbsp;{result.docLevelId}</p>
-                    </div>
+                    <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
 
-                    <div className="text text--small">
-                        <b>Sections&nbsp;(&sect;{result.fromSection}&nbsp;-&nbsp;&sect;{result.toSection})&nbsp;-&nbsp;Location&nbsp;ID:&nbsp;{result.locationId}</b>
-                        <p>{result.title}</p>
+                        <div className="text items-center mr-20">
+                            {result.docType}&nbsp;{result.docLevelId}
+                        </div>
+
+                        <div className="row-start-1 col-start-2 col-span-2">
+                            <div className=" items-center">
+                                <b>Sections&nbsp;(&sect;{result.fromSection}&nbsp;-&nbsp;&sect;{result.toSection})</b>
+                                <p>Location&nbsp;ID:{result.locationId}</p>
+                                <p>{result.title}</p>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div className="flex-flow:column-wrap flex-end">
-                        {params.location === result.locationId &&
+                        {/*method here to see if number in term is within sections from and to*/}
+                        {(params.location === result.locationId || wasSearchedFor({result,term}) ) &&
                         (<div>
-                            <SpecifiedLawArticleSections response={result}/>
+                            <SpecifiedLawArticleSections response={result} term={term}/>
                         </div>)
                         }
                     </div>
 
-                </div>
             </div>
         </div>
     )
@@ -82,6 +75,19 @@ function ResultItem({result}) {
         const params = queryString.parse(location.search)
         params.location = result.locationId
         history.push({search: queryString.stringify(params)})
+    }
+
+    function wasSearchedFor({result,term}) {
+        const resultFrom = result.fromSection
+        const resultTo = result.toSection
+
+        //validate term is a number
+
+        if (term >= resultFrom && term <= resultTo) {
+            return true;
+        }
+        return false;
+
     }
 }
 
