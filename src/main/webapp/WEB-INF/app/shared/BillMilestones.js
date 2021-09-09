@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import Tippy from "@tippyjs/react";
-import Date from "app/shared/Date";
 import { DateTime } from "luxon";
+import { formatDateTime } from "app/lib/dateUtils";
 
 const createMilestone = (desc) => {
   return {
@@ -101,7 +101,7 @@ function MilestoneTooltipText({ milestone }) {
     <div>
       <span>{milestone.statusDesc}</span>
       {milestone.actionDate &&
-      <span> | <Date date={milestone.actionDate} format={DateTime.DATE_FULL} /></span>
+      <span> | {formatDateTime(milestone.actionDate, DateTime.DATE_FULL)}</span>
       }
       {milestone.committeeName &&
       <span> | {milestone.committeeName}</span>

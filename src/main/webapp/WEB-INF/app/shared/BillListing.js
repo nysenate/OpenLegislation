@@ -1,6 +1,6 @@
 import React from 'react'
 import MemberThumbnail from "app/shared/MemberThumbnail";
-import Date from "app/shared/Date";
+import {formatDateTime} from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
@@ -56,7 +56,7 @@ function BillListingDetail({ bill, highlights }) {
         </div>
         {bill.status.actionDate &&
         <div className="mt-1 text text-blue-600">
-          <Date date={bill.status.actionDate} format={DateTime.DATE_FULL} /> - <BillStatusDesc status={bill.status} />
+          {formatDateTime(bill.status.actionDate, DateTime.DATE_FULL)} - <BillStatusDesc status={bill.status} />
         </div>
         }
         {!bill.billType.resolution &&

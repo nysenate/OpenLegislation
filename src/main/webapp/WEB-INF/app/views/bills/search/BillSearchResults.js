@@ -1,11 +1,5 @@
 import React from 'react'
 import Pagination from "app/shared/Pagination";
-import { Link } from "react-router-dom";
-import MemberThumbnail from "app/shared/MemberThumbnail";
-import Date from "app/shared/Date";
-import BillStatusDesc from "app/shared/BillStatusDesc";
-import BillMilestones from "app/shared/BillMilestones";
-import { DateTime } from "luxon";
 import BillListing from "app/shared/BillListing";
 
 export default function BillSearchResults({ response, limit, page, onPageChange }) {

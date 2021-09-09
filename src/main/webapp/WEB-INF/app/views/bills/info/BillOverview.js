@@ -1,6 +1,5 @@
 import React from 'react'
 import MemberThumbnail from "app/shared/MemberThumbnail";
-import Date from "app/shared/Date";
 import { DateTime } from "luxon";
 import {
   CheckCircle,
@@ -8,6 +7,7 @@ import {
 } from "phosphor-react";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
+import { formatDateTime } from "app/lib/dateUtils";
 
 export default function BillOverview({ bill }) {
   return (
@@ -62,7 +62,7 @@ function BillStatus({ bill }) {
   return (
     <React.Fragment>
       <div className="text text--small">
-        Status as of <Date date={bill.status.actionDate} format={DateTime.DATE_FULL} />&nbsp;
+        Status as of {formatDateTime(bill.status.actionDate, DateTime.DATE_FULL)}&nbsp;
         <span className="font-semibold">({bill.basePrintNo})</span>
       </div>
       <div className="flex items-center">
