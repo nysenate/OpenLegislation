@@ -18,8 +18,8 @@ export default function Accordion({ title, children }) {
         </span>
         <div>
           {isOpen
-            ? <CaretDown size="1.25rem" />
-            : <CaretUp size="1.25rem" />
+            ? <CaretUp size="1.25rem" />
+            : <CaretDown size="1.25rem" />
           }
         </div>
       </div>

@@ -11,13 +11,13 @@ import BillMilestones from "app/shared/BillMilestones";
 
 export default function BillOverview({ bill }) {
   return (
-    <div className="flex justify-start flex-wrap w-10/12 mt-2">
-      <div className="flex py-3 pr-10">
+    <div className="flex justify-start flex-wrap mt-2">
+      <div className="flex py-3 pr-8">
         <MemberThumbnail member={bill.sponsor.member} />
         <SponsorInfo sponsor={bill.sponsor} />
       </div>
       {billStatusMessages(bill).map((s) =>
-        <div className="my-3 mr-10" key={s.printNo}>
+        <div className="my-3 mr-8" key={s.printNo}>
           <BillStatus bill={s} />
         </div>
       )}
