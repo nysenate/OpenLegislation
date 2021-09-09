@@ -6,6 +6,8 @@ import {
 } from "app/lib/dateUtils";
 import {
   Link,
+  useHistory,
+  useLocation,
   useRouteMatch
 } from "react-router-dom";
 import {
@@ -16,6 +18,7 @@ import { DateTime } from "luxon";
 import Tabs from "app/shared/Tabs";
 import BillSummaryTab from "app/views/bills/info/BillSummaryTab";
 import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
+import * as queryString from "query-string";
 
 export default function Bill({ setHeaderText }) {
 
@@ -23,8 +26,10 @@ export default function Bill({ setHeaderText }) {
   const [ bill, setBill ] = React.useState({})
   const [ selectedAmd, setSelectedAmd ] = React.useState()
   const [ tabs, setTabs ] = React.useState([])
-  const [ activeTab, setActiveTab ] = React.useState("Summary")
+  const [ activeTab, setActiveTab ] = React.useState()
   const match = useRouteMatch()
+  const location = useLocation()
+  const history = useHistory()
 
   React.useEffect(() => {
     if (bill && (selectedAmd != null)) {
@@ -33,10 +38,12 @@ export default function Bill({ setHeaderText }) {
   }, [ bill, selectedAmd ])
 
   React.useEffect(() => {
+    const params = queryString.parse(location.search, { parseBooleans: true })
     getBillApi(match.params.sessionYear, match.params.printNo, "with_refs_no_fulltext")
       .then((bill) => {
         setBill(bill)
-        setSelectedAmd(bill.activeVersion)
+        setSelectedAmd(params.amendment == null ? bill.activeVersion : params.amendment)
+        setActiveTab(params.tab || "Summary")
         setHeaderText(headerTextForBill(bill))
         setLoading(false)
       })
@@ -46,6 +53,23 @@ export default function Bill({ setHeaderText }) {
     return (<div>Loading ...</div>)
   }
 
+  const updateSearchParams = (searchParams) => {
+    const params = queryString.parse(location.search)
+    params.tab = searchParams.tab
+    params.amendment = searchParams.amd
+    history.push({ search: queryString.stringify(params) })
+  }
+
+  const onTabChange = (tab) => {
+    setActiveTab(tab)
+    updateSearchParams({amd: selectedAmd, tab: tab})
+  }
+
+  const onAmdChange = (amd) => {
+    setSelectedAmd(amd)
+    updateSearchParams({amd: amd, tab: activeTab})
+  }
+
   return (
     <div>
       <div className="mx-8">
@@ -53,10 +77,10 @@ export default function Bill({ setHeaderText }) {
         <h3 className="h3">{bill.title}</h3>
         <ProgramInfoMsg bill={bill} />
         <BillOverview bill={bill} />
-        <AmendmentSwitcher bill={bill} selectedAmd={selectedAmd} setSelectedAmd={setSelectedAmd} />
+        <AmendmentSwitcher bill={bill} selectedAmd={selectedAmd} setSelectedAmd={onAmdChange} />
       </div>
       <div className="mb-5">
-        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={onTabChange} />
       </div>
     </div>
   )
@@ -110,9 +134,7 @@ function AmendmentSwitcher({ bill, selectedAmd, setSelectedAmd }) {
       <div>
         <label className="flex items-center">
           <h4 className="h5 my-3 mr-3">Amendment Version</h4>
-          <select value={selectedAmd} onChange={(e) => {
-            setSelectedAmd(e.target.value)
-          }} className="select m-3">
+          <select value={selectedAmd} onChange={(e) => setSelectedAmd(e.target.value)} className="select m-3">
             {Object.entries(bill.amendments.items).map(([ key, amd ]) => {
               let label = amd.version === "" ? "Original" : `Revision ${amd.version}`
               if (amd.version === bill.activeVersion) {
