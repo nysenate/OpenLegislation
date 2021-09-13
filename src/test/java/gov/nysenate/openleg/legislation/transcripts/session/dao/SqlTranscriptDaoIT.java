@@ -53,7 +53,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
             }
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        UPDATE = new Transcript(curr.getTranscriptId(), "t0v1.txt",
+        UPDATE = new Transcript(curr.getId(), "t0v1.txt",
                 curr.getSessionType(), curr.getLocation(), curr.getText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
@@ -71,19 +71,19 @@ public class SqlTranscriptDaoIT extends BaseTests {
         List<TranscriptId> ids = getNewIds(dao.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL));
         assertEquals(TRANSCRIPTS.size(), ids.size());
         for (int i = 0; i < TRANSCRIPTS.size(); i++)
-            assertEquals(TRANSCRIPTS.get(i).getTranscriptId(), ids.get(i));
+            assertEquals(TRANSCRIPTS.get(i).getId(), ids.get(i));
         List<Transcript> reversed = Lists.reverse(TRANSCRIPTS);
         ids = getNewIds(dao.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL));
         assertEquals(TRANSCRIPTS.size(), ids.size());
         for (int i = 0; i < reversed.size(); i++)
-            assertEquals(reversed.get(i).getTranscriptId(), ids.get(i));
+            assertEquals(reversed.get(i).getId(), ids.get(i));
     }
 
     @Test
     public void getTranscriptTest() {
         fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
-        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getTranscriptId()));
+        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
         dao.updateTranscript(TRANSCRIPTS.get(0));
         fileDao.updateTranscriptFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
-        assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getTranscriptId()));
+        assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test

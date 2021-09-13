@@ -46,7 +46,7 @@ public class PublicHearingGetCtrl extends BaseCtrl {
      * Retrieve public hearings for a year: (GET) /api/3/hearings/{year}
      * Retrieve all public hearings: (GET) /api/3/hearings/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
-     *                      full - If true, the full public hearing view is returned. Otherwise just its filename.
+     *                      full - If true, the full public hearing view is returned. Otherwise just its id.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      *
@@ -83,7 +83,7 @@ public class PublicHearingGetCtrl extends BaseCtrl {
         "Data for public hearing with id #" + id);
     }
 
-    @RequestMapping(value = "/{filename}")
+    @RequestMapping(value = "/{filename:.*\\D.*}")
     public BaseResponse getHearingByFilename(@PathVariable String filename) {
         return new ViewObjectResponse<>(new PublicHearingView(
                 hearingData.getPublicHearing(filename)),
@@ -104,7 +104,7 @@ public class PublicHearingGetCtrl extends BaseCtrl {
         return new PublicHearingPdfView(hearing).writeData();
     }
 
-    @RequestMapping(value = "/{filename}.pdf")
+    @RequestMapping(value = "/{filename::.*\\D.*}.pdf")
     public ResponseEntity<byte[]> getHearingPdfFromFilename(@PathVariable String filename)
             throws IOException {
         PublicHearing hearing = hearingData.getPublicHearing(filename);

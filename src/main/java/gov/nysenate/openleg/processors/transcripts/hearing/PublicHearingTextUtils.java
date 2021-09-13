@@ -18,7 +18,7 @@ public class PublicHearingTextUtils {
         List<List<String>> pages = PublicHearing.getPages(fullText);
         if (pages.size() < 2)
             throw new ParseError("Public hearing in file " + filename + " is too short.");
-        boolean isWrongFormat = pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
+        boolean isWrongFormat = PublicHearing.isWrongFormat(pages);
         List<String> dataList = getDataList(pages.get(0), isWrongFormat);
         // Retrieves address, date, and time data from text.
         String[] placeTimeData = getAddressAndDateTime(dataList.get(dataList.size() - 1), isWrongFormat);

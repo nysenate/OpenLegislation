@@ -35,6 +35,10 @@ public class PublicHearing extends BaseLegislativeContent {
         this.session = SessionYear.of(this.getYear());
     }
 
+    public static boolean isWrongFormat(List<List<String>> pages) {
+        return pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
+    }
+
     /**
      * Groups public hearing text into pages, which are lists of lines.
      * @param fullText of the hearing.

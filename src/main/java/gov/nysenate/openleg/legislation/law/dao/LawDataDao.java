@@ -55,7 +55,7 @@ public interface LawDataDao
      * Get law documents that were repealed during the given date time range
      *
      * @param dateRange Range<LocalDateTime>
-     * @return {@link List<  LawDocId  >}
+     * @return {@link List<LawDocId>}
      */
     List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange);
 

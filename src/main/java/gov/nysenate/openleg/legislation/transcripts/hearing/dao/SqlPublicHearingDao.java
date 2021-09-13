@@ -36,8 +36,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     @Override
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
         var params = new MapSqlParameterSource("id", publicHearingId.getId());
-        PublicHearing publicHearing = jdbcNamed.queryForObject(
-                SELECT_HEARING_BY_ID, params, HEARING_ROW_MAPPER);
+        PublicHearing publicHearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID, params, HEARING_ROW_MAPPER);
         if (publicHearing != null)
             publicHearing.setHosts(hearingHostDao.getHearingHosts(publicHearingId));
         return publicHearing;
@@ -106,7 +105,8 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     /** --- Row Mapper Instances --- */
 
     private static final RowMapper<PublicHearing> HEARING_ROW_MAPPER = (rs, rowNum) -> {
-        PublicHearing publicHearing = new PublicHearing(rs.getString("filename"), rs.getString("text"), rs.getString("title"), rs.getString("address"), getLocalDateFromRs(rs, "date"),
+        PublicHearing publicHearing = new PublicHearing(rs.getString("filename"), rs.getString("text"),
+                rs.getString("title"), rs.getString("address"), getLocalDateFromRs(rs, "date"),
                 getLocalTimeFromRs(rs, "start_time"), getLocalTimeFromRs(rs, "end_time"));
         publicHearing.setId(new PublicHearingId(rs.getInt("id")));
         publicHearing.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
