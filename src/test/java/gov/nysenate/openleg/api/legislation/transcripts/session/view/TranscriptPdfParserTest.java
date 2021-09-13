@@ -7,7 +7,6 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +50,7 @@ public class TranscriptPdfParserTest {
         catch (IOException e) {
             fail();
         }
-        var pdfParser = new TranscriptPdfParser(LocalDateTime.parse(dateTime), text);
+        var pdfParser = new TranscriptPdfParser(text);
         assertEquals(expectedNumberedLines, pdfParser.hasLineNumbers());
         List<List<String>> pages = pdfParser.getPages();
         assertEquals(expectedPageCount, pages.size());

@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +11,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TranscriptPdfParser {
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptPdfParser.class);
     private final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();
@@ -25,20 +21,13 @@ public class TranscriptPdfParser {
     private static final Pattern BLANK_LINE_PATTERN = Pattern.compile(".*?(" +
             String.join("|", BLANK_LINES.keySet()) + ").*");
 
-    public TranscriptPdfParser(LocalDateTime id, String transcriptText) {
+    public TranscriptPdfParser(String transcriptText) {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
                 .filter(tl -> (!tl.isBlank() || tl.getText().matches(" {10,}")) && !tl.isStenographer())
                 .collect(Collectors.toCollection(ArrayList::new));
         // Second line may be a page number after a line of whitespace, so the 3rd line is used.
         this.hasLineNumbers = lineArrayList.size() >= 3 && lineArrayList.get(2).hasLineNumber();
         processLines(lineArrayList);
-        int firstPageLength = pages.get(0).size();
-        for (int i = 1; i < pages.size() - 1; i++) {
-            if (pages.get(i).size() != firstPageLength) {
-                logger.warn("In Transcript " + id + ", there is a page length mismatch");
-                break;
-            }
-        }
     }
 
     public List<List<String>> getPages() {

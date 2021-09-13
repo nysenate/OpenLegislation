@@ -30,7 +30,7 @@ public class PublicHearingPdfCtrl {
         return getHearingPdf(id, response, true);
     }
 
-    @RequestMapping(value = "/{filename}")
+    @RequestMapping(value = "/{filename:.*\\D.*}")
     public ResponseEntity<byte[]> getHearingPdfByFilename(@PathVariable String filename, HttpServletResponse response)
             throws IOException {
         return getHearingPdf(filename, response, false);
