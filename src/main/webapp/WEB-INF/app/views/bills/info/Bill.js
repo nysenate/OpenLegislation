@@ -19,6 +19,7 @@ import Tabs from "app/shared/Tabs";
 import BillSummaryTab from "app/views/bills/info/BillSummaryTab";
 import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
 import * as queryString from "query-string";
+import BillMemosTab from "app/views/bills/info/BillMemosTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -179,6 +180,7 @@ const billInfoTabs = (bill, selectedAmd) => {
       name: "Memos",
       quantity: (bill.amendments.items[selectedAmd].memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
       isDisabled: bill.billType.resolution,
+      component: <BillMemosTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
       name: "Actions",
