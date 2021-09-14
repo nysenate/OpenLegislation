@@ -1,7 +1,5 @@
 import React from 'react'
-import {Link} from "react-router-dom";
 import getLawsApi from "app/apis/getLawsApi";
-import * as queryString from "query-string";
 
 export default function SpecifiedLawArticleSections({response, term}) {
 
@@ -19,13 +17,13 @@ export default function SpecifiedLawArticleSections({response, term}) {
 
 
 function Section({results, term}) {
-    // console.log(results)
     const [section, setSection] = React.useState({result: {items: []}})
     const [openText, setOpenText] = React.useState(false)
 
     React.useEffect(() => {
         getLawsApi(results.lawId, results.locationId)
             .then((response) => {
+                response.text = response.text.replaceAll("\\n"," ")
                 setSection(response)
             })
             .catch((error) => {
@@ -64,9 +62,7 @@ function Section({results, term}) {
     )
 
     function expandText({openText, setOpenText}) {
-
         setOpenText(!openText)
-        console.log(openText)
     }
 }
 
