@@ -10,7 +10,7 @@ export default function BillListingQueried({ bill }) {
   const [ sameAsBill, setSameAsBill ] = React.useState()
 
   React.useEffect(() => {
-    getBillApi(bill.session, bill.printNo, "info")
+    getBillApi(bill.session, bill.printNo, {view: "info"})
       .then((bill) => {
         setSameAsBill(bill)
       })

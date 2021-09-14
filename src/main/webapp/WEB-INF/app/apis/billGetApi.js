@@ -1,17 +1,18 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import * as queryString from "query-string";
 
 /**
  *
  * @param sessionYear
  * @param printNo
- * @param view The level of detail to return. See BillGetCtrl.getBill for more details.
+ * @param searchParams An object containing search parameter to set on api request. i.e. {view: "info"}
  * @returns {Promise<*>}
  */
-export function getBillApi(sessionYear, printNo, view) {
+export function getBillApi(sessionYear, printNo, searchParams) {
   let url = `/api/3/bills/${sessionYear}/${printNo}`
-  if (view) {
-    url += `?view=${view}`
+  if (searchParams) {
+    url += "?" + queryString.stringify(searchParams)
   }
   return fetchUrl(url)
 }

@@ -20,6 +20,7 @@ import BillSummaryTab from "app/views/bills/info/BillSummaryTab";
 import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
 import * as queryString from "query-string";
 import BillMemosTab from "app/views/bills/info/BillMemosTab";
+import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -40,7 +41,7 @@ export default function Bill({ setHeaderText }) {
 
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
-    getBillApi(match.params.sessionYear, match.params.printNo, "with_refs_no_fulltext")
+    getBillApi(match.params.sessionYear, match.params.printNo, {view: "with_refs_no_fulltext"})
       .then((bill) => {
         setBill(bill)
         setSelectedAmd(params.amendment == null ? bill.activeVersion : params.amendment)
@@ -63,12 +64,12 @@ export default function Bill({ setHeaderText }) {
 
   const onTabChange = (tab) => {
     setActiveTab(tab)
-    updateSearchParams({amd: selectedAmd, tab: tab})
+    updateSearchParams({ amd: selectedAmd, tab: tab })
   }
 
   const onAmdChange = (amd) => {
     setSelectedAmd(amd)
-    updateSearchParams({amd: amd, tab: activeTab})
+    updateSearchParams({ amd: amd, tab: activeTab })
   }
 
   return (
@@ -191,6 +192,7 @@ const billInfoTabs = (bill, selectedAmd) => {
       name: "Full Text",
       quantity: undefined,
       isDisabled: false,
+      component: <BillFullTextTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
       name: "Updates",
