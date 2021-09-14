@@ -40,7 +40,7 @@ function ResultItem({result , filter}) {
         <div>
             { doFilterResult &&
             <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-                <div className="py-3 w-full md:w-1/3">
+                <div className="py-3 w-full">
 
                     <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
 
@@ -48,10 +48,13 @@ function ResultItem({result , filter}) {
                             <b>{volume.lawId}</b>
                         </div>
 
-                        <div className="row-start-1 col-start-2 col-span-2">
+                        <div className="col-start-2 col-span-2">
                             <div className="flex items-center text text--small">
 
-                                <p><b>{volume.name}</b> {volume.lawType}&nbsp;|&nbsp;Chapter&nbsp;{volume.chapter}</p>
+                                <p><b>{volume.name} </b></p>
+                                <span><br/></span>
+
+                                <p className="">&nbsp;|&nbsp;{volume.lawType}&nbsp;|&nbsp;Chapter&nbsp;{volume.chapter}</p>
                             </div>
                         </div>
 
