@@ -39,8 +39,9 @@ function ResultItem({result, term}) {
     const params = queryString.parse(location.search, {parseBooleans: true})
 
     return (
-        <div className="p-1 hover:bg-gray-200 flex" onClick={() => expandArticle()}>
-            <div className=" py-6 w-full">
+        <div>
+            <div className="p-1 hover:bg-gray-200 flex" onClick={() => expandArticle()}>
+                <div className=" py-6 w-full">
 
                     <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
 
@@ -58,18 +59,19 @@ function ResultItem({result, term}) {
 
                     </div>
 
-                    <div className="flex-flow:column-wrap flex-end">
-                        {/*method here to see if number in term is within sections from and to*/}
-                        {(params.location === result.locationId || wasSearchedFor({result,term}) ) &&
-                        (<div>
-                            <SpecifiedLawArticleSections response={result} term={term}/>
-                        </div>)
-                        }
-                    </div>
 
+                </div>
+            </div>
+            <div className="">
+                {(params.location === result.locationId || wasSearchedFor({result, term})) &&
+                (<div>
+                    <SpecifiedLawArticleSections response={result} term={term}/>
+                </div>)
+                }
             </div>
         </div>
-    )
+
+)
 
     function expandArticle() {
         const params = queryString.parse(location.search)
@@ -77,11 +79,9 @@ function ResultItem({result, term}) {
         history.push({search: queryString.stringify(params)})
     }
 
-    function wasSearchedFor({result,term}) {
+    function wasSearchedFor({result, term}) {
         const resultFrom = result.fromSection
         const resultTo = result.toSection
-
-        //validate term is a number
 
         if (term >= resultFrom && term <= resultTo) {
             return true;

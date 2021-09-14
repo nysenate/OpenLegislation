@@ -22,9 +22,6 @@ export default function LawSearchForm({searchTerm}) {
         console.log(location)
         const params = queryString.parse(location.search)
         params.term = term
-        const path = location.pathname+'?location=A'+term
-        console.log(params)
-        // history.push(path)
         searchTerm(term)
     }
 

@@ -1,5 +1,4 @@
 import React from 'react'
-import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
 
 export default function LawVolumeSearchResults({response, filter}) {
@@ -37,7 +36,6 @@ function ResultList({results, filter}) {
 function ResultItem({result , filter}) {
     const volume = result
     const doFilterResult = doFilter(result, filter)
-    // const doFilterResult = true
     return (
         <div>
             { doFilterResult &&

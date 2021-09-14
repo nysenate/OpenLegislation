@@ -34,17 +34,12 @@ function Section({results, term}) {
             })
     }, [results])
 
-    React.useEffect(() => {
-
-    }, [openText])
-
     return (
         <div>
-            {/*<Link to={`/laws/${documents.lawId}?location=${documents.locationId}`} key={documents.lawId}>*/}
             <div className="p-3 hover:bg-gray-200 flex flex-wrap" onClick={() => expandText({openText, setOpenText})}>
                 <div className="py-3 w-full">
 
-                    <div className="grid grid-flow-col grid-rows-2 grid-cols-3 ">
+                    <div className="grid auto-rows-min grid-cols-3 ">
 
                         <div className="text mr-5 row-start-1">
                             <p>§&nbsp;{section.locationId}</p>
@@ -56,7 +51,7 @@ function Section({results, term}) {
                         </div>
 
                         {(openText || term === section.locationId) &&
-                        <div className="py-3 text text--small row-start-2 col-start-1 col-span-3">
+                        <div className="text text--small col-start-1 col-span-3 mt-5">
                             {section.text}
                         </div>
                         }
@@ -65,7 +60,6 @@ function Section({results, term}) {
 
                 </div>
             </div>
-            {/*</Link>*/}
         </div>
     )
 
@@ -73,9 +67,6 @@ function Section({results, term}) {
 
         setOpenText(!openText)
         console.log(openText)
-        // const params = queryString.parse(location.search)
-        // params.location = result.locationId
-        // history.push({search: queryString.stringify(params)})
     }
 }
 
