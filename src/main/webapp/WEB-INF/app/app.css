@@ -34,7 +34,7 @@
     }
 
     .h5 {
-        @apply text-gray-700 text-sm lg:text-base font-medium;
+        @apply text-gray-700 text-sm lg:text-base font-semibold;
     }
 
     .text {

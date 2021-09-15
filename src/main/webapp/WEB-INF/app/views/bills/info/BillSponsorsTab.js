@@ -8,14 +8,14 @@ import {
 
 export default function BillSponsorsTab({ bill, selectedAmd }) {
   return (
-    <div className="m-5">
+    <div className="mx-5">
       <div>
         <CoPrimeList bill={bill} />
       </div>
-      <div className="mt-8">
+      <div>
         <CoSponsorsList amendment={bill.amendments.items[selectedAmd]} />
       </div>
-      <div className="mt-8">
+      <div>
         <MultiSponsorList amendment={bill.amendments.items[selectedAmd]} />
       </div>
     </div>
@@ -30,9 +30,9 @@ function CoPrimeList({ bill }) {
   const coPrimeComponents = bill.additionalSponsors.items.map((coPrime) => <MemberListing member={coPrime} />)
 
   return (
-    <section className="mt-3">
+    <section className="mt-5">
       <header>
-        <h3 className="h4 mb-1">Co Prime Sponsors</h3>
+        <h3 className="h5 mb-1">Co Prime Sponsors</h3>
       </header>
       <TruncatedList components={coPrimeComponents} />
     </section>
@@ -51,9 +51,9 @@ function CoSponsorsList({ amendment }) {
   })
 
   return (
-    <section className="mt-3">
+    <section className="mt-5">
       <header>
-        <h3 className="h4 mb-1">Co Sponsors</h3>
+        <h3 className="h5 mb-1">Co Sponsors</h3>
       </header>
       <TruncatedList components={coSponsorComponents} />
     </section>
@@ -68,9 +68,9 @@ function MultiSponsorList({ amendment }) {
   const multiSponsorEls = amendment.multiSponsors.items.map((multiSponsor) => <MemberListing member={multiSponsor} />)
 
   return (
-    <section className="mt-3">
+    <section className="mt-5">
       <header>
-        <h3 className="h4 mb-1">Multi Sponsors</h3>
+        <h3 className="h5 mb-1">Multi Sponsors</h3>
       </header>
       <TruncatedList components={multiSponsorEls} />
     </section>

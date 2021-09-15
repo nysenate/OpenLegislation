@@ -5,7 +5,7 @@ export default function BillMemosTab({ bill, selectedAmd }) {
   return (
     <section className="m-5">
       <header>
-        <h3 className="h4">Sponsor's Memorandum</h3>
+        <h3 className="h5">Sponsor's Memorandum</h3>
       </header>
       <div className="mx-5">
         <pre className="text text--small">

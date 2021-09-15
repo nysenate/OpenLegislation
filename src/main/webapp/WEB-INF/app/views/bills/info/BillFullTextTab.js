@@ -22,8 +22,7 @@ export default function BillFullTextTab({ bill, selectedAmd }) {
   return (
     <section className="m-5">
       <header>
-        <h3 className="h4 inline text-blue-700 font-semibold">Full Text:</h3>
-        <h3 className="h4 inline font-semibold"> {bill.amendments.items[selectedAmd].printNo}-{bill.session}</h3>
+        <h3 className="h5 inline">Full Text</h3>
       </header>
       {isLoading &&
       <div className="my-3">

@@ -23,7 +23,7 @@ function SameAs({ bill, selectedAmd }) {
   return (
     <section>
       <header>
-        <h3 className="h4">Same As Bills</h3>
+        <h3 className="h5">Same As Bills</h3>
       </header>
       <div className="mx-2">
         {bill.amendments.items[selectedAmd].sameAs.items.map((sameAs) => {
@@ -43,7 +43,7 @@ function EnactingClause({ bill, selectedAmd }) {
   return (
     <section className="mt-5">
       <header>
-        <h3 className="h4">Enacting Clause</h3>
+        <h3 className="h5">Enacting Clause</h3>
       </header>
       <div className="mx-5 my-3">
         <p className="text whitespace-pre-wrap">
@@ -63,7 +63,7 @@ function Summary({ bill }) {
   return (
     <section className="mt-8">
       <header>
-        <h3 className="h4">Summary of Bill</h3>
+        <h3 className="h5">Summary of Bill</h3>
       </header>
       <div className="mx-5 my-3">
         <p className="text whitespace-pre-wrap">
@@ -78,7 +78,7 @@ function AffectedLaw({ amendment }) {
   return (
     <section className="mt-8">
       <header>
-        <h3 className="h4">Affected Law</h3>
+        <h3 className="h5">Affected Law</h3>
       </header>
       <div className="mx-5 my-3">
         <p className="text">Primary Law Section - {amendment.lawSection}</p>
@@ -117,7 +117,7 @@ function PreviousVersions({ bill }) {
   return (
     <section className="mt-8">
       <header>
-        <h3 className="h4">Previous Versions of this Bill</h3>
+        <h3 className="h5">Previous Versions of this Bill</h3>
       </header>
       <div className="mx-2">
         {bill.previousVersions.items.map((sameAs) => {
@@ -137,7 +137,7 @@ function AgendaCalendarReferences({ bill }) {
   return (
     <section className="mt-8">
       <header>
-        <h3 className="h4">Agenda/Calendar References</h3>
+        <h3 className="h5">Agenda/Calendar References</h3>
       </header>
       <div className="mx-5 my-3">
         {bill.committeeAgendas.items.map((agenda) => {
