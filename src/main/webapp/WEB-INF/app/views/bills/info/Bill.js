@@ -25,7 +25,7 @@ import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
 export default function Bill({ setHeaderText }) {
 
   const [ loading, setLoading ] = React.useState(true)
-  const [ bill, setBill ] = React.useState({})
+  const [ bill, setBill ] = React.useState()
   const [ selectedAmd, setSelectedAmd ] = React.useState()
   const [ tabs, setTabs ] = React.useState([])
   const [ activeTab, setActiveTab ] = React.useState()
@@ -33,26 +33,35 @@ export default function Bill({ setHeaderText }) {
   const location = useLocation()
   const history = useHistory()
 
+  // Initialize data when a bill page is navigated to
+  React.useEffect(() => {
+    getBillApi(match.params.sessionYear, match.params.printNo, { view: "with_refs_no_fulltext" })
+      .then((bill) => {
+        setBill(bill)
+        setStateFromSearchParams("Summary", bill.activeVersion)
+        setHeaderText(headerTextForBill(bill))
+        setLoading(false)
+      })
+  }, [ match.params.sessionYear, match.params.printNo ])
+
+  // Update tab labels and content whenever bill or selected amd change.
   React.useEffect(() => {
     if (bill && (selectedAmd != null)) {
       setTabs(billInfoTabs(bill, selectedAmd))
     }
   }, [ bill, selectedAmd ])
 
+  // Update selectedAmd and active tab on back/forward naviagion.
   React.useEffect(() => {
-    const params = queryString.parse(location.search, { parseBooleans: true })
-    getBillApi(match.params.sessionYear, match.params.printNo, {view: "with_refs_no_fulltext"})
-      .then((bill) => {
-        setBill(bill)
-        setSelectedAmd(params.amendment == null ? bill.activeVersion : params.amendment)
-        setActiveTab(params.tab || "Summary")
-        setHeaderText(headerTextForBill(bill))
-        setLoading(false)
-      })
-  }, [ match ])
+    if (bill) {
+      setStateFromSearchParams("Summary", bill.activeVersion)
+    }
+  }, [ location.search ])
 
-  if (loading) {
-    return (<div>Loading ...</div>)
+  const setStateFromSearchParams = (defaultTab, defaultAmd) => {
+    const params = queryString.parse(location.search, { parseBooleans: true })
+    setSelectedAmd(params.amendment == null ? defaultAmd : params.amendment)
+    setActiveTab(params.tab || defaultTab)
   }
 
   const updateSearchParams = (searchParams) => {
@@ -70,6 +79,10 @@ export default function Bill({ setHeaderText }) {
   const onAmdChange = (amd) => {
     setSelectedAmd(amd)
     updateSearchParams({ amd: amd, tab: activeTab })
+  }
+
+  if (loading) {
+    return (<div>Loading ...</div>)
   }
 
   return (
