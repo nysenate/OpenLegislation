@@ -9,9 +9,12 @@ export default function MemberListing({ member }) {
   return (
     <div className="flex items-center">
       <div className="w-12 mr-2">
-      <MemberThumbnail member={member} />
+        <MemberThumbnail member={member} />
       </div>
-      <div>{member.fullName} - District {member.districtCode}</div>
+      <div>
+        <div>{member.fullName}</div>
+        <div className="text text--small">District {member.districtCode}</div>
+      </div>
     </div>
   )
 }

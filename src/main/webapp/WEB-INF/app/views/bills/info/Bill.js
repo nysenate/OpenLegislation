@@ -21,6 +21,7 @@ import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
 import * as queryString from "query-string";
 import BillMemosTab from "app/views/bills/info/BillMemosTab";
 import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
+import BillVotesTab from "app/views/bills/info/BillVotesTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -189,6 +190,7 @@ const billInfoTabs = (bill, selectedAmd) => {
       name: "Votes",
       quantity: bill.votes.size,
       isDisabled: bill.votes.size === 0,
+      component: <BillVotesTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
       name: "Memos",

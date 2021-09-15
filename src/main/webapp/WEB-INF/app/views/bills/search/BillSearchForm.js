@@ -224,31 +224,33 @@ export default function BillSearchForm() {
 
         <div className="m-4">
           <Accordion title={advancedSearchTitleEls}>
-            <div className="flex justify-between flex-wrap">
-              <div className={advancedFilterColumnClass}>
-                {advancedSelectEls()}
+            <div className="m-5">
+              <div className="flex justify-between flex-wrap">
+                <div className={advancedFilterColumnClass}>
+                  {advancedSelectEls()}
+                </div>
+                <div className={advancedFilterColumnClass}>
+                  {advancedInputEls().slice(0, 5)}
+                </div>
+                <div className={advancedFilterColumnClass}>
+                  {advancedInputEls().slice(5, 10)}
+                </div>
+                <div className={advancedFilterColumnClass}>
+                  {advancedCheckboxEls()}
+                </div>
               </div>
-              <div className={advancedFilterColumnClass}>
-                {advancedInputEls().slice(0, 5)}
+              <div className="m-3">
+                <p className="text text--small">
+                  Tip: To match an entire phrase, surround your query with double quotes.
+                </p>
               </div>
-              <div className={advancedFilterColumnClass}>
-                {advancedInputEls().slice(5, 10)}
-              </div>
-              <div className={advancedFilterColumnClass}>
-                {advancedCheckboxEls()}
-              </div>
-            </div>
-            <div className="m-3">
-              <p className="text text--small">
-                Tip: To match an entire phrase, surround your query with double quotes.
-              </p>
-            </div>
-            {Object.entries(refine).some(([ key, value ]) => value.value) &&
-            <div className="m-3">
+              {Object.entries(refine).some(([ key, value ]) => value.value) &&
+              <div className="m-3">
               <span onClick={resetFilters}
                     className="text-blue-500 font-medium cursor-pointer">Reset Advanced Filters</span>
+              </div>
+              }
             </div>
-            }
           </Accordion>
         </div>
 

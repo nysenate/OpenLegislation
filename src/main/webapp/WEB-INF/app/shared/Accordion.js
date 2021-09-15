@@ -25,7 +25,7 @@ export default function Accordion({ title, children }) {
       </div>
 
       {isOpen &&
-      <div className="m-5">
+      <div>
         {children}
       </div>
       }
