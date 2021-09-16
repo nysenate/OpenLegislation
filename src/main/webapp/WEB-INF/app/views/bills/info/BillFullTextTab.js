@@ -8,30 +8,24 @@ import { Link } from "react-router-dom";
 export default function BillFullTextTab({ bill, selectedAmd }) {
   // A fully populated bill object which includes full text in plan and html format (if available) for each amendment.
   const [ fullBill, setFullBill ] = React.useState()
-  const [ isLoading, setIsLoading ] = React.useState(true)
 
   React.useEffect(() => {
-    setIsLoading(true)
     getBillApi(bill.session, bill.printNo, { view: "with_refs", fullTextFormat: [ "PLAIN", "HTML" ] })
       .then((res) => {
         setFullBill(res)
-        setIsLoading(false)
       })
   }, [ bill ])
+
+  if (!fullBill) {
+    return <LoadingIndicator />
+  }
 
   return (
     <section className="m-5">
       <header>
         <h3 className="h5 inline">Full Text</h3>
       </header>
-      {isLoading &&
-      <div className="my-3">
-        <LoadingIndicator />
-      </div>
-      }
-      {fullBill &&
       <FullText amd={fullBill.amendments.items[selectedAmd]} />
-      }
     </section>
   )
 }
