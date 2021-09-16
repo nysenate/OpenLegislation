@@ -9,9 +9,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractTranscriptPdfView extends BasePdfView {
-    protected static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f, SPACING = 2;
-    private static final Pattern LINE_NUM_PATTERN = Pattern.compile("^(?<indent> {0,11}\\d+)( |$)");
+    protected static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f;
+
+    private static final Pattern LINE_NUM_PATTERN = Pattern.compile("^ {0,11}\\d{0,2}");
+
     protected int indent;
+
+    // TODO can be turned into a full constructor with sealed classes.
+    protected void writeTranscriptPages(List<List<String>> pages) throws IOException {
+        this.indent = getIndent(pages.get(1));
+        writePages(TOP, 0, pages);
+    }
 
     @Override
     protected void newPageSetup() throws IOException {
@@ -22,45 +30,26 @@ public abstract class AbstractTranscriptPdfView extends BasePdfView {
 
     @Override
     protected void writePage(List<String> page) throws IOException {
-        boolean hasPageNum = isPageNumber(page.get(0));
-        String pageNum = hasPageNum ? page.get(0) : "";
-        drawPageNumber(pageNum.trim());
-        for (int i = hasPageNum ? 1 : 0; i < page.size(); i++)
-            drawLine(page.get(i));
-        drawStenographer(page.size());
+        String pageNum = page.get(0).trim();
+        float xOffsetPageNum = RIGHT - (pageNum.length() + 1) * FONT_WIDTH;
+        contentStream.newLineAtOffset(xOffsetPageNum, FONT_SIZE/2);
+        contentStream.showText(pageNum);
+        contentStream.newLine();
+        float xOffsetLine = LEFT - indent * FONT_WIDTH;
+        contentStream.newLineAtOffset(-xOffsetPageNum + xOffsetLine, -FONT_SIZE/2);
+        super.writePage(page.subList(1, page.size()));
+        contentStream.newLineAtOffset(-xOffsetLine, 0);
     }
 
-    protected static int indentSize(List<String> secondPage) {
-        for (var line : secondPage) {
-            Matcher m = LINE_NUM_PATTERN.matcher(line);
+    protected static int getIndent(List<String> page) {
+        int indent = 1 << 10;
+        for (int i = 1; i < page.size(); i++) {
+            if (page.get(i).isBlank())
+                continue;
+            Matcher m = LINE_NUM_PATTERN.matcher(page.get(i));
             if (m.find())
-                return m.end("indent") + 1;
+                indent = Math.min(m.end() + 1, indent);
         }
-        return 0;
+        return indent == 1 ? -1: indent;
     }
-
-    protected abstract boolean isPageNumber(String firstLine);
-
-    protected abstract boolean isDoubleSpaced();
-
-    protected abstract void drawStenographer(int lineCount) throws IOException;
-
-    /**
-     * Page numbers should be right aligned above the border.
-     * @param line to write.
-     */
-    private void drawPageNumber(String line) throws IOException {
-        float offset = RIGHT - (line.length() + 1) * FONT_WIDTH;
-        contentStream.newLineAtOffset(offset, FONT_WIDTH * SPACING);
-        contentStream.showText(line);
-        contentStream.newLineAtOffset(-offset, -FONT_SIZE * SPACING);
-    }
-
-    private void drawLine(String line) throws IOException {
-        float offset = LEFT - indent * FONT_WIDTH;
-        contentStream.newLineAtOffset(offset, -FONT_SIZE);
-        contentStream.showText(line);
-        contentStream.newLineAtOffset(-offset, isDoubleSpaced() ? -FONT_SIZE : 0);
-    }
-
 }

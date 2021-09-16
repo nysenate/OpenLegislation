@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.Stenographer;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Pdf representation of a transcript designed to match the formatting
@@ -18,34 +19,23 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
     public TranscriptPdfView(Transcript transcript) throws IOException {
         if (transcript == null)
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
-
+        var pages = new TranscriptPdfParser(transcript.getText()).getPages();
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
         this.stenographerCenter = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
-        var parser = new TranscriptPdfParser(transcript.getText());
-        var pages = parser.getPages();
-        this.indent = parser.hasLineNumbers() ? AbstractTranscriptPdfView.indentSize(pages.get(1)) : 0;
-        writePages(TOP - FONT_WIDTH, 0, pages);
-    }
-
-    // Session transcripts are guaranteed to start with page numbers.
-    @Override
-    protected boolean isPageNumber(String firstLine) {
-        return true;
+        writeTranscriptPages(pages);
     }
 
     @Override
-    protected boolean isDoubleSpaced() {
-        return true;
-    }
-
-    /**
-     * The stenographer should be centered at the bottom of the page
-     * @param lineCount of the session.
-     */
-    @Override
-    protected void drawStenographer(int lineCount) throws IOException {
-        float offset = (lineCount - STENOGRAPHER_LINE_NUM) * FONT_SIZE * SPACING;
-        contentStream.newLineAtOffset(stenographerCenter, offset);
+    protected void writePage(List<String> page) throws IOException {
+        super.writePage(page);
+        // The stenographer should be centered at the bottom of the page.
+        float yOffset = (page.size() - STENOGRAPHER_LINE_NUM) * FONT_SIZE * getSpacing();
+        contentStream.newLineAtOffset(stenographerCenter, yOffset);
         contentStream.showText(stenographer);
+    }
+
+    @Override
+    protected float getSpacing() {
+        return 2;
     }
 }

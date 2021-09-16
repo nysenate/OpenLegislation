@@ -23,16 +23,15 @@ public class LawPdfView extends BasePdfView {
     }
 
     @Override
-    protected void writePage(List<String> page) throws IOException {
-        for (String line : page)
-            writeLine(line);
+    protected float getSpacing() {
+        return 1.5f;
     }
 
     /**
      * Writes a single line from the document, after splitting it into sections marked by bold markers.
      * @throws IOException if the writing was interrupted.
      */
-    private void writeLine(String line) throws IOException {
+    protected void writeLine(String line) throws IOException {
         // Used to avoid split() erasing a marker at the end.
         if (line.endsWith(LawPdfUtil.BOLD_MARKER))
             line += " ";
@@ -43,7 +42,6 @@ public class LawPdfView extends BasePdfView {
             if (i != sections.size() - 1)
                 bold = !bold;
         }
-        contentStream.newLineAtOffset(0, -FONT_SIZE * SPACING);
     }
 
     /**

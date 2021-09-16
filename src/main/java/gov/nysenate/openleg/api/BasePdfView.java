@@ -67,12 +67,21 @@ public abstract class BasePdfView {
         contentStream.beginText();
         contentStream.newLineAtOffset(margin, top);
         contentStream.setFont(FONT, FONT_SIZE);
+        contentStream.setLeading(FONT_SIZE * getSpacing());
+    }
+
+    protected float getSpacing() {
+        return 1;
     }
 
     protected void writePage(List<String> page) throws IOException {
         for (String line : page) {
-            contentStream.showText(line);
-            contentStream.newLineAtOffset(0, -FONT_SIZE);
+            writeLine(line);
+            contentStream.newLine();
         }
+    }
+
+    protected void writeLine(String line) throws IOException {
+        contentStream.showText(line);
     }
 }

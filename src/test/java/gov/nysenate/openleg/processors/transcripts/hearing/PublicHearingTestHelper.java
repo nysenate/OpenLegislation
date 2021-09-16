@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import static org.junit.Assert.fail;
 
 public class PublicHearingTestHelper {
-    private PublicHearingTestHelper() {};
+    private PublicHearingTestHelper() {}
 
     public static PublicHearing getHearingFromFilename(String filename) {
         String fullText = "";
@@ -22,6 +22,6 @@ public class PublicHearingTestHelper {
         catch (URISyntaxException | IOException e) {
             fail();
         }
-        return PublicHearingTextUtils.getHearingFromText(filename, fullText);
+        return PublicHearingParser.getHearingFromText(filename, fullText);
     }
 }

@@ -34,7 +34,7 @@ public class TranscriptPdfParser {
         return pages;
     }
 
-    public boolean hasLineNumbers() {
+    protected boolean hasLineNumbers() {
         return hasLineNumbers;
     }
 

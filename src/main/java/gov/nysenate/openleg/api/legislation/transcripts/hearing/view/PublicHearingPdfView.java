@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing.view;
 
 import gov.nysenate.openleg.api.legislation.transcripts.AbstractTranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingTextUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,30 +16,17 @@ public class PublicHearingPdfView extends AbstractTranscriptPdfView {
     public PublicHearingPdfView(PublicHearing publicHearing) throws IOException {
         if (publicHearing == null)
             throw new IllegalArgumentException("Supplied Public Hearing cannot be null when converting to pdf.");
-        List<List<String>> pages = PublicHearing.getPages(publicHearing.getText());
-        this.isWrongFormat = PublicHearing.isWrongFormat(pages);
-        // These hearings format their line numbers differently.
+        var pages = PublicHearingTextUtils.getPages(publicHearing.getText());
+        // TODO: some of these lines are too long.
+        this.isWrongFormat = PublicHearingTextUtils.isWrongFormat(pages);
+        writeTranscriptPages(pages);
+    }
+
+    @Override
+    protected void writePage(List<String> page) throws IOException {
+        // Indents may change every page in these hearings.
         if (isWrongFormat)
-            indent = 3;
-        else
-            indent = indentSize(pages.get(1));
-        writePages(TOP - FONT_WIDTH, 0, pages);
-    }
-
-    @Override
-    protected boolean isPageNumber(String firstLine) {
-        return firstLine.trim().matches("(?i)(Page )?\\d+");
-    }
-
-    @Override
-    protected boolean isDoubleSpaced() {
-        return false;
-    }
-
-    @Override
-    protected void drawStenographer(int lineCount) throws IOException {
-        if (!isWrongFormat)
-            return;
-        // TODO: draw Stenographer
+            indent = getIndent(page) + 1;
+        super.writePage(page);
     }
 }

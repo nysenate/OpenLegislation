@@ -1,16 +1,12 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
-import com.google.common.base.Splitter;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class PublicHearing extends BaseLegislativeContent {
     // Uniquely identifies a hearing, but may not be available if the hearing is not in the database yet.
@@ -33,30 +29,6 @@ public class PublicHearing extends BaseLegislativeContent {
         this.endTime = endTime;
         this.year = this.date.getYear();
         this.session = SessionYear.of(this.getYear());
-    }
-
-    public static boolean isWrongFormat(List<List<String>> pages) {
-        return pages.get(1).stream().anyMatch(str -> str.contains("Geneva Worldwide, Inc."));
-    }
-
-    /**
-     * Groups public hearing text into pages, which are lists of lines.
-     * @param fullText of the hearing.
-     */
-    public static List<List<String>> getPages(String fullText) {
-        fullText = fullText.replaceAll("\r\n", "\n");
-        return Splitter.on("\f").splitToList(fullText).stream().map(PublicHearing::getLines)
-                .filter(page -> !page.isEmpty()).collect(Collectors.toList());
-    }
-
-    private static List<String> getLines(String page) {
-        List<String> ret = Splitter.on("\n").splitToList(page)
-                .stream().dropWhile(String::isEmpty).collect(Collectors.toList());
-        // Drops empty Strings from the end of the list as well.
-        Collections.reverse(ret);
-        ret = ret.stream().dropWhile(String::isEmpty).collect(Collectors.toList());
-        Collections.reverse(ret);
-        return ret;
     }
 
     @Override

@@ -21,7 +21,6 @@ public class PublicHearingAddressParserTest {
                 "250 Broadway - 19th Floor\nNew York, New York  10007");
     }
 
-    //
     @Test
     public void zipPlusFiveParses() {
         testHearingAddress("09-17-13 Mental Health Test.txt",
@@ -34,7 +33,6 @@ public class PublicHearingAddressParserTest {
                 "Seneca Nation of Indians'\nCattaraugus County Reservation");
     }
 
-    //
     @Test
     public void withDashesParses() {
         testHearingAddress("10-19-16 Hudson Barge Test.txt",
