@@ -76,7 +76,6 @@ function VoteDetails({ vote }) {
         <div className="">
           {Object.entries(vote.memberVotes.items).map(([ key, memberVotes ], index) => {
             return vote.memberVotes.items[key].items.map((member) => {
-              console.log(member)
               return (
                 <div className={`flex items-center content-start p-2 ${bgColorClass(key)}`} key={member.memberId}>
                   <div className="w-24">{voteTypeLabel(key)}</div>

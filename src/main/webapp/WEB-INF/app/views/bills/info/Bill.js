@@ -22,6 +22,7 @@ import * as queryString from "query-string";
 import BillMemosTab from "app/views/bills/info/BillMemosTab";
 import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
 import BillVotesTab from "app/views/bills/info/BillVotesTab";
+import BillActionsTab from "app/views/bills/info/BillActionsTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -52,7 +53,7 @@ export default function Bill({ setHeaderText }) {
     }
   }, [ bill, selectedAmd ])
 
-  // Update selectedAmd and active tab on back/forward naviagion.
+  // Update selectedAmd and active tab on back/forward navigation.
   React.useEffect(() => {
     if (bill) {
       setStateFromSearchParams("Summary", bill.activeVersion)
@@ -169,7 +170,6 @@ function AmendmentSwitcher({ bill, selectedAmd, setSelectedAmd }) {
   )
 }
 
-
 const billInfoTabs = (bill, selectedAmd) => {
   return [
     {
@@ -201,7 +201,8 @@ const billInfoTabs = (bill, selectedAmd) => {
     {
       name: "Actions",
       quantity: bill.actions.size,
-      isDisabled: false,
+      isDisabled: bill.actions.size === 0,
+      component: <BillActionsTab bill={bill} />
     },
     {
       name: "Full Text",
