@@ -17,6 +17,14 @@ export function getBillApi(sessionYear, printNo, searchParams) {
   return fetchUrl(url)
 }
 
+export function getBillUpdatesApi(sessionYear, printNo, searchParams) {
+  let url = `/api/3/bills/${sessionYear}/${printNo}/updates`
+  if (searchParams) {
+    url += "?" + queryString.stringify(searchParams)
+  }
+  return fetchUrl(url)
+}
+
 export function getBillsApi(sessionYear) {
   return fetchUrl(`/api/3/bills/${sessionYear}`)
 }

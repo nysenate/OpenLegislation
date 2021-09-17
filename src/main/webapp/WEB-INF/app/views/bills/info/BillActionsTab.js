@@ -23,14 +23,14 @@ export default function BillActionsTab({ bill }) {
   return (
     <section className="m-5">
       <div className="mb-5">
-        <label className="label">Sort by&nbsp;
-          <select className="select"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}>
-            <option value={ASC}>Oldest to Newest</option>
-            <option value={DESC}>Newest to Oldest</option>
-          </select>
-        </label>
+        <label className="label label--top" htmlFor="sort">Sort by</label>
+        <select className="select"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                name="sort">
+          <option value={ASC}>Oldest to Newest</option>
+          <option value={DESC}>Newest to Oldest</option>
+        </select>
       </div>
       <div>
         {actions.map((action) => {

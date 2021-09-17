@@ -89,6 +89,24 @@
         @apply block leading-7;
     }
 
+    .table {
+        thead {
+            @apply border-b-1 border-gray-400;
+        }
+        th {
+            @apply font-semibold;
+        }
+        td {
+            @apply pr-8;
+        }
+    }
+
+    .table--stripe {
+        tr:nth-child(even) {
+            @apply bg-gray-100;
+        }
+    }
+
 }
 
 /*

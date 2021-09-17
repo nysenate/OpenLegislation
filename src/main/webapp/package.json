@@ -37,6 +37,7 @@
     "html-webpack-plugin": "^4.5.0",
     "postcss": "^7.0.36",
     "postcss-loader": "^6.1.0",
+    "postcss-nested": "^4.2.3",
     "style-loader": "^2.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
     "webpack": "^5.3.2",

@@ -24,6 +24,7 @@ import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
 import BillVotesTab from "app/views/bills/info/BillVotesTab";
 import BillActionsTab from "app/views/bills/info/BillActionsTab";
 import BillJsonTab from "app/views/bills/info/BillJsonTab";
+import BillUpdatesTab from "app/views/bills/info/BillUpdatesTab";
 
 export default function Bill({ setHeaderText }) {
 
@@ -215,6 +216,7 @@ const billInfoTabs = (bill, selectedAmd) => {
       name: "Updates",
       quantity: undefined,
       isDisabled: false,
+      component: <BillUpdatesTab bill={bill} />
     },
     {
       name: "JSON",
