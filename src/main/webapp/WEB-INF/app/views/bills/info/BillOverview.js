@@ -11,8 +11,8 @@ import { formatDateTime } from "app/lib/dateUtils";
 
 export default function BillOverview({ bill }) {
   return (
-    <div className="flex justify-start flex-wrap mt-2">
-      <div className="flex py-3 pr-8">
+    <div className="flex justify-start flex-wrap">
+      <div className="flex items-center pr-8">
         <MemberThumbnail member={bill.sponsor.member} />
         <SponsorInfo sponsor={bill.sponsor} />
       </div>

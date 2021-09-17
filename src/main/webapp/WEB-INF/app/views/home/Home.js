@@ -12,6 +12,11 @@ import { List } from "phosphor-react";
 
 const fakeHeaderText = "New York State Laws";
 
+/**
+ * Controls the header, left side nav menu, and main content block.
+ * The left nav menu is displayed when the "2xl" breakpoint is reached, at smaller screen's it is hidden
+ * in the hamburger menu.
+ */
 export default function Home() {
   const [ headerText, setHeaderText ] = React.useState(fakeHeaderText);
   const [ isMenuOpen, setMenuOpen ] = React.useState(false);
@@ -31,7 +36,7 @@ export default function Home() {
           <Menu isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen}/>
         </div>
 
-        <div className="pl-0 xl:pl-80 pt-16 md:min-h-screen">
+        <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
           <Switch>
             <Route path="/bills">
               <Bills setHeaderText={setHeaderText} />
@@ -52,11 +57,11 @@ export default function Home() {
 function Header({ isMenuOpen, setMenuOpen, headerText }) {
   return (
     <div className="fixed h-16 w-full bg-blue-500 z-10">
-      <div className="block xl:hidden">
+      <div className="block 2xl:hidden">
         <MobileHeader isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} headerText={headerText} />
       </div>
 
-      <div className="hidden xl:block">
+      <div className="hidden 2xl:block">
         <XLHeader headerText={headerText} />
       </div>
     </div>
@@ -95,9 +100,9 @@ function Menu({ isMenuOpen }) {
    */
   let className = "fixed top-16 transform bg-gray-200 w-80 h-full z-10";
   if (isMenuOpen) {
-    className += " translate-x-0 xl:translate-x-0"
+    className += " translate-x-0 2xl:translate-x-0"
   } else {
-    className += " -translate-x-80 xl:translate-x-0"
+    className += " -translate-x-80 2xl:translate-x-0"
   }
 
   return (

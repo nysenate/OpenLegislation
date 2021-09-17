@@ -69,7 +69,7 @@ export default function Bill({ setHeaderText }) {
   }
 
   const updateSearchParams = (searchParams) => {
-    const params = queryString.parse(location.search)
+    const params = {} // Reset params when tabs are changed so params from one tab dont carry over to another.
     params.tab = searchParams.tab
     params.amendment = searchParams.amd
     history.push({ search: queryString.stringify(params) })
@@ -92,11 +92,21 @@ export default function Bill({ setHeaderText }) {
   return (
     <div>
       <div className="mx-8">
-        <SubstitutedByMsg bill={bill} />
-        <h3 className="h3">{bill.title}</h3>
-        <ProgramInfoMsg bill={bill} />
-        <BillOverview bill={bill} />
-        <AmendmentSwitcher bill={bill} selectedAmd={selectedAmd} setSelectedAmd={onAmdChange} />
+        <div className="my-2">
+          <SubstitutedByMsg bill={bill} />
+        </div>
+        <div className="my-2">
+          <h3 className="h3">{bill.title}</h3>
+        </div>
+        <div className="my-2">
+          <ProgramInfoMsg bill={bill} />
+        </div>
+        <div className="my-2">
+          <BillOverview bill={bill} />
+        </div>
+        <div className="my-2">
+          <AmendmentSwitcher bill={bill} selectedAmd={selectedAmd} setSelectedAmd={onAmdChange} />
+        </div>
       </div>
       <div className="mb-5">
         <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={onTabChange} />
@@ -119,7 +129,7 @@ function SubstitutedByMsg({ bill }) {
     return null
   }
   return (
-    <div className="bg-yellow-50 py-2 mb-2 flex items-center rounded">
+    <div className="bg-yellow-50 py-2 flex items-center rounded">
       <FileDotted size="1.2rem" className="mx-1" />
       <p>
         This bill has been substituted by&nbsp;
@@ -136,7 +146,7 @@ function ProgramInfoMsg({ bill }) {
     return null
   }
   return (
-    <div className="pb-3 text">
+    <div className="text">
       Bill #{bill.programInfo.sequenceNo} on the program
       for <span className="font-medium">{bill.programInfo.name}</span>
     </div>
@@ -152,7 +162,7 @@ function AmendmentSwitcher({ bill, selectedAmd, setSelectedAmd }) {
     <React.Fragment>
       <div>
         <label className="flex items-center">
-          <h4 className="h5 my-3 mr-3">Amendment Version</h4>
+          <h4 className="h5 mr-3">Amendment Version</h4>
           <select value={selectedAmd} onChange={(e) => setSelectedAmd(e.target.value)} className="select m-3">
             {Object.entries(bill.amendments.items).map(([ key, amd ]) => {
               let label = amd.version === "" ? "Original" : `Revision ${amd.version}`
@@ -197,7 +207,7 @@ const billInfoTabs = (bill, selectedAmd) => {
     {
       name: "Memos",
       quantity: (bill.amendments.items[selectedAmd].memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
-      isDisabled: bill.billType.resolution,
+      isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd].memo,
       component: <BillMemosTab bill={bill} selectedAmd={selectedAmd} />
     },
     {

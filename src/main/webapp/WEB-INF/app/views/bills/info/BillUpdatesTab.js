@@ -31,7 +31,7 @@ export default function BillUpdatesTab({ bill }) {
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
     setSort(params.sort || DESC)
-    setUpdateType(params.updateType || "status")
+    setUpdateType((params.updateType == null) ? "status" : params.updateType)
   }, [ location.search ])
 
   const onUpdateTypeChange = (value) => {

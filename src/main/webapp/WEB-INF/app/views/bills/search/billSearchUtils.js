@@ -74,7 +74,7 @@ export const initialRefineState = {
     value: "",
     options: billTypeOptions,
     searchTerm: function (value) {
-      return (value === billTypeOptions[2].value) ? "billType.resolution:(true)" : ""
+      return (value === billTypeOptions[2].value) ? "billType.resolution:(true)" : "billType.resolution:(false)"
     }
   },
   sponsor: {
