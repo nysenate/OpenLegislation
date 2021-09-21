@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 @Category(IntegrationTest.class)
-public class TranscriptParserTest extends BaseTests {
-    private static final String[] FILENAMES = {"simple.txt", "No Date Test.txt", "noTime.txt", "badStartLines.txt"};
+public class TranscriptParserIT extends BaseTests {
+    private static final String[] FILENAMES = {"simple.txt", "noDate.txt", "noTime.txt"};
     private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
     FILE_TEXT = """
                                                                           10
@@ -68,18 +68,5 @@ public class TranscriptParserTest extends BaseTests {
         final TranscriptFile transcriptFile2 = new TranscriptFile(new File(TEST_DIR + FILENAMES[2]));
         assertThrows(ParseError.class, () ->
                 transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile2), true));
-    }
-
-    @Test
-    public void testBadLines() throws IOException {
-        TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0));
-        Transcript expectedTranscript = new Transcript(testId, FILENAMES[3],
-                "REGULAR SESSION", "ALBANY, NEW YORK", FILE_TEXT);
-        TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[3]));
-
-        transcriptFileDao.updateTranscriptFile(transcriptFile);
-        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
-        Transcript actualTranscript = transcriptDataService.getTranscript(testId);
-        assertEquals(expectedTranscript, actualTranscript);
     }
 }

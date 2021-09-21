@@ -45,6 +45,7 @@ public class LawPdfUtilTest {
         var text = "Before paragraph.\n  1. Paragraph.";
         LawDocInfo info = LawTestUtils.getLawDocInfo(LAB, "2", SECTION);
         LawDocument doc = new LawDocument(info, text);
+        doc.setTitle("Unrelated title");
 
         List<String> lines = LawPdfUtil.getLines(doc);
         StringBuilder withNewlines = new StringBuilder();

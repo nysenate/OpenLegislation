@@ -31,13 +31,19 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
         for (String fileId : TEST_LAW_IDS)
             loadTestData(fileId, true);
         try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+        try {
             List<String> lawIds = convertResponse(testCtrl.searchLaws("locationId:1", testRequest));
             List<String> ruleLawIds = convertResponse(testCtrl.searchLaws("locationId:R1", testRequest));
             for (String lawId : TEST_LAW_IDS) {
+                String message = "Search responses do not contain law chapter " + lawId;
                 if (LawChapterCode.valueOf(lawId).getType() == LawType.RULES)
-                    assertTrue(ruleLawIds.contains(lawId));
+                    assertTrue(message, ruleLawIds.contains(lawId));
                 else {
-                    assertTrue(lawIds.contains(lawId));
+                    assertTrue(message, lawIds.contains(lawId));
                 }
             }
         } catch (SearchException e) {

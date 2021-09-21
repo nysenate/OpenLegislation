@@ -20,15 +20,12 @@ public class LawCtrlBaseIT extends ApiTest {
     private LawFileDao testDao;
 
     protected static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
-    protected static final List<String> TEST_LAW_IDS = Arrays.asList(EHC.name(), ETP.name(), CMA.name(), CMS.name(), ABC.name());
-    protected static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20140923", "20140924", "20140925");
+    protected static final List<String> TEST_LAW_IDS = Arrays.asList(ABC.name(), EHC.name(), ETP.name(), CMA.name(), CMS.name()),
+        TEST_UPDATE_FILE_PREFIX = Arrays.asList("20140923", "20140924", "20140925");
 
     protected void loadTestData(String fileId, boolean isInitial) {
-        LawFile file;
-        if (isInitial)
-            file = new LawFile(new File(TEST_FILE_PREFIX + "DATABASE.LAW." + fileId));
-        else
-            file = new LawFile(new File(TEST_FILE_PREFIX + fileId + ".UPDATE"));
+        String filename = isInitial ? "DATABASE.LAW." + fileId : fileId + ".UPDATE";
+        LawFile file = new LawFile(new File(TEST_FILE_PREFIX + filename));
         testDao.updateLawFile(file);
         testService.processLawFiles(Collections.singletonList(file));
     }
