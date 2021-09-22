@@ -78,7 +78,7 @@ public interface LawDataService
      * Get a set of law documents that have been repealed during the given datetime range.
      *
      * @param dateRange Range<LocalDateTime>
-     * @return {@link Set<  LawDocId  >}
+     * @return {@link Set<LawDocId>}
      */
     Set<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange);
 
