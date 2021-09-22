@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 
@@ -34,7 +32,6 @@ public class SqlCalendarDaoIT extends BaseTests {
     public void getCalendarTest() {
         Calendar cal = CalendarUtils.createGenericCalendar(new CalendarId(calSequenceNo, LocalDate.now().getYear()));
         putCalendar(cal);
-        cal.setPublishedDateTime(roundToMicro(cal.getPublishedDateTime()));
         assertEquals(cal, calendarDao.getCalendar(cal.getId()));
     }
 
@@ -42,11 +39,10 @@ public class SqlCalendarDaoIT extends BaseTests {
     public void getActiveListTest() {
         CalendarId calId = new CalendarId(calSequenceNo, LocalDate.now().getYear());
         List<CalendarActiveList> singletonList = CalendarUtils.createActiveLists(5, 1, calId);
-        putCalendar(CalendarUtils.createCalendar(calId, singletonList, new HashSet<>()));
-        var expectedList = singletonList.get(0);
-        expectedList.setReleaseDateTime(roundToMicro(expectedList.getReleaseDateTime()));
-        var actualList = calendarDao.getActiveList(new CalendarActiveListId(calId, singletonList.get(0).getSequenceNo()));
-        assertEquals(singletonList.get(0), actualList);
+        Calendar cal = CalendarUtils.createCalendar(calId, singletonList, new HashSet<>());
+        putCalendar(cal);
+        CalendarActiveList getList = calendarDao.getActiveList(new CalendarActiveListId(calId, singletonList.get(0).getSequenceNo()));
+        assertEquals(singletonList.get(0), getList);
     }
 
     @Test
@@ -89,13 +85,6 @@ public class SqlCalendarDaoIT extends BaseTests {
             assertEquals(testYear, id.getYear());
             assertEquals(id.getCalNo(), i);
         }
-    }
-
-    // SQL rounds times to the nearest microsecond.
-    private static LocalDateTime roundToMicro(LocalDateTime ldt) {
-        float nanos = ldt.getNano();
-        int answer = 1000*Math.round(nanos/1000);
-        return ldt.withNano(answer);
     }
 
     private void putCalendar(Calendar calendar) {
