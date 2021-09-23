@@ -42,7 +42,7 @@
     }
 
     .text--large {
-        @apply text-base lg:text-lg font-medium;
+        @apply text-base lg:text-lg;
     }
 
     .text--small {
