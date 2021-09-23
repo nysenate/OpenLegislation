@@ -1,7 +1,7 @@
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
-<%@ page import="gov.nysenate.openleg.model.notification.NotificationType" %>
-<%@ page import="gov.nysenate.openleg.util.OutputUtils" %>
-<%@ page import="gov.nysenate.openleg.model.notification.NotificationMedium" %>
+<%@ page import="gov.nysenate.openleg.notifications.model.NotificationType" %>
+<%@ page import="gov.nysenate.openleg.common.util.OutputUtils" %>
+<%@ page import="gov.nysenate.openleg.notifications.model.NotificationMedium" %>
 <%@ page import="java.util.EnumSet" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

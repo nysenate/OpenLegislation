@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.config;
 
-import gov.nysenate.openleg.util.AsciiArt;
+import gov.nysenate.openleg.common.util.AsciiArt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,13 @@ import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConvert
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.PostConstruct;
-import javax.xml.transform.Source;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -76,7 +78,7 @@ public class WebApplicationConfig implements WebMvcConfigurer
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(stringConverter);
         converters.add(new ResourceHttpMessageConverter());
-        converters.add(new SourceHttpMessageConverter<Source>());
+        converters.add(new SourceHttpMessageConverter<>());
         converters.add(new AllEncompassingFormHttpMessageConverter());
         converters.add(new Jaxb2RootElementHttpMessageConverter());
         converters.add(jackson2Converter());

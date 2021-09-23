@@ -1,22 +1,23 @@
 **Public Hearing Transcripts API**
 ==================================
 
-.. note:: Assembly public hearings are not available at this time.
+.. note:: Most Assembly public hearings are not available at this time.
 
 Get a single Public Hearing
 ---------------------------
 
 **Usage**
 
-Retrieve public hearing by filename
+Retrieve public hearing by id
 ::
-    (GET) /api/3/hearings/{filename}
+    (GET) /api/3/hearings/{id}
 
 **Examples**
 
-Request public hearing "10-29-13 NYsenate_Flanagan_Education_FINAL.txt"
+// TODO
+Request public hearing 5
 ::
-    /api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
+    /api/3/hearings/5
 
 **Response**
 

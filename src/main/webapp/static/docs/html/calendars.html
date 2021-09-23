@@ -1,38 +1,44 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Senate Calendar API &mdash; Open Legislation 2.0-alpha documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Senate Agenda API" href="agendas.html" />
@@ -77,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,6 +115,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -142,18 +150,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="reference.html">Docs</a> &raquo;</li>
+      <li><a href="reference.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><strong>Senate Calendar API</strong></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/calendars.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -221,17 +231,17 @@
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar&quot;</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                 <span class="c1">// Year the calendar was published</span>
-        <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>         <span class="c1">// Incremental identifier for calendars within a year</span>
+        <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                 <span class="c1">// Year the calendar was published</span>
+        <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">54</span><span class="p">,</span>         <span class="c1">// Incremental identifier for calendars within a year</span>
         <span class="s2">&quot;floorCalendar&quot;</span><span class="o">:</span> <span class="p">{...},</span>       <span class="c1">// See supplemental/floor calendar response result</span>
         <span class="s2">&quot;supplementalCalendars&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of supplemental version characters to</span>
                                     <span class="c1">//  supplemental calendar response results</span>
-            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">2</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">2</span>
         <span class="p">},</span>
         <span class="s2">&quot;activeLists&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of sequence numbers to active list response results</span>
-            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">3</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">3</span>
         <span class="p">},</span>
         <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span>       <span class="c1">// The date this calendar was active for</span>
     <span class="p">}</span>
@@ -244,8 +254,8 @@
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-floor&quot;</span><span class="p">,</span>   <span class="c1">// &quot;calendar-supplemental&quot; if the response is a supplemental</span>
   <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
-    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
     <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;floor&quot;</span><span class="p">,</span>                       <span class="c1">// The supplemental version, &quot;floor&quot; or</span>
                                               <span class="c1">//  a single capital character</span>
     <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
@@ -256,7 +266,7 @@
           <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="p">{</span>                                 <span class="c1">// Modified bill response (link below)</span>
               <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A5625&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
               <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A5625A&quot;</span><span class="p">,</span>
               <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>
@@ -265,26 +275,26 @@
               <span class="p">},</span>
               <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
               <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
               <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-03-04T14:32:46&quot;</span><span class="p">,</span>
               <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
               <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
-                  <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">466</span><span class="p">,</span>
+                  <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">466</span><span class="p">,</span>
                   <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;ENGLEBRIGHT&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                  <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
                   <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Steven Englebright&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">4</span>
+                  <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">4</span>
                 <span class="p">},</span>
                 <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
                 <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
               <span class="p">},</span>
-              <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mi">1090</span><span class="p">,</span>              <span class="c1">// The calendar number that ids this bill</span>
+              <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mf">1090</span><span class="p">,</span>              <span class="c1">// The calendar number that ids this bill</span>
                                               <span class="c1">//  within all calendars</span>
               <span class="s2">&quot;sectionType&quot;</span><span class="o">:</span> <span class="s2">&quot;THIRD_READING&quot;</span><span class="p">,</span> <span class="c1">// The floor status of this bill</span>
               <span class="s2">&quot;subBillInfo&quot;</span><span class="o">:</span> <span class="p">{</span>                <span class="c1">// Bill info response for a substituted bill</span>
                 <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
                 <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
                   <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
@@ -293,16 +303,16 @@
                 <span class="p">},</span>
                 <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
+                <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>
                 <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-05-15T18:17:31&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
                 <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
                   <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">385</span><span class="p">,</span>
+                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">385</span><span class="p">,</span>
                     <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;ESPAILLAT&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
                     <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Adriano Espaillat&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">31</span>
+                    <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">31</span>
                   <span class="p">},</span>
                   <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
                   <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
@@ -312,7 +322,7 @@
             <span class="p">},</span>
             <span class="p">...</span>
           <span class="p">],</span>
-          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">284</span>
+          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">284</span>
         <span class="p">},</span>
         <span class="s2">&quot;STARRED_ON_THIRD_READING&quot;</span><span class="o">:</span> <span class="p">{</span>     <span class="c1">// Another floor status. All statuses include:</span>
                                     <span class="c1">// ORDER_OF_THE_FIRST_REPORT, ORDER_OF_THE_SECOND_REPORT,</span>
@@ -320,10 +330,10 @@
                                     <span class="c1">// THIRD_READING_FROM_SPECIAL_REPORT,</span>
                                     <span class="c1">// STARRED_ON_THIRD_READING</span>
           <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[...],</span>
-          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">3</span>
+          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">3</span>
         <span class="p">}</span>
       <span class="p">},</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">2</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">2</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -335,9 +345,9 @@
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-activelist&quot;</span><span class="p">,</span>
   <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
-    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
-    <span class="s2">&quot;sequenceNumber&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                      <span class="c1">// Indicates publish sequence of active lists</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="s2">&quot;sequenceNumber&quot;</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                      <span class="c1">// Indicates publish sequence of active lists</span>
     <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>                  <span class="c1">// The date this calendar was active</span>
     <span class="s2">&quot;releaseDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T04:28:48&quot;</span><span class="p">,</span> <span class="c1">// The date and time this active list was released</span>
     <span class="s2">&quot;notes&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                            <span class="c1">// Notes regarding the active list, pretty much always null</span>
@@ -345,7 +355,7 @@
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>                                   <span class="c1">// Modified bill response (see above link)</span>
           <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S4779&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
           <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S4779B&quot;</span><span class="p">,</span>
           <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
@@ -354,29 +364,29 @@
           <span class="p">},</span>
           <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Relates to inheritance by children conceived after the death of a genetic parent&quot;</span><span class="p">,</span>
           <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
           <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-04-23T15:04:37&quot;</span><span class="p">,</span>
           <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A7461&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span>
           <span class="p">},</span>
           <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
-              <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">413</span><span class="p">,</span>
+              <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">413</span><span class="p">,</span>
               <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;BONACIC&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
               <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;John J. Bonacic&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">42</span>
+              <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">42</span>
             <span class="p">},</span>
             <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
             <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
           <span class="p">},</span>
-          <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mi">192</span>                    <span class="c1">// The calendar number that ids this bill</span>
+          <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mf">192</span>                    <span class="c1">// The calendar number that ids this bill</span>
                                             <span class="c1">//  within all calendars</span>
         <span class="p">},</span>
         <span class="p">...</span>
       <span class="p">],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">31</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">31</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -549,16 +559,16 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
-  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
-  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mf">4</span><span class="p">,</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mf">4</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mf">100</span><span class="p">,</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
         <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="p">{</span>        <span class="c1">// The year and calendar number of the updated calendar</span>
-          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">2019</span><span class="p">,</span>
-          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mi">1</span>
+          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mf">2019</span><span class="p">,</span>
+          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mf">1</span>
         <span class="p">},</span>
         <span class="c1">// The id of the reference that triggered the update</span>
         <span class="s2">&quot;sourceId&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-01-14-15.55.39.563595_SENCAL_00001.XML-1-CALENDAR&quot;</span><span class="p">,</span>
@@ -569,7 +579,7 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
       <span class="p">},</span>
       <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
     <span class="p">],</span>
-    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">2</span>
+    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">2</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -628,16 +638,16 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
-  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
-  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mf">3</span><span class="p">,</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mf">3</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
         <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
-          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mi">54</span>
+          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>
+          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mf">54</span>
         <span class="p">},</span>
         <span class="s2">&quot;sourceId&quot;</span> <span class="o">:</span> <span class="s2">&quot;SOBI.D140620.T153915.TXT-1-CALENDAR&quot;</span><span class="p">,</span>
         <span class="s2">&quot;sourceDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-20T15:39:15&quot;</span><span class="p">,</span>
@@ -656,7 +666,7 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
       <span class="p">},</span>
       <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
     <span class="p">],</span>
-    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">3</span>
+    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">3</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -673,29 +683,29 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="agendas.html" class="btn btn-neutral float-right" title="Senate Agenda API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="bills.html" class="btn btn-neutral float-left" title="Bills and Resolutions API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="agendas.html" class="btn btn-neutral float-right" title="Senate Agenda API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="bills.html" class="btn btn-neutral float-left" title="Bills and Resolutions API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &#169; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -703,7 +713,6 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

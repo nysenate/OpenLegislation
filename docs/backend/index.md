@@ -108,7 +108,7 @@ Also navigate to `src/main/webapp` and copy the following files:
 
 ### `app.properties` Configuration
 
-These are properties that need to be modified for a typical installation.  Many properties are ignored in this guide but may need to be set to fit your needs.
+These are properties that need to be modified for a typical installation.  This guide ignores many properties but may need to be set to fit your needs.
 
 #### API authentication
 
@@ -119,8 +119,6 @@ Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce api auth
 #### Admin Settings
 
 Set `default.admin.user` to your email address and `default.admin.password` to your desired admin password.
-
-Set `admin.email.regex` to match your user email address and fit any other admin users you would want to add.
 
 #### Data Directory Configuration
 
@@ -172,6 +170,13 @@ Set `flyway.password` to the database user password.
 
 Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
 
+### Test Configuration
+
+Copy the following files from `src/main/resources` to `src/test/resources`:
+* `app.properties` -> `test.app.properties`
+* `log4j2.xml` -> `test.log4j2.xml`
+ 
+Set `admin.email.regex` in `app.properties` to match your user email address and fit any other admin users you would want to add.
 
 ## Building
 

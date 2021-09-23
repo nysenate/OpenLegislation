@@ -1,6 +1,6 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.annotation.SillyTest;
+import gov.nysenate.openleg.config.annotation.SillyTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
