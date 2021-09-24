@@ -46,7 +46,9 @@ function MenuContent() {
    * Also closes all non active categories when a link is clicked.
    */
   React.useEffect(() => {
-    setOpenCategories([ activeCategory().name ])
+    if (activeCategory()) {
+      setOpenCategories([ activeCategory().name ])
+    }
   }, [ location.pathname ])
 
   /**
@@ -55,7 +57,7 @@ function MenuContent() {
    * @param name
    */
   const toggleCategory = (name) => {
-    if (name === activeCategory().name) {
+    if (name === activeCategory()?.name) {
       return // never collapse the active category.
     }
 

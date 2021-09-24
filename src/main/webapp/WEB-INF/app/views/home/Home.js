@@ -1,30 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  Link,
-  NavLink,
   Route,
   Switch,
+  useHistory,
   useLocation,
-  useRouteMatch
 } from "react-router-dom";
 import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
 import {
-  CalendarBlank,
   List,
-  IconContext,
-  CaretDown,
-  CaretUp,
-  MagnifyingGlass,
-  GitBranch,
-  Megaphone,
-  Files,
-  Bookmarks,
-  TextAlignLeft,
-  Code,
-  Article,
-  SignOut,
 } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
 
@@ -39,10 +24,15 @@ export default function Home() {
   const [ headerText, setHeaderText ] = React.useState(fakeHeaderText);
   const [ isMenuOpen, setMenuOpen ] = React.useState(false);
   const location = useLocation()
+  const history = useHistory()
 
-  // Close the mobile menu whenever a link is clicked.
   React.useEffect(() => {
+    // Close the mobile menu whenever a link is clicked.
     setMenuOpen(false)
+    // By default, direct users to the bill search page.
+    if (location.pathname === "/") {
+      history.push("/bills/search")
+    }
   }, [ location ])
 
   return (
