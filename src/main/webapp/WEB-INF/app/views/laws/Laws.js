@@ -20,11 +20,11 @@ export default function Laws({ setHeaderText }) {
     return (
         <ContentContainer>
             <Switch>
+                <Route exact path="/laws/search">
+                    <LawSearch/>
+                </Route>
                 <Route path="/laws/:lawId">
                     <SpecifiedLaw setHeaderText={ setHeaderText } />
-                </Route>
-                <Route exact path="/laws">
-                    <LawSearch/>
                 </Route>
             </Switch>
         </ContentContainer>

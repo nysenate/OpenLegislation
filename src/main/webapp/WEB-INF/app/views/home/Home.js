@@ -8,7 +8,7 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import Bills from "app/views/bills/Bills"
-import Laws from "app/views/laws"
+import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
 import {
   CalendarBlank,
