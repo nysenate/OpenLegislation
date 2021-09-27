@@ -2,7 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './WEB-INF/app/Laws.js',
+  entry: './WEB-INF/app/index.js',
   output: {
     path: path.resolve(__dirname, 'static/dist'),
     filename: 'index_bundle.js',
