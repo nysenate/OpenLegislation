@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import LawSearch from "app/views/laws/LawSearch";
 import SpecifiedLaw from "app/views/laws/SpecifiedLaw";
+import LawUpdates from "app/views/laws/LawUpdates";
 import ContentContainer from "app/shared/ContentContainer";
 
 export default function Laws({ setHeaderText }) {
@@ -20,11 +21,14 @@ export default function Laws({ setHeaderText }) {
     return (
         <ContentContainer>
             <Switch>
-                <Route exact path="/laws/search">
-                    <LawSearch/>
+                <Route exact path="/laws/updates">
+                    <LawUpdates/>
                 </Route>
                 <Route path="/laws/:lawId">
                     <SpecifiedLaw setHeaderText={ setHeaderText } />
+                </Route>
+                <Route exact path="/laws">
+                    <LawSearch/>
                 </Route>
             </Switch>
         </ContentContainer>
