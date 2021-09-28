@@ -29,6 +29,7 @@ public class SqlCalendarDaoIT extends BaseTests {
     private SqlCalendarDao calendarDao;
     private int calSequenceNo = 0;
 
+    @Test
     public void getCalendarTest() {
         Calendar cal = CalendarUtils.createGenericCalendar(new CalendarId(calSequenceNo, LocalDate.now().getYear()));
         putCalendar(cal);
