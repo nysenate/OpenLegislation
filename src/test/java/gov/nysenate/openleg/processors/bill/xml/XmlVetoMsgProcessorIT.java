@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -83,11 +84,11 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
         VetoMessage storedMsgObject = bill.getVetoMessages().get(id);
 
-        assertTrue(storedMsgObject.getMemoText().equals(vetoMessage.getMemoText()));
-        assertTrue(storedMsgObject.getBillId().equals(vetoMessage.getBillId()));
-        assertTrue(storedMsgObject.getSigner().equals(vetoMessage.getSigner()));
-        assertTrue(storedMsgObject.getType().equals(vetoMessage.getType()));
-        assertTrue(storedMsgObject.getYear() ==vetoMessage.getYear());
+        assertEquals(vetoMessage.getMemoText(), storedMsgObject.getMemoText());
+        assertEquals(vetoMessage.getBillId(), storedMsgObject.getBillId());
+        assertEquals(vetoMessage.getSigner(), storedMsgObject.getSigner());
+        assertEquals(vetoMessage.getType(), storedMsgObject.getType());
+        assertEquals(vetoMessage.getYear(), storedMsgObject.getYear());
     }
 
     @Test
@@ -153,16 +154,16 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
         VetoMessage storedMsgObject = bill.getVetoMessages().get(id);
 
-        assertTrue(storedMsgObject.getMemoText().equals(vetoMessage.getMemoText()));
-        assertTrue(storedMsgObject.getBillId().equals(vetoMessage.getBillId()));
-        assertTrue(storedMsgObject.getSigner().equals(vetoMessage.getSigner()));
-        assertTrue(storedMsgObject.getType().equals(vetoMessage.getType()));
-        assertTrue(storedMsgObject.getSignedDate().equals(vetoMessage.getSignedDate()));
-        assertTrue(storedMsgObject.getYear() ==vetoMessage.getYear());
-        assertTrue(storedMsgObject.getChapter() == vetoMessage.getChapter());
-        assertTrue(storedMsgObject.getBillPage() == vetoMessage.getBillPage());
-        assertTrue(storedMsgObject.getLineEnd() == vetoMessage.getLineEnd());
-        assertTrue(storedMsgObject.getLineStart() == vetoMessage.getLineStart());
+        assertEquals(vetoMessage.getMemoText(), storedMsgObject.getMemoText());
+        assertEquals(vetoMessage.getBillId(), storedMsgObject.getBillId());
+        assertEquals(vetoMessage.getSigner(), storedMsgObject.getSigner());
+        assertEquals(vetoMessage.getType(), storedMsgObject.getType());
+        assertEquals(vetoMessage.getYear(), storedMsgObject.getYear());
+        assertEquals(vetoMessage.getSignedDate(), storedMsgObject.getSignedDate());
+        assertEquals(vetoMessage.getChapter(), storedMsgObject.getChapter());
+        assertEquals(vetoMessage.getBillPage(), storedMsgObject.getBillPage());
+        assertEquals(vetoMessage.getLineEnd(), storedMsgObject.getLineEnd());
+        assertEquals(vetoMessage.getLineStart(), storedMsgObject.getLineStart());
     }
 
     @Test
