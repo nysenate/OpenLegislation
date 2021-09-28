@@ -116,7 +116,7 @@
     <flying-saucer.version>9.1.18</flying-saucer.version>
     <guava.version>29.0-jre</guava.version>
     <guava.jackson.version>2.9.10</guava.jackson.version>
-    <http-client.version>4.5.10</http-client.version>
+    <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.12.1</jackson.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.11.1</jsoup.version>
