@@ -134,7 +134,7 @@ public class CommitteeDaoIT extends BaseTests {
         assertEquals(NUM_INITIAL_COMMITTEE_VERSIONS, sessionIds.size());
         for (CommitteeSessionId id : sessionIds) {
             for (Committee c : committeeDao.getCommitteeHistory(id))
-                assertNull(c.getReformed());
+                assertTrue(c.getReformed() == null || c.getReformed().getYear() > 2013);
         }
     }
 
