@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import testing_utils.TimeUtils;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -28,11 +29,12 @@ public class SqlCalendarDaoIT extends BaseTests {
     private SqlCalendarDao calendarDao;
     private int calSequenceNo = 0;
 
-    @Test
     public void getCalendarTest() {
         Calendar cal = CalendarUtils.createGenericCalendar(new CalendarId(calSequenceNo, LocalDate.now().getYear()));
         putCalendar(cal);
-        assertEquals(cal, calendarDao.getCalendar(cal.getId()));
+        cal.setPublishedDateTime(TimeUtils.roundToMicroseconds(cal.getPublishedDateTime()));
+        Calendar actualCal = calendarDao.getCalendar(cal.getId());
+        assertEquals(cal, actualCal);
     }
 
     @Test
@@ -41,8 +43,11 @@ public class SqlCalendarDaoIT extends BaseTests {
         List<CalendarActiveList> singletonList = CalendarUtils.createActiveLists(5, 1, calId);
         Calendar cal = CalendarUtils.createCalendar(calId, singletonList, new HashSet<>());
         putCalendar(cal);
-        CalendarActiveList getList = calendarDao.getActiveList(new CalendarActiveListId(calId, singletonList.get(0).getSequenceNo()));
-        assertEquals(singletonList.get(0), getList);
+        CalendarActiveList expectedList = singletonList.get(0);
+        expectedList.setReleaseDateTime(TimeUtils.roundToMicroseconds(expectedList.getReleaseDateTime()));
+        CalendarActiveList actualList = calendarDao.getActiveList(new CalendarActiveListId
+                (calId, expectedList.getSequenceNo()));
+        assertEquals(expectedList, actualList);
     }
 
     @Test
