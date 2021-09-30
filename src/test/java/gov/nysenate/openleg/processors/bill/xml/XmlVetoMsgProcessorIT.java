@@ -34,8 +34,7 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
         VetoMessage vetoMessage = new VetoMessage();
         vetoMessage.setType(VetoType.STANDARD);
-        vetoMessage.setMemoText("\n" +
-                " \n" +
+        vetoMessage.setMemoText(" \n" +
                 "                         VETO MESSAGE - No. 231\n" +
                 " \n" +
                 "TO THE ASSEMBLY:\n" +
@@ -103,8 +102,7 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
         vetoMessage.setBillId(new BaseBillId("A9000",2016));
 
-        vetoMessage.setMemoText("\n" +
-                " \n" +
+        vetoMessage.setMemoText(" \n" +
                 "                  STATE OF NEW YORK--EXECUTIVE CHAMBER\n" +
                 " \n" +
                 "TO THE ASSEMBLY:                                        April 13, 2016\n" +
