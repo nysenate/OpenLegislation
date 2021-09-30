@@ -32,12 +32,12 @@ public class SqlPublicHearingQuery implements BasicSqlQuery {
             "VALUES (:filename, :date, :title, :address, :text, :startTime, :endTime)",
 
         SELECT_HEARING_UPDATES =
-            "SELECT filename, modified_date_time, COUNT(*) OVER() as total_updated " +
+            "SELECT id, filename, modified_date_time, COUNT(*) OVER() as total_updated " +
             "FROM " + TABLE + "\n" +
             "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime";
 
     @Override
     public String getSql() {
-        return null;
+        return "";
     }
 }
