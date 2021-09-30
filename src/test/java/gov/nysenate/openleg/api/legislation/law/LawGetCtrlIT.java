@@ -52,7 +52,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         ImmutableList<LawNodeView> nodes = tree.getDocuments().getDocuments().getItems();
         for (int i = 1; i <= 4; i++) {
             assertEquals(Integer.toString(i), nodes.get(i-1).getFromSection());
-            assertEquals(Integer.toString(i), nodes.get(i-1).getToSection());;
+            assertEquals(Integer.toString(i), nodes.get(i-1).getToSection());
         }
 
         genericTree = (ViewObjectResponse<?>)testCtrl.getLawTree(CMA.name(), null, "R1", null, true);

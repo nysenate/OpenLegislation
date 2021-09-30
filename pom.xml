@@ -4,7 +4,7 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.7</version>
+  <version>3.8</version>
 
   <!-- NY Senate Maven Repository -->
 
@@ -107,26 +107,26 @@
   <properties>
     <c3p0.version>0.9.5.4</c3p0.version>
     <commons-cli.version>1.4</commons-cli.version>
-    <commons-io.version>2.6</commons-io.version>
+    <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
     <commons-text.version>1.8</commons-text.version>
     <commons-validator.version>1.6</commons-validator.version>
     <eh-cache.version>2.10.6</eh-cache.version>
     <elasticsearch.version>7.3.2</elasticsearch.version>
     <flying-saucer.version>9.1.18</flying-saucer.version>
-    <guava.version>29.0-jre</guava.version>
+    <guava.version>31.0-jre</guava.version>
     <guava.jackson.version>2.9.10</guava.jackson.version>
-    <http-client.version>4.5.10</http-client.version>
+    <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.12.1</jackson.version>
     <jbcrypt.version>0.4</jbcrypt.version>
-    <jsoup.version>1.11.1</jsoup.version>
+    <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.1</junit.version>
     <log4j.version>2.13.3</log4j.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <postgres-jdbc.version>42.2.8</postgres-jdbc.version>
-    <shiro.version>1.5.0</shiro.version>
+    <shiro.version>1.8.0</shiro.version>
     <slf4j.version>1.7.28</slf4j.version>
     <spring.version>5.3.5</spring.version>
     <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
