@@ -176,7 +176,7 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n            STATE OF NEW YORK"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "            STATE OF NEW YORK"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -190,7 +190,7 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\nSTATE OF NEW YORK\nCommends the city of Albany"));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "STATE OF NEW YORK\nCommends the city of Albany"));
         BillText expected = new BillText(diffs);
         assertEquals(expected, actual);
     }
@@ -209,7 +209,6 @@ public class BillTextDiffProcessorTest {
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n\n"));
         diffs.add(new TextDiff(TextDiffType.HEADER, "                STATE OF NEW YORK"));
         diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n\n"));
         diffs.add(new TextDiff(TextDiffType.BOLD, "Commends"));
@@ -225,26 +224,26 @@ public class BillTextDiffProcessorTest {
     }
 
     @Test
-    public void onlyOneEmptyLineBetweenPages() {
+    public void noEmptyLinesBetweenPages() {
         String text = "<PRE>\n" +
                 "         EXPLANATION--Matter in <B><U>italics</U></B> (underscored) is new; matter in brackets\n" +
                 "                              [<B><S> </S></B>] is old law to be omitted.\n" +
                 "                                                                   LBD03867-09-9\n" +
-                "</PRE><P CLASS=\"brk\"><PRE WIDTH=\"127\">\n" + // This should be a single empty line.
+                "</PRE><P CLASS=\"brk\"><PRE WIDTH=\"127\">\n" + // A new page is indicated by PAGE_BREAK diff, no need for extra new lines.
                 "A. 1133--D                          2\n" +
                 "\n" +
                 "1  provision  in  any section contained within a Part, including the effec-";
         BillText actual = textProcessor.processBillText(text);
 
         List<TextDiff> diffs = new ArrayList<>();
-        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n         EXPLANATION--Matter in "));
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "         EXPLANATION--Matter in "));
         diffs.add(new TextDiff(TextDiffType.ADDED, "italics"));
         diffs.add(new TextDiff(TextDiffType.UNCHANGED, " (underscored) is new; matter in brackets\n                              ["));
         diffs.add(new TextDiff(TextDiffType.REMOVED, " "));
         diffs.add(new TextDiff(TextDiffType.UNCHANGED, "] is old law to be omitted.\n" +
                 "                                                                   LBD03867-09-9\n"));
         diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
-        diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n" +
+        diffs.add(new TextDiff(TextDiffType.UNCHANGED,
                 "A. 1133--D                          2\n" +
                 "\n" +
                 "1  provision  in  any section contained within a Part, including the effec-"));
@@ -271,7 +270,6 @@ public class BillTextDiffProcessorTest {
                 "    55  this chapter.\n"));
         diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
         diffs.add(new TextDiff(TextDiffType.UNCHANGED,
-                "\n" +
                 "        S. 2143--A                          3\n" +
                 " \n" +
                 "     1    (3)  Any  gunsmith  who  fails  to  comply with the provisions of this\n" +
@@ -316,7 +314,6 @@ public class BillTextDiffProcessorTest {
         diffs.add(new TextDiff(TextDiffType.UNCHANGED, "\n"));
         diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
         diffs.add(new TextDiff(TextDiffType.UNCHANGED,
-                "\n" +
                 "                                           449                        12654-09-0\n" +
                 "\n                              "));
         diffs.add(new TextDiff(TextDiffType.REMOVED, "DEPARTMENT OF MENTAL HYGIENE"));

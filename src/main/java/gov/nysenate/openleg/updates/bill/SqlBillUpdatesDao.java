@@ -20,11 +20,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.updates.bill.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_DIGESTS;
-import static gov.nysenate.openleg.updates.bill.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_TOKENS;
-import static gov.nysenate.openleg.updates.bill.SqlBillUpdatesQuery.SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL;
-import static gov.nysenate.openleg.legislation.bill.BillUpdateField.*;
 import static gov.nysenate.openleg.common.dao.SqlTable.*;
+import static gov.nysenate.openleg.legislation.bill.BillUpdateField.*;
+import static gov.nysenate.openleg.updates.bill.SqlBillUpdatesQuery.*;
 
 @Repository
 public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
@@ -45,7 +43,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         }
     }
 
-    private final static Map<BillUpdateField, BillUpdateTable> updateMappings = new HashMap<>();
+    private static final Map<BillUpdateField, BillUpdateTable> updateMappings = new HashMap<>();
     static {
         updateMappings.put(PUBLISHED_BILL, new BillUpdateTable(BILL, "published_date_time"));
         updateMappings.put(ACT_CLAUSE, new BillUpdateTable(BILL_AMENDMENT, "act_clause"));

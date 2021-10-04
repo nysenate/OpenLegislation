@@ -4,20 +4,16 @@ import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static gov.nysenate.openleg.common.dao.SqlQueryUtils.getOrderByClause;
 import static gov.nysenate.openleg.common.dao.SqlQueryUtils.getSqlWithSchema;
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class SqlQueryUtilsTest
-{
-    private static final Logger logger = LoggerFactory.getLogger(SqlQueryUtilsTest.class);
+public class SqlQueryUtilsTest {
 
     @Test
-    public void testGetSqlWithSchema() throws Exception {
+    public void testGetSqlWithSchema() {
         final String select = "SELECT 1 FROM ";
         final String table = "test";
         final String template = select + "${schema}." + table;
@@ -41,12 +37,12 @@ public class SqlQueryUtilsTest
     }
 
     @Test
-    public void testGetLimitOffsetClause() throws Exception {
+    public void testGetLimitOffsetClause() {
 
     }
 
     @Test
-    public void testGetOrderByClause() throws Exception {
+    public void testGetOrderByClause() {
         assertEquals("ORDER BY id DESC, name DESC", getOrderByClause(
             new OrderBy("id", SortOrder.DESC, "name", SortOrder.DESC)).trim());
         assertEquals("ORDER BY id DESC", getOrderByClause(

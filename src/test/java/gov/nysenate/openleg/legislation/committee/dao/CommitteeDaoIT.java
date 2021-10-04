@@ -10,6 +10,7 @@ import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import testing_utils.TestData;
+import testing_utils.TimeUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -128,12 +129,12 @@ public class CommitteeDaoIT extends BaseTests {
 
     @Test
     public void getAllSessionIdsTest() {
-        List<CommitteeSessionId> sessionIds = committeeDao.getAllSessionIds();
-        assertEquals(NUM_INITIAL_COMMITTEE_VERSIONS, sessionIds.stream().filter(
-                s -> s.getSession().getYear() <= 2013).count());
+        List<CommitteeSessionId> sessionIds = committeeDao.getAllSessionIds().stream().filter(
+                s -> s.getSession().getYear() <= 2013).collect(Collectors.toList());
+        assertEquals(NUM_INITIAL_COMMITTEE_VERSIONS, sessionIds.size());
         for (CommitteeSessionId id : sessionIds) {
             for (Committee c : committeeDao.getCommitteeHistory(id))
-                assertNull(c.getReformed());
+                assertTrue(c.getReformed() == null || c.getReformed().getYear() > 2013);
         }
     }
 
@@ -145,7 +146,7 @@ public class CommitteeDaoIT extends BaseTests {
         Committee oldEthics = committeeDao.getCommittee(new CommitteeId(Chamber.SENATE, "Ethics"));
         oldEthics.setYear(LocalDate.now().getYear());
         oldEthics.setSession(SessionYear.current());
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = TimeUtils.roundToMicroseconds(LocalDateTime.now());
         oldEthics.setPublishedDateTime(now);
         committeeDao.updateCommittee(oldEthics, null);
         Committee newEthics = committeeDao.getCommittee(oldEthics.getId());

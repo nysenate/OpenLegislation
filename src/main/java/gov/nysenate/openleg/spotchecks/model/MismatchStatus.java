@@ -22,31 +22,24 @@ public enum MismatchStatus {
     }
 
     public LocalDateTime getObservedStartDateTime(LocalDate date) {
-        switch(this) {
-            case NEW:
-            case RESOLVED:
-                return date.atStartOfDay();
-            default:
-                return SessionYear.of(date.getYear()).getStartDateTime();
-        }
+        return switch (this) {
+            case NEW, RESOLVED -> date.atStartOfDay();
+            default -> SessionYear.of(date.getYear()).getStartDateTime();
+        };
     }
 
     public LocalDateTime getFirstSeenStartDateTime(LocalDate date) {
-        switch(this) {
-            case NEW:
-                return date.atStartOfDay();
-            default:
-                return SessionYear.of(date.getYear()).getStartDateTime();
+        if (this == NEW) {
+            return date.atStartOfDay();
         }
+        return SessionYear.of(date.getYear()).getStartDateTime();
     }
 
     public LocalDateTime getFirstSeenEndDateTime(LocalDate date) {
-        switch(this) {
-            case EXISTING:
-                return date.minusDays(1).atTime(23, 59, 59);
-            default:
-                return date.atTime(23, 59, 59);
+        if (this == EXISTING) {
+            return date.minusDays(1).atTime(23, 59, 59);
         }
+        return date.atTime(23, 59, 59);
     }
 
     public LocalDateTime getObservedEndDateTime(LocalDate date) {

@@ -56,7 +56,7 @@
              total-items="transcriptSearch.paginate.totalItems"
              current-page="transcriptSearch.paginate.currPage"
              pagination-id="tx-paginate"
-             ng-href="${ctxPath}/transcripts/{{transcriptSearch.type}}/{{(transcriptSearch.type == 'session') ? tx.result.dateTime : tx.result.filename}}/"
+             ng-href="${ctxPath}/transcripts/{{transcriptSearch.type}}/{{(transcriptSearch.type == 'session') ? tx.result.dateTime : tx.result.id}}/"
              class="result-link transcript-result-link">
             <div ng-if="transcriptSearch.type == 'session'">
               <h4>
@@ -67,7 +67,7 @@
             <div ng-if="transcriptSearch.type == 'hearing'">
               <h4>
                 <span class="blue3">{{tx.result.date | moment:'LL'}}</span> -
-                <span class="text-normal">{{tx.result.filename}}</span>
+                <span class="text-normal">{{tx.result.title}}</span>
               </h4>
             </div>
             <pre class="tx-result-highlight" ng-if="tx.highlights.hasFields">

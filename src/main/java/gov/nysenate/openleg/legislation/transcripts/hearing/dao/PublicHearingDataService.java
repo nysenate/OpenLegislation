@@ -3,7 +3,6 @@ package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingNotFoundEx;
 
@@ -13,10 +12,17 @@ public interface PublicHearingDataService
 {
     /**
      * Retrieves a {@link PublicHearing} instance from a {@link PublicHearingId}.
-     * @param publicHearingId
+     * @param publicHearingId primary key for hearing.
      * @return
      */
     PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx;
+
+    /**
+     * Used to maintain backward compatibility after hearing ID changes.
+     * @param filename of a public hearing.
+     * @return the relevant hearing.
+     */
+    PublicHearing getPublicHearing(String filename) throws PublicHearingNotFoundEx;
 
     /**
      * Retrieves a List of {@link PublicHearingId}.
@@ -28,10 +34,7 @@ public interface PublicHearingDataService
     /**
      * Saves a {@link PublicHearing} to the backing store.
      * The PublicHearing is inserted if it is a new instance, Updated otherwise.
-     * @param publicHearing
-     * @param publicHearingFile
-     * @param postUpdateEvent
      */
-    void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent);
+    void savePublicHearing(PublicHearing publicHearing, boolean postUpdateEvent);
 
 }

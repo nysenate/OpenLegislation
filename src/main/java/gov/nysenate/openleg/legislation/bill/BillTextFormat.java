@@ -6,6 +6,5 @@ package gov.nysenate.openleg.legislation.bill;
 public enum BillTextFormat {
     PLAIN,
     HTML,
-    TEMPLATE,
-    ;
+    TEMPLATE
 }

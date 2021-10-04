@@ -20,8 +20,8 @@ public enum OpenLegRole
     SEN_SITE_API_USER(Collections.singletonList("senatesite:*:*"))
     ;
 
-    private List<String> permissions;
-    private List<Permission> wildcardPermissions;
+    private final List<String> permissions;
+    private final List<Permission> wildcardPermissions;
 
     OpenLegRole(List<String> permissions) {
         this.permissions = permissions;

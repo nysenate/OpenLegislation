@@ -77,7 +77,7 @@ public class LawTitleParser {
     private static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
         String realID = getRealID(lawDocInfo, bodyText);
         String typeLabel = lawDocInfo.getDocType().name();
-        String label = String.format(NON_SECTION_PREFIX_PATTERN, typeLabel, realID);
+        String label = NON_SECTION_PREFIX_PATTERN.formatted(typeLabel, realID);
         String title = bodyText.replaceAll("\\* NB.*?\\\\n ", "").replaceFirst(".*?" + label, "")
                 // Removes division names that might come after, and converts
                 // whitespace into single spaces.
@@ -196,7 +196,7 @@ public class LawTitleParser {
         Matcher idMatch = ID_NUM_PATTERN.matcher(docTypeId);
         if (!bodyText.isEmpty() && idMatch.matches()) {
             String options = NumberConversionUtils.allOptions(idMatch.group(1));
-            Pattern docTypePattern = Pattern.compile(String.format(DOC_TYPE_STRING, lawDocInfo.getDocType().name(), options));
+            Pattern docTypePattern = Pattern.compile(DOC_TYPE_STRING.formatted(lawDocInfo.getDocType().name(), options));
             Matcher docTypeMatcher = docTypePattern.matcher(bodyText.toUpperCase());
             if (docTypeMatcher.matches())
                 return docTypeMatcher.group(1) + idMatch.group(2);
@@ -249,7 +249,7 @@ public class LawTitleParser {
         String trueBeforeTitlePattern = BEFORE_TITLE_PATTERN + (isUnconsolidated(lawId) ? "" : SUBSECTION + "?");
         // EPT laws end their titles with a newline (\n).
         String trueTitlePattern = TITLE_PATTERN.replace(".", lawId.equals(EPT.name()) ? "\\\\" : ".");
-        String fullPattern = String.format(trueBeforeTitlePattern, id) + trueTitlePattern + ".*";
+        String fullPattern = trueBeforeTitlePattern.formatted(id) + trueTitlePattern + ".*";
         return Pattern.compile(fullPattern);
     }
 }

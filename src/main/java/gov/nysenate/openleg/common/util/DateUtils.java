@@ -3,8 +3,6 @@ package gov.nysenate.openleg.common.util;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import org.postgresql.util.PGInterval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -13,29 +11,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-public abstract class DateUtils
-{
-    private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
-
+public abstract class DateUtils {
     /** --- Date Formats --- */
 
-    public final static DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd"),
+    public static final DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd"),
             LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy"),
             LRS_DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd"),
             LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'"),
-            LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
-
-    public final static DateTimeFormatter PUBLIC_WEBSITE_DUMP_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
-    public final static DateTimeFormatter BASIC_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
-    public final static Pattern BASIC_ISO_DATE_TIME_REGEX = Pattern.compile("\\d{8}T\\d{6}");
+            LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a"),
+            PUBLIC_WEBSITE_DUMP_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+            BASIC_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+    public static final Pattern BASIC_ISO_DATE_TIME_REGEX = Pattern.compile("\\d{8}T\\d{6}");
 
     /** --- Reference Dates --- */
 
-    public final static LocalDate LONG_AGO = LocalDate.of(1970, 1, 1);
-    public final static LocalDate THE_FUTURE = LocalDate.of(2999, 12, 31);
-    public final static Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
-    public final static Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
+    public static final LocalDate LONG_AGO = LocalDate.of(1970, 1, 1),
+            THE_FUTURE = LocalDate.of(2999, 12, 31);
+    public static final Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
+    public static final Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
 
     /** --- Static Methods --- */
 

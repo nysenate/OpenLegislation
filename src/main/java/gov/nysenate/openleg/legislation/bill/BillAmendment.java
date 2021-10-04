@@ -6,6 +6,7 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -16,6 +17,7 @@ import java.util.*;
  */
 public class BillAmendment implements Serializable, Cloneable
 {
+    @Serial
     private static final long serialVersionUID = -2020934234685630361L;
 
     /** The parent base bill id. */

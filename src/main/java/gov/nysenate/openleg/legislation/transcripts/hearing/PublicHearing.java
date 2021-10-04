@@ -1,72 +1,56 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
-import com.google.common.base.Splitter;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Set;
 
 public class PublicHearing extends BaseLegislativeContent {
-    /** The Public Hearing id. */
-    private final PublicHearingId id;
-
-    /** The title of the public hearing. */
-    private String title;
-
-    /** The date of the public hearing. */
+    // Uniquely identifies a hearing, but may not be available if the hearing is not in the database yet.
+    private PublicHearingId id;
+    private final String filename, text, title, address;
     private final LocalDate date;
+    private final LocalTime startTime, endTime;
 
-    /** The location of this Public Hearing. */
-    private String address;
+    /** The {@link HearingHost}s holding this PublicHearing. */
+    private Set<HearingHost> hosts;
 
-    /** The {@link PublicHearingCommittee}
-     * holding this PublicHearing. */
-    private List<PublicHearingCommittee> committees;
-
-    /** The raw text of the Public Hearing. */
-    private final String text;
-
-    /** The start time of the public hearing. */
-    private LocalTime startTime;
-
-    /** The end time of the public hearing. */
-    private LocalTime endTime;
-
-    /** --- Constructor --- */
-
-    public PublicHearing(PublicHearingId publicHearingId, LocalDate date, String text) {
-        this.id = publicHearingId;
+    public PublicHearing(String filename, String text, String title, String address,
+                         LocalDate date, LocalTime startTime, LocalTime endTime) {
+        this.filename = filename;
         this.date = date;
         this.text = text;
+        this.title = title;
+        this.address = address;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.year = this.date.getYear();
         this.session = SessionYear.of(this.getYear());
     }
 
-    /**
-     * Groups public hearing text into pages, which are lists of lines..
-     * @param fullText of the hearing.
-     */
-    public static List<List<String>> getPages(String fullText) {
-        fullText = fullText.replaceAll("\r\n", "\n");
-        return Splitter.on("\f").splitToList(fullText).stream().map(PublicHearing::getLines)
-                .filter(page -> !page.isEmpty()).collect(Collectors.toList());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PublicHearing that = (PublicHearing) o;
+        return Objects.equals(id, that.id) && Objects.equals(filename, that.filename) &&
+                Objects.equals(text, that.text) && Objects.equals(title, that.title) &&
+                Objects.equals(address, that.address) && Objects.equals(date, that.date) &&
+                Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime) &&
+                Objects.equals(hosts, that.hosts);
     }
 
-    private static List<String> getLines(String page) {
-        List<String> ret = Splitter.on("\n").splitToList(page)
-                .stream().dropWhile(String::isEmpty).collect(Collectors.toList());
-        // Drops empty Strings from the end of the list as well.
-        Collections.reverse(ret);
-        ret = ret.stream().dropWhile(String::isEmpty).collect(Collectors.toList());
-        Collections.reverse(ret);
-        return ret;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, filename, text, title, address, date, startTime, endTime, hosts);
     }
 
-    /** --- Basic Getters/Setters --- */
+    public void setId(PublicHearingId id) {
+        this.id = id;
+    }
 
     public PublicHearingId getId() {
         return id;
@@ -84,39 +68,27 @@ public class PublicHearing extends BaseLegislativeContent {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public Set<HearingHost> getHosts() {
+        return hosts;
     }
 
-    public List<PublicHearingCommittee> getCommittees() {
-        return committees;
-    }
-
-    public void setCommittees(List<PublicHearingCommittee> committees) {
-        this.committees = committees;
+    public void setHosts(Set<HearingHost> hosts) {
+        this.hosts = hosts;
     }
 
     public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
     public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
+    public String getFilename() {
+        return filename;
     }
 }

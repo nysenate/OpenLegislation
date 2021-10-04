@@ -43,11 +43,12 @@ public class LawPdfCtrl extends BaseCtrl {
      */
     @RequestMapping("/{documentId}")
     public ResponseEntity<byte[]> getLawPdf(@PathVariable String documentId,
-                                                   @RequestParam(defaultValue = "false") boolean full)
+                                            @RequestParam(defaultValue = "false") boolean full)
             throws IOException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
         if (!matcher.matches())
-            throw new InvalidRequestParamEx(documentId, "documentId", "String", "Document ID must start with a 3 letter law ID.");
+            throw new InvalidRequestParamEx(documentId, "documentId", "String",
+                    "Document ID must start with a 3 letter law ID.");
         LawTree lawTree = lawData.getLawTree(matcher.group(1));
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())

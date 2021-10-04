@@ -8,7 +8,7 @@ public class TranscriptInfoView extends TranscriptIdView
     protected String location;
 
     public TranscriptInfoView(Transcript transcript) {
-        super((transcript != null) ? transcript.getTranscriptId() : null);
+        super((transcript != null) ? transcript.getId() : null);
         if (transcript != null) {
             this.sessionType = transcript.getSessionType();
             this.location = transcript.getLocation();

@@ -5,14 +5,14 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 
 public class PublicHearingIdView implements ViewObject
 {
-    private String filename;
+    private final int id;
 
     public PublicHearingIdView(PublicHearingId publicHearingId) {
-        this.filename = publicHearingId.getFileName();
+        this.id = publicHearingId.getId();
     }
 
-    public String getFilename() {
-        return filename;
+    public int getId() {
+        return id;
     }
 
     @Override

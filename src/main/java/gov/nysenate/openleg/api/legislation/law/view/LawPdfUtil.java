@@ -60,7 +60,7 @@ public class LawPdfUtil {
         if (doc.getDocType() == LawDocumentType.CHAPTER)
             toMatch = getChapterPattern(doc.getLawId());
         else {
-            String titleMatch = NON_CHAP_TITLE.formatted(doc.getTitle());
+            String titleMatch = NON_CHAP_TITLE.formatted(doc.getTitle().replaceAll("^[)]|[(][^)]*$|^[^(]*[)]|[.]{3}$", ""));
             // Newline characters instead of spaces could split up the Strings we're looking for.
             toMatch = titleMatch.replaceAll(" ", "[ \n]+");
             if (doc.getDocType() != LawDocumentType.SECTION)

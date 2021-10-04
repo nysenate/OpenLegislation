@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
@@ -50,7 +51,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * Base class for Elastic Search layer classes to inherit common functionality from.
+ * Base class for Elasticsearch layer classes to inherit common functionality from.
  */
 public abstract class ElasticBaseDao
 {
@@ -335,6 +336,19 @@ public abstract class ElasticBaseDao
      */
     protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
         return new HashMap<>();
+    }
+
+    /**
+     * Ensures that any changes to indices are actually show, which is usually done automatically once per second.
+     */
+    public void refreshIndices() {
+        try {
+            String[] indices = getIndices().toArray(new String[0]);
+            searchClient.indices().refresh(new RefreshRequest(indices), RequestOptions.DEFAULT);
+        }
+        catch (IOException ex) {
+            throw new ElasticsearchException("Failed to refresh these indices: " + getIndices());
+        }
     }
 
     /**

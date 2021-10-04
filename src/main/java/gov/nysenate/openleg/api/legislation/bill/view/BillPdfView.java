@@ -122,7 +122,7 @@ public class BillPdfView extends BasePdfView {
     private void writePlainTextPdf(BillId billId, String fullText) throws IOException {
         List<List<String>> pages = billId.getBillType().isResolution() ?
                 BillTextUtils.getResolutionPages(fullText) : BillTextUtils.getBillPages(fullText);
-        if (pages.get(0).isEmpty())
+        if (pages.isEmpty())
             pages = Collections.singletonList(Collections.singletonList(
                     "No full text available for " + billId));
         float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;

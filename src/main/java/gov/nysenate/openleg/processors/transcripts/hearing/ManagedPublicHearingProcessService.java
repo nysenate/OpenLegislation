@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingFileDao;
+import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingFileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +13,21 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Service
 public class ManagedPublicHearingProcessService implements PublicHearingProcessService
 {
-    private static Logger logger = LoggerFactory.getLogger(ManagedPublicHearingProcessService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagedPublicHearingProcessService.class);
 
     @Autowired
     private PublicHearingFileDao publicHearingFileDao;
 
     @Autowired
-    private PublicHearingParser publicHearingParser;
+    private PublicHearingDataService hearingDataService;
 
     /** --- Implemented Methods --- */
 
@@ -54,9 +59,8 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
                 publicHearingFiles = publicHearingFileDao.getIncomingPublicHearingFiles(LimitOffset.FIFTY);
                 for (PublicHearingFile file : publicHearingFiles) {
                     file.setPendingProcessing(true);
-                    file.setArchived(false);
-                    publicHearingFileDao.updatePublicHearingFile(file);
                     publicHearingFileDao.archivePublicHearingFile(file);
+                    publicHearingFileDao.updatePublicHearingFile(file);
                     numCollated++;
                 }
             }
@@ -65,7 +69,7 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
         catch (IOException ex) {
             logger.error("Error retrieving public hearing files during collation.", ex);
         }
-
+        logger.debug("Collated {} hearing files.", numCollated);
         return numCollated;
     }
 
@@ -78,11 +82,14 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
     /** {@inheritDoc} */
     @Override
     public int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
+        SortedMap<PublicHearingFile, PublicHearing> processed = new TreeMap<>(
+                Comparator.comparing(PublicHearingFile::isManualFix)
+                        .thenComparing(PublicHearingFile::getFileName));
         int processCount = 0;
         for (PublicHearingFile file : publicHearingFiles) {
             try {
-                logger.info("Processing PublicHearingFile: " + file.getFileName());
-                publicHearingParser.process(file);
+                logger.info("Processing public hearing file {}", file.getFileName());
+                processed.put(file, PublicHearingParser.process(file));
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
@@ -93,6 +100,9 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
                 logger.error("Error reading from PublicHearingFile: " + file.getFileName(), ex);
             }
         }
+        logger.info("Saving {} public hearings", processCount);
+        for (var hearing : processed.values())
+            hearingDataService.savePublicHearing(hearing, true);
         return processCount;
     }
 

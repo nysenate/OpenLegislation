@@ -10,51 +10,32 @@ import static org.junit.Assert.assertEquals;
 @Category(UnitTest.class)
 public class PublicHearingTitleParserTest {
     @Test
-    public void basicTitleParses() {
-        testTitle("03-12-14 Roundtable on the Compassionate Care Act_Savino_FINAL.txt",
+    public void basicTest() {
+        testTitle("03-12-14 Compassionate Care Act Test.txt",
                 "ROUNDTABLE DISCUSSION ON THE COMPASSIONATE CARE ACT");
     }
 
     @Test
-    public void forumTownHallTitleParses() {
-        testTitle("02-09-12 ChildCareHearing_Final.txt",
-                "FORUM/TOWN HALL: HUMAN SERVICES FORUM ON THE CURRENT AND FUTURE " +
-                          "ISSUES AND CONCERNS OF HUMAN SERVICES ADMINISTRATORS, ADVOCATES AND CLIENTS");
-    }
-
-    @Test
-    public void newYorkStateForumTownHallTitleParses() {
-        testTitle("05-18-11 ValeskyAgingCommitteeRoundtableFINAL.txt",
+    public void forumTest() {
+        testTitle("05-18-11 Valesky Aging Test.txt",
                 "NEW YORK STATE FORUM/TOWN HALL ROUNDTABLE ON THE SAGE COMMISSION'S " +
                           "PROPOSAL TO MERGE THE NYS OFFICE FOR THE AGING WITH THE DEPARTMENT OF HEALTH");
     }
 
     @Test
-    public void titleFoundIfCommitteeMissing() {
-        testTitle("01-03-13 HurricaneSandy_NYS TaskForce Roundtable_Final.txt",
+    public void noHostsTest() {
+        testTitle("01-03-13 Hurricane Sandy Test.txt",
                 "ROUNDTABLE DISCUSSION HELD BY THE NEW YORK STATE SENATE " +
                           "BIPARTISAN TASK FORCE FOR \"HURRICANE SANDY\" RECOVERY");
     }
 
     @Test
-    public void conferenceTitleParses() {
-        testTitle("02-28-13 2013 RevenueConsensusConference_Final.txt",
-                "NEW YORK STATE 2013 ECONOMIC AND REVENUE CONSENSUS FORECASTING CONFERENCE");
-    }
-
-    @Test
-    public void onHeroinEpidemicParses() {
-        testTitle("02-23-2016 NYS Task Force Heroin_Penn Yan Final.txt",
-                "TO EXAMINE THE ISSUES FACING COMMUNITIES IN THE WAKE OF INCREASED HEROIN AND OPIOID ABUSE");
-    }
-
-    @Test
-    public void jointLegislativeHearingParses() {
-        testTitle("1-30-20 Human Services Transcript.txt",
+    public void jointHearingTest() {
+        testTitle("1-30-20 Human Services Test.txt",
                 "JOINT LEGISLATIVE HEARING In the Matter of the 2020-2021 EXECUTIVE BUDGET ON HUMAN SERVICES");
     }
 
-    private void testTitle(String filename, String expected) {
+    private static void testTitle(String filename, String expected) {
         PublicHearing hearing = PublicHearingTestHelper.getHearingFromFilename(filename);
         assertEquals(expected, hearing.getTitle());
     }

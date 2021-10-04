@@ -1,18 +1,18 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.api.search.view.SearchResultView;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
-import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ListViewResponse;
+import gov.nysenate.openleg.api.search.view.SearchResultView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
-import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -61,7 +61,7 @@ public class TranscriptSearchCtrl extends BaseCtrl
      *  Search all transcripts in a given year: (GET) /api/3/transcripts/{year}/search
      *  @see #globalSearch see globalSearch for request params.
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/search")
+    @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse yearSearch(@PathVariable int year,
                                    @RequestParam(required = true) String term,
                                    @RequestParam(defaultValue = "") String sort,

@@ -3,16 +3,11 @@ package gov.nysenate.openleg.legislation.committee.dao;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.*;
+import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -248,7 +243,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /** {@inheritDoc} */
     @Override
     public void saveCommittee(Committee committee, LegDataFragment legDataFragment) {
-        if(committee==null) {
+        if (committee == null) {
             throw new IllegalArgumentException("Committee cannot be null.");
         }
         // Update the database.

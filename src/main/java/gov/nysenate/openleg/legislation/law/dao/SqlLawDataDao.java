@@ -3,9 +3,9 @@ package gov.nysenate.openleg.legislation.law.dao;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.processors.law.LawProcessor;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
+import gov.nysenate.openleg.processors.law.LawProcessor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +72,8 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         return lawTree;
     }
 
+
+    // TODO: during testing, this query takes 12 seconds on average.
     @Override
     public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()

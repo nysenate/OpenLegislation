@@ -4,6 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -14,6 +15,7 @@ import java.util.Objects;
  */
 public class BillAction implements Serializable, Comparable<BillAction>
 {
+    @Serial
     private static final long serialVersionUID = -508975280380827827L;
 
     /** Identifies the bill this action was taken on. */

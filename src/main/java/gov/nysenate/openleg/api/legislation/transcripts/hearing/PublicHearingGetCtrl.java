@@ -32,8 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class PublicHearingGetCtrl extends BaseCtrl
-{
+public class PublicHearingGetCtrl extends BaseCtrl {
     @Autowired
     private PublicHearingDataService hearingData;
 
@@ -41,88 +40,74 @@ public class PublicHearingGetCtrl extends BaseCtrl
     private PublicHearingSearchService hearingSearch;
 
     /**
-     * Public Hearing Listing API
-     * --------------------------
-     *
-     * Retrieve all public hearings: (GET) /api/3/hearings/
-     * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
-     *                      full - If true, the full public hearing view is returned. Otherwise just its filename.
-     *                      limit - Limit the number of results
-     *                      offset - Start results from an offset.
-     *
-     * Expected Output: List of PublicHearingView or PublicHearingIdView.
-     */
-    @RequestMapping(value = "")
-    public BaseResponse getAllHearings(@RequestParam(defaultValue = "date:desc") String sort,
-                                       @RequestParam(defaultValue = "false") boolean full,
-                                       WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(sort, limOff);
-        return ListViewResponse.of(results.getResults().stream().map(r ->
-                        (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                                : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
-    }
-
-    /**
      * Public Hearing Listing API.
      * --------------------------
      *
      * Retrieve public hearings for a year: (GET) /api/3/hearings/{year}
+     * Retrieve all public hearings: (GET) /api/3/hearings/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
-     *                      full - If true, the full public hearing view is returned. Otherwise just its filename.
+     *                      full - If true, the full public hearing view is returned. Otherwise just its id.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      *
      * Expected Output: List of PublicHearingIdView or PublicHearingView.
      */
-    @RequestMapping(value = "/{year:\\d{4}}")
-    public BaseResponse getHearingsByYear(@PathVariable int year,
+    @RequestMapping(value = "/{strYear:\\d{4}|^$}")
+    public BaseResponse getHearingsByYear(@PathVariable String strYear,
                                           @RequestParam(defaultValue = "date:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest)
                                           throws SearchException {
+        // A null year will return all hearings.
+        Integer year = strYear.isEmpty() ? null : Integer.parseInt(strYear);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(year, sort, limOff);
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
                                 : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
+                .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
     /**
      * Single Public Hearing Retrieval API.
-     * ------------------------------------
-     *
-     * Retrieve a singe public hearing by its filename.
-     * (GET) /api/3/hearings/{filename}
-     *
+     * Retrieve a singe public hearing by its id or filename.
+     * (GET) /api/3/hearings/{id OR filename}
      * Request Parameters: None
-     *
      * Expected Output: PublicHearingView
-     *
      */
-    @RequestMapping(value = "/{filename:.*}")
-    public BaseResponse getHearing(@PathVariable String filename) {
-        return new ViewObjectResponse<>(
-                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(filename))),
-        "Data for public hearing " + filename);
+    // TODO: what about when we get to 4 digits?
+    @RequestMapping(value = "/{id:\\d{1,3}}")
+    public BaseResponse getHearingById(@PathVariable String id) {
+        return new ViewObjectResponse<>(new PublicHearingView(
+                hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)))),
+        "Data for public hearing with id #" + id);
+    }
+
+    @RequestMapping(value = "/{filename:.*\\D.*}")
+    public BaseResponse getHearingByFilename(@PathVariable String filename) {
+        return new ViewObjectResponse<>(new PublicHearingView(
+                hearingData.getPublicHearing(filename)),
+                "Data for public hearing with filename " + filename);
     }
 
     /**
      * Single Public Hearing PDF retrieval API.
-     * ----------------------------------------
-     *
-     * Retrieve a single public hearing text pdf: (GET) /api/3/hearings/{filename}.pdf
-     *
+     * Retrieve a single public hearing text pdf:
+     * (GET) /api/3/hearings/{id OR filename}.pdf or
      * Request Parameters: None.
-     *
      * Expected Output: PDF response.
      */
-    @RequestMapping(value = "/{filename}.pdf")
-    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename)
+    @RequestMapping(value = "/{id:\\d{1,3}}.pdf")
+    public ResponseEntity<byte[]> getHearingPdfFromId(@PathVariable String id)
             throws IOException {
-        PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
+        PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(id)));
+        return new PublicHearingPdfView(hearing).writeData();
+    }
+
+    @RequestMapping(value = "/{filename::.*\\D.*}.pdf")
+    public ResponseEntity<byte[]> getHearingPdfFromFilename(@PathVariable String filename)
+            throws IOException {
+        PublicHearing hearing = hearingData.getPublicHearing(filename);
         return new PublicHearingPdfView(hearing).writeData();
     }
 
