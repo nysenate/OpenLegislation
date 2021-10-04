@@ -36,7 +36,7 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
         });
     }]);
 
-/** --- Calendar Search PageWrapper --- */
+/** --- Calendar Search Page --- */
 
 calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout',
     function ($scope, $rootScope, $routeParams, $location, $timeout) {

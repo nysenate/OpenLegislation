@@ -51,7 +51,7 @@ public class TranscriptPdfView extends BasePdfView {
     }
 
     /**
-     * PageWrapper numbers should be right aligned above the border.
+     * Page numbers should be right aligned above the border.
      * @param line to write.
      */
     private void drawPageNumber(String line) throws IOException {

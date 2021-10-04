@@ -56,7 +56,7 @@ public class DaybreakPageFileParser {
      */
     private static PageFileEntry getPageFileEntryFromLine(String line, DaybreakFile daybreakFile){
         String[] parts = line.split(",");
-        // PageWrapper file line format
+        // Page file line format
         // SESSYR,SEN_HSE,SEN_NO,SEN_AMD,ASM_HSE,ASM_NO,ASM_AMD,OUT_DATE,PAGES
 
         SessionYear sessionYear = null;
