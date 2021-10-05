@@ -137,7 +137,7 @@ public class BillLawCodeParser {
             } catch (Exception ex) {
                 logger.error("Error parsing Law Chapter Code from chapter name: " + chapterName, ex);
             }
-            if (!currChapter.isPresent())
+            if (currChapter.isEmpty())
                 continue;
             if (general)
                 putLawEffect(currAction, currChapter.get().toString() + " (generally)", mapping);

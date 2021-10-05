@@ -4,9 +4,10 @@
 
 General installation instructions for Ubuntu.
 
-### Java 8
-1. `sudo apt-get install openjdk-8-jdk`
-2. Set `$JAVA_HOME` environment variable
+### Java 15
+1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/archive/.
+2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
+3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
 
 ### Git
@@ -18,7 +19,7 @@ General installation instructions for Ubuntu.
 ### IntelliJ
 
 1. Download the Ultimate Edition from https://www.jetbrains.com/idea/download/#section=linux
-2. Extract: `sudo tar -xzvf <<downloaded_file_name>> -C /usr/share/`
+2. Extract: `sudo tar -xzvf <<downloaded_file_name>> -C /usr/share/`.
 3. Run: `bin/idea.sh` which will be located in the directory extracted in the previous step.
 
 ### Tomcat
@@ -161,6 +162,8 @@ Set `domain.url` to the hostname and context path you will be using.  This affec
 ### `flyway.conf` Configuration
 
 These configurations are needed for automatic database migrations.
+
+If you picked a name for the database that was not 'openleg', replace 'openleg' with that name in `flyway.url`.
 
 Set `flyway.user` to the database user you created.
 

@@ -4,21 +4,15 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.hearing.BulkPublicHearingUpdateEvent;
+import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 
 public interface PublicHearingSearchService
 {
-
     /**
-     * Performs a search of all public hearing id's
+     * Performs a search of public hearing id's by year. A null year returns all hearings.
      */
-    SearchResults<PublicHearingId> searchPublicHearings(String sort, LimitOffset limOff) throws SearchException;
-
-    /**
-     * Performs a search of public hearing id's by year.
-     */
-    SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<PublicHearingId> searchPublicHearings(Integer year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Performs a search across all public hearings.

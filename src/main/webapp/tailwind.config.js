@@ -1,5 +1,8 @@
 module.exports = {
-  purge: [],
+  purge: [
+    './WEB-INF/app/**/*.js',
+    './WEB-INF/app/**/*.html',
+  ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {

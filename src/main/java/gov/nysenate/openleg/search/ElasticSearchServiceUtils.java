@@ -14,7 +14,7 @@ public abstract class ElasticSearchServiceUtils {
 
     // Sorting scores and fields requires different method calls,
     // so the correct type must be identified.
-    private final static String SCORE_NAME = "_score";
+    private static final String SCORE_NAME = "_score";
 
     private static final ImmutableSet<String> commonTextSortFields = ImmutableSet.of(
             "printNo",

@@ -68,13 +68,20 @@ public abstract class SqlQueryUtils
     }
 
     /**
+     * Add LIMIT AND ORDER BY clause to SQL statement.
+     */
+    public static String addOrderAndLimitOffset(String sql, OrderBy orderBy, LimitOffset limitOffset) {
+        return sql + getOrderByClause(orderBy) + getLimitOffsetClause(limitOffset);
+    }
+
+    /**
      * Returns a LIMIT OFFSET sql clause using the supplied LimitOffset instance.
      * If neither the limit nor the offset is set an empty string will be returned.
      *
      * @param limitOffset LimitOffset
      * @return String
      */
-    public static String getLimitOffsetClause(LimitOffset limitOffset) {
+    protected static String getLimitOffsetClause(LimitOffset limitOffset) {
         String clause = "";
         if (limitOffset != null) {
             if (limitOffset.hasLimit()) {
@@ -94,7 +101,7 @@ public abstract class SqlQueryUtils
      * @param orderBy OrderBy
      * @return String
      */
-    public static String getOrderByClause(OrderBy orderBy) {
+    protected static String getOrderByClause(OrderBy orderBy) {
         String clause = "";
         if (orderBy != null) {
             ImmutableMap<String, SortOrder> sortColumns = orderBy.getSortColumns();

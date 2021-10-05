@@ -29,7 +29,7 @@ public class CommitteeId implements Serializable, Comparable<CommitteeId>
         this.name = name;
     }
 
-    //Added for Json Deserialization
+    // Added for Json Deserialization
     protected CommitteeId() {}
     
     public CommitteeId(CommitteeId committeeId) {

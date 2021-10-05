@@ -26,6 +26,10 @@
 # Revised: 2019-12-16 - Remove feeds from Drupal maintenance tasks
 # Revised: 2020-04-10 - Add nys_sage to Drupal maintenance tasks
 # Revised: 2021-04-23 - Add accumulator-archive drush task
+# Revised: 2021-07-29 - Remove all law-related processing, since laws are now
+#                       accessed in OpenLegislation in real-time by the website
+#                     - Remove --update-all-statutes and "uas" mode
+#                     - Remove law spotcheck from the --qa option
 #
 
 PATH=$PATH:/usr/local/bin
@@ -35,7 +39,7 @@ prog=`basename $0`
 penv=$DEFAULT_ENV
 
 usage() {
-  echo "Usage: $prog [--import-all | --import-leg | --qa | --maint | --accum | --update-statutes | --disqus | --styles] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
+  echo "Usage: $prog [--import-all | --import-leg | --qa | --maint | --accum | --disqus | --styles] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
 }
 
@@ -58,7 +62,6 @@ while [ $# -gt 0 ]; do
     --qa) mode=qa ;;
     --maint) mode=maint ;;
     --accum) mode=accum ;;
-    --update-statutes|--uas) mode=uas ;;
     --disqus) mode=disqus ;;
     --styles|--esu) mode=esu ;;
     --arg) shift; drush_args="$drush_args $1" ;;
@@ -82,9 +85,6 @@ if [ "$mode" = "qa" ]; then
 
   echo "About to generate QA report for all agendas during the current year"
   pdrush @$penv spotcheck-dump agenda
-
-  echo "About to generate QA report for all current laws"
-  pdrush @$penv spotcheck-dump law
 
 elif [ "$mode" = "disqus" ]; then
 
@@ -134,12 +134,6 @@ elif [ "$mode" = "accum" ]; then
   echo "About to run website accumulator integrity check"
   pdrush @$penv accumulator-integrity all
   pdrush @$penv accumulator-archive
-
-elif [ "$mode" = "uas" ]; then
-
-  echo "About to update all statutes"
-  pdrush @$penv structure-clear-range-statutes -y $drush_args
-  pdrush @$penv update-all-statutes --force -y $drush_args
 
 elif [ "$mode" = "import" ]; then
 

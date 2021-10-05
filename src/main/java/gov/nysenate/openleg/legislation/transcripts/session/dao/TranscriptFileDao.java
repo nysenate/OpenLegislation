@@ -19,14 +19,6 @@ public interface TranscriptFileDao
     List<TranscriptFile> getIncomingTranscriptFiles(LimitOffset limOff) throws IOException;
 
     /**
-     * Retrieves a list of TranscriptFiles that are awaiting processing.
-     *
-     * @param limOff Specifies the maximum number of TranscriptFiles to fetch
-     * @return List<TranscriptFile>
-     */
-    List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limOff);
-
-    /**
      * Updates the backing store with the given instance or inserts it
      * if the record doesn't already exist.
      *
@@ -42,5 +34,13 @@ public interface TranscriptFileDao
      * @throws IOException
      * @see TranscriptFile
      */
-    void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException;
+    void archiveTranscriptFile(TranscriptFile transcriptFile) throws IOException;
+
+    /**
+     * Retrieves a list of TranscriptFiles that are awaiting processing.
+     *
+     * @param limOff Specifies the maximum number of TranscriptFiles to fetch
+     * @return List<TranscriptFile>
+     */
+    List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limOff);
 }

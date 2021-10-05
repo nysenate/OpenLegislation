@@ -1,17 +1,17 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.search.transcripts.hearing.PublicHearingSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +43,7 @@ public class PublicHearingSearchCtrl extends BaseCtrl
      *                      offset - Start results from offset
      */
     @RequestMapping(value = "/search")
-    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+    public BaseResponse globalSearch(@RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
@@ -60,9 +60,9 @@ public class PublicHearingSearchCtrl extends BaseCtrl
      *  Search all Public Hearings in a given year: (GET) /api/3/hearings/{year}/search
      *  @see #globalSearch see globalSearch for request params.
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/search")
+    @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse yearSearch(@PathVariable int year,
-                                   @RequestParam(required = true) String term,
+                                   @RequestParam String term,
                                    @RequestParam(defaultValue = "") String sort,
                                    @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,

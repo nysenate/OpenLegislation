@@ -5,7 +5,6 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateToken;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +18,7 @@ public interface PublicHearingDao
     /**
      * Retrieves all PublicHearingId's.
      */
-    List<PublicHearingId> getPublicHearingIds(SortOrder dateOrder, LimitOffset limOff);
+    List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff);
 
     /**
      * Retrieves a {@link PublicHearing} via its {@link PublicHearingId}.
@@ -27,13 +26,17 @@ public interface PublicHearingDao
     PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
 
     /**
-     * Updates the backing store with the given instance or inserts
-     * if if the record doesn't already exist.
-     * @param publicHearing The {@link PublicHearing} to update.
-     * @param publicHearingFile The {@link PublicHearingFile}
-     *                          which updated the Public Hearing.
+     * Retrieves a {@link PublicHearing} via its filename.
      */
-    void updatePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile);
+    PublicHearing getPublicHearing(String filename) throws EmptyResultDataAccessException;
+
+    /**
+     * Updates the hearing info in the database, or inserts it if necessary.
+     * Also assigns the hearing an ID.
+     * @param publicHearing The {@link PublicHearing} to update.
+     *
+     */
+    void updatePublicHearing(PublicHearing publicHearing);
 
     /**
      * Fetches new and updated public hearings from a specified date range.

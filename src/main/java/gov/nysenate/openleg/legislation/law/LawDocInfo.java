@@ -42,10 +42,10 @@ public class LawDocInfo extends LawDocId
     }
 
     public LawDocInfo(LawBlock lawBlock) {
-        this.setDocumentId(lawBlock.getDocumentId());
-        this.setLawId(lawBlock.getLawId());
-        this.setLocationId(lawBlock.getLocationId());
-        this.setPublishedDate(lawBlock.getPublishedDate());
+        this.documentId = lawBlock.getDocumentId();
+        this.lawId = lawBlock.getLawId();
+        this.locationId = lawBlock.getLocationId();
+        this.publishedDate = lawBlock.getPublishedDate();
     }
 
     /** --- Overrides --- */

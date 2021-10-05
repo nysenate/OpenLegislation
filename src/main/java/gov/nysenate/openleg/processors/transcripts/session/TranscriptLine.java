@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.Stenographer;
 import org.apache.commons.text.WordUtils;
 import org.springframework.lang.NonNull;
 
@@ -14,8 +13,7 @@ import java.util.Optional;
  * Set of methods that function on individual transcript lines to help with parsing logic.
  */
 public class TranscriptLine {
-    /** Regex to match any non alphanumeric or whitespace characters. */
-    // TODO: unnecessary once all bad characters have been removed.
+    /** Regex to match any non-alphanumeric or whitespace characters. */
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
 
     /** All line numbers occur in the first 10 characters of a line. */
@@ -50,7 +48,7 @@ public class TranscriptLine {
     }
 
     /**
-     * PageWrapper numbers are right aligned at the top of each page.
+     * Page numbers are right aligned at the top of each page.
      * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */
@@ -68,7 +66,7 @@ public class TranscriptLine {
     public Optional<String> getLocation() {
         String temp = removeLineNumber().replaceAll("\\s+", " ");
         if (temp.matches(("(?i).*ALBANY.*NEW.*YORK.*")))
-            return Optional.of(temp.trim());
+            return Optional.of(temp.trim().toUpperCase());
         return Optional.empty();
     }
 

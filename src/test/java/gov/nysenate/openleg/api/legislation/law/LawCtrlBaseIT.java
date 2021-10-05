@@ -4,12 +4,11 @@ import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.legislation.law.dao.LawFileDao;
 import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.processors.law.ManagedLawProcessService;
+import gov.nysenate.openleg.search.law.ElasticLawSearchDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
@@ -18,18 +17,20 @@ public class LawCtrlBaseIT extends ApiTest {
     private ManagedLawProcessService testService;
     @Autowired
     private LawFileDao testDao;
+    @Autowired
+    private ElasticLawSearchDao elasticTestDao;
 
     protected static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
-    protected static final List<String> TEST_LAW_IDS = Arrays.asList(EHC.name(), ETP.name(), CMA.name(), CMS.name(), ABC.name());
-    protected static final List<String> TEST_UPDATE_FILE_PREFIX = Arrays.asList("20140923", "20140924", "20140925");
+    protected static final String[] TEST_LAW_IDS = {ABC.name(), EHC.name(), ETP.name(), CMA.name(), CMS.name()},
+        TEST_UPDATE_FILES = {"20140923", "20140924", "20140925"};
 
-    protected void loadTestData(String fileId, boolean isInitial) {
-        LawFile file;
-        if (isInitial)
-            file = new LawFile(new File(TEST_FILE_PREFIX + "DATABASE.LAW." + fileId));
-        else
-            file = new LawFile(new File(TEST_FILE_PREFIX + fileId + ".UPDATE"));
-        testDao.updateLawFile(file);
-        testService.processLawFiles(Collections.singletonList(file));
+    protected void loadTestData(boolean isInitial, String... fileIds) {
+        for (var fileId : fileIds) {
+            String filename = isInitial ? "DATABASE.LAW." + fileId : fileId + ".UPDATE";
+            LawFile file = new LawFile(new File(TEST_FILE_PREFIX + filename));
+            testDao.updateLawFile(file);
+            testService.processLawFiles(Collections.singletonList(file));
+        }
+        elasticTestDao.refreshIndices();
     }
 }

@@ -5,12 +5,12 @@ import gov.nysenate.openleg.processors.BaseSourceData;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public abstract class AbstractTranscriptsFile extends BaseSourceData {
+public abstract class AbstractTranscriptsFile extends BaseSourceData implements Comparable<AbstractTranscriptsFile> {
     /** Reference to the actual file. */
     protected File file;
 
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
-    protected boolean archived;
+    protected boolean archived = false;
 
     protected AbstractTranscriptsFile(File file) throws FileNotFoundException {
         if (file.exists()) {
@@ -19,6 +19,12 @@ public abstract class AbstractTranscriptsFile extends BaseSourceData {
         }
         else
             throw new FileNotFoundException(file.getAbsolutePath());
+    }
+
+    @Override
+    public int compareTo(AbstractTranscriptsFile o) {
+        int result = Boolean.compare(isManualFix(), o.isManualFix());
+        return result == 0 ? getFileName().compareTo(o.getFileName()) : result;
     }
 
     /** --- Basic Getters/Setters --- */

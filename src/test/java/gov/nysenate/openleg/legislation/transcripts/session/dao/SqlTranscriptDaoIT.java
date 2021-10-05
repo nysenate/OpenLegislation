@@ -25,18 +25,17 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
-public class SqlTranscriptDaoIT extends BaseTests
-{
+public class SqlTranscriptDaoIT extends BaseTests {
     @Autowired
     private TranscriptDao dao;
     @Autowired
     private TranscriptFileDao fileDao;
 
     // Generates Transcript test data.
-    private final static int NUM_TRANSCRIPTS = 3;
-    private final static String FILEPATH = "src/test/resources/transcriptFiles/";
-    private final static List<LocalDateTime> LDTS = new ArrayList<>();
-    private final static List<Transcript> TRANSCRIPTS = new ArrayList<>();
+    private static final int NUM_TRANSCRIPTS = 3;
+    private static final String FILEPATH = "src/test/resources/transcriptFiles/";
+    private static final List<LocalDateTime> LDTS = new ArrayList<>();
+    private static final List<Transcript> TRANSCRIPTS = new ArrayList<>();
     private static final Transcript UPDATE;
     private static final List<TranscriptFile> TRANSCRIPT_FILES = new ArrayList<>();
     private static TranscriptFile UPDATE_FILE;
@@ -54,7 +53,7 @@ public class SqlTranscriptDaoIT extends BaseTests
             }
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        UPDATE = new Transcript(curr.getTranscriptId(), "t0v1.txt",
+        UPDATE = new Transcript(curr.getId(), "t0v1.txt",
                 curr.getSessionType(), curr.getLocation(), curr.getText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
@@ -72,19 +71,19 @@ public class SqlTranscriptDaoIT extends BaseTests
         List<TranscriptId> ids = getNewIds(dao.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL));
         assertEquals(TRANSCRIPTS.size(), ids.size());
         for (int i = 0; i < TRANSCRIPTS.size(); i++)
-            assertEquals(TRANSCRIPTS.get(i).getTranscriptId(), ids.get(i));
+            assertEquals(TRANSCRIPTS.get(i).getId(), ids.get(i));
         List<Transcript> reversed = Lists.reverse(TRANSCRIPTS);
         ids = getNewIds(dao.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL));
         assertEquals(TRANSCRIPTS.size(), ids.size());
         for (int i = 0; i < reversed.size(); i++)
-            assertEquals(reversed.get(i).getTranscriptId(), ids.get(i));
+            assertEquals(reversed.get(i).getId(), ids.get(i));
     }
 
     @Test
     public void getTranscriptTest() {
         fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
-        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getTranscriptId()));
+        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test
@@ -93,7 +92,7 @@ public class SqlTranscriptDaoIT extends BaseTests
         dao.updateTranscript(TRANSCRIPTS.get(0));
         fileDao.updateTranscriptFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
-        assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getTranscriptId()));
+        assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test

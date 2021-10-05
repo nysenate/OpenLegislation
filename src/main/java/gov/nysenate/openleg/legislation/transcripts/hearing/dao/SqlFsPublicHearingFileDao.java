@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
@@ -39,19 +40,18 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
         archivePublicHearingDir = new File(environment.getArchiveDir(), "hearing_transcripts");
     }
 
-    /** --- Implemented Methods --- */
+    /* --- Implemented Methods --- */
 
     /** {@inheritDoc} */
     @Override
     public List<PublicHearingFile> getIncomingPublicHearingFiles(LimitOffset limOff) throws IOException {
         List<File> files = new ArrayList<>(FileIOUtils.safeListFiles(incomingPublicHearingDir, false, null));
-        files = LimitOffset.limitList(files, limOff);
-
         List<PublicHearingFile> publicHearingFiles = new ArrayList<>();
-        for (File file : files) {
+        for (File file : files)
             publicHearingFiles.add(new PublicHearingFile(file));
-        }
-        return publicHearingFiles;
+        // Sort files for consistent processing.
+        Collections.sort(publicHearingFiles);
+        return LimitOffset.limitList(publicHearingFiles, limOff);
     }
 
     /** {@inheritDoc} */
@@ -70,10 +70,8 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
         if (stagedFile.getParentFile().equals(incomingPublicHearingDir)) {
             File archiveFile = new File(archivePublicHearingDir, publicHearingFile.getFileName());
             FileIOUtils.moveFile(stagedFile, archiveFile);
-
             publicHearingFile.setFile(archiveFile);
             publicHearingFile.setArchived(true);
-            updatePublicHearingFile(publicHearingFile);
         }
         else {
             throw new FileNotFoundException("PublicHearingFile " + stagedFile + " must be in the incoming" +
@@ -84,7 +82,10 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
     /** {@inheritDoc} */
     @Override
     public List<PublicHearingFile> getPendingPublicHearingFile(LimitOffset limOff) {
-        return jdbcNamed.query(SELECT_PENDING_PUBLIC_HEARING_FILES.getSql(schema(), limOff), new PublicHearingFileRowMapper());
+        var temp = jdbcNamed.query(SELECT_PENDING_PUBLIC_HEARING_FILES.getSql(schema()),
+                new PublicHearingFileRowMapper());
+        Collections.sort(temp);
+        return LimitOffset.limitList(temp, limOff);
     }
 
     /** --- Internal Methods --- */

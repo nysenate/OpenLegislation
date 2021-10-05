@@ -2,11 +2,11 @@ package gov.nysenate.openleg.legislation.committee.dao;
 
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.member.dao.SqlMemberDao;
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +80,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     @Override
     public List<CommitteeId> getCommitteeList() {
         return jdbcNamed.query(
-                SELECT_COMMITTEE_ID.getSql(schema(), new OrderBy("chamber", ASC, "name", ASC), ALL),
+                SELECT_COMMITTEE_IDS.getSql(schema(), new OrderBy("chamber", ASC, "name", ASC), ALL),
                 new CommitteeIdRowMapper());
     }
 

@@ -12,19 +12,19 @@ public class PublicHearingId implements Serializable, Comparable<PublicHearingId
     private static final long serialVersionUID = -1772963995918679372L;
 
     /** The public hearing's file name */
-    private final String fileName;
+    private final Integer id;
 
     /** --- Constructors --- */
 
-    public PublicHearingId(String fileName) {
-        this.fileName = fileName;
+    public PublicHearingId(Integer id) {
+        this.id = id;
     }
 
     /** --- Overrides --- */
 
     @Override
     public int compareTo(PublicHearingId o) {
-        return Objects.compare(fileName, o.getFileName(), String::compareTo);
+        return Integer.compare(id, o.id);
     }
 
     @Override
@@ -32,17 +32,17 @@ public class PublicHearingId implements Serializable, Comparable<PublicHearingId
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublicHearingId hearingId = (PublicHearingId) o;
-        return Objects.equals(fileName, hearingId.fileName);
+        return Objects.equals(id, hearingId.id);
     }
 
     @Override
     public int hashCode() {
-        return fileName != null ? fileName.hashCode() : 0;
+        return id.hashCode();
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getFileName() {
-        return fileName;
+    public Integer getId() {
+        return id;
     }
 }

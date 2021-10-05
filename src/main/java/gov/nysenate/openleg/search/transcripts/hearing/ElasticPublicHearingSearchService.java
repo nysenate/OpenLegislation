@@ -2,14 +2,13 @@ package gov.nysenate.openleg.search.transcripts.hearing;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.hearing.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
@@ -42,14 +41,9 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
         eventBus.register(this);
     }
 
-    @Override
-    public SearchResults<PublicHearingId> searchPublicHearings(String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.matchAllQuery(), null, sort, limOff);
-    }
-
     /** {@inheritDoc} */
     @Override
-    public SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<PublicHearingId> searchPublicHearings(Integer year, String sort, LimitOffset limOff) throws SearchException {
         return search(QueryBuilders.matchAllQuery(), year, sort, limOff);
     }
 

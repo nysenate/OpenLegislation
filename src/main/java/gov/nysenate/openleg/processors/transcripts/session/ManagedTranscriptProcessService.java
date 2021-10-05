@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptFileDao;
+import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
+import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptFileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Service
 public class ManagedTranscriptProcessService implements TranscriptProcessService
@@ -22,10 +27,10 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     private TranscriptFileDao transcriptFileDao;
 
     @Autowired
-    private TranscriptParser transcriptParser;
+    private TranscriptDataService transcriptDataService;
 
 
-    /** --- Implemented Methods --- */
+    /* --- Implemented Methods --- */
 
     /** {@inheritDoc} */
     @Override
@@ -55,8 +60,8 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 transcriptFiles = transcriptFileDao.getIncomingTranscriptFiles(LimitOffset.FIFTY);
                 for (TranscriptFile file : transcriptFiles) {
                     file.setPendingProcessing(true);
-                    file.setTranscript(TranscriptParser.getTranscriptFromFile(file));
-                    transcriptFileDao.archiveAndUpdateTranscriptFile(file);
+                    transcriptFileDao.archiveTranscriptFile(file);
+                    transcriptFileDao.updateTranscriptFile(file);
                     numCollated++;
                 }
             }
@@ -78,21 +83,35 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
+        // Ensures transcripts are saved in a reliable order, with manual fixes processed last.
+        SortedMap<TranscriptFile, Transcript> processed = new TreeMap<>(
+                Comparator.comparing(TranscriptFile::isManualFix)
+                        .thenComparing(TranscriptFile::getDateTime)
+                        .thenComparing(TranscriptFile::getFileName));
+
         int processCount = 0;
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
-                transcriptParser.process(file);
+                var currTranscript = TranscriptParser.getTranscriptFromFile(file);
+
+                file.setDateTime(currTranscript.getDateTime());
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
                 transcriptFileDao.updateTranscriptFile(file);
+
+                currTranscript.setFilename(file.getFileName());
+                processed.put(file, currTranscript);
                 processCount++;
             }
             catch (IOException ex) {
                 logger.error("Error processing TranscriptFile " + file.getFileName() + ".", ex);
             }
         }
+        logger.info("Saving {} processed transcripts", processCount);
+        for (var transcript : processed.values())
+            transcriptDataService.saveTranscript(transcript, true);
         return processCount;
     }
 

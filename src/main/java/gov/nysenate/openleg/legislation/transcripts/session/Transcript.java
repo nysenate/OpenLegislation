@@ -9,41 +9,27 @@ import java.util.Objects;
 /**
  * A Transcript is a written record of Senate sessions.
  */
-public class Transcript extends BaseLegislativeContent
-{
-    /** The transcript id. */
-    private final TranscriptId transcriptId;
-
-    /** A transcripts session type. */
-    private final String sessionType;
-
-    /** The date time of this transcript. */
+public class Transcript extends BaseLegislativeContent {
+    private final TranscriptId id;
     private final LocalDateTime dateTime;
-
-    /** Location of meeting recorded in transcript. */
-    private final String location;
-
-    /** The raw text of the transcript. */
-    private final String text;
-
-    /** The filename of this transcript. */
-    private final String filename;
+    private final String sessionType, location, text;
+    private String filename;
 
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId transcriptId, String filename, String sessionType, String location, String text) {
-        this.transcriptId = transcriptId;
-        this.filename = filename;
+    public Transcript(TranscriptId id, String filename, String sessionType, String location, String text) {
+        this.id = id;
         this.sessionType = sessionType;
-        this.dateTime = transcriptId.getDateTime();
+        this.dateTime = id.getDateTime();
         this.location = location;
         this.text =  text;
+        this.filename = filename;
         this.year = this.dateTime.getYear();
         this.session = SessionYear.of(this.year);
     }
 
-    public TranscriptId getTranscriptId() {
-        return transcriptId;
+    public TranscriptId getId() {
+        return id;
     }
 
     public String getSessionType() {
@@ -66,12 +52,16 @@ public class Transcript extends BaseLegislativeContent
         return filename;
     }
 
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transcript that = (Transcript) o;
-        return Objects.equals(transcriptId, that.transcriptId) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(sessionType, that.sessionType) &&
                 Objects.equals(dateTime, that.dateTime) &&
                 Objects.equals(location, that.location) &&
@@ -81,6 +71,6 @@ public class Transcript extends BaseLegislativeContent
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), transcriptId, sessionType, dateTime, location, text, filename);
+        return Objects.hash(super.hashCode(), id, sessionType, dateTime, location, text, filename);
     }
 }

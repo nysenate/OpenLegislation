@@ -1,16 +1,17 @@
 package gov.nysenate.openleg.legislation.bill;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public enum TextDiffType {
 
-    UNCHANGED(0, Arrays.asList(), "", ""),
+    UNCHANGED(0, Collections.emptyList(), "", ""),
     ADDED(1, Arrays.asList("ol-changed", "ol-added"), "<b><u>", "</u></b>"),
     REMOVED(-1, Arrays.asList("ol-changed", "ol-removed"), "<b><s>", "</s></b>"),
-    HEADER(0, Arrays.asList("ol-header"), "<font size=5><b>", "</b></font>"),
-    BOLD(0, Arrays.asList("ol-bold"), "<b>", "</b>"),
-    PAGE_BREAK(0, Arrays.asList("ol-page-break"), "<p class=\"brk\">", "");
+    HEADER(0, Collections.singletonList("ol-header"), "<font size=5><b>", "</b></font>"),
+    BOLD(0, Collections.singletonList("ol-bold"), "<b>", "</b>"),
+    PAGE_BREAK(0, Collections.singletonList("ol-page-break"), "<p class=\"brk\">", "");
 
     /**
      * The type of text relative to the previous amendment's text.
@@ -19,22 +20,22 @@ public enum TextDiffType {
      * if 1: This text has been added.
      * if -1: This text was removed.
      */
-    private int type;
+    private final int type;
 
     /**
      * List of css classes that describe how this text should be styled.
      */
-    private List<String> templateCssClass;
+    private final List<String> templateCssClass;
 
     /**
      * Html tag used as a prefix for the html format.
      */
-    private String htmlOpeningTags;
+    private final String htmlOpeningTags;
 
     /**
      * Html tag used as an ending for the html format.
      */
-    private String htmlClosingTags;
+    private final String htmlClosingTags;
 
     TextDiffType(int type, List<String> templateCssClass, String htmlOpeningTags, String htmlClosingTags) {
         this.type = type;

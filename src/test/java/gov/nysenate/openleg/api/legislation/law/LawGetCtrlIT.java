@@ -32,10 +32,9 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void getAllLawsTest() {
-        for (String fileId : TEST_LAW_IDS)
-            loadTestData(fileId, true);
+        loadTestData(true, TEST_LAW_IDS);
         ImmutableList<?> genericAllLaws = ((ListViewResponse<?>)testCtrl.getLaws(testRequest)).getResult().getItems();
-        assertTrue(TEST_LAW_IDS.size() <= genericAllLaws.size());
+        assertTrue(TEST_LAW_IDS.length <= genericAllLaws.size());
         List<String> lawIds = new ArrayList<>();
         for (Object o : genericAllLaws)
             lawIds.add(((LawInfoView)o).getLawId());
@@ -45,15 +44,15 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void getLawTreeTest() {
-        loadTestData(EHC.name(), true);
-        loadTestData(CMA.name(), true);
-        loadTestData(CMS.name(), true);
+        loadTestData(true, EHC.name());
+        loadTestData(true, CMA.name());
+        loadTestData(true, CMS.name());
         ViewObjectResponse<?> genericTree = (ViewObjectResponse<?>)testCtrl.getLawTree(EHC.name(), null, null, null, false);
         LawTreeView tree = ((LawTreeView) genericTree.getResult());
         ImmutableList<LawNodeView> nodes = tree.getDocuments().getDocuments().getItems();
         for (int i = 1; i <= 4; i++) {
             assertEquals(Integer.toString(i), nodes.get(i-1).getFromSection());
-            assertEquals(Integer.toString(i), nodes.get(i-1).getToSection());;
+            assertEquals(Integer.toString(i), nodes.get(i-1).getToSection());
         }
 
         genericTree = (ViewObjectResponse<?>)testCtrl.getLawTree(CMA.name(), null, "R1", null, true);
@@ -72,7 +71,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void getLawDocumentTest() {
-        loadTestData(ETP.name(), true);
+        loadTestData(true, ETP.name());
         ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ETP.name(), "2", null, null);
         LawDocWithRefsView doc = ((LawDocWithRefsView) genericDocument.getResult());
         assertEquals(1, doc.getParentLocationIds().size());
@@ -83,9 +82,8 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void getLawDocumentWithRefTreeDateTest() {
-        loadTestData(ABC.name(), true);
-        for (String fileId : TEST_UPDATE_FILE_PREFIX)
-            loadTestData(fileId, false);
+        loadTestData(true, ABC.name());
+        loadTestData(false, TEST_UPDATE_FILES);
         String initialDate = "2014-09-22";
         String[] locIds = {"A1", "4", "5", "A2", "6", "7"};
         for (String locId : locIds) {
@@ -97,9 +95,8 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void getRepealedLawsTest() {
-        loadTestData(ABC.name(), true);
-        for (String fileId : TEST_UPDATE_FILE_PREFIX)
-            loadTestData(fileId, false);
+        loadTestData(true, ABC.name());
+        loadTestData(false, TEST_UPDATE_FILES);
 
         LocalDate startDate = LocalDate.of(2014, 9, 22);
         LocalDate testDate = startDate.plusDays(2);
@@ -147,8 +144,9 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void handleLawDocNotFoundExTes() {
-        loadTestData(TEST_LAW_IDS.get(0), true);
-        String badDocId = TEST_LAW_IDS.get(0) + "0";
+        String lawId = ABC.name();
+        loadTestData(true, lawId);
+        String badDocId = lawId + "0";
         String date = "2020-06-30";
         try {
             testCtrl.getLawDocument(badDocId.substring(0, 3), badDocId.substring(3), date, null);

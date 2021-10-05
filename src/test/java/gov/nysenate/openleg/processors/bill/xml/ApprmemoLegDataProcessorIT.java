@@ -29,7 +29,7 @@ public class ApprmemoLegDataProcessorIT extends BaseXmlProcessorTest {
         String xmlFilePath = "processor/bill/apprmemo/2016-11-17-10.06.30.448942_APPRMEMO_2016-00002.XML";
         processXmlFile(xmlFilePath);
         Bill baseBill = billDataService.getBill(new BaseBillId("A06182", 2016));
-        String expectedMemo = "\n \n" +
+        String expectedMemo = " \n" +
                 "                 APPROVAL MEMORANDUM - No. 2 Chapter 62\n" +
                 "       MEMORANDUM filed with Assembly Bill Number 6182, entitled:\n" +
                 "  This bill is approved.                      (signed) ANDREW M. CUOMO\n" +

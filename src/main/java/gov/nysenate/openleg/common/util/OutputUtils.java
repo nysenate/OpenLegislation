@@ -21,7 +21,7 @@ public abstract class OutputUtils
 {
     private static final Logger logger = LoggerFactory.getLogger(OutputUtils.class);
 
-    private static ObjectMapper jsonMapper = new ObjectMapper();
+    private static final ObjectMapper jsonMapper = new ObjectMapper();
     static {
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
         jsonMapper.registerModule(new GuavaModule());
@@ -29,7 +29,7 @@ public abstract class OutputUtils
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    private static ObjectMapper elasticsearchJsonMapper = jsonMapper.copy();
+    private static final ObjectMapper elasticsearchJsonMapper = jsonMapper.copy();
     static {
         SimpleModule module = new SimpleModule();
         module.addSerializer(MapView.class, new MapViewSerializer());

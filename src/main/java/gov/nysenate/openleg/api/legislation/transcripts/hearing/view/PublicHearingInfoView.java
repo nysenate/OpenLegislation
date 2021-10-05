@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing.view;
 
+import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
-import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingCommittee;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PublicHearingInfoView extends PublicHearingIdView
@@ -12,19 +13,17 @@ public class PublicHearingInfoView extends PublicHearingIdView
     /** Time format to match our Elasticsearch mappings.*/
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
-    private String title;
+    private final String title, address, filename, startTime, endTime;
     protected LocalDate date;
-    protected List<PublicHearingCommittee> committees;
-    private String address;
-    private String startTime;
-    private String endTime;
+    protected List<HearingHost> hosts;
 
     public PublicHearingInfoView(PublicHearing publicHearing) {
         super(publicHearing.getId());
         this.title = publicHearing.getTitle();
         this.date = publicHearing.getDate();
-        this.committees = publicHearing.getCommittees();
+        this.hosts = new ArrayList<>(publicHearing.getHosts());
         this.address = publicHearing.getAddress();
+        this.filename = publicHearing.getFilename();
         this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);
         this.endTime = publicHearing.getEndTime() == null ? null : publicHearing.getEndTime().format(TIME_FORMAT);
     }
@@ -42,8 +41,8 @@ public class PublicHearingInfoView extends PublicHearingIdView
         return date;
     }
 
-    public List<PublicHearingCommittee> getCommittees() {
-        return committees;
+    public List<HearingHost> getHosts() {
+        return hosts;
     }
 
     public String getAddress() {
@@ -56,5 +55,9 @@ public class PublicHearingInfoView extends PublicHearingIdView
 
     public String getEndTime() {
         return endTime;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }
