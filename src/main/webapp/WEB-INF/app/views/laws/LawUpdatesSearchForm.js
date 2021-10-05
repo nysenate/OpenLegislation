@@ -6,26 +6,14 @@ import {
 import * as queryString from "query-string";
 
 
-export default function LawSearchForm() {
-    const [ term, setTerm ] = React.useState("")
-    const location = useLocation()
-    const history = useHistory()
+export default function LawSearchForm({updateValues, aMonthAgo, todaysDate}) {
 
-    // Update search fields when back/forward navigation is used.
     React.useEffect(() => {
-        const params = queryString.parse(location.search)
-
-        let aMonthAgo = new Date();
-        aMonthAgo.setMonth(aMonthAgo.getMonth() - 1);
-        let aMonthAgosDate = aMonthAgo.toISOString().slice(0, 10);
-        let todaysDate = new Date().toISOString().slice(0, 10);
-        const LawUpdateFrom = document.getElementById("LawUpdateFrom")
-        LawUpdateFrom.value = aMonthAgosDate
-        const lawUpdateTo = document.getElementById("lawUpdateTo")
-        lawUpdateTo.value = todaysDate;
-
-
-    }, [ location ])
+        let LawUpdateFrom = document.getElementById("LawUpdateFrom")
+        LawUpdateFrom.value = aMonthAgo
+        let lawUpdateTo = document.getElementById("lawUpdateTo")
+        lawUpdateTo.value = todaysDate
+    }, [])
 
     // Updates the term query param when the form is submitted.
     const onSubmitLawUpdatesSearch = (e) => {
@@ -42,6 +30,8 @@ export default function LawSearchForm() {
 
         const sortSelect = document.getElementById("sort")
         console.log(sortSelect.value)
+
+        updateValues(LawUpdateFrom.value, lawUpdateTo.value, withSelect.value, sortSelect.value);
     }
 
     return (
