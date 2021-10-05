@@ -25,44 +25,32 @@ import java.util.Map;
  * all the heavy lifting.
  */
 @Controller
-public class AngularAppCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AngularAppCtrl.class);
+public class ReactAppCtrl {
+    private static final Logger logger = LoggerFactory.getLogger(ReactAppCtrl.class);
 
-    @Autowired private Environment environment;
+    @Autowired
+    private Environment environment;
 
-    @Value("${ga.tracking.id}") private String gaTrackingId;
-    @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
+    @Value("${ga.tracking.id}")
+    private String gaTrackingId;
+    @Value("${api.auth.ip.whitelist}")
+    private String ipWhitelist;
 
-//    @RequestMapping({"/",
-//                     "/data/**",
-//                     "/bills/**",
-//                     "/calendars/**",
-//                     "/agendas/**",
-//                     "/transcripts/**",
-//                     "/members/**",
-//                     "/laws/**",
-//                     "/sources/**",
-//                     "/reports/**",
-//                     "/manage/**"
-//                     })
-//    public String home(HttpServletRequest request) {
-//        String forwardedForIp = request.getHeader("x-forwarded-for");
-//        String ipAddr= forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
-//        Subject subject = SecurityUtils.getSubject();
-//        setRequestAttributes(request);
-//        // Senate staff and API users will be routed to the internal dev interface.
-//        if (subject.isPermitted("ui:view") || ipAddr.matches(ipWhitelist)) {
-//            return "home";
-//        }
-//        // Non-senate staff and un-authenticated users will see the public page.
-//        return "publichome";
-//    }
-
-    @RequestMapping("/")
+    @RequestMapping({"/",
+            "/data/**",
+            "/bills/**",
+            "/calendars/**",
+            "/agendas/**",
+            "/transcripts/**",
+            "/members/**",
+            "/laws/**",
+            "/sources/**",
+            "/reports/**",
+            "/manage/**"
+    })
     public String home(HttpServletRequest request) {
         String forwardedForIp = request.getHeader("x-forwarded-for");
-        String ipAddr= forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
+        String ipAddr = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
         Subject subject = SecurityUtils.getSubject();
         setRequestAttributes(request);
         // Senate staff and API users will be routed to the internal dev interface.
@@ -90,8 +78,7 @@ public class AngularAppCtrl
         try {
             SecurityUtils.getSubject().login(new ApiKeyLoginToken(apiKey, ipAddr));
             return new SimpleResponse(true, "Login successful", "apikey-login");
-        }
-        catch (AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             logger.info("Invalid API Key attempt with key: {}", apiKey);
         }
         return new ErrorResponse(ErrorCode.API_KEY_INVALID);
