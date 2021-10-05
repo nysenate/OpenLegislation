@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingView;
@@ -26,21 +27,23 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class PublicHearingSearchCtrl extends BaseCtrl
-{
-    @Autowired private PublicHearingDataService hearingData;
-    @Autowired private PublicHearingSearchService hearingSearch;
+public class PublicHearingSearchCtrl extends BaseCtrl {
+    @Autowired
+    private PublicHearingDataService hearingData;
+
+    @Autowired
+    private PublicHearingSearchService hearingSearch;
 
     /**
      * Public Hearing Search API.
      * ---------------
-     *
+     * <p>
      * Search all public hearings:  (GET) /api/3/hearings/search
      * Request Parameters:  term - The lucene query string.
-     *                      sort - The lucene sort string (blank by default)
-     *                      full - Set to true to retrieve full public hearing responses (false by default)
-     *                      limit - Limit the number of results (default 25)
-     *                      offset - Start results from offset
+     * sort - The lucene sort string (blank by default)
+     * full - Set to true to retrieve full public hearing responses (false by default)
+     * limit - Limit the number of results (default 25)
+     * offset - Start results from offset
      */
     @RequestMapping(value = "/search")
     public BaseResponse globalSearch(@RequestParam String term,
@@ -55,10 +58,11 @@ public class PublicHearingSearchCtrl extends BaseCtrl
 
     /**
      * Public Hearing Search by Year.
-     *  ---------------
+     * ---------------
+     * <p>
+     * Search all Public Hearings in a given year: (GET) /api/3/hearings/{year}/search
      *
-     *  Search all Public Hearings in a given year: (GET) /api/3/hearings/{year}/search
-     *  @see #globalSearch see globalSearch for request params.
+     * @see #globalSearch see globalSearch for request params.
      */
     @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse yearSearch(@PathVariable int year,
@@ -74,9 +78,15 @@ public class PublicHearingSearchCtrl extends BaseCtrl
 
     private BaseResponse getSearchResponse(boolean full, boolean summary, LimitOffset limOff, SearchResults<PublicHearingId> results) {
         return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
-                (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                        : (summary) ? new PublicHearingInfoView(hearingData.getPublicHearing(r.getResult()))
-                           : new PublicHearingIdView(r.getResult()), r.getRank(), r.getHighlights()))
+                        getHearingViewObject(r.getResult(), full, summary), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
+    }
+
+    private ViewObject getHearingViewObject(PublicHearingId id, boolean full, boolean summary) {
+        if (full)
+            return new PublicHearingView(hearingData.getPublicHearing(id));
+        if (summary)
+            return new PublicHearingInfoView(hearingData.getPublicHearing(id));
+        return new PublicHearingIdView(id, hearingData.getFilename(id));
     }
 }

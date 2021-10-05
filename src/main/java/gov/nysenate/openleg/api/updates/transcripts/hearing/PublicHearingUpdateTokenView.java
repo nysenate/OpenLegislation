@@ -12,8 +12,8 @@ public class PublicHearingUpdateTokenView implements ViewObject
     protected PublicHearingIdView publicHearingId;
     protected LocalDateTime dateTime;
 
-    public PublicHearingUpdateTokenView(PublicHearingUpdateToken token) {
-        this.publicHearingId = new PublicHearingIdView(token.getPublicHearingId());
+    public PublicHearingUpdateTokenView(PublicHearingUpdateToken token, String filename) {
+        this.publicHearingId = new PublicHearingIdView(token.getPublicHearingId(), filename);
         this.dateTime = token.getDateTime();
     }
 

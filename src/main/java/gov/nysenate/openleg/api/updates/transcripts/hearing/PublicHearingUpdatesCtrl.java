@@ -1,15 +1,15 @@
 package gov.nysenate.openleg.api.updates.transcripts.hearing;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDao;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateToken;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,7 +74,7 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
         Range<LocalDateTime> dateRange = getOpenRange(from, to, "from", "to");
         PaginatedList<PublicHearingUpdateToken> updates = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.getResults().stream()
-                .map(PublicHearingUpdateTokenView::new)
+                .map(r -> new PublicHearingUpdateTokenView(r, publicHearingDao.getFilename(r.getPublicHearingId())))
                 .collect(Collectors.toList()), updates.getTotal(), limOff);
     }
 }
