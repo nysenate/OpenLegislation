@@ -14,13 +14,13 @@ public class PublicHearingInfoView extends PublicHearingIdView {
 
     private final String title, address, startTime, endTime;
     protected LocalDate date;
-    protected List<HearingHost> hosts;
+    protected List<HearingHost> committees;
 
     public PublicHearingInfoView(PublicHearing publicHearing) {
         super(publicHearing.getId(), publicHearing.getFilename());
         this.title = publicHearing.getTitle();
         this.date = publicHearing.getDate();
-        this.hosts = new ArrayList<>(publicHearing.getHosts());
+        this.committees = new ArrayList<>(publicHearing.getHosts());
         this.address = publicHearing.getAddress();
         this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);
         this.endTime = publicHearing.getEndTime() == null ? null : publicHearing.getEndTime().format(TIME_FORMAT);
@@ -39,8 +39,8 @@ public class PublicHearingInfoView extends PublicHearingIdView {
         return date;
     }
 
-    public List<HearingHost> getHosts() {
-        return hosts;
+    public List<HearingHost> getCommittees() {
+        return committees;
     }
 
     public String getAddress() {
