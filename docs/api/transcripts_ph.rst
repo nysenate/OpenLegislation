@@ -8,16 +8,21 @@ Get a single Public Hearing
 
 **Usage**
 
-Retrieve public hearing by id
+Retrieve public hearing by id or filename
 ::
     (GET) /api/3/hearings/{id}
+    (GET) /api/3/hearings/{filename}
 
 **Examples**
 
-// TODO
 Request public hearing 5
 ::
     /api/3/hearings/5
+
+Request public hearing "10-29-13 NYsenate_Flanagan_Education_FINAL.txt"
+::
+    /api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
+
 
 **Response**
 
@@ -30,12 +35,14 @@ Full Public Hearing Response
       "message" : "Data for public hearing 10-29..",  // Response description
       "responseType" : "hearing",                     // Response data type
       "result" : {
+        "id": 179
         "filename" : "10-29-13 NYsenate_Flanagan..",  // Filename of public hearing transcript
         "title" : "PUBLIC HEARING THE REGENTS RE..",  // Title of public hearing
         "date" : "2013-10-29",                        // Date of public hearing
         "address" : "Senate Hearing Room\n250 Br..",  // Address of public hearing
         "committees" : [ {                            // List of committees/task forces/other groups holding the hearing
           "name" : "EDUCATION",                       // Name of committee/task force/other group
+          "type" : "COMMITTEE"                        // Type of group, committee/task force/legislative commission/etc
           "chamber" : "SENATE"                        // Chamber of committee
         } ],
         "startTime" : "10:00",                        // Time the public hearing started
@@ -49,8 +56,9 @@ Get a public hearing pdf
 
 **Usage**
 
-Retrieve public hearing pdf by filename
+Retrieve public hearing pdf by id or filename
 ::
+    (GET) /api/3/hearings/{id}.pdf
     (GET) /api/3/hearings/{filename}.pdf
 
 **Examples**
