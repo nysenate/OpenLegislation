@@ -99,7 +99,7 @@ function MenuContent() {
               </NavCategory>
             )
           })}
-          <NavPage name="JSON API Docs" icon={<Code />} to="/docs" />
+          <DocPage name="JSON API Docs" icon={<Code />} to="/static/docs/html/index.html" />
           {/*// If admin is logged in, show logout btn*/}
           {/*<NavPage name="Logout" icon={<SignOut />} to="/logout" />*/}
         </ul>
@@ -155,6 +155,19 @@ function NavPage({ name, icon, to }) {
         <div className="flex-grow">{name}</div>
       </div>
     </Link>
+  )
+}
+
+function DocPage({ name, icon, to }) {
+  return (
+      <a href={to} >
+
+        <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+          <div className="ml-5 mr-2 inline">{icon}</div>
+          <div className="flex-grow">{name}</div>
+        </div>
+
+      </a>
   )
 }
 
