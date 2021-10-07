@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.config;
 
-import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.api.BaseCtrl;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;

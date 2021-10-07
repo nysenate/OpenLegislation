@@ -8,16 +8,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
-import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.notification.Notification;
-import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
-import gov.nysenate.openleg.processor.base.IngestCache;
-import gov.nysenate.openleg.util.AsciiArt;
-import gov.nysenate.openleg.util.OpenlegThreadFactory;
+import gov.nysenate.openleg.legislation.agenda.Agenda;
+import gov.nysenate.openleg.legislation.agenda.AgendaId;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.notifications.NotificationDispatcher;
+import gov.nysenate.openleg.notifications.model.Notification;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.processors.IngestCache;
+import gov.nysenate.openleg.common.util.AsciiArt;
+import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -48,7 +49,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 
-import static gov.nysenate.openleg.model.notification.NotificationType.EVENT_BUS_EXCEPTION;
+import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
 @EnableCaching
@@ -75,7 +76,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
         // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
         config.addDefaultCache(cacheConfiguration);
-        config.setUpdateCheck(false);
 
         return net.sf.ehcache.CacheManager.newInstance(config);
     }
@@ -175,8 +175,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
         executor.setCorePoolSize(8);
-        executor.setMaxPoolSize(12);
-        executor.setQueueCapacity(100);
         executor.setWaitForTasksToCompleteOnShutdown(false);
         executor.initialize();
         return executor;
@@ -225,7 +223,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
      *
      * Note that even though notifications are posted through the event bus,
      * all exceptions are caught within the notification event handling code, preventing an infinite loop.
-     * @see gov.nysenate.openleg.service.notification.dispatch.NotificationDispatcher#handleNotificationEvent(Notification)
+     * @see NotificationDispatcher#handleNotificationEvent(Notification)
      *
      * @param exception Throwable
      * @param context SubscriberExceptionContext

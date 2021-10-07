@@ -18,6 +18,7 @@ target/
 .settings/
 
 !.idea/codeStyleSettings.xml
+!.idea/codeStyles/**
 
 flyway.conf
 log4j2.xml

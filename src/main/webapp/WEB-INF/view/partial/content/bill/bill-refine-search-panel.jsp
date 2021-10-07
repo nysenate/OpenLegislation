@@ -3,7 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="open" tagdir="/WEB-INF/tags/component" %>
 
-<%@ page import="gov.nysenate.openleg.model.bill.BillStatusType" %>
+<%@ page import="gov.nysenate.openleg.legislation.bill.BillStatusType" %>
 <c:set var="statusTypes" value="<%=BillStatusType.values()%>"/>
 
 <div layout-gt-sm="row" layout="column" class="search-refine-panel">
