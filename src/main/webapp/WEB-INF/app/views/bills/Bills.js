@@ -12,7 +12,7 @@ export default function Bills({ setHeaderText }) {
   const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname === '/bills') {
+    if (location.pathname.startsWith('/bills')) {
       setHeaderText("Search NYS Legislation")
     }
   }, [ location ])
