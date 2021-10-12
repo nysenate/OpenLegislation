@@ -81,6 +81,13 @@
         focus:border-blue-400;
     }
 
+    .date-picker {
+        @apply input;
+        div {
+            @apply items-center border-0;
+        }
+    }
+
     .label {
         @apply font-light;
     }
