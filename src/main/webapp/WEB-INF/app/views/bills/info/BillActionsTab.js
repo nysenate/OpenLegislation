@@ -3,9 +3,10 @@ import { CalendarBlank } from "phosphor-react";
 import { formatDateTime } from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import { capitalize } from "app/lib/textUtils";
-
-const ASC = "asc"
-const DESC = "desc"
+import SortBy, {
+  ASC,
+  DESC
+} from "app/shared/SortBy";
 
 export default function BillActionsTab({ bill }) {
   const [ actions, setActions ] = React.useState(bill.actions.items)
@@ -24,13 +25,7 @@ export default function BillActionsTab({ bill }) {
     <section className="m-5">
       <div className="mb-5">
         <label className="label label--top" htmlFor="sort">Sort by</label>
-        <select className="select"
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                name="sort">
-          <option value={ASC}>Oldest to Newest</option>
-          <option value={DESC}>Newest to Oldest</option>
-        </select>
+        <SortBy sort={sort} onChange={(value) => setSort(value)} name="sort" />
       </div>
       <div>
         {actions.map((action) => {

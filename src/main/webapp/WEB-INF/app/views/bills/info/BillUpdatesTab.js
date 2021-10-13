@@ -9,9 +9,11 @@ import {
   useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
+import SortBy, {
+  ASC,
+  DESC
+} from "app/shared/SortBy";
 
-const ASC = "asc"
-const DESC = "desc"
 
 export default function BillUpdatesTab({ bill }) {
   const [ updates, setUpdates ] = React.useState()
@@ -99,13 +101,7 @@ function Filters({ updateType, onUpdateTypeChange, sort, onSortChange }) {
       </div>
       <div>
         <label className="label label--top" htmlFor="sort">Sort by</label>
-        <select value={sort}
-                onChange={(e) => onSortChange(e.target.value)}
-                className="select"
-                name="sort">
-          <option value={ASC}>Oldest to Newest</option>
-          <option value={DESC}>Newest to Oldest</option>
-        </select>
+        <SortBy sort={sort} onChange={(value) => onSortChange(value)} name="sort" />
       </div>
     </div>
   )
