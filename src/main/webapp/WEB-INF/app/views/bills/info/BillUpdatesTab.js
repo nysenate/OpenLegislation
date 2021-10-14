@@ -1,10 +1,7 @@
 import React from "react"
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import { getBillUpdatesApi } from "app/apis/billGetApi";
-import { formatDateTime } from "app/lib/dateUtils";
-import { DateTime } from "luxon";
+import { fetchSingleBillUpdates } from "app/apis/billGetApi";
 import {
-  Link,
   useHistory,
   useLocation
 } from "react-router-dom";
@@ -13,6 +10,7 @@ import SortBy, {
   ASC,
   DESC
 } from "app/shared/SortBy";
+import BillUpdate from "app/shared/BillUpdate";
 
 
 export default function BillUpdatesTab({ bill }) {
@@ -24,9 +22,9 @@ export default function BillUpdatesTab({ bill }) {
 
   React.useEffect(() => {
     setUpdates(undefined)
-    getBillUpdatesApi(bill.session, bill.printNo, { order: sort, filter: updateType, offset: 1, limit: 1000 })
+    fetchSingleBillUpdates(bill.session, bill.printNo, { order: sort, filter: updateType, offset: 1, limit: 1000 })
       .then((res) => {
-        setUpdates(res.items)
+        setUpdates(res.result.items)
       })
   }, [ bill, updateType, sort ])
 
@@ -113,61 +111,10 @@ function UpdateList({ updates }) {
       {updates.map((update, index) => {
         return (
           <div className="py-6 border-b-1 border-gray-300" key={index}>
-            <Update update={update} />
+            <BillUpdate update={update} />
           </div>
         )
       })}
     </React.Fragment>
-  )
-}
-
-function Update({ update }) {
-  return (
-    <React.Fragment>
-      <div className="mb-1">
-        <span className="font-semibold">{update.action}</span> | <span className="font-semibold">{update.scope}</span>
-      </div>
-      <div>
-        <div>
-          <span className="font-light mr-1.5">Published date time:</span> {formatDateTime(update.sourceDateTime, DateTime.DATETIME_MED)}
-        </div>
-        <div>
-          <span className="font-light">Processed date time:</span> {formatDateTime(update.processedDateTime, DateTime.DATETIME_MED)}
-        </div>
-        <div>
-          <span className="font-light">Source:</span>&nbsp;
-          <Link to={`/api/3/sources/fragment/${update.sourceId}`}
-                target="_blank">{update.sourceId}</Link>
-        </div>
-        <div className="mt-3">
-          <FieldTable update={update} />
-        </div>
-      </div>
-    </React.Fragment>
-  )
-}
-
-function FieldTable({ update }) {
-  return (
-    <table className="table table--stripe">
-      <thead>
-      <tr>
-        <th>Field Name</th>
-        <th>Data</th>
-      </tr>
-      </thead>
-      <tbody>
-      {Object.entries(update.fields).map(([ key, value ]) => {
-        return (
-          <tr key={key}>
-            <td>{key}</td>
-            <td>
-              <pre className="whitespace-pre-wrap">{value}</pre>
-            </td>
-          </tr>
-        )
-      })}
-      </tbody>
-    </table>
   )
 }

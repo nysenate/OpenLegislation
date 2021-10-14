@@ -12,7 +12,7 @@ export default function BillFullTextTab({ bill, selectedAmd }) {
   React.useEffect(() => {
     getBillApi(bill.session, bill.printNo, { view: "with_refs", fullTextFormat: [ "PLAIN", "HTML" ] })
       .then((res) => {
-        setFullBill(res)
+        setFullBill(res.result)
       })
   }, [ bill ])
 

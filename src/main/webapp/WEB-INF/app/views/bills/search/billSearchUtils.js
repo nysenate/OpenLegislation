@@ -49,7 +49,7 @@ export const fetchMembers = (session) => {
 
 export const fetchStatusTypes = () => {
   return getBillStatusTypes().then((res) => {
-    return [ new SelectOption("", "Any") ].concat(res.items.map((status) => {
+    return [ new SelectOption("", "Any") ].concat(res.result.items.map((status) => {
       return new SelectOption(status.name, status.description)
     }))
   })
