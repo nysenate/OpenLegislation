@@ -25,7 +25,8 @@ public abstract class BasePdfView {
     private final PDDocument doc = new PDDocument();
     private PDPage currPage;
 
-    public ResponseEntity<byte[]> writeData() {
+    public ResponseEntity<byte[]> writeData() throws IOException {
+        doc.close();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
@@ -46,7 +47,6 @@ public abstract class BasePdfView {
             doc.addPage(currPage);
         }
         doc.save(pdfBytes);
-        doc.close();
     }
 
     /**
