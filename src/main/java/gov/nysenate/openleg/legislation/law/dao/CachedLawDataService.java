@@ -1,24 +1,16 @@
 package gov.nysenate.openleg.legislation.law.dao;
 
 import com.google.common.collect.Range;
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
-import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.legislation.CachingService;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.CacheConfiguration;
+import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.law.*;
+import gov.nysenate.openleg.processors.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -33,52 +25,49 @@ import static java.util.stream.Collectors.toList;
  * Service interface for retrieving and saving NYS Law data.
  */
 @Service
-public class CachedLawDataService implements LawDataService, CachingService<LawVersionId>
-{
+public class CachedLawDataService extends CachingService<LawVersionId, LawTree> implements LawDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedLawDataService.class);
 
-    @Autowired private LawDataDao lawDataDao;
-    @Autowired private CacheManager cacheManager;
-    @Autowired private EventBus eventBus;
-
-    @Value("${law.cache.element.size}") private int lawTreeCacheElementSize;
-
-    private EhCacheCache lawTreeCache;
-
+    @Autowired
+    private LawDataDao lawDataDao;
+    @Value("${law.cache.element.size}")
+    private int lawTreeCacheElementSize;
     private Map<String, LocalDate> maxPubDates = new HashMap<>();
 
+    public CachedLawDataService() {
+        super(cache);
+    }
+
+    @Override
     @PostConstruct
-    private void init() {
-        eventBus.register(this);
-        setupCaches();
+    protected void init() {
+        super.init();
         maxPubDates = lawDataDao.getLastPublishedMap();
     }
 
     @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.LAW.name());
+    protected void cleanUp() {
+        super.cleanUp();
         maxPubDates.clear();
     }
 
+    @Override
+    protected List<ContentCache> getCacheEnums() {
+        return List.of(ContentCache.LAW);
+    }
+
+    @Override
+    protected boolean isByteSizeOf() {
+        return false;
+    }
+
+    @Override
+    protected int getNumUnits() {
+        return lawTreeCacheElementSize;
+    }
+
+
     /** --- CachingService implementation --- */
-
-    /** {@inheritDoc} */
-    @Override
-    public List<Ehcache> getCaches() {
-        return Collections.singletonList(lawTreeCache.getNativeCache());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.LAW.name())
-                .eternal(true)
-                .maxEntriesLocalHeap(lawTreeCacheElementSize)
-                .sizeOfPolicy(elementSizeOfPolicy()));
-        cacheManager.addCache(cache);
-        this.lawTreeCache = new EhCacheCache(cache);
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -91,18 +80,9 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     }
 
     /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<LawVersionId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.LAW)) {
-            evictContent(evictIdEvent.getContentId());
-        }
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void evictContent(LawVersionId lawVersionId) {
-        lawTreeCache.evict(lawVersionId);
+        super.evictContent(lawVersionId);
         maxPubDates.clear();
     }
 
@@ -116,15 +96,6 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
         }
         catch (LawTreeNotFoundEx ex) {
             logger.warn("Failed to warm up law cache!.", ex);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.LAW)) {
-            warmCaches();
         }
     }
 
@@ -142,22 +113,17 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
         if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
         try {
             if (endPublishedDate == null) {
-                if (maxPubDates.isEmpty()) {
+                if (maxPubDates.isEmpty())
                     maxPubDates = lawDataDao.getLastPublishedMap();
-                }
                 endPublishedDate = maxPubDates.get(lawId);
             }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
-            LawTree lawTree;
-            org.springframework.cache.Cache.ValueWrapper tree = lawTreeCache.get(lawVersionId);
-            if (tree != null) {
-                lawTree = (LawTree) tree.get();
+            LawTree tree = cache.get(lawVersionId);
+            if (tree == null) {
+                tree = lawDataDao.getLawTree(lawId, endPublishedDate);
+                cache.put(tree.getLawVersionId(), tree);
             }
-            else {
-                lawTree = lawDataDao.getLawTree(lawId, endPublishedDate);
-                lawTreeCache.put(lawTree.getLawVersionId(), lawTree);
-            }
-            return lawTree;
+            return tree;
         }
         catch (EmptyResultDataAccessException ex) {
             throw new LawTreeNotFoundEx(lawId, endPublishedDate, ex.getMessage());
@@ -167,9 +133,8 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     /** {@inheritDoc} */
     @Override
     public LawDocInfo getLawDocInfo(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx {
-        if (documentId == null || documentId.length() < 4) {
+        if (documentId == null || documentId.length() < 4)
             throw new IllegalArgumentException("Document id cannot be less than 4 characters");
-        }
         Optional<LawTreeNode> node =
             getLawTree(documentId.substring(0, 3), endPublishedDate).find(documentId);
         if (node.isPresent()) {
@@ -212,7 +177,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     public void saveLawTree(LawFile lawFile, LawTree lawTree) {
         if (lawTree == null) throw new IllegalArgumentException("Supplied lawTree cannot be null");
         lawDataDao.updateLawTree(lawFile, lawTree);
-        lawTreeCache.put(lawTree.getLawVersionId(), lawTree);
+        cache.put(lawTree.getLawVersionId(), lawTree);
         maxPubDates.clear();
     }
 

@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.openleg.agenda;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaSummaryView;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
@@ -43,7 +43,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
 
         return agendaSummaries.getResults().stream()
                 .map(AgendaSummaryView::getId)
-                .map(aiv -> new AgendaId(aiv.getNumber(), aiv.getYear()))
+                .map(aiv -> new AgendaId(aiv.number(), aiv.year()))
                 .map(this::getAgendaView)
                 .collect(Collectors.toList());
     }

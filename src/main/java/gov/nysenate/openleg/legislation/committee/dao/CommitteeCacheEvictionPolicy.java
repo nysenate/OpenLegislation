@@ -2,8 +2,6 @@ package gov.nysenate.openleg.legislation.committee.dao;
 
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.store.AbstractPolicy;
 
 public class CommitteeCacheEvictionPolicy extends AbstractPolicy {
 

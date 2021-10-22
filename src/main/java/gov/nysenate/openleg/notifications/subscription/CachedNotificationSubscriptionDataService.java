@@ -1,58 +1,32 @@
 package gov.nysenate.openleg.notifications.subscription;
 
 import com.google.common.collect.Maps;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
+import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.SubscriptionNotFoundEx;
-import gov.nysenate.openleg.legislation.CachingService;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CachedNotificationSubscriptionDataService implements NotificationSubscriptionDataService, CachingService
-{
-
-    @Autowired private CacheManager cacheManager;
-    @Autowired private EventBus eventBus;
-    @Value("${notification.cache.heap.size}") private long notificationCacheSizeMb;
+public class CachedNotificationSubscriptionDataService extends CachingService<String, HashMap<Integer, NotificationSubscription>>
+        implements NotificationSubscriptionDataService {
+    @Value("${notification.cache.heap.size}")
+    private int notificationCacheSizeMb;
 
     @Autowired
     private NotificationSubscriptionDao subscriptionDao;
 
-    private Cache subCache;
-
     private static final String subCacheKey = "sUbCaChE";
-
-    @PostConstruct
-    private void init() {
-        setupCaches();
-        eventBus.register(this);
-    }
-
-    @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.NOTIFICATION_SUBSCRIPTION.name());
-    }
 
     /* --- NotificationSubscriptionDataService Implementation --- */
 
@@ -113,49 +87,24 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     /* --- CachingService Implementations --- */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void setupCaches() {
-        subCache = new Cache(new CacheConfiguration().name(ContentCache.NOTIFICATION_SUBSCRIPTION.name())
-                .eternal(true)
-                .maxBytesLocalHeap(notificationCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(byteSizeOfPolicy()));
-        cacheManager.addCache(subCache);
+    protected List<ContentCache> getCacheEnums() {
+        return List.of(ContentCache.NOTIFICATION_SUBSCRIPTION);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public List<Ehcache> getCaches() {
-        return Collections.singletonList(subCache);
+    protected boolean isByteSizeOf() {
+        return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Subscribe
     @Override
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
-            evictCaches();
-        }
+    protected int getNumUnits() {
+        return notificationCacheSizeMb;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void evictContent(Object o) {
+    public void evictContent(String s) {
         evictCaches();
     }
 
@@ -167,29 +116,16 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
         getSubscriptionMap();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Subscribe
-    @Override
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
-            warmCaches();
-        }
-    }
-
     /** --- Internal Methods --- */
 
-    @SuppressWarnings("unchecked")
     private HashMap<Integer, NotificationSubscription> getSubscriptionMap() {
-        Element element = subCache.get(subCacheKey);
-        if (element != null) {
-            return (HashMap<Integer, NotificationSubscription>) element.getObjectValue();
-        }
+        var map = cache.get(subCacheKey);
+        if (map != null)
+            return map;
         Set<NotificationSubscription> subscriptionSet = subscriptionDao.getSubscriptions();
         HashMap<Integer, NotificationSubscription> subMap =
                 new HashMap<>(Maps.uniqueIndex(subscriptionSet, NotificationSubscription::getId));
-        subCache.put(new Element(subCacheKey, subMap));
+        cache.put(subCacheKey, subMap);
         return subMap;
     }
 

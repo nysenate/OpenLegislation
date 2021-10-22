@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.agenda;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Objects;
  */
 public class AgendaInfoCommittee implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 6788116636375650193L;
 
     /** Reference to the id of the committee this info is associated with. */

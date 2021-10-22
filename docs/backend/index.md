@@ -4,8 +4,8 @@
 
 General installation instructions for Ubuntu.
 
-### Java 15
-1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/archive/.
+### Java 17
+1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/17/.
 2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java

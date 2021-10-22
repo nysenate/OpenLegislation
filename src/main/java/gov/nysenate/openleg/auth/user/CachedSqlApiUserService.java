@@ -2,33 +2,26 @@ package gov.nysenate.openleg.auth.user;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.auth.exception.UsernameExistsException;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.*;
+import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.notifications.mail.SendMailService;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
+import org.ehcache.config.ResourceUnit;
+import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,96 +29,49 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class CachedSqlApiUserService implements ApiUserService, CachingService<String>
-{
+public class CachedSqlApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
+    private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
-    private final String domainUrl;
-    private long apiUserCacheSizeMb;
-
-    private final EventBus eventBus;
-    private final CacheManager cacheManager;
+    @Value("${api_user.cache.heap.size}")
+    private int apiUserCacheSizeMb;
     private final Environment environment;
 
-    private EhCacheCache apiUserCache;
-
-    private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
-
-    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
-                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl,
-                                   @Value("${api_user.cache.heap.size}") long apiUserCacheSizeMb) {
+    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, Environment environment) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
-        this.cacheManager = cacheManager;
         this.environment = environment;
-        this.eventBus = eventBus;
-        this.apiUserCacheSizeMb = apiUserCacheSizeMb;
-        eventBus.register(this);
-        setupCaches();
-        this.domainUrl = domainUrl;
     }
 
-    @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.APIUSER.name());
+    @Override
+    protected List<ContentCache> getCacheEnums() {
+        return List.of(ContentCache.APIUSER);
+    }
+
+    @Override
+    protected boolean isByteSizeOf() {
+        return true;
+    }
+
+    @Override
+    protected int getNumUnits() {
+        return apiUserCacheSizeMb;
+    }
+
+    @Override
+    protected ResourceUnit getUnit() {
+        return MemoryUnit.MB;
     }
 
     /*** --- CachingService Implementation --- */
 
     @Override
-    public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.APIUSER.name())
-                .eternal(true)
-                .maxBytesLocalHeap(apiUserCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(byteSizeOfPolicy()));
-        cacheManager.addCache(cache);
-        this.apiUserCache = new EhCacheCache(cache);
-    }
-
-    @Override
-    public List<Ehcache> getCaches() {
-        return Collections.singletonList(apiUserCache.getNativeCache());
-    }
-
-    @Override
-    @Subscribe
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.APIUSER)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<String> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.APIUSER)) {
-            evictContent(evictIdEvent.getContentId());
-        }
-    }
-
-    @Override
-    public void evictContent(String key) {
-        apiUserCache.evict(key);
-    }
-
-    @Override
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up API User Cache");
-
         // Feed in all the api users from the database into the cache
         apiUserDao.getAllUsers().forEach(this::cacheApiUser);
-    }
-
-    @Override
-    @Subscribe
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.APIUSER)) {
-            warmCaches();
-        }
     }
 
     /** --- ApiUserService Implementation --- */
@@ -156,12 +102,9 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         // Try to send the registration email before saving the user's info into the DB.
         // If sending the email fails, the use should be able to try signing up again with the same info.
         sendRegistrationEmail(newUser);
-
         apiUserDao.insertUser(newUser);
-
         newUser.setSubscriptions(subscriptions);
         apiUserDao.updateUser(newUser);
-
         return newUser;
     }
 
@@ -298,9 +241,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * Inserts the given api user into the cache
      */
     private void cacheApiUser(ApiUser apiUser) {
-        if (apiUser != null) {
-            apiUserCache.put(apiUser.getApiKey(), apiUser);
-        }
+        if (apiUser != null)
+            cache.put(apiUser.getApiKey(), apiUser);
     }
 
     /**
@@ -310,8 +252,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * @return Optional<ApiUser>
      */
     private Optional<ApiUser> getCachedApiUser(String apiKey) {
-        return Optional.ofNullable(apiUserCache.get(apiKey))
-                .map(valueWrapper -> (ApiUser) valueWrapper.get());
+        return Optional.ofNullable(cache.get(apiKey));
     }
 
     /**

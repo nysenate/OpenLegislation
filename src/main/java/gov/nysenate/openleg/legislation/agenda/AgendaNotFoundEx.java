@@ -1,13 +1,14 @@
 package gov.nysenate.openleg.legislation.agenda;
 
+import java.io.Serial;
 import java.time.LocalDate;
 
 public class AgendaNotFoundEx extends RuntimeException
 {
+    @Serial
     private static final long serialVersionUID = 2760237573336644451L;
 
     private AgendaId agendaId;
-    private LocalDate weekOf;
 
     public AgendaNotFoundEx(AgendaId agendaId, Throwable cause) {
         super("The agenda with id " + agendaId + " could not be found.", cause);
@@ -26,15 +27,7 @@ public class AgendaNotFoundEx extends RuntimeException
         super(message);
     }
 
-    public AgendaNotFoundEx(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public AgendaId getAgendaId() {
         return agendaId;
-    }
-
-    public LocalDate getWeekOf() {
-        return weekOf;
     }
 }

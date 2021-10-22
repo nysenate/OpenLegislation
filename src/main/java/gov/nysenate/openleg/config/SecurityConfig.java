@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.config;
 
-import gov.nysenate.openleg.auth.shiro.shiroCacheManager;
+import gov.nysenate.openleg.auth.shiro.ShiroCacheManager;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.realm.Realm;
@@ -11,7 +11,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,7 +64,7 @@ public class SecurityConfig
     }
 
     /**
-     * Configures the shiroCacheService security manager with the instance of the active realm.
+     * Configures the ShiroCachingService security manager with the instance of the active realm.
      */
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager securityManager() {
@@ -76,11 +75,11 @@ public class SecurityConfig
 
     @Bean(name = "shiroCacheManager")
     public CacheManager shiroCacheManager() {
-        return new shiroCacheManager();
+        return new ShiroCacheManager();
     }
 
     /**
-     * Exposes the shiroCacheService.ini configuration file as an Ini instance that is consumed by the
+     * Exposes the ShiroCachingService.ini configuration file as an Ini instance that is consumed by the
      * security filter manager when setting up the filter chains.
      */
     public Ini shiroIniConfig() {

@@ -22,10 +22,10 @@
       <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>15</source>
-          <target>15</target>
+          <source>17</source>
+          <target>17</target>
           <!-- avoid possible encoding issues -->
           <encoding>utf-8</encoding>
         </configuration>
@@ -107,17 +107,19 @@
   <properties>
     <c3p0.version>0.9.5.4</c3p0.version>
     <commons-cli.version>1.4</commons-cli.version>
+    <commons-csv.version>1.5</commons-csv.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
     <commons-text.version>1.8</commons-text.version>
     <commons-validator.version>1.6</commons-validator.version>
-    <eh-cache.version>2.10.6</eh-cache.version>
+    <eh-cache.version>3.9.7</eh-cache.version>
     <elasticsearch.version>7.3.2</elasticsearch.version>
     <flying-saucer.version>9.1.18</flying-saucer.version>
-    <guava.version>31.0-jre</guava.version>
-    <guava.jackson.version>2.9.10</guava.jackson.version>
+    <gson.version>2.8.8</gson.version>
+    <guava.version>31.0.1-jre</guava.version>
+    <guava.jackson.version>2.13.0</guava.jackson.version>
     <http-client.version>4.5.13</http-client.version>
-    <jackson.version>2.12.1</jackson.version>
+    <jackson.version>2.13.0</jackson.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
@@ -140,7 +142,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
-      <version>1.5</version>
+      <version>${commons-csv.version}</version>
     </dependency>
 
     <!-- Spring -->
@@ -420,7 +422,7 @@
     <!-- Caching -->
 
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
+      <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>${eh-cache.version}</version>
     </dependency>
@@ -486,7 +488,7 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.3.1</version>
+      <version>${gson.version}</version>
     </dependency>
 
     <dependency>

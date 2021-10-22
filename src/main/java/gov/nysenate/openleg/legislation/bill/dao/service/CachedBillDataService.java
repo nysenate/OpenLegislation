@@ -1,26 +1,20 @@
 package gov.nysenate.openleg.legislation.bill.dao.service;
 
 import com.google.common.collect.Range;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
+import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillInfo;
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.bill.dao.BillDao;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
-import net.sf.ehcache.*;
-import net.sf.ehcache.config.CacheConfiguration;
+import org.ehcache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,23 +23,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Data service layer for retrieving and updating bill data. This implementation makes use of
  * in-memory caches to reduce the number of database queries involved in retrieving bill data.
  */
 @Service
-public class CachedBillDataService implements BillDataService, CachingService<BaseBillId>
-{
+public class CachedBillDataService extends CachingService<BaseBillId> implements BillDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
-    @Autowired private CacheManager cacheManager;
-    @Autowired private BillDao billDao;
-    @Autowired private EventBus eventBus;
+    @Autowired
+    private BillDao billDao;
 
     @Value("${bill.cache.element.size}") private int billCacheElementSize;
     @Value("${bill-info.cache.element.size}") private int billInfoCacheElementSize;
@@ -53,26 +45,18 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     private Cache billCache;
     private Cache billInfoCache;
 
-    @PostConstruct
-    private void init() {
-        setupCaches();
-        eventBus.register(this);
+    public CachedBillDataService() {
+        super(cache);
     }
 
     @PreDestroy
-    private void cleanUp() {
+    protected void cleanUp() {
         evictCaches();
         cacheManager.removeCache(ContentCache.BILL.name());
         cacheManager.removeCache(ContentCache.BILL_INFO.name());
     }
 
     /** --- CachingService implementation --- */
-
-    /** {@inheritDoc} */
-    @Override
-    public List<Ehcache> getCaches() {
-        return Arrays.asList(billCache, billInfoCache);
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -124,36 +108,10 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    @Subscribe
-    public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.BILL) || evictEvent.affects(ContentCache.BILL_INFO)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<BaseBillId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.BILL) || evictIdEvent.affects(ContentCache.BILL_INFO)) {
-            evictContent(evictIdEvent.getContentId());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void evictContent(BaseBillId baseBillId) {
         logger.debug("evicting {}", baseBillId);
         billInfoCache.remove(baseBillId);
         billCache.remove(baseBillId);
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.BILL) || warmEvent.affects(ContentCache.BILL_INFO)) {
-            warmCaches();
-        }
     }
 
     /** --- BillDataService implementation --- */

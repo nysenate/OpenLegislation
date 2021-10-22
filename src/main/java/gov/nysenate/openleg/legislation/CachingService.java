@@ -1,42 +1,99 @@
 package gov.nysenate.openleg.legislation;
 
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.ResourceUnit;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.EntryUnit;
+import org.ehcache.expiry.ExpiryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.List;
 
-import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.CONTINUE;
+public abstract class CachingService<Key, Value> {
+    private static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
-public interface CachingService<ContentId>
-{
-    Logger logger = LoggerFactory.getLogger(CachingService.class);
+    @Autowired
+    protected CacheManager cacheManager;
+    @Autowired
+    protected EventBus eventBus;
+    protected Cache<Key, Value> cache;
+
+    @PostConstruct
+    protected void init() {
+        setupCaches();
+        eventBus.register(this);
+    }
+
+    @PreDestroy
+    protected void cleanUp() {
+        evictCaches();
+        for (ContentCache c : getCacheEnums())
+            cacheManager.removeCache(c.name());
+    }
+
+    protected abstract List<ContentCache> getCacheEnums();
+
+    protected abstract boolean isByteSizeOf();
+
+    protected ResourceUnit getUnit() {
+        // TODO: does this align with above? Use simple Interface?
+        return EntryUnit.ENTRIES;
+    }
+
+    protected abstract int getNumUnits();
+
+    // TODO: align types?
+    protected ExpiryPolicy<? super Key, ? super Value> getExpiryPolicy() {
+        return ExpiryPolicy.NO_EXPIRY;
+    }
 
     /**
      * Performs cache creation and any pre-caching of data.
      */
-    void setupCaches();
+    protected void setupCaches() {
+        var cacheType = getCacheEnums().get(0);
+        CacheConfiguration<Key, Value> config = (CacheConfiguration<Key, Value>) CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(cacheType.getKeyClass(), cacheType.getValueClass(),
+                        ResourcePoolsBuilder.newResourcePoolsBuilder().heap(getNumUnits(), getUnit()))
+                .withExpiry(getExpiryPolicy()).withSizeOfMaxObjectGraph(isByteSizeOf() ? 5000 : 100000).build();
+        cache = cacheManager.createCache(cacheType.name(), config);
+    }
 
     /**
      * Returns all cache instances.
+     * @return
      */
-    List<Ehcache> getCaches();
+    public List<? extends Cache<?, ?>> getCaches() {
+        return getCacheEnums().stream().map(c -> cacheManager.getCache(c.name(), c.getKeyClass(), c.getValueClass()))
+                .toList();
+    }
 
     /**
      * Evicts a single item from the cache based on the given content id
      */
-    void evictContent(ContentId contentId);
+    public void evictContent(Key key) {
+        cache.remove(key);
+    }
 
     /**
      * (Default Method)
      * Clears all the cache entries from all caches.
      */
-    default void evictCaches() {
-        if (getCaches() != null && !getCaches().isEmpty()) {
+     public void evictCaches() {
+        if (getCaches() != null) {
             getCaches().forEach(c -> {
-                logger.info("Clearing out {} cache", c.getName());
-                c.removeAll();
+                // TODO: use Content Type
+                logger.info("Clearing out a {} cache", c.toString());
+                c.clear();
             });
         }
     }
@@ -47,19 +104,27 @@ public interface CachingService<ContentId>
      *
      * @param evictEvent CacheEvictEvent
      */
-    void handleCacheEvictEvent(CacheEvictEvent evictEvent);
+    @Subscribe
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+        if (getCacheEnums().stream().anyMatch(evictEvent::affects))
+            evictCaches();
+    }
 
     /**
      * Intercept an evict Id event and evict the specified content
      * if the caching service has any of the affected caches
      * @param evictIdEvent CacheEvictIdEvent
      */
-    void handleCacheEvictIdEvent(CacheEvictIdEvent<ContentId> evictIdEvent);
+    @Subscribe
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<Key> evictIdEvent) {
+        if (getCacheEnums().stream().anyMatch(evictIdEvent::affects))
+            evictContent(evictIdEvent.getContentId());
+    }
 
     /**
      * Pre-fetch a subset of currently active data and store it in the cache.
      */
-    void warmCaches();
+    public abstract void warmCaches();
 
     /**
      * If a CacheWarmEvent is sent out on the event bus, the caching service
@@ -67,7 +132,11 @@ public interface CachingService<ContentId>
      *
      * @param warmEvent CacheWarmEvent
      */
-    void handleCacheWarmEvent(CacheWarmEvent warmEvent);
+    @Subscribe
+    public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
+        if (getCacheEnums().stream().anyMatch(warmEvent::affects))
+            warmCaches();
+    }
 
     /**
      * The default side of configuration to use with caches sized by bytes on heap.
@@ -79,9 +148,6 @@ public interface CachingService<ContentId>
      *
      * @return SizeOfPolicyConfiguration
      */
-    default SizeOfPolicyConfiguration byteSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(5000).maxDepthExceededBehavior(CONTINUE);
-    }
 
     /**
      * An alternative size of configuration to be used only with caches sized by element count.
@@ -94,7 +160,4 @@ public interface CachingService<ContentId>
      * ctrl or the cache stats UI.
      * @return
      */
-    public default SizeOfPolicyConfiguration elementSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(100000).maxDepthExceededBehavior(CONTINUE);
-    }
 }

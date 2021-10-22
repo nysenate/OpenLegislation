@@ -5,13 +5,13 @@ import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommAddendumView;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaView;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +95,7 @@ public class OpenlegAgendaReportService implements SpotCheckReportService<Commit
     private Map<CommitteeAgendaAddendumId, AgendaCommAddendumView> getAddendumMap(Collection<AgendaView> agendaViews) {
         return agendaViews.stream()
                 .flatMap(agendaView -> agendaView.getCommitteeAgendas().getItems().stream())
-                .flatMap(agendaCommView -> agendaCommView.getAddenda().getItems().stream())
+                .flatMap(agendaCommView -> agendaCommView.addenda().getItems().stream())
                 .collect(Collectors.toMap(AgendaCommAddendumView::getCommitteeAgendaAddendumId, Function.identity()));
     }
 }
