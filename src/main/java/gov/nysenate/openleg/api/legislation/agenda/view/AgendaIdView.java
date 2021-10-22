@@ -3,25 +3,10 @@ package gov.nysenate.openleg.api.legislation.agenda.view;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 
-public class AgendaIdView implements ViewObject
-{
-    private long number;
-    private int year;
-
-    public AgendaIdView(){}
+public record AgendaIdView(long number, int year) implements ViewObject {
+    // TODO: some kind of default design?
     public AgendaIdView(AgendaId agendaId) {
-        if (agendaId != null) {
-            this.number = agendaId.getNumber();
-            this.year = agendaId.getYear();
-        }
-    }
-
-    public long getNumber() {
-        return number;
-    }
-
-    public int getYear() {
-        return year;
+        this(agendaId == null ? 0 : agendaId.getNumber(), agendaId == null ? 0 : agendaId.getYear());
     }
 
     @Override

@@ -7,52 +7,41 @@ import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.legislation.agenda.AgendaVoteCommittee;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AgendaCommView implements ViewObject
-{
-    private CommitteeId committeeId;
-    private ListView<AgendaCommAddendumView> addenda;
+public record AgendaCommView(CommitteeId committeeId, ListView<AgendaCommAddendumView> addenda) implements ViewObject {
 
     public AgendaCommView(CommitteeId committeeId, Agenda agenda, BillDataService billDataService) {
-        this.committeeId = committeeId;
+        this(committeeId, ListView.of(getAddendaList(agenda, committeeId, billDataService)));
+    }
+
+    // TODO: BillDataService should not really be used like this.
+    private static List<AgendaCommAddendumView> getAddendaList(Agenda agenda, CommitteeId committeeId, BillDataService billDataService) {
         List<AgendaCommAddendumView> addendaList = new ArrayList<>();
-        if (agenda != null) {
-            for (String addendumId : agenda.getAddenda()) {
-                CommitteeAgendaAddendumId id = new CommitteeAgendaAddendumId(agenda.getId(), committeeId, Version.of(addendumId));
-                AgendaInfoCommittee infoComm = null;
-                AgendaVoteCommittee voteComm = null;
-                LocalDateTime modifiedDateTime = null;
-                if (agenda.getAgendaInfoAddenda().containsKey(addendumId) &&
-                    agenda.getAgendaInfoAddendum(addendumId).getCommitteeInfoMap().containsKey(committeeId)) {
-                    infoComm = agenda.getAgendaInfoAddendum(addendumId).getCommitteeInfoMap().get(committeeId);
-                    modifiedDateTime = agenda.getAgendaInfoAddendum(addendumId).getModifiedDateTime();
-                }
-                if (agenda.getAgendaVoteAddenda().containsKey(addendumId) &&
-                        agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().containsKey(committeeId)) {
-                    voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
-                }
-                if (infoComm != null) {
-                    addendaList.add(new AgendaCommAddendumView(id, modifiedDateTime, infoComm, voteComm, billDataService));
-                }
+        if (agenda == null)
+            return addendaList;
+        for (String addendumId : agenda.getAddenda()) {
+            CommitteeAgendaAddendumId id = new CommitteeAgendaAddendumId(agenda.getId(), committeeId, Version.of(addendumId));
+            AgendaInfoCommittee infoComm = null;
+            AgendaVoteCommittee voteComm = null;
+            LocalDateTime modifiedDateTime = null;
+            if (agenda.getAgendaInfoAddenda().containsKey(addendumId) && agenda.getAgendaInfoAddendum(addendumId).getCommitteeInfoMap().containsKey(committeeId)) {
+                infoComm = agenda.getAgendaInfoAddendum(addendumId).getCommitteeInfoMap().get(committeeId);
+                modifiedDateTime = agenda.getAgendaInfoAddendum(addendumId).getModifiedDateTime();
             }
-            this.addenda = ListView.of(addendaList);
+            if (agenda.getAgendaVoteAddenda().containsKey(addendumId) &&
+                    agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().containsKey(committeeId)) {
+                voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
+            }
+            if (infoComm != null)
+                addendaList.add(new AgendaCommAddendumView(id, modifiedDateTime, infoComm, voteComm, billDataService));
         }
-    }
-
-    public AgendaCommView() {}
-
-    public CommitteeId getCommitteeId() {
-        return committeeId;
-    }
-
-    public ListView<AgendaCommAddendumView> getAddenda() {
-        return addenda;
+        return addendaList;
     }
 
     @Override

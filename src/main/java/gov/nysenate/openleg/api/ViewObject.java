@@ -11,6 +11,7 @@ public interface ViewObject
      * Returns a string indicating the type of the content that the view object encapsulates
      * @return String
      */
+    // TODO: check to normalize it?
     @JsonIgnore
     String getViewType();
 

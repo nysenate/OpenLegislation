@@ -18,9 +18,13 @@ public class AgendaMeetingDetailView extends CommAgendaIdView implements ViewObj
     public AgendaMeetingDetailView(CommitteeAgendaId committeeAgendaId, AgendaInfoCommittee infoComm, String addendum,
                                    LocalDate weekOf) {
         super(committeeAgendaId);
-        this.meeting = new AgendaMeetingView(infoComm);
+        this.meeting = new AgendaMeetingView(getOrDefault(infoComm));
         this.addendum = addendum;
         this.weekOf = weekOf;
+    }
+
+    private static AgendaInfoCommittee getOrDefault(AgendaInfoCommittee infoComm) {
+        return infoComm == null ? new AgendaInfoCommittee() : infoComm;
     }
 
     @Override

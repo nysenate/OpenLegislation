@@ -9,9 +9,9 @@ import java.util.Optional;
 public class CommAgendaSummaryView extends CommAgendaIdView
 {
     protected LocalDate weekOf;
-    private long totalAddendum;
-    private int totalBillsConsidered;
-    private int totalBillsVotedOn;
+    private final long totalAddendum;
+    private final int totalBillsConsidered;
+    private final int totalBillsVotedOn;
 
     public CommAgendaSummaryView(CommitteeAgendaId committeeAgendaId, Agenda agenda) {
         super(committeeAgendaId);

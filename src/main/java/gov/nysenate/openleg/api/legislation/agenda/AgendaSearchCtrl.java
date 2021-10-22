@@ -1,20 +1,18 @@
 package gov.nysenate.openleg.api.legislation.agenda;
 
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ListViewResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommFlatView;
 import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaSummaryView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.search.agenda.AgendaSearchService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -25,10 +23,7 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/agendas/", method = RequestMethod.GET)
-public class AgendaSearchCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AgendaSearchCtrl.class);
-
+public class AgendaSearchCtrl extends BaseCtrl {
     @Autowired private AgendaDataService agendaData;
     @Autowired private AgendaSearchService agendaSearch;
     @Autowired private BillDataService billData;
@@ -42,7 +37,7 @@ public class AgendaSearchCtrl extends BaseCtrl
      * for query parameter details.
      */
     @RequestMapping(value = "/search")
-    public BaseResponse searchAgendas(@RequestParam(required = true) String term,
+    public BaseResponse searchAgendas(@RequestParam String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
@@ -64,7 +59,7 @@ public class AgendaSearchCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year:[\\d]{4}}/search")
     public BaseResponse searchAgendas(@PathVariable int year,
-                                      @RequestParam(required = true) String term,
+                                      @RequestParam String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {

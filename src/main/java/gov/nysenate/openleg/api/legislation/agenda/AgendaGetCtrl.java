@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.agenda;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.agenda.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
@@ -8,22 +9,19 @@ import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.search.agenda.AgendaSearchService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +36,7 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/agendas", method = RequestMethod.GET)
-public class AgendaGetCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AgendaGetCtrl.class);
-
+public class AgendaGetCtrl extends BaseCtrl {
     @Autowired private AgendaDataService agendaData;
     @Autowired private AgendaSearchService agendaSearch;
     @Autowired private BillDataService billData;
@@ -131,11 +126,11 @@ public class AgendaGetCtrl extends BaseCtrl
         String sort = "committee.addenda.items.meeting.meetingDateTime:ASC";
         SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(meetingQuery, sort, LimitOffset.THOUSAND);
         List<AgendaMeetingDetailView> meetingViews = new ArrayList<>();
-        results.getResults().stream().forEach(r -> {
+        results.getResults().forEach(r -> {
             // Create a flat listing of detailed meeting views.
             CommitteeAgendaId commAgendaId = r.getResult();
             agendaData.getAgenda(commAgendaId.getAgendaId())
-                    .getAgendaInfoAddenda().values().stream()
+                    .getAgendaInfoAddenda().values()
                     .forEach(addn -> {
                         if (addn.getCommitteeInfoMap().containsKey(commAgendaId.getCommitteeId())) {
                             meetingViews.add(new AgendaMeetingDetailView(
