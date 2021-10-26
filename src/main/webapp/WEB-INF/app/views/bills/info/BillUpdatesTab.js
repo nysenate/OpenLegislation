@@ -7,8 +7,6 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import SortBy, {
-  ASC,
-  DESC
 } from "app/shared/SortBy";
 import BillUpdate from "app/shared/BillUpdate";
 
@@ -16,7 +14,7 @@ import BillUpdate from "app/shared/BillUpdate";
 export default function BillUpdatesTab({ bill }) {
   const [ updates, setUpdates ] = React.useState()
   const [ updateType, setUpdateType ] = React.useState("status")
-  const [ sort, setSort ] = React.useState(DESC)
+  const [ sort, setSort ] = React.useState()
   const location = useLocation()
   const history = useHistory()
 
@@ -30,7 +28,7 @@ export default function BillUpdatesTab({ bill }) {
 
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
-    setSort(params.sort || DESC)
+    setSort(params.sort)
     setUpdateType((params.updateType == null) ? "status" : params.updateType)
   }, [ location.search ])
 
