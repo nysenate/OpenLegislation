@@ -13,6 +13,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { Sliders } from "phosphor-react";
+import InputText from "app/shared/InputText";
 
 
 /**
@@ -156,14 +157,16 @@ export default function BillSearchForm() {
       .map(([ key, value ]) => {
         return (
           <div className={filterWrapperClass} key={key}>
-            <SearchTextInput label={value.label}
-                             value={value.value}
-                             onChange={(e) => dispatch({
-                               type: "update",
-                               value: e.target.value,
-                               key: key
-                             })}
-                             placeholder={value.placeholder} />
+            <InputText label={value.label}
+                       value={value.value}
+                       onChange={(e) => dispatch({
+                         type: "update",
+                         value: e.target.value,
+                         key: key
+                       })}
+                       placeholder={value.placeholder}
+                       isHighlighted={value.value}
+                       type="text" />
           </div>
         )
       })
@@ -193,16 +196,13 @@ export default function BillSearchForm() {
       <form onSubmit={onSubmit}>
         <div className="flex flex-wrap">
           <div className="flex-grow mr-8">
-            <label htmlFor="billsearch" className="label label--top">
-              Print number or term
-            </label>
-            <input onChange={(e) => setTerm(e.target.value)}
-                   value={term}
-                   tabIndex="1"
-                   name="billsearch"
-                   type="text"
-                   className="input w-full"
-                   placeholder="e.g. S1234-2015 or yogurt" />
+            <InputText label="Print number or term"
+                       onChange={(e) => setTerm(e.target.value)}
+                       value={term}
+                       tabIndex="1"
+                       name="billsearch"
+                       type="text"
+                       placeholder="e.g. S1234-2015 or yogurt" />
           </div>
           <div className="mr-8">
             <SearchSelect label="Session Year"
@@ -277,23 +277,6 @@ function SearchSelect({ label, value, onChange, options, tabindex, highlight = t
         {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
       </select>
     </label>
-  )
-}
-
-function SearchTextInput({ label, value, onChange, placeholder }) {
-  let className = "label label--top"
-  className += value ? "bg-yellow-100" : ""
-  return (
-    <div>
-      <label className={className}>{label}
-        <input value={value}
-               onChange={onChange}
-               type="text"
-               placeholder={placeholder}
-               className="input w-full"
-        />
-      </label>
-    </div>
   )
 }
 
