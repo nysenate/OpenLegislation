@@ -16,8 +16,8 @@ export default function BillUpdatesForm({ doSearch, formData }) {
   const [ from, setFrom ] = React.useState(DateTime.fromISO(formData.from))
   const [ to, setTo ] = React.useState(DateTime.fromISO(formData.to))
   const [ type, setType ] = React.useState(formData.type)
-  const [order, setOrder] = React.useState(formData.order)
-  const [filter, setFilter] = React.useState(formData.filter)
+  const [ order, setOrder ] = React.useState(formData.order)
+  const [ filter, setFilter ] = React.useState(formData.filter)
   const detailRef = React.useRef()
 
   React.useEffect(() => {
@@ -48,22 +48,18 @@ export default function BillUpdatesForm({ doSearch, formData }) {
       </p>
       <form onSubmit={onSubmit}>
         <div className="flex flex-wrap">
-          <div className="flex flex-wrap items-end w-full lg:w-8/12">
+          <div className="flex flex-wrap items-end lg:w-8/12">
             <div className={filterDivClasses}>
-              <SearchLabel htmlFor="from">
-                From
-              </SearchLabel>
-              <DatePicker id="from"
+              <DatePicker label="From"
+                          id="from"
                           date={from}
                           setDate={(date) => setFrom(date)}
                           maxDate={to}
                           className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
-              <SearchLabel htmlFor="to">
-                To
-              </SearchLabel>
-              <DatePicker id="to"
+              <DatePicker label="To"
+                          id="to"
                           date={to}
                           setDate={(date) => setTo(date)}
                           minDate={from}
@@ -74,22 +70,28 @@ export default function BillUpdatesForm({ doSearch, formData }) {
               <Select label="Sort By"
                       value={order}
                       options={sortOptions}
-                      onChange={(e) => {setOrder(e.target.value)}}
+                      onChange={(e) => {
+                        setOrder(e.target.value)
+                      }}
                       name="order" />
             </div>
             <div className={filterDivClasses}>
               <Select label="Date Field"
                       value={type}
                       options={typeOptions}
-                      onChange={(e) => {setType(e.target.value)}}
-                      name="type"/>
+                      onChange={(e) => {
+                        setType(e.target.value)
+                      }}
+                      name="type" />
             </div>
             <div className={filterDivClasses}>
               <Select label="Content Type"
                       value={filter}
                       options={contentTypeOptions}
-                      onChange={(e) => {setFilter(e.target.value)}}
-                      name="filter"/>
+                      onChange={(e) => {
+                        setFilter(e.target.value)
+                      }}
+                      name="filter" />
             </div>
             <div className={filterDivClasses}>
               <div className={`flex items-center`}>
