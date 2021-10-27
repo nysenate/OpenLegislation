@@ -9,10 +9,11 @@ import React from 'react'
  * @param name {string} Sets the attribute "for" on the label and "id" on the select equal to this value.
  * @param tabIndex {string|number} The tab index.
  * @param isHighlighted {boolean} If true, the label text background will be highlighted.
+ * @param className {string} Classnames to add to the select element.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Select({ label, value, options, onChange, name, tabIndex, isHighlighted = false }) {
+export default function Select({ label, value, options, onChange, name, tabIndex, isHighlighted = false, className }) {
   let labelClasses = "label label--top"
   labelClasses += isHighlighted ? " bg-yellow-100" : ""
 
@@ -23,7 +24,7 @@ export default function Select({ label, value, options, onChange, name, tabIndex
               value={value}
               tabIndex={tabIndex}
               onChange={onChange}
-              className="select w-full">
+              className={`select block ${className}`}>
         {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
       </select>
     </label>

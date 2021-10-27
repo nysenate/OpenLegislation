@@ -11,6 +11,7 @@ import React from 'react'
  * @param name {string} Sets the attribute "for" on the label and "id" on the input equal to this value.
  * @param tabIndex {string|number} The input's tab index.
  * @param isHighlighted {boolean} If true, the label text background will be highlighted.
+ * @param className {string} Classnames to add to the input.
  * @returns {JSX.Element}
  * @constructor
  */
@@ -22,7 +23,8 @@ export default function Input({
                                 type = "text",
                                 name,
                                 tabIndex,
-                                isHighlighted = false
+                                isHighlighted = false,
+                                className,
                               }) {
   let labelClasses = "label label--top"
   labelClasses += isHighlighted ? " bg-yellow-100" : ""
@@ -36,7 +38,7 @@ export default function Input({
              type={type}
              placeholder={placeholder}
              tabIndex={tabIndex}
-             className="input w-full"
+             className={`input block ${className}`}
       />
     </label>
   )

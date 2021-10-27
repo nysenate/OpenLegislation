@@ -73,7 +73,8 @@ export default function BillUpdatesForm({ doSearch, formData }) {
                       onChange={(e) => {
                         setOrder(e.target.value)
                       }}
-                      name="order" />
+                      name="order"
+                      className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
               <Select label="Date Field"
@@ -82,7 +83,8 @@ export default function BillUpdatesForm({ doSearch, formData }) {
                       onChange={(e) => {
                         setType(e.target.value)
                       }}
-                      name="type" />
+                      name="type"
+                      className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
               <Select label="Content Type"
@@ -91,7 +93,8 @@ export default function BillUpdatesForm({ doSearch, formData }) {
                       onChange={(e) => {
                         setFilter(e.target.value)
                       }}
-                      name="filter" />
+                      name="filter"
+                      className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
               <div className={`flex items-center`}>

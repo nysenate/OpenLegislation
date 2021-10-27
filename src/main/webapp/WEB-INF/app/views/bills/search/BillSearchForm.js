@@ -147,6 +147,7 @@ export default function BillSearchForm() {
                     })}
                     options={value.options}
                     isHighlighted={value.value}
+                    className="w-full"
             />
           </div>
         )
@@ -163,13 +164,15 @@ export default function BillSearchForm() {
             <Input label={value.label}
                    value={value.value}
                    onChange={(e) => dispatch({
-                         type: "update",
-                         value: e.target.value,
-                         key: key
-                       })}
+                     type: "update",
+                     value: e.target.value,
+                     key: key
+                   })}
                    placeholder={value.placeholder}
                    isHighlighted={value.value}
-                   type="text" />
+                   type="text"
+                   className="w-full"
+            />
           </div>
         )
       })
@@ -205,14 +208,16 @@ export default function BillSearchForm() {
                    tabIndex="1"
                    name="billsearch"
                    type="text"
-                   placeholder="e.g. S1234-2015 or yogurt" />
+                   placeholder="e.g. S1234-2015 or yogurt"
+                   className="w-full" />
           </div>
           <div className="mr-8">
             <Select label="Session Year"
                     tabindex={2}
                     value={session}
                     onChange={(e) => setSession(e.target.value)}
-                    options={sessionOptions()} />
+                    options={sessionOptions()}
+                    className="w-full" />
           </div>
           <div className="">
             <Select label="Sort By"
@@ -220,7 +225,8 @@ export default function BillSearchForm() {
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
                     highlight={false}
-                    options={sortOptions} />
+                    options={sortOptions}
+                    className="w-full" />
           </div>
         </div>
 
