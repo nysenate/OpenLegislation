@@ -13,7 +13,8 @@ import {
   useLocation
 } from "react-router-dom";
 import { Sliders } from "phosphor-react";
-import InputText from "app/shared/InputText";
+import Input from "app/shared/Input";
+import Select from "app/shared/Select";
 
 
 /**
@@ -137,14 +138,16 @@ export default function BillSearchForm() {
       .map(([ key, value ]) => {
         return (
           <div className={filterWrapperClass} key={key}>
-            <SearchSelect label={value.label}
-                          value={value.value}
-                          onChange={(e) => dispatch({
-                            type: "update",
-                            value: e.target.value,
-                            key: key
-                          })}
-                          options={value.options} />
+            <Select label={value.label}
+                    value={value.value}
+                    onChange={(e) => dispatch({
+                      type: "update",
+                      value: e.target.value,
+                      key: key
+                    })}
+                    options={value.options}
+                    isHighlighted={value.value}
+            />
           </div>
         )
       })
@@ -157,16 +160,16 @@ export default function BillSearchForm() {
       .map(([ key, value ]) => {
         return (
           <div className={filterWrapperClass} key={key}>
-            <InputText label={value.label}
-                       value={value.value}
-                       onChange={(e) => dispatch({
+            <Input label={value.label}
+                   value={value.value}
+                   onChange={(e) => dispatch({
                          type: "update",
                          value: e.target.value,
                          key: key
                        })}
-                       placeholder={value.placeholder}
-                       isHighlighted={value.value}
-                       type="text" />
+                   placeholder={value.placeholder}
+                   isHighlighted={value.value}
+                   type="text" />
           </div>
         )
       })
@@ -196,29 +199,28 @@ export default function BillSearchForm() {
       <form onSubmit={onSubmit}>
         <div className="flex flex-wrap">
           <div className="flex-grow mr-8">
-            <InputText label="Print number or term"
-                       onChange={(e) => setTerm(e.target.value)}
-                       value={term}
-                       tabIndex="1"
-                       name="billsearch"
-                       type="text"
-                       placeholder="e.g. S1234-2015 or yogurt" />
+            <Input label="Print number or term"
+                   onChange={(e) => setTerm(e.target.value)}
+                   value={term}
+                   tabIndex="1"
+                   name="billsearch"
+                   type="text"
+                   placeholder="e.g. S1234-2015 or yogurt" />
           </div>
           <div className="mr-8">
-            <SearchSelect label="Session Year"
-                          tabindex={2}
-                          value={session}
-                          onChange={(e) => setSession(e.target.value)}
-                          highlight={false}
-                          options={sessionOptions()} />
+            <Select label="Session Year"
+                    tabindex={2}
+                    value={session}
+                    onChange={(e) => setSession(e.target.value)}
+                    options={sessionOptions()} />
           </div>
           <div className="">
-            <SearchSelect label="Sort By"
-                          tabindex={3}
-                          value={sort}
-                          onChange={(e) => setSort(e.target.value)}
-                          highlight={false}
-                          options={sortOptions} />
+            <Select label="Sort By"
+                    tabindex={3}
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    highlight={false}
+                    options={sortOptions} />
           </div>
         </div>
 
@@ -259,24 +261,6 @@ export default function BillSearchForm() {
         </div>
       </form>
     </div>
-  )
-}
-
-function SearchSelect({ label, value, onChange, options, tabindex, highlight = true }) {
-  let className = "label label--top"
-  if (highlight) {
-    // If highlight and value are truthy, highlight the label.
-    className += value ? " bg-yellow-100" : ""
-  }
-  return (
-    <label className={className}>{label}
-      <select value={value}
-              tabIndex={tabindex}
-              onChange={onChange}
-              className="select w-full">
-        {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
-      </select>
-    </label>
   )
 }
 

@@ -1,13 +1,7 @@
 import { billSessionYears } from "app/lib/dateUtils";
 import { getBillStatusTypes } from "app/apis/billGetApi";
 import { getMembersApi } from "app/apis/memberApi";
-
-class SelectOption {
-  constructor(value, label) {
-    this.value = value;
-    this.label = label;
-  }
-}
+import { SelectOption } from "app/shared/Select";
 
 /**
  * Option values for many of the fields in the Advanced Search section.

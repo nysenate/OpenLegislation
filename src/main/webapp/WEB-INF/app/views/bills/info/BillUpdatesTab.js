@@ -6,9 +6,11 @@ import {
   useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
-import SortBy, {
-} from "app/shared/SortBy";
 import BillUpdate from "app/shared/BillUpdate";
+import Select, {
+  SelectOption,
+  sortOptions
+} from "app/shared/Select";
 
 
 export default function BillUpdatesTab({ bill }) {
@@ -71,33 +73,20 @@ export default function BillUpdatesTab({ bill }) {
 function Filters({ updateType, onUpdateTypeChange, sort, onSortChange }) {
   return (
     <div className="flex flex-wrap gap-x-8">
-      <div>
-        <label className="label label--top" htmlFor="updateType">Update type</label>
-        <select value={updateType}
+      <div className="w-44">
+        <Select label="Update Type"
+                value={updateType}
                 onChange={(e) => onUpdateTypeChange(e.target.value)}
                 className="select"
-                name="updateType">
-          <option value="">All</option>
-          <option value="action">Action</option>
-          <option value="active_version">Active Version</option>
-          <option value="approval">Approval Memo</option>
-          <option value="cosponsor">Co Sponsor</option>
-          <option value="act_clause">Enacting Clause</option>
-          <option value="fulltext">Full Text</option>
-          <option value="law">Law</option>
-          <option value="memo">Memo</option>
-          <option value="multisponsor">Multi Sponsor</option>
-          <option value="sponsor">Sponsor</option>
-          <option value="status">Status</option>
-          <option value="summary">Summary</option>
-          <option value="title">Title</option>
-          <option value="veto">Veto</option>
-          <option value="vote">Vote</option>
-        </select>
+                name="updateType"
+                options={updateTypeOptions} />
       </div>
       <div>
-        <label className="label label--top" htmlFor="sort">Sort by</label>
-        <SortBy sort={sort} onChange={(value) => onSortChange(value)} name="sort" />
+        <Select label="Sort By"
+                value={sort}
+                onChange={(e) => onSortChange(e.target.value)}
+                options={sortOptions}
+                name="sort" />
       </div>
     </div>
   )
@@ -116,3 +105,22 @@ function UpdateList({ updates }) {
     </React.Fragment>
   )
 }
+
+const updateTypeOptions = [
+  new SelectOption("", "All"),
+  new SelectOption("action", "Action"),
+  new SelectOption("active_version", "Active Version"),
+  new SelectOption("approval", "Approval Memo"),
+  new SelectOption("cosponsor", "Co Sponsor"),
+  new SelectOption("act_clause", "Enacting Clause"),
+  new SelectOption("fulltext", "Full Text"),
+  new SelectOption("law", "Law"),
+  new SelectOption("memo", "Memo"),
+  new SelectOption("multisponsor", "Multi Sponsor"),
+  new SelectOption("sponsor", "Sponsor"),
+  new SelectOption("status", "Status"),
+  new SelectOption("summary", "Summary"),
+  new SelectOption("title", "Title"),
+  new SelectOption("veto", "Veto"),
+  new SelectOption("vote", "Vote"),
+]

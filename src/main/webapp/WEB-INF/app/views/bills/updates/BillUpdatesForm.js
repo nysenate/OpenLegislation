@@ -1,24 +1,28 @@
 import React from "react"
 import { DateTime } from "luxon";
 import DatePicker from "app/shared/DatePicker";
+import Select, {
+  SelectOption,
+  sortOptions
+} from "app/shared/Select";
 
 /**
  * Contains the bill updates search form.
+ * @param doSearch Callback
+ * @param formData Current/initial form values taken from the url. This ensures the form has the correct values
+ *                 on forward/back browser navigation.
  */
 export default function BillUpdatesForm({ doSearch, formData }) {
   const [ from, setFrom ] = React.useState(DateTime.fromISO(formData.from))
   const [ to, setTo ] = React.useState(DateTime.fromISO(formData.to))
-  const typeRef = React.useRef()
-  const orderRef = React.useRef()
-  const filterRef = React.useRef()
+  const [ type, setType ] = React.useState(formData.type)
+  const [order, setOrder] = React.useState(formData.order)
+  const [filter, setFilter] = React.useState(formData.filter)
   const detailRef = React.useRef()
 
   React.useEffect(() => {
     setFrom(DateTime.fromISO(formData.from))
     setTo(DateTime.fromISO(formData.to))
-    typeRef.current.value = formData.type
-    orderRef.current.value = formData.order
-    filterRef.current.value = formData.filter
     detailRef.current.checked = formData.detail
   }, [ formData ])
 
@@ -27,9 +31,9 @@ export default function BillUpdatesForm({ doSearch, formData }) {
     doSearch({
       from: from.startOf("day").toISO({ includeOffset: false }),
       to: to.endOf("day").toISO({ includeOffset: false }),
-      order: orderRef.current.value,
-      type: typeRef.current.value,
-      filter: filterRef.current.value,
+      order: order,
+      type: type,
+      filter: filter,
       detail: detailRef.current.checked
     })
   }
@@ -67,49 +71,25 @@ export default function BillUpdatesForm({ doSearch, formData }) {
                           className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
-              <SearchLabel htmlFor="order">
-                Sort by
-              </SearchLabel>
-              <select className={`select ${inputClassNames}`}
-                      ref={orderRef}
-                      id="order">
-                <option value={ASC}>Oldest to Newest</option>
-                <option value={DESC}>Newest to Oldest</option>
-              </select>
+              <Select label="Sort By"
+                      value={order}
+                      options={sortOptions}
+                      onChange={(e) => {setOrder(e.target.value)}}
+                      name="order" />
             </div>
             <div className={filterDivClasses}>
-              <SearchLabel htmlFor="type">
-                Date Field
-              </SearchLabel>
-              <select ref={typeRef}
-                      id="type"
-                      className={`select ${inputClassNames}`}>
-                {types.map((type) => <option value={type.value} key={type.value}>{type.label}</option>)}
-              </select>
+              <Select label="Date Field"
+                      value={type}
+                      options={typeOptions}
+                      onChange={(e) => {setType(e.target.value)}}
+                      name="type"/>
             </div>
             <div className={filterDivClasses}>
-              <SearchLabel htmlFor="filter">
-                Content Type
-              </SearchLabel>
-              <select className={`select ${inputClassNames}`} ref={filterRef} id="filter">
-                <option value="">All</option>
-                <option value="published_bill">Newly Published</option>
-                <option value="action">Action</option>
-                <option value="active_version">Active Version</option>
-                <option value="approval">Approval Memo</option>
-                <option value="cosponsor">Co Sponsor</option>
-                <option value="act_clause">Enacting Clause</option>
-                <option value="fulltext">Full Text</option>
-                <option value="law">Law</option>
-                <option value="memo">Memo</option>
-                <option value="multisponsor">Multi Sponsor</option>
-                <option value="sponsor">Sponsor</option>
-                <option value="status">Status</option>
-                <option value="summary">Summary</option>
-                <option value="title">Title</option>
-                <option value="veto">Veto</option>
-                <option value="vote">Vote</option>
-              </select>
+              <Select label="Content Type"
+                      value={filter}
+                      options={contentTypeOptions}
+                      onChange={(e) => {setFilter(e.target.value)}}
+                      name="filter"/>
             </div>
             <div className={filterDivClasses}>
               <div className={`flex items-center`}>
@@ -142,16 +122,27 @@ function SearchLabel({ htmlFor, children }) {
   )
 }
 
-const types = [
-  {
-    value: "published",
-    label: "Published Date"
-  },
-  {
-    value: "processed",
-    label: "Processed Date"
-  }
+const typeOptions = [
+  new SelectOption("published", "Published Date"),
+  new SelectOption("processed", "Processed Date")
 ]
 
-const ASC = "asc"
-const DESC = "desc"
+const contentTypeOptions = [
+  new SelectOption("", "All"),
+  new SelectOption("published_bill", "Newly Published"),
+  new SelectOption("action", "Action"),
+  new SelectOption("active_version", "Active Version"),
+  new SelectOption("approval", "Approval Memo"),
+  new SelectOption("cosponsor", "Co Sponsor"),
+  new SelectOption("act_clause", "Enacting Clause"),
+  new SelectOption("fulltext", "Full Text"),
+  new SelectOption("law", "Law"),
+  new SelectOption("memo", "Memo"),
+  new SelectOption("multisponsor", "Multi Sponsor"),
+  new SelectOption("sponsor", "Sponsor"),
+  new SelectOption("status", "Status"),
+  new SelectOption("summary", "Summary"),
+  new SelectOption("title", "Title"),
+  new SelectOption("veto", "Veto"),
+  new SelectOption("vote", "Vote"),
+]

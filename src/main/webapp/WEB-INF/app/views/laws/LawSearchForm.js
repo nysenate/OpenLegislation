@@ -4,7 +4,7 @@ import {
     useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
-import InputText from "app/shared/InputText";
+import Input from "app/shared/Input";
 
 
 export default function LawSearchForm({handleVolumeSearchFilter, handleSearchTerm}) {
@@ -41,13 +41,13 @@ export default function LawSearchForm({handleVolumeSearchFilter, handleSearchTer
             <form onSubmit={onSubmitLawSearch}>
                 <div className="flex flex-wrap">
                     <div className="flex-grow mr-8">
-                        <InputText label="Search for Laws"
-                                   onChange={(e) => setTerm(e.target.value)}
-                                   value={term}
-                                   tabIndex="1"
-                                   name="lawsearch"
-                                   type="text"
-                                   placeholder="e.g. official state muffin , STL 84"/>
+                        <Input label="Search for Laws"
+                               onChange={(e) => setTerm(e.target.value)}
+                               value={term}
+                               tabIndex="1"
+                               name="lawsearch"
+                               type="text"
+                               placeholder="e.g. official state muffin , STL 84"/>
                     </div>
                 </div>
 
@@ -58,13 +58,13 @@ export default function LawSearchForm({handleVolumeSearchFilter, handleSearchTer
 
             <form onSubmit={onSubmitLawVolumeSearch}>
                 <div className="flex w-2/12">
-                    <InputText label="Browse By Law Volume"
-                               onChange={(e) => setFilter(e.target.value)}
-                               value={filter}
-                               tabIndex="3"
-                               name="lawvolumesearch"
-                               type="text"
-                               placeholder="e.g. TAX" />
+                    <Input label="Browse By Law Volume"
+                           onChange={(e) => setFilter(e.target.value)}
+                           value={filter}
+                           tabIndex="3"
+                           name="lawvolumesearch"
+                           type="text"
+                           placeholder="e.g. TAX" />
                 </div>
 
                 <div className="flex justify-left">
