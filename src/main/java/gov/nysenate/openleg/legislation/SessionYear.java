@@ -5,6 +5,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class SessionYear implements Serializable, Comparable<SessionYear>
 {
+    @Serial
     private static final long serialVersionUID = 4084929981265208671L;
 
     private int year;
@@ -163,8 +165,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SessionYear)) return false;
-        SessionYear that = (SessionYear) o;
+        if (!(o instanceof SessionYear that)) return false;
         return year == that.year;
     }
 

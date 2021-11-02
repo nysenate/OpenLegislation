@@ -3,8 +3,8 @@ package gov.nysenate.openleg.legislation.bill.dao.service;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
@@ -15,15 +15,14 @@ import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
 import org.ehcache.Cache;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,50 +32,37 @@ import java.util.Optional;
  * in-memory caches to reduce the number of database queries involved in retrieving bill data.
  */
 @Service
-public class CachedBillDataService extends CachingService<BaseBillId> implements BillDataService {
+public class CachedBillDataService extends CachingService<BaseBillId, Bill> implements BillDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
+    // TODO: autowire this into class with generics in constructor?
     @Autowired
     private BillDao billDao;
 
-    @Value("${bill.cache.element.size}") private int billCacheElementSize;
-    @Value("${bill-info.cache.element.size}") private int billInfoCacheElementSize;
-
-    private Cache billCache;
-    private Cache billInfoCache;
-
-    public CachedBillDataService() {
-        super(cache);
-    }
-
-    @PreDestroy
-    protected void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.BILL.name());
-        cacheManager.removeCache(ContentCache.BILL_INFO.name());
-    }
+    // Bill Info cache will store BillInfo instances to speed up search and listings.
+    // If a bill is already stored in the main cache, its BillInfo does not need to be stored here.
+    private final Cache<BaseBillId, BillInfo> billInfoCache = new CachedBillInfoDataService().getBillInfoCache();
 
     /** --- CachingService implementation --- */
 
-    /** {@inheritDoc} */
     @Override
-    public void setupCaches() {
-        // Partial bill cache will store Bill instances with the full text fields stripped to save space.
-        this.billCache = new Cache(new CacheConfiguration().name(ContentCache.BILL.name())
-            .eternal(true)
-            .maxEntriesLocalHeap(billCacheElementSize)
-            .sizeOfPolicy(elementSizeOfPolicy()));
-        cacheManager.addCache(this.billCache);
-        // This can only be called after the cache is added to the cache manager.
-        this.billCache.setMemoryStoreEvictionPolicy(new BillCacheEvictionPolicy());
+    protected CacheType cacheType() {
+        return CacheType.BILL;
+    }
 
-        // Bill Info cache will store BillInfo instances to speed up search and listings.
-        // If a bill is already stored in the billCache, it's BillInfo does not need to be stored here.
-        this.billInfoCache = new Cache(new CacheConfiguration().name(ContentCache.BILL_INFO.name())
-            .eternal(true)
-            .maxEntriesLocalHeap(billInfoCacheElementSize)
-            .sizeOfPolicy(elementSizeOfPolicy()));
-        cacheManager.addCache(this.billInfoCache);
+    @Override
+    protected Class<BaseBillId> keyClass() {
+        return BaseBillId.class;
+    }
+
+    @Override
+    protected Class<Bill> valueClass() {
+        return Bill.class;
+    }
+
+    @Override
+    protected CacheConfigurationBuilder<BaseBillId, Bill> getConfigBuilder() {
+        return super.getConfigBuilder().withEvictionAdvisor(new BillCacheEvictionPolicy());
     }
 
     /**
@@ -84,6 +70,7 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
      * Bill Cache - Current session year bills only
      * Bill Info Cache - Bill Infos from all available session years.
      */
+    @Override
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up bill cache.");
@@ -94,7 +81,7 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
                 if (sessionYear.equals(SessionYear.current())) {
                     logger.info("Caching Bill instances for current session year: {}", sessionYear);
                     // Don't load any text because that is not cached.
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id));
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBill);
                 }
                 else {
                     logger.info("Caching Bill Info instances for session year: {}", sessionYear);
@@ -109,38 +96,45 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
     /** {@inheritDoc} */
     @Override
     public void evictContent(BaseBillId baseBillId) {
-        logger.debug("evicting {}", baseBillId);
+        super.evictContent(baseBillId);
         billInfoCache.remove(baseBillId);
-        billCache.remove(baseBillId);
     }
 
-    /** --- BillDataService implementation --- */
+    @Override
+    public void evictCaches() {
+        super.evictCaches();
+        billInfoCache.clear();
+    }
+
+    /* --- BillDataService implementation --- */
 
     /** {@inheritDoc} */
     @Override
     public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
-        if (billId == null) {
+        if (billId == null)
             throw new IllegalArgumentException("BillId cannot be null");
-        }
-        try {
-            Bill bill;
-            if (billCache.get(billId) != null) {
-                bill = constructBillFromCache(billId);
-                logger.debug("Cache hit for bill {}", bill);
+        Bill bill = cache.get(billId);
+        if (bill != null) {
+            logger.debug("Cache hit for bill {}", bill);
+            try {
+                bill = bill.shallowClone();
             }
-            else {
-                logger.debug("Fetching bill {}..", billId);
+            catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Failed to cache retrieved Bill: " + e.getMessage());
+            }
+            billDao.applyTextAndMemo(bill);
+        }
+        else {
+            logger.debug("Fetching bill {}...", billId);
+            try {
                 bill = billDao.getBill(billId);
-                putStrippedBillInCache(bill);
             }
-            return bill;
+            catch (EmptyResultDataAccessException ex) {
+                throw new BillNotFoundEx(billId, ex);
+            }
+            putStrippedBillInCache(bill);
         }
-        catch (EmptyResultDataAccessException ex) {
-            throw new BillNotFoundEx(billId, ex);
-        }
-        catch (CloneNotSupportedException e) {
-            throw new CacheException("Failed to cache retrieved Bill: " + e.getMessage());
-        }
+        return bill;
     }
 
     /** {@inheritDoc} */
@@ -150,15 +144,15 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
-        if (billCache.get(billId) != null) {
-            return new BillInfo((Bill) billCache.get(billId).getObjectValue());
+        if (cache.get(billId) != null) {
+            return new BillInfo(cache.get(billId));
         }
         if (billInfoCache.get(billId) != null) {
-            return (BillInfo) billInfoCache.get(billId).getObjectValue();
+            return billInfoCache.get(billId);
         }
         try {
             BillInfo billInfo = billDao.getBillInfo(billId);
-            billInfoCache.put(new Element(billId, billInfo));
+            billInfoCache.put(billId, billInfo);
             return billInfo;
         }
         catch (EmptyResultDataAccessException ex) {
@@ -184,21 +178,18 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
     /** {@inheritDoc} */
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        if (sessionYear == null) {
+        if (sessionYear == null)
             throw new IllegalArgumentException("SessionYear cannot be null");
-        }
-        if (limitOffset == null) {
+        if (limitOffset == null)
             limitOffset = LimitOffset.ALL;
-        }
         return billDao.getBillIds(sessionYear, limitOffset, SortOrder.ASC);
     }
 
     /** {@inheritDoc} */
     @Override
     public synchronized int getBillCount(SessionYear sessionYear) {
-        if (sessionYear == null) {
+        if (sessionYear == null)
             throw new IllegalArgumentException("SessionYear cannot be null");
-        }
         return billDao.getBillCount(sessionYear);
     }
 
@@ -208,9 +199,8 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);
-        if (postUpdateEvent) {
+        if (postUpdateEvent)
             eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
-        }
     }
 
     /** {@inheritDoc} */
@@ -235,22 +225,7 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
         }
     }
 
-    /** --- Internal Methods --- */
-
-    /**
-     * Retrieves the bill from the cache. You must check that the bill exists prior to calling this
-     * method. The fulltext and memo are put back into a copy of the cached bill.
-     *
-     * @param billId BaseBillId
-     * @return Bill
-     * @throws CloneNotSupportedException
-     */
-    private Bill constructBillFromCache(BaseBillId billId) throws CloneNotSupportedException {
-        Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
-        cachedBill = cachedBill.shallowClone();
-        billDao.applyTextAndMemo(cachedBill);
-        return cachedBill;
-    }
+    /* --- Internal Methods --- */
 
     /**
      * In order to cache bills effectively, we strip out the memos and full text from the bill first
@@ -258,20 +233,20 @@ public class CachedBillDataService extends CachingService<BaseBillId> implements
      * @param bill Bill
      */
     private void putStrippedBillInCache(final Bill bill) {
-        if (bill != null) {
-            try {
-                Bill cacheBill = bill.shallowClone();
-                cacheBill.getAmendmentList().forEach(ba -> {
-                    ba.setMemo("");
-                    ba.clearFullTexts();
-                });
-                this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
-                // Remove entry from the bill info cache if it exists
-                this.billInfoCache.remove(cacheBill.getBaseBillId());
-            }
-            catch (CloneNotSupportedException e) {
-                logger.error("Failed to cache bill!", e);
-            }
+        if (bill == null)
+            return;
+        try {
+            Bill cacheBill = bill.shallowClone();
+            cacheBill.getAmendmentList().forEach(ba -> {
+                ba.setMemo("");
+                ba.clearFullTexts();
+            });
+            this.cache.put(cacheBill.getBaseBillId(), cacheBill);
+            // Remove entry from the bill info cache if it exists
+            this.billInfoCache.remove(cacheBill.getBaseBillId());
+        }
+        catch (CloneNotSupportedException e) {
+            logger.error("Failed to cache bill!", e);
         }
     }
 }

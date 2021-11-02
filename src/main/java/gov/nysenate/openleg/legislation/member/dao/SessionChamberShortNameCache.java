@@ -2,32 +2,22 @@ package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Locale;
-
 @Component
 public class SessionChamberShortNameCache extends CachingService<String, SessionMember> {
-
     private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
-
     private final MemberDao memberDao;
-    @Value("${shortname.cache.heap.size}")
-    private int shortnameCacheSizeMb;
 
     @Autowired
     public SessionChamberShortNameCache(MemberDao memberDao) {
@@ -35,23 +25,18 @@ public class SessionChamberShortNameCache extends CachingService<String, Session
     }
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.SESSION_CHAMBER_SHORTNAME);
+    protected CacheType cacheType() {
+        return CacheType.SHORTNAME;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<String> keyClass() {
+        return String.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return shortnameCacheSizeMb;
-    }
-
-    @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected Class<SessionMember> valueClass() {
+        return SessionMember.class;
     }
 
     @Override
@@ -88,22 +73,15 @@ public class SessionChamberShortNameCache extends CachingService<String, Session
 
     /* --- Internal Methods --- */
 
-    private String genCacheKey(SessionMember sessionMember) {
-        return genCacheKey(
-                sessionMember.getLbdcShortName(),
-                sessionMember.getSessionYear(),
-                sessionMember.getMember().getChamber()
-        );
-    }
-
     /**
      * Generate a unique key used to identify an individual session member.
      */
-    private String genCacheKey(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
-        return sessionYear.toString() + "-" + chamber.name() + "-" + lbdcShortName.toUpperCase(Locale.US);
+    private static String genCacheKey(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
+        return sessionYear.toString() + "-" + chamber.name() + "-" + lbdcShortName.toUpperCase();
     }
 
     private void putMemberInCache(SessionMember member) {
-        cache.put(genCacheKey(member), member);
+        String key = genCacheKey(member.getLbdcShortName(), member.getSessionYear(), member.getMember().getChamber());
+        cache.put(key, member);
     }
 }

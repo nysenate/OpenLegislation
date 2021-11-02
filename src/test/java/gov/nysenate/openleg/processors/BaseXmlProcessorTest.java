@@ -3,22 +3,22 @@ package gov.nysenate.openleg.processors;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.legislation.CacheEvictEvent;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
-import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
+import gov.nysenate.openleg.legislation.bill.dao.service.CachedBillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
 import gov.nysenate.openleg.processors.bill.xml.XmlFile;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.dao.service.CachedBillDataService;
-import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
+import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -79,7 +79,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         env.setElasticIndexing(originalIndexingSetting);
         env.setBillScrapeQueueEnabled(originalScrapeQueueSetting);
         env.setNotificationsEnabled(originalNotificationSetting);
-        eventBus.post(new CacheEvictEvent(EnumSet.allOf(ContentCache.class)));
+        eventBus.post(new CacheEvictEvent(EnumSet.allOf(CacheType.class)));
     }
 
     /**
@@ -119,7 +119,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         processor.process(fragment);
         processor.postProcess();
         // Clear caches to ensure proper saves
-        eventBus.post(new CacheEvictEvent(EnumSet.allOf(ContentCache.class)));
+        eventBus.post(new CacheEvictEvent(EnumSet.allOf(CacheType.class)));
     }
 
     /**

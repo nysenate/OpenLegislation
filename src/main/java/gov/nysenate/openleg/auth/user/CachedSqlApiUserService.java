@@ -6,18 +6,15 @@ import gov.nysenate.openleg.auth.exception.UsernameExistsException;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.notifications.mail.SendMailService;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +31,6 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
-    @Value("${api_user.cache.heap.size}")
-    private int apiUserCacheSizeMb;
     private final Environment environment;
 
     public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, Environment environment) {
@@ -45,23 +40,18 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
     }
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.APIUSER);
+    protected CacheType cacheType() {
+        return CacheType.API_USER;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<String> keyClass() {
+        return String.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return apiUserCacheSizeMb;
-    }
-
-    @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected Class<ApiUser> valueClass() {
+        return ApiUser.class;
     }
 
     /*** --- CachingService Implementation --- */

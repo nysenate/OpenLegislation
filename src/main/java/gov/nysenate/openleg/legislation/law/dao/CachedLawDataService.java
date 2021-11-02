@@ -3,14 +3,13 @@ package gov.nysenate.openleg.legislation.law.dao;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.legislation.CacheEvictEvent;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +29,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
 
     @Autowired
     private LawDataDao lawDataDao;
-    @Value("${law.cache.element.size}")
-    private int lawTreeCacheElementSize;
     private Map<String, LocalDate> maxPubDates = new HashMap<>();
-
-    public CachedLawDataService() {
-        super(cache);
-    }
 
     @Override
     @PostConstruct
@@ -52,20 +45,19 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     }
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.LAW);
+    protected CacheType cacheType() {
+        return CacheType.LAW;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return false;
+    protected Class<LawVersionId> keyClass() {
+        return LawVersionId.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return lawTreeCacheElementSize;
+    protected Class<LawTree> valueClass() {
+        return LawTree.class;
     }
-
 
     /** --- CachingService implementation --- */
 
@@ -73,7 +65,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     @Override
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.LAW)) {
+        if (evictEvent.affects(CacheType.LAW)) {
             evictCaches();
             maxPubDates.clear();
         }

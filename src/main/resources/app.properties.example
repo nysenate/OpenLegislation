@@ -115,7 +115,7 @@ elastic.search.connection_retries = 30
 bill.cache.element.size = 21000
 
 # Bill Info Cache Element Size (Recommended: 40000. Uses about 100MB heap space)
-bill-info.cache.element.size = 40000
+bill_info.cache.element.size = 40000
 
 # Law Cache Element Size (Recommended: 150. Uses about 30MB heap space)
 law.cache.element.size = 150
@@ -144,7 +144,7 @@ full_member.cache.heap.size = 5
 shortname.cache.heap.size = 5
 
 # Member Cache Size (in MB) (Recommended: 5)
-member.cache.heap.size = 5
+session_member.cache.heap.size = 5
 
 # --- Postgres Database Configuration -----------------------------------------
 

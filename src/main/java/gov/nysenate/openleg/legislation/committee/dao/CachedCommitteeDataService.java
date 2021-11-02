@@ -3,18 +3,16 @@ package gov.nysenate.openleg.legislation.committee.dao;
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -24,35 +22,35 @@ import java.util.List;
 
 @Service
 public class CachedCommitteeDataService extends CachingService<CommitteeSessionId, List<Committee>> implements CommitteeDataService {
-
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
-    @Autowired private CommitteeDao committeeDao;
-
-    @Value("${committee.cache.heap.size}")
-    private int committeeCacheSizeMb;
-
+    @SuppressWarnings("unchecked")
+    private static final Class<List<Committee>> VALUE_CLASS = (Class<List<Committee>>)
+            List.of(new Committee()).getClass();
+    @Autowired
+    private CommitteeDao committeeDao;
 
     /** --- Cache Management --- */
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.COMMITTEE);
+    protected CacheType cacheType() {
+        return CacheType.COMMITTEE;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<CommitteeSessionId> keyClass() {
+        return CommitteeSessionId.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return committeeCacheSizeMb;
+    protected Class<List<Committee>> valueClass() {
+        return VALUE_CLASS;
     }
 
     @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected CacheConfigurationBuilder<CommitteeSessionId, List<Committee>> getConfigBuilder() {
+        return super.getConfigBuilder().withEvictionAdvisor(new CommitteeCacheEvictionPolicy());
     }
+
     // TODO: add this
     //committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
 

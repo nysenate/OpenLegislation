@@ -5,6 +5,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import java.util.List;
  * Contains some common constants and methods for writing PDFs.
  */
 public abstract class BasePdfView {
+    private static final Logger logger = LoggerFactory.getLogger(BasePdfView.class);
     protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f;
     protected static final PDFont FONT = PDType1Font.COURIER;
     protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
@@ -25,7 +28,8 @@ public abstract class BasePdfView {
     private final PDDocument doc = new PDDocument();
     private PDPage currPage;
 
-    public ResponseEntity<byte[]> writeData() {
+    public ResponseEntity<byte[]> writeData() throws IOException {
+        doc.close();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
@@ -46,7 +50,6 @@ public abstract class BasePdfView {
             doc.addPage(currPage);
         }
         doc.save(pdfBytes);
-        doc.close();
     }
 
     /**
@@ -82,6 +85,11 @@ public abstract class BasePdfView {
     }
 
     protected void writeLine(String line) throws IOException {
-        contentStream.showText(line);
+        try {
+            contentStream.showText(line);
+        }
+        catch (IllegalArgumentException ex) {
+            logger.warn("Bad character in PDF. Line: " + line);
+        }
     }
 }

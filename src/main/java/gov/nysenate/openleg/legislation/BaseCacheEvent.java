@@ -5,17 +5,17 @@ import java.util.Set;
 
 public abstract class BaseCacheEvent
 {
-    protected Set<ContentCache> affectedCaches = new HashSet<>();
+    protected Set<CacheType> affectedCaches = new HashSet<>();
 
-    protected BaseCacheEvent(Set<ContentCache> affectedCaches) {
+    protected BaseCacheEvent(Set<CacheType> affectedCaches) {
         this.affectedCaches = affectedCaches;
     }
 
-    public boolean affects(ContentCache contentCache) {
-        return affectedCaches.contains(contentCache);
+    public boolean affects(CacheType cacheType) {
+        return affectedCaches.contains(cacheType);
     }
 
-    public Set<ContentCache> getAffectedCaches() {
+    public Set<CacheType> getAffectedCaches() {
         return affectedCaches;
     }
 }

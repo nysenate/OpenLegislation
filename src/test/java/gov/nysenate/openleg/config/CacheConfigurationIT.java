@@ -3,9 +3,10 @@ package gov.nysenate.openleg.config;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.TestConfig;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.EntryUnit;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,12 @@ public class CacheConfigurationIT extends BaseTests {
     @Autowired
     ApplicationContext context;
 
-    public static class CacheTesterConfig implements CacheTester{
+    public static class CacheTesterConfig implements CacheTester {
         public CacheTesterConfig(CacheManager cacheManager) {
-            Cache testCache = new Cache(new CacheConfiguration()
-                    .name("test")
-                    .maxEntriesLocalHeap(10000));
-            cacheManager.addCache(testCache);
+            var resourcePools = ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1000, EntryUnit.ENTRIES);
+            var config = CacheConfigurationBuilder
+                    .newCacheConfigurationBuilder(String.class, String.class, resourcePools);
+            cacheManager.createCache("test", config);
         }
 
         @Cacheable(value = "test", key = "#root.methodName + #s")
@@ -49,19 +50,19 @@ public class CacheConfigurationIT extends BaseTests {
     public void usesCacheProperly() {
         TestConfig b = context.getBean("testConfig", TestConfig.class);
         CacheTester tester = b.cacheTester();
-        Cache cache = cacheManager.getCache("test");
+        var cache = cacheManager.getCache("test", String.class, String.class);
         assertNull(cache.get("methodReturnsMoose"));
-        assertEquals(tester.methodReturnsMoose(), cache.get("methodReturnsMoose").getObjectValue());
+        assertEquals(tester.methodReturnsMoose(), cache.get("methodReturnsMoose"));
 
         String arg = "argument";
         assertNull(cache.get("methodReturnsArg" + arg));
-        assertEquals(tester.methodReturnsArg(arg), cache.get("methodReturnsArg" + arg).getObjectValue());
+        assertEquals(tester.methodReturnsArg(arg), cache.get("methodReturnsArg" + arg));
 
         assertNull(cache.get("methodReturnsArgNotCached" + arg));
         tester.methodReturnsArgNotCached(arg);
         assertNull(cache.get("methodReturnsArgNotCached" + arg));
 
         tester.clear();
-        assertTrue(cache.getKeys().isEmpty());
+        assertFalse(cache.iterator().hasNext());
     }
 }

@@ -5,6 +5,9 @@ import org.ehcache.Cache;
 
 import java.util.*;
 
+/**
+ * Special Cache implementation using an ehcache.
+ */
 public class ShiroCache implements org.apache.shiro.cache.Cache<Object, Object> {
 
     private final org.ehcache.Cache<Object, Object> ehcache;
@@ -12,7 +15,6 @@ public class ShiroCache implements org.apache.shiro.cache.Cache<Object, Object> 
     public ShiroCache(Cache<Object, Object> ehcache) {
         this.ehcache = ehcache;
     }
-
 
     @Override
     public Object get(Object o) throws CacheException {
@@ -45,6 +47,7 @@ public class ShiroCache implements org.apache.shiro.cache.Cache<Object, Object> 
 
     @Override
     public Set<Object> keys() {
+        // Ehcaches have no methods to get keys or values directly, only an iterator.
         Iterator<Cache.Entry<Object, Object>> iter = ehcache.iterator();
         var keys = Collections.synchronizedSet(new HashSet<>());
         while (iter.hasNext())

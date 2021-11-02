@@ -6,7 +6,7 @@ public class CacheEvictIdEvent<ContentId> extends BaseCacheEvent {
 
     protected ContentId contentId;
 
-    public CacheEvictIdEvent(ContentCache affectedCache, ContentId contentId) {
+    public CacheEvictIdEvent(CacheType affectedCache, ContentId contentId) {
         super(Sets.newHashSet(affectedCache));
         this.contentId = contentId;
     }

@@ -2,25 +2,21 @@ package gov.nysenate.openleg.api.admin;
 
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CacheStatsView;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
-import gov.nysenate.openleg.api.CacheStatsView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
-import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.*;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
-import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 
@@ -61,9 +57,10 @@ public class CacheCtrl extends BaseCtrl
     @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getCacheStats() {
-        return ListViewResponse.of(Arrays.asList(cacheManager.getCacheNames()).stream()
-            .map(cn -> new CacheStatsView(cacheManager.getCache(cn).getStatistics()))
-            .collect(Collectors.toList()), cacheManager.getCacheNames().length, LimitOffset.ALL);
+        List<CacheStatsView> views = new ArrayList<>();
+        for (var type : CacheType.values())
+            views.add(new CacheStatsView(type.name(), CachingService.getStats(type)));
+        return ListViewResponse.of(views);
     }
 
     /**
@@ -75,12 +72,12 @@ public class CacheCtrl extends BaseCtrl
      *
      * Warm memory caches: (PUT) /api/3/admin/cache/{cacheType}
      * The cacheType can be either 'all' for all caches, or one of the values in the
-     * {@link ContentCache} enumeration.
+     * {@link CacheType} enumeration.
      */
     @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.PUT)
     public BaseResponse warmCache(@PathVariable String cacheType) {
-        Set<ContentCache> targetCaches = getTargetCaches(cacheType);
+        Set<CacheType> targetCaches = getTargetCaches(cacheType);
         eventBus.post(new CacheWarmEvent(targetCaches));
         return new SimpleResponse(true, "Cache warming requests completed for " + targetCaches, "cache-warm");
     }
@@ -95,7 +92,7 @@ public class CacheCtrl extends BaseCtrl
     @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.DELETE)
     public BaseResponse deleteCache(@PathVariable String cacheType) {
-        Set<ContentCache> targetCaches = getTargetCaches(cacheType);
+        Set<CacheType> targetCaches = getTargetCaches(cacheType);
         eventBus.post(new CacheEvictEvent(targetCaches));
         return new SimpleResponse(true, "Cache eviction request sent for " + targetCaches, "cache-evict");
     }
@@ -133,7 +130,7 @@ public class CacheCtrl extends BaseCtrl
     @RequestMapping(value = "/{cacheType}/id", method = RequestMethod.DELETE)
     public BaseResponse evictContentId(@PathVariable String cacheType, WebRequest webRequest)
             throws MissingServletRequestParameterException {
-        ContentCache targetCache = getTargetCache(cacheType);
+        CacheType targetCache = getTargetCache(cacheType);
         Object contentId = getContentId(targetCache, webRequest);
         if (contentId == null) {
             throw new InvalidRequestParamEx(cacheType, "cacheType", "string", "Supported cache type.");
@@ -144,18 +141,18 @@ public class CacheCtrl extends BaseCtrl
 
     /** --- Internal --- */
 
-    private Set<ContentCache> getTargetCaches(String cacheType) {
+    private Set<CacheType> getTargetCaches(String cacheType) {
         if (cacheType.equalsIgnoreCase("all")) {
-            return Sets.newHashSet(ContentCache.values());
+            return Sets.newHashSet(CacheType.values());
         }
         return Sets.newHashSet(getTargetCache(cacheType));
     }
 
-    private ContentCache getTargetCache(String cacheType) {
-        return getEnumParameter("cacheType", cacheType, ContentCache.class);
+    private CacheType getTargetCache(String cacheType) {
+        return getEnumParameter("cacheType", cacheType, CacheType.class);
     }
 
-    private Object getContentId(ContentCache targetCache, WebRequest request)
+    private Object getContentId(CacheType targetCache, WebRequest request)
             throws MissingServletRequestParameterException {
         switch (targetCache) {
             case BILL:
@@ -171,10 +168,10 @@ public class CacheCtrl extends BaseCtrl
             case SESSION_MEMBER:
                 requireParameters(request, "memberId", "integer");
                 return getIntegerParam(request, "memberId");
-            case APIUSER:
+            case API_USER:
                 requireParameters(request, "key", "string");
                 return request.getParameter("key");
-            case NOTIFICATION_SUBSCRIPTION:
+            case NOTIFICATION:
                 return "all subscriptions";
             default:
                 return null;

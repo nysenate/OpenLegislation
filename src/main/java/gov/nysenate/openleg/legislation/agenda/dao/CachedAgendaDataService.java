@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
@@ -11,7 +11,6 @@ import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -26,24 +25,19 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Autowired
     private AgendaDao agendaDao;
 
-    @Value("${agenda.cache.element.size}")
-    private int agendaCacheElementSize;
-
-    /** --- CachingService implementation --- */
-
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.AGENDA);
+    public Class<AgendaId> keyClass() {
+        return AgendaId.class;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return false;
+    public Class<Agenda> valueClass() {
+        return Agenda.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return agendaCacheElementSize;
+    protected CacheType cacheType() {
+        return CacheType.AGENDA;
     }
 
     /**

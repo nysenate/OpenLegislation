@@ -3,17 +3,14 @@ package gov.nysenate.openleg.legislation.calendar.dao;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -30,30 +27,21 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
     @Autowired
     private CalendarDao calendarDao;
 
-    @Value("${calendar.cache.heap.size}")
-    private int calendarCacheSizeMb;
-
     /** --- CachingService implementation --- */
 
-
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.CALENDAR);
+    protected CacheType cacheType() {
+        return CacheType.CALENDAR;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<CalendarId> keyClass() {
+        return CalendarId.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return calendarCacheSizeMb;
-    }
-
-    @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected Class<Calendar> valueClass() {
+        return Calendar.class;
     }
 
     /** {@inheritDoc} */

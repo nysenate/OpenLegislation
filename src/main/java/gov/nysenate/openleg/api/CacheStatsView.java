@@ -1,83 +1,18 @@
 package gov.nysenate.openleg.api;
 
-import net.sf.ehcache.statistics.StatisticsGateway;
+import org.ehcache.core.statistics.CacheStatistics;
 
-public class CacheStatsView implements ViewObject
-{
-    protected String cacheName;
-    protected long heapSizeMb;
-    protected long size;
-    protected long hitCount;
-    protected double hitRatio;
-    protected long missCount;
-    protected long addedCount;
-    protected long updatedCount;
-    protected long removeCount;
-    protected long evictedCount;
-    protected long expiredCount;
+public record CacheStatsView(String cacheName, long putCount, long removeCount, long evictedCount,
+                             long expiredCount, long hitCount, long missCount, float hitRatio) implements ViewObject {
 
-    public CacheStatsView(StatisticsGateway stats) {
-        if (stats != null) {
-            this.cacheName = stats.getAssociatedCacheName();
-            this.heapSizeMb = stats.getLocalHeapSizeInBytes() / (1024 * 1024);
-            this.size = stats.getSize();
-            this.hitCount = stats.cacheHitCount();
-            this.hitRatio = stats.cacheHitRatio();
-            this.missCount = stats.cacheMissCount();
-            this.addedCount = stats.cachePutAddedCount();
-            this.updatedCount = stats.cachePutUpdatedCount();
-            this.removeCount = stats.cacheRemoveCount();
-            this.evictedCount = stats.cacheEvictedCount();
-            this.expiredCount = stats.cacheExpiredCount();
-        }
+    public CacheStatsView(String cacheName, CacheStatistics stats) {
+        this(cacheName, stats.getCachePuts(), stats.getCacheRemovals(), stats.getCacheEvictions(),
+                stats.getCacheExpirations(), stats.getCacheHits(), stats.getCacheMisses(),
+                stats.getCacheHitPercentage());
     }
 
     @Override
     public String getViewType() {
         return "cache-stats";
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public long getHeapSizeMb() {
-        return heapSizeMb;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public long getHitCount() {
-        return hitCount;
-    }
-
-    public double getHitRatio() {
-        return hitRatio;
-    }
-
-    public long getMissCount() {
-        return missCount;
-    }
-
-    public long getAddedCount() {
-        return addedCount;
-    }
-
-    public long getUpdatedCount() {
-        return updatedCount;
-    }
-
-    public long getRemoveCount() {
-        return removeCount;
-    }
-
-    public long getEvictedCount() {
-        return evictedCount;
-    }
-
-    public long getExpiredCount() {
-        return expiredCount;
     }
 }

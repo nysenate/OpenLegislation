@@ -1,26 +1,16 @@
 package gov.nysenate.openleg.legislation.committee.dao;
 
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.Committee;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
+import org.ehcache.config.EvictionAdvisor;
 
-public class CommitteeCacheEvictionPolicy extends AbstractPolicy {
+import java.util.List;
 
-    public static final String name = "RECENT_COMMITTEE_FIRST";
+public class CommitteeCacheEvictionPolicy implements EvictionAdvisor<CommitteeSessionId, List<Committee>> {
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean compare(Element element1, Element element2) {
-        int element1Year = ((CommitteeSessionId) element1.getObjectKey()).getSession().getYear();
-        int element2Year = ((CommitteeSessionId) element2.getObjectKey()).getSession().getYear();
-        return (element1Year >= SessionYear.current().getYear() && element1Year != element2Year)
-                ? (element2Year < element1Year)
-                : (element2.getLastAccessTime() < element1.getLastAccessTime());
+    public boolean adviseAgainstEviction(CommitteeSessionId key, List<Committee> value) {
+        return key.getSession().equals(SessionYear.current()) && value.stream().anyMatch(Committee::isCurrent);
     }
 }

@@ -2,17 +2,14 @@ package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -21,12 +18,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class FullMemberIdCache extends CachingService<Integer, FullMember> {
-
     private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
-
     private final MemberDao memberDao;
-    @Value("${full_member.cache.heap.size}")
-    private int fullMemberCacheSizeMb;
 
     // TODO: should this be the norm? See other autowired warnings.
     @Autowired
@@ -35,23 +28,18 @@ public class FullMemberIdCache extends CachingService<Integer, FullMember> {
     }
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.FULL_MEMBER);
+    protected CacheType cacheType() {
+        return CacheType.FULL_MEMBER;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<Integer> keyClass() {
+        return Integer.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return fullMemberCacheSizeMb;
-    }
-
-    @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected Class<FullMember> valueClass() {
+        return FullMember.class;
     }
 
     @Override

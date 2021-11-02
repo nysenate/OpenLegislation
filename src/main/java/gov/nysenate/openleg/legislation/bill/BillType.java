@@ -18,9 +18,9 @@ public enum BillType
     E(ASSEMBLY, "Rules and Extraordinary Session", true),
     L(ASSEMBLY, "Joint", true);
 
-    private Chamber chamber;
-    private String name;
-    private boolean resolution;
+    private final Chamber chamber;
+    private final String name;
+    private final boolean resolution;
 
     BillType(Chamber chamber, String name, boolean resolution) {
         this.chamber = chamber;

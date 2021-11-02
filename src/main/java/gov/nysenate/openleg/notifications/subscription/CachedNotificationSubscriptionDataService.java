@@ -1,32 +1,32 @@
 package gov.nysenate.openleg.notifications.subscription;
 
 import com.google.common.collect.Maps;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.SubscriptionNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CachedNotificationSubscriptionDataService extends CachingService<String, HashMap<Integer, NotificationSubscription>>
+public class CachedNotificationSubscriptionDataService
+        extends CachingService<String, Map<Integer, NotificationSubscription>>
         implements NotificationSubscriptionDataService {
-    @Value("${notification.cache.heap.size}")
-    private int notificationCacheSizeMb;
-
+    private static final String subCacheKey = "sUbCaChE";
+    @SuppressWarnings("all")
+    private static final Class<Map<Integer, NotificationSubscription>> VALUE_CLASS =
+            (Class<Map<Integer, NotificationSubscription>>) Map.of(0, new NotificationSubscription.Builder().build())
+                    .getClass();
     @Autowired
     private NotificationSubscriptionDao subscriptionDao;
-
-    private static final String subCacheKey = "sUbCaChE";
 
     /* --- NotificationSubscriptionDataService Implementation --- */
 
@@ -88,18 +88,19 @@ public class CachedNotificationSubscriptionDataService extends CachingService<St
     /* --- CachingService Implementations --- */
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return List.of(ContentCache.NOTIFICATION_SUBSCRIPTION);
+    protected CacheType cacheType() {
+        return CacheType.NOTIFICATION;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<String> keyClass() {
+        return String.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return notificationCacheSizeMb;
+    @SuppressWarnings("all")
+    protected Class<Map<Integer, NotificationSubscription>> valueClass() {
+        return VALUE_CLASS;
     }
 
     /** {@inheritDoc} */
@@ -118,12 +119,12 @@ public class CachedNotificationSubscriptionDataService extends CachingService<St
 
     /** --- Internal Methods --- */
 
-    private HashMap<Integer, NotificationSubscription> getSubscriptionMap() {
+    private Map<Integer, NotificationSubscription> getSubscriptionMap() {
         var map = cache.get(subCacheKey);
         if (map != null)
             return map;
         Set<NotificationSubscription> subscriptionSet = subscriptionDao.getSubscriptions();
-        HashMap<Integer, NotificationSubscription> subMap =
+        Map<Integer, NotificationSubscription> subMap =
                 new HashMap<>(Maps.uniqueIndex(subscriptionSet, NotificationSubscription::getId));
         cache.put(subCacheKey, subMap);
         return subMap;

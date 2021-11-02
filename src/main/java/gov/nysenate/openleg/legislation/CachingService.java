@@ -4,77 +4,67 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.ResourceUnit;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
+import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.core.internal.statistics.DefaultStatisticsService;
+import org.ehcache.core.spi.service.StatisticsService;
+import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
+import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.List;
+import java.util.Objects;
 
 public abstract class CachingService<Key, Value> {
     private static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
+    private static final StatisticsService statisticsService = new DefaultStatisticsService();
+    protected static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder().using(statisticsService).build();
     @Autowired
-    protected CacheManager cacheManager;
+    private Environment environment;
     @Autowired
     protected EventBus eventBus;
     protected Cache<Key, Value> cache;
 
+    protected abstract CacheType cacheType();
+
+    protected abstract Class<Key> keyClass();
+
+    protected abstract Class<Value> valueClass();
+
+    @Nonnull
+    public static CacheStatistics getStats(CacheType type) {
+        return statisticsService.getCacheStatistics(type.name());
+    }
+
     @PostConstruct
     protected void init() {
-        setupCaches();
+        this.cache = cacheManager.createCache(cacheType().name(), getConfigBuilder());
         eventBus.register(this);
+    }
+
+    protected CacheConfigurationBuilder<Key, Value> getConfigBuilder() {
+        var type = cacheType();
+        String propertyStr = type.name() + ".cache." + (type.isElementSize() ? "element" : "heap") + ".size";
+        int numUnits = Integer.parseInt(Objects.requireNonNull(environment.getProperty(propertyStr)));
+        var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder().heap(numUnits,
+                type.isElementSize() ? EntryUnit.ENTRIES : MemoryUnit.MB);
+        return CacheConfigurationBuilder.newCacheConfigurationBuilder(keyClass(), valueClass(), resourcePoolsBuilder)
+                .withSizeOfMaxObjectGraph(type.isElementSize() ? 100000 : 5000).withExpiry(ExpiryPolicy.NO_EXPIRY);
     }
 
     @PreDestroy
     protected void cleanUp() {
         evictCaches();
-        for (ContentCache c : getCacheEnums())
-            cacheManager.removeCache(c.name());
-    }
-
-    protected abstract List<ContentCache> getCacheEnums();
-
-    protected abstract boolean isByteSizeOf();
-
-    protected ResourceUnit getUnit() {
-        // TODO: does this align with above? Use simple Interface?
-        return EntryUnit.ENTRIES;
-    }
-
-    protected abstract int getNumUnits();
-
-    // TODO: align types?
-    protected ExpiryPolicy<? super Key, ? super Value> getExpiryPolicy() {
-        return ExpiryPolicy.NO_EXPIRY;
-    }
-
-    /**
-     * Performs cache creation and any pre-caching of data.
-     */
-    protected void setupCaches() {
-        var cacheType = getCacheEnums().get(0);
-        CacheConfiguration<Key, Value> config = (CacheConfiguration<Key, Value>) CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(cacheType.getKeyClass(), cacheType.getValueClass(),
-                        ResourcePoolsBuilder.newResourcePoolsBuilder().heap(getNumUnits(), getUnit()))
-                .withExpiry(getExpiryPolicy()).withSizeOfMaxObjectGraph(isByteSizeOf() ? 5000 : 100000).build();
-        cache = cacheManager.createCache(cacheType.name(), config);
-    }
-
-    /**
-     * Returns all cache instances.
-     * @return
-     */
-    public List<? extends Cache<?, ?>> getCaches() {
-        return getCacheEnums().stream().map(c -> cacheManager.getCache(c.name(), c.getKeyClass(), c.getValueClass()))
-                .toList();
+        cacheManager.removeCache(cacheType().name());
     }
 
     /**
@@ -89,13 +79,8 @@ public abstract class CachingService<Key, Value> {
      * Clears all the cache entries from all caches.
      */
      public void evictCaches() {
-        if (getCaches() != null) {
-            getCaches().forEach(c -> {
-                // TODO: use Content Type
-                logger.info("Clearing out a {} cache", c.toString());
-                c.clear();
-            });
-        }
+         logger.info("Clearing out the {} cache", cacheType().name());
+         cache.clear();
     }
 
     /**
@@ -106,7 +91,7 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (getCacheEnums().stream().anyMatch(evictEvent::affects))
+        if (evictEvent.affects(cacheType()))
             evictCaches();
     }
 
@@ -117,7 +102,7 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public void handleCacheEvictIdEvent(CacheEvictIdEvent<Key> evictIdEvent) {
-        if (getCacheEnums().stream().anyMatch(evictIdEvent::affects))
+        if (evictIdEvent.affects(cacheType()))
             evictContent(evictIdEvent.getContentId());
     }
 
@@ -134,30 +119,7 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (getCacheEnums().stream().anyMatch(warmEvent::affects))
+        if (warmEvent.affects(cacheType()))
             warmCaches();
     }
-
-    /**
-     * The default side of configuration to use with caches sized by bytes on heap.
-     * Sets the maximum limit for how many nodes are traversed when computing the heap
-     * size of an object before raising a warning.
-     *
-     * Keep this low so we get warning messages when a cache's performance may be impacted
-     * by the size of its object graph.
-     *
-     * @return SizeOfPolicyConfiguration
-     */
-
-    /**
-     * An alternative size of configuration to be used only with caches sized by element count.
-     * This uses a very high maxDepth to avoid warning messages as this heap size calculation is
-     * only done when hitting the cache stats admin API.
-     *
-     * Some caches are sized by element count instead of bytes on heap because their object graphs are
-     * large and calculating the heap size will effect its performance. These caches should be configured
-     * with this policy so that erroneous warning messages are not received when we load the cache stats
-     * ctrl or the cache stats UI.
-     * @return
-     */
 }

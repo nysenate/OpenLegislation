@@ -6,6 +6,7 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public class BillId implements Serializable, Comparable<BillId>
 {
+    @Serial
     private static final long serialVersionUID = 6494036869654732240L;
 
     public static final String PRINT_NUMBER_REGEX = "([ASLREJKBC])(\\d+)([A-Z]?)";
@@ -278,7 +280,7 @@ public class BillId implements Serializable, Comparable<BillId>
             throw new IllegalArgumentException("PrintNo (" + printNo + ") must begin with a valid letter designator.");
         }
         // Trim leading 0's after the first character
-        printNo = printNo.substring(0, 1) + StringUtils.trimLeadingCharacter(printNo.substring(1), '0');
+        printNo = printNo.charAt(0) + StringUtils.trimLeadingCharacter(printNo.substring(1), '0');
         return printNo;
     }
 

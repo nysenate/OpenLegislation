@@ -2,28 +2,19 @@ package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import org.ehcache.config.ResourceUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class SessionMemberIdCache extends CachingService<Integer, SessionMember> {
-
     private static final Logger logger = LoggerFactory.getLogger(SessionMemberIdCache.class);
-
-    @Value("${member.cache.heap.size}")
-    private int memberCacheSizeMb;
     private final MemberDao memberDao;
 
     @Autowired
@@ -32,23 +23,18 @@ public class SessionMemberIdCache extends CachingService<Integer, SessionMember>
     }
 
     @Override
-    protected List<ContentCache> getCacheEnums() {
-        return null;
+    protected CacheType cacheType() {
+        return CacheType.SESSION_MEMBER;
     }
 
     @Override
-    protected boolean isByteSizeOf() {
-        return true;
+    protected Class<Integer> keyClass() {
+        return Integer.class;
     }
 
     @Override
-    protected int getNumUnits() {
-        return memberCacheSizeMb;
-    }
-
-    @Override
-    protected ResourceUnit getUnit() {
-        return MemoryUnit.MB;
+    protected Class<SessionMember> valueClass() {
+        return SessionMember.class;
     }
 
     @Override
