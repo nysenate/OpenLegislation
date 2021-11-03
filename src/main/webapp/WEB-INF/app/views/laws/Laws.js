@@ -16,6 +16,9 @@ export default function Laws({ setHeaderText }) {
         if (location.pathname === '/laws') {
             setHeaderText("NYS Laws")
         }
+        if (location.pathname === '/laws/updates') {
+            setHeaderText("NYS Laws")
+        }
     }, [ location ])
 
     return (

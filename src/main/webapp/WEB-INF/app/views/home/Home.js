@@ -8,6 +8,7 @@ import {
 import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
+import Calendars from "app/views/calendars/Calendars"
 import {
   List,
 } from "phosphor-react";
@@ -46,6 +47,9 @@ export default function Home() {
 
         <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
           <Switch>
+              <Route path="/calendars">
+                  <Calendars setHeaderText={setHeaderText}/>
+              </Route>
             <Route path="/bills">
               <Bills setHeaderText={setHeaderText} />
             </Route>

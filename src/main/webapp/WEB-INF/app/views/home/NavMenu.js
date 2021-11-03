@@ -213,7 +213,7 @@ const navCategories = [
     icon: <Bookmarks />,
     children: (
       <React.Fragment>
-        <NavChild name="Search Laws" icon={<MagnifyingGlass />} to="/laws/" />
+        <NavChild name="Search Laws" icon={<MagnifyingGlass />} to="/laws" />
         <NavChild name="Law Updates" icon={<GitBranch />} to="/laws/updates" />
       </React.Fragment>
     )
