@@ -112,7 +112,7 @@
     <commons-lang.version>3.9</commons-lang.version>
     <commons-text.version>1.8</commons-text.version>
     <commons-validator.version>1.6</commons-validator.version>
-    <eh-cache.version>3.9.7</eh-cache.version>
+    <ehcache.version>3.9.7</ehcache.version>
     <elasticsearch.version>7.3.2</elasticsearch.version>
     <flying-saucer.version>9.1.18</flying-saucer.version>
     <gson.version>2.8.8</gson.version>
@@ -120,6 +120,7 @@
     <guava.jackson.version>2.13.0</guava.jackson.version>
     <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.13.0</jackson.version>
+    <javax-cache.version>1.1.1</javax-cache.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
@@ -424,7 +425,13 @@
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>${eh-cache.version}</version>
+      <version>${ehcache.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+      <version>${javax-cache.version}</version>
     </dependency>
 
     <!-- PDF -->

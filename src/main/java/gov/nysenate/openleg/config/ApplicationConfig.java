@@ -8,6 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
+import gov.nysenate.openleg.common.util.AsciiArt;
+import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
+import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -15,14 +18,11 @@ import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.IngestCache;
-import gov.nysenate.openleg.common.util.AsciiArt;
-import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
+import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
@@ -32,11 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.interceptor.*;
+import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -45,6 +44,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import javax.annotation.Nonnull;
+import javax.cache.Caching;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -53,41 +54,22 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BU
 
 @Configuration
 @EnableCaching
-public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer
-{
+public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
     /** --- Eh Cache Spring Configuration --- */
 
-    @Bean(destroyMethod = "shutdown")
-    public net.sf.ehcache.CacheManager pooledCacheManger() {
-        // Set the upper limit when computing heap size for objects. Once it reaches the limit
-        // a warning message will be logged. We should evaluate all heap based caches with
-        // a large object dept for performance issues and convert it to an element size cache if necessary.
-        SizeOfPolicyConfiguration sizeOfConfig = new SizeOfPolicyConfiguration();
-        sizeOfConfig.setMaxDepth(5000);
-        sizeOfConfig.setMaxDepthExceededBehavior("continue");
-
-        // Configure the default cache to be used as a template for actual caches.
-        CacheConfiguration cacheConfiguration = new CacheConfiguration();
-        cacheConfiguration.setMemoryStoreEvictionPolicy("LRU");
-        cacheConfiguration.addSizeOfPolicy(sizeOfConfig);
-
-        // Configure the cache manager.
-        net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
-        config.addDefaultCache(cacheConfiguration);
-
-        return net.sf.ehcache.CacheManager.newInstance(config);
+    @Override
+    @Nonnull
+    public org.springframework.cache.CacheManager cacheManager() {
+        EhcacheCachingProvider provider = (EhcacheCachingProvider) Caching.getCachingProvider();
+        javax.cache.CacheManager javaxCacheManager = provider.getCacheManager(provider.getDefaultURI(),
+                CachingService.cacheManagerConfig());
+        return new JCacheCacheManager(javaxCacheManager);
     }
 
     @Override
     @Bean
-    public CacheManager cacheManager() {
-        return new EhCacheCacheManager(pooledCacheManger());
-    }
-
-    @Bean
-    @Override
     public CacheResolver cacheResolver() {
         return new SimpleCacheResolver(cacheManager());
     }
@@ -126,7 +108,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
                 }
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
                 return client;
-            } catch (IOException | ElasticsearchException ex){
+            } catch (IOException | ElasticsearchException ex) {
                 logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
                 logger.warn("{} retries remain.", esAllowedRetries - retryCount);
                 if (retryCount >= esAllowedRetries) {
@@ -170,6 +152,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     }
 
     @Override
+    @Nonnull
     @Bean(name = "openlegAsync", destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

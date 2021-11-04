@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.config.Configuration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -27,7 +28,8 @@ public abstract class CachingService<Key, Value> {
     private static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
-    protected static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder().using(statisticsService).build();
+    protected static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+            .using(statisticsService).build(true);
     @Autowired
     private Environment environment;
     @Autowired
@@ -43,6 +45,10 @@ public abstract class CachingService<Key, Value> {
     @Nonnull
     public static CacheStatistics getStats(CacheType type) {
         return statisticsService.getCacheStatistics(type.name());
+    }
+
+    public static Configuration cacheManagerConfig() {
+        return cacheManager.getRuntimeConfiguration();
     }
 
     @PostConstruct
