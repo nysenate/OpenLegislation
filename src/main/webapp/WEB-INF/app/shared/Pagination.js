@@ -1,32 +1,33 @@
 import React from 'react'
 import ReactPaginate from 'react-paginate'
 
+
 /**
  * A common Pagination component to be used by Open Legislation.
  * This wraps react-paginate but also adds custom styling and a custom return object.
  *
  * Fixes some inconvenient aspects or react-paginate, mainly page numbers being 0 indexed.
+ *
+ * @param {Object} params
+ * @param {number} params.currentPage - The currently active page, this page will be selected.
+ * @param {number} params.limit - The number of results to show per page.
+ * @param {number} params.total - The total number of results.
+ * @param {callback} params.onPageChange - A callback function called on page change.
+ *                                         Its given a PageLimOff representing the selected page.
+ * @return {PageLimOff} Limit offset info for the selected page.
  */
 export default function Pagination({ currentPage = 1, limit, total, onPageChange }) {
+  if (!total) {
+    return null;
+  }
 
   const pageCount = () => {
     return Math.ceil(total / limit)
   }
 
-  /**
-   * Generate the object returned to onPageChange when a new page is clicked.
-   *
-   * @param page
-   * @returns {*} An object with the newly selected page number and the limit and offset values
-   * needed to query that page from our API.
-   */
   const onPageChangeWrapper = (page) => {
     const page1Indexed = page.selected + 1 // Converts the 0 indexed page from react-paginate to be 1 indexed.
-    return onPageChange({
-      selectedPage: page1Indexed,
-      limit: limit,
-      offset: offsetForPage(page1Indexed)
-    })
+    return onPageChange(new PageLimOff(page1Indexed, limit, offsetForPage(page1Indexed)))
   }
 
   const offsetForPage = (page) => {
@@ -62,3 +63,18 @@ export default function Pagination({ currentPage = 1, limit, total, onPageChange
   )
 }
 
+/**
+ * Limit, offset, and page info on a page. Useful for querying that page from an API.
+ * @param selectedPage {number} The selected page.
+ * @param limit {number} The current limit being used.
+ * @param offset {number} The offset needed to query the selected page with the current limit.
+ * @returns {{selectedPage, offset, limit}}
+ * @constructor
+ */
+function PageLimOff(selectedPage, limit, offset) {
+  return {
+    selectedPage: selectedPage,
+    limit: limit,
+    offset: offset
+  }
+}

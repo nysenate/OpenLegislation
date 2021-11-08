@@ -7,6 +7,7 @@ import {
 import Bill from "app/views/bills/info/Bill";
 import BillSearch from "app/views/bills/search/BillSearch";
 import ContentContainer from "app/shared/ContentContainer";
+import BillUpdates from "app/views/bills/updates/BillUpdates";
 
 export default function Bills({ setHeaderText }) {
   const location = useLocation()
@@ -22,6 +23,9 @@ export default function Bills({ setHeaderText }) {
       <Switch>
         <Route path="/bills/:sessionYear/:printNo">
           <Bill setHeaderText={setHeaderText} />
+        </Route>
+        <Route path="/bills/updates">
+          <BillUpdates />
         </Route>
         <Route path="/bills">
           <BillSearch />

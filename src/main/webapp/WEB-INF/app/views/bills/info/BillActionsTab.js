@@ -3,29 +3,29 @@ import { CalendarBlank } from "phosphor-react";
 import { formatDateTime } from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import { capitalize } from "app/lib/textUtils";
-import SortBy, {
-  ASC,
-  DESC
-} from "app/shared/SortBy";
+import Select, { sortOptions } from "app/shared/Select";
 
 export default function BillActionsTab({ bill }) {
   const [ actions, setActions ] = React.useState(bill.actions.items)
-  const [ sort, setSort ] = React.useState(ASC)
+  const [ sort, setSort ] = React.useState()
 
   React.useEffect(() => {
-    if (sort === ASC) {
+    if (sort === sortOptions[0].value) {
       setActions(bill.actions.items)
     }
-    if (sort === DESC) {
+    if (sort === sortOptions[1].value) {
       setActions(bill.actions.items.slice().reverse())
     }
   }, [ sort ])
 
   return (
     <section className="m-5">
-      <div className="mb-5">
-        <label className="label label--top" htmlFor="sort">Sort by</label>
-        <SortBy sort={sort} onChange={(value) => setSort(value)} name="sort" />
+      <div className="mb-5 w-44">
+        <Select label="Sort by"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                options={sortOptions}
+                name="sort"/>
       </div>
       <div>
         {actions.map((action) => {

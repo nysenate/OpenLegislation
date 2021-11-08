@@ -30,19 +30,18 @@ export default function LawSearch() {
 
     React.useEffect(() => {
         doSearch()
-    }, [location])
+    }, [location, from, to, withSelect, toSelect])
 
     const setSearchValues = (fromForm, toForm, withSelectForm, toSelectForm) => {
         setFrom(fromForm)
         setTo(toForm)
         setWithSelect(withSelectForm)
         setToSelect(toSelectForm)
-        doSearch();
     }
 
     const doSearch = () => {
         setLoading(true)
-        getLawUpdatesApi(true, from, to, withSelect, toSelect, limit, offset)
+        getLawUpdatesApi(true, from + 'T00:00:00.000', to + 'T00:00:00.000', withSelect, toSelect, limit, offset)
             .then((response) => {
                 console.log(response)
                 setResponse(response)

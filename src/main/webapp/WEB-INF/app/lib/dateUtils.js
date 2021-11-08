@@ -19,10 +19,10 @@ export function billSessionYears() {
 
 /**
  * Converts an ISO date or datetime into the specified format.
- * @param date An ISO date or datetime.
+ * @param dateString A String representing an ISO date time.
  * @param format The format to convert to - a format object from luxon, see https://moment.github.io/luxon/#/formatting?id=presets
  * @returns {string}
  */
-export function formatDateTime(date, format) {
-  return DateTime.fromISO(date).toLocaleString(format)
+export function formatDateTime(dateString, format) {
+  return DateTime.fromISO(dateString).toLocaleString(format)
 }
