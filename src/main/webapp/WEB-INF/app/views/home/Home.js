@@ -12,6 +12,8 @@ import Calendars from "app/views/calendars/Calendars"
 import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
 import Configuration from "app/views/admin/configuration/Configuration";
+import PrivateRoute from "app/shared/PrivateRoute";
+import Admin from "app/views/admin/Admin";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -61,6 +63,9 @@ export default function Home() {
             <Route path="/admin/config">
               <Configuration />
             </Route>
+            <PrivateRoute path="/admin" permissionName="admin:view">
+              <Admin />
+            </PrivateRoute>
           </Switch>
         </div>
       </div>

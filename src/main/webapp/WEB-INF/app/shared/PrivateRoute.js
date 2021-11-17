@@ -3,20 +3,11 @@ import {
   Redirect,
   Route
 } from "react-router-dom";
-import { hasPermission } from "app/apis/authApi";
+import useIsPermitted from "app/shared/useIsPermitted";
 
 
 export default function PrivateRoute({ permissionName, children, ...rest }) {
-  const [ isPermitted, setIsPermitted ] = React.useState(undefined)
-
-  React.useEffect(() => {
-    hasPermission(permissionName)
-      .then((isPermitted) => setIsPermitted(isPermitted))
-      .catch((err) => {
-        console.error(err)
-        setIsPermitted(false)
-      })
-  }, [permissionName])
+  const isPermitted = useIsPermitted(permissionName)
 
   if (isPermitted === undefined) {
     return null
@@ -35,3 +26,5 @@ export default function PrivateRoute({ permissionName, children, ...rest }) {
     )
   }
 }
+
+

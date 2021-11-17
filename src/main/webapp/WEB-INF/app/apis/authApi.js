@@ -25,7 +25,7 @@ export function loginWithApiKey(apiKey) {
   return fetchUrl(url, options)
 }
 
-async function fetchUrl(url, options) {
+async function fetchUrl(url, options = {}) {
   const response = await fetch(url, options)
   const data = await response.json()
   if (!data.success) {
