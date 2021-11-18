@@ -9,9 +9,7 @@ import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
 import Calendars from "app/views/calendars/Calendars"
-import {
-  List,
-} from "phosphor-react";
+import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
 
 const fakeHeaderText = "New York State Laws";
@@ -57,7 +55,7 @@ export default function Home() {
               <Laws setHeaderText={setHeaderText} />
             </Route>
             <Route path="/transcripts">
-              <Transcripts />
+              <Transcripts/>
             </Route>
           </Switch>
         </div>

@@ -67,7 +67,7 @@ Clone the Open Legislation codebase to your computer.
     * Automatically download
         * Sources
         * Documentation
-5. Be sure to use Java 8 on this project
+5. Be sure to use Java 15 on this project
 
 ## Database Setup
 
@@ -218,5 +218,5 @@ Now we can process the xml data we downloaded in our local Open Legislation envi
 `curl -XPOST -v -u '<<default.admin.user>>:<<default.admin.password>>' localhost:8080/api/3/admin/process/run`
 
 **NOTE**
-* Do not attempt this on a system with 4GB of ram without changing the cache limits in app.properties
+* If your system has 4 GB of RAM or less, lower the cache limits in app.properties
 * Using a SSD can help the performance of this process significantly

@@ -224,8 +224,8 @@ const navCategories = [
     icon: <TextAlignLeft />,
     children: (
       <React.Fragment>
-        <NavChild name="Session Transcripts" icon={<TextAlignLeft />} to="/transcripts/search" />
-        <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/updates" />
+        <NavChild name="Session Transcripts" icon={<TextAlignLeft />} to="/transcripts/session" />
+        <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
       </React.Fragment>
     )
   },
