@@ -15,6 +15,10 @@ export default function Transcripts() {
         <Route exact path = "/transcripts/session">
           <TranscriptSearchResults/>
         </Route>
+        // TODO: should be a param you can select from dropdown
+        <Route path = "/transcripts/session/:year(\d+)">
+          <TranscriptSearchResults/>
+        </Route>
         <Route path = "/transcripts/session/:dateTime">
           <SessionTranscript/>
         </Route>
