@@ -38,7 +38,7 @@ function ResultList({results}) {
     return (
         <div>
             {results.map((r) =>
-                <Link to={`/laws/${r.lawId}?location=${r.locationId}`} key={r.rank}>
+                <Link to={`/laws/${r.result.lawId}?location=${r.result.locationId}`} key={r.rank}>
                 <ResultItem result={r} key={r.rank}/>
                 </Link>
             )}
@@ -47,6 +47,7 @@ function ResultList({results}) {
 }
 
 function ResultItem({result}) {
+    let highlights = result.highlights.text.toString().split('\\n').join(' ');
     return (
         <div>
             <div className="p-3 hover:bg-gray-200 flex flex-wrap">
@@ -56,7 +57,7 @@ function ResultItem({result}) {
                             <p>{result.result.lawName} {result.result.docType} {result.result.docLevelId} {result.result.title}</p>
                         </div>
                         <div className="text text--small">
-                            <p>{result.highlights.text}</p>
+                            <span className="highlight" dangerouslySetInnerHTML={{ __html: highlights }} />
                         </div>
                     </div>
                 </div>

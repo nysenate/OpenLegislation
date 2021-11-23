@@ -70,7 +70,7 @@ function doFilter(result,filter) {
     if ( filter === undefined || isEmpty(filter) ) {
         return true;
     }
-    return result.name.toLowerCase().includes(filter.toLowerCase());
+    return result.name.toLowerCase().includes(filter.toLowerCase()) || result.lawId.toLowerCase().includes(filter.toLowerCase());
 }
 
 function isEmpty(str) {
