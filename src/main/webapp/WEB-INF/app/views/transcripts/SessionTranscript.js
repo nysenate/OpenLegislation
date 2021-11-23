@@ -1,14 +1,14 @@
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import getSessionApi from "app/apis/getSessionApi";
+import getTranscriptApi from "app/apis/getTranscriptApi";
 
 export default function SessionTranscript() {
   const year = null;
   const dateTime = useRouteMatch().params.dateTime;
-  const [ loading, setLoading ] = React.useState(true)
-  let [sessionTranscript, setSessionTranscript] = React.useState([]);
+  const [loading, setLoading] = React.useState(true)
+  const [sessionTranscript, setSessionTranscript] = React.useState([]);
   // TODO: catch error
-  React.useEffect(() => {getSessionApi(year, dateTime)
+  React.useEffect(() => {getTranscriptApi(false, year, dateTime, true)
     .then((res) => {setSessionTranscript(res); setLoading(false)})},
     [year, dateTime]);
   if (loading)
