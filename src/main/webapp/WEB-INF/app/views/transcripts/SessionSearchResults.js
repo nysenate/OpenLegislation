@@ -9,8 +9,7 @@ import {
 } from "react-router-dom";
 import Select, { yearSortOptions } from "app/shared/Select";
 
-export default function TranscriptSearchResults() {
-  // TODO: this default should stay in the Java code
+export default function SessionSearchResults() {
   const location = useLocation()
   const params = queryString.parse(location.search)
   params.page = params.page || "1"
@@ -46,7 +45,7 @@ function ResultList({transcripts, pathname}) {
   return (
     <div>{transcripts.map((transcript) =>
       <Link to = {pathname + "/" + transcript.dateTime} key = {transcript.dateTime}>
-        <div className="text text--small">
+        <div className = "col mt-1 text text-blue-600">
           {transcript.dateTime}
         </div>
         <br/>
