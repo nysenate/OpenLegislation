@@ -14,7 +14,7 @@ export const sessionOptions = () => {
 }
 
 export const sortOptions = [
-  new SelectOption("_score:desc,session:desc", "Relavent"),
+  new SelectOption("_score:desc,session:desc", "Relevant"),
   new SelectOption("status.actionDate:desc,_score:desc", "Recent Status Update"),
   new SelectOption("printNo:asc,session:desc", "Print No"),
   new SelectOption("milestones.size:desc,_score:desc", "Most Progress"),

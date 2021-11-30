@@ -4,12 +4,12 @@ export default function getTranscript(isHearing, id) {
   return fetchUrl(getBaseApi(isHearing) + `/${id}`)
 }
 
-export function transcriptSearchApi(isHearing, year, limit, offset) {
+export function transcriptSearchApi(isHearing, year, pageNum) {
   let url = getBaseApi(isHearing)
   if (year)
     url += `/${year}`
   url += "?" + queryString.stringify({
-    limit: limit, offset: offset
+    offset: (pageNum - 1) * 25 + 1
   })
   return fetchUrl(url)
 }

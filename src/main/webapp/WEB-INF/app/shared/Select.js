@@ -2,12 +2,12 @@ import React from 'react'
 
 /**
  * A common Select input component.
- * @param label {string} The label for this select.
- * @param value {string|number} The value for this select.
- * @param options {SelectOption[]} The options for this select.
- * @param onChange {callback} Callback method executed when a new selection is made, it is given the event.
+ * @param label {string} The label appearing above the select element.
+ * @param value {string|number} The starting value for this element.
+ * @param options {SelectOption[]} The options for the dropdown.
+ * @param onChange {callback} Callback method that is executed when a new selection is made, and takes in an event.
  * @param name {string} Sets the attribute "for" on the label and "id" on the select equal to this value.
- * @param tabIndex {string|number} The tab index.
+ * @param tabIndex {string|number} Used to determine the order of selection when tab is pressed.
  * @param isHighlighted {boolean} If true, the label text background will be highlighted.
  * @param className {string} Classnames to add to the select element.
  * @returns {JSX.Element}
@@ -51,3 +51,11 @@ export const sortOptions = [
   new SelectOption("asc", "Oldest to Newest"),
   new SelectOption("desc", "Newest to Oldest")
 ]
+
+export function yearSortOptions(earliestYear) {
+  const currYear = new Date().getFullYear()
+  const options = [new SelectOption("", "Any")]
+  for (let i = currYear; i >= earliestYear; i--)
+    options.push(new SelectOption(i, i))
+  return options
+}
