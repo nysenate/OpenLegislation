@@ -77,7 +77,7 @@ public class PdfTest extends ApiTest {
     public void fullHearingTest() throws IOException {
         var ids = publicHearingDao.getPublicHearingIds(SortOrder.ASC, LimitOffset.ALL);
         for (var id : ids)
-            publicHearingGetCtrl.getHearingPdfFromId(id.getId().toString());
+            publicHearingGetCtrl.getHearingPdf(id.getId().toString());
     }
 
     static Set<Integer> alphaNum = new HashSet<>(), punctuation = new HashSet<>(), accentChars = new HashSet<>();

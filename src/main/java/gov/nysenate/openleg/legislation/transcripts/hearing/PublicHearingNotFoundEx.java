@@ -6,19 +6,28 @@ public class PublicHearingNotFoundEx extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 6022069225508859290L;
 
-    protected PublicHearingId publicHearingId;
+    private final PublicHearingId id;
+    private final String filename;
 
-    public PublicHearingNotFoundEx(PublicHearingId publicHearingId, Throwable ex) {
-        super(
-                publicHearingId != null
-                        ? "Public hearing " + publicHearingId + " could not be retrieved."
-                        : "Public hearing could not be retrieved since the given public hearing id was null",
-                ex
-        );
-        this.publicHearingId = publicHearingId;
+    public PublicHearingNotFoundEx(PublicHearingId id, Throwable ex) {
+        this(id, null, ex);
     }
 
-    public PublicHearingId getPublicHearingId() {
-        return publicHearingId;
+    public PublicHearingNotFoundEx(String filename, Throwable ex) {
+        this(null, filename, ex);
+    }
+
+    public PublicHearingNotFoundEx(PublicHearingId id, String filename, Throwable ex) {
+        super("Public hearing " + (id == null ? filename : id.getId()) + " could not be retrieved.", ex);
+        this.id = id;
+        this.filename = filename;
+    }
+
+    public PublicHearingId getId() {
+        return id;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }

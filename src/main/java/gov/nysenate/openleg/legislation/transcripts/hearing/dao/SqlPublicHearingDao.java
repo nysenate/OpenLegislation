@@ -27,16 +27,14 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     /** {@inheritDoc} */
     @Override
     public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("id", order);
-        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_IDS, orderBy, limOff);
-        return jdbcNamed.query(sql, ID_ROW_MAPPER);
+        return jdbcNamed.query(SELECT_HEARING_IDS.getSql(schema(), new OrderBy("id", order), limOff), ID_ROW_MAPPER);
     }
 
     /** {@inheritDoc} */
     @Override
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
         var params = new MapSqlParameterSource("id", publicHearingId.getId());
-        PublicHearing publicHearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID, params, HEARING_ROW_MAPPER);
+        PublicHearing publicHearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID.getSql(schema()), params, HEARING_ROW_MAPPER);
         if (publicHearing != null)
             publicHearing.setHosts(hearingHostDao.getHearingHosts(publicHearingId));
         return publicHearing;
@@ -48,21 +46,27 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
         return getPublicHearing(getId(filename));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getFilename(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
+        var params = new MapSqlParameterSource("id", publicHearingId.getId());
+        return jdbcNamed.queryForObject(SELECT_FILENAME_BY_ID.getSql(schema()), params, FILENAME_ROW_MAPPER);
+    }
 
     private PublicHearingId getId(String filename) throws EmptyResultDataAccessException {
-        return new PublicHearingId(jdbcNamed.queryForObject(SELECT_HEARING_ID_BY_FILENAME,
+        return new PublicHearingId(jdbcNamed.queryForObject(SELECT_ID_BY_FILENAME.getSql(schema()),
                 new MapSqlParameterSource("filename", filename), Integer.class));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updatePublicHearing(PublicHearing publicHearing) {
-        if (jdbc.queryForList(SELECT_HEARING_IDS, Integer.class).isEmpty())
-            jdbc.execute(RESET_ID);
+        if (jdbc.queryForList(SELECT_HEARING_IDS.getSql(schema()), Integer.class).isEmpty())
+            jdbc.execute(RESET_ID.getSql(schema()));
         MapSqlParameterSource params = getPublicHearingParams(publicHearing);
-        boolean isNew = jdbcNamed.update(UPDATE_HEARING, params) == 0;
+        boolean isNew = jdbcNamed.update(UPDATE_HEARING.getSql(schema()), params) == 0;
         if (isNew)
-            jdbcNamed.update(INSERT_HEARING, params);
+            jdbcNamed.update(INSERT_HEARING.getSql(schema()), params);
         var hearingId = getId(publicHearing.getFilename());
         if (!isNew)
             hearingHostDao.deleteHearingHosts(hearingId);
@@ -80,7 +84,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
         PaginatedRowHandler<PublicHearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated",
                 TOKEN_ROW_MAPPER);
-        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_UPDATES, orderBy, limOff);
+        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_UPDATES.getSql(schema()), orderBy, limOff);
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
     }
@@ -113,6 +117,9 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
         publicHearing.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return publicHearing;
     };
+
+    private static final RowMapper<String> FILENAME_ROW_MAPPER = (rs, rowNum) ->
+        rs.getString("filename");
 
     private static final RowMapper<PublicHearingId> ID_ROW_MAPPER = (rs, rowNum) ->
             new PublicHearingId(rs.getInt("id"));

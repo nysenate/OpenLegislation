@@ -31,6 +31,7 @@ public class LawPdfView extends BasePdfView {
      * Writes a single line from the document, after splitting it into sections marked by bold markers.
      * @throws IOException if the writing was interrupted.
      */
+    @Override
     protected void writeLine(String line) throws IOException {
         // Used to avoid split() erasing a marker at the end.
         if (line.endsWith(LawPdfUtil.BOLD_MARKER))

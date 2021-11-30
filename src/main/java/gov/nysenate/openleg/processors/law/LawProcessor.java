@@ -9,6 +9,7 @@ import gov.nysenate.openleg.processors.AbstractDataProcessor;
 import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +128,13 @@ public class LawProcessor extends AbstractDataProcessor
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
-            lawBuilders.get(block.getLawId()).addUpdateBlock(block);
+            try {
+                lawBuilders.get(block.getLawId()).addUpdateBlock(block);
+            } catch (LawParseException ex) {
+                // Catch LawBlock parsing errors here so the rest of the blocks in the file will be processed.
+                logger.error("LawParseException has occurred:\n{}", ExceptionUtils.getStackTrace(ex));
+                unit.addException("Unable to process LawBlock, this block has been skipped: ", ex);
+            }
         }
         persist(lawFile, lawBuilders);
     }

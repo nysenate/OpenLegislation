@@ -25,6 +25,11 @@ public interface PublicHearingDataService
     PublicHearing getPublicHearing(String filename) throws PublicHearingNotFoundEx;
 
     /**
+     * Retrieves the filename of a hearing via its {@link PublicHearingId}.
+     */
+    String getFilename(PublicHearingId id) throws PublicHearingNotFoundEx;
+
+    /**
      * Retrieves a List of {@link PublicHearingId}.
      * @param limitOffset Restrict the number of results.
      * @return

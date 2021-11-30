@@ -21,6 +21,7 @@ public interface LawBuilder
      * Updates a LawDocument within an existing tree or creates a new one if a master doc is received.
      *
      * @param block LawBlock - The LawBlock to convert into a document and store within the tree
+     * @throws LawParseException if there is an error adding/updating a block.
      */
     void addUpdateBlock(LawBlock block);
 

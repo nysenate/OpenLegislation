@@ -28,12 +28,11 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
         eventBus.register(this);
     }
 
-    /** {@inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx {
-        if (publicHearingId == null) {
+        if (publicHearingId == null)
             throw new IllegalArgumentException("PublicHearingId cannot be null");
-        }
         try {
             return publicHearingDao.getPublicHearing(publicHearingId);
         } catch (EmptyResultDataAccessException ex) {
@@ -41,15 +40,27 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getFilename(PublicHearingId id) throws PublicHearingNotFoundEx {
+        if (id == null)
+            throw new IllegalArgumentException("PublicHearingId cannot be null");
+        try {
+            return publicHearingDao.getFilename(id);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            throw new PublicHearingNotFoundEx(id, ex);
+        }
+    }
+
     @Override
     public PublicHearing getPublicHearing(String filename) throws PublicHearingNotFoundEx {
-        if (filename == null) {
+        if (filename == null)
             throw new IllegalArgumentException("PublicHearingId cannot be null");
-        }
         try {
             return publicHearingDao.getPublicHearing(filename);
         } catch (EmptyResultDataAccessException ex) {
-            throw new PublicHearingNotFoundEx(null, ex);
+            throw new PublicHearingNotFoundEx(filename, ex);
         }
     }
 
@@ -62,12 +73,10 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
     /** {@inheritDoc */
     @Override
     public void savePublicHearing(PublicHearing publicHearing, boolean postUpdateEvent) {
-        if (publicHearing == null) {
+        if (publicHearing == null)
             throw new IllegalArgumentException("publicHearing cannot be null");
-        }
         publicHearingDao.updatePublicHearing(publicHearing);
-        if (postUpdateEvent) {
+        if (postUpdateEvent)
             eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
-        }
     }
 }
