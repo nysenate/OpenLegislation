@@ -24,24 +24,25 @@ export default function LawSearch() {
     const [to, setTo] = React.useState(new Date().toISOString().slice(0, 10))
 
     const [withSelect, setWithSelect] = React.useState('published')
-    const [toSelect, setToSelect] = React.useState('desc')
+    const [sortSelect, setSortSelect] = React.useState('desc')
     const [offset, setOffset] = React.useState((page - 1) * limit + 1)
     const [limit, setLimit] = React.useState(6)
 
     React.useEffect(() => {
         doSearch()
-    }, [location, from, to, withSelect, toSelect])
+    }, [location, from, to, withSelect, sortSelect])
 
-    const setSearchValues = (fromForm, toForm, withSelectForm, toSelectForm) => {
+    const setSearchValues = (fromForm, toForm, withSelectForm, sortSelect) => {
         setFrom(fromForm)
         setTo(toForm)
         setWithSelect(withSelectForm)
-        setToSelect(toSelectForm)
+        setSortSelect(sortSelect)
     }
 
     const doSearch = () => {
         setLoading(true)
-        getLawUpdatesApi(true, from + 'T00:00:00.000', to + 'T00:00:00.000', withSelect, toSelect, limit, offset)
+
+        getLawUpdatesApi(true, from + 'T00:00:00.000', to + 'T00:00:00.000', withSelect, sortSelect, limit, offset)
             .then((response) => {
                 console.log(response)
                 setResponse(response)

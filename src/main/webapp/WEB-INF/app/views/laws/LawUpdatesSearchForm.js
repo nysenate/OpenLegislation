@@ -20,16 +20,16 @@ export default function LawSearchForm({updateValues, aMonthAgo, todaysDate}) {
         e.preventDefault()
 
         const LawUpdateFrom = document.getElementById("LawUpdateFrom")
-        console.log(LawUpdateFrom.value)
+        // console.log(LawUpdateFrom.value)
 
         const lawUpdateTo = document.getElementById("lawUpdateTo")
-        console.log(lawUpdateTo.value)
+        // console.log(lawUpdateTo.value)
 
         const withSelect = document.getElementById("with")
-        console.log(withSelect.value)
+        // console.log(withSelect.value)
 
         const sortSelect = document.getElementById("sort")
-        console.log(sortSelect.value)
+        // console.log(sortSelect.value)
 
         updateValues(LawUpdateFrom.value, lawUpdateTo.value, withSelect.value, sortSelect.value);
     }

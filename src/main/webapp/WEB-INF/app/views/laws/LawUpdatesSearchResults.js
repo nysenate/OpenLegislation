@@ -3,8 +3,6 @@ import Pagination from "app/shared/Pagination";
 
 export default function LawUpdatesSearchResults({ response, limit, page, onPageChange }) {
 
-    console.log(response)
-
     if (response.result.items.length === 0) {
         return (
             <div>
@@ -40,14 +38,13 @@ function ResultList({results}) {
     return (
         <div>
             {results.map((r) =>
-                    <ResultItem result={r} key={r.id.lawId}/>
+                    <ResultItem result={r} key={r.processedDateTime}/>
             )}
         </div>
     )
 }
 
 function ResultItem({result}) {
-    console.log(result)
     return (
         <div>
             <div className="p-3 hover:bg-gray-200 flex flex-wrap">
