@@ -10,11 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LawFile extends BaseSourceData implements Comparable<LawFile> {
-    /** Pattern for the file names of the initial dumps. */
-    private static final Pattern INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+"),
-
-    /** Pattern for the file names of law updates. */
-    UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE");
+    private static final Pattern
+            INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+"), // Initial dump filename pattern.
+            UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE(\\.fixed)?"); // Law updates filename pattern.
 
     /** Received the initial data dumps from LBDC on this date. */
     private static final LocalDate INITIAL_PUBLISH_DATE = LocalDate.of(2014, 9, 22);
@@ -61,6 +59,9 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile> {
                 throw new IllegalArgumentException("Supplied law file " + getFileName() + " does not have a " +
                                                    "recognized file name.");
             }
+        }
+        if (file.getName().endsWith(".fixed")) {
+            setManualFix(true);
         }
     }
 
