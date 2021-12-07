@@ -11,6 +11,7 @@ import Transcripts from "app/views/transcripts/Transcripts";
 import Calendars from "app/views/calendars/Calendars"
 import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
+import Configuration from "app/views/admin/configuration/Configuration";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -56,6 +57,9 @@ export default function Home() {
             </Route>
             <Route path="/transcripts">
               <Transcripts/>
+            </Route>
+            <Route path="/admin/config">
+              <Configuration />
             </Route>
           </Switch>
         </div>
