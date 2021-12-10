@@ -8,9 +8,8 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import ContentContainer from "app/shared/ContentContainer";
-import SessionTranscript from "app/views/transcripts/SessionTranscript";
-import HearingTranscript from "app/views/transcripts/HearingTranscript";
-import getTranscript, { transcriptSearchApi } from "app/apis/transcriptApi";
+import TranscriptDisplay, { getDisplayDate } from "app/views/transcripts/TranscriptDisplay";
+import transcriptApi from "app/apis/transcriptApi";
 import * as queryString from "query-string";
 import Select, { yearSortOptions } from "app/shared/Select";
 import Pagination from "app/shared/Pagination";
@@ -20,15 +19,15 @@ export default function Transcripts() {
     <ContentContainer>
       <Switch>
         <Route exact path = "/transcripts/session">
-          <SessionSearchResults/>
+          <TranscriptListing isHearing = {false}/>
         </Route>
         <Route exact path = "/transcripts/hearing">
-          <HearingSearchResults/>
+          <HearingListing/>
         </Route>
-        <Route path = "/transcripts/session/:key">
+        <Route path = "/transcripts/session/:id">
           <Transcript isHearing = {false}/>
         </Route>
-        <Route path = "/transcripts/hearing/:key">
+        <Route path = "/transcripts/hearing/:id">
           <Transcript isHearing = {true}/>
         </Route>
       </Switch>
@@ -36,31 +35,40 @@ export default function Transcripts() {
   )
 }
 
-// TODO: trigger re-render another way?
-// Without these functions, React won't trigger the useEffect hook.
-function HearingSearchResults() {
-  return <TranscriptSearchResults isHearing = {true}/>
+/**
+ * Needed to ensure page reloads when switching between transcript types.
+ */
+function HearingListing() {
+  return <TranscriptListing isHearing = {true}/>
 }
 
-function SessionSearchResults() {
-  return <TranscriptSearchResults isHearing = {false}/>
+/**
+ * Gets the JSX for a single transcript.
+ * Needed because useRouteMatch() doesn't work if called in default function.
+ */
+function Transcript({isHearing}) {
+  return <TranscriptDisplay isHearing = {isHearing} id = {useRouteMatch().params.id}/>
 }
 
-function TranscriptSearchResults({isHearing}) {
+/**
+ * Makes an API call to get a list of Transcripts, and passes the results to ResultList.
+ */
+function TranscriptListing({isHearing}) {
   const location = useLocation()
-  const params = queryString.parse(location.search)
-  params.page = params.page || "1"
-  params.year = params.year || ""
+  let params = queryString.parse(location.search)
+  params = {year: params.year ?? "", page: params.page ?? "1"}
+  const history = useHistory()
 
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState({result: {items: []}})
-  React.useEffect(() => {transcriptSearchApi(isHearing, params.year, params.page)
-    .then((data) => setData(data))
-    .finally(() => setLoading(false))}, [params.year, params.page]);
+  // TODO: it's regenerating DOM before running API call
+  React.useEffect(() => {transcriptApi(isHearing, params.year, params.page, params.term)
+      .then((data) => setData(data))
+      .finally(() => setLoading(false))},
+    [isHearing, params.year, params.page, params.term]);
 
   if (loading)
     return (<div>Loading ...</div>);
-  const history = useHistory()
   const onPageChange = pageInfo => {
     params.page = pageInfo.selectedPage
     history.push({search: queryString.stringify(params)})
@@ -70,42 +78,37 @@ function TranscriptSearchResults({isHearing}) {
     params.year = event.target.value
     history.push({search: queryString.stringify(params)})
   }
-  return (<div className="pt-3">
-    <Select label = {"Year"} value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
-            onChange = {onYearChange} name = {"year"}/>
-    <Pagination currentPage = {params.page} limit = {data.limit} total = {data.total} onPageChange = {onPageChange}/>
-    <ResultList transcripts = {data.result.items} pathname = {location.pathname} isHearing = {isHearing}/>
-  </div>)
+
+  return (
+    <div className="pt-3">
+      <Select label = {"Year"} value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
+              onChange = {onYearChange} name = {"year"}/>
+      <Pagination currentPage = {params.page} limit = {data.limit} total = {data.total} onPageChange = {onPageChange}/>
+      <ResultList items = {data.result.items} isSearch = {params.term}
+                  pathname = {location.pathname} isHearing = {isHearing}/>
+    </div>
+  )
 }
 
-function ResultList({transcripts, pathname, isHearing}) {
-  if (transcripts.length === 0)
+/**
+ * Displays a list of results (items).
+ */
+function ResultList({items, isSearch, pathname, isHearing}) {
+  if (items.length === 0)
     return <div>No transcripts found!</div>
   const identifier = isHearing ? "id" : "dateTime"
-  return (
-    <div>{transcripts.map((transcript) =>
-        <div className = "col mt-1 text text-blue-600">
-          <Link to = {pathname + "/" + transcript[identifier]}>
-            {isHearing ? transcript.date : transcript.dateTime}
-          </Link>
-          {isHearing ? " - " + transcript.title : ""}<br/>
-        </div>
-    )}
-    </div>)
-}
+  const getTranscript = (item) => isSearch ? item.result : item
 
-function Transcript({isHearing}) {
-  const id = useRouteMatch().params.key;
-  const [loading, setLoading] = React.useState(true)
-  const [transcript, setTranscript] = React.useState([]);
-  React.useEffect(() => {getTranscript(isHearing, id)
-      .then((res) => setTranscript(res.result))
-      .finally(() => setLoading(false))},
-    [isHearing, id]);
-  if (loading)
-    return (<div>Loading ...</div>);
-  else if (isHearing)
-    return <HearingTranscript hearing = {transcript}/>
-  else
-    return <SessionTranscript session = {transcript}/>
+  return (
+    <ol style ={{ style: 'none' }}>{items.map((item) =>
+      <li key = {getTranscript(item)[identifier]}>
+        <div className = "col mt-1 text text-blue-600">
+          <Link to = {pathname + "/" + getTranscript(item)[identifier]}>
+            {getDisplayDate(getTranscript(item), isHearing)}
+          </Link>
+          {isHearing ? " - " + getTranscript(item).title : ""}<br/>
+        </div>
+        {item.highlights}
+      </li>
+    )}</ol>)
 }

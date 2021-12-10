@@ -1,25 +1,26 @@
 import * as queryString from "query-string";
 
-export default function getTranscript(isHearing, id) {
-  return fetchUrl(getBaseApi(isHearing) + `/${id}`)
-}
-
-export function transcriptSearchApi(isHearing, year, pageNum) {
+export default function transcriptApi(isHearing, year, pageNum, searchTerm) {
+  const defaultLimit = 25
   let url = getBaseApi(isHearing)
   if (year)
     url += `/${year}`
-  // TODO: keep '25' in Java code?
+  if (searchTerm)
+    url += "/search"
   url += "?" + queryString.stringify({
-    offset: (pageNum - 1) * 25 + 1
+    offset: (pageNum - 1) * defaultLimit + 1,
+    term: searchTerm,
+    summary: isHearing && !searchTerm
   })
-  // Hearings need some more information to display properly.
-  if (isHearing)
-    url += "&summary=true"
   return fetchUrl(url)
 }
 
+export function getTranscript(isHearing, id) {
+  return fetchUrl(getBaseApi(isHearing) + `/${id}`)
+}
+
 function getBaseApi(isHearing) {
-  return "/api/3/" + (isHearing ? "hearings" : "transcripts");
+  return "/api/3/" + (isHearing ? "hearings" : "transcripts")
 }
 
 async function fetchUrl(url) {
