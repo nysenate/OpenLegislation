@@ -122,7 +122,7 @@
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.1</junit.version>
-    <log4j.version>2.13.3</log4j.version>
+    <log4j.version>2.15.0</log4j.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <postgres-jdbc.version>42.2.8</postgres-jdbc.version>
