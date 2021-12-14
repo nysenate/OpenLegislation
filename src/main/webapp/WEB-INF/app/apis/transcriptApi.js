@@ -10,8 +10,9 @@ export default function transcriptApi(isHearing, year, pageNum, searchTerm) {
   url += "?" + queryString.stringify({
     offset: (pageNum - 1) * defaultLimit + 1,
     term: searchTerm,
-    summary: isHearing && !searchTerm
+    summary: isHearing
   })
+  console.log(url)
   return fetchUrl(url)
 }
 

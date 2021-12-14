@@ -13,6 +13,7 @@ import transcriptApi from "app/apis/transcriptApi";
 import * as queryString from "query-string";
 import Select, { yearSortOptions } from "app/shared/Select";
 import Pagination from "app/shared/Pagination";
+import Input from "app/shared/Input";
 
 export default function Transcripts() {
   return (
@@ -56,12 +57,12 @@ function Transcript({isHearing}) {
 function TranscriptListing({isHearing}) {
   const location = useLocation()
   let params = queryString.parse(location.search)
-  params = {year: params.year ?? "", page: params.page ?? "1"}
+  params = {year: params.year ?? "", page: params.page ?? "1", term: params.term ?? ""}
   const history = useHistory()
 
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState({result: {items: []}})
-  // TODO: it's regenerating DOM before running API call
+  const [ term, setTerm ] = React.useState(params.term)
   React.useEffect(() => {transcriptApi(isHearing, params.year, params.page, params.term)
       .then((data) => setData(data))
       .finally(() => setLoading(false))},
@@ -78,15 +79,44 @@ function TranscriptListing({isHearing}) {
     params.year = event.target.value
     history.push({search: queryString.stringify(params)})
   }
+  const setSearchTerm = term => {
+    params.term = term
+    history.push({search: queryString.stringify(params)})
+  }
 
   return (
     <div className="pt-3">
-      <Select label = {"Year"} value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
-              onChange = {onYearChange} name = {"year"}/>
+      <SearchBox term = {term} setTerm = {setTerm} setSearchTerm = {setSearchTerm}/>
+      <Select label = "Year" value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
+              onChange = {onYearChange} name = "year"/>
       <Pagination currentPage = {params.page} limit = {data.limit} total = {data.total} onPageChange = {onPageChange}/>
       <ResultList items = {data.result.items} isSearch = {params.term}
                   pathname = {location.pathname} isHearing = {isHearing}/>
     </div>
+  )
+}
+
+function SearchBox({term, setTerm, setSearchTerm}) {
+  // TODO: works only after reloading page
+  const name = "transcriptSearch"
+  const onSubmit = (e) => {
+    // TODO: why is this needed?
+    e.preventDefault();
+    setSearchTerm(document.getElementById(name).value)
+  }
+
+  return (
+    <form onSubmit = {onSubmit}>
+      <div className="flex flex-wrap">
+        <div className="flex-grow mr-8">
+          <Input label = "Search for Transcripts" value = {term} onChange = {(e) => setTerm(e.target.value)}
+                 placeholder = {"e.g. \"a phrase\" or keywords"} name = {name} className = "w-full"/>
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <button className="btn my-3 w-36" type="submit">Search</button>
+      </div>
+    </form>
   )
 }
 
@@ -100,7 +130,7 @@ function ResultList({items, isSearch, pathname, isHearing}) {
   const getTranscript = (item) => isSearch ? item.result : item
 
   return (
-    <ol style ={{ style: 'none' }}>{items.map((item) =>
+    <ol style = {{style: 'none'}}>{items.map((item) =>
       <li key = {getTranscript(item)[identifier]}>
         <div className = "col mt-1 text text-blue-600">
           <Link to = {pathname + "/" + getTranscript(item)[identifier]}>
@@ -108,7 +138,9 @@ function ResultList({items, isSearch, pathname, isHearing}) {
           </Link>
           {isHearing ? " - " + getTranscript(item).title : ""}<br/>
         </div>
-        {item.highlights}
+        <div className="text text--small">
+          <span className = "highlight" dangerouslySetInnerHTML = {{__html: isSearch ? item.highlights.text : ""}} />
+        </div><br/>
       </li>
     )}</ol>)
 }
