@@ -12,16 +12,19 @@ import javax.mail.Store;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class SimpleCheckMailService extends BaseCheckMailService {
+public abstract class SimpleCheckMailService extends BaseCheckMailService implements CheckMailService {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleCheckMailService.class);
+    protected static String datePattern = "(?<date>\\d{2}/\\d{2}/\\d{4})";
 
     /**
      * Saves the text of all emails in the email receiving folder that have subjects that match the given pattern
      */
-    protected int checkMail(Pattern subjectPattern) {
+    @Override
+    public int checkMail() {
         Store store = null;
         int savedReports = 0;
         try {
@@ -31,7 +34,7 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
             Folder archiveFolder = mailUtils.navigateToFolder(environment.getEmailProcessedFolder(), store);
             sourceFolder.open(Folder.READ_WRITE);
 
-            List<Message> messages = getMatchingMessages(subjectPattern, sourceFolder);
+            List<Message> messages = getMatchingMessages(getPattern(), sourceFolder);
             List<Message> savedMessages = new ArrayList<>();
             for (Message message : messages) {
                 try {
@@ -54,8 +57,17 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
         return savedReports;
     }
 
+    protected abstract Pattern getPattern();
+
+    protected abstract String getFilename(Message message, Matcher matcher) throws MessagingException;
+
     /** Designates where a matched message will be saved */
-    protected abstract File getSaveFile(Message message) throws MessagingException;
+    protected File getSaveFile(Message message) throws MessagingException {
+        Matcher subjectMatcher = getPattern().matcher(message.getSubject());
+        if (subjectMatcher.matches())
+            return new File(new File(environment.getStagingDir(), "alerts"), getFilename(message, subjectMatcher));
+        throw new IllegalArgumentException();
+    }
 
     protected abstract String getCheckMailType();
 
@@ -64,9 +76,10 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
     }
 
     /** Gets all messages from the source folder whose subjects match the given pattern */
-    private ArrayList<Message> getMatchingMessages(Pattern subjectPattern, Folder sourceFolder) throws MessagingException {
-        ArrayList<Message> messages = new ArrayList<>();
-        for (Message message : sourceFolder.getMessages()) {
+    private List<Message> getMatchingMessages(Pattern subjectPattern, Folder sourceFolder) throws MessagingException {
+        var messages = new ArrayList<Message>();
+        var sourceMessages = sourceFolder.getMessages();
+        for (Message message : sourceMessages) {
             if (subjectPattern.matcher(message.getSubject()).matches()) {
                 messages.add(message);
                 logger.info("Saving and archiving {} email message with subject: {}", getCheckMailType(), message.getSubject());

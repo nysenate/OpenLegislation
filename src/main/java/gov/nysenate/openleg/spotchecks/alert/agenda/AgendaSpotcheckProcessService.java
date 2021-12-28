@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.spotchecks.alert.agenda;
 
 import gov.nysenate.openleg.spotchecks.alert.agenda.dao.AgendaAlertDao;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckMailProcessService;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ public class AgendaSpotcheckProcessService extends SpotcheckMailProcessService {
 
     /** --- Implemented Methods --- */
 
+    // TODO: This method takes minutes to run.
     @Override
     protected int doCollate() throws Exception {
         return alertCheckMailService.checkMail() + commAgendaAlertCheckMailService.checkMail();
