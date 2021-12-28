@@ -25,6 +25,6 @@ public class AsyncUtils {
 
     @PreDestroy
     public void destroy() {
-    executor.shutdown();
+        executor.shutdown();
     }
 }
