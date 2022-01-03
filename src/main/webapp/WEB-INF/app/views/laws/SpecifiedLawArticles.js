@@ -45,7 +45,7 @@ function ResultItem({ result, term }) {
 
   return (
     <div>
-      <div className="p-1 hover:bg-gray-200 flex" onClick={() => expandArticle()}>
+      <div className="p-1 hover:bg-gray-200 flex" id={result.locationId} onClick={() => expandArticle()}>
         <div className=" py-6 w-full">
 
           <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
@@ -68,7 +68,8 @@ function ResultItem({ result, term }) {
         </div>
       </div>
       <div className="">
-        {(params.location === result.locationId || wasSearchedFor({ result, term })) &&
+        {(params.location === result.locationId || params.location === result.locationId + '#' + result.locationId
+          || wasSearchedFor({ result, term })) &&
         (<div>
           <SpecifiedLawArticleSections response={result} term={term} />
         </div>)
@@ -81,7 +82,7 @@ function ResultItem({ result, term }) {
   function expandArticle() {
     const params = queryString.parse(location.search)
     params.location = result.locationId
-    history.push({ search: queryString.stringify(params) })
+    history.push({ search: queryString.stringify(params) +'#'+ result.locationId })
   }
 
   function wasSearchedFor({ result, term }) {

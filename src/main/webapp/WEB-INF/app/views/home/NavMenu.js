@@ -178,7 +178,6 @@ const navCategories = [
     icon: <CalendarBlank />,
     children: (
       <React.Fragment>
-        <NavChild name="Browse Calendars" icon={<CalendarBlank />} to="/calendars/browse" />
         <NavChild name="Search Calendars" icon={<MagnifyingGlass />} to="/calendars/search" />
         <NavChild name="Calendar Updates" icon={<GitBranch />} to="/calendars/updates" />
       </React.Fragment>

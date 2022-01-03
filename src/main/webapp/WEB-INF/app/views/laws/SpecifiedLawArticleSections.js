@@ -1,8 +1,14 @@
 import React from 'react'
+import {
+  Link,
+  useHistory,
+  useLocation,
+  useRouteMatch
+} from "react-router-dom";
 import getLawsApi from "app/apis/getLawsApi";
+import * as queryString from "query-string";
 
 export default function SpecifiedLawArticleSections({ response, term }) {
-
   // console.log(response)
   return (
     <div className="mt-8">
@@ -19,6 +25,9 @@ export default function SpecifiedLawArticleSections({ response, term }) {
 function Section({ results, term }) {
   const [ section, setSection ] = React.useState({ result: { items: [] } })
   const [ openText, setOpenText ] = React.useState(false)
+  const location = useLocation()
+  const history = useHistory()
+  const params = queryString.parse(location.search, { parseBooleans: true })
 
   React.useEffect(() => {
     getLawsApi(results.lawId, results.locationId)
@@ -34,7 +43,7 @@ function Section({ results, term }) {
 
   return (
     <div>
-      <div className="p-3 hover:bg-gray-200 flex flex-wrap" onClick={() => expandText({ openText, setOpenText })}>
+      <div className="p-3 hover:bg-gray-200 flex flex-wrap" id={section.locationId} onClick={() => expandText({ openText, setOpenText })}>
         <div className="py-3 w-full">
 
           <div className="grid auto-rows-min grid-cols-3 ">
@@ -63,6 +72,7 @@ function Section({ results, term }) {
 
   function expandText({ openText, setOpenText }) {
     setOpenText(!openText)
+    // history.push({ search: queryString.stringify(params) +'#'+section.locationId })
   }
 }
 
