@@ -9,12 +9,14 @@ public class SponsorView implements ViewObject
     protected MemberView member;
     protected boolean budget;
     protected boolean rules;
+    protected boolean redistricting;
 
     public SponsorView(BillSponsor billSponsor) {
         if (billSponsor != null) {
             this.member = billSponsor.getMember()!=null ? new MemberView(billSponsor.getMember()) : null;
             this.budget = billSponsor.isBudget();
             this.rules = billSponsor.isRules();
+            this.redistricting = billSponsor.isRedistricting();
         }
     }
 
@@ -37,5 +39,9 @@ public class SponsorView implements ViewObject
 
     public boolean isRules() {
         return rules;
+    }
+
+    public boolean isRedistricting() {
+        return redistricting;
     }
 }
