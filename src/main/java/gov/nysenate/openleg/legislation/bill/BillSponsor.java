@@ -23,6 +23,9 @@ public class BillSponsor implements Serializable
     /** Indicates if bill is introduced through RULES. (no member). */
     private boolean rules = false;
 
+    /** Indicates if bill is introduced by the Independent Redistricting Commission. */
+    private boolean redistricting = false;
+
     /** --- Constructors --- */
 
     public BillSponsor() {}
@@ -46,26 +49,36 @@ public class BillSponsor implements Serializable
         final BillSponsor other = (BillSponsor) obj;
         return Objects.equals(this.member, other.member) &&
                Objects.equals(this.budget, other.budget) &&
-               Objects.equals(this.rules, other.rules);
+               Objects.equals(this.rules, other.rules) &&
+                Objects.equals(this.redistricting, other.redistricting);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(member, budget, rules);
+        return Objects.hash(member, budget, rules, redistricting);
     }
 
     @Override
     public String toString() {
-        return (((rules)
-                    ? "RULES " : "")
-                + ((budget)
-                    ? "BUDGET BILL " : "") +
-                ((hasMember())
-                    ? ((rules)
-                       ? "(" + member.getLbdcShortName() + ")"
-                       : member.getLbdcShortName())
-                    : "")
-        ).trim();
+        if (!rules & !budget & !redistricting) {
+            return member.getLbdcShortName();
+        }
+
+        String s = "";
+        if (rules) {
+            s = "RULES";
+        }
+        else if (budget) {
+            s = "BUDGET BILL";
+        }
+        else if (redistricting) {
+            s = "REDISTRICTING";
+        }
+
+        if (hasMember()) {
+            s += " (" + member.getLbdcShortName() + ")";
+        }
+        return s.trim();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -92,5 +105,13 @@ public class BillSponsor implements Serializable
 
     public void setRules(boolean rules) {
         this.rules = rules;
+    }
+
+    public boolean isRedistricting() {
+        return redistricting;
+    }
+
+    public void setRedistricting(boolean redistricting) {
+        this.redistricting = redistricting;
     }
 }

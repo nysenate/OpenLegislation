@@ -87,6 +87,11 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
             billSponsor.setBudget(true);
             billSponsor.setMember(null);
         }
+        // Bills sponsored by the Redistricting commission don't have a specific sponsor.
+        else if (sponsorLine.startsWith("REDISTRICTING")) {
+           billSponsor.setRedistricting(true);
+           billSponsor.setMember(null);
+        }
 
         else {
             // In rare cases multiple sponsors can be listed on a single line. We can handle this

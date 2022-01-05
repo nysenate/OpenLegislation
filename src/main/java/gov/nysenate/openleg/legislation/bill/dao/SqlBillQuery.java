@@ -53,13 +53,13 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_SPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
-        "(bill_print_no, bill_session_year, session_member_id, budget_bill, rules_sponsor, last_fragment_id) " +
-        "VALUES (:printNo, :sessionYear, :sessionMemberId, :budgetBill, :rulesSponsor, :lastFragmentId)"
+        "(bill_print_no, bill_session_year, session_member_id, budget_bill, rules_sponsor, redistricting_sponsor, last_fragment_id) " +
+        "VALUES (:printNo, :sessionYear, :sessionMemberId, :budgetBill, :rulesSponsor, :redistrictingSponsor, :lastFragmentId)"
     ),
     UPDATE_BILL_SPONSOR(
         "UPDATE ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
         "SET session_member_id = :sessionMemberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor, " +
-        "last_fragment_id = :lastFragmentId\n" +
+        "redistricting_sponsor = :redistrictingSponsor, last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     DELETE_BILL_SPONSOR(
