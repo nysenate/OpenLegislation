@@ -3,14 +3,11 @@ package gov.nysenate.openleg.spotchecks.alert.agenda;
 import gov.nysenate.openleg.spotchecks.alert.agenda.dao.AgendaAlertDao;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckMailProcessService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AgendaSpotcheckProcessService extends SpotcheckMailProcessService {
-    private static final Logger logger = LoggerFactory.getLogger(AgendaSpotcheckProcessService.class);
 
     @Autowired
     private AgendaAlertCheckMailService alertCheckMailService;
@@ -26,7 +23,7 @@ public class AgendaSpotcheckProcessService extends SpotcheckMailProcessService {
 
     /** --- Implemented Methods --- */
 
-    // TODO: This method takes minutes to run.
+    // TODO: This method takes minutes to run. Can combine these Patterns.
     @Override
     protected int doCollate() throws Exception {
         return alertCheckMailService.checkMail() + commAgendaAlertCheckMailService.checkMail();
