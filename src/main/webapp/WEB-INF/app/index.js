@@ -8,23 +8,23 @@ import {
 import './app.css'
 import PublicView from './views/public/PublicView'
 import Home from "app/views/home/Home";
-import PrivateRoute from "app/shared/PrivateRoute";
+import { AuthProvider } from "./shared/useAuth";
 
 
 function App() {
   return (
-    <React.Fragment>
+    <AuthProvider>
       <Router>
         <Switch>
           <Route exact path="/">
             <PublicView />
           </Route>
-          <PrivateRoute permissionName="ui:view">
+          <Route>
             <Home />
-          </PrivateRoute>
+          </Route>
         </Switch>
       </Router>
-    </React.Fragment>
+    </AuthProvider>
   )
 }
 

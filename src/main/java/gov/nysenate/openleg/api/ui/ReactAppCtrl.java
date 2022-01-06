@@ -1,13 +1,16 @@
 package gov.nysenate.openleg.api.ui;
 
+import gov.nysenate.openleg.api.auth.AuthedUser;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
+import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.auth.model.ApiKeyLoginToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,14 +64,14 @@ public class ReactAppCtrl {
         return "publichome";
     }
 
-    @RequestMapping("/admin/**")
-    public String admin(HttpServletRequest request) {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.isPermitted("admin:view")) {
-            return home(request);
-        }
-        return "404";
-    }
+//    @RequestMapping("/admin/**")
+//    public String admin(HttpServletRequest request) {
+//        Subject subject = SecurityUtils.getSubject();
+//        if (subject.isPermitted("admin:view")) {
+//            return home(request);
+//        }
+//        return "404";
+//    }
 
     @ResponseBody
     @RequestMapping(value = "/loginapikey", method = RequestMethod.POST)
@@ -77,11 +80,25 @@ public class ReactAppCtrl {
         String apiKey = body.get("apiKey");
         try {
             SecurityUtils.getSubject().login(new ApiKeyLoginToken(apiKey, ipAddr));
-            return new SimpleResponse(true, "Login successful", "apikey-login");
+            return new ViewObjectResponse<>(new AuthedUser(true, false));
         } catch (AuthenticationException ex) {
             logger.info("Invalid API Key attempt with key: {}", apiKey);
         }
         return new ErrorResponse(ErrorCode.API_KEY_INVALID);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/admin/login", method = RequestMethod.POST)
+    public BaseResponse loginAdmin(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        String username = body.get("username");
+        String password = body.get("password");
+        String host = request.getRemoteAddr();
+        try {
+            SecurityUtils.getSubject().login(new UsernamePasswordToken(username, password, host));
+            return new ViewObjectResponse<>(new AuthedUser(true, true));
+        } catch (AuthenticationException ex) {
+            return new ErrorResponse(ErrorCode.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping("/public")

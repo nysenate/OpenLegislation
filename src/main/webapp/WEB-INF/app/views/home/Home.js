@@ -48,24 +48,21 @@ export default function Home() {
 
         <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
           <Switch>
-              <Route path="/calendars">
-                  <Calendars setHeaderText={setHeaderText}/>
-              </Route>
-            <Route path="/bills">
-              <Bills setHeaderText={setHeaderText} />
-            </Route>
-            <Route path="/laws">
-              <Laws setHeaderText={setHeaderText} />
-            </Route>
-            <Route path="/transcripts">
-              <Transcripts/>
-            </Route>
-            <Route path="/admin/config">
-              <Configuration />
-            </Route>
-            <PrivateRoute path="/admin" permissionName="admin:view">
-              <Admin />
+            <PrivateRoute path="/calendars">
+              <Calendars setHeaderText={setHeaderText} />
             </PrivateRoute>
+            <PrivateRoute path="/bills">
+              <Bills setHeaderText={setHeaderText} />
+            </PrivateRoute>
+            <PrivateRoute path="/laws">
+              <Laws setHeaderText={setHeaderText} />
+            </PrivateRoute>
+            <PrivateRoute path="/transcripts">
+              <Transcripts/>
+            </PrivateRoute>
+            <Route path="/admin">
+              <Admin />
+            </Route>
           </Switch>
         </div>
       </div>

@@ -1,26 +1,26 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import {
   useHistory
 } from "react-router-dom";
 import { loginWithApiKey } from "app/apis/authApi";
+import useAuth from "../../../shared/useAuth";
 
 export default function BrowseLegislation() {
   const apiKeyRef = React.useRef()
   const [ error, setError ] = React.useState(false)
   const history = useHistory()
+  const auth = useAuth()
 
   const handleSubmit = e => {
     e.preventDefault()
 
     const apiKey = apiKeyRef.current.value.trim();
-    loginWithApiKey(apiKey)
+    auth.loginApiUser(apiKey)
       .then(() => {
         setError(false)
         history.push("/bills/search")
       })
-      .catch((err) => {
-        setError(true)
-      })
+      .catch((err) => setError(true))
   }
 
   return (

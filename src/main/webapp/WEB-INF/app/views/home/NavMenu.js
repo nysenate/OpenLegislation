@@ -18,7 +18,7 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
-import useIsPermitted from "app/shared/useIsPermitted";
+import useAuth from "app/shared/useAuth";
 
 export default function NavMenu({ isMenuOpen }) {
   /*
@@ -90,9 +90,9 @@ function MenuContent() {
         }}>
         <ul>
           {navCategories.map((opt) => {
-            if (opt.requiredPermission) {
+            if (opt.adminOnly) {
               return (
-                <PrivateNavCategory {...opt}
+                <AdminNavCategory {...opt}
                                     isOpen={openCategories.includes(opt.name)}
                                     isActive={activeCategory()?.name === opt.name}
                                     onCategoryClick={() => toggleCategory(opt.name)}
@@ -116,14 +116,14 @@ function MenuContent() {
   )
 }
 
-function PrivateNavCategory({ requiredPermission, ...rest }) {
-  const isPermitted = useIsPermitted(requiredPermission)
+function AdminNavCategory({ ...rest }) {
+  const auth = useAuth()
 
-  if (!isPermitted) {
+  if (!auth.isAdmin) {
     return null
   }
 
-  if (isPermitted === true) {
+  if (auth.isAdmin) {
     return <NavCategory {...rest} />
   }
 }
@@ -254,9 +254,9 @@ const navCategories = [
     icon: <Sliders />,
     children: (
       <React.Fragment>
-        <NavChild name="Configuration" icon={<TextAlignLeft />} to="/admin/configuration" />
+        <NavChild name="Configuration" icon={<TextAlignLeft />} to="/admin/config" />
       </React.Fragment>
     ),
-    requiredPermission: "admin:view"
+    adminOnly: true
   },
 ]
