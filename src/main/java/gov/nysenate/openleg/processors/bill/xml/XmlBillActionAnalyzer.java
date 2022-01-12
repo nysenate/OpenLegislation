@@ -27,7 +27,7 @@ public class XmlBillActionAnalyzer
 
     /** Pattern for extracting the committee from matching bill events. */
     private static final Pattern committeeEventTextPattern =
-        Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO ([A-Z, ]*[A-Z]+)\\s?([0-9]+[A-Z]?)?");
+        Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO (.*)");
 
     /** Pattern that indicates that the bill has passed a certain house. */
     private static final Pattern passedHousePattern = Pattern.compile("PASSED (ASSEMBLY|SENATE)");
