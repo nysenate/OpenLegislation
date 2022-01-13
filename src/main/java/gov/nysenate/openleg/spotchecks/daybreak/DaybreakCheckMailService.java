@@ -80,8 +80,6 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
     private DaybreakReportSet<DaybreakMessage> getReports(Folder sourceFolder) throws MessagingException {
         DaybreakReportSet<DaybreakMessage> reports = new DaybreakReportSet<>();
         var messages = sourceFolder.getMessages();
-        // TODO: remove
-        int i = 0;
         for (Message message : messages) {
             if (DaybreakDocType.getMessageDocType(message.getSubject()) != null)
                 reports.insertDaybreakDocument(new DaybreakMessage(message));
@@ -90,9 +88,6 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
             // We could continue processing if the Thread has been interrupted, but it would take too long.
             if (Thread.currentThread().isInterrupted())
                 return new DaybreakReportSet<>();
-            // TODO: remove
-            if (++i > 5)
-                break;
         }
         return reports;
     }

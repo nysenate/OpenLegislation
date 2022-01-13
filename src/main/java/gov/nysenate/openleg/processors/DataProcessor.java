@@ -113,9 +113,7 @@ public class DataProcessor
             }
             // Scheduled methods cannot let checked exceptions through
             catch (Exception ex) {
-                // TODO
-                // ExceptionUtils.getStackTrace(ex)
-                logger.error("Caught exception while processing data\n{}\n{}\n{}", ex.getMessage(), ex.getCause(), ex.getStackTrace());
+                logger.error("Caught exception while processing data\n{}", ExceptionUtils.getStackTrace(ex));
             }
         }
     }

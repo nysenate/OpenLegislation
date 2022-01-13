@@ -72,18 +72,16 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
     private List<Message> getMatchingMessages(Folder sourceFolder) throws MessagingException {
         logger.info("Starting message search for " + getCheckMailType());
         var messages = new ArrayList<Message>();
+        var sourceMessages = sourceFolder.getMessages();
+        for (Message message : sourceMessages) {
+            if (getPattern().matcher(message.getSubject()).matches()) {
+                messages.add(message);
+                logger.info("Saving and archiving {} email message with subject: {}", getCheckMailType(), message.getSubject());
+            }
+            // We could continue processing if the Thread has been interrupted, but it would take too long.
+            if (Thread.currentThread().isInterrupted())
+                return List.of();
+        }
         return messages;
-        // TODO: remove
-//        var sourceMessages = sourceFolder.getMessages();
-//        for (Message message : sourceMessages) {
-//            if (getPattern().matcher(message.getSubject()).matches()) {
-//                messages.add(message);
-//                logger.info("Saving and archiving {} email message with subject: {}", getCheckMailType(), message.getSubject());
-//            }
-//            // We could continue processing if the Thread has been interrupted, but it would take too long.
-//            if (Thread.currentThread().isInterrupted())
-//                return List.of();
-//        }
-//        return messages;
     }
 }
