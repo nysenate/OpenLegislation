@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.script.BaseScript;
+import gov.nysenate.openleg.config.Environment;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -72,11 +72,11 @@ public class ProcessDataCLI extends BaseScript
             dataProcessor.run(this.getClass().getName() + " script");
         }
         else {
-            if(collate) {
-                dataProcessor.collate();
+            if (collate) {
+                dataProcessor.collateAll();
             }
-            if(ingest) {
-                dataProcessor.ingest();
+            if (ingest) {
+                dataProcessor.ingestAll();
             }
         }
     }

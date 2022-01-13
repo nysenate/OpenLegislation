@@ -3,13 +3,13 @@ package gov.nysenate.openleg.processors;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.common.util.AsyncUtils;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.processors.law.LawProcessService;
 import gov.nysenate.openleg.processors.log.*;
 import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingProcessService;
-import gov.nysenate.openleg.processors.law.LawProcessService;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptProcessService;
 import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
-import gov.nysenate.openleg.common.util.AsyncUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Process all the things.
@@ -75,23 +76,18 @@ public class DataProcessor
      * @throws Exception - If unhandled exceptions occur during processing
      */
     public synchronized DataProcessRun run(String invoker, boolean async) throws Exception {
-        if (env.isProcessingEnabled()) {
-            logger.info("Starting data processor...");
-            currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
-
-            if (async) {
-                asyncUtils.run(this::doRun);
-            } else {
-                doRun();
-                logger.info("Data processor has completed.");
-            }
-
-            return currentRun;
-        }
-        else {
+        if (!env.isProcessingEnabled()) {
             logger.debug("Data processing is disabled!");
             return null;
         }
+
+        logger.info("Starting data processor...");
+        currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
+        if (async)
+            asyncUtils.run(this::doRun);
+        else
+            doRun();
+        return currentRun;
     }
 
     /**
@@ -117,7 +113,9 @@ public class DataProcessor
             }
             // Scheduled methods cannot let checked exceptions through
             catch (Exception ex) {
-                logger.error("Caught exception while processing data\n{}", ExceptionUtils.getStackTrace(ex));
+                // TODO
+                // ExceptionUtils.getStackTrace(ex)
+                logger.error("Caught exception while processing data\n{}\n{}\n{}", ex.getMessage(), ex.getCause(), ex.getStackTrace());
             }
         }
     }
@@ -144,49 +142,40 @@ public class DataProcessor
 
     /* --- Processing methods --- */
 
-    public synchronized void collate() {
-        logger.debug("Begin collating data");
-        Map<String, Integer> collatedCounts = new LinkedHashMap<>();
-        for (ProcessService processor : processServices) {
-            if (env.isProcessingEnabled()) {
-                logger.info("Collating " + processor.getCollateType());
-                int collatedCount = processor.collate();
-                if (collatedCount > 0) {
-                    collatedCounts.put(processor.getCollateType(), collatedCount);
-                }
-            } else {
-                logger.info("Not collating data, processing is disabled.");
-            }
-        }
-        if (collatedCounts.size() > 0) {
-            logger.debug("Completed collations:");
-            logCounts(collatedCounts);
-        }
-        else {
-            logger.info("Nothing to collate");
-        }
+    protected synchronized void collateAll() throws IOException {
+        processAll(true);
     }
 
-    public synchronized void ingest() throws IOException {
-        logger.info("Begin ingesting data");
-        Map<String, Integer> ingestedCounts = new LinkedHashMap<>();
+    protected synchronized void ingestAll() throws IOException {
+        processAll(false);
+    }
+
+    /**
+     * Common code for collating and ingesting data.
+     * @param isCollate marks which operation it is.
+     */
+    private synchronized void processAll(boolean isCollate) {
+        if (!env.isProcessingEnabled()) {
+            logger.info("Not {} data, processing is disabled.", isCollate ? "collating" : "ingesting");
+            return;
+        }
+        logger.info("Begin {} data", isCollate ? "collating" : "ingesting");
+        Map<String, Integer> processedCounts = new LinkedHashMap<>();
         for (ProcessService processor : processServices) {
-            if (env.isProcessingEnabled()) {
-                logger.info("Ingesting " + processor.getIngestType());
-                int ingestedCount = processor.ingest();
-                if (ingestedCount > 0) {
-                    ingestedCounts.put(processor.getIngestType(), ingestedCount);
-                }
-            } else {
-                logger.info("Not ingesting data, processing is disabled.");
-            }
+            if (Thread.currentThread().isInterrupted())
+                break;
+            String type = isCollate ? processor.getCollateType() : processor.getIngestType();
+            logger.info("{} " + type, isCollate ? "Collating" : "Ingesting");
+            int count = isCollate ? processor.collate() : processor.ingest();
+            if (count > 0)
+                processedCounts.put(type, count);
         }
-        if (ingestedCounts.size() > 0) {
-            logger.debug("Completed ingestion:");
-            logCounts(ingestedCounts);
-        }
+        if (processedCounts.isEmpty())
+            logger.info("Nothing to {}", isCollate ? "collate" : "ingest");
         else {
-            logger.info("Nothing to ingest");
+            logger.info("Completed {}. Statistics:", isCollate ? "collation" : "ingestion");
+            logger.info(processedCounts.entrySet().stream()
+                    .map(pair -> pair.getKey() + ": " + pair.getValue()).collect(Collectors.joining(", ")));
         }
     }
 
@@ -201,18 +190,15 @@ public class DataProcessor
      */
     private synchronized void doRun() {
         try {
-            collate();
-            ingest();
+            collateAll();
+            ingestAll();
         }
         catch (Exception ex) {
             eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex, currentRun.getProcessId()));
             logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
         }
-        processLogService.finishRun(currentRun);
+        if (!Thread.currentThread().isInterrupted())
+            processLogService.finishRun(currentRun);
         logger.info("Exiting data processor.");
-    }
-
-    private void logCounts(Map<String, Integer> counts) {
-        counts.forEach((type, count) -> logger.info("{}: {}", type, count));
     }
 }
