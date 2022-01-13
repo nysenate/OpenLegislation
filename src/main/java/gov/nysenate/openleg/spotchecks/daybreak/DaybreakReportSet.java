@@ -16,7 +16,7 @@ public class DaybreakReportSet<DaybreakDoc extends DaybreakDocument> {
     Logger logger = LoggerFactory.getLogger(DaybreakReportSet.class);
 
     /** Stores any generated reports */
-    private Set<DaybreakReport<DaybreakDoc> > reportSet;
+    private Set<DaybreakReport<DaybreakDoc>> reportSet;
 
     /** Stores any Documents that have been found to be of the same type and report date as a document in an existing report */
     private List<DaybreakDoc> duplicateDocuments;

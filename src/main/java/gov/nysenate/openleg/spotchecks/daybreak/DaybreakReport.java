@@ -22,7 +22,7 @@ public class DaybreakReport <DaybreakDoc extends DaybreakDocument> {
     private Map<DaybreakDocType, DaybreakDoc> reportDocs;
 
     /** Specifies the accepted temporal margin of error for the report date of each document */
-    private static final Duration reportDateMarginOfError = Duration.ofHours(23);
+    private static final Duration reportDateMarginOfError = Duration.ofHours(24).minus(Duration.ofMinutes(1));
 
     /** Is set to the date of the first entry and used as a reference to prevent date piggybacking */
     private LocalDateTime anchorDate;

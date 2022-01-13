@@ -101,7 +101,10 @@ public class MailUtils {
      * @throws MessagingException if a connection cannot be established
      */
     private Store getStore(String host, String user, String password)
-            throws MessagingException {
+            throws MessagingException, InterruptedException {
+        // A connection shouldn't be attempted if the program is being shutdown.
+        if (Thread.currentThread().isInterrupted())
+            throw new InterruptedException("Prevented loading mail resource.");
         Store store = getImapsSession().getStore(storeProtocol);
         try {
             store.connect(host, user, password);
@@ -112,7 +115,7 @@ public class MailUtils {
         return store;
     }
 
-    public Store getCheckMailStore() throws MessagingException {
+    public Store getCheckMailStore() throws MessagingException, InterruptedException {
         return getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
     }
 
