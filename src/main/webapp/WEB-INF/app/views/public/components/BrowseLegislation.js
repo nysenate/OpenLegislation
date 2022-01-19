@@ -4,6 +4,7 @@ import {
 } from "react-router-dom";
 import { loginWithApiKey } from "app/apis/authApi";
 import useAuth from "../../../shared/useAuth";
+import { Warning } from "phosphor-react";
 
 export default function BrowseLegislation() {
   const apiKeyRef = React.useRef()
@@ -52,11 +53,12 @@ export default function BrowseLegislation() {
         </form>
       </div>
       {error &&
-      <div className="mt-3">
-        <p className="text text--error"><i className="icon-warning mx-1" />
-          Please enter a valid api key, or sign up for one below.
-        </p>
-      </div>
+        <div className="mt-3">
+          <p className="text text--error flex items-center justify-center gap-x-1">
+            <Warning size="1.2rem" />
+            Please enter a valid api key, or sign up for one below.
+          </p>
+        </div>
       }
     </section>
   )
