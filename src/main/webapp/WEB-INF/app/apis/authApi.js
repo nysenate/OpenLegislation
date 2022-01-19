@@ -33,7 +33,9 @@ async function fetchUrl(url, options = {}) {
   const response = await fetch(url, options)
   const data = await response.json()
   if (!data.success) {
-    throw new Error(data.message)
+    let error = new Error(data.message)
+    error.errorCode = data.errorCode
+    throw error
   }
   return data
 }

@@ -6,17 +6,20 @@ import {
 } from "react-router-dom";
 import Configuration from "app/views/admin/configuration/Configuration";
 import PrivateRoute from "app/shared/PrivateRoute";
+import ContentContainer from "app/shared/ContentContainer";
 
 export default function Admin() {
 
   return (
-    <Switch>
-      <PrivateRoute path="/admin/config">
-        <Configuration />
-      </PrivateRoute>
-      <Route path="/admin">
-        <AdminLogin />
-      </Route>
-    </Switch>
+    <ContentContainer>
+      <Switch>
+        <PrivateRoute path="/admin/config">
+          <Configuration />
+        </PrivateRoute>
+        <Route path="/admin">
+          <AdminLogin />
+        </Route>
+      </Switch>
+    </ContentContainer>
   )
 }

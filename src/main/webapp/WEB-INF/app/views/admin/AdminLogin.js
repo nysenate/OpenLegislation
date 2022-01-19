@@ -3,11 +3,13 @@ import Input from "app/shared/Input";
 import { loginAdmin } from "app/apis/authApi";
 import { useHistory } from "react-router-dom";
 import useAuth from "app/shared/useAuth";
+import { Warning } from "phosphor-react";
 
 
 export default function AdminLogin() {
   const [ username, setUsername ] = React.useState("")
   const [ password, setPassword ] = React.useState("")
+  const [ error, setError ] = React.useState("")
   const history = useHistory()
   const auth = useAuth()
 
@@ -15,10 +17,17 @@ export default function AdminLogin() {
     e.preventDefault()
     auth.loginAdminUser(username, password)
       .then(() => history.push("/admin/config"))
+      .catch((err) => {
+        if (err.errorCode === 401) {
+          setError("Invalid credentials.")
+        } else {
+          setError("Error during authentication.")
+        }
+      })
   }
 
   return (
-    <div>
+    <div className="p-3">
       <form onSubmit={onSubmit}>
         <Input label="Username"
                value={username}
@@ -31,6 +40,13 @@ export default function AdminLogin() {
                type="password" />
         <button className="btn my-3 w-36" type="submit">Login</button>
       </form>
+      {error &&
+        <div>
+          <p className="flex items-center gap-x-1 text text--error">
+            <Warning size="1.2rem" /> <span>{error}</span>
+          </p>
+        </div>
+      }
     </div>
   )
 }
