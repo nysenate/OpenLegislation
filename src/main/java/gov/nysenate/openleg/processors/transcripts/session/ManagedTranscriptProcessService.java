@@ -109,7 +109,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 logger.error("Error processing TranscriptFile " + file.getFileName() + ".", ex);
             }
         }
-        logger.info("Saving {} processed transcripts", processCount);
+        logger.debug("Saving {} processed transcripts", processCount);
         for (var transcript : processed.values())
             transcriptDataService.saveTranscript(transcript, true);
         return processCount;

@@ -3,8 +3,6 @@ package gov.nysenate.openleg.spotchecks.alert.agenda;
 import gov.nysenate.openleg.spotchecks.base.SimpleCheckMailService;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -26,9 +24,9 @@ public class AgendaAlertCheckMailService extends SimpleCheckMailService {
     }
 
     @Override
-    protected String getFilename(Message message, Matcher matcher) throws MessagingException {
+    protected String getFilename(String sentDate, Matcher matcher) {
         LocalDate date = LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         return String.format("agenda_alert-%s-full-%s.html", date.format(DateTimeFormatter.BASIC_ISO_DATE),
-                getSentDateString(message));
+                sentDate);
     }
 }

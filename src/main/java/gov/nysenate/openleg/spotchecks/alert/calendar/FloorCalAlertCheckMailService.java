@@ -3,8 +3,6 @@ package gov.nysenate.openleg.spotchecks.alert.calendar;
 import gov.nysenate.openleg.spotchecks.base.SimpleCheckMailService;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -21,10 +19,9 @@ public class FloorCalAlertCheckMailService extends SimpleCheckMailService {
     }
 
     @Override
-    protected String getFilename(Message message, Matcher matcher) throws MessagingException {
+    protected String getFilename(String sentDate, Matcher matcher) {
         LocalDate date = LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        return String.format("floor_cal_alert-%d-%s-%s.html", date.getYear(), matcher.group("calNo"),
-                getSentDateString(message));
+        return String.format("floor_cal_alert-%d-%s-%s.html", date.getYear(), matcher.group("calNo"), sentDate);
     }
 
     @Override

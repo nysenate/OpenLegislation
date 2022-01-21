@@ -1,11 +1,8 @@
 package gov.nysenate.openleg.spotchecks.alert.agenda;
 
 import gov.nysenate.openleg.spotchecks.base.SimpleCheckMailService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -24,15 +21,13 @@ public class CommAgendaAlertCheckMailService extends SimpleCheckMailService {
     }
 
     @Override
-    protected String getFilename(Message message, Matcher matcher) throws MessagingException {
+    protected String getFilename(String sentDate, Matcher matcher) {
         LocalDate weekOf = LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         String addendum = matcher.group(2);
-        if (StringUtils.isBlank(addendum))
-            addendum = "original";
         return String.format("agenda_alert-%s-%s-%s-%s.html",
                 weekOf.format(DateTimeFormatter.BASIC_ISO_DATE),
-                matcher.group(1).replace(' ', '_').replace(',', '.'), addendum,
-                getSentDateString(message));
+                matcher.group(1).replace(' ', '_').replace(',', '.'),
+                addendum.isBlank() ? "original" : addendum, sentDate);
     }
 
     @Override

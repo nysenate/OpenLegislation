@@ -23,7 +23,7 @@ public class AgendaSpotcheckProcessService extends SpotcheckMailProcessService {
 
     /** --- Implemented Methods --- */
 
-    // TODO: This method takes minutes to run. Can combine these Patterns.
+    // TODO: Can combine these Patterns.
     @Override
     protected int doCollate() throws Exception {
         return alertCheckMailService.checkMail() + commAgendaAlertCheckMailService.checkMail();
