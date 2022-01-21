@@ -111,6 +111,13 @@ public class ReactAppCtrl {
         return "subscriptions";
     }
 
+    @ResponseBody
+    @RequestMapping("/globals")
+    public BaseResponse globals() {
+        GlobalsView gv = new GlobalsView(ipWhitelist, environment.getSenSiteUrl(), environment.getOpenlegRefUrl());
+        return new ViewObjectResponse<>(gv);
+    }
+
     /* --- Internal Methods --- */
 
     private void setRequestAttributes(ServletRequest request) {
