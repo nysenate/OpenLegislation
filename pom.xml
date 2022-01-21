@@ -121,9 +121,8 @@
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
-    <junit.version>4.13.1</junit.version>
-    <log4j.version>2.16.0</log4j.version>
-    <mail.version>1.6.2</mail.version>
+    <junit.version>4.13.2</junit.version>
+    <log4j.version>2.17.1</log4j.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <postgres-jdbc.version>42.2.8</postgres-jdbc.version>
@@ -401,13 +400,7 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>javax.mail-api</artifactId>
-      <version>${mail.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
-      <version>${mail.version}</version>
+      <version>1.6.2</version>
     </dependency>
 
     <!-- Database -->
