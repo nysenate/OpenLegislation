@@ -51,7 +51,7 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
             Multipart content = (Multipart) message.getContent();
             for (int i = 0; i < content.getCount(); i++) {
                 Part part = content.getBodyPart(i);
-                if (!part.getDisposition().equalsIgnoreCase(Part.ATTACHMENT)) {
+                if (!Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                     logger.info("\tsaving body of {} to {}", message.getSubject(), file.getAbsolutePath());
                     FileIOUtils.write(file, (String) part.getContent());
                 }

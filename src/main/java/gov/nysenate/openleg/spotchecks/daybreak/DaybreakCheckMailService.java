@@ -46,7 +46,7 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
         int partCount = content.getCount();
         for (int i = 0; i < partCount; i++) {
             Part part = content.getBodyPart(i);
-            if (part.getDisposition().equalsIgnoreCase(Part.ATTACHMENT)) {
+            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                 logger.info("\tSaving " + part.getFileName() + " to " + file.getAbsolutePath());
                 String attachment = IOUtils.toString(part.getInputStream(), Charset.defaultCharset());
                 FileIOUtils.write(file, attachment);
@@ -60,7 +60,8 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
         Map<LocalDate, DaybreakReport<DaybreakMessage>> completeReports = reports.getCompleteReports();
         Map<LocalDate, DaybreakReport<DaybreakMessage>> partialReports = reports.getPartialReports();
         if (completeReports.size() > 0) {
-            logger.info("{} complete daybreak reports found.  Saving...", completeReports.size());
+            logger.info("{} complete daybreak report{} found.  Saving...", completeReports.size(),
+                    completeReports.size() == 1 ? "" : "s");
             // If a full set of daybreak emails is detected, the daybreak file attachments are saved as daybreak files.
             saveCompleteReports(completeReports.values());
             logger.info("Daybreak files saved.");
@@ -116,7 +117,9 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
                     oldReports.add(daybreakMessage.getMessage());
             }
         }
-        logger.info("Archiving {} old partial daybreak reports.", oldReports.size());
+        if (!oldReports.isEmpty())
+            logger.info("Archiving {} old partial daybreak report{}.", oldReports.size(),
+                    oldReports.size() == 1 ? "" : "s");
         mailUtils.moveMessages(oldReports, false);
     }
 }

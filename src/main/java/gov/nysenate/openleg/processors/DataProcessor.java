@@ -173,7 +173,7 @@ public class DataProcessor
         else {
             logger.info("Completed {}. Statistics:", isCollate ? "collation" : "ingestion");
             logger.info(processedCounts.entrySet().stream()
-                    .map(pair -> pair.getKey() + ": " + pair.getValue()).collect(Collectors.joining(", ")));
+                    .map(pair -> "\t" + pair.getKey() + ": " + pair.getValue()).collect(Collectors.joining(", ")));
         }
     }
 
