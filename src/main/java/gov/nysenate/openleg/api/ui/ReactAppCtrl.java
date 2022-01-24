@@ -113,8 +113,11 @@ public class ReactAppCtrl {
 
     @ResponseBody
     @RequestMapping("/globals")
-    public BaseResponse globals() {
-        GlobalsView gv = new GlobalsView(ipWhitelist, environment.getSenSiteUrl(), environment.getOpenlegRefUrl());
+    public BaseResponse globals(HttpServletRequest request) {
+        String forwardedForIp = request.getHeader("x-forwarded-for");
+        String ipAddr = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
+        GlobalsView gv = new GlobalsView(ipWhitelist, ipAddr,
+                environment.getSenSiteUrl(), environment.getOpenlegRefUrl());
         return new ViewObjectResponse<>(gv);
     }
 

@@ -2,7 +2,9 @@ import React from "react"
 
 
 /**
- * Creates a GlobalsContext which contains global config params.
+ * Creates a global object to store constants and config params needed by the front end.
+ *
+ * These global config values can be accessed in any component like "const globals = useGlobals()"
  */
 const GlobalsContext = React.createContext()
 
