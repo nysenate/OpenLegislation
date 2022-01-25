@@ -4,37 +4,45 @@ import {
   loginWithApiKey
 } from "../apis/authApi";
 import { DateTime } from "luxon";
+import {
+  loadAuth,
+  saveAuth
+} from "app/lib/authStorage";
+import { useLocation } from "react-router-dom";
 
 
 const AuthContext = React.createContext()
 
 function useProvideAuth() {
-  // If current time is before the expiration time, initialize with values from local storage,
-  // otherwise reset auth's to false.
-  const isExpired = DateTime.now() > DateTime.fromISO(localStorage.getItem("auth.expires"));
-  const initIsAuthed = isExpired ? false : localStorage.getItem("auth.isAuthed") === "true";
-  const initIsAdmin = isExpired ? false : localStorage.getItem("auth.isAdmin") === "true";
+  // Load any existing auth from local storage. This is necessary to persist
+  // the auth across refreshes and new tabs.
+  const localStorageAuth = loadAuth()
 
   // Is an API user logged in.
-  const [ isAuthed, setIsAuthed ] = React.useState(initIsAuthed)
+  const [ isAuthed, setIsAuthed ] = React.useState(localStorageAuth.isAuthed)
   // Is an Admin user logged in.
-  const [ isAdmin, setIsAdmin ] = React.useState(initIsAdmin)
+  const [ isAdmin, setIsAdmin ] = React.useState(localStorageAuth.isAdmin)
+  // A ISO datetime string representation of the users last action.
+  const [ lastActionDate, setLastActionDate ] = React.useState(localStorageAuth.lastAccessDate)
 
-  React.useEffect(() => {
-    // Saves auth info to local storage, so it can be persisted across page reloads.
-    localStorage.setItem("auth.isAuthed", isAuthed ? "true" : "false")
-    localStorage.setItem("auth.isAdmin", isAdmin ? "true" : "false")
-    // Set an expiration date. After this date the saved auth data will be ignored.
-    localStorage.setItem("auth.expires", DateTime.now().plus({ hour: 1 }).toISO())
-  }, [ isAuthed, isAdmin ])
+  // A user's auth is expired if they have been inactive for 30+ minutes.
+  const isExpired = () => {
+    return DateTime.now() > DateTime.fromISO(lastActionDate).plus({ minutes: 30 })
+  }
 
   return {
-    isAuthed,
-    isAdmin,
+    isAuthed() {
+      return isAuthed && !isExpired()
+    },
+    isAdmin() {
+      return isAdmin && !isExpired()
+    },
+    lastActionDate,
     loginApiUser(apiKey) {
       return loginWithApiKey(apiKey)
         .then((res) => {
           setIsAuthed(res.result.isAuthed)
+          setLastActionDate(DateTime.now().toISO())
         })
     },
     loginAdminUser(username, password) {
@@ -42,13 +50,32 @@ function useProvideAuth() {
         .then((res) => {
           setIsAuthed(res.result.isAuthed)
           setIsAdmin(res.result.isAdmin)
+          setLastActionDate(DateTime.now().toISO())
         })
+    },
+    updateLastActionDate(date = DateTime.now()) {
+      // Only update the lastActionDate if the auth is not expired.
+      // Updating the lastActionDate when expired would incorrectly cause the auth to appear valid.
+      if (!isExpired()) {
+        setLastActionDate(date.toISO())
+      }
     }
   }
 }
 
 export function AuthProvider({ children }) {
   const auth = useProvideAuth()
+  const location = useLocation()
+
+  // Persist auth to localStorage whenever it is updated.
+  React.useEffect(() => {
+    saveAuth(auth)
+  }, [ auth ])
+
+  // Updates the lastActionDate whenever the user navigates to a new page.
+  React.useEffect(() => {
+    auth.updateLastActionDate()
+  }, [ location ])
 
   return (
     <AuthContext.Provider value={auth}>

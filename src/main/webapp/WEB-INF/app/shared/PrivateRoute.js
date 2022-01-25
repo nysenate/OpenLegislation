@@ -21,7 +21,7 @@ export default function PrivateRoute({ children, ...rest }) {
   if (rest.path?.startsWith("/admin")) {
     return (
       <Route {...rest} render={() => {
-        return auth.isAdmin === true
+        return auth.isAdmin() === true
           ? children
           : <Redirect to="/admin" />
       }} />
@@ -32,7 +32,7 @@ export default function PrivateRoute({ children, ...rest }) {
   else {
     return (
       <Route {...rest} render={() => {
-        return (auth.isAuthed === true || globals.isWhitelisted)
+        return (auth.isAuthed() === true || globals.isWhitelisted)
           ? children
           : <Redirect to="/" />
       }} />

@@ -16,8 +16,8 @@ function App() {
   return (
     <GlobalsProvider>
       <RequireGlobals>
-        <AuthProvider>
-          <Router>
+        <Router>
+          <AuthProvider>
             <Switch>
               <Route exact path="/">
                 <PublicView />
@@ -26,8 +26,8 @@ function App() {
                 <Home />
               </Route>
             </Switch>
-          </Router>
-        </AuthProvider>
+          </AuthProvider>
+        </Router>
       </RequireGlobals>
     </GlobalsProvider>
   )

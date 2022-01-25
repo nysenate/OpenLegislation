@@ -119,11 +119,11 @@ function MenuContent() {
 function AdminNavCategory({ ...rest }) {
   const auth = useAuth()
 
-  if (!auth.isAdmin) {
+  if (!auth.isAdmin()) {
     return null
   }
 
-  if (auth.isAdmin) {
+  if (auth.isAdmin()) {
     return <NavCategory {...rest} />
   }
 }
