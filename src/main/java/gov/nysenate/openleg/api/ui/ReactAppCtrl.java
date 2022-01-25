@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * Simple entry point to the front-end. Returns the main angular-js driven web page which will handle
+ * Simple entry point to the front-end. Returns the main react app which will handle
  * all the heavy lifting.
  */
 @Controller
@@ -52,26 +52,9 @@ public class ReactAppCtrl {
             "/manage/**"
     })
     public String home(HttpServletRequest request) {
-        String forwardedForIp = request.getHeader("x-forwarded-for");
-        String ipAddr = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
-        Subject subject = SecurityUtils.getSubject();
         setRequestAttributes(request);
-        // Senate staff and API users will be routed to the internal dev interface.
-        if (subject.isPermitted("ui:view") || ipAddr.matches(ipWhitelist)) {
-            return "index";
-        }
-        // Non-senate staff and un-authenticated users will see the public page.
-        return "publichome";
+        return "index";
     }
-
-//    @RequestMapping("/admin/**")
-//    public String admin(HttpServletRequest request) {
-//        Subject subject = SecurityUtils.getSubject();
-//        if (subject.isPermitted("admin:view")) {
-//            return home(request);
-//        }
-//        return "404";
-//    }
 
     @ResponseBody
     @RequestMapping(value = "/loginapikey", method = RequestMethod.POST)
@@ -99,16 +82,6 @@ public class ReactAppCtrl {
         } catch (AuthenticationException ex) {
             return new ErrorResponse(ErrorCode.UNAUTHORIZED);
         }
-    }
-
-    @RequestMapping("/public")
-    public String publicHome() {
-        return "publichome";
-    }
-
-    @RequestMapping("/subscriptions")
-    public String subscriptions() {
-        return "subscriptions";
     }
 
     @ResponseBody
