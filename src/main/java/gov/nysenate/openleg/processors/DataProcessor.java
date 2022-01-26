@@ -111,7 +111,7 @@ public class DataProcessor
             try {
                 run("Scheduler");
             }
-            // Scheduled methods cannot let checked exceptions through
+            // Scheduled methods cannot let checked exceptions through.
             catch (Exception ex) {
                 logger.error("Caught exception while processing data\n{}", ExceptionUtils.getStackTrace(ex));
             }

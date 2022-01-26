@@ -67,11 +67,10 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
             logger.info("Daybreak files saved.");
         }
         if (partialReports.size() > 0) {
-            logger.info("{} partial daybreak reports found.", partialReports.size());
+            logger.info("{} partial daybreak report{} found.", partialReports.size(),
+                    partialReports.size() == 1 ? "" : "s");
             savePartialReports(partialReports.values());
         }
-        else if (completeReports.size() == 0)
-            logger.info("No daybreak reports found.");
         return completeReports.size();
     }
 
@@ -108,6 +107,12 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
         mailUtils.moveMessages(toArchive, true);
     }
 
+    /**
+     * If partial reports are over 10 days old, they are definitely
+     * out of date, and the complete report isn't coming.
+     * So, we should move them out of the incoming folder.
+     * @param partialReports to check the dates of.
+     */
     private void savePartialReports(Iterable<DaybreakReport<DaybreakMessage>> partialReports)
             throws MessagingException {
         var oldReports = new ArrayList<Message>();

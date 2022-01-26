@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.config;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,9 +45,9 @@ public class DatabaseConfig
      * @return DataSource
      */
     @Bean(destroyMethod = "close")
-    public ComboPooledDataSource postgresDataSource() {
+    public OpenLegComboPooledDataSource postgresDataSource() {
         final String jdbcUrlTemplate = "jdbc:%s//%s/%s";
-        ComboPooledDataSource pool = new ComboPooledDataSource();
+        var pool = new OpenLegComboPooledDataSource();
         try {
             pool.setDriverClass(dbDriver);
         }

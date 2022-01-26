@@ -55,7 +55,8 @@ public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService
     protected int doIngest() throws Exception {
         int processedCount = 0;
         List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
-        logger.info("Processing " + files.size() + " files.");
+        if (!files.isEmpty())
+            logger.info("Processing " + files.size() + " files.");
         for (CalendarAlertFile file : files) {
             try {
                 logger.info("Processing calendar from file: " + file.getFile().getName());
