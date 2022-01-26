@@ -1,90 +1,91 @@
 import React from 'react'
+import Input from "app/shared/Input";
+import Select, {
+  SelectOption,
+  sortOptions
+} from "app/shared/Select";
 
-export default function CalendarSearchForm({updateValues}) {
+export default function CalendarSearchForm({ updateValues }) {
 
-    React.useEffect(() => {
-    }, [])
+  const yearOptions = [
+    new SelectOption("2022", "2022"),
+    new SelectOption("2021", "2021"),
+    new SelectOption("2020", "2020"),
+    new SelectOption("2019", "2019"),
+    new SelectOption("2018", "2018"),
+    new SelectOption("2017", "2017"),
+    new SelectOption("2016", "2016"),
+    new SelectOption("2015", "2015"),
+    new SelectOption("2014", "2014"),
+    new SelectOption("2013", "2013"),
+    new SelectOption("2012", "2012"),
+    new SelectOption("2011", "2011"),
+    new SelectOption("2010", "2010"),
+    new SelectOption("2009", "2009"),
+  ]
 
-    // Updates the term query param when the form is submitted.
-    const onSubmitCalendarSearch = (e) => {
-        e.preventDefault()
+  const withOptions = [
+    new SelectOption("calendarNumber", "Calendar No."),
+    new SelectOption("printNo", "Print No."),
+    new SelectOption("billCalNo", "Bill Calendar No.")
+  ]
 
-        const year = document.getElementById("year")
-        console.log(year.value)
+  React.useEffect(() => {
+  }, [])
 
-        const searchBy = document.getElementById("searchBy")
-        console.log(searchBy.value)
+  // Updates the term query param when the form is submitted.
+  const onSubmitCalendarSearch = (e) => {
+    e.preventDefault()
 
-        const searchValue = document.getElementById("searchValue")
-        console.log(searchValue.value)
+    const year = document.getElementById("yearSelect")
+    console.log(year.value)
 
-        const sortSelect = document.getElementById("sort")
-        console.log(sortSelect.value)
+    const searchBy = document.getElementById("withSelect")
+    console.log(searchBy.value)
 
-        const activeListOnly = document.getElementById("activeListOnly")
-        console.log(activeListOnly.checked)
+    const searchValue = document.getElementById("searchValue")
+    console.log(searchValue.value)
 
-        updateValues(year.value, searchBy.value, searchValue.value, sortSelect.value, activeListOnly.checked)
-    }
+    const sortSelect = document.getElementById("sortSelect")
+    console.log(sortSelect.value)
 
-    return (
-        <div>
+    const activeListOnly = document.getElementById("activeListOnly")
+    console.log(activeListOnly.checked)
 
-            <form onSubmit={onSubmitCalendarSearch}>
-                <div className="flex flex-wrap">
-                    <div className="flex-grow mr-8">
+    updateValues(year.value, searchBy.value, searchValue.value, sortSelect.value, activeListOnly.checked)
+  }
 
-                        <h1 className="p-5 font-bold">Field Search</h1>
+  return (
 
-                        <label htmlFor="year" className="label label--left uppercase font-bold p-2">Year:</label>
-                        <select className="pl-4" name="year" id="year" tabIndex="1">
-                            <option value="2021">2021</option>
-                            <option value="allyears">All Years</option>
-                            <option value="2022">2022</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                            <option value="2018">2018</option>
-                            <option value="2017">2017</option>
-                            <option value="2016">2016</option>
-                            <option value="2015">2015</option>
-                            <option value="2014">2014</option>
-                            <option value="2013">2013</option>
-                            <option value="2012">2012</option>
-                            <option value="2011">2011</option>
-                            <option value="2010">2010</option>
-                            <option value="2009">2009</option>
-                        </select>
+    <div>
 
-                        <label htmlFor="with" className="label label--left uppercase font-bold p-2">With:</label>
-                        <select className="pl-4" name="searchBy" id="searchBy" tabIndex="2">
-                            <option value="calDate">Calendar No.</option>
-                            <option value="printNo">Print No.</option>
-                            <option value="billCalNo">Bill Calendar No.</option>
-                        </select>
+      <form onSubmit={onSubmitCalendarSearch}>
+        <div className="flex flex-wrap">
 
-                        <label htmlFor="searchValue" className="label label--left uppercase font-bold p-2">Search Value:</label>
-                        <input className="pl-4" type="text" id="searchValue" name="searchValue" tabIndex="3"/>
+          <h1 className="font-bold">Field Search</h1>
 
-                        <label htmlFor="sort" className="label label--left uppercase font-bold p-2">Sort:</label>
-                        <select className="pl-4" name="sort" id="sort" tabIndex="4">
-                            <option value="desc">Newest First</option>
-                            <option value="asc">Oldest First</option>
-                        </select>
+          <div className="flex-grow flex justify-between p-10">
 
-                        <label htmlFor="sort" className="label label--left uppercase font-bold p-2">Active List Only:</label>
-                        <input type="checkbox" id="activeListOnly" name="activeListOnly" tabIndex="5"/>
+            <Select label="Year:" options={yearOptions} name="yearSelect" tabIndex="1"/>
 
+            <Select label="With:" options={withOptions} name="withSelect" tabIndex="2" />
 
-                    </div>
-                </div>
+            <Input label="Search Value:" placeholder="1" name="searchValue" tabIndex="3" />
 
-                <div className="flex justify-end">
-                    <button className="btn my-3 w-36" type="submit" tabIndex="6">Search</button>
-                </div>
+            <Select label="Sort by" options={sortOptions} name="sortSelect" tabIndex="4"/>
 
-            </form>
+            <Input label="Active List Only:" type="checkbox"
+                   name="activeListOnly" tabIndex="5"/>
 
-
+          </div>
         </div>
-    )
+
+        <div className="flex justify-end">
+          <button className="btn my-3 w-36" type="submit" tabIndex="6">Search</button>
+        </div>
+
+      </form>
+
+    </div>
+  )
 }

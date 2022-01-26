@@ -11,12 +11,14 @@ import {
   IconContext,
   MagnifyingGlass,
   Megaphone,
+  Sliders,
   TextAlignLeft
 } from "phosphor-react";
 import {
   Link,
   useLocation
 } from "react-router-dom";
+import useAuth from "app/shared/useAuth";
 
 export default function NavMenu({ isMenuOpen }) {
   /*
@@ -88,15 +90,21 @@ function MenuContent() {
         }}>
         <ul>
           {navCategories.map((opt) => {
+            if (opt.adminOnly) {
+              return (
+                <AdminNavCategory {...opt}
+                                    isOpen={openCategories.includes(opt.name)}
+                                    isActive={activeCategory()?.name === opt.name}
+                                    onCategoryClick={() => toggleCategory(opt.name)}
+                                    key={opt.name} />
+              )
+            }
             return (
-              <NavCategory name={opt.name}
-                           icon={opt.icon}
+              <NavCategory {...opt}
                            isOpen={openCategories.includes(opt.name)}
                            isActive={activeCategory()?.name === opt.name}
                            onCategoryClick={() => toggleCategory(opt.name)}
-                           key={opt.name}>
-                {opt.children}
-              </NavCategory>
+                           key={opt.name} />
             )
           })}
           <DocPage name="JSON API Docs" icon={<Code />} to="/static/docs/html/index.html" />
@@ -106,6 +114,18 @@ function MenuContent() {
       </IconContext.Provider>
     </div>
   )
+}
+
+function AdminNavCategory({ ...rest }) {
+  const auth = useAuth()
+
+  if (!auth.isAdmin()) {
+    return null
+  }
+
+  if (auth.isAdmin()) {
+    return <NavCategory {...rest} />
+  }
 }
 
 function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }) {
@@ -160,14 +180,14 @@ function NavPage({ name, icon, to }) {
 
 function DocPage({ name, icon, to }) {
   return (
-      <a href={to} >
+    <a href={to}>
 
-        <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
-          <div className="ml-5 mr-2 inline">{icon}</div>
-          <div className="flex-grow">{name}</div>
-        </div>
+      <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+        <div className="ml-5 mr-2 inline">{icon}</div>
+        <div className="flex-grow">{name}</div>
+      </div>
 
-      </a>
+    </a>
   )
 }
 
@@ -178,7 +198,6 @@ const navCategories = [
     icon: <CalendarBlank />,
     children: (
       <React.Fragment>
-        <NavChild name="Browse Calendars" icon={<CalendarBlank />} to="/calendars/browse" />
         <NavChild name="Search Calendars" icon={<MagnifyingGlass />} to="/calendars/search" />
         <NavChild name="Calendar Updates" icon={<GitBranch />} to="/calendars/updates" />
       </React.Fragment>
@@ -228,5 +247,16 @@ const navCategories = [
         <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
       </React.Fragment>
     )
+  },
+  {
+    name: "Admin",
+    path: "/admin",
+    icon: <Sliders />,
+    children: (
+      <React.Fragment>
+        <NavChild name="Configuration" icon={<TextAlignLeft />} to="/admin/config" />
+      </React.Fragment>
+    ),
+    adminOnly: true
   },
 ]

@@ -3,16 +3,21 @@ import "regenerator-runtime/runtime";
 import * as queryString from "query-string";
 
 export default async function calendarSearchApi(searchValue, activeListOnly, year, sort, searchBy, limit = 6, offset = 1) {
-  let term = '+year:' + year
+  let term = ''
+  let yearTerm = '+year:' + year
   let includeActiveListOnlyTerm = '+AND+activeLists'
-  let searchByAndValue = searchBy + ':' + searchValue
+  let searchByAndValue = '../' + searchBy + ':' + searchValue
 
+  if (year !== 'all') {
+      term = term + yearTerm
+  }
   if (searchValue !== '') {
     term = term + searchByAndValue
   }
   if (activeListOnly) {
     term = term + includeActiveListOnlyTerm
   }
+  console.log(term)
   const response = await fetch(`/api/3/calendars/search?` + queryString.stringify({
     term: term,
     sort: 'calDate:' + sort.toUpperCase(),

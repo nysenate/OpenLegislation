@@ -1,21 +1,27 @@
-import React, { useContext } from 'react'
-import { apiKeyLogin } from "app/apis/apiKeyLogin"
+import React from 'react'
+import {
+  useHistory
+} from "react-router-dom";
+import { loginWithApiKey } from "app/apis/authApi";
+import useAuth from "../../../shared/useAuth";
+import { Warning } from "phosphor-react";
 
 export default function BrowseLegislation() {
   const apiKeyRef = React.useRef()
   const [ error, setError ] = React.useState(false)
+  const history = useHistory()
+  const auth = useAuth()
 
   const handleSubmit = e => {
     e.preventDefault()
 
     const apiKey = apiKeyRef.current.value.trim();
-    apiKeyLogin(apiKey)
-      .then((result) => {
+    auth.loginApiUser(apiKey)
+      .then(() => {
         setError(false)
+        history.push("/bills/search")
       })
-      .catch((error) => {
-        setError(true)
-      });
+      .catch((err) => setError(true))
   }
 
   return (
@@ -47,11 +53,12 @@ export default function BrowseLegislation() {
         </form>
       </div>
       {error &&
-      <div className="mt-3">
-        <p className="text text--error"><i className="icon-warning mx-1" />
-          Please enter a valid api key, or sign up for one below.
-        </p>
-      </div>
+        <div className="mt-3">
+          <p className="text text--error flex items-center justify-center gap-x-1">
+            <Warning size="1.2rem" />
+            Please enter a valid api key, or sign up for one below.
+          </p>
+        </div>
       }
     </section>
   )
