@@ -49,7 +49,7 @@ public class MailUtils {
         mailProperties.put("mail.smtp.ssl.protocols", sslProtocol);
         mailProperties.put("mail.smtp.user", smtpUser);
 
-        if (environment.getEmailFromAddress().isBlank())
+        if (!environment.getEmailFromAddress().isBlank())
             mailProperties.put("mail.smtp.from", environment.getEmailFromAddress());
 
         mailProperties.put("mail.debug", debug);
