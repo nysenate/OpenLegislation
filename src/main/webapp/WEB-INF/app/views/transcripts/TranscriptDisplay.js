@@ -34,9 +34,9 @@ function SessionHeading({session}) {
 
 function HearingHeading({hearing}) {
   return <h2>
-    <strong>{hearing.title}</strong><br/>
-    <b>Date:</b> {getDisplayDate(hearing, true)}<b> Time:</b> {getHearingDisplayTime(hearing)}<br/>
-    <b>Address:</b> {hearing.address}{hearing.committees.map((host) =>
+    <strong>{hearing.title}</strong><br/><br/>
+    <b>Date:</b> {getDisplayDate(hearing, true)}<b> Time:</b> {getHearingDisplayTime(hearing)}<br/><br/>
+    <b>Address:</b> {hearing.address}<br/>{hearing.committees.map((host) =>
       <div key = {host.chamber + host.name}>{host.chamber} {host.type} {host.name} </div>)}
   </h2>
 }
