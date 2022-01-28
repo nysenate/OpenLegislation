@@ -75,6 +75,8 @@ public class MailUtils {
      * Creates a new Store and new Folders. Ensures we can reconnect if the connection fails.
      */
     public void createCheckMailConnection() throws MessagingException {
+        if (this.store != null)
+            store.close();
         store = null;
         try {
             store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
