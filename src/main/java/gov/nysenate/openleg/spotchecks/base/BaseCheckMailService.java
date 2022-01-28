@@ -24,6 +24,7 @@ public abstract class BaseCheckMailService implements CheckMailService {
     public int checkMail() {
         int savedCount = 0;
         try {
+            mailUtils.createCheckMailConnection();
             savedCount = saveReports();
         }
         catch (MessagingException | IOException ex) {

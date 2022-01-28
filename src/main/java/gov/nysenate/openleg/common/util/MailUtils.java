@@ -1,13 +1,19 @@
 package gov.nysenate.openleg.common.util;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.notifications.model.Notification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.mail.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
+
+import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_WARNING;
 
 /**
  * Contains methods that can be used to interact with mail servers
@@ -15,10 +21,13 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
+    @Autowired
+    private EventBus eventBus;
     private final String storeProtocol, smtpUser, smtpPass;
     private final Properties mailProperties;
-    private final Store store;
-    private final Folder sourceFolder, archiveFolder, partialFolder;
+    private final Environment environment;
+    private Store store;
+    private Folder sourceFolder, archiveFolder, partialFolder;
 
     public MailUtils(@Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
@@ -34,7 +43,7 @@ public class MailUtils {
                      @Value("${mail.smtp.connectiontimeout:5000}") String connTimeout,
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
-                     Environment environment) throws MessagingException {
+                     Environment environment) {
         this.storeProtocol = storeProtocol;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
@@ -59,12 +68,23 @@ public class MailUtils {
         mailProperties.put("mail.smtp.timeout", smtpTimeout);
         mailProperties.put("mail.smtp.writetimeout", writeTimeout);
 
-        Store temp = null;
+        this.environment = environment;
+    }
+
+    /**
+     * Creates a new Store and new Folders. Ensures we can reconnect if the connection fails.
+     */
+    public void createCheckMailConnection() throws MessagingException {
+        store = null;
         try {
-            temp = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+        } catch (MessagingException ex) {
+            if (environment.isCheckmailEnabled() && eventBus != null) {
+                eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
+                        "Can't connect to checkMail.", ex.getMessage()));
+            }
         }
-        catch (Exception ignored) {}
-        this.store = temp;
+
         this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
         this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
         this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
@@ -125,10 +145,10 @@ public class MailUtils {
      * @throws MessagingException if a connection cannot be established
      */
     private Store getStore(String host, String user, String password)
-            throws MessagingException, InterruptedException {
+            throws MessagingException {
         // A connection shouldn't be attempted if the program is being shutdown.
         if (Thread.currentThread().isInterrupted())
-            throw new InterruptedException("Prevented loading mail resource.");
+            return null;
         Store store = Session.getInstance(mailProperties).getStore(storeProtocol);
         try {
             store.connect(host, user, password);
