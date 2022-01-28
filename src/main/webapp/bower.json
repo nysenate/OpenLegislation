@@ -1,9 +1,9 @@
 {
   "name": "gov-nysenate-openleg",
   "version": "2.0-alpha",
-  "private": "true",
+  "private": true,
   "devDependencies": {
-    "angular": "1.5.8",
+    "angular": "1.8.2",
     "angular-route": "1.5.8",
     "angular-animate": "1.5.8",
     "angular-resource": "1.5.8",
@@ -11,7 +11,7 @@
     "angular-aria": "1.5.8",
     "angular-smart-table": "~1.4.8",
     "jquery": "2.2.4",
-    "moment": "~2.8.2",
+    "moment": "~2.29.1",
     "angular-ui-calendar": "0.8.1",
     "ngInfiniteScroll": "1.0.0",
     "angular-utils-pagination": "0.9.3",
