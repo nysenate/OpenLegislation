@@ -240,6 +240,7 @@ mail.imaps.ssl.protocols = TLSv1.2
 # Mail directory paths where daybreak emails are stored
 checkmail.receiving = OpenLegislationTest/LRSAutomated
 checkmail.processed = OpenLegislationTest/LRSProcessed
+checkmail.partial = OpenLegislationTest/PartialDaybreaks
 
 # Connection information for sending emails
 mail.smtp.host =

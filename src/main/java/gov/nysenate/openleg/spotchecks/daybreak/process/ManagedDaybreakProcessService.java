@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.spotchecks.daybreak.process;
 
+import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.spotchecks.daybreak.*;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBillId;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakDao;
-import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,24 +75,29 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
             return 0;
         }
 
+        var completeReports = reportSet.getCompleteReports();
         // Prints the status of all files found in the incoming directory
-        if(!reportSet.getCompleteReports().isEmpty()) logger.info(" --- Complete reports ---");
-        for (DaybreakReport<DaybreakFile> daybreakReport: reportSet.getCompleteReports().values()) {
+        if (!completeReports.isEmpty())
+            logger.info(" --- Complete reports ---");
+        for (DaybreakReport<DaybreakFile> daybreakReport: completeReports.values()) {
             logger.info("Report " + daybreakReport.getReportDate());
             daybreakReport.getReportDocs().values().forEach(daybreakFile -> logger.info('\t' + daybreakFile.getFileName()));
         }
-        if(!reportSet.getPartialReports().isEmpty()) logger.info(" --- Partial reports --- ");
-        for (DaybreakReport<DaybreakFile> daybreakReport: reportSet.getPartialReports().values()) {
+        var partialReports = reportSet.getPartialReports();
+        if (!partialReports.isEmpty())
+            logger.info(" --- Partial reports --- ");
+        for (DaybreakReport<DaybreakFile> daybreakReport: partialReports.values()) {
             logger.info("Report " + daybreakReport.getReportDate());
             daybreakReport.getReportDocs().values().forEach(daybreakFile -> logger.info('\t' + daybreakFile.getFileName()));
         }
-        if(!reportSet.getDuplicateDocuments().isEmpty()) logger.info(" --- Duplicate files --- ");
+        if (!reportSet.getDuplicateDocuments().isEmpty())
+            logger.info(" --- Duplicate files --- ");
         reportSet.getDuplicateDocuments().forEach(file -> logger.info('\t' + file.getFileName()));
 
         // Collates all complete reports
-        reportSet.getCompleteReports().values().forEach(this::collateDaybreakReport);
+        completeReports.values().forEach(this::collateDaybreakReport);
 
-        return reportSet.getCompleteReports().values().size();
+        return completeReports.size();
     }
 
     /**{@inheritDoc}  */

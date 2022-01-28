@@ -100,7 +100,7 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
                 logger.error("Error reading from PublicHearingFile: " + file.getFileName(), ex);
             }
         }
-        logger.info("Saving {} public hearings", processCount);
+        logger.debug("Saving {} public hearings", processCount);
         for (var hearing : processed.values())
             hearingDataService.savePublicHearing(hearing, true);
         return processCount;

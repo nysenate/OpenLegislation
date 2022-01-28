@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.spotchecks.daybreak;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Designates the file type of a daybreak document
- * Contains methods to identify the daybreak doc type of daybreak files and email messages
+ * Designates the file type of a daybreak document.
+ * Contains methods to identify the daybreak doc type of daybreak files and email messages.
  */
 public enum DaybreakDocType {
     PAGE_FILE       (".page_file.txt",      "Job ABPSDD - LBDC all Bills"),
@@ -17,10 +14,10 @@ public enum DaybreakDocType {
     ASSEMBLY_HIGH   (".assembly.high.html", "ASM Act Title Sum Spon Law 4001-99999")
     ;
 
-    String localFileExt;
-    String subjectContains;
+    private final String localFileExt;
+    private final String subjectContains;
 
-    private DaybreakDocType(String localFileExt, String subjectContains){
+    DaybreakDocType(String localFileExt, String subjectContains){
         this.localFileExt = localFileExt;
         this.subjectContains = subjectContains;
     }
@@ -29,36 +26,17 @@ public enum DaybreakDocType {
         return localFileExt;
     }
 
-    private static List<DaybreakDocType> allDocTypes =
-            new LinkedList<>(Arrays.asList(DaybreakDocType.values()));
-
-    public static DaybreakDocType getMessageDocType(String messageSubject){
-        for(DaybreakDocType type : DaybreakDocType.values()){
-            if(messageSubject.contains(type.subjectContains)){
-                return type;
-            }
-        }
-        return null;
+    public static DaybreakDocType getMessageDocType(String messageSubject) {
+        return getType(messageSubject, true);
     }
 
-    public static DaybreakDocType getFileDocType(String fileName){
-        for(DaybreakDocType type : DaybreakDocType.values()){
-            if(fileName.contains(type.localFileExt)){
-                return type;
-            }
-        }
-        return null;
+    public static DaybreakDocType getFileDocType(String fileName) {
+        return getType(fileName, false);
     }
 
-    public static String[] getFileExts(){
-        String[] fileExts = new String[DaybreakDocType.values().length];
-        for( int i=0; i<DaybreakDocType.values().length; i++){
-            fileExts[i] = DaybreakDocType.values()[i].localFileExt;
-        }
-        return fileExts;
-    }
-
-    public static boolean containsAllDocTypes(Collection<DaybreakDocType> docTypeCollection){
-        return docTypeCollection.containsAll(allDocTypes);
+    private static DaybreakDocType getType(String toMatch, boolean searchSubject) {
+        return Arrays.stream(DaybreakDocType.values())
+                .filter(type -> toMatch.contains(searchSubject ? type.subjectContains : type.localFileExt))
+                .findFirst().orElse(null);
     }
 }

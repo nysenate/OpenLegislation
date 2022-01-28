@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertDao;
 import gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlFsCalendarAlertFileDao;
-import gov.nysenate.openleg.legislation.calendar.Calendar;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckNotificationService;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckMailProcessService;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService {
 
-    private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
+    private final Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
 
     @Autowired
     private ActiveListAlertCheckMailService activeListMailService;
@@ -55,7 +55,8 @@ public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService
     protected int doIngest() throws Exception {
         int processedCount = 0;
         List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
-        logger.info("Processing " + files.size() + " files.");
+        if (!files.isEmpty())
+            logger.info("Processing " + files.size() + " files.");
         for (CalendarAlertFile file : files) {
             try {
                 logger.info("Processing calendar from file: " + file.getFile().getName());

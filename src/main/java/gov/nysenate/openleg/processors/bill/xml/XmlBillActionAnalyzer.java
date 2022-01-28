@@ -2,9 +2,8 @@ package gov.nysenate.openleg.processors.bill.xml;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.PublishStatus;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import org.apache.commons.lang3.tuple.Pair;

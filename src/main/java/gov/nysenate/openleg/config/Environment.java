@@ -117,6 +117,7 @@ public class Environment
     /** Incoming emails are stored in the receiving folder and archived in the processed folder */
     @Value("${checkmail.receiving}") private String emailReceivingFolder;
     @Value("${checkmail.processed}") private String emailProcessedFolder;
+    @Value("${checkmail.partial}") private String emailPartialDaybreakFolder;
 
     /** The return address on outbound emails */
     @Value("${mail.smtp.from:}") private String emailFromAddress;
@@ -315,6 +316,10 @@ public class Environment
 
     public void setEmailProcessedFolder(String emailProcessedFolder) {
         this.emailProcessedFolder = emailProcessedFolder;
+    }
+
+    public String getEmailPartialDaybreakFolder() {
+        return emailPartialDaybreakFolder;
     }
 
     public Duration getSpotcheckAlertGracePeriod() {
