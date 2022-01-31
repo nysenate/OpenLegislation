@@ -10,6 +10,7 @@ import PublicView from './views/public/PublicView'
 import Home from "app/views/home/Home";
 import { AuthProvider } from "./shared/useAuth";
 import useGlobals, { GlobalsProvider } from "app/shared/useGlobals";
+import Logout from "app/views/logout/Logout";
 
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
             <Switch>
               <Route exact path="/">
                 <PublicView />
+              </Route>
+              <Route exact path="/logout">
+                <Logout />
               </Route>
               <Route>
                 <Home />
