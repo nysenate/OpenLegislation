@@ -8,6 +8,7 @@ import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.CacheStatsView;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -64,6 +65,19 @@ public class CacheCtrl extends BaseCtrl
         return ListViewResponse.of(Arrays.asList(cacheManager.getCacheNames()).stream()
             .map(cn -> new CacheStatsView(cacheManager.getCache(cn).getStatistics()))
             .collect(Collectors.toList()), cacheManager.getCacheNames().length, LimitOffset.ALL);
+    }
+
+    /**
+     * Cache Stats API
+     * ---------------
+     *
+     * Get stats for a single cache: (GET) /api/3/admin/cache/{cacheType}
+     */
+    @RequiresPermissions("admin:cacheEdit")
+    @RequestMapping(value = "/{cacheType}", method = RequestMethod.GET)
+    public BaseResponse getSingleCacheStats(@PathVariable String cacheType) {
+        var stats = cacheManager.getCache(cacheType).getStatistics();
+        return new ViewObjectResponse<>(new CacheStatsView(stats));
     }
 
     /**

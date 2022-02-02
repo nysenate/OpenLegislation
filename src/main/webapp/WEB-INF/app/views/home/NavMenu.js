@@ -253,6 +253,7 @@ const navCategories = [
     children: (
       <React.Fragment>
         <NavChild name="Configuration" icon={<TextAlignLeft />} to="/admin/config" />
+        <NavChild name="Caches" to="/admin/caches" />
       </React.Fragment>
     ),
     adminOnly: true
