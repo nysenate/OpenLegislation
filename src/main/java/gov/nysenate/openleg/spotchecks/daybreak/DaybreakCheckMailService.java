@@ -1,116 +1,130 @@
 package gov.nysenate.openleg.spotchecks.daybreak;
 
+import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.spotchecks.base.BaseCheckMailService;
-import gov.nysenate.openleg.spotchecks.base.CheckMailService;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Service
-public class DaybreakCheckMailService extends BaseCheckMailService implements CheckMailService
-{
+public class DaybreakCheckMailService extends BaseCheckMailService {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckMailService.class);
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DaybreakFile.reportDateMatchPattern);
     private File daybreakStagingDir;
 
     @PostConstruct
-    public void init() {
+    private void init() {
         daybreakStagingDir = new File(environment.getStagingDir(), "daybreak");
     }
 
-    /**
-     * Checks an email server for incoming daybreak emails.
-     * If a full set of daybreak emails is detected, the daybreak file attachments are saved as daybreak files
-     * @return int - the number of reports saved
-     */
-    public int checkMail() {
-        Store store = null;
-        int savedReports = 0;
+    @Override
+    protected void saveMessage(Message message, File file) throws MessagingException, IOException {
+        boolean isMimeType = false;
         try {
-            logger.info("checking for daybreak emails...");
-            store = mailUtils.getCheckMailStore();
-
-            Folder sourceFolder = mailUtils.navigateToFolder(environment.getEmailReceivingFolder(), store);
-            Folder archiveFolder = mailUtils.navigateToFolder(environment.getEmailProcessedFolder(), store);
-            sourceFolder.open(Folder.READ_WRITE);
-
-            DaybreakReportSet<DaybreakMessage> reports = getReports(sourceFolder);
-            Map<LocalDate, DaybreakReport<DaybreakMessage>> completeReports = reports.getCompleteReports();
-            Map<LocalDate, DaybreakReport<DaybreakMessage>> partialReports = reports.getPartialReports();
-            if (completeReports.size() > 0) {
-                logger.info("{} complete daybreak reports found.  Saving...", completeReports.size());
-                saveCompleteReports(completeReports, sourceFolder, archiveFolder);
-                logger.info("Daybreak files saved.");
-                savedReports = completeReports.size();
-            }
-            if (partialReports.size() > 0) {
-                logger.info("{} partial daybreak reports found.", partialReports.size());
-            }
-            if (completeReports.size() == 0 && partialReports.size() == 0) {
-                logger.info("No daybreak reports found");
-            }
-        } catch (MessagingException | IOException ex) {
-            logger.error("CheckMail Error\n{}", ExceptionUtils.getStackTrace(ex));
-        } finally {
-            try {
-                if (store != null) {
-                    store.close();
-                }
-            } catch (MessagingException ignored) {}
+            isMimeType = message.isMimeType("multipart/*");
         }
-        return savedReports;
+        catch (NullPointerException ex) {
+            logger.error("Problem parsing mime type in message: {}", message);
+        }
+        if (!isMimeType)
+            return;
+        Multipart content = (Multipart) message.getContent();
+        int partCount = content.getCount();
+        for (int i = 0; i < partCount; i++) {
+            Part part = content.getBodyPart(i);
+            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                logger.info("\tSaving " + part.getFileName() + " to " + file.getAbsolutePath());
+                String attachment = IOUtils.toString(part.getInputStream(), Charset.defaultCharset());
+                FileIOUtils.write(file, attachment);
+            }
+        }
+    }
+
+    @Override
+    public int saveReports() throws MessagingException, IOException {
+        DaybreakReportSet<DaybreakMessage> reports = getReports(mailUtils.getIncomingMessages());
+        Map<LocalDate, DaybreakReport<DaybreakMessage>> completeReports = reports.getCompleteReports();
+        Map<LocalDate, DaybreakReport<DaybreakMessage>> partialReports = reports.getPartialReports();
+        if (completeReports.size() > 0) {
+            logger.info("{} complete daybreak report{} found.  Saving...", completeReports.size(),
+                    completeReports.size() == 1 ? "" : "s");
+            // If a full set of daybreak emails is detected, the daybreak file attachments are saved as daybreak files.
+            saveCompleteReports(completeReports.values());
+            logger.info("Daybreak files saved.");
+        }
+        if (partialReports.size() > 0) {
+            logger.info("{} partial daybreak report{} found.", partialReports.size(),
+                    partialReports.size() == 1 ? "" : "s");
+            savePartialReports(partialReports.values());
+        }
+        return completeReports.size();
     }
 
     /**
-     * --- Internal Methods ---
+     * Extracts all valid daybreak messages from the given source Message list,
+     * and places each of them in a report within the report set.
+     * @return set of Daybreak email messages.
      */
-
-    /**
-     * Extracts all valid daybreak messages from the given source folder
-     *  and places each of them in a report within the report set
-     *
-     * @param sourceFolder
-     * @return
-     * @throws MessagingException
-     */
-    private DaybreakReportSet<DaybreakMessage> getReports(Folder sourceFolder) throws MessagingException {
-        DaybreakReportSet<DaybreakMessage> reports = new DaybreakReportSet<>();
-        for (Message message : sourceFolder.getMessages()) {
-            if (DaybreakDocType.getMessageDocType(message.getSubject()) != null) {
+    private static DaybreakReportSet<DaybreakMessage> getReports(Message[] messages) throws MessagingException {
+        var reports = new DaybreakReportSet<DaybreakMessage>();
+        for (var message : messages) {
+            if (DaybreakDocType.getMessageDocType(message.getSubject()) != null)
                 reports.insertDaybreakDocument(new DaybreakMessage(message));
-            }
-            else {
-                logger.warn("Email could not be identified as a daybreak email: " + message.getSubject());
-            }
         }
         return reports;
     }
 
-    private void saveCompleteReports(Map<LocalDate, DaybreakReport<DaybreakMessage>> completeReports,
-                                     Folder sourceFolder, Folder archiveFolder)
+    /**
+     * Stages DaybreakMessages for processing, and moves daybreak emails to the processed folder.
+     * @param completeReports maps dates to full DaybreakReports.
+     */
+    private void saveCompleteReports(Iterable<DaybreakReport<DaybreakMessage>> completeReports)
             throws MessagingException, IOException {
-        List<Message> toArchive = new ArrayList<>();
-        for (DaybreakReport<DaybreakMessage> report : completeReports.values()) {
-            String prefix = report.getReportDate().format(DateTimeFormatter.ofPattern(DaybreakFile.reportDateMatchPattern));
+        var toArchive = new ArrayList<Message>();
+        for (var report : completeReports) {
+            String prefix = report.getReportDate().format(formatter);
             for (DaybreakMessage daybreakMessage : report.getReportDocs().values()) {
                 String filename = prefix + daybreakMessage.getDaybreakDocType().getLocalFileExt();
                 Message message = daybreakMessage.getMessage();
-
-                saveMessageAttachment(message, new File(daybreakStagingDir, filename));
+                saveMessage(message, new File(daybreakStagingDir, filename));
                 toArchive.add(message);
             }
         }
-        moveToArchive(sourceFolder, archiveFolder, toArchive.toArray(new Message[toArchive.size()]));
+        mailUtils.moveMessages(toArchive, true);
+    }
+
+    /**
+     * If partial reports are over 10 days old, they are definitely
+     * out of date, and the complete report isn't coming.
+     * So, we should move them out of the incoming folder.
+     * @param partialReports to check the dates of.
+     */
+    private void savePartialReports(Iterable<DaybreakReport<DaybreakMessage>> partialReports)
+            throws MessagingException {
+        var oldReports = new ArrayList<Message>();
+        for (var report : partialReports) {
+            if (report.getReportDate().isBefore(LocalDate.now().minusDays(10))) {
+                for (DaybreakMessage daybreakMessage : report.getReportDocs().values())
+                    oldReports.add(daybreakMessage.getMessage());
+            }
+        }
+        if (!oldReports.isEmpty())
+            logger.info("Archiving {} old partial daybreak report{}.", oldReports.size(),
+                    oldReports.size() == 1 ? "" : "s");
+        mailUtils.moveMessages(oldReports, false);
     }
 }

@@ -60,6 +60,11 @@ public class WebInitializer implements WebApplicationInitializer
         servletContext.addFilter("corsFilter", corsFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
+        /** XFrameFilter to prevent clickjacking */
+        DelegatingFilterProxy xFrameFilter = new DelegatingFilterProxy("xFrameFilter", dispatcherContext);
+        servletContext.addFilter("xFrameFilter", xFrameFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
+
         /** Api Request Logging */
         DelegatingFilterProxy apiLogFilter = new DelegatingFilterProxy("apiLogFilter", dispatcherContext);
         servletContext.addFilter("apiLogFilter", apiLogFilter)

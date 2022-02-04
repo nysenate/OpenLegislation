@@ -68,7 +68,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     @PreDestroy
     private void destroyContext() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Thread.activeCount();
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             Driver driver = drivers.nextElement();
