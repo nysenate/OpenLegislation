@@ -11,6 +11,7 @@ import {
   IconContext,
   MagnifyingGlass,
   Megaphone,
+  SignOut,
   Sliders,
   TextAlignLeft
 } from "phosphor-react";
@@ -93,10 +94,10 @@ function MenuContent() {
             if (opt.adminOnly) {
               return (
                 <AdminNavCategory {...opt}
-                                    isOpen={openCategories.includes(opt.name)}
-                                    isActive={activeCategory()?.name === opt.name}
-                                    onCategoryClick={() => toggleCategory(opt.name)}
-                                    key={opt.name} />
+                                  isOpen={openCategories.includes(opt.name)}
+                                  isActive={activeCategory()?.name === opt.name}
+                                  onCategoryClick={() => toggleCategory(opt.name)}
+                                  key={opt.name} />
               )
             }
             return (
@@ -108,8 +109,7 @@ function MenuContent() {
             )
           })}
           <DocPage name="JSON API Docs" icon={<Code />} to="/static/docs/html/index.html" />
-          {/*// If admin is logged in, show logout btn*/}
-          {/*<NavPage name="Logout" icon={<SignOut />} to="/logout" />*/}
+          <LogoutPage name="Logout" icon={<SignOut />} to="/logout" />
         </ul>
       </IconContext.Provider>
     </div>
@@ -141,9 +141,9 @@ function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }
       </div>
 
       {isOpen &&
-      <div>
-        {children}
-      </div>
+        <div>
+          {children}
+        </div>
       }
     </div>
   )
@@ -167,10 +167,10 @@ function NavChild({ name, to, icon }) {
   )
 }
 
-function NavPage({ name, icon, to }) {
+function LogoutPage({ name, icon, to }) {
   return (
     <Link to={to}>
-      <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+      <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
       </div>
@@ -181,12 +181,10 @@ function NavPage({ name, icon, to }) {
 function DocPage({ name, icon, to }) {
   return (
     <a href={to}>
-
-      <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+      <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
       </div>
-
     </a>
   )
 }

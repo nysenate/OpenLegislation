@@ -11,9 +11,6 @@ const isAdminKey = "auth.isAdmin"
 const lastActionKey = "auth.lastAccessDate"
 
 export function saveAuth(auth) {
-  console.log(auth.isAuthed())
-  console.log(auth.isAdmin())
-  console.log(auth.lastActionDate)
   localStorage.setItem(isAuthedKey, JSON.stringify(auth.isAuthed()) || false)
   localStorage.setItem(isAdminKey, JSON.stringify(auth.isAdmin()) || false)
   localStorage.setItem(lastActionKey, auth.lastActionDate)

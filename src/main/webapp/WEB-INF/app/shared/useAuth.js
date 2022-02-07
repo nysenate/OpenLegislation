@@ -1,7 +1,8 @@
 import React from "react";
 import {
   loginAdmin,
-  loginWithApiKey
+  loginWithApiKey,
+  logout
 } from "../apis/authApi";
 import { DateTime } from "luxon";
 import {
@@ -38,6 +39,13 @@ function useProvideAuth() {
       return isAdmin && !isExpired()
     },
     lastActionDate,
+    updateLastActionDate(date = DateTime.now()) {
+      // Only update the lastActionDate if the auth is not expired.
+      // Updating the lastActionDate when expired would incorrectly cause the auth to appear valid.
+      if (!isExpired()) {
+        setLastActionDate(date.toISO())
+      }
+    },
     loginApiUser(apiKey) {
       return loginWithApiKey(apiKey)
         .then((res) => {
@@ -53,12 +61,12 @@ function useProvideAuth() {
           setLastActionDate(DateTime.now().toISO())
         })
     },
-    updateLastActionDate(date = DateTime.now()) {
-      // Only update the lastActionDate if the auth is not expired.
-      // Updating the lastActionDate when expired would incorrectly cause the auth to appear valid.
-      if (!isExpired()) {
-        setLastActionDate(date.toISO())
-      }
+    logoutUser() {
+      logout()
+        .finally(() => {
+          setIsAuthed(false)
+          setIsAdmin(false)
+        })
     }
   }
 }

@@ -11,7 +11,7 @@ export function loginWithApiKey(apiKey) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({apiKey: apiKey})
+    body: JSON.stringify({ apiKey: apiKey })
   }
   return fetchUrl(url, options)
 }
@@ -24,8 +24,14 @@ export function loginAdmin(username, password) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({username: username, password: password})
+    body: JSON.stringify({ username: username, password: password })
   }
+  return fetchUrl(url, options)
+}
+
+export function logout() {
+  const url = "/logout"
+  const options = { method: "GET" }
   return fetchUrl(url, options)
 }
 
