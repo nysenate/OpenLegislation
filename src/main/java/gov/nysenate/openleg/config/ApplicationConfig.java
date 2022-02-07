@@ -8,6 +8,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
+import gov.nysenate.openleg.common.util.AsciiArt;
+import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -15,10 +17,8 @@ import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.IngestCache;
-import gov.nysenate.openleg.common.util.AsciiArt;
-import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -45,17 +45,45 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Enumeration;
 
 import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
 @EnableCaching
-public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer
-{
+public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
+
+    /**
+     * Used to prevent Tomcat having to forcibly unregister the JDBC driver.
+     * Code taken from https://stackoverflow.com/a/23912257
+     */
+    @PreDestroy
+    private void destroyContext() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            if (driver.getClass().getClassLoader() == cl) {
+                // This driver was registered by the webapp's ClassLoader, so deregister it:
+                try {
+                    logger.info("De-registering JDBC driver {}", driver);
+                    DriverManager.deregisterDriver(driver);
+                }
+                catch (SQLException ex) {
+                    logger.error("Error de-registering JDBC driver {}", driver, ex);
+                }
+            } else
+                logger.trace("JDBC driver {} as it does not belong to this webapp's ClassLoader", driver);
+        }
+    }
 
     /** --- Eh Cache Spring Configuration --- */
 
@@ -175,7 +203,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
         executor.setCorePoolSize(8);
-        executor.setWaitForTasksToCompleteOnShutdown(false);
         executor.initialize();
         return executor;
     }

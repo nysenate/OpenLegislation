@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.notifications.mail;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.util.MailUtils;
+import gov.nysenate.openleg.config.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,7 +12,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.util.Collection;
-
 
 @Service
 public class MimeSendMailService implements SendMailService {

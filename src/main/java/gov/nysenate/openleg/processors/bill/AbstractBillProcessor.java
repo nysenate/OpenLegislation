@@ -3,10 +3,9 @@ package gov.nysenate.openleg.processors.bill;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
 import gov.nysenate.openleg.processors.ParseError;
@@ -86,6 +85,11 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
         else if (sponsorLine.startsWith("BUDGET")) {
             billSponsor.setBudget(true);
             billSponsor.setMember(null);
+        }
+        // Bills sponsored by the Redistricting commission don't have a specific sponsor.
+        else if (sponsorLine.startsWith("REDISTRICTING")) {
+           billSponsor.setRedistricting(true);
+           billSponsor.setMember(null);
         }
 
         else {

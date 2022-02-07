@@ -2,9 +2,8 @@ package gov.nysenate.openleg.processors.bill.xml;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.PublishStatus;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +26,7 @@ public class XmlBillActionAnalyzer
 
     /** Pattern for extracting the committee from matching bill events. */
     private static final Pattern committeeEventTextPattern =
-        Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO ([A-Z, ]*[A-Z]+)\\s?([0-9]+[A-Z]?)?");
+        Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO (.*)");
 
     /** Pattern that indicates that the bill has passed a certain house. */
     private static final Pattern passedHousePattern = Pattern.compile("PASSED (ASSEMBLY|SENATE)");
