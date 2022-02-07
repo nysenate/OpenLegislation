@@ -8,6 +8,7 @@ import Configuration from "app/views/admin/configuration/Configuration";
 import PrivateRoute from "app/shared/PrivateRoute";
 import ContentContainer from "app/shared/ContentContainer";
 import Caches from "app/views/admin/caches/Caches";
+import Indices from "app/views/admin/indices/Indices";
 
 export default function Admin({ setHeaderText }) {
 
@@ -19,6 +20,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/caches">
           <Caches setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/indices">
+          <Indices setHeaderText={setHeaderText} />
         </PrivateRoute>
         <Route path="/admin">
           <AdminLogin setHeaderText={setHeaderText} />

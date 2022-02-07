@@ -252,8 +252,9 @@ const navCategories = [
     icon: <Sliders />,
     children: (
       <React.Fragment>
-        <NavChild name="Configuration" icon={<TextAlignLeft />} to="/admin/config" />
+        <NavChild name="Configuration" to="/admin/config" />
         <NavChild name="Caches" to="/admin/caches" />
+        <NavChild name="Indices" to="/admin/indices" />
       </React.Fragment>
     ),
     adminOnly: true

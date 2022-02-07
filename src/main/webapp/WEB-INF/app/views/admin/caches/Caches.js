@@ -64,8 +64,8 @@ function CacheCard({ name }) {
   }
 
   return (
-    <div className="p-3 shadow-md bg-white rounded">
-      <h3 className="h5 border-b-1">{cache.cacheName}</h3>
+    <div className="card">
+      <h3 className="card__title">{cache.cacheName}</h3>
       <div className={isWarming ? "visible" : "invisible"}>
         <LoadingIndicator />
       </div>

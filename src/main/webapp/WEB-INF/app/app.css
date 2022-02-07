@@ -63,15 +63,16 @@
 
     .btn {
         @apply py-1 px-2 shadow-md text-base font-medium cursor-pointer text-center rounded
-        transform active:translate-y-0.5 outline-none transition-colors;
+        transform active:translate-y-0.5 outline-none transition-colors
+        disabled:shadow-none disabled:cursor-default;
     }
 
     .btn--primary {
-        @apply text-white bg-blue-700 border-0 hover:bg-blue-500;
+        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 disabled:opacity-70 disabled:bg-blue-700;
     }
 
     .btn--secondary {
-        @apply text-blue-700 bg-white border-1 border-blue-700 hover:bg-gray-200;
+        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 disabled:opacity-50 disabled:bg-gray-450;
     }
 
     .btn--danger {
@@ -128,6 +129,14 @@
         em {
             background-color: #fff6b4;
         }
+    }
+
+    .card {
+        @apply p-3 shadow-md bg-white rounded;
+    }
+
+    .card__title {
+        @apply h5 border-b-1 border-gray-200;
     }
 }
 
