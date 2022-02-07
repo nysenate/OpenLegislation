@@ -150,7 +150,7 @@ export default function SignUp() {
             <label htmlFor="newFeatures">{newFeaturesSub.desc}</label>
           </div>
         </div>
-        <button className="btn my-3 w-36" type="submit">Get API Key</button>
+        <button className="btn btn--primary my-3 w-36" type="submit">Get API Key</button>
       </form>
       {state.errorMsg &&
         <h3 className="h5 text text--error flex items-center justify-center gap-x-1">

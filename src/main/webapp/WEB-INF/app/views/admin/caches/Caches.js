@@ -77,8 +77,8 @@ function CacheCard({ name }) {
         </ul>
       </div>
       <div className="flex justify-evenly">
-        <button className="btn w-24" onClick={() => clearCache(cache)}>Clear</button>
-        <button className="btn w-24" onClick={() => warmCache(cache)}>Warm</button>
+        <button className="btn btn--secondary w-24" onClick={() => clearCache(cache)}>Clear</button>
+        <button className="btn btn--primary w-24" onClick={() => warmCache(cache)}>Warm</button>
       </div>
     </div>
   )

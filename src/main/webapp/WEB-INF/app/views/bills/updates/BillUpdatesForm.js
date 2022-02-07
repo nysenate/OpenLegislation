@@ -109,7 +109,7 @@ export default function BillUpdatesForm({ doSearch, formData }) {
             </div>
           </div>
           <div className="flex items-end w-full xl:w-4/12 mt-3">
-            <button className="btn w-36 ml-auto">
+            <button className="btn btn--primary w-36 ml-auto">
               Submit
             </button>
           </div>

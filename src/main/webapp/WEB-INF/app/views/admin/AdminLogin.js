@@ -42,7 +42,7 @@ export default function AdminLogin({ setHeaderText }) {
                onChange={(e) => setPassword(e.target.value)}
                name="password"
                type="password" />
-        <button className="btn my-3 w-36" type="submit">Login</button>
+        <button className="btn btn--primary my-3 w-36" type="submit">Login</button>
       </form>
       {error &&
         <div>
