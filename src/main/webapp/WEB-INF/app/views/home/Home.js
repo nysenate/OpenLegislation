@@ -61,7 +61,7 @@ export default function Home() {
               <Transcripts/>
             </PrivateRoute>
             <Route path="/admin">
-              <Admin />
+              <Admin setHeaderText={setHeaderText} />
             </Route>
           </Switch>
         </div>

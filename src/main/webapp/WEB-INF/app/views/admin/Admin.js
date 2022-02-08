@@ -7,17 +7,21 @@ import {
 import Configuration from "app/views/admin/configuration/Configuration";
 import PrivateRoute from "app/shared/PrivateRoute";
 import ContentContainer from "app/shared/ContentContainer";
+import Caches from "app/views/admin/caches/Caches";
 
-export default function Admin() {
+export default function Admin({ setHeaderText }) {
 
   return (
     <ContentContainer>
       <Switch>
         <PrivateRoute path="/admin/config">
-          <Configuration />
+          <Configuration setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/caches">
+          <Caches setHeaderText={setHeaderText} />
         </PrivateRoute>
         <Route path="/admin">
-          <AdminLogin />
+          <AdminLogin setHeaderText={setHeaderText} />
         </Route>
       </Switch>
     </ContentContainer>

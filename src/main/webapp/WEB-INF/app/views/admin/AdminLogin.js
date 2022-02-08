@@ -6,12 +6,16 @@ import useAuth from "app/shared/useAuth";
 import { Warning } from "phosphor-react";
 
 
-export default function AdminLogin() {
+export default function AdminLogin({ setHeaderText }) {
   const [ username, setUsername ] = React.useState("")
   const [ password, setPassword ] = React.useState("")
   const [ error, setError ] = React.useState("")
   const history = useHistory()
   const auth = useAuth()
+
+  React.useEffect(() => {
+    setHeaderText("Admin Login")
+  }, [])
 
   const onSubmit = (e) => {
     e.preventDefault()
