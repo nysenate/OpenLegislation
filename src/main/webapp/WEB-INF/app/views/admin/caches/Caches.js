@@ -17,7 +17,7 @@ export default function Caches({ setHeaderText }) {
   }, [])
 
   return (
-    <div className="py-3 px-6 grid grid-cols-1 lg:grid-cols-3 gap-6 bg-gray-100">
+    <div className="py-5 px-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       {cacheNames.map((name) => {
         return <CacheCard name={name} key={name} />
       })}

@@ -132,7 +132,7 @@
     }
 
     .card {
-        @apply p-3 shadow-md bg-white rounded;
+        @apply p-3 bg-white rounded shadow-lg border;
     }
 
     .card__title {

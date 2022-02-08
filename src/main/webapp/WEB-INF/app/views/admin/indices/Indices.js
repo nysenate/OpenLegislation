@@ -31,7 +31,7 @@ export default function Indices({ setHeaderText }) {
   }, [])
 
   return (
-    <div className="py-3 px-6 bg-gray-100 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="py-5 px-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       {indices.map((i) => <IndexCard index={i}
                                      isRebuilding={isRebuilding}
                                      setIsRebuilding={setIsRebuilding}
