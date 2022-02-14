@@ -65,7 +65,7 @@ export default function CalendarBrowseForm({ updateValues }) {
         </div>
 
         <div className="flex justify-end">
-          <button className="btn my-3 w-36" type="submit" tabIndex="6">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="6">Search</button>
         </div>
 
       </form>

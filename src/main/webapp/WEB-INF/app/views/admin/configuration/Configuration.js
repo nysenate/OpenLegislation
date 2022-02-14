@@ -21,11 +21,12 @@ const registerReducer = function (state, action) {
   }
 }
 
-export default function Configuration() {
+export default function Configuration({setHeaderText}) {
   // Object which maps variable name to the variable object.
   const [ vars, dispatch ] = React.useReducer(registerReducer, {})
 
   React.useEffect(() => {
+    setHeaderText("Manage Configuration")
     fetchEnvironmentVariables()
       .then((res) => dispatch({ type: "init", value: res.result.items }))
   }, [])

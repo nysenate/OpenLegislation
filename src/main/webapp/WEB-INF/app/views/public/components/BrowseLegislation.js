@@ -49,7 +49,7 @@ export default function BrowseLegislation() {
             placeholder="API key"
             className="input text-center w-40 sm:w-60 lg:w-80"
           />
-          <button type="submit" className="btn ml-3">View Legislation</button>
+          <button type="submit" className="btn btn--primary ml-3">View Legislation</button>
         </form>
       </div>
       {error &&
