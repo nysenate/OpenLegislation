@@ -36,6 +36,7 @@ src/main/webapp/static/bower_components/**
 src/main/webapp/static/css/**
 src/main/webapp/static/js/dest/**
 src/main/webapp/static/dist
+src/main/webapp/package-lock.json
 node_modules/**
 
 

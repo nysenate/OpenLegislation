@@ -36,6 +36,7 @@
     "autoprefixer": "^9.8.8",
     "babel-loader": "^8.1.0",
     "css-loader": "^5.2.7",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "html-webpack-plugin": "^4.5.0",
     "postcss": "^7.0.39",
     "postcss-loader": "^6.2.0",

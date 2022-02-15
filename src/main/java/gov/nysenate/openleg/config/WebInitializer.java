@@ -68,6 +68,12 @@ public class WebInitializer implements WebApplicationInitializer
         servletContext.addFilter("encodingFilter", encodingFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
+        /** XFrameFilter to prevent clickjacking */
+        DelegatingFilterProxy xFrameFilter = new DelegatingFilterProxy("xFrameFilter", dispatcherContext);
+        servletContext.addFilter("xFrameFilter", xFrameFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
+
+
         /** Api Request Logging */
         DelegatingFilterProxy apiLogFilter = new DelegatingFilterProxy("apiLogFilter", dispatcherContext);
         servletContext.addFilter("apiLogFilter", apiLogFilter)
