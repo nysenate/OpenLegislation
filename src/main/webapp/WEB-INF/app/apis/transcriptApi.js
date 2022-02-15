@@ -12,7 +12,6 @@ export default function transcriptApi(isHearing, year, pageNum, searchTerm) {
     term: searchTerm,
     summary: isHearing
   })
-  console.log(url)
   return fetchUrl(url)
 }
 

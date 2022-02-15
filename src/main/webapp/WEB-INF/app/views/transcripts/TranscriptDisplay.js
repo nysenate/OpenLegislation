@@ -1,5 +1,6 @@
 import React from 'react'
 import { getTranscript } from "app/apis/transcriptApi";
+import { Link } from "react-router-dom";
 
 const timeOptions = {hour: 'numeric', minute: 'numeric'}
 
@@ -13,32 +14,44 @@ export default function TranscriptDisplay({id, isHearing}) {
   if (loading)
     return (<div>Loading ...</div>);
 
-  return <section>
-    <div>
+  return (
+    <section>
+      <p className = "gray-2-blue">
+        <Link to = {`/transcripts/${isHearing ? "hearing" : "session"}`}>
+          Back to search
+        </Link>
+      </p><br/>
       {isHearing ? <HearingHeading hearing = {transcript}/> : <SessionHeading session = {transcript}/>}
-    </div>
-    <div className = "my-3">
-      <pre className = "text text--small">
-        {transcript.text}
-      </pre>
-    </div>
-  </section>
+      <div className = "my-3">
+        <pre className = "text text--small">{transcript.text}</pre>
+      </div>
+    </section>
+  )
 }
 
 function SessionHeading({session}) {
-  return <h2>
-    <strong>{session.sessionType}</strong>
-    <br/>{getDisplayDate(session, false)}, {session.location}
-  </h2>
+  return (
+    <h2>
+      <strong>{session.sessionType}</strong><br/>
+      {getDisplayDate(session, false)}, {session.location}
+    </h2>
+  )
 }
 
 function HearingHeading({hearing}) {
-  return <h2>
-    <strong>{hearing.title}</strong><br/><br/>
-    <b>Date:</b> {getDisplayDate(hearing, true)}<b> Time:</b> {getHearingDisplayTime(hearing)}<br/><br/>
-    <b>Address:</b> {hearing.address}<br/>{hearing.committees.map((host) =>
-      <div key = {host.chamber + host.name}>{host.chamber} {host.type} {host.name} </div>)}
-  </h2>
+  return (
+    <div>
+      <h2>
+        <strong>{hearing.title}</strong><br/><br/>
+        <strong>Date:</strong> {getDisplayDate(hearing, true)}<strong> Time:</strong> {getHearingDisplayTime(hearing)}<br/><br/>
+        <strong>Address:</strong> {hearing.address}<br/><br/>
+      </h2>
+      <h4>
+        {hearing.committees.map((host) =>
+          <div key = {host.chamber + host.name}>{host.chamber} {host.type} {host.name} </div>)}
+      </h4>
+    </div>
+  )
 }
 
 function getHearingDisplayTime(hearing) {

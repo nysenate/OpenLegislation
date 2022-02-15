@@ -62,7 +62,6 @@ function TranscriptListing({isHearing}) {
 
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState({result: {items: []}})
-  const [ term, setTerm ] = React.useState(params.term)
   React.useEffect(() => {transcriptApi(isHearing, params.year, params.page, params.term)
       .then((data) => setData(data))
       .finally(() => setLoading(false))},
@@ -79,28 +78,25 @@ function TranscriptListing({isHearing}) {
     params.year = event.target.value
     history.push({search: queryString.stringify(params)})
   }
-  const setSearchTerm = term => {
+  const onTermChange = term => {
     params.term = term
     history.push({search: queryString.stringify(params)})
   }
 
   return (
     <div className="pt-3">
-      <SearchBox term = {term} setTerm = {setTerm} setSearchTerm = {setSearchTerm}/>
+      <SearchBox term = {params.term} setSearchTerm = {onTermChange}/><br/>
       <Select label = "Year" value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
               onChange = {onYearChange} name = "year"/>
       <Pagination currentPage = {params.page} limit = {data.limit} total = {data.total} onPageChange = {onPageChange}/>
-      <ResultList items = {data.result.items} isSearch = {params.term}
-                  pathname = {location.pathname} isHearing = {isHearing}/>
+      <ResultList items = {data.result.items} isHearing = {isHearing}/>
     </div>
   )
 }
 
-function SearchBox({term, setTerm, setSearchTerm}) {
-  // TODO: works only after reloading page
+function SearchBox({term, setSearchTerm}) {
   const name = "transcriptSearch"
   const onSubmit = (e) => {
-    // TODO: why is this needed?
     e.preventDefault();
     setSearchTerm(document.getElementById(name).value)
   }
@@ -109,12 +105,9 @@ function SearchBox({term, setTerm, setSearchTerm}) {
     <form onSubmit = {onSubmit}>
       <div className="flex flex-wrap">
         <div className="flex-grow mr-8">
-          <Input label = "Search for Transcripts" value = {term} onChange = {(e) => setTerm(e.target.value)}
+          <Input label = "Search for Transcripts" value = {term} onChange = {(e) => setSearchTerm(e.target.value)}
                  placeholder = {"e.g. \"a phrase\" or keywords"} name = {name} className = "w-full"/>
         </div>
-      </div>
-      <div className="flex justify-end">
-        <button className="btn my-3 w-36" type="submit">Search</button>
       </div>
     </form>
   )
@@ -123,23 +116,23 @@ function SearchBox({term, setTerm, setSearchTerm}) {
 /**
  * Displays a list of results (items).
  */
-function ResultList({items, isSearch, pathname, isHearing}) {
+function ResultList({items, isHearing}) {
   if (items.length === 0)
     return <div>No transcripts found!</div>
   const identifier = isHearing ? "id" : "dateTime"
-  const getTranscript = (item) => isSearch ? item.result : item
+  const getTranscriptFromItem = (item) => item.result ?? item
 
   return (
     <ol style = {{style: 'none'}}>{items.map((item) =>
-      <li key = {getTranscript(item)[identifier]}>
+      <li key = {getTranscriptFromItem(item)[identifier]}>
         <div className = "col mt-1 text text-blue-600">
-          <Link to = {pathname + "/" + getTranscript(item)[identifier]}>
-            {getDisplayDate(getTranscript(item), isHearing)}
+          <Link to = {useLocation().pathname + "/" + getTranscriptFromItem(item)[identifier]}>
+            {getDisplayDate(getTranscriptFromItem(item), isHearing)}
           </Link>
-          {isHearing ? " - " + getTranscript(item).title : ""}<br/>
+          {isHearing ? " - " + getTranscriptFromItem(item).title : ""}<br/>
         </div>
         <div className="text text--small">
-          <span className = "highlight" dangerouslySetInnerHTML = {{__html: isSearch ? item.highlights.text : ""}} />
+          <span className = "highlight" dangerouslySetInnerHTML = {{__html: item.highlights?.text ?? ""}} />
         </div><br/>
       </li>
     )}</ol>)
