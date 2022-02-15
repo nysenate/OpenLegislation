@@ -111,11 +111,11 @@
         }
 
         th {
-            @apply font-semibold;
+            @apply font-semibold px-3 text-left;
         }
 
         td {
-            @apply pr-8;
+            @apply px-3 py-1;
         }
     }
 

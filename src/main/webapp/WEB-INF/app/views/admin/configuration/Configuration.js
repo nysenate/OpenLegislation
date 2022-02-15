@@ -37,7 +37,7 @@ export default function Configuration({setHeaderText}) {
         <table className="table table--stripe w-full">
           <tbody>
           <tr>
-            <th className="p-3" colSpan="2">Mutable Variables</th>
+            <th className="p-3" colSpan="2"><span className="text-center">Mutable Variables</span></th>
           </tr>
           {Object.values(vars).filter((v) => v.mutable)
             .map((v) => <MutableVariableRow variable={v} dispatch={dispatch} key={v.name} />)}
