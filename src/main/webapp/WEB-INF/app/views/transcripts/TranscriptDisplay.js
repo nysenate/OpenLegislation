@@ -1,7 +1,9 @@
 import React from 'react'
-import { getTranscript } from "app/apis/transcriptApi";
 import { Link } from "react-router-dom";
+import { formatDateTime } from "../../lib/dateUtils";
+import { getTranscript } from "app/apis/transcriptApi";
 
+const dateOptions = {year: "numeric", month: "long", day: "numeric"}
 const timeOptions = {hour: 'numeric', minute: 'numeric'}
 
 export default function TranscriptDisplay({id, isHearing}) {
@@ -57,27 +59,15 @@ function HearingHeading({hearing}) {
 function getHearingDisplayTime(hearing) {
   if (!hearing.startTime)
     return ""
-  // There is no Javascript object for a Time alone, so a date must be added.
-  const defaultDate = "1970-01-01"
-  const dateTimeFormat = new Intl.DateTimeFormat("en-US", timeOptions)
-  const startTime = new Date(defaultDate + "T" + hearing.startTime)
-  let str = dateTimeFormat.format(startTime)
-  if (hearing.endTime) {
-    const endTime = new Date(defaultDate + "T" + hearing.endTime)
-    str += " - " + dateTimeFormat.format(endTime)
-  }
+  let str = formatDateTime(hearing.startTime, timeOptions)
+  if (hearing.endTime)
+    str += " - " + formatDateTime(hearing.endTime, timeOptions)
   return str
 }
 
 export function getDisplayDate(transcript, isHearing) {
-  let options = {year: "numeric", month: "long", day: "numeric"};
+  let options = dateOptions;
   if (!isHearing)
     options = {...options, ...timeOptions}
-  // Dates without times default to using UTC.
-  else
-    options.timeZone = "UTC"
-
-  const dateTimeFormat = new Intl.DateTimeFormat("en-US", options)
-  const value = new Date(transcript[isHearing ? "date" : "dateTime"])
-  return dateTimeFormat.format(value)
+  return formatDateTime(transcript[isHearing ? "date" : "dateTime"], options)
 }
