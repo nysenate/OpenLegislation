@@ -14,6 +14,7 @@ import * as queryString from "query-string";
 import Select, { yearSortOptions } from "app/shared/Select";
 import Pagination from "app/shared/Pagination";
 import Input from "app/shared/Input";
+import LoadingIndicator from "app/shared/LoadingIndicator";
 
 export default function Transcripts() {
   return (
@@ -62,13 +63,12 @@ function TranscriptListing({isHearing}) {
 
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState({result: {items: []}})
-  React.useEffect(() => {transcriptApi(isHearing, params.year, params.page, params.term)
-      .then((data) => setData(data))
-      .finally(() => setLoading(false))},
+  React.useEffect(() => {setLoading(true)
+      transcriptApi(isHearing, params.year, params.page, params.term)
+        .then((data) => setData(data))
+        .finally(() => setLoading(false))},
     [isHearing, params.year, params.page, params.term]);
 
-  if (loading)
-    return (<div>Loading ...</div>);
   const onPageChange = pageInfo => {
     params.page = pageInfo.selectedPage
     history.push({search: queryString.stringify(params)})
@@ -83,13 +83,19 @@ function TranscriptListing({isHearing}) {
     history.push({search: queryString.stringify(params)})
   }
 
+  const bottom = loading ? <LoadingIndicator/> :
+    <div>
+      <Pagination currentPage = {params.page} limit = {data.limit}
+                  total = {data.total} onPageChange = {onPageChange}/>
+      <ResultList items = {data.result.items} isHearing = {isHearing}/>
+    </div>;
+
   return (
     <div className="pt-3">
       <SearchBox term = {params.term} setSearchTerm = {onTermChange}/><br/>
       <Select label = "Year" value = {params.year} options = {yearSortOptions(isHearing ? 2011 : 1993)}
               onChange = {onYearChange} name = "year"/>
-      <Pagination currentPage = {params.page} limit = {data.limit} total = {data.total} onPageChange = {onPageChange}/>
-      <ResultList items = {data.result.items} isHearing = {isHearing}/>
+      {bottom}
     </div>
   )
 }

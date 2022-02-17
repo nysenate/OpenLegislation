@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import { formatDateTime } from "../../lib/dateUtils";
+import { formatDateTime } from "app/lib/dateUtils";
 import { getTranscript } from "app/apis/transcriptApi";
 
 const dateOptions = {year: "numeric", month: "long", day: "numeric"}
