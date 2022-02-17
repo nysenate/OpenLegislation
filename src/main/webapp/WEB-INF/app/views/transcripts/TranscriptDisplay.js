@@ -2,19 +2,24 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import { formatDateTime } from "app/lib/dateUtils";
 import { getTranscript } from "app/apis/transcriptApi";
+import LoadingIndicator from "app/shared/LoadingIndicator";
 
 const dateOptions = {year: "numeric", month: "long", day: "numeric"}
 const timeOptions = {hour: 'numeric', minute: 'numeric'}
 
+/**
+ * Top-level method for displaying a single session or hearing transcript.
+ */
 export default function TranscriptDisplay({id, isHearing}) {
   const [loading, setLoading] = React.useState(true)
   const [transcript, setTranscript] = React.useState([]);
-  React.useEffect(() => {getTranscript(isHearing, id)
-      .then((res) => setTranscript(res.result))
-      .finally(() => setLoading(false))},
+  React.useEffect(() => {setLoading(true)
+      getTranscript(isHearing, id)
+        .then((res) => setTranscript(res.result))
+        .finally(() => setLoading(false))},
     [isHearing, id]);
   if (loading)
-    return (<div>Loading ...</div>);
+    return <LoadingIndicator/>
 
   return (
     <section>

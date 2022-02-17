@@ -16,6 +16,9 @@ import Pagination from "app/shared/Pagination";
 import Input from "app/shared/Input";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 
+/**
+ * The top-level function for transcripts.
+ */
 export default function Transcripts() {
   return (
     <ContentContainer>
@@ -83,6 +86,7 @@ function TranscriptListing({isHearing}) {
     history.push({search: queryString.stringify(params)})
   }
 
+  // Ensures part of the page is replaced by a loading bar if data is not available yet.
   const bottom = loading ? <LoadingIndicator/> :
     <div>
       <Pagination currentPage = {params.page} limit = {data.limit}
@@ -100,6 +104,13 @@ function TranscriptListing({isHearing}) {
   )
 }
 
+/**
+ * Displays a text book that can be used to search transcripts.
+ * @param term To search for
+ * @param setSearchTerm Used to change URL params.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function SearchBox({term, setSearchTerm}) {
   const name = "transcriptSearch"
   const onSubmit = (e) => {
