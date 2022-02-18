@@ -15,6 +15,7 @@ import Select, { yearSortOptions } from "app/shared/Select";
 import Pagination from "app/shared/Pagination";
 import Input from "app/shared/Input";
 import LoadingIndicator from "app/shared/LoadingIndicator";
+import HighlightedText from "app/shared/HighlightedText";
 
 /**
  * The top-level function for transcripts.
@@ -120,8 +121,8 @@ function SearchBox({term, setSearchTerm}) {
 
   return (
     <form onSubmit = {onSubmit}>
-      <div className="flex flex-wrap">
-        <div className="flex-grow mr-8">
+      <div className = "flex flex-wrap">
+        <div className = "flex-grow mr-8">
           <Input label = "Search for Transcripts" value = {term} onChange = {(e) => setSearchTerm(e.target.value)}
                  placeholder = {"e.g. \"a phrase\" or keywords"} name = {name} className = "w-full"/>
         </div>
@@ -140,7 +141,7 @@ function ResultList({items, isHearing}) {
   const getTranscriptFromItem = (item) => item.result ?? item
 
   return (
-    <ol style = {{style: 'none'}}>{items.map((item) =>
+    <ol>{items.map((item) =>
       <li key = {getTranscriptFromItem(item)[identifier]}>
         <div className = "col mt-1 text text-blue-600">
           <Link to = {useLocation().pathname + "/" + getTranscriptFromItem(item)[identifier]}>
@@ -148,8 +149,8 @@ function ResultList({items, isHearing}) {
           </Link>
           {isHearing ? " - " + getTranscriptFromItem(item).title : ""}<br/>
         </div>
-        <div className="text text--small">
-          <span className = "highlight" dangerouslySetInnerHTML = {{__html: item.highlights?.text ?? ""}} />
+        <div className = "text text--small">
+          <HighlightedText highlights = {item.highlights}/>
         </div><br/>
       </li>
     )}</ol>)
