@@ -7,10 +7,11 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import BillListing from "app/shared/BillListing";
+import Accordion from "app/shared/Accordion";
 
 export default function SpecificCalendarActiveLists({ response }) {
 
-  console.log(response)
+  // console.log(response)
 
   if (response.success === false) {
     return (
@@ -20,26 +21,27 @@ export default function SpecificCalendarActiveLists({ response }) {
     )
   }
 
-  const activeLists = response.activeLists
+  const activeLists = response.result.activeLists
+  let listOfBills = activeLists.items[0].entries.items
 
   return (
     <div className="mt-8">
       <div className="pt-3">
-        <ResultList results={activeLists} />
+        <Accordion title="ACTIVE LISTS" startOpen={true}>
+          <ResultList results={listOfBills} />
+        </Accordion>
       </div>
     </div>
   )
 }
 
 function ResultList({ results }) {
-  const list = results.items.entries
-//collapsable
   return (
     <div>
-      {list.map((r) =>
-        <BillListing bill={r.result}
-                     highlights={r.highlights.title}
-                     to={`/bills/${r.result.session}/${r.result.basePrintNo}`}
+      {results.map((r) =>
+        <BillListing bill={r}
+                     highlights={r.title}
+                     to={`/bills/${r.session}/${r.basePrintNo}`}
                      key={r.basePrintNoStr} />
       )}
     </div>

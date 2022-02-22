@@ -51,7 +51,8 @@ export default function SpecifiedCalendarFloor({ response }) {
       <div className="mt-8">
         <div className="pt-3">
 
-          <h1>Floor Calendar Bills</h1>
+          <Accordion title="FLOOR CALENDAR BILLS">
+
           {entriesExist("RESOLUTIONS") &&
           <Accordion title="RESOLUTIONS">
             <ResultList results={entriesFor("RESOLUTIONS")} />
@@ -93,10 +94,12 @@ export default function SpecifiedCalendarFloor({ response }) {
             <ResultList results={entriesFor("STARRED_ON_THIRD_READING")} />
           </Accordion>
           }
+          </Accordion>
 
           {supplementalsExist &&
           // <Supplementals supplementalMap={supplementalMap}></Supplementals>
 
+          <Accordion title="SUPPLEMENTAL CALENDAR BILLS">
             <div>
               {
                 Object.entries(supplementals.items).map( supp => {
@@ -105,7 +108,7 @@ export default function SpecifiedCalendarFloor({ response }) {
               }
 
             </div>
-
+          </Accordion>
           }
 
         </div>

@@ -5,8 +5,8 @@ import {
 } from "phosphor-react";
 
 
-export default function Accordion({ title, children }) {
-  const [ isOpen, setIsOpen ] = React.useState(false);
+export default function Accordion({ title, children, startOpen = false}) {
+  const [ isOpen, setIsOpen ] = React.useState(startOpen);
   let headerClass = "flex justify-between items-center p-3 rounded cursor-pointer hover:bg-gray-100";
   headerClass += isOpen ? " bg-gray-100" : ""
   return (

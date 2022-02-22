@@ -7,7 +7,7 @@ import {
 import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import getCalendarsApi from "app/apis/getCalendarApi";
-// import ActiveLists from "app/views/calendars/SpecificCalendarActiveLists";
+import ActiveLists from "app/views/calendars/SpecificCalendarActiveLists";
 import Floor from "app/views/calendars/SpecificCalendarFloor";
 
 
@@ -49,7 +49,7 @@ export default function SpecificCalendar({ setHeaderText }) {
         ? <LoadingIndicator />
         :
         <div>
-          {/*<ActiveLists response={response} />*/}
+          <ActiveLists response={response} />
           <Floor response={response} />
         </div>
       }
