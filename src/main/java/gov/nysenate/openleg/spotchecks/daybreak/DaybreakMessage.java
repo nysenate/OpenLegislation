@@ -31,8 +31,13 @@ public class DaybreakMessage implements DaybreakDocument {
 
     @Override
     public String toString() {
+        String subject = null;
+        try {
+            subject = message.getSubject();
+        }
+        catch (MessagingException ignored) {}
         return new ToStringBuilder(this)
-                .append("message", message)
+                .append("messageSubject", subject)
                 .append("daybreakDocType", daybreakDocType)
                 .append("reportDateTime", reportDateTime)
                 .toString();

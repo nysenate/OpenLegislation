@@ -877,6 +877,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             int sessionMemberId = rs.getInt("session_member_id");
             sponsor.setBudget(rs.getBoolean("budget_bill"));
             sponsor.setRules(rs.getBoolean("rules_sponsor"));
+            sponsor.setRedistricting(rs.getBoolean("redistricting_sponsor"));
             return Pair.of(sponsor, sessionMemberId);
         }
     }
@@ -1022,7 +1023,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(bill, params);
         params.addValue("sessionMemberId", (hasMember) ? billSponsor.getMember().getSessionMemberId() : null)
                 .addValue("budgetBill", (billSponsor != null && billSponsor.isBudget()))
-                .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRules()));
+                .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRules()))
+                .addValue("redistrictingSponsor", (billSponsor!= null && billSponsor.isRedistricting()));
         addLastFragmentParam(fragment, params);
         return params;
     }

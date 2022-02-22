@@ -28,7 +28,7 @@
             <img class="margin-right-10"
                  ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
                  style="width: 55px;"/>
-            <div layout="column" ng-if="!bill.sponsor.budget">
+            <div layout="column" ng-if="!bill.sponsor.budget && !bill.sponsor.redistricting">
               <div ng-if="!bill.sponsor.rules" class="text-medium">Sponsored By</div>
               <div ng-if="bill.sponsor.rules" class="text-medium bold">
                 From the Rules Committee<span ng-if="bill.sponsor.member"> Via</span>
@@ -38,6 +38,9 @@
             </div>
             <div layout="column" ng-if="bill.sponsor.budget">
               <h5 class="bold no-margin">Budget Bill</h5>
+            </div>
+            <div layout="column" ng-if="bill.sponsor.redistricting">
+              <h5 class="bold no-margin">Independent Redistricting Commission</h5>
             </div>
           </div>
 

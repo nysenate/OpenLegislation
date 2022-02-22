@@ -5,10 +5,10 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.spotchecks.SpotCheckReportDao;
 import gov.nysenate.openleg.spotchecks.model.*;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +143,7 @@ public class SpotcheckRunService {
     /* --- Internal Methods --- */
 
     private void runReport(SpotCheckReportService<?> reportService, Range<LocalDateTime> reportRange) {
-        logger.info("Attempting to run a {} report..", reportService.getSpotcheckRefType());
+        logger.info("Attempting to run a {} report...", reportService.getSpotcheckRefType());
         try {
             SpotCheckReport<?> report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));

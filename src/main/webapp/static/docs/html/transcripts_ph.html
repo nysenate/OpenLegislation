@@ -179,16 +179,21 @@
 <h1><strong>Public Hearing Transcripts API</strong><a class="headerlink" href="#public-hearing-transcripts-api" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Assembly public hearings are not available at this time.</p>
+<p>Most Assembly public hearings are not available at this time.</p>
 </div>
 <div class="section" id="get-a-single-public-hearing">
 <h2>Get a single Public Hearing<a class="headerlink" href="#get-a-single-public-hearing" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve public hearing by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+<p>Retrieve public hearing by id or filename</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span>
+<span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
+<p>Request public hearing 5</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">5</span>
+</pre></div>
+</div>
 <p>Request public hearing “10-29-13 NYsenate_Flanagan_Education_FINAL.txt”</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYsenate_Flanagan_Education_FINAL</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
@@ -200,12 +205,14 @@
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for public hearing 10-29..&quot;</span><span class="p">,</span>  <span class="c1">// Response description</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing&quot;</span><span class="p">,</span>                     <span class="c1">// Response data type</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mf">179</span>
     <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;10-29-13 NYsenate_Flanagan..&quot;</span><span class="p">,</span>  <span class="c1">// Filename of public hearing transcript</span>
     <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;PUBLIC HEARING THE REGENTS RE..&quot;</span><span class="p">,</span>  <span class="c1">// Title of public hearing</span>
     <span class="s2">&quot;date&quot;</span> <span class="o">:</span> <span class="s2">&quot;2013-10-29&quot;</span><span class="p">,</span>                        <span class="c1">// Date of public hearing</span>
     <span class="s2">&quot;address&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senate Hearing Room\n250 Br..&quot;</span><span class="p">,</span>  <span class="c1">// Address of public hearing</span>
     <span class="s2">&quot;committees&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>                            <span class="c1">// List of committees/task forces/other groups holding the hearing</span>
       <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDUCATION&quot;</span><span class="p">,</span>                       <span class="c1">// Name of committee/task force/other group</span>
+      <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="s2">&quot;COMMITTEE&quot;</span>                        <span class="c1">// Type of group, committee/task force/legislative commission/etc</span>
       <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span>                        <span class="c1">// Chamber of committee</span>
     <span class="p">}</span> <span class="p">],</span>
     <span class="s2">&quot;startTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;10:00&quot;</span><span class="p">,</span>                        <span class="c1">// Time the public hearing started</span>
@@ -219,8 +226,9 @@
 <div class="section" id="get-a-public-hearing-pdf">
 <h2>Get a public hearing pdf<a class="headerlink" href="#get-a-public-hearing-pdf" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve public hearing pdf by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<p>Retrieve public hearing pdf by id or filename</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>

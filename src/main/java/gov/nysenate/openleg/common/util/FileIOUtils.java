@@ -45,7 +45,11 @@ public class FileIOUtils {
      * @return A collection of matching filenames
      * @throws IOException
      */
-    public static Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
+    public static Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive)
+            throws IOException {
+        // After shutdown is signalled, file moves shouldn't be attempted.
+        if (Thread.currentThread().isInterrupted())
+            return List.of();
         FileUtils.forceMkdir(directory);
         return FileUtils.listFiles(directory, extensions, recursive);
     }

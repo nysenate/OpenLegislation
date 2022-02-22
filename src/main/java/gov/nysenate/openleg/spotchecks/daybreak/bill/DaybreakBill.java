@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.daybreak.bill;
 
-import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAction;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
 

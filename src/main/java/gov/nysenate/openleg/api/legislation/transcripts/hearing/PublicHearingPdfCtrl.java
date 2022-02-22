@@ -24,18 +24,6 @@ public class PublicHearingPdfCtrl {
     @Autowired
     private PublicHearingDataService hearingData;
 
-    @RequestMapping(value = "/{id:\\d+}")
-    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String id, HttpServletResponse response)
-            throws IOException {
-        return getHearingPdf(id, response, true);
-    }
-
-    @RequestMapping(value = "/{filename:.*\\D.*}")
-    public ResponseEntity<byte[]> getHearingPdfByFilename(@PathVariable String filename, HttpServletResponse response)
-            throws IOException {
-        return getHearingPdf(filename, response, false);
-    }
-
     /**
      * Single Public Hearing PDF retrieval.
      * Retrieve a single public hearing text pdf:
@@ -43,11 +31,17 @@ public class PublicHearingPdfCtrl {
      * Request Parameters: None.
      * Expected Output: PDF response.
      */
-    private ResponseEntity<byte[]> getHearingPdf(String data, HttpServletResponse response, boolean isId)
+    @RequestMapping(value = "/{identifier}")
+    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String identifier, HttpServletResponse response)
             throws IOException {
         try {
-            PublicHearing hearing = isId ? hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(data))) :
-                    hearingData.getPublicHearing(data);
+            PublicHearing hearing;
+            try {
+                hearing = hearingData.getPublicHearing(new PublicHearingId(Integer.parseInt(identifier)));
+            }
+            catch (NumberFormatException ex) {
+                hearing = hearingData.getPublicHearing(identifier);
+            }
             return new PublicHearingPdfView(hearing).writeData();
         } catch (PublicHearingNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

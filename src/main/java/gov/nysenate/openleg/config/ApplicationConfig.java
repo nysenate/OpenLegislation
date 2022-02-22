@@ -45,10 +45,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PreDestroy;
 import javax.cache.Caching;
 import java.io.IOException;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Enumeration;
 
 import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BUS_EXCEPTION;
 
@@ -56,6 +61,30 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BU
 @EnableCaching
 public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
+
+    /**
+     * Used to prevent Tomcat having to forcibly unregister the JDBC driver.
+     * Code taken from https://stackoverflow.com/a/23912257
+     */
+    @PreDestroy
+    private void destroyContext() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            if (driver.getClass().getClassLoader() == cl) {
+                // This driver was registered by the webapp's ClassLoader, so deregister it:
+                try {
+                    logger.info("De-registering JDBC driver {}", driver);
+                    DriverManager.deregisterDriver(driver);
+                }
+                catch (SQLException ex) {
+                    logger.error("Error de-registering JDBC driver {}", driver, ex);
+                }
+            } else
+                logger.trace("JDBC driver {} as it does not belong to this webapp's ClassLoader", driver);
+        }
+    }
 
     /** --- Eh Cache Spring Configuration --- */
 

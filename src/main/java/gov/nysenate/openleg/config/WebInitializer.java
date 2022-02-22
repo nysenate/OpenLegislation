@@ -50,6 +50,13 @@ public class WebInitializer implements WebApplicationInitializer
         dispatcher.addMapping("/");
         dispatcher.setAsyncSupported(true);
 
+        /** Encoding filter - sets Content-Type charset to UTF-8 */
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(true);
+        servletContext.addFilter("encodingFilter", encodingFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
+
         /** Register Apache Shiro */
         DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
         shiroFilter.setTargetFilterLifecycle(true);
@@ -61,11 +68,9 @@ public class WebInitializer implements WebApplicationInitializer
         servletContext.addFilter("corsFilter", corsFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
-        /** Encoding filter - sets Content-Type charset to UTF-8 */
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
-        encodingFilter.setForceEncoding(true);
-        servletContext.addFilter("encodingFilter", encodingFilter)
+        /** XFrameFilter to prevent clickjacking */
+        DelegatingFilterProxy xFrameFilter = new DelegatingFilterProxy("xFrameFilter", dispatcherContext);
+        servletContext.addFilter("xFrameFilter", xFrameFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
         /** Api Request Logging */

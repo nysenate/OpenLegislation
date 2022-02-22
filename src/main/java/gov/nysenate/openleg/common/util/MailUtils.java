@@ -1,12 +1,19 @@
 package gov.nysenate.openleg.common.util;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
-import org.apache.commons.lang3.StringUtils;
+import gov.nysenate.openleg.notifications.model.Notification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import javax.mail.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Properties;
+
+import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_WARNING;
 
 /**
  * Contains methods that can be used to interact with mail servers
@@ -14,14 +21,13 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
-
-    private final Environment environment;
-
-    private final String storeProtocol;
-    private final String smtpUser;
-    private final String smtpPass;
-
+    @Autowired
+    private EventBus eventBus;
+    private final String storeProtocol, smtpUser, smtpPass;
     private final Properties mailProperties;
+    private final Environment environment;
+    private Store store;
+    private Folder sourceFolder, archiveFolder, partialFolder;
 
     public MailUtils(@Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
@@ -41,7 +47,7 @@ public class MailUtils {
         this.storeProtocol = storeProtocol;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
-        mailProperties = new Properties();
+        this.mailProperties = new Properties();
         mailProperties.put("mail.smtp.host", host);
         mailProperties.put("mail.smtp.port", port);
 
@@ -50,44 +56,84 @@ public class MailUtils {
         mailProperties.put("mail.smtp.starttls.enable", stlsEnable);
         mailProperties.put("mail.smtp.ssl.enable", sslEnable);
         mailProperties.put("mail.smtp.ssl.protocols", sslProtocol);
-
         mailProperties.put("mail.smtp.user", smtpUser);
 
-        if (StringUtils.isNotBlank(environment.getEmailFromAddress())) {
+        if (!environment.getEmailFromAddress().isBlank())
             mailProperties.put("mail.smtp.from", environment.getEmailFromAddress());
-        }
 
         mailProperties.put("mail.debug", debug);
-
         mailProperties.put("mail.store.protocol", storeProtocol);
         mailProperties.put("mail.imaps.ssl.protocols", imapsSSLProtocol);
         mailProperties.put("mail.smtp.connectiontimeout", connTimeout);
         mailProperties.put("mail.smtp.timeout", smtpTimeout);
         mailProperties.put("mail.smtp.writetimeout", writeTimeout);
+
         this.environment = environment;
     }
 
+    /**
+     * Creates a new Store and new Folders. Ensures we can reconnect if the connection fails.
+     */
+    public void createCheckMailConnection() throws MessagingException {
+        if (this.store != null)
+            store.close();
+        store = null;
+        try {
+            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+        } catch (MessagingException ex) {
+            if (environment.isCheckmailEnabled() && eventBus != null) {
+                eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
+                        "Can't connect to checkMail.", ex.getMessage()));
+            }
+        }
+
+        this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
+        this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
+        this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
+        if (sourceFolder != null)
+            sourceFolder.open(Folder.READ_WRITE);
+    }
+
+    @PreDestroy
+    private void destroy() {
+        try {
+            if (store != null)
+                store.close();
+        }
+        catch (MessagingException ignored) {}
+    }
+
+    public Message[] getIncomingMessages() throws MessagingException {
+        return sourceFolder == null || Thread.currentThread().isInterrupted() ?
+                new Message[0] : sourceFolder.getMessages();
+    }
+
+    /**
+     * Moves messages from the source folder to the partial or archive folder,
+     * then deletes the emails from the source folder.
+     */
+    public void moveMessages(List<Message> messages, boolean toArchive) throws MessagingException {
+        if (sourceFolder == null || Thread.currentThread().isInterrupted())
+            return;
+        sourceFolder.copyMessages(messages.toArray(new Message[0]), toArchive ? archiveFolder : partialFolder);
+        for (Message message : messages)
+            message.setFlag(Flags.Flag.DELETED, true);
+        sourceFolder.expunge();
+    }
 
     /**
      * Gets an authenticated smtp mail session
-     *
      * @return Session
      */
     public Session getSmtpSession() {
-        return Session.getInstance(mailProperties, getSmtpAuthenticator());
-    }
-
-    /**
-     * Gets a mail session for use with imaps
-     *
-     * @return
-     */
-    public Session getImapsSession() {
-        return Session.getInstance(mailProperties);
-    }
-
-    public Properties getMailProperties() {
-        return mailProperties;
+        var auth = new Authenticator() {
+            private final PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return pa;
+            }
+        };
+        return Session.getInstance(mailProperties, auth);
     }
 
     /**
@@ -102,7 +148,10 @@ public class MailUtils {
      */
     private Store getStore(String host, String user, String password)
             throws MessagingException {
-        Store store = getImapsSession().getStore(storeProtocol);
+        // A connection shouldn't be attempted if the program is being shutdown.
+        if (Thread.currentThread().isInterrupted())
+            return null;
+        Store store = Session.getInstance(mailProperties).getStore(storeProtocol);
         try {
             store.connect(host, user, password);
         } catch (MessagingException ex) {
@@ -110,10 +159,6 @@ public class MailUtils {
             throw ex;
         }
         return store;
-    }
-
-    public Store getCheckMailStore() throws MessagingException {
-        return getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
     }
 
     /**
@@ -124,29 +169,13 @@ public class MailUtils {
      * @return Folder - the resulting folder
      * @throws MessagingException If the folder cannot be found
      */
-    public Folder navigateToFolder(String path, Store store) throws MessagingException {
+    private static Folder navigateToFolder(String path, Store store) throws MessagingException {
+        if (store == null)
+            return null;
         String[] splitPath = path.split("/");
         Folder folder = store.getFolder(splitPath[0]);
-        for (int i = 1; i < splitPath.length; i++) {
+        for (int i = 1; i < splitPath.length; i++)
             folder = folder.getFolder(splitPath[i]);
-        }
         return folder;
     }
-
-    /** --- Internal Methods --- */
-
-    /**
-     * Generates an authenticator from the smtp properties
-     */
-    private Authenticator getSmtpAuthenticator() {
-        return new Authenticator() {
-            private PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
-
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return pa;
-            }
-        };
-    }
-
 }

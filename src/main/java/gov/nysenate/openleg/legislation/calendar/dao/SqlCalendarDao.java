@@ -2,10 +2,10 @@ package gov.nysenate.openleg.legislation.calendar.dao;
 
 import com.google.common.collect.*;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.legislation.calendar.*;
-import gov.nysenate.openleg.legislation.calendar.Calendar;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.calendar.Calendar;
+import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -199,11 +199,15 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         for (Version supVersion : updateSupVersions) {
             CalendarSupplemental sup = calendar.getSupplemental(supVersion);
             ImmutableParams supParams = ImmutableParams.from(getCalSupplementalParams(sup, fragment));
-            jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
+            try {
+                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
+            } catch (Exception e) {
+                throw e;
+            }
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
                 ImmutableParams entryParams = ImmutableParams.from(getCalSupEntryParams(sup, entry, fragment));
-                    jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
+                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
             }
         }
     }
