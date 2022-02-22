@@ -1,5 +1,6 @@
 import React from 'react'
 import Pagination from "app/shared/Pagination";
+import { Link } from "react-router-dom";
 
 export default function CalendarUpdatesSearchResults({ response, limit, page, onPageChange, detail: activeListOnly }) {
 
@@ -51,6 +52,7 @@ function ResultList({ results, detail }) {
 
 function ResultItem({ result, detail }) {
   result = result.result
+  // console.log(result)
 
   let floorCalendar = result.floorCalendar
   let supplementalCalendars = result.supplementalCalendars
@@ -83,7 +85,9 @@ function ResultItem({ result, detail }) {
   }
 
   return (
+
     <div>
+      <Link to={`/calendars/view/${result.year}/${result.calendarNumber}`}>
       <div className="p-3 hover:bg-gray-200 flex flex-wrap">
         <div className="py-3 w-full">
 
@@ -121,6 +125,7 @@ function ResultItem({ result, detail }) {
 
         </div>
       </div>
+      </Link>
     </div>
-  )
+)
 }
