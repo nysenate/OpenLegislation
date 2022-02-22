@@ -30,7 +30,7 @@ function UpdateResult({ billUpdate, showDetail }) {
       <div className="hover:bg-gray-200 rounded">
         <div className="p-3 flex flex-wrap justify-between items-center">
           <div className="flex items-center w-full lg:w-3/12">
-            <MemberThumbnail member={billUpdate?.sponsor?.member} />
+            <MemberThumbnail member={billUpdate?.item?.sponsor?.member} />
             <div>
               <div className="text">
                 {billUpdate.id.basePrintNo}-{billUpdate.id.session}
