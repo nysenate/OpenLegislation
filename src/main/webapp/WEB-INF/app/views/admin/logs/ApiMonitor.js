@@ -2,9 +2,9 @@ import React from "react"
 import SockJS from 'sockjs-client';
 import * as StompJs from "@stomp/stompjs";
 import { DateTime } from "luxon";
-import * as queryString from "querystring";
 import { Link } from "react-router-dom";
 import Input from "app/shared/Input";
+import * as queryString from "query-string";
 
 
 export default function ApiMonitor({ setHeaderText }) {
