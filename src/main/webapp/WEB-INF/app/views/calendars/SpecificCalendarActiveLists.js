@@ -24,10 +24,12 @@ export default function SpecificCalendarActiveLists({ response }) {
   const activeLists = response.result.activeLists
   let listOfBills = activeLists.items[0].entries.items
 
+  let accordianTitle = "ACTIVE LISTS - " + activeLists.items[0].entries.size + " BILLS"
+
   return (
     <div className="mt-8">
       <div className="pt-3">
-        <Accordion title="ACTIVE LISTS" startOpen={true}>
+        <Accordion title={accordianTitle} startOpen={true}>
           <ResultList results={listOfBills} />
         </Accordion>
       </div>

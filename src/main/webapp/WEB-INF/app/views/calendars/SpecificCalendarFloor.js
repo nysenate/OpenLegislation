@@ -45,6 +45,26 @@ export default function SpecifiedCalendarFloor({ response }) {
     }
   }
 
+  const getAccordianTitleForSubSection = (sectionType, array) => {
+    let title = sectionType.replaceAll('_', ' ');
+    for (let [ key, value ] of Object.entries(array)) {
+      if (key === sectionType) {
+        if (value) {
+          title = title + " - " +value.size + " BILLS"
+        }
+      }
+    }
+    return title
+  }
+
+  // console.log(entriesFor("RESOLUTIONS").size)
+  // console.log(entriesFor("ORDER_OF_THE_FIRST_REPORT").size)
+  // console.log(entriesFor("ORDER_OF_THE_SECOND_REPORT").size)
+  // console.log(entriesFor("ORDER_OF_THE_SPECIAL_REPORT").size)
+  // console.log(entriesFor("THIRD_READING_FROM_SPECIAL_REPORT").size)
+  // console.log(entriesFor("THIRD_READING").size)
+  // console.log(entriesFor("STARRED_ON_THIRD_READING").size)
+
   return (
     <div>
 
@@ -54,50 +74,49 @@ export default function SpecifiedCalendarFloor({ response }) {
           <Accordion title="FLOOR CALENDAR BILLS">
 
           {entriesExist("RESOLUTIONS") &&
-          <Accordion title="RESOLUTIONS">
+          <Accordion title={getAccordianTitleForSubSection("RESOLUTIONS",floor.entriesBySection.items)} >
             <ResultList results={entriesFor("RESOLUTIONS")} />
           </Accordion>
           }
 
           {entriesExist("ORDER_OF_THE_FIRST_REPORT") &&
-          <Accordion title="BILLS ON ORDER OF FIRST REPORT">
+          <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_FIRST_REPORT",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("ORDER_OF_THE_FIRST_REPORT")} />
           </Accordion>
           }
 
           {entriesExist("ORDER_OF_THE_SECOND_REPORT") &&
-          <Accordion title="BILLS ON ORDER OF SECOND REPORT">
+          <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_SECOND_REPORT",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("ORDER_OF_THE_SECOND_REPORT")} />
           </Accordion>
           }
 
           {entriesExist("ORDER_OF_THE_SPECIAL_REPORT") &&
-          <Accordion title="BILLS ON ORDER OF SPECIAL REPORT">
+          <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_SPECIAL_REPORT",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("ORDER_OF_THE_SPECIAL_REPORT")} />
           </Accordion>
           }
 
           {entriesExist("THIRD_READING_FROM_SPECIAL_REPORT") &&
-          <Accordion title="BILLS ON THIRD READING FROM SPECIAL REPORT">
+          <Accordion title={getAccordianTitleForSubSection("THIRD_READING_FROM_SPECIAL_REPORT",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("THIRD_READING_FROM_SPECIAL_REPORT")} />
           </Accordion>
           }
 
           {entriesExist("THIRD_READING") &&
-          <Accordion title="BILLS ON THIRD READING">
+          <Accordion title={getAccordianTitleForSubSection("THIRD_READING",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("THIRD_READING")} />
           </Accordion>
           }
 
           {entriesExist("STARRED_ON_THIRD_READING") &&
-          <Accordion title="BILLS STARRED ON THIRD READING">
+          <Accordion title={getAccordianTitleForSubSection("STARRED_ON_THIRD_READING",floor.entriesBySection.items)}>
             <ResultList results={entriesFor("STARRED_ON_THIRD_READING")} />
           </Accordion>
           }
           </Accordion>
 
           {supplementalsExist &&
-          // <Supplementals supplementalMap={supplementalMap}></Supplementals>
 
           <Accordion title="SUPPLEMENTAL CALENDAR BILLS">
             <div>
@@ -138,50 +157,60 @@ function Supplementals({ supplemental }) {
     }
   }
 
-
+  const getAccordianTitleForSubSection = (sectionType, array) => {
+    let title = sectionType.replaceAll('_', ' ');
+    for (let [ key, value ] of Object.entries(array)) {
+      if (key === sectionType) {
+        if (value) {
+          title = title + " - " +value.size + " BILLS"
+        }
+      }
+    }
+    return title
+  }
 
   return (
     <div>
       <h1>Supplemental {supplemental[1].version}</h1>
 
       {suppEntriesExist("RESOLUTIONS", supplementalItems) &&
-      <Accordion title="RESOLUTIONS">
+      <Accordion title={getAccordianTitleForSubSection("RESOLUTIONS", supplementalItems)}>
         <ResultList results={suppEntriesFor("RESOLUTIONS", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("ORDER_OF_THE_FIRST_REPORT", supplementalItems) &&
-      <Accordion title="BILLS ON ORDER OF FIRST REPORT">
+      <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_FIRST_REPORT", supplementalItems)}>
         <ResultList results={suppEntriesFor("ORDER_OF_THE_FIRST_REPORT", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("ORDER_OF_THE_SECOND_REPORT", supplementalItems) &&
-      <Accordion title="BILLS ON ORDER OF SECOND REPORT">
+      <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_SECOND_REPORT", supplementalItems)}>
         <ResultList results={suppEntriesFor("ORDER_OF_THE_SECOND_REPORT", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("ORDER_OF_THE_SPECIAL_REPORT", supplementalItems) &&
-      <Accordion title="BILLS ON ORDER OF SPECIAL REPORT">
+      <Accordion title={getAccordianTitleForSubSection("ORDER_OF_THE_SPECIAL_REPORT", supplementalItems)}>
         <ResultList results={suppEntriesFor("ORDER_OF_THE_SPECIAL_REPORT", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("THIRD_READING_FROM_SPECIAL_REPORT", supplementalItems) &&
-      <Accordion title="BILLS ON THIRD READING FROM SPECIAL REPORT">
+      <Accordion title={getAccordianTitleForSubSection("THIRD_READING_FROM_SPECIAL_REPORT", supplementalItems)}>
         <ResultList results={suppEntriesFor("THIRD_READING_FROM_SPECIAL_REPORT", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("THIRD_READING", supplementalItems) &&
-      <Accordion title="BILLS ON THIRD READING">
+      <Accordion title={getAccordianTitleForSubSection("THIRD_READING", supplementalItems)}>
         <ResultList results={suppEntriesFor("THIRD_READING", supplementalItems)} />
       </Accordion>
       }
 
       {suppEntriesExist("STARRED_ON_THIRD_READING", supplementalItems) &&
-      <Accordion title="BILLS STARRED ON THIRD READING">
+      <Accordion title={getAccordianTitleForSubSection("STARRED_ON_THIRD_READING", supplementalItems)}>
         <ResultList results={suppEntriesFor("STARRED_ON_THIRD_READING", supplementalItems)} />
       </Accordion>
       }
