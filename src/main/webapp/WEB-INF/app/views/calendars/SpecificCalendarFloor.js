@@ -71,7 +71,7 @@ export default function SpecifiedCalendarFloor({ response }) {
       <div className="mt-8">
         <div className="pt-3">
 
-          <Accordion title="FLOOR CALENDAR BILLS">
+          <Accordion title="FLOOR CALENDAR BILLS" startOpen={true}>
 
           {entriesExist("RESOLUTIONS") &&
           <Accordion title={getAccordianTitleForSubSection("RESOLUTIONS",floor.entriesBySection.items)} >
@@ -118,7 +118,7 @@ export default function SpecifiedCalendarFloor({ response }) {
 
           {supplementalsExist &&
 
-          <Accordion title="SUPPLEMENTAL CALENDAR BILLS">
+          <Accordion title="SUPPLEMENTAL CALENDAR BILLS" startOpen={true}>
             <div>
               {
                 Object.entries(supplementals.items).map( supp => {
