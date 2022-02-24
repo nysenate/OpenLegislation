@@ -4,58 +4,63 @@ import { formatDateTime } from "app/lib/dateUtils";
 import { getTranscript } from "app/apis/transcriptApi";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 
-const dateOptions = {year: "numeric", month: "long", day: "numeric"}
-const timeOptions = {hour: 'numeric', minute: 'numeric'}
+const dateOptions = { year: "numeric", month: "long", day: "numeric" }
+const timeOptions = { hour: 'numeric', minute: 'numeric' }
 
 /**
  * Top-level method for displaying a single session or hearing transcript.
  */
-export default function TranscriptDisplay({id, isHearing}) {
-  const [loading, setLoading] = React.useState(true)
-  const [transcript, setTranscript] = React.useState([]);
-  React.useEffect(() => {setLoading(true)
-      getTranscript(isHearing, id)
-        .then((res) => setTranscript(res.result))
-        .finally(() => setLoading(false))},
-    [isHearing, id]);
+export default function TranscriptDisplay({ id, isHearing }) {
+  const [ loading, setLoading ] = React.useState(true)
+  const [ transcript, setTranscript ] = React.useState([])
+
+  React.useEffect(() => {
+    setLoading(true)
+    getTranscript(isHearing, id)
+      .then((res) => setTranscript(res.result))
+      .finally(() => setLoading(false))
+  }, [ isHearing, id ]);
+
   if (loading)
-    return <LoadingIndicator/>
+    return <LoadingIndicator />
 
   return (
     <section>
-      <p className = "gray-2-blue">
-        <Link to = {`/transcripts/${isHearing ? "hearing" : "session"}`}>
+      <p className="gray-2-blue">
+        <Link to={`/transcripts/${isHearing ? "hearing" : "session"}`}>
           Back to search
         </Link>
-      </p><br/>
-      {isHearing ? <HearingHeading hearing = {transcript}/> : <SessionHeading session = {transcript}/>}
-      <div className = "my-3">
-        <pre className = "text text--small">{transcript.text}</pre>
+      </p>
+      <br />
+      {isHearing ? <HearingHeading hearing={transcript} /> : <SessionHeading session={transcript} />}
+      <div className="my-3">
+        <pre className="text text--small">{transcript.text}</pre>
       </div>
     </section>
   )
 }
 
-function SessionHeading({session}) {
+function SessionHeading({ session }) {
   return (
     <h2>
-      <strong>{session.sessionType}</strong><br/>
+      <strong>{session.sessionType}</strong><br />
       {getDisplayDate(session, false)}, {session.location}
     </h2>
   )
 }
 
-function HearingHeading({hearing}) {
+function HearingHeading({ hearing }) {
   return (
     <div>
       <h2>
-        <strong>{hearing.title}</strong><br/><br/>
-        <strong>Date:</strong> {getDisplayDate(hearing, true)}<strong> Time:</strong> {getHearingDisplayTime(hearing)}<br/><br/>
-        <strong>Address:</strong> {hearing.address}<br/><br/>
+        <strong>{hearing.title}</strong><br /><br />
+        <strong>Date:</strong> {getDisplayDate(hearing, true)}<strong> Time:</strong> {getHearingDisplayTime(hearing)}<br /><br />
+        <strong>Address:</strong> {hearing.address}<br /><br />
       </h2>
       <h4>
         {hearing.committees.map((host) =>
-          <div key = {host.chamber + host.name}>{host.chamber} {host.type} {host.name} </div>)}
+          <div key={host.chamber + host.name}>{host.chamber} {host.type} {host.name} </div>)
+        }
       </h4>
     </div>
   )
@@ -73,6 +78,6 @@ function getHearingDisplayTime(hearing) {
 export function getDisplayDate(transcript, isHearing) {
   let options = dateOptions;
   if (!isHearing)
-    options = {...options, ...timeOptions}
+    options = { ...options, ...timeOptions }
   return formatDateTime(transcript[isHearing ? "date" : "dateTime"], options)
 }
