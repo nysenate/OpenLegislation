@@ -14,10 +14,10 @@ export default function Laws({ setHeaderText }) {
 
   useEffect(() => {
     if (location.pathname === '/laws') {
-      setHeaderText("NYS Laws")
+      setHeaderText("Search NYS Laws")
     }
     if (location.pathname === '/laws/updates') {
-      setHeaderText("NYS Laws")
+      setHeaderText("Search NYS Law Updates")
     }
   }, [ location ])
 

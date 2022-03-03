@@ -4,70 +4,79 @@ import {
   useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
+import DatePicker from "app/shared/DatePicker";
+import { DateTime } from "luxon";
+import Select, {
+  SelectOption,
+  sortOptions
+} from "app/shared/Select";
 
 
-export default function LawSearchForm({ updateValues, aMonthAgo, todaysDate }) {
+export default function LawSearchForm({ updateValues, from, to }) {
+  // "Dirty" values hold the user set values until the form is submitted.
+  const [ dirtyFrom, setDirtyFrom ] = React.useState(from)
+  const [ dirtyTo, setDirtyTo ] = React.useState(to)
+  const [ dirtyType, setDirtyType ] = React.useState(dateTypeOptions[0].value)
+  const [ dirtySort, setDirtySort ] = React.useState(sortOptions[1].value)
 
-  React.useEffect(() => {
-    let LawUpdateFrom = document.getElementById("LawUpdateFrom")
-    LawUpdateFrom.value = aMonthAgo
-    let lawUpdateTo = document.getElementById("lawUpdateTo")
-    lawUpdateTo.value = todaysDate
-  }, [])
-
-  // Updates the term query param when the form is submitted.
   const onSubmitLawUpdatesSearch = (e) => {
     e.preventDefault()
-
-    const LawUpdateFrom = document.getElementById("LawUpdateFrom")
-
-    const lawUpdateTo = document.getElementById("lawUpdateTo")
-
-    const withSelect = document.getElementById("with")
-
-    const sortSelect = document.getElementById("sort")
-
-    updateValues(LawUpdateFrom.value, lawUpdateTo.value, withSelect.value, sortSelect.value);
+    updateValues(dirtyFrom, dirtyTo, dirtyType, dirtySort);
   }
 
   return (
     <div>
-
       <form onSubmit={onSubmitLawUpdatesSearch}>
+        <h3 className="mb-3">Search law updates</h3>
         <div className="flex flex-wrap">
-          <div className="flex-grow mr-8">
-
-            <h1 className="p-5 font-bold">Show law updates during the following date range</h1>
-
-            <label htmlFor="LawUpdateFrom" className="label label--left uppercase font-bold p-2">From:</label>
-            <input className="pl-4" type="date" id="LawUpdateFrom" name="LawUpdateFrom" tabIndex="2" />
-
-            <label htmlFor="lawUpdateTo" className="label label--left uppercase font-bold p-2">To:</label>
-            <input className="pl-4" type="date" id="lawUpdateTo" name="lawUpdateTo" tabIndex="3" />
-
-            <label htmlFor="with" className="label label--left uppercase font-bold p-2">With:</label>
-            <select className="pl-4" name="with" id="with" tabIndex="4">
-              <option value="published">Published Date</option>
-              <option value="processed">Processed Date</option>
-            </select>
-
-            <label htmlFor="sort" className="label label--left uppercase font-bold p-2">Sort:</label>
-            <select className="pl-4" name="sort" id="sort" tabIndex="5">
-              <option value="desc">Newest First</option>
-              <option value="asc">Oldest First</option>
-            </select>
-
-
+          <div className="mr-3">
+            <DatePicker label="From"
+                        name="from"
+                        date={dirtyFrom}
+                        setDate={(date) => setDirtyFrom(date)}
+                        maxDate={dirtyTo}
+                        tabIndex={1}
+            />
+          </div>
+          <div className="mr-3">
+            <DatePicker label="To"
+                        name="to"
+                        date={dirtyTo}
+                        setDate={(date) => setDirtyTo(date)}
+                        minDate={dirtyFrom}
+                        maxDate={DateTime.now()}
+                        tabIndex={2}
+            />
+          </div>
+          <div className="mr-3">
+            <Select label="Date Type"
+                    value={dirtyType}
+                    options={dateTypeOptions}
+                    onChange={(e) => setDirtyType(e.target.value)}
+                    name="field"
+                    tabIndex={3}
+            />
+          </div>
+          <div className="mr-3">
+            <Select label="Sort By"
+                    value={dirtySort}
+                    options={sortOptions}
+                    onChange={(e) => setDirtySort(e.target.value)}
+                    name="sortBy"
+                    tabIndex={4}
+            />
           </div>
         </div>
 
         <div className="flex justify-end">
-          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="6">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="5">Search</button>
         </div>
-
       </form>
-
-
     </div>
   )
 }
+
+const dateTypeOptions = [
+  new SelectOption("published", "Published Date"),
+  new SelectOption("processed", "Processed Date")
+]
