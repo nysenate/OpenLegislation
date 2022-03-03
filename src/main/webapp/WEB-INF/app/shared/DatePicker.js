@@ -1,48 +1,52 @@
 import React from 'react'
-import { default as ReactDatePicker } from 'react-date-picker'
 import {
   CalendarBlank,
-  X
 } from "phosphor-react";
 import { DateTime } from "luxon";
+import ReactDatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 /**
  * A common date picker component to be used by OL React.
  * Dates sent to and received from this component will be luxon DateTime objects, not JS Date objects.
+ *
+ * This uses the react-datepicker library which can be found at https://reactdatepicker.com/.
+ *
  * @param label The label for the date picker.
- * @param date A luxon DateTime object, not a javascript Date object.
+ * @param name The value to use for the input's "name" and label's "for" attributes.
+ * @param date A luxon DateTime object representing the initial date.
  * @param setDate Callback method which receives a Luxon DateTime representing the selected date time.
- * @param minDate The minimum selectable date.
- * @param maxDate The maximum selectable date.
- * @param name The name for the input element. Defaults to "date"
- * @param className Additional classes for styling the date picker.
+ * @param minDate Optional - The minimum selectable date.
+ * @param maxDate Optional - The maximum selectable date.
+ * @param className Optional - Additional classes for styling the date picker.
+ * @param rest Any additional configuration necessary for an individual date picker.
+ *             - See https://reactdatepicker.com/ for options.
+ *             - Useful Examples:
+ *                  - {@code selectsStart} and {@code selectsEnd} When using 2 datepickers to specify a date range
+ *                      these attributes indicate which datepicker is the start and end of the range.
  */
-export default function DatePicker({ label, date, setDate, minDate, maxDate, name = "date", className }) {
-  const jsDate = date?.toJSDate()
-  const jsMinDate = minDate?.toJSDate()
-  const jsMaxDate = maxDate?.toJSDate()
-
-  // Converts the selected date to a luxon datetime obj before executing the callback function.
-  const setDateInternal = (jsDate) => {
-    setDate(jsDate === null ? null : DateTime.fromJSDate(jsDate))
-  }
-
+export default function DatePicker({ label, name, date, setDate, minDate, maxDate, className, ...rest }) {
   return (
-    <label className="label label--top" htmlFor={name}>
-      {label}
-      <div className={`block ${className}`}>
-        <ReactDatePicker
-          id={name}
-          name={name}
-          onChange={(date) => setDateInternal(date)}
-          value={jsDate}
-          minDate={jsMinDate}
-          maxDate={jsMaxDate}
-          className={`date-picker ${className}`}
-          calendarIcon={<CalendarBlank color="#374151" size="1.2rem" weight="bold" />}
-          clearIcon={<X color="#374151" size="1.2rem" weight="bold" />}
-        />
-      </div>
-    </label>
+    <React.Fragment>
+      <label className="label label--top" htmlFor={name}>
+        {label} <CalendarBlank color="#374151" size="1.2rem" className="inline" />
+      </label>
+      <ReactDatePicker
+        selected={date?.toJSDate()}
+        onChange={(date) => setDate(DateTime.fromJSDate(date))}
+        minDate={minDate?.toJSDate() || defaultMinDate}
+        maxDate={maxDate?.toJSDate()}
+        name={name}
+        todayButton="Today"
+        showYearDropdown
+        showMonthDropdown
+        dropdownMode="select"
+        className={`date-picker ${className}`}
+        {...rest} />
+    </React.Fragment>
   )
 }
+
+// If no min date is specified, use the start of OL data in 2009.
+const defaultMinDate = DateTime.fromFormat("2009-01-01", "yyyy-MM-dd").toJSDate()
