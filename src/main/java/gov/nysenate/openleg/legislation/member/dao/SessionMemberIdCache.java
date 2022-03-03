@@ -28,16 +28,6 @@ public class SessionMemberIdCache extends CachingService<Integer, SessionMember>
     }
 
     @Override
-    protected Class<Integer> keyClass() {
-        return Integer.class;
-    }
-
-    @Override
-    protected Class<SessionMember> valueClass() {
-        return SessionMember.class;
-    }
-
-    @Override
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up Session member cache");

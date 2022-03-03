@@ -9,7 +9,8 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.EvictionAdvisor;
+import org.elasticsearch.common.collect.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,22 +38,15 @@ public class CachedCommitteeDataService extends CachingService<CommitteeSessionI
     }
 
     @Override
-    protected Class<CommitteeSessionId> keyClass() {
-        return CommitteeSessionId.class;
+    // A generic class that itself has a generic class requires special treatment.
+    protected Tuple<Class<CommitteeSessionId>, Class<List<Committee>>> getGenericClasses() {
+        return new Tuple<>(CommitteeSessionId.class, VALUE_CLASS);
     }
 
     @Override
-    protected Class<List<Committee>> valueClass() {
-        return VALUE_CLASS;
+    protected EvictionAdvisor<CommitteeSessionId, List<Committee>> evictionAdvisor() {
+        return new CommitteeCacheEvictionPolicy();
     }
-
-    @Override
-    protected CacheConfigurationBuilder<CommitteeSessionId, List<Committee>> getConfigBuilder() {
-        return super.getConfigBuilder().withEvictionAdvisor(new CommitteeCacheEvictionPolicy());
-    }
-
-    // TODO: add this
-    //committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
 
     /** {@inheritDoc} */
     @Override

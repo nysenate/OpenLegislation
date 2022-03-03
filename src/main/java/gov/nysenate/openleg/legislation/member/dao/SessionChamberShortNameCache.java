@@ -30,16 +30,6 @@ public class SessionChamberShortNameCache extends CachingService<String, Session
     }
 
     @Override
-    protected Class<String> keyClass() {
-        return String.class;
-    }
-
-    @Override
-    protected Class<SessionMember> valueClass() {
-        return SessionMember.class;
-    }
-
-    @Override
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up Session Chamber ShortName cache");

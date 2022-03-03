@@ -33,16 +33,6 @@ public class FullMemberIdCache extends CachingService<Integer, FullMember> {
     }
 
     @Override
-    protected Class<Integer> keyClass() {
-        return Integer.class;
-    }
-
-    @Override
-    protected Class<FullMember> valueClass() {
-        return FullMember.class;
-    }
-
-    @Override
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up member cache");

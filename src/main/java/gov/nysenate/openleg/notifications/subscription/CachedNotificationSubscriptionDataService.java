@@ -7,6 +7,7 @@ import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.SubscriptionNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.collect.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,14 +94,8 @@ public class CachedNotificationSubscriptionDataService
     }
 
     @Override
-    protected Class<String> keyClass() {
-        return String.class;
-    }
-
-    @Override
-    @SuppressWarnings("all")
-    protected Class<Map<Integer, NotificationSubscription>> valueClass() {
-        return VALUE_CLASS;
+    protected Tuple<Class<String>, Class<Map<Integer, NotificationSubscription>>> getGenericClasses() {
+        return new Tuple<>(String.class, VALUE_CLASS);
     }
 
     /** {@inheritDoc} */

@@ -49,16 +49,6 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
         return CacheType.LAW;
     }
 
-    @Override
-    protected Class<LawVersionId> keyClass() {
-        return LawVersionId.class;
-    }
-
-    @Override
-    protected Class<LawTree> valueClass() {
-        return LawTree.class;
-    }
-
     /** --- CachingService implementation --- */
 
     /** {@inheritDoc} */

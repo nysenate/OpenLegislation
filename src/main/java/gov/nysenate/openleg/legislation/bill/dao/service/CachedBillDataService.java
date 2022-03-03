@@ -15,7 +15,7 @@ import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
 import org.ehcache.Cache;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.EvictionAdvisor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,18 +51,8 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     }
 
     @Override
-    protected Class<BaseBillId> keyClass() {
-        return BaseBillId.class;
-    }
-
-    @Override
-    protected Class<Bill> valueClass() {
-        return Bill.class;
-    }
-
-    @Override
-    protected CacheConfigurationBuilder<BaseBillId, Bill> getConfigBuilder() {
-        return super.getConfigBuilder().withEvictionAdvisor(new BillCacheEvictionPolicy());
+    protected EvictionAdvisor<BaseBillId, Bill> evictionAdvisor() {
+        return new BillCacheEvictionPolicy();
     }
 
     /**

@@ -19,16 +19,6 @@ public class ShiroCachingService extends CachingService<Object, Object> {
     }
 
     @Override
-    protected Class<Object> keyClass() {
-        return Object.class;
-    }
-
-    @Override
-    protected Class<Object> valueClass() {
-        return Object.class;
-    }
-
-    @Override
     public void warmCaches() {}
 
     protected Cache<Object, Object> getEhcache() {

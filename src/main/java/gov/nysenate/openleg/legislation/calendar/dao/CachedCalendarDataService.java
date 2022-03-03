@@ -34,16 +34,6 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
         return CacheType.CALENDAR;
     }
 
-    @Override
-    protected Class<CalendarId> keyClass() {
-        return CalendarId.class;
-    }
-
-    @Override
-    protected Class<Calendar> valueClass() {
-        return Calendar.class;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void warmCaches() {

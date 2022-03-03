@@ -26,16 +26,6 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     private AgendaDao agendaDao;
 
     @Override
-    public Class<AgendaId> keyClass() {
-        return AgendaId.class;
-    }
-
-    @Override
-    public Class<Agenda> valueClass() {
-        return Agenda.class;
-    }
-
-    @Override
     protected CacheType cacheType() {
         return CacheType.AGENDA;
     }

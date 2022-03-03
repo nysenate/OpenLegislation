@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.notifications.mail;
 
 import gov.nysenate.openleg.common.util.MailUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,12 +16,12 @@ import java.util.Collection;
 @Service
 public class MimeSendMailService implements SendMailService {
 
-    private final Environment env;
+    private final OpenLegEnvironment env;
 
     private final JavaMailSender mailSender;
 
     @Autowired
-    public MimeSendMailService(MailUtils mailUtils, Environment env) {
+    public MimeSendMailService(MailUtils mailUtils, OpenLegEnvironment env) {
         this.env = env;
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setSession(mailUtils.getSmtpSession());

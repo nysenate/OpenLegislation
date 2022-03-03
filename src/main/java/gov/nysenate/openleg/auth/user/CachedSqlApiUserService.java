@@ -44,16 +44,6 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         return CacheType.API_USER;
     }
 
-    @Override
-    protected Class<String> keyClass() {
-        return String.class;
-    }
-
-    @Override
-    protected Class<ApiUser> valueClass() {
-        return ApiUser.class;
-    }
-
     /*** --- CachingService Implementation --- */
 
     @Override

@@ -13,16 +13,6 @@ public class CachedBillInfoDataService extends CachingService<BaseBillId, BillIn
     }
 
     @Override
-    protected Class<BaseBillId> keyClass() {
-        return BaseBillId.class;
-    }
-
-    @Override
-    protected Class<BillInfo> valueClass() {
-        return BillInfo.class;
-    }
-
-    @Override
     public void warmCaches() {}
 
     public Cache<BaseBillId, BillInfo> getBillInfoCache() {

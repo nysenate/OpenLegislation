@@ -5,7 +5,7 @@
 General installation instructions for Ubuntu.
 
 ### Java 17
-1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/17/.
+1. Download the Linux/x64 build of 17 from https://jdk.java.net/17/.
 2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
@@ -67,7 +67,7 @@ Clone the Open Legislation codebase to your computer.
     * Automatically download
         * Sources
         * Documentation
-5. Be sure to use Java 15 on this project
+5. Be sure to use Java 17 on this project
 
 ## Database Setup
 
