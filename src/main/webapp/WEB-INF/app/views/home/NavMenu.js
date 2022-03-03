@@ -11,12 +11,15 @@ import {
   IconContext,
   MagnifyingGlass,
   Megaphone,
+  SignOut,
+  Sliders,
   TextAlignLeft
 } from "phosphor-react";
 import {
   Link,
   useLocation
 } from "react-router-dom";
+import useAuth from "app/shared/useAuth";
 
 export default function NavMenu({ isMenuOpen }) {
   /*
@@ -88,24 +91,41 @@ function MenuContent() {
         }}>
         <ul>
           {navCategories.map((opt) => {
+            if (opt.adminOnly) {
+              return (
+                <AdminNavCategory {...opt}
+                                  isOpen={openCategories.includes(opt.name)}
+                                  isActive={activeCategory()?.name === opt.name}
+                                  onCategoryClick={() => toggleCategory(opt.name)}
+                                  key={opt.name} />
+              )
+            }
             return (
-              <NavCategory name={opt.name}
-                           icon={opt.icon}
+              <NavCategory {...opt}
                            isOpen={openCategories.includes(opt.name)}
                            isActive={activeCategory()?.name === opt.name}
                            onCategoryClick={() => toggleCategory(opt.name)}
-                           key={opt.name}>
-                {opt.children}
-              </NavCategory>
+                           key={opt.name} />
             )
           })}
           <DocPage name="JSON API Docs" icon={<Code />} to="/static/docs/html/index.html" />
-          {/*// If admin is logged in, show logout btn*/}
-          {/*<NavPage name="Logout" icon={<SignOut />} to="/logout" />*/}
+          <LogoutPage name="Logout" icon={<SignOut />} to="/logout" />
         </ul>
       </IconContext.Provider>
     </div>
   )
+}
+
+function AdminNavCategory({ ...rest }) {
+  const auth = useAuth()
+
+  if (!auth.isAdmin()) {
+    return null
+  }
+
+  if (auth.isAdmin()) {
+    return <NavCategory {...rest} />
+  }
 }
 
 function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }) {
@@ -121,9 +141,9 @@ function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }
       </div>
 
       {isOpen &&
-      <div>
-        {children}
-      </div>
+        <div>
+          {children}
+        </div>
       }
     </div>
   )
@@ -147,10 +167,10 @@ function NavChild({ name, to, icon }) {
   )
 }
 
-function NavPage({ name, icon, to }) {
+function LogoutPage({ name, icon, to }) {
   return (
     <Link to={to}>
-      <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+      <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
       </div>
@@ -160,14 +180,12 @@ function NavPage({ name, icon, to }) {
 
 function DocPage({ name, icon, to }) {
   return (
-      <a href={to} >
-
-        <div className="py-4 flex items-center cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
-          <div className="ml-5 mr-2 inline">{icon}</div>
-          <div className="flex-grow">{name}</div>
-        </div>
-
-      </a>
+    <a href={to}>
+      <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+        <div className="ml-5 mr-2 inline">{icon}</div>
+        <div className="flex-grow">{name}</div>
+      </div>
+    </a>
   )
 }
 
@@ -178,7 +196,6 @@ const navCategories = [
     icon: <CalendarBlank />,
     children: (
       <React.Fragment>
-        <NavChild name="Browse Calendars" icon={<CalendarBlank />} to="/calendars/browse" />
         <NavChild name="Search Calendars" icon={<MagnifyingGlass />} to="/calendars/search" />
         <NavChild name="Calendar Updates" icon={<GitBranch />} to="/calendars/updates" />
       </React.Fragment>
@@ -213,7 +230,7 @@ const navCategories = [
     icon: <Bookmarks />,
     children: (
       <React.Fragment>
-        <NavChild name="Search Laws" icon={<MagnifyingGlass />} to="/laws/" />
+        <NavChild name="Search Laws" icon={<MagnifyingGlass />} to="/laws" />
         <NavChild name="Law Updates" icon={<GitBranch />} to="/laws/updates" />
       </React.Fragment>
     )
@@ -224,9 +241,23 @@ const navCategories = [
     icon: <TextAlignLeft />,
     children: (
       <React.Fragment>
-        <NavChild name="Session Transcripts" icon={<TextAlignLeft />} to="/transcripts/search" />
-        <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/updates" />
+        <NavChild name="Session Transcripts" icon={<TextAlignLeft />} to="/transcripts/session" />
+        <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
       </React.Fragment>
     )
+  },
+  {
+    name: "Admin",
+    path: "/admin",
+    icon: <Sliders />,
+    children: (
+      <React.Fragment>
+        <NavChild name="Configuration" to="/admin/config" />
+        <NavChild name="Caches" to="/admin/caches" />
+        <NavChild name="Indices" to="/admin/indices" />
+        <NavChild name="Logs" to="/admin/logs" />
+      </React.Fragment>
+    ),
+    adminOnly: true
   },
 ]

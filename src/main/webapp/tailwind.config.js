@@ -17,6 +17,9 @@ module.exports = {
           700: '#2B6A90',
           800: '#165B81',
           900: '#0e3a4e',
+        },
+        gray: {
+          450: '#848B98',
         }
       },
       borderWidth: {
@@ -28,6 +31,10 @@ module.exports = {
     extend: {
       borderWidth: ['responsive', 'hover', 'focus'],
       translate: ['responsive', 'hover', 'focus', 'active'],
+      boxShadow: ['disabled'],
+      cursor: ['disabled'],
+      backgroundColor: ['disabled'],
+      opacity: ['disabled']
     },
   },
   plugins: [],

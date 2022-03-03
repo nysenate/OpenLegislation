@@ -10,9 +10,7 @@ import {
   useLocation,
   useRouteMatch
 } from "react-router-dom";
-import {
-  FileDotted,
-} from "phosphor-react";
+import { FileDotted, } from "phosphor-react";
 import BillOverview from "app/views/bills/info/BillOverview";
 import { DateTime } from "luxon";
 import Tabs from "app/shared/Tabs";
@@ -40,10 +38,10 @@ export default function Bill({ setHeaderText }) {
   // Initialize data when a bill page is navigated to
   React.useEffect(() => {
     getBillApi(match.params.sessionYear, match.params.printNo, { view: "with_refs_no_fulltext" })
-      .then((bill) => {
-        setBill(bill)
-        setStateFromSearchParams("Summary", bill.activeVersion)
-        setHeaderText(headerTextForBill(bill))
+      .then((res) => {
+        setBill(res.result)
+        setStateFromSearchParams("Summary", res.result.activeVersion)
+        setHeaderText(headerTextForBill(res.result))
         setLoading(false)
       })
   }, [ match.params.sessionYear, match.params.printNo ])

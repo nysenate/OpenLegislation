@@ -8,10 +8,11 @@ import {
 import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
-import {
-  List,
-} from "phosphor-react";
+import Calendars from "app/views/calendars/Calendars"
+import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
+import PrivateRoute from "app/shared/PrivateRoute";
+import Admin from "app/views/admin/Admin";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -46,14 +47,20 @@ export default function Home() {
 
         <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
           <Switch>
-            <Route path="/bills">
+            <PrivateRoute path="/calendars">
+              <Calendars setHeaderText={setHeaderText} />
+            </PrivateRoute>
+            <PrivateRoute path="/bills">
               <Bills setHeaderText={setHeaderText} />
-            </Route>
-            <Route path="/laws">
+            </PrivateRoute>
+            <PrivateRoute path="/laws">
               <Laws setHeaderText={setHeaderText} />
-            </Route>
-            <Route path="/transcripts">
-              <Transcripts />
+            </PrivateRoute>
+            <PrivateRoute path="/transcripts">
+              <Transcripts/>
+            </PrivateRoute>
+            <Route path="/admin">
+              <Admin setHeaderText={setHeaderText} />
             </Route>
           </Switch>
         </div>

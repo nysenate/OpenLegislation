@@ -1,5 +1,6 @@
 import React from 'react'
 import apiSignup from "app/apis/apiSignup";
+import { Warning } from "phosphor-react";
 
 const breakingChangesSub = {
   title: 'Breaking Changes', enumVal: 'BREAKING_CHANGES', checked: true,
@@ -149,16 +150,17 @@ export default function SignUp() {
             <label htmlFor="newFeatures">{newFeaturesSub.desc}</label>
           </div>
         </div>
-        <button className="btn my-3 w-36" type="submit">Get API Key</button>
+        <button className="btn btn--primary my-3 w-36" type="submit">Get API Key</button>
       </form>
       {state.errorMsg &&
-      <h3 className="h5 text text--error"><i className="icon-warning mx-1" />{state.errorMsg}</h3>
+        <h3 className="h5 text text--error flex items-center justify-center gap-x-1">
+          <Warning size="1.2rem" />{state.errorMsg}</h3>
       }
       {state.registeredMsg &&
-      <h3 className="h5">Thanks for signing up, please check your email to receive your API key.</h3>
+        <h3 className="h5">Thanks for signing up, please check your email to receive your API key.</h3>
       }
       {state.loading &&
-      <h3 className="h5">Your API key is being created, one sec.</h3>
+        <h3 className="h5">Your API key is being created, one sec.</h3>
       }
     </section>
   )

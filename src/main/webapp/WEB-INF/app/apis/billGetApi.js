@@ -17,8 +17,27 @@ export function getBillApi(sessionYear, printNo, searchParams) {
   return fetchUrl(url)
 }
 
-export function getBillUpdatesApi(sessionYear, printNo, searchParams) {
+/**
+ * Get updates for a single bill.
+ */
+export function fetchSingleBillUpdates(sessionYear, printNo, searchParams) {
   let url = `/api/3/bills/${sessionYear}/${printNo}/updates`
+  if (searchParams) {
+    url += "?" + queryString.stringify(searchParams)
+  }
+  return fetchUrl(url)
+}
+
+/**
+ * Get updates for all bills which match the supplied parameters.
+ * @param {Object} params
+ * @param {string} params.from - From date time ISO string, i.e. 2021-06-01T00:00:00.000
+ * @param {string} params.to - To date time ISO string, ie. 2021-10-20T23:59:59.999
+ * @param {Object} params.searchParams - Additional search parameters to set when calling the API.
+ */
+export function fetchAllBillUpdates({ from, to, ...searchParams }) {
+  searchParams.summary = true; // Always send the summary=true search param so we get the correct response.
+  let url = `/api/3/bills/updates/${from}/${to}`
   if (searchParams) {
     url += "?" + queryString.stringify(searchParams)
   }
@@ -35,7 +54,7 @@ async function fetchUrl(url) {
   if (!data.success) {
     throw new Error(data.message)
   }
-  return data.result
+  return data
 }
 
 export function getBillStatusTypes() {

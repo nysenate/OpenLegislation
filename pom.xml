@@ -74,8 +74,7 @@
             <configuration>
               <executable>npm</executable>
               <arguments>
-                <argument>install</argument>
-                <argument>--no-audit</argument>
+                <argument>ci</argument>
               </arguments>
               <workingDirectory>src/main/webapp</workingDirectory>
             </configuration>

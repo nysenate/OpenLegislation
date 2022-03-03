@@ -13,6 +13,8 @@ import {
   useLocation
 } from "react-router-dom";
 import { Sliders } from "phosphor-react";
+import Input from "app/shared/Input";
+import Select from "app/shared/Select";
 
 
 /**
@@ -136,14 +138,17 @@ export default function BillSearchForm() {
       .map(([ key, value ]) => {
         return (
           <div className={filterWrapperClass} key={key}>
-            <SearchSelect label={value.label}
-                          value={value.value}
-                          onChange={(e) => dispatch({
-                            type: "update",
-                            value: e.target.value,
-                            key: key
-                          })}
-                          options={value.options} />
+            <Select label={value.label}
+                    value={value.value}
+                    onChange={(e) => dispatch({
+                      type: "update",
+                      value: e.target.value,
+                      key: key
+                    })}
+                    options={value.options}
+                    isHighlighted={value.value}
+                    className="w-full"
+            />
           </div>
         )
       })
@@ -156,14 +161,18 @@ export default function BillSearchForm() {
       .map(([ key, value ]) => {
         return (
           <div className={filterWrapperClass} key={key}>
-            <SearchTextInput label={value.label}
-                             value={value.value}
-                             onChange={(e) => dispatch({
-                               type: "update",
-                               value: e.target.value,
-                               key: key
-                             })}
-                             placeholder={value.placeholder} />
+            <Input label={value.label}
+                   value={value.value}
+                   onChange={(e) => dispatch({
+                     type: "update",
+                     value: e.target.value,
+                     key: key
+                   })}
+                   placeholder={value.placeholder}
+                   isHighlighted={value.value}
+                   type="text"
+                   className="w-full"
+            />
           </div>
         )
       })
@@ -193,32 +202,31 @@ export default function BillSearchForm() {
       <form onSubmit={onSubmit}>
         <div className="flex flex-wrap">
           <div className="flex-grow mr-8">
-            <label htmlFor="billsearch" className="label label--top">
-              Print number or term
-            </label>
-            <input onChange={(e) => setTerm(e.target.value)}
+            <Input label="Print number or term"
+                   onChange={(e) => setTerm(e.target.value)}
                    value={term}
                    tabIndex="1"
                    name="billsearch"
                    type="text"
-                   className="input w-full"
-                   placeholder="e.g. S1234-2015 or yogurt" />
+                   placeholder="e.g. S1234-2015 or yogurt"
+                   className="w-full" />
           </div>
           <div className="mr-8">
-            <SearchSelect label="Session Year"
-                          tabindex={2}
-                          value={session}
-                          onChange={(e) => setSession(e.target.value)}
-                          highlight={false}
-                          options={sessionOptions()} />
+            <Select label="Session Year"
+                    tabindex={2}
+                    value={session}
+                    onChange={(e) => setSession(e.target.value)}
+                    options={sessionOptions()}
+                    className="w-full" />
           </div>
           <div className="">
-            <SearchSelect label="Sort By"
-                          tabindex={3}
-                          value={sort}
-                          onChange={(e) => setSort(e.target.value)}
-                          highlight={false}
-                          options={sortOptions} />
+            <Select label="Sort By"
+                    tabindex={3}
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    highlight={false}
+                    options={sortOptions}
+                    className="w-full" />
           </div>
         </div>
 
@@ -255,44 +263,9 @@ export default function BillSearchForm() {
         </div>
 
         <div className="flex justify-end">
-          <button className="btn my-3 w-36" type="submit" tabIndex="4">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="4">Search</button>
         </div>
       </form>
-    </div>
-  )
-}
-
-function SearchSelect({ label, value, onChange, options, tabindex, highlight = true }) {
-  let className = "label label--top"
-  if (highlight) {
-    // If highlight and value are truthy, highlight the label.
-    className += value ? " bg-yellow-100" : ""
-  }
-  return (
-    <label className={className}>{label}
-      <select value={value}
-              tabIndex={tabindex}
-              onChange={onChange}
-              className="select w-full">
-        {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
-      </select>
-    </label>
-  )
-}
-
-function SearchTextInput({ label, value, onChange, placeholder }) {
-  let className = "label label--top"
-  className += value ? "bg-yellow-100" : ""
-  return (
-    <div>
-      <label className={className}>{label}
-        <input value={value}
-               onChange={onChange}
-               type="text"
-               placeholder={placeholder}
-               className="input w-full"
-        />
-      </label>
     </div>
   )
 }

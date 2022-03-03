@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  getBillApi,
-} from "app/apis/billGetApi";
+import { getBillApi, } from "app/apis/billGetApi";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import { Link } from "react-router-dom";
 
@@ -12,7 +10,7 @@ export default function BillFullTextTab({ bill, selectedAmd }) {
   React.useEffect(() => {
     getBillApi(bill.session, bill.printNo, { view: "with_refs", fullTextFormat: [ "PLAIN", "HTML" ] })
       .then((res) => {
-        setFullBill(res)
+        setFullBill(res.result)
       })
   }, [ bill ])
 

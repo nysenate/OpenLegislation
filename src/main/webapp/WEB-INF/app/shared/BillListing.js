@@ -1,6 +1,6 @@
 import React from 'react'
 import MemberThumbnail from "app/shared/MemberThumbnail";
-import {formatDateTime} from "app/lib/dateUtils";
+import { formatDateTime } from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import BillStatusDesc from "app/shared/BillStatusDesc";
 import BillMilestones from "app/shared/BillMilestones";
