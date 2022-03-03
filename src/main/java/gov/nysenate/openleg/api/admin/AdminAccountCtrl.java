@@ -1,22 +1,22 @@
 package gov.nysenate.openleg.api.admin;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.ListView;
+import gov.nysenate.openleg.api.auth.AdminUserView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.ListView;
-import gov.nysenate.openleg.api.auth.AdminUserView;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.auth.admin.AdminUser;
 import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.exception.InvalidUsernameException;
-import gov.nysenate.openleg.notifications.mail.SendMailService;
 import gov.nysenate.openleg.common.util.RandomUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.notifications.mail.SendMailService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.shiro.SecurityUtils;
@@ -48,7 +48,7 @@ public class AdminAccountCtrl extends BaseCtrl
     private SendMailService sendMailService;
 
     @Autowired
-    Environment environment;
+    OpenLegEnvironment environment;
 
     private static final String registrationEmailSubject = "OpenLegislation admin registration";
 

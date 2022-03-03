@@ -3,16 +3,16 @@ package gov.nysenate.openleg.api.admin;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ViewObjectResponse;
-import gov.nysenate.openleg.api.response.error.ErrorCode;
-import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.config.EnvVarNotFoundException;
 import gov.nysenate.openleg.api.config.EnvironmentVariableView;
 import gov.nysenate.openleg.api.config.ImmutableEnvVarException;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ViewObjectResponse;
+import gov.nysenate.openleg.api.response.error.ErrorCode;
+import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -26,7 +26,9 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,8 @@ public class EnvironmentCtrl extends BaseCtrl
             .build();
 
 
-    @Autowired Environment env;
+    @Autowired
+    OpenLegEnvironment env;
 
     @PostConstruct
     public void init() {
@@ -65,7 +68,7 @@ public class EnvironmentCtrl extends BaseCtrl
     }
 
     /**
-     * Set Environment Variable API
+     * Set OpenLegEnvironment Variable API
      * ----------------------------
      *
      * Set the value of an environment variable:
@@ -83,14 +86,14 @@ public class EnvironmentCtrl extends BaseCtrl
             String user = SecurityUtils.getSubject().getPrincipal().toString();
             logger.info("Setting environment variable '{}' to '{}'    user: {}", varName, value, user);
             mutableProperties.get(varName).accept(value);
-            return new ViewObjectResponse<>(getVariable(varName), "Environment variable value successfully changed");
+            return new ViewObjectResponse<>(getVariable(varName), "OpenLegEnvironment variable value successfully changed");
         } else {
             throw new ImmutableEnvVarException(getVariable(varName));
         }
     }
 
     /**
-     * Get Environment Variable API
+     * Get OpenLegEnvironment Variable API
      * ----------------------------
      *
      * Get the value of one or more environment variables
@@ -109,7 +112,7 @@ public class EnvironmentCtrl extends BaseCtrl
                     .map(this::getVariable)
                     .forEach(variables::add);
         } else {
-            for (Field field : Environment.class.getDeclaredFields()) {
+            for (Field field : OpenLegEnvironment.class.getDeclaredFields()) {
                 try {
                     variables.add(getVariable(field));
                 } catch (NoSuchMethodException ignored) {}
@@ -141,7 +144,7 @@ public class EnvironmentCtrl extends BaseCtrl
 
     private EnvironmentVariableView getVariable(String name) throws EnvVarNotFoundException {
         try {
-            return getVariable(Environment.class.getDeclaredField(name));
+            return getVariable(OpenLegEnvironment.class.getDeclaredField(name));
         } catch (NoSuchFieldException | NoSuchMethodException ex) {
             throw new EnvVarNotFoundException(name);
         }
@@ -164,7 +167,7 @@ public class EnvironmentCtrl extends BaseCtrl
         try {
             return getter.invoke(env);
         } catch (InvocationTargetException | IllegalAccessException ex) {
-            logger.error("Get Environment variable ex\n", ex);
+            logger.error("Get OpenLegEnvironment variable ex\n", ex);
             return null;
         }
     }
@@ -172,9 +175,9 @@ public class EnvironmentCtrl extends BaseCtrl
     private Method getGetter(Field field) throws NoSuchMethodException {
         String getterSuffix = StringUtils.capitalize(field.getName());
         try {
-            return Environment.class.getDeclaredMethod("get" + getterSuffix);
+            return OpenLegEnvironment.class.getDeclaredMethod("get" + getterSuffix);
         } catch (NoSuchMethodException e) {
-            return Environment.class.getDeclaredMethod("is" + getterSuffix);
+            return OpenLegEnvironment.class.getDeclaredMethod("is" + getterSuffix);
         }
     }
 }
