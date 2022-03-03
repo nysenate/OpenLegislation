@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.spotchecks.base;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckAbortException;
@@ -27,10 +27,10 @@ public class SpotCheckNotificationService {
     private static final String spotcheckReportPath = "/admin/report/spotcheck";
 
     private final EventBus eventBus;
-    private final Environment env;
+    private final OpenLegEnvironment env;
 
     @Autowired
-    public SpotCheckNotificationService(EventBus eventBus, Environment env) {
+    public SpotCheckNotificationService(EventBus eventBus, OpenLegEnvironment env) {
         this.eventBus = eventBus;
         this.env = env;
     }

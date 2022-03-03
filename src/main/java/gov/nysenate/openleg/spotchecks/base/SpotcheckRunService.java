@@ -6,7 +6,7 @@ import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.spotchecks.SpotCheckReportDao;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class SpotcheckRunService {
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckRunService.class);
 
     private final EventBus eventBus;
-    private final Environment env;
+    private final OpenLegEnvironment env;
     private final SpotCheckNotificationService spotCheckNotificationService;
     private final SpotCheckReportDao reportDao;
 
@@ -43,7 +43,7 @@ public class SpotcheckRunService {
      */
     private final ImmutableSet<SpotCheckReportService> intervalReports;
 
-    public SpotcheckRunService(Environment env,
+    public SpotcheckRunService(OpenLegEnvironment env,
                                EventBus eventBus,
                                SpotCheckNotificationService spotCheckNotificationService,
                                SpotCheckReportDao reportDao,

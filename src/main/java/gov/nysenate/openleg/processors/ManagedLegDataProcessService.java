@@ -4,18 +4,18 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.*;
 import gov.nysenate.openleg.processors.bill.sobi.SobiLineType;
 import gov.nysenate.openleg.processors.bill.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processors.config.ProcessConfig;
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
 import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
-import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
     @Autowired
     private EventBus eventBus;
     @Autowired
-    private Environment env;
+    private OpenLegEnvironment env;
     @Autowired
     private ProcessConfig processConfig;
 

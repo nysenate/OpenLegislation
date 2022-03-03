@@ -2,20 +2,20 @@ package gov.nysenate.openleg.spotchecks.openleg.bill;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillInfo;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +40,13 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
     private final OpenlegBillDao openlegBillDao;
     private final BillDataService billDataService;
     private final OpenlegBillCheckService checkService;
-    private final Environment env;
+    private final OpenLegEnvironment env;
 
     @Autowired
     public OpenlegBillReportService(OpenlegBillDao openlegBillDao,
                                     BillDataService billDataService,
                                     OpenlegBillCheckService checkService,
-                                    Environment env) {
+                                    OpenLegEnvironment env) {
         this.openlegBillDao = openlegBillDao;
         this.billDataService = billDataService;
         this.checkService = checkService;

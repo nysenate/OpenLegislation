@@ -1,24 +1,24 @@
 package gov.nysenate.openleg.api.processor;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunDetailView;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunInfoView;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunDetailView;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunInfoView;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.processors.log.DataProcessRun;
-import gov.nysenate.openleg.processors.log.DataProcessRunInfo;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.DataProcessor;
 import gov.nysenate.openleg.processors.log.DataProcessLogService;
+import gov.nysenate.openleg.processors.log.DataProcessRun;
+import gov.nysenate.openleg.processors.log.DataProcessRunInfo;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class DataProcessCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessCtrl.class);
 
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private DataProcessLogService processLogs;
     @Autowired private DataProcessor dataProcessor;
 

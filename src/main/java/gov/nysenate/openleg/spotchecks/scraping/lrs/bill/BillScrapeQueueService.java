@@ -2,13 +2,13 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillUpdateField;
+import gov.nysenate.openleg.spotchecks.base.SpotcheckMismatchEvent;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;
 import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
-import gov.nysenate.openleg.spotchecks.base.SpotcheckMismatchEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class BillScrapeQueueService {
     EventBus eventBus;
 
     @Autowired
-    Environment env;
+    OpenLegEnvironment env;
 
     @PostConstruct
     public void init() {

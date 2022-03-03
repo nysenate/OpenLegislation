@@ -2,18 +2,17 @@ package gov.nysenate.openleg.search.agenda;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
-import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
-import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.agenda.dao.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.legislation.agenda.dao.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.search.*;
+import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
+import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -35,7 +34,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchService.class);
 
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private EventBus eventBus;
     @Autowired private ElasticAgendaSearchDao agendaSearchDao;
     @Autowired private AgendaDataService agendaDataService;

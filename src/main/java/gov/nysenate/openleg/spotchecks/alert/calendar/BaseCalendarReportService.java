@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar;
 
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.*;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     private CalendarCheckService checkService;
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     protected abstract String getNotes();
 

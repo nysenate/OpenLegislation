@@ -2,14 +2,13 @@ package gov.nysenate.openleg.search.member;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.legislation.member.dao.MemberService;
-import gov.nysenate.openleg.search.SearchIndex;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -31,7 +30,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
 
-    @Autowired protected Environment env;
+    @Autowired protected OpenLegEnvironment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticMemberSearchDao memberSearchDao;
     @Autowired protected MemberService memberDataService;

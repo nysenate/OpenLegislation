@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.spotchecks.daybreak;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckMailProcessService;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakDao;
 import gov.nysenate.openleg.spotchecks.daybreak.process.DaybreakProcessService;
@@ -23,7 +23,7 @@ public class DaybreakSpotcheckProcessService extends SpotcheckMailProcessService
     DaybreakProcessService daybreakProcessService;
 
     @Autowired
-    Environment env;
+    OpenLegEnvironment env;
 
     @Autowired
     EventBus eventBus;

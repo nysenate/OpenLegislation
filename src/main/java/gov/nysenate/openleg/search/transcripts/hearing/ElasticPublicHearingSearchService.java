@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
@@ -31,7 +31,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
 {
     private static final Logger logger = LoggerFactory.getLogger(PublicHearingSearchService.class);
 
-    @Autowired protected Environment env;
+    @Autowired protected OpenLegEnvironment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticPublicHearingSearchDao publicHearingSearchDao;
     @Autowired protected PublicHearingDataService publicHearingDataService;

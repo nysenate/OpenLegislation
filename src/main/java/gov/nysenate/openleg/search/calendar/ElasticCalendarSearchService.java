@@ -3,18 +3,18 @@ package gov.nysenate.openleg.search.calendar;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     @Autowired private ElasticCalendarSearchDao calendarSearchDao;
     @Autowired private CalendarDataService calendarDataService;
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private EventBus eventBus;
 
     @PostConstruct

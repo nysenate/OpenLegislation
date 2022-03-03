@@ -3,7 +3,7 @@ package gov.nysenate.openleg.common.dao;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
@@ -46,7 +46,7 @@ public abstract class SqlBaseDao
     @Autowired protected NamedParameterJdbcTemplate jdbcNamed;
 
     /** Reference to the environment in which the data is stored */
-    @Autowired protected Environment environment;
+    @Autowired protected OpenLegEnvironment environment;
 
     @PostConstruct
     private void init() {}

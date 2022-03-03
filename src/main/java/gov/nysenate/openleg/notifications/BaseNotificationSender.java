@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.notifications;
 
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.NotificationDigest;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class BaseNotificationSender {
 
     @Autowired
-    protected Environment environment;
+    protected OpenLegEnvironment environment;
 
     private static final String notificationDisplayPath = "/api/3/admin/notifications/";
 

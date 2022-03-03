@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * The Environment class contains various configuration options to be used throughout the application.
+ * The OpenLegEnvironment class contains various configuration options to be used throughout the application.
  * This class is mutable during runtime so that hot config changes can be made to the fields here whereas
  * the property file is only checked during initialization.
  *
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * have setters to allow for changes while the application is running.
  */
 @Component
-public class Environment
+public class OpenLegEnvironment
 {
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
@@ -142,7 +142,7 @@ public class Environment
 
     /** --- Constructors --- */
 
-    public Environment() {}
+    public OpenLegEnvironment() {}
 
     @PostConstruct
     private void init() {

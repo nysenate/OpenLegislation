@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.auth.exception.UsernameExistsException;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.notifications.mail.SendMailService;
@@ -31,9 +31,9 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
-    private final Environment environment;
+    private final OpenLegEnvironment environment;
 
-    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, Environment environment) {
+    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, OpenLegEnvironment environment) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
         this.environment = environment;

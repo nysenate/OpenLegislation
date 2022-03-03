@@ -2,11 +2,11 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -44,7 +44,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
             Pattern.compile("^(\\d{4})-([A-Z]\\d+[A-Z]?)-(\\d{8}T\\d{6})\\.html$");
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     private File scrapedBillIncomingDir;
     private File scrapedBillArchiveDir;

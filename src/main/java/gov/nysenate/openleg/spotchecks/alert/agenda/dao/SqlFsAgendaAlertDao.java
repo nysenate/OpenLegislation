@@ -2,21 +2,21 @@ package gov.nysenate.openleg.spotchecks.alert.agenda.dao;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.SqlFsDaybreakDao;
-import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaAlertInfoCommittee;
-import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
+import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.SqlFsDaybreakDao;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     private static final Pattern agendaFullFilePattern =
             Pattern.compile("^agenda_alert-\\d{8}-[A-z\\._-]*\\d{8}T\\d{6}.html$");
 
-    @Autowired private Environment environment;
+    @Autowired private OpenLegEnvironment environment;
 
     private File incomingAgendaAlertDir;
     private File archiveAgendaAlertDir;

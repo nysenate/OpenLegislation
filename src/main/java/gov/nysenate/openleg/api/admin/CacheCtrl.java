@@ -8,7 +8,11 @@ import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
-import gov.nysenate.openleg.legislation.*;
+import gov.nysenate.openleg.api.response.ViewObjectResponse;
+import gov.nysenate.openleg.legislation.CacheEvictEvent;
+import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
+import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.CacheWarmEvent;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
@@ -57,8 +61,21 @@ public class CacheCtrl extends BaseCtrl {
     public BaseResponse getCacheStats() {
         List<CacheStatsView> views = new ArrayList<>();
         for (var type : CacheType.values())
-            views.add(new CacheStatsView(type.name(), CachingService.getStats(type)));
+            views.add(new CacheStatsView(type));
         return ListViewResponse.of(views);
+    }
+
+    /**
+     * Cache Stats API
+     * ---------------
+     *
+     * Get stats for a single cache: (GET) /api/3/admin/cache/{cacheType}
+     */
+    @RequiresPermissions("admin:cacheEdit")
+    @RequestMapping(value = "/{cacheType}", method = RequestMethod.GET)
+    public BaseResponse getSingleCacheStats(@PathVariable String cacheType) {
+        var type = CacheType.valueOf(cacheType.toUpperCase());
+        return new ViewObjectResponse<>(new CacheStatsView(type));
     }
 
     /**

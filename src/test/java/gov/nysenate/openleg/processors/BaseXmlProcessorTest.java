@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.CacheEvictEvent;
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -40,7 +40,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     @Autowired private CachedBillDataService billDataService;
     @Autowired private SourceFileRefDao sourceFileRefDao;
     @Autowired private LegDataFragmentDao legDataFragmentDao;
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private EventBus eventBus;
     @Autowired private List<LegDataProcessor> processors;
 

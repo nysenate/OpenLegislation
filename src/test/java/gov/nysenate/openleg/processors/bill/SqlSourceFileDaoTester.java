@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.processors.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.processors.bill.sobi.SobiFile;
+import gov.nysenate.openleg.processors.bill.xml.XmlFile;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
 import gov.nysenate.openleg.processors.sourcefile.sobi.FsSobiDao;
 import gov.nysenate.openleg.processors.sourcefile.xml.FsXmlDao;
-import gov.nysenate.openleg.processors.bill.SourceFile;
-import gov.nysenate.openleg.processors.bill.sobi.SobiFile;
-import gov.nysenate.openleg.processors.bill.xml.XmlFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,8 @@ public class SqlSourceFileDaoTester extends BaseTests {
     @Autowired private FsSobiDao sobiDao;
     @Autowired private FsXmlDao xmlDao;
 
-    @Autowired Environment environment;
+    @Autowired
+    OpenLegEnvironment environment;
 
     public File preTestSetup(String sourceName, String archiveName, boolean makedir) throws IOException {
         File temp = new File(archiveName, sourceName);

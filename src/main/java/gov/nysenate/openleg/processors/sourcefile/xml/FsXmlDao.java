@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.processors.sourcefile.xml;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
+import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.SourceType;
 import gov.nysenate.openleg.processors.bill.xml.XmlFile;
-import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -33,7 +33,7 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
      * Reference to the environment in which the data is stored
      */
     @Autowired
-    protected Environment environment;
+    protected OpenLegEnvironment environment;
     private File incomingSourceDir;
     private File archiveSourceDir;
     private Pattern xmlType = Pattern.compile("(?:_)(\\w+)(?:_)");

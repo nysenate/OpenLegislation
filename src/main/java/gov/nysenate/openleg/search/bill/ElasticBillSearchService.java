@@ -5,7 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.AsyncUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
@@ -42,7 +42,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     private static final int billReindexThreadCount = 4;
     private static final int billReindexBatchSize = 100;
 
-    @Autowired protected Environment env;
+    @Autowired protected OpenLegEnvironment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticBillSearchDao billSearchDao;
     @Autowired protected BillDataService billDataService;

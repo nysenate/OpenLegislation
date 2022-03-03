@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.processors.sourcefile.sobi;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.SourceType;
 import gov.nysenate.openleg.processors.bill.sobi.SobiFile;
+import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,8 @@ import static gov.nysenate.openleg.common.util.FileIOUtils.moveFile;
 @Repository
 public class FsSobiDao implements SourceFileFsDao<SobiFile> {
 
-    @Autowired Environment environment;
+    @Autowired
+    OpenLegEnvironment environment;
 
     private static final Logger logger = LoggerFactory.getLogger(FsSobiDao.class);
     /**

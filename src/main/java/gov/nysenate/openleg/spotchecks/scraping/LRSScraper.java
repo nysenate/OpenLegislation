@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.spotchecks.scraping;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import org.apache.commons.io.FileUtils;
@@ -31,7 +31,7 @@ public abstract class LRSScraper {
 
     protected final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("'D'yyyyMMdd'.T'HHmmss");
 
-    @Autowired protected Environment environment;
+    @Autowired protected OpenLegEnvironment environment;
     @Autowired private EventBus eventBus;
 
     /**

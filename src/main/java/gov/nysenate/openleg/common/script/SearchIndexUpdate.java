@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.common.script;
 
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.apache.commons.cli.*;
@@ -16,7 +16,7 @@ public class SearchIndexUpdate extends BaseScript
     private static final Logger logger = LoggerFactory.getLogger(SearchIndexUpdate.class);
 
     @Autowired
-    private Environment env;
+    private OpenLegEnvironment env;
 
     @Autowired
     private BillDataService billDataService;

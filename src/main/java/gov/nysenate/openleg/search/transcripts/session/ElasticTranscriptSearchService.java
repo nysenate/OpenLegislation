@@ -2,14 +2,13 @@ package gov.nysenate.openleg.search.transcripts.session;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.session.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
@@ -32,7 +31,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchService.class);
 
-    @Autowired protected Environment env;
+    @Autowired protected OpenLegEnvironment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticTranscriptSearchDao transcriptSearchDao;
     @Autowired protected TranscriptDataService transcriptDataService;

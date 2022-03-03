@@ -2,13 +2,13 @@ package gov.nysenate.openleg.spotchecks.sensite.bill;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.common.util.SenateSiteDumpFragParser;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpId;
-import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.common.util.SenateSiteDumpFragParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.text.StringSubstitutor;
@@ -33,7 +33,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
     private static final Logger logger = LoggerFactory.getLogger(FsSenateSiteDao.class);
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
     @Autowired
     private SenateSiteDumpFragParser parser;
     @Autowired

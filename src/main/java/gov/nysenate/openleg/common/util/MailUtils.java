@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.common.util;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ public class MailUtils {
     private EventBus eventBus;
     private final String storeProtocol, smtpUser, smtpPass;
     private final Properties mailProperties;
-    private final Environment environment;
+    private final OpenLegEnvironment environment;
     private Store store;
     private Folder sourceFolder, archiveFolder, partialFolder;
 
@@ -43,7 +43,7 @@ public class MailUtils {
                      @Value("${mail.smtp.connectiontimeout:5000}") String connTimeout,
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
-                     Environment environment) {
+                     OpenLegEnvironment environment) {
         this.storeProtocol = storeProtocol;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;

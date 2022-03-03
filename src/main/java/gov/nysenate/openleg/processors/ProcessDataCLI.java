@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.common.script.BaseScript;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -16,7 +16,7 @@ public class ProcessDataCLI extends BaseScript
 {
     private static final Logger logger = LoggerFactory.getLogger(ProcessDataCLI.class);
 
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private DataProcessor dataProcessor;
 
     public static void main(String[] args) throws Exception {

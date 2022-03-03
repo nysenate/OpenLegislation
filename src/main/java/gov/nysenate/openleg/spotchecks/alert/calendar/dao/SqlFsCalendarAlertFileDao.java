@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar.dao;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarAlertFile;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarAlertFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertFileQuery.*;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertFileQuery.*;
 
 @Repository
 public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
@@ -35,7 +35,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
             Pattern.compile("^(floor_cal|active_list)_alert-\\d{4}-\\d+(-\\d+)?[A-Z]?-\\d{8}T\\d{6}.html$");
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     private File incomingCalendarAlertDir;
     private File archiveCalendarAlertDir;

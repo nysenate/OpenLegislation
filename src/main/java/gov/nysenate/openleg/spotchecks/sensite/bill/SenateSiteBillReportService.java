@@ -1,24 +1,24 @@
 package gov.nysenate.openleg.spotchecks.sensite.bill;
 
 import com.google.common.collect.ImmutableList;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.common.util.pipeline.Pipeline;
+import gov.nysenate.openleg.common.util.pipeline.PipelineFactory;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpId;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckException;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.sensite.BaseSenateSiteReportService;
-import gov.nysenate.openleg.common.util.pipeline.Pipeline;
-import gov.nysenate.openleg.common.util.pipeline.PipelineFactory;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpId;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,14 +33,14 @@ import java.util.function.Function;
 @Service
 public class SenateSiteBillReportService extends BaseSenateSiteReportService<BillId> {
 
-    private final Environment env;
+    private final OpenLegEnvironment env;
     private final PipelineFactory pipelineFactory;
     private final SenateSiteBillJsonParser billJsonParser;
     private final BillDataService billDataService;
     private final SenateSiteBillCheckService billCheckService;
 
     @Autowired
-    public SenateSiteBillReportService(Environment env, PipelineFactory pipelineFactory,
+    public SenateSiteBillReportService(OpenLegEnvironment env, PipelineFactory pipelineFactory,
                                        SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
                                        SenateSiteBillCheckService billCheckService) {
         this.env = env;

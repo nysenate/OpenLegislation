@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processors.log;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class SimpleDataProcessLogService implements DataProcessLogService
 {
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private DataProcessLogDao processLogDao;
 
     /** {@inheritDoc} */

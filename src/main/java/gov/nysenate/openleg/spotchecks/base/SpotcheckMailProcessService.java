@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.spotchecks.base;
 
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class SpotcheckMailProcessService extends BaseSpotcheckProcessService {
 
-    @Autowired private Environment environment;
+    @Autowired private OpenLegEnvironment environment;
 
     @Override
     public int collate() {

@@ -2,11 +2,11 @@ package gov.nysenate.openleg.spotchecks.openleg;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ import java.util.List;
 @Service
 public class JsonOpenlegDaoUtils {
 
-    private final Environment env;
+    private final OpenLegEnvironment env;
     private final ObjectMapper objectMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegDaoUtils.class);
 
     @Autowired
-    public JsonOpenlegDaoUtils(Environment env, ObjectMapper objectMapper) {
+    public JsonOpenlegDaoUtils(OpenLegEnvironment env, ObjectMapper objectMapper) {
         this.env = env;
         this.objectMapper = objectMapper;
     }
@@ -100,7 +100,7 @@ public class JsonOpenlegDaoUtils {
     /**
      * Generate a URL from the given uri string and {@link LimitOffset}.
      *
-     * The host and key are added from current {@link Environment} variables.
+     * The host and key are added from current {@link OpenLegEnvironment} variables.
      * The limit/offset params are added from the passed in {@link LimitOffset}
      *
      * @param uriString String - uri

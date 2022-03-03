@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.util.AsyncUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.law.LawProcessService;
 import gov.nysenate.openleg.processors.log.*;
 import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingProcessService;
@@ -34,7 +34,7 @@ public class DataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessor.class);
 
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private EventBus eventBus;
     @Autowired private DataProcessLogService processLogService;
     @Autowired private AsyncUtils asyncUtils;

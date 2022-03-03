@@ -3,16 +3,15 @@ package gov.nysenate.openleg.search.law;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawInfo;
-import gov.nysenate.openleg.search.*;
+import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawUpdateEvent;
@@ -39,7 +38,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchService.class);
 
     @Autowired private EventBus eventBus;
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private ElasticLawSearchDao lawSearchDao;
     @Autowired private LawDataDao lawDataDao;
     @Autowired private LawDataService lawDataService;
