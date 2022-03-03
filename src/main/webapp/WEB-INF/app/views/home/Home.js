@@ -58,7 +58,7 @@ export default function Home() {
               <Laws setHeaderText={setHeaderText} />
             </PrivateRoute>
             <PrivateRoute path="/transcripts">
-              <Transcripts/>
+              <Transcripts setHeaderText={setHeaderText} />
             </PrivateRoute>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
