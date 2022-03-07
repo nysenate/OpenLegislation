@@ -39,29 +39,17 @@ function ResultItem({ result, filter }) {
   return (
     <div>
       {doFilterResult &&
-      <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-        <div className="py-3 w-full">
-
-          <div className="grid grid-flow-col grid-rows-1 grid-cols-3 gap-4">
-
-            <div className="flex items-center text mr-5">
-              <b>{volume.lawId}</b>
-            </div>
-
-            <div className="col-start-2 col-span-2">
-              <div className="flex items-center text text--small">
-
-                <p><b>{volume.name} </b></p>
-                <span><br /></span>
-
-                <p className="">&nbsp;|&nbsp;{volume.lawType}&nbsp;|&nbsp;Chapter&nbsp;{volume.chapter}</p>
-              </div>
-            </div>
-
+        <div className="p-3 hover:bg-gray-200 rounded flex items-center">
+          <div className="text w-16 lg:w-36 flex-none">
+            <b>{volume.lawId}</b>
           </div>
 
+          <div className="flex-none">
+              <div className="text">{volume.name}</div>
+              <div className="text text--small">{volume.lawType}&nbsp;|&nbsp;Chapter&nbsp;{volume.chapter}</div>
+          </div>
         </div>
-      </div>}
+      }
     </div>
   )
 }
