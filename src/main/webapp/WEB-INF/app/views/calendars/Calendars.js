@@ -8,6 +8,7 @@ import {
 import CalendarSearch from "app/views/calendars/CalendarSearch";
 import CalendarUpdates from "app/views/calendars/CalendarUpdates";
 import ContentContainer from "app/shared/ContentContainer";
+import SpecificCalendar from "app/views/calendars/SpecificCalendar";
 
 export default function Calendars({ setHeaderText }) {
   const location = useLocation()
@@ -27,11 +28,11 @@ export default function Calendars({ setHeaderText }) {
   return (
     <ContentContainer>
       <Switch>
-        <Route exact path="/calendars/browse">
-          <div>Work In Progress</div>
-        </Route>
         <Route exact path="/calendars/search">
           <CalendarSearch />
+        </Route>
+        <Route path="/calendars/view/:calendarYear/:calendarNumber">
+          <SpecificCalendar setHeaderText={setHeaderText} />
         </Route>
         <Route exact path="/calendars/updates">
           <CalendarUpdates />

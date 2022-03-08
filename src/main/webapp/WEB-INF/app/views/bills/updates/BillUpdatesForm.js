@@ -51,19 +51,21 @@ export default function BillUpdatesForm({ doSearch, formData }) {
           <div className="flex flex-wrap items-end lg:w-8/12">
             <div className={filterDivClasses}>
               <DatePicker label="From"
-                          id="from"
+                          name="fromdatetime"
                           date={from}
                           setDate={(date) => setFrom(date)}
                           maxDate={to}
+                          selectsStart
                           className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>
               <DatePicker label="To"
-                          id="to"
+                          name="todatetime"
                           date={to}
                           setDate={(date) => setTo(date)}
                           minDate={from}
-                          maxDate={DateTime.local()}
+                          maxDate={DateTime.now()}
+                          selectsEnd
                           className={inputClassNames} />
             </div>
             <div className={filterDivClasses}>

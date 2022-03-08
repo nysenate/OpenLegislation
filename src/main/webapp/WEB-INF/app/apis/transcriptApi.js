@@ -1,16 +1,16 @@
 import * as queryString from "query-string";
 
-export default function transcriptApi(isHearing, year, pageNum, searchTerm) {
+export default function transcriptApi(isHearing, year, pageNum, searchTerm, sortBy) {
   const defaultLimit = 25
   let url = getBaseApi(isHearing)
-  if (year)
+  if (year) {
     url += `/${year}`
-  if (searchTerm)
-    url += "/search"
-  url += "?" + queryString.stringify({
+  }
+  url += "/search?" + queryString.stringify({
     offset: (pageNum - 1) * defaultLimit + 1,
     term: searchTerm,
-    summary: isHearing
+    sort: sortBy,
+    summary: true
   })
   return fetchUrl(url)
 }

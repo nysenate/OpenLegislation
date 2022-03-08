@@ -26,3 +26,14 @@ export function billSessionYears() {
 export function formatDateTime(dateString, format) {
   return DateTime.fromISO(dateString).toLocaleString(format)
 }
+
+/**
+ * Example of this format: October 14, 1983, 1:30 PM
+ */
+export const DATETIME_FULL_NO_ZONE = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+}
