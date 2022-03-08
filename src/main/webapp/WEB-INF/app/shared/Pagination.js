@@ -14,9 +14,10 @@ import ReactPaginate from 'react-paginate'
  * @param {number} params.total - The total number of results.
  * @param {callback} params.onPageChange - A callback function called on page change.
  *                                         Its given a PageLimOff representing the selected page.
- * @return {PageLimOff} Limit offset info for the selected page.
+ * @return {PageParams} Limit offset info for the selected page.
  */
 export default function Pagination({ currentPage = 1, limit, total, onPageChange }) {
+  console.log("render pagination: " + currentPage)
   if (!total) {
     return null;
   }
@@ -27,11 +28,7 @@ export default function Pagination({ currentPage = 1, limit, total, onPageChange
 
   const onPageChangeWrapper = (page) => {
     const page1Indexed = page.selected + 1 // Converts the 0 indexed page from react-paginate to be 1 indexed.
-    return onPageChange(new PageLimOff(page1Indexed, limit, offsetForPage(page1Indexed)))
-  }
-
-  const offsetForPage = (page) => {
-    return (page - 1) * limit + 1
+    return onPageChange(new PageParams(page1Indexed, limit))
   }
 
   const itemClassName = "hover:bg-gray-100 rounded cursor-pointer"
@@ -67,14 +64,13 @@ export default function Pagination({ currentPage = 1, limit, total, onPageChange
  * Limit, offset, and page info on a page. Useful for querying that page from an API.
  * @param selectedPage {number} The selected page.
  * @param limit {number} The current limit being used.
- * @param offset {number} The offset needed to query the selected page with the current limit.
  * @returns {{selectedPage, offset, limit}}
  * @constructor
  */
-function PageLimOff(selectedPage, limit, offset) {
+export function PageParams(selectedPage, limit) {
   return {
     selectedPage: selectedPage,
     limit: limit,
-    offset: offset
+    offset: (selectedPage - 1) * limit + 1
   }
 }

@@ -28,7 +28,6 @@ export default function LawSearch() {
 
   React.useEffect(() => {
     doSearch()
-    console.log("Use effect ddd")
   }, [ location, from, to, withSelect, sortSelect ])
 
   const setSearchValues = (fromForm, toForm, withSelectForm, sortSelect) => {

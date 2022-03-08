@@ -1,78 +1,61 @@
 import React from 'react'
+import Input from "app/shared/Input";
 import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string";
-import Input from "app/shared/Input";
+import * as queryString from "query-string"
 
 
-export default function LawSearchForm({ handleVolumeSearchFilter, handleSearchTerm }) {
-  const [ term, setTerm ] = React.useState("")
-  const [ filter, setFilter ] = React.useState("")
-  const location = useLocation()
+export default function LawSearchForm({ term = "", filter = "" }) {
+  console.log(term)
+  const [ dirtyTerm, setDirtyTerm ] = React.useState(term)
+  const [ dirtyFilter, setDirtyFilter ] = React.useState(filter)
+  const { search } = useLocation()
   const history = useHistory()
 
-  // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
-    const params = queryString.parse(location.search)
-    setTerm(params.term || "")
-  }, [ location ])
+    setDirtyTerm(term)
+    setDirtyFilter(filter)
+  }, [ term, filter ])
 
-  // Updates the term query param when the form is submitted.
-  const onSubmitLawSearch = (e) => {
+  const onSubmit = e => {
     e.preventDefault()
-    const input = document.getElementById("lawsearch");
-    const params = queryString.parse(location.search)
-    params.term = term
+    const params = queryString.parse(search)
+    params.term = dirtyTerm
+    params.chapterFilter = dirtyFilter
+    params.page = 1
     history.push({ search: queryString.stringify(params) })
-    handleSearchTerm(term)
-  }
-
-  const onSubmitLawVolumeSearch = (e) => {
-    e.preventDefault()
-    const input = document.getElementById("lawvolumesearch")
-    console.log(input.value)
-    handleVolumeSearchFilter(input.value)
   }
 
   return (
     <div>
-      <form onSubmit={onSubmitLawSearch}>
-        <div className="flex flex-wrap">
-          <div className="flex-grow mr-8">
-            <Input label="Search for Laws"
-                   onChange={(e) => setTerm(e.target.value)}
-                   value={term}
+      <form onSubmit={onSubmit}>
+        <div className="flex">
+          <div className="flex-1 mr-6">
+            <Input label="Search laws by term"
+                   onChange={(e) => setDirtyTerm(e.target.value)}
+                   value={dirtyTerm}
                    tabIndex="1"
                    name="lawsearch"
                    type="text"
                    placeholder="e.g. official state muffin , STL 84"
                    className="w-full" />
           </div>
+          <div className="flex-none">
+            <Input label="Filter by law chapter"
+                   onChange={(e) => setDirtyFilter(e.target.value)}
+                   value={dirtyFilter}
+                   tabIndex="2"
+                   name="chapterFilter"
+                   type="text"
+                   placeholder="e.g. TAX" />
+          </div>
         </div>
-
         <div className="flex justify-end">
-          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="2">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="3">Search</button>
         </div>
       </form>
-
-      <form onSubmit={onSubmitLawVolumeSearch}>
-        <div className="flex w-2/12">
-          <Input label="Browse By Law Volume"
-                 onChange={(e) => setFilter(e.target.value)}
-                 value={filter}
-                 tabIndex="3"
-                 name="lawvolumesearch"
-                 type="text"
-                 placeholder="e.g. TAX" />
-        </div>
-
-        <div className="flex justify-left">
-          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="4">Search</button>
-        </div>
-      </form>
-
     </div>
   )
 }

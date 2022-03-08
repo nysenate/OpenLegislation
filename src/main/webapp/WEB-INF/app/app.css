@@ -68,15 +68,17 @@
     }
 
     .btn--primary {
-        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 disabled:opacity-70 disabled:bg-blue-700;
+        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 focus:bg-blue-500
+        disabled:opacity-70 disabled:bg-blue-700;
     }
 
     .btn--secondary {
-        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 disabled:opacity-50 disabled:bg-gray-450;
+        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 focus:bg-gray-400
+        disabled:opacity-50 disabled:bg-gray-450;
     }
 
     .btn--danger {
-        @apply text-white bg-red-600 border-0 hover:bg-red-400;
+        @apply text-white bg-red-600 border-0 hover:bg-red-400 focus:bg-red-400;
     }
 
     .input {
