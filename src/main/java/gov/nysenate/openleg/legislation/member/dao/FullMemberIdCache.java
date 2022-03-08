@@ -59,22 +59,16 @@ public class FullMemberIdCache extends CachingService<Integer, FullMember> {
     }
 
     /**
-     * Get a FullMember.
-     *
      * Checks the cache first, if not there the member is loaded from the database and saved to the cache.
-     * @param memberId
-     * @return
-     * @throws MemberNotFoundEx
+     * @param memberId of the FullMember to be retrieved.
      */
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
         FullMember fm = cache.get(memberId);
-        if (fm != null) {
-            return fm;
-        } else {
+        if (fm == null) {
             fm = memberDao.getMemberById(memberId);
             putMemberInCache(fm);
-            return fm;
         }
+        return fm;
     }
 
     /* --- Internal Methods --- */

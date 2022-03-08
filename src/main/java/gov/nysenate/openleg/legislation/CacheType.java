@@ -21,7 +21,6 @@ public enum CacheType {
     FULL_MEMBER(false),
     SHORTNAME(false), // Session Member with a different key
     SESSION_MEMBER(false),
-    // TODO: SHIRO only has size 2?
     SHIRO(false);
 
     private final static Set<String> ALL_TYPES = Arrays.stream(values()).map(Enum::name).collect(Collectors.toSet());

@@ -45,6 +45,7 @@ public abstract class CachingService<Key, Value> {
     protected abstract CacheType cacheType();
 
     // Some reflective code to get the Class objects of the current cache's Key and Value.
+    @SuppressWarnings("unchecked")
     protected Tuple<Class<Key>, Class<Value>> getGenericClasses() {
         Type[] types = ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments();
@@ -79,7 +80,6 @@ public abstract class CachingService<Key, Value> {
         int numUnits = Integer.parseInt(Objects.requireNonNull(environment.getProperty(propertyStr)));
         var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder()
                 .heap(numUnits, type.isElementSize() ? EntryUnit.ENTRIES : MemoryUnit.MB);
-        // TODO: check magic constants
         var config = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(classes.v1(), classes.v2(), resourcePoolsBuilder)
                 .withSizeOfMaxObjectGraph(type.isElementSize() ? 100000 : 5000)

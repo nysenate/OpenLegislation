@@ -38,10 +38,11 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     // TODO: autowire this into class with generics in constructor?
     @Autowired
     private BillDao billDao;
-
     // Bill Info cache will store BillInfo instances to speed up search and listings.
     // If a bill is already stored in the main cache, its BillInfo does not need to be stored here.
-    private final Cache<BaseBillId, BillInfo> billInfoCache = new CachedBillInfoDataService().getBillInfoCache();
+    @Autowired
+    private CachedBillInfoDataService billInfoDataService;
+    private Cache<BaseBillId, BillInfo> billInfoCache;
 
     /** --- CachingService implementation --- */
 
@@ -53,6 +54,12 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     @Override
     protected EvictionAdvisor<BaseBillId, Bill> evictionAdvisor() {
         return new BillCacheEvictionPolicy();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.billInfoCache = billInfoDataService.getBillInfoCache();
     }
 
     /**
@@ -134,16 +141,18 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
-        if (cache.get(billId) != null) {
-            return new BillInfo(cache.get(billId));
+        Bill bill = cache.get(billId);
+        if (bill != null) {
+            return new BillInfo(bill);
         }
-        if (billInfoCache.get(billId) != null) {
-            return billInfoCache.get(billId);
+        BillInfo info = billInfoCache.get(billId);
+        if (info != null) {
+            return info;
         }
         try {
-            BillInfo billInfo = billDao.getBillInfo(billId);
-            billInfoCache.put(billId, billInfo);
-            return billInfo;
+            info = billDao.getBillInfo(billId);
+            billInfoCache.put(billId, info);
+            return info;
         }
         catch (EmptyResultDataAccessException ex) {
             throw new BillNotFoundEx(billId, ex);
