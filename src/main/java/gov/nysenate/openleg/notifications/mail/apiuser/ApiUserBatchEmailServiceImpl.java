@@ -12,7 +12,7 @@ import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -191,6 +191,6 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * @return
      */
     private String stripHtmlTags(String text) {
-        return Jsoup.clean(text, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+        return Jsoup.clean(text, "", Safelist.none(), new Document.OutputSettings().prettyPrint(false));
     }
 }

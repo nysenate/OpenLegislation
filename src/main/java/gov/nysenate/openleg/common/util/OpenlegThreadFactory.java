@@ -4,17 +4,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Nearly a copy of Executors.DefaultThreadFactory, but with more useful naming.
+ * Nearly a copy of Executors.DefaultThreadFactory, but with more useful naming
+ * and the deprecated SecurityManager removed.
  */
 public class OpenlegThreadFactory implements ThreadFactory {
-    private final ThreadGroup group;
+    private final ThreadGroup group = Thread.currentThread().getThreadGroup();
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private final String namePrefix;
 
     public OpenlegThreadFactory(String prefix) {
-        SecurityManager s = System.getSecurityManager();
-        this.group = (s != null) ? s.getThreadGroup() :
-                Thread.currentThread().getThreadGroup();
         this.namePrefix = prefix + "-thread-";
     }
 

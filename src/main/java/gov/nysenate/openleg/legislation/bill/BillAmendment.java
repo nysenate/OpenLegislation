@@ -265,6 +265,7 @@ public class BillAmendment implements Serializable, Cloneable
         relatedLawsJson = json;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, List<String>> getRelatedLawsMap() {
         Map<String, List<String>> mapping = new HashMap<>();
         if (relatedLawsJson == null || relatedLawsJson.equals("")){
