@@ -3,9 +3,9 @@ package gov.nysenate.openleg.spotchecks.model;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 import gov.nysenate.openleg.spotchecks.sensite.bill.LawSpotCheckId;
-import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
 
 public enum SpotCheckContentType {
 
@@ -17,14 +17,14 @@ public enum SpotCheckContentType {
     LAW(LawSpotCheckId.class),
     ;
 
-    private Class contentKeyClass;
+    private final Class<?> contentKeyClass;
 
-    SpotCheckContentType(Class contentKeyClass) {
+    SpotCheckContentType(Class<?> contentKeyClass) {
         this.contentKeyClass = contentKeyClass;
     }
 
 
-    public Class getContentKeyClass() {
+    public Class<?> getContentKeyClass() {
         return contentKeyClass;
     }
 }

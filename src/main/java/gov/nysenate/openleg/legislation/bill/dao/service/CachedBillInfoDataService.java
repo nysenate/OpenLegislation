@@ -14,9 +14,6 @@ public class CachedBillInfoDataService extends CachingService<BaseBillId, BillIn
         return CacheType.BILL_INFO;
     }
 
-    @Override
-    public void warmCaches() {}
-
     public Cache<BaseBillId, BillInfo> getBillInfoCache() {
         return cache;
     }

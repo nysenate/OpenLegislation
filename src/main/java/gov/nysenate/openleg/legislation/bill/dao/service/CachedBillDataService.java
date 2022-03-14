@@ -53,7 +53,8 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
 
     @Override
     protected EvictionAdvisor<BaseBillId, Bill> evictionAdvisor() {
-        return new BillCacheEvictionPolicy();
+        return (key, value) -> key.getSession().equals(SessionYear.current()) &&
+                value.isPublished();
     }
 
     @Override

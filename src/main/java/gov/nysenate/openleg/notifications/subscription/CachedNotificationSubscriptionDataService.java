@@ -7,7 +7,6 @@ import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.SubscriptionNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.collect.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +18,22 @@ import java.util.stream.Collectors;
 
 @Service
 public class CachedNotificationSubscriptionDataService
-        extends CachingService<String, Map<Integer, NotificationSubscription>>
+        extends CachingService<String, CachedNotificationSubscriptionDataService.NotificationSubscriptionMap>
         implements NotificationSubscriptionDataService {
+
     private static final String subCacheKey = "sUbCaChE";
-    @SuppressWarnings("all")
-    private static final Class<Map<Integer, NotificationSubscription>> VALUE_CLASS =
-            (Class<Map<Integer, NotificationSubscription>>) Map.of(0, new NotificationSubscription.Builder().build())
-                    .getClass();
     @Autowired
     private NotificationSubscriptionDao subscriptionDao;
+
+    /**
+     * This is a strange class, only needed for accurate type-checking of cache Values.
+     * Otherwise, the generic part of any Map would be subject to type erasure.
+     */
+    static class NotificationSubscriptionMap extends HashMap<Integer, NotificationSubscription> {
+        NotificationSubscriptionMap(Map<Integer, NotificationSubscription> map) {
+            super(map);
+        }
+    }
 
     /* --- NotificationSubscriptionDataService Implementation --- */
 
@@ -93,11 +99,6 @@ public class CachedNotificationSubscriptionDataService
         return CacheType.NOTIFICATION;
     }
 
-    @Override
-    protected Tuple<Class<String>, Class<Map<Integer, NotificationSubscription>>> getGenericClasses() {
-        return new Tuple<>(String.class, VALUE_CLASS);
-    }
-
     /** {@inheritDoc} */
     @Override
     public void evictContent(String s) {
@@ -121,7 +122,7 @@ public class CachedNotificationSubscriptionDataService
         Set<NotificationSubscription> subscriptionSet = subscriptionDao.getSubscriptions();
         Map<Integer, NotificationSubscription> subMap =
                 new HashMap<>(Maps.uniqueIndex(subscriptionSet, NotificationSubscription::getId));
-        cache.put(subCacheKey, subMap);
+        cache.put(subCacheKey, new NotificationSubscriptionMap(subMap));
         return subMap;
     }
 

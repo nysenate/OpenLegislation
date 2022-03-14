@@ -2,17 +2,17 @@ package gov.nysenate.openleg.spotchecks;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
-import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.spotcheck.view.MismatchContentTypeSummaryView;
 import gov.nysenate.openleg.api.spotcheck.view.MismatchStatusSummaryView;
 import gov.nysenate.openleg.api.spotcheck.view.MismatchTypeSummaryView;
 import gov.nysenate.openleg.api.spotcheck.view.MismatchView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.PaginatedList;
@@ -94,9 +94,9 @@ public class SpotCheckCtrl extends BaseCtrl
                 .withOrderBy(order)
                 .withMismatchTypes(type);
 
-        PaginatedList<DeNormSpotCheckMismatch> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
-        List<MismatchView> mismatchViews = new ArrayList<>();
-        for (DeNormSpotCheckMismatch mm : mismatches.getResults()) {
+        PaginatedList<DeNormSpotCheckMismatch<?>> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
+        List<MismatchView<?>> mismatchViews = new ArrayList<>();
+        for (DeNormSpotCheckMismatch<?> mm : mismatches.getResults()) {
             mismatchViews.add(new MismatchView(mm));
         }
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
@@ -432,7 +432,7 @@ public class SpotCheckCtrl extends BaseCtrl
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
         return parameters == null
                 ? EnumSet.allOf(SpotCheckRefType.class)
-                : Arrays.asList(parameters).stream()
+                : Arrays.stream(parameters)
                         .map(param -> getSpotcheckRefType(param, paramName))
                         .collect(Collectors.toSet());
     }

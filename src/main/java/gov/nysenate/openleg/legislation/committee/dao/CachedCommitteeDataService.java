@@ -10,7 +10,6 @@ import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
 import org.ehcache.config.EvictionAdvisor;
-import org.elasticsearch.common.collect.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +18,26 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
-public class CachedCommitteeDataService extends CachingService<CommitteeSessionId, List<Committee>> implements CommitteeDataService {
+public class CachedCommitteeDataService
+        extends CachingService<CommitteeSessionId, CachedCommitteeDataService.CommitteeList>
+        implements CommitteeDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
-    @SuppressWarnings("unchecked")
-    private static final Class<List<Committee>> VALUE_CLASS = (Class<List<Committee>>)
-            List.of(new Committee()).getClass();
     @Autowired
     private CommitteeDao committeeDao;
+
+    /**
+     * This is a strange class, only needed for accurate type-checking of cache Values.
+     * Otherwise, the generic part of any List would be subject to type erasure.
+     */
+    static class CommitteeList extends ArrayList<Committee> {
+        CommitteeList(Collection<Committee> list) {
+            super(list);
+        }
+    }
 
     /** --- Cache Management --- */
 
@@ -38,14 +47,9 @@ public class CachedCommitteeDataService extends CachingService<CommitteeSessionI
     }
 
     @Override
-    // A generic class that itself has a generic class requires special treatment.
-    protected Tuple<Class<CommitteeSessionId>, Class<List<Committee>>> getGenericClasses() {
-        return new Tuple<>(CommitteeSessionId.class, VALUE_CLASS);
-    }
-
-    @Override
-    protected EvictionAdvisor<CommitteeSessionId, List<Committee>> evictionAdvisor() {
-        return new CommitteeCacheEvictionPolicy();
+    protected EvictionAdvisor<CommitteeSessionId, CommitteeList> evictionAdvisor() {
+        return (key, value) -> key.getSession().equals(SessionYear.current()) &&
+                value.stream().anyMatch(Committee::isCurrent);
     }
 
     /** {@inheritDoc} */
@@ -132,17 +136,18 @@ public class CachedCommitteeDataService extends CachingService<CommitteeSessionI
     /** {@inheritDoc} */
     @Override
     public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId,
-                                               LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx {
-        if (committeeSessionId ==null)
-            throw new IllegalArgumentException("CommitteeSessionId cannot be null!");
+                                               LimitOffset limitOffset, SortOrder order)
+            throws CommitteeNotFoundEx {
 
+        if (committeeSessionId == null)
+            throw new IllegalArgumentException("CommitteeSessionId cannot be null!");
         List<Committee> committeeHistory = cache.get(committeeSessionId);
         if (committeeHistory != null)
             logger.debug("Committee cache hit for {}", committeeSessionId);
         else {
             try {
                 committeeHistory = committeeDao.getCommitteeHistory(committeeSessionId);
-                cache.put(committeeSessionId, committeeHistory);
+                cache.put(committeeSessionId, new CommitteeList(committeeHistory));
                 logger.debug("Added committee history {} to cache", committeeSessionId);
             }
             catch (EmptyResultDataAccessException ex){
@@ -179,7 +184,7 @@ public class CachedCommitteeDataService extends CachingService<CommitteeSessionI
 
         // Update the cache.
         List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
-        cache.put(committee.getSessionId(), committeeHistory);
+        cache.put(committee.getSessionId(), new CommitteeList(committeeHistory));
 
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }

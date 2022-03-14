@@ -10,14 +10,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class MismatchUtils {
+public final class MismatchUtils {
+
+    private MismatchUtils() {}
 
     /**
      * Updates the ignore status of the given reference.
      *
      * @param mismatch
      */
-    public static void updateIgnoreStatus(DeNormSpotCheckMismatch mismatch) {
+    public static void updateIgnoreStatus(DeNormSpotCheckMismatch<?> mismatch) {
         if (mismatch.getState() == MismatchState.CLOSED) {
             mismatch.setIgnoreStatus(ignoreStatusForClosed(mismatch));
         } else {
@@ -25,14 +27,14 @@ public class MismatchUtils {
         }
     }
 
-    private static SpotCheckMismatchIgnore ignoreStatusForClosed(DeNormSpotCheckMismatch mismatch) {
+    private static SpotCheckMismatchIgnore ignoreStatusForClosed(DeNormSpotCheckMismatch<?> mismatch) {
         if (mismatch.getIgnoreStatus() == SpotCheckMismatchIgnore.IGNORE_PERMANENTLY) {
             return SpotCheckMismatchIgnore.IGNORE_PERMANENTLY;
         }
         return SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
-    private static SpotCheckMismatchIgnore ignoreStatusForOpen(DeNormSpotCheckMismatch mismatch) {
+    private static SpotCheckMismatchIgnore ignoreStatusForOpen(DeNormSpotCheckMismatch<?> mismatch) {
         if (mismatch.getIgnoreStatus() == SpotCheckMismatchIgnore.IGNORE_ONCE) {
             return SpotCheckMismatchIgnore.NOT_IGNORED;
         }
@@ -48,13 +50,13 @@ public class MismatchUtils {
      * @param report             The report date time to set for any resolved mismatches.
      * @return A list of mismatches resolved by this report.
      */
-    public static List<DeNormSpotCheckMismatch> determineClosedMismatches(
-            Collection<DeNormSpotCheckMismatch> currentMismatches,
-            SpotCheckReport report) {
+    public static List<DeNormSpotCheckMismatch<?>> determineClosedMismatches(
+            Collection<DeNormSpotCheckMismatch<?>> currentMismatches,
+            SpotCheckReport<?> report) {
 
         Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
-        Set checkedKeys = report.getCheckedKeys();
-        Set observedMismatchKeys = report.getMismatchKeys();
+        Set<?> checkedKeys = report.getCheckedKeys();
+        Set<?> observedMismatchKeys = report.getMismatchKeys();
 
         return currentMismatches.stream()
                 .filter(m -> m.getState() != MismatchState.CLOSED)
@@ -73,8 +75,8 @@ public class MismatchUtils {
      * @param report
      * @return A copy of mm with fields updated to reflect it getting closed.
      */
-    private static DeNormSpotCheckMismatch closeMismatchWithReport(DeNormSpotCheckMismatch mm, SpotCheckReport report) {
-        DeNormSpotCheckMismatch closed = mm.copy();
+    private static DeNormSpotCheckMismatch<?> closeMismatchWithReport(DeNormSpotCheckMismatch<?> mm, SpotCheckReport<?> report) {
+        DeNormSpotCheckMismatch<?> closed = mm.copy();
         closed.setState(MismatchState.CLOSED);
         closed.setReportId(report.getId());
         closed.setReferenceId(new SpotCheckReferenceId(report.getReferenceType(), report.getReferenceDateTime()));
@@ -88,9 +90,9 @@ public class MismatchUtils {
      * Copies the firstSeenDateTime from the current mismatch to the report mismatches unless the report mismatch
      * is new or a regression, in which case the first seen date time is set to the observed date time.
      */
-    public static void updateFirstSeenDateTime(DeNormSpotCheckMismatch reportMismatch,
-                                               Optional<DeNormSpotCheckMismatch> savedMismatch) {
-        if (!savedMismatch.isPresent() || savedMismatch.get().getState() == MismatchState.CLOSED) {
+    public static void updateFirstSeenDateTime(DeNormSpotCheckMismatch<?> reportMismatch,
+                                               Optional<DeNormSpotCheckMismatch<?>> savedMismatch) {
+        if (savedMismatch.isEmpty() || savedMismatch.get().getState() == MismatchState.CLOSED) {
             reportMismatch.setFirstSeenDateTime(reportMismatch.getObservedDateTime());
         } else {
             reportMismatch.setFirstSeenDateTime(savedMismatch.get().getFirstSeenDateTime());

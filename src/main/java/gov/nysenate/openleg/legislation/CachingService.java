@@ -15,7 +15,6 @@ import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
-import org.elasticsearch.common.collect.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 @Service
@@ -44,14 +42,6 @@ public abstract class CachingService<Key, Value> {
 
     protected abstract CacheType cacheType();
 
-    // Some reflective code to get the Class objects of the current cache's Key and Value.
-    @SuppressWarnings("unchecked")
-    protected Tuple<Class<Key>, Class<Value>> getGenericClasses() {
-        Type[] types = ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments();
-        return new Tuple<>((Class<Key>)types[0], (Class<Value>)types[1]);
-    }
-
     @Nonnull
     public static CacheStatistics getStats(CacheType type) {
         return statisticsService.getCacheStatistics(type.name());
@@ -65,11 +55,15 @@ public abstract class CachingService<Key, Value> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @PostConstruct
     protected void init() {
         var type = cacheType();
-        var classes = getGenericClasses();
-        var currCache = cacheManager.getCache(type.name().toLowerCase(), classes.v1(), classes.v2());
+        var classes = ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments();
+        Class<Key> keyClass = (Class<Key>) classes[0];
+        Class<Value> valueClass = (Class<Value>) classes[1];
+        var currCache = cacheManager.getCache(type.name().toLowerCase(), keyClass, valueClass);
         if (currCache != null) {
             this.cache = currCache;
             return;
@@ -81,11 +75,11 @@ public abstract class CachingService<Key, Value> {
         var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder()
                 .heap(numUnits, type.isElementSize() ? EntryUnit.ENTRIES : MemoryUnit.MB);
         var config = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(classes.v1(), classes.v2(), resourcePoolsBuilder)
+                .newCacheConfigurationBuilder(keyClass, valueClass, resourcePoolsBuilder)
                 .withSizeOfMaxObjectGraph(type.isElementSize() ? 100000 : 5000)
                 .withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
-        this.cache = cacheManager.createCache(cacheType().name(), config);
+        this.cache = cacheManager.createCache(type.name(), config);
         eventBus.register(this);
     }
 
@@ -137,7 +131,7 @@ public abstract class CachingService<Key, Value> {
     /**
      * Pre-fetch a subset of currently active data and store it in the cache.
      */
-    public abstract void warmCaches();
+    public void warmCaches() {}
 
     /**
      * If a CacheWarmEvent is sent out on the event bus, the caching service

@@ -18,9 +18,6 @@ public class ShiroCachingService extends CachingService<Object, Object> {
         return SHIRO;
     }
 
-    @Override
-    public void warmCaches() {}
-
     protected Cache<Object, Object> getEhcache() {
         return cache;
     }

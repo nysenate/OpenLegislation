@@ -17,8 +17,8 @@ public enum SearchIndex
     API_LOG("apilog", true)
     ;
 
-    String indexName;
-    boolean primaryStore = false;
+    private final String indexName;
+    private boolean primaryStore = false;
 
     SearchIndex(String indexName) {
         this.indexName = indexName;
