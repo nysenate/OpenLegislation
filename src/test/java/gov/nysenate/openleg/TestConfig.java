@@ -1,11 +1,7 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.config.CacheConfigurationIT;
-import gov.nysenate.openleg.config.CacheTester;
 import gov.nysenate.openleg.spotchecks.alert.calendar.MockCalendarAlertDao;
 import gov.nysenate.openleg.spotchecks.alert.calendar.dao.CalendarAlertDao;
-import org.ehcache.CacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,19 +16,11 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource("classpath:/test.app.properties")
 @Profile({"test"})
 public class TestConfig {
-    @Autowired
-    CacheManager cacheManager;
-
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
         PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
         pspc.setIgnoreUnresolvablePlaceholders(true);
         return pspc;
-    }
-
-    @Bean
-    public CacheTester cacheTester() {
-        return new CacheConfigurationIT.CacheTesterConfig(cacheManager);
     }
 
     @Bean
