@@ -5,9 +5,9 @@ import {
   useHistory
 } from "react-router-dom";
 import * as queryString from "query-string";
-import LawSearchForm from "app/views/laws/LawSearchForm";
-import LawChapterList from "app/views/laws/LawChapterList";
-import LawSearchResults from "app/views/laws/LawSearchResults";
+import LawSearchForm from "app/views/laws/search/LawSearchForm";
+import LawChapterList from "app/views/laws/search/LawChapterList";
+import LawSearchResults from "app/views/laws/search/LawSearchResults";
 import { PageParams } from "app/shared/Pagination";
 
 

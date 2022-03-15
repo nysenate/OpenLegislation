@@ -4,9 +4,9 @@ import {
   Switch,
   useLocation
 } from "react-router-dom";
-import LawSearch from "app/views/laws/LawSearch";
-import SpecifiedLaw from "app/views/laws/SpecifiedLaw";
-import LawUpdates from "app/views/laws/LawUpdates";
+import LawSearch from "app/views/laws/search/LawSearch";
+import ChapterView from "app/views/laws/chapter/ChapterView";
+import LawUpdates from "app/views/laws/updates/LawUpdates";
 import ContentContainer from "app/shared/ContentContainer";
 
 export default function Laws({ setHeaderText }) {
@@ -31,7 +31,7 @@ export default function Laws({ setHeaderText }) {
           <LawUpdates />
         </Route>
         <Route path="/laws/:lawId">
-          <SpecifiedLaw setHeaderText={setHeaderText} />
+          <ChapterView setHeaderText={setHeaderText} />
         </Route>
       </Switch>
     </ContentContainer>

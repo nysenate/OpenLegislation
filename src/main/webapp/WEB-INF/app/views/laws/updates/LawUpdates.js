@@ -5,8 +5,8 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import LawUpdatesSearchForm from "app/views/laws/LawUpdatesSearchForm";
-import LawUpdatesSearchResults from "app/views/laws/LawUpdatesSearchResults";
+import LawUpdatesSearchForm from "app/views/laws/updates/LawUpdatesSearchForm";
+import LawUpdatesSearchResults from "app/views/laws/updates/LawUpdatesSearchResults";
 import getLawUpdatesApi from "app/apis/getLawUpdatesApi";
 import { DateTime } from "luxon";
 

@@ -4,16 +4,17 @@ import {
   useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
+import Input from "app/shared/Input";
 
-export default function LawSearchForm({ searchTerm }) {
-  const [ term, setTerm ] = React.useState("")
+export default function ChapterSectionFilter({ setTerm }) {
+  const [ dirtyTerm, setDirtyTerm ] = React.useState("")
   const location = useLocation()
   const history = useHistory()
 
   // Update search fields when back/forward navigation is used.
   React.useEffect(() => {
     const params = queryString.parse(location.search)
-    setTerm(params.term || "")
+    setDirtyTerm(params.term || "")
   }, [ location ])
 
   // Updates the term query param when the form is submitted.
@@ -21,26 +22,21 @@ export default function LawSearchForm({ searchTerm }) {
     e.preventDefault()
     console.log(location)
     const params = queryString.parse(location.search)
-    params.term = term
-    searchTerm(term)
+    params.term = dirtyTerm
+    setTerm(dirtyTerm)
   }
 
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <div className="flex flex-wrap">
-          <div className="flex-grow mr-8">
-            <label htmlFor="specifiedlawsearch" className="label label--top">
-              Navigate by section number
-            </label>
-            <input onChange={(e) => setTerm(e.target.value)}
-                   value={term}
-                   tabIndex="1"
-                   name="specifiedlawsearch"
-                   type="text"
-                   className="input w-full"
-                   placeholder="e.g. 32.01" />
-          </div>
+        <div>
+          <Input label="Navigate by section number"
+                 value={dirtyTerm}
+                 onChange={(e) => setDirtyTerm(e.target.value)}
+                 placeholder="e.g. 32.01"
+                 name="specifiedlawsearch"
+                 tabIndex="1"
+                 className="w-full" />
         </div>
 
         <div className="flex justify-end">

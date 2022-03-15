@@ -7,10 +7,11 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import SpecifiedLawArticles from "app/views/laws/SpecifiedLawArticles";
-import SpecifiedLawSearchForm from "app/views/laws/SpecifiedLawSearchForm";
+import ArticleList from "app/views/laws/chapter/ArticleList";
+import ChapterSectionFilter from "app/views/laws/chapter/ChapterSectionFilter";
 
-export default function SpecifiedLaw({ setHeaderText }) {
+
+export default function ChapterView({ setHeaderText }) {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
   const [ loading, setLoading ] = React.useState(true)
   const [ term, setTerm ] = React.useState("*")
@@ -20,13 +21,11 @@ export default function SpecifiedLaw({ setHeaderText }) {
   const limit = 6
   const match = useRouteMatch()
 
+  console.log(response)
+
   React.useEffect(() => {
     getLaw(match.params.lawId)
   }, [])
-
-  React.useEffect(() => {
-
-  }, [ term ])
 
   const getLaw = (lawId) => {
     setLoading(true)
@@ -51,16 +50,15 @@ export default function SpecifiedLaw({ setHeaderText }) {
 
   return (
     <div className="p-3">
-      <SpecifiedLawSearchForm searchTerm={setTerm} />
+      <ChapterSectionFilter setTerm={setTerm} />
       {loading
         ? <LoadingIndicator />
-        : <SpecifiedLawArticles response={response}
-                                term={term}
-                                limit={limit}
-                                page={params.page}
-                                onPageChange={onPageChange} />
+        : <ArticleList articles={response.documents.documents.items}
+                       term={term}
+                       limit={limit}
+                       page={params.page}
+                       onPageChange={onPageChange} />
       }
     </div>
   )
-
 }
