@@ -13,10 +13,6 @@
 /* Custom css classes */
 @layer components {
 
-    .card {
-        @apply p-4 bg-white shadow;
-    }
-
     .h1 {
         @apply text-gray-700 text-4xl md:text-6xl lg:text-7xl;
     }

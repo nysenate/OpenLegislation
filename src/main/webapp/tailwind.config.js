@@ -1,4 +1,5 @@
 module.exports = {
+  mode: 'jit',
   purge: [
     './WEB-INF/app/**/*.js',
     './WEB-INF/app/**/*.html',

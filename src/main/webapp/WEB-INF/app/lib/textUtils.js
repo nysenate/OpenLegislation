@@ -4,6 +4,9 @@
  * @returns {string}
  */
 export function capitalize(text) {
+  if (!text) {
+    return ""
+  }
   const lowercase = text.toLowerCase()
   return lowercase.charAt(0).toUpperCase() + lowercase.slice(1)
 }
