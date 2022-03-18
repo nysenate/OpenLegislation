@@ -27,6 +27,28 @@ function BackToArticleLink({ article }) {
     : <div></div>
 }
 
+function NextArticleLink({ nextArticle }) {
+  return nextArticle
+    ? <NavigationLink label="Next Article"
+                      type="next"
+                      to={`/laws/${nextArticle.lawId}/${nextArticle.locationId}`} />
+    : <div></div>
+}
+
+function PrevArticleLink({ prevArticle }) {
+  return prevArticle
+    ? <NavigationLink label="Previous Article"
+                      type="prev"
+                      to={`/laws/${prevArticle.lawId}/${prevArticle.locationId}`} />
+    : <div></div>
+}
+
+function BackToChapterLink({ chapter }) {
+  return chapter
+    ? <NavigationLink label={`Back to Chapter ${chapter.lawId}`} type="up" to={`/laws/${chapter.lawId}`} />
+    : <div></div>
+}
+
 function NavigationLink({ label, type, to }) {
   let icon
   let containerClass = "flex"
@@ -59,4 +81,11 @@ function NavigationLink({ label, type, to }) {
   )
 }
 
-export { NextSectionLink, PrevSectionLink, BackToArticleLink }
+export {
+  NextSectionLink,
+  PrevSectionLink,
+  BackToArticleLink,
+  NextArticleLink,
+  PrevArticleLink,
+  BackToChapterLink,
+}

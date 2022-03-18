@@ -16,7 +16,7 @@ export default function SectionList({ sections = [], articleLocationId }) {
           <div className="w-24 lg:w-32 flex-none">
             § {section.locationId}
           </div>
-          <div>
+          <div className="text font-semibold">
             {section.title}
           </div>
         </div>
