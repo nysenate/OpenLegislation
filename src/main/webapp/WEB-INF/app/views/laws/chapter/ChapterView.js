@@ -4,9 +4,9 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import ArticleList from "app/views/laws/chapter/ArticleList";
+import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 import {
-  BackToLawSearchLink,
+  NavigationLink,
   Spacer
 } from "app/views/laws/chapter/NavigationLinks";
 import { FilePdf } from "phosphor-react";
@@ -48,7 +48,7 @@ export default function ChapterView({ setHeaderText }) {
         <a href={`/pdf/laws/${chapter.info.lawId}?full=true`} target="_blank">View full chapter text as PDF</a>
       </div>
 
-      <ArticleList articles={chapter.documents.documents.items} />
+      <LawNodeChildrenList nodes={chapter.documents.documents.items} />
     </section>
   )
 }
@@ -57,7 +57,7 @@ function NavigationLinks() {
   return (
     <div className="grid grid-cols-3">
       <Spacer />
-      <BackToLawSearchLink />
+      <NavigationLink label={"Back to Law Search"} type="up" to="/laws" />
       <Spacer />
     </div>
   )

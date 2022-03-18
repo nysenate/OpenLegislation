@@ -8,8 +8,8 @@ import LawSearch from "app/views/laws/search/LawSearch";
 import ChapterView from "app/views/laws/chapter/ChapterView";
 import LawUpdates from "app/views/laws/updates/LawUpdates";
 import ContentContainer from "app/shared/ContentContainer";
-import ArticleView from "app/views/laws/chapter/ArticleView";
-import SectionView from "app/views/laws/chapter/SectionView";
+import LawNodeView from "app/views/laws/chapter/LawNodeView";
+import LawLeafNodeView from "app/views/laws/chapter/LawLeafNodeView";
 
 export default function Laws({ setHeaderText }) {
   const location = useLocation()
@@ -35,11 +35,11 @@ export default function Laws({ setHeaderText }) {
         <Route exact path="/laws/:chapterId">
           <ChapterView setHeaderText={setHeaderText} />
         </Route>
-        <Route exact path="/laws/:chapterId/:articleId" >
-          <ArticleView />
+        <Route exact path="/laws/:chapterId/node/:locationId" >
+          <LawNodeView />
         </Route>
-        <Route exact path="/laws/:chapterId/:articleId/:sectionId" >
-          <SectionView />
+        <Route exact path="/laws/:chapterId/leaf/:locationId" >
+          <LawLeafNodeView />
         </Route>
       </Switch>
     </ContentContainer>
