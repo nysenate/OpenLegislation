@@ -10,13 +10,13 @@ import React from "react";
 function NextSectionLink({ chapterId, articleId, sectionId }) {
   return sectionId
     ? <NavigationLink label="Next Section" type="next" to={`/laws/${chapterId}/${articleId}/${sectionId}`} />
-    : <div></div>
+    : <Spacer />
 }
 
 function PrevSectionLink({ chapterId, articleId, sectionId }) {
   return sectionId
     ? <NavigationLink label="Previous Section" type="prev" to={`/laws/${chapterId}/${articleId}/${sectionId}`} />
-    : <div></div>
+    : <Spacer />
 }
 
 function BackToArticleLink({ article }) {
@@ -24,7 +24,7 @@ function BackToArticleLink({ article }) {
     ? <NavigationLink label={`Back to Article ${article.locationId}`}
                       type="up"
                       to={`/laws/${article.lawId}/${article.locationId}`} />
-    : <div></div>
+    : <Spacer />
 }
 
 function NextArticleLink({ nextArticle }) {
@@ -32,7 +32,7 @@ function NextArticleLink({ nextArticle }) {
     ? <NavigationLink label="Next Article"
                       type="next"
                       to={`/laws/${nextArticle.lawId}/${nextArticle.locationId}`} />
-    : <div></div>
+    : <Spacer />
 }
 
 function PrevArticleLink({ prevArticle }) {
@@ -40,13 +40,21 @@ function PrevArticleLink({ prevArticle }) {
     ? <NavigationLink label="Previous Article"
                       type="prev"
                       to={`/laws/${prevArticle.lawId}/${prevArticle.locationId}`} />
-    : <div></div>
+    : <Spacer />
 }
 
 function BackToChapterLink({ chapter }) {
   return chapter
     ? <NavigationLink label={`Back to Chapter ${chapter.lawId}`} type="up" to={`/laws/${chapter.lawId}`} />
-    : <div></div>
+    : <Spacer />
+}
+
+function BackToLawSearchLink() {
+  return <NavigationLink label={"Back to Law Search"} type="up" to="/laws" />
+}
+
+function Spacer() {
+  return <div />
 }
 
 function NavigationLink({ label, type, to }) {
@@ -88,4 +96,6 @@ export {
   NextArticleLink,
   PrevArticleLink,
   BackToChapterLink,
+  BackToLawSearchLink,
+  Spacer,
 }

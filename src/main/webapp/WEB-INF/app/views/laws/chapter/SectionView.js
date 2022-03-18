@@ -36,7 +36,7 @@ export default function SectionView() {
       <header className="text-center">
         <NavigationBar section={section} match={match} />
         <hr className="my-3" />
-        <h3 className="h3 mt-6">{section.lawName}</h3>
+        <h3 className="h3">{section.lawName}</h3>
         <h4 className="h4">{capitalize(section.docType)} {section.locationId}</h4>
         <h4 className="h5">{section.title}</h4>
       </header>

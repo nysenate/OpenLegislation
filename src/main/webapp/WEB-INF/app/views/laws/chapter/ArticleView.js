@@ -38,7 +38,7 @@ export default function ArticleView() {
       <header className="text-center">
         <NavigationBar article={article} />
         <hr className="my-3" />
-        <h3 className="h3 mt-6">{article.lawName}</h3>
+        <h3 className="h3">{article.lawName}</h3>
         <h4 className="h4">{capitalize(article.docType)} {article.docLevelId}</h4>
         <h4 className="h5">{article.title}</h4>
       </header>
