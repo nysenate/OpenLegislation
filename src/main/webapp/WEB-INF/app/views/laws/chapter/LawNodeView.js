@@ -10,18 +10,22 @@ import { FilePdf } from "phosphor-react";
 import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 
 
-export default function LawNodeView() {
+export default function LawNodeView({ setHeaderText }) {
   const match = useRouteMatch()
   const [ nodeTree, setNodeTree ] = React.useState()
   const [ node, setNode ] = React.useState()
 
   React.useEffect(() => {
-    getLawsApi(match.params.chapterId, null, {fromLocation: match.params.locationId})
+    getLawsApi(match.params.chapterId, null, { fromLocation: match.params.locationId })
       .then(response => setNodeTree(response.documents))
 
     getLawsApi(match.params.chapterId, match.params.locationId)
       .then(response => setNode(response))
   }, [ match ])
+
+  React.useEffect(() => {
+    setHeaderText(node?.lawName || "")
+  }, [ node ])
 
   if (!node || !nodeTree) {
     return null
@@ -50,7 +54,7 @@ export default function LawNodeView() {
 }
 
 function NodeNavigationBar({ node }) {
-  const [parent] = node.parents.slice(-1)
+  const [ parent ] = node.parents.slice(-1)
   const parentTo = parent.docType === "CHAPTER"
     ? `/laws/${node.lawId}`
     : `/laws/${node.lawId}/node/${parent.locationId}`

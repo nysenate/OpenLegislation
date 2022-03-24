@@ -18,13 +18,16 @@ export default function ChapterView({ setHeaderText }) {
   const [ isLoading, setIsLoading ] = React.useState(true)
 
   React.useEffect(() => {
-    setHeaderText(match.params.chapterId)
     setIsLoading(true)
     getLawsApi(match.params.chapterId, null)
       .then(response => setChapter(response))
       .catch(error => console.warn(`${error}`))
       .finally(() => setIsLoading(false))
   }, [ match ])
+
+  React.useEffect(() => {
+    setHeaderText(chapter?.info?.name || "")
+  }, [ chapter ])
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -39,11 +42,7 @@ export default function ChapterView({ setHeaderText }) {
         <div className="text mt-1">{chapter.info.lawType} | Chapter {chapter.info.chapter}</div>
       </header>
 
-      <div className="my-5 bg-gray-300">
-        Search Form stub
-      </div>
-
-      <div className="my-3 flex items-center">
+      <div className="my-5 flex items-center">
         <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
         <a href={`/pdf/laws/${chapter.info.lawId}?full=true`} target="_blank">View full chapter text as PDF</a>
       </div>

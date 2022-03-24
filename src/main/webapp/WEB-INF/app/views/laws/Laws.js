@@ -35,11 +35,11 @@ export default function Laws({ setHeaderText }) {
         <Route exact path="/laws/:chapterId">
           <ChapterView setHeaderText={setHeaderText} />
         </Route>
-        <Route exact path="/laws/:chapterId/node/:locationId" >
-          <LawNodeView />
+        <Route exact path="/laws/:chapterId/node/:locationId">
+          <LawNodeView setHeaderText={setHeaderText} />
         </Route>
-        <Route exact path="/laws/:chapterId/leaf/:locationId" >
-          <LawLeafNodeView />
+        <Route exact path="/laws/:chapterId/leaf/:locationId">
+          <LawLeafNodeView setHeaderText={setHeaderText} />
         </Route>
       </Switch>
     </ContentContainer>

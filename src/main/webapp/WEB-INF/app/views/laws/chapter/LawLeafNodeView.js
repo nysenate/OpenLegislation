@@ -9,10 +9,7 @@ import {
   FilePdf
 } from "phosphor-react";
 import {
-  BackToArticleLink,
   NavigationLink,
-  NextSectionLink,
-  PrevSectionLink,
   Spacer
 } from "app/views/laws/chapter/NavigationLinks";
 
@@ -20,7 +17,7 @@ import {
 /**
  * Displays the text for a leaf node of a law document tree.
  */
-export default function LawLeafNodeView() {
+export default function LawLeafNodeView({ setHeaderText }) {
   const match = useRouteMatch()
   const [ leafNode, setLeafNode ] = React.useState()
 
@@ -31,6 +28,10 @@ export default function LawLeafNodeView() {
         setLeafNode(response)
       })
   }, [ match ])
+
+  React.useEffect(() => {
+    setHeaderText(leafNode?.lawName || "")
+  }, [leafNode])
 
   if (!leafNode) {
     return null
@@ -64,7 +65,7 @@ export default function LawLeafNodeView() {
 }
 
 function LeafNavigationBar({ node }) {
-  const [parent] = node.parents.slice(-1)
+  const [ parent ] = node.parents.slice(-1)
   const parentTo = parent.docType === "CHAPTER"
     ? `/laws/${node.lawId}`
     : `/laws/${node.lawId}/node/${parent.locationId}`
