@@ -7,11 +7,11 @@ import {
 
 export default function Accordion({ title, children, startOpen = false, type = "default" }) {
   return (
-    <CoreAccordion title={title} children={children} startOpen={startOpen} type={type}/>
+    <CoreAccordion title={title} children={children} startOpen={startOpen} type={type} />
   )
 }
 
-function CoreAccordion({ title, children, startOpen = false, type = "default"}) {
+function CoreAccordion({ title, children, startOpen = false, type = "default" }) {
   const [ isOpen, setIsOpen ] = React.useState(startOpen);
   let headerClass = "flex justify-between items-center p-3 cursor-pointer hover:bg-gray-100";
   headerClass += isOpen ? " bg-gray-100" : ""
@@ -22,9 +22,11 @@ function CoreAccordion({ title, children, startOpen = false, type = "default"}) 
       headerClass += " rounded"
       containerClass += " rounded border-1 border-gray-300"
       break
-    case "laws": // named laws for lack of a better name. Used for law articles and sections. Has a thick left border when opened.
-      containerClass += isOpen ? " border-l-4 border-blue-400" : " border-l-4 border-transparent"
-      break
+    // Other accordion styles can be created in types here.
+    // This "laws" accordion has a thick blue left border to help highlight the accordion data. It's not used anymore.
+    // case "laws":
+    //   containerClass += isOpen ? " border-l-4 border-blue-400" : " border-l-4 border-transparent"
+    //   break
   }
 
   return (
@@ -36,8 +38,8 @@ function CoreAccordion({ title, children, startOpen = false, type = "default"}) 
         </span>
         <div>
           {isOpen
-            ? <CaretUp size="1.25rem" weight="bold" className="text-blue-600"/>
-            : <CaretDown size="1.25rem" weight="bold"/>
+            ? <CaretUp size="1.25rem" weight="bold" className="text-blue-600" />
+            : <CaretDown size="1.25rem" weight="bold" />
           }
         </div>
       </div>
