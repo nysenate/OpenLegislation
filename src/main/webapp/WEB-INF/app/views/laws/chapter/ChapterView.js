@@ -6,15 +6,14 @@ import {
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 import {
-  NavigationLink,
-  Spacer
+  LawNavigationBar,
 } from "app/views/laws/chapter/NavigationLinks";
 import { FilePdf } from "phosphor-react";
 
 
 export default function ChapterView({ setHeaderText }) {
   const match = useRouteMatch()
-  const [ chapter, setChapter ] = React.useState({})
+  const [ chapter, setChapter ] = React.useState()
   const [ isLoading, setIsLoading ] = React.useState(true)
 
   React.useEffect(() => {
@@ -36,7 +35,7 @@ export default function ChapterView({ setHeaderText }) {
   return (
     <section className="p-3">
       <header className="text-center">
-        <NavigationLinks />
+        <LawNavigationBar node={chapter} docType={chapter.documents.docType} />
         <hr className="my-3" />
         <h3 className="h3">{chapter.info.name}</h3>
         <div className="text mt-1">{chapter.info.lawType} | Chapter {chapter.info.chapter}</div>
@@ -49,15 +48,5 @@ export default function ChapterView({ setHeaderText }) {
 
       <LawNodeChildrenList nodes={chapter.documents.documents.items} />
     </section>
-  )
-}
-
-function NavigationLinks() {
-  return (
-    <div className="grid grid-cols-3">
-      <Spacer />
-      <NavigationLink label={"Back to Law Search"} type="up" to="/laws" />
-      <Spacer />
-    </div>
   )
 }

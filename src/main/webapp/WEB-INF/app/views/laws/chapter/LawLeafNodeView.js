@@ -9,8 +9,7 @@ import {
   FilePdf
 } from "phosphor-react";
 import {
-  NavigationLink,
-  Spacer
+  LawNavigationBar,
 } from "app/views/laws/chapter/NavigationLinks";
 
 
@@ -40,7 +39,7 @@ export default function LawLeafNodeView({ setHeaderText }) {
   return (
     <section className="p-3">
       <header className="text-center">
-        <LeafNavigationBar node={leafNode} />
+        <LawNavigationBar node={leafNode} docType={leafNode.docType} />
         <hr className="my-3" />
         <h3 className="h3">{leafNode.lawName}</h3>
         <h4 className="h4">{capitalize(leafNode.docType)} {leafNode.locationId}</h4>
@@ -61,34 +60,5 @@ export default function LawLeafNodeView({ setHeaderText }) {
         </div>
       </div>
     </section>
-  )
-}
-
-function LeafNavigationBar({ node }) {
-  const [ parent ] = node.parents.slice(-1)
-  const parentTo = parent.docType === "CHAPTER"
-    ? `/laws/${node.lawId}`
-    : `/laws/${node.lawId}/node/${parent.locationId}`
-  return (
-    <div className="grid grid-cols-3">
-      {node.prevSibling
-        ? <NavigationLink type="prev"
-                          label={`Previous ${capitalize(node.prevSibling.docType)}`}
-                          to={`/laws/${node.lawId}/leaf/${node.prevSibling.locationId}`} />
-        : <Spacer />
-      }
-      {parent
-        ? <NavigationLink type="up"
-                          label={`Back to ${capitalize(parent.docType)}`}
-                          to={parentTo} />
-        : <Spacer />
-      }
-      {node.nextSibling
-        ? <NavigationLink type="next"
-                          label={`Next ${capitalize(node.nextSibling.docType)}`}
-                          to={`/laws/${node.lawId}/leaf/${node.nextSibling.locationId}`} />
-        : <Spacer />
-      }
-    </div>
   )
 }

@@ -3,8 +3,7 @@ import { useRouteMatch } from "react-router-dom";
 import getLawsApi from "app/apis/getLawsApi";
 import { capitalize } from "app/lib/textUtils";
 import {
-  NavigationLink,
-  Spacer
+  LawNavigationBar,
 } from "app/views/laws/chapter/NavigationLinks";
 import { FilePdf } from "phosphor-react";
 import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
@@ -34,7 +33,7 @@ export default function LawNodeView({ setHeaderText }) {
   return (
     <section className="p-3">
       <header className="text-center">
-        <NodeNavigationBar node={node} />
+        <LawNavigationBar node={node} docType={node.docType} />
         <hr className="my-3" />
         <h3 className="h3">{node.lawName}</h3>
         <h4 className="h4">{capitalize(node.docType)} {node.docLevelId}</h4>
@@ -52,33 +51,3 @@ export default function LawNodeView({ setHeaderText }) {
     </section>
   )
 }
-
-function NodeNavigationBar({ node }) {
-  const [ parent ] = node.parents.slice(-1)
-  const parentTo = parent.docType === "CHAPTER"
-    ? `/laws/${node.lawId}`
-    : `/laws/${node.lawId}/node/${parent.locationId}`
-  return (
-    <div className="grid grid-cols-3">
-      {node.prevSibling
-        ? <NavigationLink type="prev"
-                          label={`Previous ${capitalize(node.prevSibling.docType)}`}
-                          to={`/laws/${node.lawId}/node/${node.prevSibling.locationId}`} />
-        : <Spacer />
-      }
-      {parent
-        ? <NavigationLink type="up"
-                          label={`Back to ${capitalize(parent.docType)}`}
-                          to={parentTo} />
-        : <Spacer />
-      }
-      {node.nextSibling
-        ? <NavigationLink type="next"
-                          label={`Next ${capitalize(node.nextSibling.docType)}`}
-                          to={`/laws/${node.lawId}/node/${node.nextSibling.locationId}`} />
-        : <Spacer />
-      }
-    </div>
-  )
-}
-

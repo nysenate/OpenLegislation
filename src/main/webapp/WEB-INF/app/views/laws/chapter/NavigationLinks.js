@@ -5,7 +5,77 @@ import {
 } from "phosphor-react";
 import { Link } from "react-router-dom";
 import React from "react";
+import { capitalize } from "app/lib/textUtils";
 
+
+function LawNavigationBar({ node, docType }) {
+  if (!node) {
+    return null
+  }
+
+  // The node.parents array contains all parents including grandparents, etc.
+  // The last element in the parents array is this node's parent.
+  const [ parent ] = node.parents?.slice(-1) || []
+  let prevLink
+  let parentLink
+  let nextLink
+
+  switch (docType) {
+    case "CHAPTER":
+      parentLink = <NavigationLink type="up"
+                                   label="Back to Law Search"
+                                   to="/laws" />
+      break
+    case "SECTION":
+      node.prevSibling
+        ? prevLink = <NavigationLink type="prev"
+                                     label={`Previous ${capitalize(node.prevSibling.docType)}`}
+                                     to={`/laws/${node.lawId}/leaf/${node.prevSibling.locationId}`} />
+        : <Spacer />
+
+      parent
+        ? parentLink = <NavigationLink type="up"
+                                       label={`Back to ${capitalize(parent.docType)}`}
+                                       to={`/laws/${node.lawId}/node/${parent.locationId}`} />
+        : <Spacer />
+
+      node.nextSibling
+        ? nextLink = <NavigationLink type="next"
+                                     label={`Next ${capitalize(node.nextSibling.docType)}`}
+                                     to={`/laws/${node.lawId}/leaf/${node.nextSibling.locationId}`} />
+        : <Spacer />
+      break
+    default: // Articles, Titles, etc
+      node.prevSibling
+        ? prevLink = <NavigationLink type="prev"
+                                     label={`Previous ${capitalize(node.prevSibling.docType)}`}
+                                     to={`/laws/${node.lawId}/node/${node.prevSibling.locationId}`} />
+        : <Spacer />
+
+      parent
+        ? parentLink = <NavigationLink type="up"
+                                       label={`Back to ${capitalize(parent.docType)}`}
+                                       to={parent.docType === "CHAPTER"
+                                         ? `/laws/${parent.lawId}`
+                                         : `/laws/${parent.lawId}/node/${parent.locationId}`} />
+        : <Spacer />
+
+      node.nextSibling
+        ? nextLink = <NavigationLink type="next"
+                                     label={`Next ${capitalize(node.nextSibling.docType)}`}
+                                     to={`/laws/${node.lawId}/node/${node.nextSibling.locationId}`} />
+        : <Spacer />
+      break
+  }
+
+  return (
+    <div className="grid grid-cols-3">
+      {prevLink || <Spacer />}
+      {parentLink || <Spacer />}
+      {nextLink || <Spacer />}
+    </div>
+  )
+}
 
 function Spacer() {
   return <div />
@@ -48,6 +118,5 @@ function NavigationLink({ label, type, to }) {
 }
 
 export {
-  NavigationLink,
-  Spacer,
+  LawNavigationBar,
 }
