@@ -57,7 +57,7 @@ function ResultItem({ result }) {
   const highlights = result.highlights?.text?.map((text) => text.replace(/\\n/gm, "\n"))
   return (
     <div className="my-4">
-      <Link to={`/laws/${result.result.lawId}?location=${result.result.locationId}`}
+      <Link to={resultLinkTo(result)}
             key={result.result.lawId + result.result.docLevelId}>
         <div className="p-3 flex flex-wrap hover:bg-gray-200 hover:pointer rounded">
           <div className="w-full lg:w-3/12 mr-5 mb-1">
@@ -75,4 +75,15 @@ function ResultItem({ result }) {
       </Link>
     </div>
   )
+}
+
+const resultLinkTo = result => {
+  switch (result.result.docType) {
+    case "CHAPTER":
+      return `/laws/${result.result.lawId}`
+    case "SECTION":
+      return `/laws/${result.result.lawId}/leaf/${result.result.locationId}`
+    default:
+      return `/laws/${result.result.lawId}/node/${result.result.locationId}`
+  }
 }
