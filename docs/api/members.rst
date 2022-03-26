@@ -29,39 +29,40 @@ Get member with id 371 during 2013 session year.
 
 .. code-block:: javascript
 
-    {
-        "success" : true,
-        "message" : "",
-        "responseType" : "member-sessions",
-        "result" : {
-        "memberId" : 371,
-        "chamber" : "SENATE",
-        "incumbent" : true,
+  {
+    "success" : true,
+    "message" : "",
+    "responseType" : "member-sessions",
+    "result" : {
+      "memberId" : 371,
+      "chamber" : "SENATE",
+      "incumbent" : true,
+      "fullName" : "James L. Seward",
+      "shortName" : "SEWARD",
+      "sessionShortNameMap" : {
+        "2013" : [ {
+          "sessionMemberId" : 127,
+          "shortName" : "SEWARD",
+          "sessionYear" : 2013,
+          "districtCode" : 51,
+          "alternate" : false,
+          "memberId" : 371
+        } ]
+      },
+      "person" : {
+        "personId" : 190,
         "fullName" : "James L. Seward",
-        "shortName" : "SEWARD",
-        "sessionShortNameMap" : {
-          "2013" : [ {
-            "sessionMemberId" : 127,
-            "shortName" : "SEWARD",
-            "sessionYear" : 2013,
-            "districtCode" : 51,
-            "alternate" : false,
-            "memberId" : 371
-          } ]
-        },
-        "person" : {
-          "personId" : 190,
-          "fullName" : "James L. Seward",
-          "firstName" : "James",
-          "middleName" : "L.",
-          "lastName" : "Seward",
-          "email" : "seward@senate.state.ny.us",
-          "prefix" : "Senator",
-          "suffix" : null,
-          "verified" : true,
-          "imgName" : "371_james_l._seward.jpg"
-        }
+        "firstName" : "James",
+        "middleName" : "L.",
+        "lastName" : "Seward",
+        "email" : "seward@senate.state.ny.us",
+        "prefix" : "Senator",
+        "suffix" : null,
+        "verified" : true,
+        "imgName" : "371_james_l._seward.jpg"
+      }
     }
+  }
 
 
 Get a list of members
