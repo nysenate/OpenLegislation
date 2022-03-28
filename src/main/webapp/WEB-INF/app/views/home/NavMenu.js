@@ -255,7 +255,8 @@ const navCategories = [
         <NavChild name="Configuration" to="/admin/config" />
         <NavChild name="Caches" to="/admin/caches" />
         <NavChild name="Indices" to="/admin/indices" />
-        <NavChild name="Logs" to="/admin/logs" />
+        <NavChild name="Logs" to="/admin/logs/monitor" />
+        <NavChild name="Data Process Logs" to="/admin/logs/dataprocess" />
       </React.Fragment>
     ),
     adminOnly: true

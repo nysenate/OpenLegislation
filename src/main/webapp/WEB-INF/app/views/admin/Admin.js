@@ -10,6 +10,7 @@ import ContentContainer from "app/shared/ContentContainer";
 import Caches from "app/views/admin/caches/Caches";
 import Indices from "app/views/admin/indices/Indices";
 import ApiMonitor from "app/views/admin/logs/ApiMonitor";
+import DataProcessLog from "app/views/admin/logs/DataProcessLog";
 
 export default function Admin({ setHeaderText }) {
 
@@ -25,8 +26,11 @@ export default function Admin({ setHeaderText }) {
         <PrivateRoute path="/admin/indices">
           <Indices setHeaderText={setHeaderText} />
         </PrivateRoute>
-        <PrivateRoute path="/admin/logs">
+        <PrivateRoute path="/admin/logs/monitor">
           <ApiMonitor setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/logs/dataprocess">
+          <DataProcessLog setHeaderText={setHeaderText} />
         </PrivateRoute>
         <Route path="/admin">
           <AdminLogin setHeaderText={setHeaderText} />
