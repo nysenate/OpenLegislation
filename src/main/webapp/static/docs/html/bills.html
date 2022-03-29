@@ -187,10 +187,8 @@
 <div class="section" id="get-a-single-bill">
 <h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve bill by session year and print no</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>Retrieve bill by session year and print no
+::(GET) /api/3/bills/{sessionYear}/{printNo}</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -253,233 +251,215 @@ Multiple formats can be requested.</p></td>
 the base print no (e.g. S1234).</p>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request bill S2180 of session year 2013</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S2180</span>
-</pre></div>
-</div>
-<p>Request summary of bill A450 of session year 2013</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013/A450?view=info
-</pre></div>
-</div>
+<p>Request bill S2180 of session year 2013
+::/api/3/bills/2013/S2180</p>
+<p>Request summary of bill A450 of session year 2013
+::/api/3/bills/2013/A450?view=info</p>
 <p id="bill-response"><strong>Response</strong></p>
 <p>Default Bill Response</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-   <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                            <span class="c1">// Indicates if bill was found</span>
-   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Data for bill S2180-2013&quot;</span><span class="p">,</span>      <span class="c1">// Response description</span>
-   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;bill&quot;</span><span class="p">,</span>                     <span class="c1">// Response data type</span>
-   <span class="s2">&quot;result&quot;</span><span class="o">:</span>
-   <span class="p">{</span>                                           <span class="c1">// Actual data of bill contained in &#39;result&#39;</span>
-   <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                     <span class="c1">// Print no of bill (not including amendment version)</span>
-   <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                            <span class="c1">// Session year bill is active in</span>
-   <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                         <span class="c1">// Print no of bill (may include amendment version)</span>
-   <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
-     <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                      <span class="c1">// Which chamber the bill was introduced (SENATE or ASSEMBLY)</span>
-     <span class="s2">&quot;desc&quot;</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>                         <span class="c1">// Type of bill</span>
-     <span class="s2">&quot;resolution&quot;</span><span class="o">:</span> <span class="kc">false</span>                       <span class="c1">// True if this is a resolution</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Provides enhanced..&quot;</span><span class="p">,</span>             <span class="c1">// Title of the bill</span>
-   <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Current amendment version (&quot;&quot; for initial version)</span>
-   <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                               <span class="c1">// Year the bill was introduced on</span>
-   <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-14T10:36:22&quot;</span><span class="p">,</span> <span class="c1">// Date/Time this bill was first published via LBDC</span>
-   <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If the bill was substituted, the bill id will be contained</span>
-     <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                   <span class="c1">// The base print no of the substituted bill</span>
-     <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span>                           <span class="c1">// Session year of the substituted bill</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>                                <span class="c1">// Contains sponsor information</span>
-     <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Contains sponsor member details (can be null)</span>
-       <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">422</span><span class="p">,</span>                        <span class="c1">// Id of the sponsor</span>
-       <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;GOLDEN&quot;</span><span class="p">,</span>                  <span class="c1">// Last name of sponsor (unique within a session year)</span>
-       <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                    <span class="c1">// Session year this sponsor was active in</span>
-       <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Martin J. Golden&quot;</span><span class="p">,</span>         <span class="c1">// Full name of sponsor</span>
-       <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">22</span>                      <span class="c1">// Legislative district code of this sponsor</span>
-     <span class="p">},</span>
-     <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                          <span class="c1">// True if this is a budget bill</span>
-     <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>                            <span class="c1">// True if this bill was sponsored by the rules committee</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Provides enhanced sentence...&quot;</span><span class="p">,</span> <span class="c1">// Summary of the bill</span>
-   <span class="s2">&quot;signed&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                            <span class="c1">// True if this bill has been signed or adopted (if its a resolution)</span>
-   <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="p">{</span>                                 <span class="c1">// Status Information of the bill</span>
-     <span class="s2">&quot;statusType&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span><span class="p">,</span>           <span class="c1">// Status Code</span>
-     <span class="s2">&quot;statusDesc&quot;</span><span class="o">:</span> <span class="s2">&quot;In Senate Committee&quot;</span><span class="p">,</span>      <span class="c1">// Description of status code</span>
-     <span class="s2">&quot;actionDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>               <span class="c1">// Date when this status was updated</span>
-     <span class="s2">&quot;committeeName&quot;</span><span class="o">:</span> <span class="s2">&quot;RULES&quot;</span><span class="p">,</span>                 <span class="c1">// If the bill is in a committee, the committee name is shown here</span>
-     <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span>                         <span class="c1">// If the bill is on the floor, the calendar number of the bill is shown here.</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;milestones&quot;</span><span class="o">:</span> <span class="p">{</span>                             <span class="c1">// The milestones list contains a list of statuses (same structure</span>
-     <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                                <span class="c1">// as the &#39;status&#39; object above.</span>
-       <span class="p">{</span>
-         <span class="s2">&quot;statusType&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;statusDesc&quot;</span><span class="o">:</span> <span class="s2">&quot;In Senate Committee&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;actionDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;committeeName&quot;</span><span class="o">:</span> <span class="s2">&quot;RULES&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span>
-       <span class="p">}</span>
-     <span class="p">],</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;programInfo&quot;</span><span class="o">:</span> <span class="p">{</span>                            <span class="c1">// Some bills are introduced as part of a program by the governor or an agency</span>
-     <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Department of Motor Vehicles&quot;</span><span class="p">,</span>   <span class="c1">// The name of the program/agency</span>
-     <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">2</span>                           <span class="c1">// The position of this bill within that program/agency list</span>
-   <span class="p">},</span>
-   <span class="c1">// ---- Bill summary view ends here --- //</span>
-   <span class="s2">&quot;amendments&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// Contains info specific to an amendment (base version is &quot;&quot;)</span>
-     <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
-       <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="p">{</span>                                   <span class="c1">// Map of Amendment versions</span>
-         <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>               <span class="c1">// Bill print no/session details duplicated here</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-         <span class="s2">&quot;basePrintNoStr&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180-2013&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Amendment version</span>
-         <span class="s2">&quot;publishDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-14&quot;</span><span class="p">,</span>          <span class="c1">// Date this amendment was published</span>
-         <span class="s2">&quot;sameAs&quot;</span><span class="o">:</span> <span class="p">{</span>                           <span class="c1">// List of bill that are identical to this within the same session year</span>
+  <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                              <span class="c1">// Indicates if bill was found</span>
+  <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Data for bill S2180-2013&quot;</span><span class="p">,</span>        <span class="c1">// Response description</span>
+  <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;bill&quot;</span><span class="p">,</span>                       <span class="c1">// Response data type</span>
+  <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>                                   <span class="c1">// Actual data of bill contained in &#39;result&#39;</span>
+    <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                     <span class="c1">// Print no of bill (not including amendment version)</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                            <span class="c1">// Session year bill is active in</span>
+    <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>                         <span class="c1">// Print no of bill (may include amendment version)</span>
+    <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                      <span class="c1">// Which chamber the bill was introduced (SENATE or ASSEMBLY)</span>
+      <span class="s2">&quot;desc&quot;</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>                         <span class="c1">// Type of bill</span>
+      <span class="s2">&quot;resolution&quot;</span><span class="o">:</span> <span class="kc">false</span>                       <span class="c1">// True if this is a resolution</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Provides enhanced..&quot;</span><span class="p">,</span>             <span class="c1">// Title of the bill</span>
+    <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Current amendment version (&quot;&quot; for initial version)</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                               <span class="c1">// Year the bill was introduced on</span>
+    <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-14T10:36:22&quot;</span><span class="p">,</span> <span class="c1">// Date/Time this bill was first published via LBDC</span>
+    <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If the bill was substituted, the bill id will be contained</span>
+      <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                   <span class="c1">// The base print no of the substituted bill</span>
+      <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span>                           <span class="c1">// Session year of the substituted bill</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>                                <span class="c1">// Contains sponsor information</span>
+      <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Contains sponsor member details (can be null)</span>
+        <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">422</span><span class="p">,</span>                        <span class="c1">// Id of the sponsor</span>
+        <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;GOLDEN&quot;</span><span class="p">,</span>                  <span class="c1">// Last name of sponsor (unique within a session year)</span>
+        <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                    <span class="c1">// Session year this sponsor was active in</span>
+        <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Martin J. Golden&quot;</span><span class="p">,</span>         <span class="c1">// Full name of sponsor</span>
+        <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">22</span>                      <span class="c1">// Legislative district code of this sponsor</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                          <span class="c1">// True if this is a budget bill</span>
+      <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>                            <span class="c1">// True if this bill was sponsored by the rules committee</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Provides enhanced sentence...&quot;</span><span class="p">,</span> <span class="c1">// Summary of the bill</span>
+    <span class="s2">&quot;signed&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                            <span class="c1">// True if this bill has been signed or adopted (if its a resolution)</span>
+    <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="p">{</span>                                 <span class="c1">// Status Information of the bill</span>
+      <span class="s2">&quot;statusType&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span><span class="p">,</span>           <span class="c1">// Status Code</span>
+      <span class="s2">&quot;statusDesc&quot;</span><span class="o">:</span> <span class="s2">&quot;In Senate Committee&quot;</span><span class="p">,</span>      <span class="c1">// Description of status code</span>
+      <span class="s2">&quot;actionDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>               <span class="c1">// Date when this status was updated</span>
+      <span class="s2">&quot;committeeName&quot;</span><span class="o">:</span> <span class="s2">&quot;RULES&quot;</span><span class="p">,</span>                 <span class="c1">// If the bill is in a committee, the committee name is shown here</span>
+      <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span>                         <span class="c1">// If the bill is on the floor, the calendar number of the bill is shown here.</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;milestones&quot;</span><span class="o">:</span> <span class="p">{</span>                             <span class="c1">// The milestones list contains a list of statuses (same structure</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>                               <span class="c1">// as the &#39;status&#39; object above.</span>
+        <span class="s2">&quot;statusType&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;statusDesc&quot;</span><span class="o">:</span> <span class="s2">&quot;In Senate Committee&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;actionDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;committeeName&quot;</span><span class="o">:</span> <span class="s2">&quot;RULES&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span>
+      <span class="p">}],</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;programInfo&quot;</span><span class="o">:</span> <span class="p">{</span>                            <span class="c1">// Some bills are introduced as part of a program by the governor or an agency</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Department of Motor Vehicles&quot;</span><span class="p">,</span>   <span class="c1">// The name of the program/agency</span>
+      <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">2</span>                           <span class="c1">// The position of this bill within that program/agency list</span>
+    <span class="p">},</span>
+    <span class="c1">// ---- Bill summary view ends here --- //</span>
+    <span class="s2">&quot;amendments&quot;</span><span class="o">:</span> <span class="p">{</span>                             <span class="c1">// Contains info specific to an amendment (base version is &quot;&quot;)</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="p">{</span>                                   <span class="c1">// Map of Amendment versions</span>
+          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>               <span class="c1">// Bill print no/session details duplicated here</span>
+          <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+          <span class="s2">&quot;basePrintNoStr&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180-2013&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S2180&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Amendment version</span>
+          <span class="s2">&quot;publishDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-14&quot;</span><span class="p">,</span>          <span class="c1">// Date this amendment was published</span>
+          <span class="s2">&quot;sameAs&quot;</span><span class="o">:</span> <span class="p">{</span>                           <span class="c1">// List of bill that are identical to this within the same session year</span>
+             <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
+                <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+                <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+             <span class="p">}],</span>
+             <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+          <span class="p">},</span>
+          <span class="s2">&quot;memo&quot;</span><span class="o">:</span> <span class="s2">&quot;BILL NUMBER:S2180&quot;</span><span class="p">,</span>          <span class="c1">// The sponsor&#39;s memo which explains the bill. Only available for senate bills.</span>
+          <span class="s2">&quot;lawSection&quot;</span><span class="o">:</span> <span class="s2">&quot;Penal Law&quot;</span><span class="p">,</span>            <span class="c1">// The primary section of law this bill impacts.</span>
+          <span class="s2">&quot;lawCode&quot;</span><span class="o">:</span> <span class="s2">&quot;Add Â§265.18, Pen L&quot;</span><span class="p">,</span>     <span class="c1">// A code that states the actions being taken on specific portions of law.</span>
+          <span class="s2">&quot;actClause&quot;</span><span class="o">:</span> <span class="s2">&quot;AN ACT to amend the..&quot;</span><span class="p">,</span> <span class="c1">// An Act to Clause</span>
+          <span class="s2">&quot;fullTextFormats&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="s2">&quot;PLAIN&quot;</span> <span class="p">],</span>
+          <span class="s2">&quot;fullText&quot;</span><span class="o">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>                    <span class="c1">// Full text of the bill amendment</span>
+          <span class="s2">&quot;fullTextHtml&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="s2">&quot;fullTextTemplate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="s2">&quot;coSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                       <span class="c1">// List of co sponsors</span>
             <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
-               <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-               <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A2098&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+              <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">391</span><span class="p">,</span>
+              <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;AVELLA&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+              <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Tony Avella&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">11</span>
             <span class="p">}],</span>
             <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;memo&quot;</span><span class="o">:</span> <span class="s2">&quot;BILL NUMBER:S2180&quot;</span><span class="p">,</span>        <span class="c1">// The sponsor&#39;s memo which explains the bill. Only available for senate bills.</span>
-         <span class="s2">&quot;lawSection&quot;</span><span class="o">:</span> <span class="s2">&quot;Penal Law&quot;</span><span class="p">,</span>            <span class="c1">// The primary section of law this bill impacts.</span>
-         <span class="s2">&quot;lawCode&quot;</span><span class="o">:</span> <span class="s2">&quot;Add Â§265.18, Pen L&quot;</span><span class="p">,</span>     <span class="c1">// A code that states the actions being taken on specific portions of law.</span>
-         <span class="s2">&quot;actClause&quot;</span><span class="o">:</span> <span class="s2">&quot;AN ACT to amend the..&quot;</span><span class="p">,</span> <span class="c1">// An Act to Clause</span>
-         <span class="s2">&quot;fullTextFormats&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="s2">&quot;PLAIN&quot;</span> <span class="p">],</span>
-         <span class="s2">&quot;fullText&quot;</span><span class="o">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>                    <span class="c1">// Full text of the bill amendment</span>
-         <span class="s2">&quot;fullTextHtml&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-         <span class="s2">&quot;fullTextTemplate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-         <span class="s2">&quot;coSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                       <span class="c1">// List of co sponsors</span>
-           <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-             <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">391</span><span class="p">,</span>
-             <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;AVELLA&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-             <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Tony Avella&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">11</span>
-            <span class="p">}</span>
-           <span class="p">],</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;multiSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of multi sponsors (only for assembly bills)</span>
-           <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;uniBill&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                     <span class="c1">// Indicates if this is a uni bill</span>
-         <span class="s2">&quot;stricken&quot;</span><span class="o">:</span> <span class="kc">false</span>                     <span class="c1">// Indicates if this amendment has been stricken</span>
-       <span class="p">}</span>
-     <span class="p">},</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">}</span>
-   <span class="s2">&quot;votes&quot;</span><span class="o">:</span> <span class="p">{</span>                                  <span class="c1">// Votes will be stored here if there are any</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-       <span class="p">{</span>
-         <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                        <span class="c1">// Amendment version vote was taken on</span>
-         <span class="s2">&quot;voteType&quot;</span><span class="o">:</span> <span class="s2">&quot;COMMITTEE&quot;</span><span class="p">,</span>              <span class="c1">// Type of vote (COMMITTEE or FLOOR)</span>
-         <span class="s2">&quot;voteDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-04-22&quot;</span><span class="p">,</span>             <span class="c1">// Date the vote was taken</span>
-         <span class="s2">&quot;committee&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// If it was a committee vote, the committee will be shown here</span>
-           <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Rules&quot;</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;memberVotes&quot;</span><span class="o">:</span> <span class="p">{</span>                      <span class="c1">// The actual votes are shown here</span>
-           <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
-             <span class="s2">&quot;EXC&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Map by vote codes</span>
-                <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                     <span class="c1">// List of members that voted with this code</span>
-                  <span class="p">{</span>
-                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">424</span><span class="p">,</span>
-                    <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;HANNON&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span>
-                  <span class="p">}</span>
-                <span class="p">],</span>
-                 <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-             <span class="p">},</span>
-             <span class="s2">&quot;AYEWR&quot;</span><span class="o">:</span> <span class="p">{..},</span>                    <span class="c1">// Other votes truncated here for brevity</span>
-             <span class="s2">&quot;NAY&quot;</span><span class="o">:</span> <span class="p">{..},</span>
-             <span class="s2">&quot;AYE&quot;</span><span class="o">:</span> <span class="p">{..}</span>
-           <span class="p">},</span>
-           <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">4</span>
-         <span class="p">}</span>
-       <span class="p">},</span>
-     <span class="p">],</span>
-     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;vetoMessages&quot;</span> <span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If a veto memo from the governor was sent, it will show up here</span>
-       <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
-         <span class="s2">&quot;billId&quot;</span> <span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Bill id replicated here</span>
-           <span class="s2">&quot;basePrintNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;session&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-           <span class="s2">&quot;printNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;version&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                        <span class="c1">// Year this veto was sent</span>
-         <span class="s2">&quot;vetoNumber&quot;</span> <span class="o">:</span> <span class="mf">511</span><span class="p">,</span>                   <span class="c1">// Veto number (unique to a single year)</span>
-         <span class="s2">&quot;memoText&quot;</span> <span class="o">:</span> <span class="s2">&quot;.....&quot;</span><span class="p">,</span>                 <span class="c1">// The content of the veto memo</span>
-         <span class="s2">&quot;vetoType&quot;</span> <span class="o">:</span> <span class="s2">&quot;STANDARD&quot;</span><span class="p">,</span>              <span class="c1">// The type of veto</span>
-         <span class="s2">&quot;chapter&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                        <span class="c1">// The chapter (if applicable)</span>
-         <span class="s2">&quot;billPage&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                       <span class="c1">// For line vetos, a page number may be specified</span>
-         <span class="s2">&quot;lineStart&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
-         <span class="s2">&quot;lineEnd&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
-         <span class="s2">&quot;signer&quot;</span> <span class="o">:</span> <span class="s2">&quot;ANDREW M. CUOMO&quot;</span><span class="p">,</span>         <span class="c1">// Governor Name</span>
-         <span class="s2">&quot;signedDate&quot;</span> <span class="o">:</span> <span class="kc">null</span>                   <span class="c1">// Date Signed (if present)</span>
-       <span class="p">}</span> <span class="p">],</span>
-       <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;approvalMessage&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Approval message from the governor (if present)</span>
-      <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// Bill id the approval message was sent for</span>
-         <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-         <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830A&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span>
+          <span class="p">},</span>
+          <span class="s2">&quot;multiSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of multi sponsors (only for assembly bills)</span>
+            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
+          <span class="p">},</span>
+          <span class="s2">&quot;uniBill&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                     <span class="c1">// Indicates if this is a uni bill</span>
+          <span class="s2">&quot;stricken&quot;</span><span class="o">:</span> <span class="kc">false</span>                     <span class="c1">// Indicates if this amendment has been stricken</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;votes&quot;</span><span class="o">:</span> <span class="p">{</span>                                  <span class="c1">// Votes will be stored here if there are any</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                          <span class="c1">// Amendment version vote was taken on</span>
+        <span class="s2">&quot;voteType&quot;</span><span class="o">:</span> <span class="s2">&quot;COMMITTEE&quot;</span><span class="p">,</span>                <span class="c1">// Type of vote (COMMITTEE or FLOOR)</span>
+        <span class="s2">&quot;voteDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-04-22&quot;</span><span class="p">,</span>               <span class="c1">// Date the vote was taken</span>
+        <span class="s2">&quot;committee&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If it was a committee vote, the committee will be shown here</span>
+          <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Rules&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;memberVotes&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// The actual votes are shown here</span>
+          <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;EXC&quot;</span><span class="o">:</span> <span class="p">{</span>                            <span class="c1">// Map by vote codes</span>
+              <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>                       <span class="c1">// List of members that voted with this code</span>
+                <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">424</span><span class="p">,</span>
+                <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;HANNON&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span>
+              <span class="p">}],</span>
+              <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;AYEWR&quot;</span><span class="o">:</span> <span class="p">{..},</span>                      <span class="c1">// Other votes truncated here for brevity</span>
+            <span class="s2">&quot;NAY&quot;</span><span class="o">:</span> <span class="p">{..},</span>
+            <span class="s2">&quot;AYE&quot;</span><span class="o">:</span> <span class="p">{..}</span>
+          <span class="p">},</span>
+          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">4</span>
+        <span class="p">}</span>
+      <span class="p">}],</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;vetoMessages&quot;</span> <span class="o">:</span> <span class="p">{</span>                          <span class="c1">// If a veto memo from the governor was sent, it will show up here</span>
+      <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;billId&quot;</span> <span class="o">:</span> <span class="p">{</span>                            <span class="c1">// Bill id replicated here</span>
+          <span class="s2">&quot;basePrintNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;session&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+          <span class="s2">&quot;printNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;A10049&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;version&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                          <span class="c1">// Year this veto was sent</span>
+        <span class="s2">&quot;vetoNumber&quot;</span> <span class="o">:</span> <span class="mf">511</span><span class="p">,</span>                     <span class="c1">// Veto number (unique to a single year)</span>
+        <span class="s2">&quot;memoText&quot;</span> <span class="o">:</span> <span class="s2">&quot;.....&quot;</span><span class="p">,</span>                   <span class="c1">// The content of the veto memo</span>
+        <span class="s2">&quot;vetoType&quot;</span> <span class="o">:</span> <span class="s2">&quot;STANDARD&quot;</span><span class="p">,</span>                <span class="c1">// The type of veto</span>
+        <span class="s2">&quot;chapter&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                          <span class="c1">// The chapter (if applicable)</span>
+        <span class="s2">&quot;billPage&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                         <span class="c1">// For line vetos, a page number may be specified</span>
+        <span class="s2">&quot;lineStart&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+        <span class="s2">&quot;lineEnd&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+        <span class="s2">&quot;signer&quot;</span> <span class="o">:</span> <span class="s2">&quot;ANDREW M. CUOMO&quot;</span><span class="p">,</span>           <span class="c1">// Governor Name</span>
+        <span class="s2">&quot;signedDate&quot;</span> <span class="o">:</span> <span class="kc">null</span>                     <span class="c1">// Date Signed (if present)</span>
+      <span class="p">}],</span>
+      <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;approvalMessage&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Approval message from the governor (if present)</span>
+      <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Bill id the approval message was sent for</span>
+        <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+        <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830A&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span>
       <span class="p">},</span>
       <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2014</span><span class="p">,</span>                             <span class="c1">// Year this approval message was sent</span>
       <span class="s2">&quot;approvalNumber&quot;</span><span class="o">:</span> <span class="mf">11</span><span class="p">,</span>                     <span class="c1">// Approval number (unique to a single year)</span>
       <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="mf">476</span><span class="p">,</span>                           <span class="c1">// The chapter (if applicable)</span>
       <span class="s2">&quot;signer&quot;</span><span class="o">:</span> <span class="s2">&quot;ANDREW M. CUOMO&quot;</span><span class="p">,</span>              <span class="c1">// Governor Name</span>
       <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;....&quot;</span>                            <span class="c1">// Text of the approval message</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;additionalSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                      <span class="c1">// If there are additional sponsors, the members will be listed here</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;additionalSponsors&quot;</span><span class="o">:</span> <span class="p">{</span>                     <span class="c1">// If there are additional sponsors, the members will be listed here</span>
       <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
       <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">0</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;pastCommittees&quot;</span><span class="o">:</span> <span class="p">{</span>                          <span class="c1">// Lists out all the committees this bill was in</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-         <span class="p">{</span>
-         <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>                 <span class="c1">// Committee Chamber</span>
-         <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;GOVERNMENTAL OPERATIONS&quot;</span><span class="p">,</span>     <span class="c1">// Name of committee</span>
-         <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                   <span class="c1">// Session year it was referenced by the committee</span>
-         <span class="s2">&quot;referenceDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-10T00:00&quot;</span>    <span class="c1">// Date it was referenced by the committee</span>
-         <span class="p">}],</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;pastCommittees&quot;</span><span class="o">:</span> <span class="p">{</span>                         <span class="c1">// Lists out all the committees this bill was in</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>                  <span class="c1">// Committee Chamber</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;GOVERNMENTAL OPERATIONS&quot;</span><span class="p">,</span>      <span class="c1">// Name of committee</span>
+        <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                    <span class="c1">// Session year it was referenced by the committee</span>
+        <span class="s2">&quot;referenceDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-10T00:00&quot;</span>     <span class="c1">// Date it was referenced by the committee</span>
+      <span class="p">}],</span>
       <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;actions&quot;</span><span class="o">:</span> <span class="p">{</span>                                 <span class="c1">// The actions that have occurred on a bill</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-         <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-            <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>                       <span class="c1">// Specifies which amendment version of the bill the action affects</span>
-         <span class="p">},</span>
-         <span class="s2">&quot;date&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-03-17&quot;</span><span class="p">,</span>                  <span class="c1">// Date of the action</span>
-         <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                   <span class="c1">// Chamber this action occurred in</span>
-         <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                       <span class="c1">// Number used to order the actions sequentially</span>
-         <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;REFERRED TO INVESTIGATIONS..&quot;</span> <span class="c1">// The text describing the action</span>
-      <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;actions&quot;</span><span class="o">:</span> <span class="p">{</span>                                <span class="c1">// The actions that have occurred on a bill</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S6830&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>                         <span class="c1">// Specifies which amendment version of the bill the action affects</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;date&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-03-17&quot;</span><span class="p">,</span>                   <span class="c1">// Date of the action</span>
+        <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                    <span class="c1">// Chamber this action occurred in</span>
+        <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                        <span class="c1">// Number used to order the actions sequentially</span>
+        <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;REFERRED TO INVESTIGATIONS..&quot;</span>  <span class="c1">// The text describing the action</span>
+      <span class="p">}],</span>
       <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;previousVersions&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Lists the previous versions of this bill from prior session years.</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-         <span class="p">{</span>
-         <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                <span class="c1">// Bill id of the previous bill</span>
-         <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-         <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
-         <span class="p">}</span>
-      <span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;previousVersions&quot;</span><span class="o">:</span> <span class="p">{</span>                       <span class="c1">// Lists the previous versions of this bill from prior session years.</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>                 <span class="c1">// Bill id of the previous bill</span>
+        <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+        <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A1989&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+      <span class="p">}],</span>
       <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;committeeAgendas&quot;</span><span class="o">:</span> <span class="p">{</span>                        <span class="c1">// If this bill was on a committee agenda, they will be referenced here</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;committeeAgendas&quot;</span><span class="o">:</span> <span class="p">{</span>                       <span class="c1">// If this bill was on a committee agenda, they will be referenced here</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>
         <span class="s2">&quot;agendaId&quot;</span><span class="o">:</span> <span class="p">{</span>                           <span class="c1">// Id of the agenda</span>
           <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="mf">2</span><span class="p">,</span>
           <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span>
@@ -490,16 +470,15 @@ the base print no (e.g. S1234).</p>
         <span class="p">}</span>
       <span class="p">}],</span>
       <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">},</span>
-   <span class="s2">&quot;calendars&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// If the bill was on a senate calendar, the calendars will be</span>
-      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                                <span class="c1">// referenced here</span>
-         <span class="p">{</span>
-         <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                          <span class="c1">// Calendar year</span>
-         <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">4</span>                    <span class="c1">// Calendar number</span>
-         <span class="p">}</span>
-      <span class="p">],</span>
-      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
-   <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;calendars&quot;</span><span class="o">:</span> <span class="p">{</span>                             <span class="c1">// If the bill was on a senate calendar, the calendars will be</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span>                              <span class="c1">// referenced here</span>
+        <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>                          <span class="c1">// Calendar year</span>
+        <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mf">4</span>                    <span class="c1">// Calendar number</span>
+      <span class="p">}],</span>
+     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">1</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -520,20 +499,16 @@ the base print no (e.g. S1234).</p>
 <hr class="docutils" />
 <div class="section" id="get-pdf-of-bill-text">
 <h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Permalink to this headline">¶</a></h2>
-<p>If you just need a pdf of the latest full text of the bill, you can make the following request:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
-</pre></div>
-</div>
+<p>If you just need a pdf of the latest full text of the bill, you can make the following request:
+::(GET) /api/3/bills/{sessionYear}/{printNo}.pdf</p>
 <p>If the bill is found, a PDF will be generated with the full text of the bill.</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="get-a-list-of-bills">
 <h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>List bills within a session year</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>List bills within a session year
+::(GET) /api/3/bills/{sessionYear}</p>
 <p id="bill-listing-params"><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -580,22 +555,14 @@ Multiple formats can be requested.</p></td>
 <p>By default, (i.e. no sort param was included in the request)
 the results will be in ascending order by the bill’s published date time (sort=publishedDateTime:DESC)</p>
 <p><strong>Examples</strong></p>
-<p>List 100 bills from 2013</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100
-</pre></div>
-</div>
-<p>List 100 complete bills starting from 101</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true
-</pre></div>
-</div>
-<p>Sort by increasing published date</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=publishedDateTime:ASC
-</pre></div>
-</div>
-<p>Sort by increasing status action date, (default)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=status.actionDate:ASC
-</pre></div>
-</div>
+<p>List 100 bills from 2013
+::/api/3/bills/2013?limit=100</p>
+<p>List 100 complete bills starting from 101
+::/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true</p>
+<p>Sort by increasing published date
+::/api/3/bills/2013?sort=publishedDateTime:ASC</p>
+<p>Sort by increasing status action date, (default)
+::/api/3/bills/2013?sort=status.actionDate:ASC</p>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                     <span class="c1">// True if the request was fine</span>
@@ -620,14 +587,10 @@ the results will be in ascending order by the bill’s published date time (sort
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.</p>
 <p><strong>Usage</strong></p>
-<p>Search across all session years</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=YOUR_TERM
-</pre></div>
-</div>
-<p>Search within a session year</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
-</pre></div>
-</div>
+<p>Search across all session years
+::(GET) /api/3/bills/search?term=YOUR_TERM</p>
+<p>Search within a session year
+::(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM</p>
 <p><strong>Required Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -655,26 +618,17 @@ structure.</p>
 <p class="admonition-title">Warning</p>
 <p>If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \*. This is a wildcard expression. E.g   ?term=\*memo:’Some phrase’</p>
 </div>
-<p>Search for a general term (matches against any data field)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=Gun Control
-</pre></div>
-</div>
-<p>Search for 2013 ‘resolutions’</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=billType.resolution:true
-</pre></div>
-</div>
-<p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC
-</pre></div>
-</div>
-<p>Search for full text containing the phrase ‘Marriage Equality’. Note the use of the \* prefix to match full texts regardless of amendment version</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=\*.fullText:&quot;Marriage Equality&quot;
-</pre></div>
-</div>
-<p>Search for bills that were published between a certain date range, ordered by increasing published date</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC
-</pre></div>
-</div>
+<p>Search for a general term (matches against any data field)
+::(GET) /api/3/bills/search?term=Gun Control</p>
+<p>Search for 2013 ‘resolutions’
+::(GET) /api/3/bills/2013/search?term=billType.resolution:true</p>
+<p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update
+::(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC</p>
+<p>Search for full text containing the phrase ‘Marriage Equality’. Note the use of the \* prefix to match full texts regardless of amendment version
+::
+(GET) /api/3/bills/search?term=*.fullText:”Marriage Equality”</p>
+<p>Search for bills that were published between a certain date range, ordered by increasing published date
+::(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <cite>[</cite> and <cite>]</cite> characters in the previous example must be url encoded to <cite>%5B</cite> and <cite>%5D</cite> respectively.</p>
@@ -693,14 +647,10 @@ This can differ from the processed date because OpenLeg can periodically reproce
 By default the type is set to ‘processed’.</p>
 </div>
 <p><strong>Usage</strong></p>
-<p>List of bills updated during the given date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
-</pre></div>
-</div>
-<p>List of bills updated since the given date/time</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>List of bills updated during the given date/time range
+::/api/3/bills/updates/{fromDateTime}/{toDateTime}</p>
+<p>List of bills updated since the given date/time
+::/api/3/bills/updates/{fromDateTime}</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The ‘fromDateTime’ and ‘toDateTime’ parameters should be formatted as the ISO 8601 Date Time format.
@@ -758,10 +708,8 @@ Multiple formats can be requested.</p></td>
 <p>By default the type is set to ‘processed’. Ensure you have the right type in the api request so you receive the results you are looking for</p>
 </div>
 <p><strong>Examples</strong></p>
-<p>Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T10</span><span class="p">:</span><span class="mi">55</span><span class="p">:</span><span class="mi">48</span>
-</pre></div>
-</div>
+<p>Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM
+::/api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48</p>
 <p id="bill-update-token-response"><strong>Response (detail = false)</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -857,29 +805,19 @@ may only want to know which bills have had status updates, or which bills had fu
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc
-</pre></div>
-</div>
+<p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM
+::(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc</p>
 <p id="detailed-update-digests">To view the actual updates that have occurred on a bill use the following API</p>
 <p><strong>Usage</strong></p>
-<p>All updates on a specific bill</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
-</pre></div>
-</div>
-<p>Updates on a specific bill from a given date/time.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span>
-</pre></div>
-</div>
-<p>Updates on a specific bill during a given date/time range.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>All updates on a specific bill
+::/api/3/bills/{sessionYear}/{printNo}/updates/</p>
+<p>Updates on a specific bill from a given date/time.
+::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/</p>
+<p>Updates on a specific bill during a given date/time range.
+::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}</p>
 <p><strong>Example</strong></p>
-<p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S1234</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">02</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
-</pre></div>
-</div>
+<p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014
+::/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00</p>
 <p id="bill-update-digest-response"><strong>Response</strong></p>
 <p>Sample response:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
