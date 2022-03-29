@@ -187,8 +187,10 @@
 <div class="section" id="get-a-single-bill">
 <h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve bill by session year and print no
-::(GET) /api/3/bills/{sessionYear}/{printNo}</p>
+<p>Retrieve bill by session year and print no</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span>
+</pre></div>
+</div>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -251,10 +253,14 @@ Multiple formats can be requested.</p></td>
 the base print no (e.g. S1234).</p>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request bill S2180 of session year 2013
-::/api/3/bills/2013/S2180</p>
-<p>Request summary of bill A450 of session year 2013
-::/api/3/bills/2013/A450?view=info</p>
+<p>Request bill S2180 of session year 2013</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S2180</span>
+</pre></div>
+</div>
+<p>Request summary of bill A450 of session year 2013</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013/A450?view=info
+</pre></div>
+</div>
 <p id="bill-response"><strong>Response</strong></p>
 <p>Default Bill Response</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -499,16 +505,20 @@ the base print no (e.g. S1234).</p>
 <hr class="docutils" />
 <div class="section" id="get-pdf-of-bill-text">
 <h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Permalink to this headline">¶</a></h2>
-<p>If you just need a pdf of the latest full text of the bill, you can make the following request:
-::(GET) /api/3/bills/{sessionYear}/{printNo}.pdf</p>
+<p>If you just need a pdf of the latest full text of the bill, you can make the following request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+</pre></div>
+</div>
 <p>If the bill is found, a PDF will be generated with the full text of the bill.</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="get-a-list-of-bills">
 <h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>List bills within a session year
-::(GET) /api/3/bills/{sessionYear}</p>
+<p>List bills within a session year</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
+</pre></div>
+</div>
 <p id="bill-listing-params"><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -555,14 +565,22 @@ Multiple formats can be requested.</p></td>
 <p>By default, (i.e. no sort param was included in the request)
 the results will be in ascending order by the bill’s published date time (sort=publishedDateTime:DESC)</p>
 <p><strong>Examples</strong></p>
-<p>List 100 bills from 2013
-::/api/3/bills/2013?limit=100</p>
-<p>List 100 complete bills starting from 101
-::/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true</p>
-<p>Sort by increasing published date
-::/api/3/bills/2013?sort=publishedDateTime:ASC</p>
-<p>Sort by increasing status action date, (default)
-::/api/3/bills/2013?sort=status.actionDate:ASC</p>
+<p>List 100 bills from 2013</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100
+</pre></div>
+</div>
+<p>List 100 complete bills starting from 101</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true
+</pre></div>
+</div>
+<p>Sort by increasing published date</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=publishedDateTime:ASC
+</pre></div>
+</div>
+<p>Sort by increasing status action date, (default)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=status.actionDate:ASC
+</pre></div>
+</div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                     <span class="c1">// True if the request was fine</span>
@@ -587,10 +605,14 @@ the results will be in ascending order by the bill’s published date time (sort
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.</p>
 <p><strong>Usage</strong></p>
-<p>Search across all session years
-::(GET) /api/3/bills/search?term=YOUR_TERM</p>
-<p>Search within a session year
-::(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM</p>
+<p>Search across all session years</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Search within a session year</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
+</pre></div>
+</div>
 <p><strong>Required Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -618,17 +640,26 @@ structure.</p>
 <p class="admonition-title">Warning</p>
 <p>If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \*. This is a wildcard expression. E.g   ?term=\*memo:’Some phrase’</p>
 </div>
-<p>Search for a general term (matches against any data field)
-::(GET) /api/3/bills/search?term=Gun Control</p>
-<p>Search for 2013 ‘resolutions’
-::(GET) /api/3/bills/2013/search?term=billType.resolution:true</p>
-<p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update
-::(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC</p>
-<p>Search for full text containing the phrase ‘Marriage Equality’. Note the use of the \* prefix to match full texts regardless of amendment version
-::
-(GET) /api/3/bills/search?term=*.fullText:”Marriage Equality”</p>
-<p>Search for bills that were published between a certain date range, ordered by increasing published date
-::(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC</p>
+<p>Search for a general term (matches against any data field)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=Gun Control
+</pre></div>
+</div>
+<p>Search for 2013 ‘resolutions’</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=billType.resolution:true
+</pre></div>
+</div>
+<p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC
+</pre></div>
+</div>
+<p>Search for full text containing the phrase ‘Marriage Equality’. Note the use of the \* prefix to match full texts regardless of amendment version</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=\*.fullText:&quot;Marriage Equality&quot;
+</pre></div>
+</div>
+<p>Search for bills that were published between a certain date range, ordered by increasing published date</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <cite>[</cite> and <cite>]</cite> characters in the previous example must be url encoded to <cite>%5B</cite> and <cite>%5D</cite> respectively.</p>
@@ -647,10 +678,14 @@ This can differ from the processed date because OpenLeg can periodically reproce
 By default the type is set to ‘processed’.</p>
 </div>
 <p><strong>Usage</strong></p>
-<p>List of bills updated during the given date/time range
-::/api/3/bills/updates/{fromDateTime}/{toDateTime}</p>
-<p>List of bills updated since the given date/time
-::/api/3/bills/updates/{fromDateTime}</p>
+<p>List of bills updated during the given date/time range</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>List of bills updated since the given date/time</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The ‘fromDateTime’ and ‘toDateTime’ parameters should be formatted as the ISO 8601 Date Time format.
@@ -708,8 +743,10 @@ Multiple formats can be requested.</p></td>
 <p>By default the type is set to ‘processed’. Ensure you have the right type in the api request so you receive the results you are looking for</p>
 </div>
 <p><strong>Examples</strong></p>
-<p>Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM
-::/api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48</p>
+<p>Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T10</span><span class="p">:</span><span class="mi">55</span><span class="p">:</span><span class="mi">48</span>
+</pre></div>
+</div>
 <p id="bill-update-token-response"><strong>Response (detail = false)</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -805,19 +842,29 @@ may only want to know which bills have had status updates, or which bills had fu
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM
-::(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc</p>
+<p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc
+</pre></div>
+</div>
 <p id="detailed-update-digests">To view the actual updates that have occurred on a bill use the following API</p>
 <p><strong>Usage</strong></p>
-<p>All updates on a specific bill
-::/api/3/bills/{sessionYear}/{printNo}/updates/</p>
-<p>Updates on a specific bill from a given date/time.
-::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/</p>
-<p>Updates on a specific bill during a given date/time range.
-::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}</p>
+<p>All updates on a specific bill</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Updates on a specific bill from a given date/time.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Updates on a specific bill during a given date/time range.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
 <p><strong>Example</strong></p>
-<p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014
-::/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00</p>
+<p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S1234</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">02</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+</pre></div>
+</div>
 <p id="bill-update-digest-response"><strong>Response</strong></p>
 <p>Sample response:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
