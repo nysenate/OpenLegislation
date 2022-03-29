@@ -205,8 +205,10 @@
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Get member with id 371 during 2013 session year.
-::/api/3/members/2013/371</p>
+<p>Get member with id 371 during 2013 session year.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="mi">371</span>
+</pre></div>
+</div>
 <p><strong>Sample Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -248,10 +250,14 @@
 <div class="section" id="get-a-list-of-members">
 <h2>Get a list of members<a class="headerlink" href="#get-a-list-of-members" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>List members for a session year.
-::(GET) /api/3/members/{sessionYear}</p>
-<p>List members in a chamber for a session year
-::(GET) /api/3/members/{sessionYear}/{chamber}</p>
+<p>List members for a session year.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>List members in a chamber for a session year</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
+</pre></div>
+</div>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -285,21 +291,31 @@
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>List all members from session year 2013
-::/api/3/members/2013</p>
-<p>List full member info for session members during session year 2011. Limit to 5 results.
-::/api/3/members/2011/senate?full=true&amp;limit=5</p>
+<p>List all members from session year 2013</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="mi">2013</span>
+</pre></div>
+</div>
+<p>List full member info for session members during session year 2011. Limit to 5 results.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/members/2011/senate?full=true&amp;limit=5
+</pre></div>
+</div>
 </div>
 <div class="section" id="search-for-members">
 <h2>Search for members<a class="headerlink" href="#search-for-members" title="Permalink to this headline">¶</a></h2>
 <p>Read our <a class="reference internal" href="search_api.html"><span class="doc">search API docs</span></a> for info on how to construct search terms.</p>
 <p><strong>Usage</strong></p>
-<p>Search across all session years
-::(GET) /api/3/members/search?term=YOUR_TERM</p>
-<p>Search within a session year
-::(GET) /api/3/members/{sessionYear}/search?term=YOUR_TERM</p>
-<p>Note: given a sessionMemberId = #### in a session year yyyy, you can get the member that sessionMemberId is used by with:
-::(GET) /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####</p>
+<p>Search across all session years</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/members/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Search within a session year</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/members/{sessionYear}/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Note: given a sessionMemberId = #### in a session year yyyy, you can get the member that sessionMemberId is used by with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####
+</pre></div>
+</div>
 <p><strong>Required Params</strong></p>
 <table class="docutils align-default">
 <colgroup>
@@ -353,8 +369,10 @@
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>List all members who have served district code 20
-::/api/3/members/search?term=districtCode:20</p>
+<p>List all members who have served district code 20</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/members/search?term=districtCode:20
+</pre></div>
+</div>
 </div>
 </div>
 
