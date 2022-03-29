@@ -11,8 +11,7 @@ Get a single bill
 **Usage**
 
 Retrieve bill by session year and print no
-::
-   (GET) /api/3/bills/{sessionYear}/{printNo}
+::(GET) /api/3/bills/{sessionYear}/{printNo}
 
 **Optional Params**
 
@@ -51,12 +50,10 @@ View options
 **Examples**
 
 Request bill S2180 of session year 2013
-::
-   /api/3/bills/2013/S2180
+::/api/3/bills/2013/S2180
 
 Request summary of bill A450 of session year 2013
-::
-   /api/3/bills/2013/A450?view=info
+::/api/3/bills/2013/A450?view=info
 
 .. _bill-response:
 
@@ -122,7 +119,7 @@ Default Bill Response
           "sequenceNo": 2                           // The position of this bill within that program/agency list
         },
         // ---- Bill summary view ends here --- //
-        "amendments": {                              // Contains info specific to an amendment (base version is "")
+        "amendments": {                             // Contains info specific to an amendment (base version is "")
           "items": {
             "": {                                   // Map of Amendment versions
               "basePrintNo": "S2180",               // Bill print no/session details duplicated here
@@ -140,7 +137,7 @@ Default Bill Response
                  }],
                  "size": 1
               },
-              "memo": "BILL NUMBER:S2180",        // The sponsor's memo which explains the bill. Only available for senate bills.
+              "memo": "BILL NUMBER:S2180",          // The sponsor's memo which explains the bill. Only available for senate bills.
               "lawSection": "Penal Law",            // The primary section of law this bill impacts.
               "lawCode": "Add Â§265.18, Pen L",     // A code that states the actions being taken on specific portions of law.
               "actClause": "AN ACT to amend the..", // An Act to Clause
@@ -312,8 +309,7 @@ Get PDF of bill text
 --------------------
 
 If you just need a pdf of the latest full text of the bill, you can make the following request:
-::
-    (GET) /api/3/bills/{sessionYear}/{printNo}.pdf
+::(GET) /api/3/bills/{sessionYear}/{printNo}.pdf
 
 If the bill is found, a PDF will be generated with the full text of the bill.
 
@@ -325,8 +321,7 @@ Get a list of bills
 **Usage**
 
 List bills within a session year
-::
-   (GET) /api/3/bills/{sessionYear}
+::(GET) /api/3/bills/{sessionYear}
 
 .. _`bill listing params`:
 
@@ -358,20 +353,16 @@ the results will be in ascending order by the bill's published date time (sort=p
 **Examples**
 
 List 100 bills from 2013
-::
-   /api/3/bills/2013?limit=100
+::/api/3/bills/2013?limit=100
 
 List 100 complete bills starting from 101
-::
-   /api/3/bills/2013?limit=100&offset=101&full=true
+::/api/3/bills/2013?limit=100&offset=101&full=true
 
 Sort by increasing published date
-::
-   /api/3/bills/2013?sort=publishedDateTime:ASC
+::/api/3/bills/2013?sort=publishedDateTime:ASC
 
 Sort by increasing status action date, (default)
-::
-   /api/3/bills/2013?sort=status.actionDate:ASC
+::/api/3/bills/2013?sort=status.actionDate:ASC
 
 **Response**
 
@@ -404,12 +395,10 @@ structure.
 **Usage**
 
 Search across all session years
-::
-   (GET) /api/3/bills/search?term=YOUR_TERM
+::(GET) /api/3/bills/search?term=YOUR_TERM
 
 Search within a session year
-::
-   (GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
+::(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
 
 
 **Required Params**
@@ -429,24 +418,20 @@ Same as the `bill listing params`_.
 .. warning:: If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \\*. This is a wildcard expression. E.g   ?term=\\*memo:'Some phrase'
 
 Search for a general term (matches against any data field)
-::
-    (GET) /api/3/bills/search?term=Gun Control
+::(GET) /api/3/bills/search?term=Gun Control
 
 Search for 2013 'resolutions'
-::
-    (GET) /api/3/bills/2013/search?term=billType.resolution:true
+::(GET) /api/3/bills/2013/search?term=billType.resolution:true
 
 Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update
-::
-    (GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
+::(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
 
 Search for full text containing the phrase 'Marriage Equality'. Note the use of the \\* prefix to match full texts regardless of amendment version
 ::
-    (GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
+(GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
 
 Search for bills that were published between a certain date range, ordered by increasing published date
-::
-    (GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
+::(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
 
 .. note:: The `[` and `]` characters in the previous example must be url encoded to `%5B` and `%5D` respectively.
 
@@ -468,12 +453,10 @@ To identify which bills have received updates within a given time period you can
 **Usage**
 
 List of bills updated during the given date/time range
-::
-    /api/3/bills/updates/{fromDateTime}/{toDateTime}
+::/api/3/bills/updates/{fromDateTime}/{toDateTime}
 
 List of bills updated since the given date/time
-::
-    /api/3/bills/updates/{fromDateTime}
+::/api/3/bills/updates/{fromDateTime}
 
 .. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
    For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
@@ -506,8 +489,7 @@ List of bills updated since the given date/time
 **Examples**
 
 Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM
-::
-    /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
+::/api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
 
 .. _bill-update-token-response:
 
@@ -588,8 +570,7 @@ Update Filters:
 **Examples**
 
 Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM
-::
-    (GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
+::(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
 
 .. _`detailed update digests`:
 
@@ -598,22 +579,18 @@ To view the actual updates that have occurred on a bill use the following API
 **Usage**
 
 All updates on a specific bill
-::
-    /api/3/bills/{sessionYear}/{printNo}/updates/
+::/api/3/bills/{sessionYear}/{printNo}/updates/
 
 Updates on a specific bill from a given date/time.
-::
-    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
+::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
 
 Updates on a specific bill during a given date/time range.
-::
-    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
+::/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
 
 **Example**
 
 Updates for S1234-2013 between December 1, 2014 and December 2, 2014
-::
-    /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+::/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
 
 .. _bill-update-digest-response:
 
