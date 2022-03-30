@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,8 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
 
     private final OpenLegEnvironment environment;
 
-    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, OpenLegEnvironment environment) {
+    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService,
+                                   OpenLegEnvironment environment) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
         this.environment = environment;
@@ -198,7 +200,10 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
      * @return Optional<ApiUser>
      */
     public Optional<ApiUser> getUserByKey(String apiKey) {
-        Optional<ApiUser> userOpt = getCachedApiUser(apiKey);
+        if (apiKey == null) {
+            return Optional.empty();
+        }
+        Optional<ApiUser> userOpt = Optional.ofNullable(cache.get(apiKey));
         if (userOpt.isPresent()) {
             return userOpt;
         }
@@ -220,19 +225,8 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
     /***
      * Inserts the given api user into the cache
      */
-    private void cacheApiUser(ApiUser apiUser) {
-        if (apiUser != null)
-            cache.put(apiUser.getApiKey(), apiUser);
-    }
-
-    /**
-     * Attempt to get an api user from the cache as an optional value
-     * If no user with the given key exists in the cache, return an empty optional
-     * @param apiKey String
-     * @return Optional<ApiUser>
-     */
-    private Optional<ApiUser> getCachedApiUser(String apiKey) {
-        return Optional.ofNullable(cache.get(apiKey));
+    private void cacheApiUser(@Nonnull ApiUser apiUser) {
+        cache.put(apiUser.getApiKey(), apiUser);
     }
 
     /**
