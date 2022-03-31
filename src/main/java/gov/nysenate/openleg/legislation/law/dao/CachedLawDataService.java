@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCache;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -159,7 +160,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
             }
             return lawTree;
         }
-        catch (EmptyResultDataAccessException ex) {
+        catch (DataRetrievalFailureException ex) {
             throw new LawTreeNotFoundEx(lawId, endPublishedDate, ex.getMessage());
         }
     }
