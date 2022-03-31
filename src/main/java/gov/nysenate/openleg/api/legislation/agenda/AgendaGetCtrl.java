@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api.legislation.agenda;
 
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.api.legislation.agenda.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
@@ -144,7 +143,7 @@ public class AgendaGetCtrl extends BaseCtrl
                     });
         });
         return DateRangeListViewResponse.of(
-                meetingViews, Range.closed(fromDateTime, toDateTime), meetingViews.size(), LimitOffset.ALL);
+                meetingViews, getClosedRange(fromDateTime, toDateTime, "from", "to"), meetingViews.size(), LimitOffset.ALL);
     }
 
     /** --- Exception Handlers --- */
