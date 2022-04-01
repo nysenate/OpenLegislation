@@ -256,6 +256,7 @@ const navCategories = [
         <NavChild name="Caches" to="/admin/caches" />
         <NavChild name="Indices" to="/admin/indices" />
         <NavChild name="Logs" to="/admin/logs/monitor" />
+        <NavChild name="Log Search" to="/admin/logs/search" />
         <NavChild name="Data Process Logs" to="/admin/logs/dataprocess" />
       </React.Fragment>
     ),

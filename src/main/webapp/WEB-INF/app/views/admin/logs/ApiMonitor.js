@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import Input from "app/shared/Input";
 import * as queryString from "query-string";
+import { anonymousUrl } from "app/lib/urlUtils";
 
 
 export default function ApiMonitor({ setHeaderText }) {
@@ -136,16 +137,6 @@ const matchesFilter = (event, filter) => { // TODO Matching URL does not work?
     || event.apiResponse.statusCode.toString().indexOf(filterUpper) > -1
     || event.apiResponse.processTime.toString().indexOf(filterUpper) > -1
     || event.apiResponse.baseRequest.url.toUpperCase().indexOf(filterUpper) > -1
-}
-
-/**
- * This removes the identifying "key" search parameter from a url.
- */
-const anonymousUrl = (url) => {
-  const endpoint = url.slice(0, url.indexOf("?"))
-  let params = queryString.parse(url.slice(url.indexOf("?") + 1))
-  delete params.key
-  return endpoint + "?" + queryString.stringify(params)
 }
 
 /**

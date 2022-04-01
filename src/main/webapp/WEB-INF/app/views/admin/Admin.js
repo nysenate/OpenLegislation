@@ -11,6 +11,7 @@ import Caches from "app/views/admin/caches/Caches";
 import Indices from "app/views/admin/indices/Indices";
 import ApiMonitor from "app/views/admin/logs/ApiMonitor";
 import DataProcessLog from "app/views/admin/logs/DataProcessLog";
+import ApiLogSearch from "app/views/admin/logs/ApiLogSearch";
 
 export default function Admin({ setHeaderText }) {
 
@@ -31,6 +32,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/logs/dataprocess">
           <DataProcessLog setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/logs/search">
+          <ApiLogSearch setHeaderText={setHeaderText} />
         </PrivateRoute>
         <Route path="/admin">
           <AdminLogin setHeaderText={setHeaderText} />
