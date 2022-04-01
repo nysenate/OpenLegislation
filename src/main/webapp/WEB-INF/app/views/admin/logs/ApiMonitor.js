@@ -18,6 +18,7 @@ export default function ApiMonitor({ setHeaderText }) {
 
   // Initialize websocket configuration.
   React.useEffect(() => {
+    setHeaderText("API Monitor")
     let client
     const stompConfig = {
       webSocketFactory: () => new SockJS("/sock"),

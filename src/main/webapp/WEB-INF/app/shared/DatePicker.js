@@ -25,6 +25,7 @@ import "react-datepicker/dist/react-datepicker.css";
  *             - Useful Examples:
  *                  - {@code selectsStart} and {@code selectsEnd} When using 2 datepickers to specify a date range
  *                      these attributes indicate which datepicker is the start and end of the range.
+ *                  - {@code showTimeSelect} attribute will add the ability to select the time.
  */
 export default function DatePicker({ label, name, date, setDate, minDate, maxDate, className, ...rest }) {
   return (
