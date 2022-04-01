@@ -136,13 +136,16 @@
     .card__title {
         @apply h5 border-b-1 border-gray-200;
     }
+
+    .page-mask {
+        @apply bg-black opacity-50 top-16 left-0 right-0 bottom-0 fixed z-10;
+    }
 }
 
 /*
  * Other styles
  * Only put styles here if its very inconvenient or impossible to describe them with @apply like above.
 */
-
 
 .loading-indicator {
     width: 100%;

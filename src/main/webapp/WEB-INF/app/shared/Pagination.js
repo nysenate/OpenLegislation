@@ -17,7 +17,6 @@ import ReactPaginate from 'react-paginate'
  * @return {PageParams} Limit offset info for the selected page.
  */
 export default function Pagination({ currentPage = 1, limit, total, onPageChange }) {
-  console.log("render pagination: " + currentPage)
   if (!total) {
     return null;
   }

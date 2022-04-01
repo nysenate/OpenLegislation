@@ -45,6 +45,9 @@ export default function Home() {
         <div>
           <NavMenu isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} />
         </div>
+        {isMenuOpen &&
+          <div className="page-mask" onClick={() => setMenuOpen(false)}/>
+        }
 
         <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
           <Switch>

@@ -26,7 +26,7 @@ export default function NavMenu({ isMenuOpen }) {
    * If the viewport is < xl, open the menu when open = true, hide when open = false.
    * If the viewport is > xl, always show the menu regardless of the value of open.
    */
-  let className = "fixed top-16 transform bg-gray-200 w-80 h-full z-10 overflow-y-auto";
+  let className = "fixed top-16 transform bg-gray-200 w-80 h-full z-20 overflow-y-auto";
   if (isMenuOpen) {
     className += " translate-x-0 2xl:translate-x-0"
   } else {
