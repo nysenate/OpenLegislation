@@ -85,7 +85,7 @@ public abstract class CachingService<Key, Value> {
 
     @PreDestroy
     protected void cleanUp() {
-        evictCaches();
+        evictCache();
         cacheManager.removeCache(cacheType().name());
     }
 
@@ -97,10 +97,9 @@ public abstract class CachingService<Key, Value> {
     }
 
     /**
-     * (Default Method)
-     * Clears all the cache entries from all caches.
+     * Clears all the cache entries from this cache.
      */
-     public void evictCaches() {
+     public void evictCache() {
          logger.info("Clearing out the {} cache", cacheType().name());
          cache.clear();
     }
@@ -114,7 +113,7 @@ public abstract class CachingService<Key, Value> {
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(cacheType()))
-            evictCaches();
+            evictCache();
     }
 
     /**

@@ -8,16 +8,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Used when we do not have a session member id, but have enough information to pick a
+ * SessionMember nonetheless.
+ */
 @Component
-class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMember> {
+class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, SessionMember> {
 
-    public SessionMemberIdCache(MemberDao memberDao) {
+    public SessionMemberNonIdCache(MemberDao memberDao) {
         super(memberDao);
     }
 
     @Override
     protected CacheType cacheType() {
-        return CacheType.SESSION_MEMBER;
+        return CacheType.SHORTNAME;
     }
 
     @Override
@@ -26,12 +30,14 @@ class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMember> {
     }
 
     @Override
-    protected SessionMember getMemberFromDao(Integer sessionMemberId) {
-        return memberDao.getMemberBySessionId(sessionMemberId);
+    protected SessionMember getMemberFromDao(ShortNameKey key) {
+        return memberDao.getMemberByShortName(key.lbdcShortName(), key.sessionYear(), key.chamber());
     }
 
     @Override
     protected void putMemberInCache(SessionMember member) {
-        cache.put(member.getSessionMemberId(), member);
+        var key = new ShortNameKey(member.getLbdcShortName(), member.getSessionYear(),
+                member.getMember().getChamber());
+        cache.put(key, member);
     }
 }

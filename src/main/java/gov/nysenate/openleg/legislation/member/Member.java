@@ -53,9 +53,8 @@ public class Member extends Person {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Member)) return false;
+        if (!(o instanceof Member member)) return false;
         if (!super.equals(o)) return false;
-        Member member = (Member) o;
         return memberId == member.memberId &&
                 chamber == member.chamber &&
                 incumbent == member.incumbent;

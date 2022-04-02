@@ -50,7 +50,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
 
     @Override
     public void warmCaches() {
-        evictCaches();
+        evictCache();
         logger.info("Warming up API User Cache");
         // Feed in all the api users from the database into the cache
         apiUserDao.getAllUsers().forEach(this::cacheApiUser);

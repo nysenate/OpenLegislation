@@ -2,11 +2,11 @@ package gov.nysenate.openleg.legislation.bill.dao.service;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.config.annotation.SillyTest;
+import gov.nysenate.openleg.legislation.CacheEvictEvent;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.common.util.OutputUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -53,7 +53,7 @@ public class CachedBillDataServiceTest extends BaseTests
     public void evictContentTest() {
         StopWatch sw = new StopWatch();
         BaseBillId id = new BaseBillId("S1", 2015);
-        billData.evictCaches();
+        billData.evictCache();
         sw.start();
         billData.getBill(id);
         sw.stop();

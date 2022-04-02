@@ -70,7 +70,7 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
      */
     @Override
     public void warmCaches() {
-        evictCaches();
+        evictCache();
         logger.info("Warming up bill cache.");
         Optional<Range<SessionYear>> sessionRange = activeSessionRange();
         if (sessionRange.isPresent()) {
@@ -99,8 +99,8 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     }
 
     @Override
-    public void evictCaches() {
-        super.evictCaches();
+    public void evictCache() {
+        super.evictCache();
         billInfoCache.clear();
     }
 

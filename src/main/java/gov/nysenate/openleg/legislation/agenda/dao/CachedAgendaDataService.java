@@ -35,7 +35,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
      * in the past 4 years.
      */
     public void warmCaches() {
-        evictCaches();
+        evictCache();
         logger.info("Warming up agenda cache.");
         int year = LocalDate.now().getYear();
         for (int i = 3; i >= 0; i--) {

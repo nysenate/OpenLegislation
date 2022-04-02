@@ -56,7 +56,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(CacheType.LAW)) {
-            evictCaches();
+            evictCache();
             maxPubDates.clear();
         }
     }
@@ -72,9 +72,9 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     @Override
     public void warmCaches() {
         try {
-            logger.info("Warming up law cache..");
+            logger.info("Warming up law cache...");
             getLawInfos().forEach(lawInfo -> getLawTree(lawInfo.getLawId(), LocalDate.now()));
-            logger.info("Finished warming up law cache..");
+            logger.info("Finished warming up law cache.");
         }
         catch (LawTreeNotFoundEx ex) {
             logger.warn("Failed to warm up law cache!.", ex);

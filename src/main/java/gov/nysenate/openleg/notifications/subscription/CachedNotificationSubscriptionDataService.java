@@ -102,7 +102,7 @@ public class CachedNotificationSubscriptionDataService
     /** {@inheritDoc} */
     @Override
     public void evictContent(String s) {
-        evictCaches();
+        evictCache();
     }
 
     /**

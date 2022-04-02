@@ -1,0 +1,36 @@
+package gov.nysenate.openleg.legislation;
+
+import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.common.util.Pair;
+import org.ehcache.core.statistics.CacheStatistics;
+import org.junit.Assert;
+import org.junit.Before;
+
+public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
+    private CachingService<Key, Value> cachingService;
+    protected CacheStatistics stats;
+
+    protected abstract CachingService<Key, Value> getCachingService();
+
+    @Before
+    public void setCachingService() {
+        this.cachingService = getCachingService();
+        this.stats = CachingService.getStats(cachingService.cacheType());
+    }
+
+    protected void putPair(Key key, Value value) {
+        cachingService.cache.put(key, value);
+    }
+
+    public static void runTests(CachingService<?, ?> cachingService, Pair<?> sampleData) {
+        CacheType type = cachingService.cacheType();
+        cachingService.init();
+        CacheStatistics stats;
+        try {
+            stats = CachingService.getStats(type);
+        }
+        catch (IllegalArgumentException ignored) {
+            Assert.fail("Cache " + type + " does not have stats.");
+        }
+    }
+}

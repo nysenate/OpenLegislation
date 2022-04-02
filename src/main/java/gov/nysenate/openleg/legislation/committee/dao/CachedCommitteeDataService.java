@@ -55,7 +55,7 @@ public class CachedCommitteeDataService
     /** {@inheritDoc} */
     @Override
     public void warmCaches() {
-        evictCaches();
+        evictCache();
         logger.info("Warming up committee cache.");
         getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
         getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);

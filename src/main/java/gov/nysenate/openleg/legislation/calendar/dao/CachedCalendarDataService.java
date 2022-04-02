@@ -37,7 +37,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
     /** {@inheritDoc} */
     @Override
     public void warmCaches() {
-        evictCaches();
+        evictCache();
         getCalendars(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL);
     }
 
