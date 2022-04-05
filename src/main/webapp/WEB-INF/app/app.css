@@ -140,6 +140,12 @@
     .page-mask {
         @apply bg-black opacity-50 top-16 left-0 right-0 bottom-0 fixed z-10;
     }
+
+    .list {
+        li {
+            @apply m-1;
+        }
+    }
 }
 
 /*

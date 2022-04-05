@@ -20,7 +20,7 @@ export default function AdminLogin({ setHeaderText }) {
   const onSubmit = (e) => {
     e.preventDefault()
     auth.loginAdminUser(username, password)
-      .then(() => history.push("/admin/config"))
+      .then(() => history.push("/admin/index"))
       .catch((err) => {
         if (err.errorCode === 401) {
           setError("Invalid credentials.")

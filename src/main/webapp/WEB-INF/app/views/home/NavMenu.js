@@ -91,15 +91,6 @@ function MenuContent() {
         }}>
         <ul>
           {navCategories.map((opt) => {
-            if (opt.adminOnly) {
-              return (
-                <AdminNavCategory {...opt}
-                                  isOpen={openCategories.includes(opt.name)}
-                                  isActive={activeCategory()?.name === opt.name}
-                                  onCategoryClick={() => toggleCategory(opt.name)}
-                                  key={opt.name} />
-              )
-            }
             return (
               <NavCategory {...opt}
                            isOpen={openCategories.includes(opt.name)}
@@ -108,24 +99,13 @@ function MenuContent() {
                            key={opt.name} />
             )
           })}
+          <AdminPage name="Admin" icon={<Sliders />} to="/admin/index" />
           <DocPage name="JSON API Docs" icon={<Code />} to="/static/docs/html/index.html" />
           <LogoutPage name="Logout" icon={<SignOut />} to="/logout" />
         </ul>
       </IconContext.Provider>
     </div>
   )
-}
-
-function AdminNavCategory({ ...rest }) {
-  const auth = useAuth()
-
-  if (!auth.isAdmin()) {
-    return null
-  }
-
-  if (auth.isAdmin()) {
-    return <NavCategory {...rest} />
-  }
 }
 
 function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }) {
@@ -189,6 +169,25 @@ function DocPage({ name, icon, to }) {
   )
 }
 
+function AdminPage({name, icon, to}) {
+  const auth = useAuth()
+
+  if (!auth.isAdmin()) {
+    return null
+  }
+
+  if (auth.isAdmin()) {
+    return (
+      <a href={to}>
+        <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
+          <div className="ml-5 mr-2 inline">{icon}</div>
+          <div className="flex-grow">{name}</div>
+        </div>
+      </a>
+    )
+  }
+}
+
 const navCategories = [
   {
     name: "Senate Calendars",
@@ -245,22 +244,5 @@ const navCategories = [
         <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
       </React.Fragment>
     )
-  },
-  {
-    name: "Admin",
-    path: "/admin",
-    icon: <Sliders />,
-    children: (
-      <React.Fragment>
-        <NavChild name="Configuration" to="/admin/config" />
-        <NavChild name="Caches" to="/admin/caches" />
-        <NavChild name="Indices" to="/admin/indices" />
-        <NavChild name="Logs" to="/admin/logs/monitor" />
-        <NavChild name="Log Search" to="/admin/logs/search" />
-        <NavChild name="Data Process Logs" to="/admin/logs/dataprocess" />
-        <NavChild name="Account Settings" to="/admin/account" />
-      </React.Fragment>
-    ),
-    adminOnly: true
   },
 ]
