@@ -12,6 +12,7 @@ import Indices from "app/views/admin/indices/Indices";
 import ApiMonitor from "app/views/admin/logs/ApiMonitor";
 import DataProcessLog from "app/views/admin/logs/DataProcessLog";
 import ApiLogSearch from "app/views/admin/logs/ApiLogSearch";
+import AccountSettings from "app/views/admin/accounts/AccountSettings";
 
 export default function Admin({ setHeaderText }) {
 
@@ -35,6 +36,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/logs/search">
           <ApiLogSearch setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/account">
+          <AccountSettings setHeaderText={setHeaderText} />
         </PrivateRoute>
         <Route path="/admin">
           <AdminLogin setHeaderText={setHeaderText} />
