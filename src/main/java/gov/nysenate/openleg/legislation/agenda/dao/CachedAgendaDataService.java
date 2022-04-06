@@ -37,11 +37,10 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     public void warmCaches() {
         evictCache();
         logger.info("Warming up agenda cache.");
-        int year = LocalDate.now().getYear();
-        for (int i = 3; i >= 0; i--) {
-            logger.info("Fetching agendas for year {}", (year - i));
-            getAgendaIds(year - i, SortOrder.ASC).forEach(this::getAgenda);
-        }
+        List<AgendaId> ids = getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC);
+        // Adds up to the most recent 8 agendas.
+        for (int i = 0; i < Math.min(7, ids.size()); i++)
+            getAgenda(ids.get(i));
         logger.info("Done warming up agenda cache.");
     }
 

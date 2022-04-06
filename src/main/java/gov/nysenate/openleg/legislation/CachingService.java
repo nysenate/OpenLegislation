@@ -70,13 +70,13 @@ public abstract class CachingService<Key, Value> {
         }
 
         String propertyStr = type.name().toLowerCase() + ".cache." +
-                (type.isElementSize() ? "element" : "heap") + ".size";
+                (type.isSizedByEntries() ? "entries" : "heap") + ".size";
         int numUnits = Integer.parseInt(Objects.requireNonNull(environment.getProperty(propertyStr)));
         var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder()
-                .heap(numUnits, type.isElementSize() ? EntryUnit.ENTRIES : MemoryUnit.MB);
+                .heap(numUnits, type.isSizedByEntries() ? EntryUnit.ENTRIES : MemoryUnit.MB);
         var config = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(keyClass, valueClass, resourcePoolsBuilder)
-                .withSizeOfMaxObjectGraph(type.isElementSize() ? 100000 : 5000)
+                .withSizeOfMaxObjectGraph(type.isSizedByEntries() ? 100000 : 5000)
                 .withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
         this.cache = cacheManager.createCache(type.name(), config);
