@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
+final class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
 
     public FullMemberIdCache(MemberDao memberDao) {
         super(memberDao);

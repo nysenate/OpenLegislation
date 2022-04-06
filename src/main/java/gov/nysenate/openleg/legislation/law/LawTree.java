@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.legislation.law;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class LawTree
 {
     /** The identifier for this tree. */
-    protected LawVersionId lawVersionId;
+    protected final LawVersionId lawVersionId;
 
     /** Information about the law. */
     protected LawInfo lawInfo;
@@ -31,8 +32,7 @@ public class LawTree
 
     /** --- Constructors --- */
 
-    public LawTree(LawVersionId lawVersionId, LawTreeNode rootNode, LawInfo lawInfo) {
-        if (lawVersionId == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawVersionId");
+    public LawTree(@Nonnull LawVersionId lawVersionId, LawTreeNode rootNode, LawInfo lawInfo) {
         if (rootNode == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null rootNode");
         if (lawInfo == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawInfo");
         this.lawVersionId = lawVersionId;
@@ -56,11 +56,11 @@ public class LawTree
     /** --- Delegates --- */
 
     public String getLawId() {
-        return lawVersionId.getLawId();
+        return lawVersionId.lawId();
     }
 
     public LocalDate getPublishedDate() {
-        return lawVersionId.getPublishedDate();
+        return lawVersionId.publishedDate();
     }
 
     /** --- Basic Getters/Setters --- */

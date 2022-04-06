@@ -123,6 +123,9 @@ law.cache.element.size = 150
 # Agenda Cache Element Size (Recommended: 100. Uses about 25MB heap space)
 agenda.cache.element.size = 100
 
+# Shortname Cache Size (in MB) (Recommended: 250. Uses <1 MB heap space.)
+shortname.cache.element.size = 250
+
 # -- Heap based cache config --
 
 # Calendar Cache Size (in MB) (Recommended: 10)
@@ -139,9 +142,6 @@ api_user.cache.heap.size = 2
 
 # Full Member Cache Size (in MB) (Recommended: 5)
 full_member.cache.heap.size = 5
-
-# Shortname Cache Size (in MB) (Recommended: 5)
-shortname.cache.heap.size = 5
 
 # Member Cache Size (in MB) (Recommended: 5)
 session_member.cache.heap.size = 5

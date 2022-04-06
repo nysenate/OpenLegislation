@@ -24,12 +24,15 @@ public class CachedMemberService implements MemberService {
     private final SessionMemberNonIdCache sessionMemberNonIdCache;
 
     @Autowired
-    public CachedMemberService(EventBus eventBus, MemberDao memberDao) {
+    public CachedMemberService(EventBus eventBus, MemberDao memberDao,
+                               FullMemberIdCache fullMemberIdCache,
+                               SessionMemberIdCache sessionMemberIdCache,
+                               SessionMemberNonIdCache sessionMemberNonIdCache) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
-        this.fullMemberIdCache = new FullMemberIdCache(memberDao);
-        this.sessionMemberIdCache = new SessionMemberIdCache(memberDao);
-        this.sessionMemberNonIdCache = new SessionMemberNonIdCache(memberDao);
+        this.fullMemberIdCache = fullMemberIdCache;
+        this.sessionMemberIdCache = sessionMemberIdCache;
+        this.sessionMemberNonIdCache = sessionMemberNonIdCache;
     }
 
     @PostConstruct

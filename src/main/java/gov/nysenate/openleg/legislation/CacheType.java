@@ -19,7 +19,7 @@ public enum CacheType {
     NOTIFICATION(false),
     API_USER(false),
     FULL_MEMBER(false),
-    SHORTNAME(false), // Session Member with a different key
+    SHORTNAME(true), // Session Member with a different key
     SESSION_MEMBER(false),
     SHIRO(false);
 

@@ -50,9 +50,8 @@ public abstract class BaseContentPageCtrl
      */
     private void initializeMembers() {
         List<Member> allMembers = memberData.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-            .map(sm -> new Member(sm.getMember()))
-            .distinct()
-            .collect(Collectors.toList());
+                .map(sm -> new Member(sm.getMember()))
+                .distinct().toList();
         senatorsList = allMembers.stream()
             .filter(m -> m.getChamber().equals(Chamber.SENATE))
             .collect(Collectors.toList());

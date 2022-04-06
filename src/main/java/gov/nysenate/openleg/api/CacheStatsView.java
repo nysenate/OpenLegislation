@@ -5,7 +5,8 @@ import gov.nysenate.openleg.legislation.CachingService;
 import org.ehcache.core.statistics.CacheStatistics;
 
 public record CacheStatsView(String cacheName, long putCount, long removeCount, long evictedCount,
-                             long expiredCount, long hitCount, long missCount, float hitRatio) implements ViewObject {
+                             long expiredCount, long hitCount, long missCount, float hitRatio)
+        implements ViewObject {
 
     public CacheStatsView(CacheType type) {
         this(type.name(), CachingService.getStats(type));

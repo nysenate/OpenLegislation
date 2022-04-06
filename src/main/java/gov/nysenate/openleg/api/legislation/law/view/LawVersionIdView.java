@@ -5,28 +5,13 @@ import gov.nysenate.openleg.legislation.law.LawVersionId;
 
 import java.time.LocalDate;
 
-public class LawVersionIdView implements ViewObject
-{
-    protected String lawId;
-    protected LocalDate activeDate;
-
-    public LawVersionIdView(LawVersionId versionId) {
-        if (versionId != null) {
-            this.lawId = versionId.getLawId();
-            this.activeDate = versionId.getPublishedDate();
-        }
+public record LawVersionIdView(String lawId, LocalDate activeDate) implements ViewObject {
+    public LawVersionIdView(LawVersionId lawVersionId) {
+        this(lawVersionId.lawId(), lawVersionId.publishedDate());
     }
 
     @Override
     public String getViewType() {
         return "law-version";
-    }
-
-    public String getLawId() {
-        return lawId;
-    }
-
-    public LocalDate getActiveDate() {
-        return activeDate;
     }
 }

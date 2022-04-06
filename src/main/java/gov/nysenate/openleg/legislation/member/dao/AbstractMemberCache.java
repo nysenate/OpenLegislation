@@ -14,6 +14,7 @@ abstract class AbstractMemberCache<Key, Value> extends CachingService<Key, Value
 
     @Autowired
     public AbstractMemberCache(MemberDao memberDao) {
+        super();
         this.memberDao = memberDao;
     }
 
@@ -41,5 +42,8 @@ abstract class AbstractMemberCache<Key, Value> extends CachingService<Key, Value
      */
     protected abstract List<Value> getAllMembersFromDao();
 
+    /**
+     * If the member data is not in the cache, it has to be pulled from the DAO.
+     */
     protected abstract Value getMemberFromDao(Key key) throws MemberNotFoundEx;
 }

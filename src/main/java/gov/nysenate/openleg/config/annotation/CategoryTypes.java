@@ -8,7 +8,7 @@ public enum CategoryTypes {
     UnitTest("Test"),
     SillyTest("Test");
     
-    final String suffix;
+    private final String suffix;
     
     CategoryTypes(String suffix){
         this.suffix = suffix;

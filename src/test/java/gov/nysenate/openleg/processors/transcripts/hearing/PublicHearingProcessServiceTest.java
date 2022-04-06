@@ -7,6 +7,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDat
 import gov.nysenate.openleg.processors.AbstractProcessServiceTest;
 import gov.nysenate.openleg.processors.ProcessService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import static gov.nysenate.openleg.legislation.committee.Chamber.SENATE;
 import static gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType.COMMITTEE;
 import static org.junit.Assert.assertEquals;
 
-@IntegrationTest
+@Category(IntegrationTest.class)
 public class PublicHearingProcessServiceTest extends AbstractProcessServiceTest {
 
     @Autowired

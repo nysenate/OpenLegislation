@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMember> {
+final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMember> {
 
     public SessionMemberIdCache(MemberDao memberDao) {
         super(memberDao);

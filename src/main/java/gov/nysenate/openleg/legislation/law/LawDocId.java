@@ -49,8 +49,7 @@ public class LawDocId
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LawDocId)) return false;
-        LawDocId lawDocId = (LawDocId) o;
+        if (!(o instanceof LawDocId lawDocId)) return false;
         return Objects.equals(documentId, lawDocId.documentId) &&
                 Objects.equals(publishedDate, lawDocId.publishedDate) &&
                 Objects.equals(locationId, lawDocId.locationId) &&
