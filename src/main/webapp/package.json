@@ -23,7 +23,7 @@
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^1.1.1",
     "node-gyp": "^3.7.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "pixrem": "^3.0.2"
   },
   "scripts": {
