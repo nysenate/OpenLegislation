@@ -13,10 +13,6 @@
 /* Custom css classes */
 @layer components {
 
-    .card {
-        @apply p-4 bg-white shadow;
-    }
-
     .h1 {
         @apply text-gray-700 text-4xl md:text-6xl lg:text-7xl;
     }
@@ -68,15 +64,17 @@
     }
 
     .btn--primary {
-        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 disabled:opacity-70 disabled:bg-blue-700;
+        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 focus:bg-blue-500
+        disabled:opacity-70 disabled:bg-blue-700;
     }
 
     .btn--secondary {
-        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 disabled:opacity-50 disabled:bg-gray-450;
+        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 focus:bg-gray-400
+        disabled:opacity-50 disabled:bg-gray-450;
     }
 
     .btn--danger {
-        @apply text-white bg-red-600 border-0 hover:bg-red-400;
+        @apply text-white bg-red-600 border-0 hover:bg-red-400 focus:bg-red-400;
     }
 
     .input {
@@ -138,13 +136,16 @@
     .card__title {
         @apply h5 border-b-1 border-gray-200;
     }
+
+    .page-mask {
+        @apply bg-black opacity-50 top-16 left-0 right-0 bottom-0 fixed z-10;
+    }
 }
 
 /*
  * Other styles
  * Only put styles here if its very inconvenient or impossible to describe them with @apply like above.
 */
-
 
 .loading-indicator {
     width: 100%;

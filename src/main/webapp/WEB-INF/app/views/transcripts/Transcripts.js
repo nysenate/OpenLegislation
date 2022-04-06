@@ -186,7 +186,7 @@ function HearingTranscriptResultList({ hearingSearchResults }) {
 
                   {h.highlights.text &&
                     <div className="pt-1 pb-6">
-                      <HighlightedText highlights={removeExcessNewLines(h.highlights)} />
+                      <HighlightedText highlights={removeExcessNewLines(h.highlights.text)} />
                     </div>
                   }
                 </div>
@@ -211,7 +211,7 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
 
               {t.highlights.text &&
                 <div className=" pt-1 pb-6">
-                  <HighlightedText highlights={removeExcessNewLines(t.highlights)} />
+                  <HighlightedText highlights={removeExcessNewLines(t.highlights.text)} />
                 </div>
               }
             </div>
@@ -230,6 +230,5 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
  * @returns {*}
  */
 const removeExcessNewLines = (highlights) => {
-  highlights.text = highlights.text.map((text) => text.replace(/(\r\n\r\n|\n\n)/gm, "\n"))
-  return highlights
+  return highlights.map((text) => text.replace(/(\r\n\r\n|\n\n)/gm, "\n"))
 }

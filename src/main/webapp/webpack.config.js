@@ -42,7 +42,9 @@ module.exports = {
         target: 'http://localhost:8080',
       }
     ],
-    historyApiFallback: true,
+    historyApiFallback: {
+      disableDotRule: true,
+    },
     static: ['../static']
   },
   devtool: 'source-map'
