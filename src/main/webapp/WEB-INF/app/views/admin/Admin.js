@@ -63,7 +63,7 @@ export default function Admin({ setHeaderText }) {
 
 function AdminDashboard({ setHeaderText }) {
   React.useEffect(() => {
-    setHeaderText("Admin Management")
+    setHeaderText("Admin Dashboard")
   }, [])
   return (
     <div className="m-3 mt-6">
