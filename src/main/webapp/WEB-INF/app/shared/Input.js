@@ -25,6 +25,7 @@ export default function Input({
                                 tabIndex,
                                 isHighlighted = false,
                                 className,
+                                ...params
                               }) {
   let labelClasses = "label label--top"
   labelClasses += isHighlighted ? " bg-yellow-100" : ""
@@ -39,6 +40,7 @@ export default function Input({
              placeholder={placeholder}
              tabIndex={tabIndex}
              className={`input block ${className}`}
+             {...params}
       />
     </label>
   )
