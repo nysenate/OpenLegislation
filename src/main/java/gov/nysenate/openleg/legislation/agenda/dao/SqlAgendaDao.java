@@ -4,14 +4,14 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.agenda.*;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -293,7 +293,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     static void addAgendaInfoCommItemParams(AgendaInfoCommitteeItem item, MapSqlParameterSource infoCommParams) {
         BillId billId = item.getBillId();
         infoCommParams.addValue("printNo", billId.getBasePrintNo());
-        infoCommParams.addValue("session", billId.getSession().getYear());
+        infoCommParams.addValue("session", billId.getSession().year());
         infoCommParams.addValue("amendVersion", billId.getVersion().toString());
         infoCommParams.addValue("message", item.getMessage());
     }

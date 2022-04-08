@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.legislation.bill;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
-import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.bill.BillType;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -29,7 +25,7 @@ public class BillIdTest
 
         id = new BillId("S02143", 2013, "a");
         assertEquals("S2143", id.getBasePrintNo());
-        assertEquals(2013, id.getSession().getYear());
+        assertEquals(2013, id.getSession().year());
         assertEquals(Version.A, id.getVersion());
 
         id = new BillId("A1133", new SessionYear(2019), null);

@@ -11,14 +11,14 @@ public enum CacheType {
     BILL_INFO(true),
     CALENDAR(true),
     LAW(true),
+    SESSION_MEMBER(true),
     SHORTNAME(true),
 
     API_USER(false),
     COMMITTEE(false),
     FULL_MEMBER(false),
     NOTIFICATION(false),
-    SHIRO(false),
-    SESSION_MEMBER(false);
+    SHIRO(false);
 
     // Whether the number of units refers to entries (true) or megabytes (false).
     private final boolean isSizedByEntries;

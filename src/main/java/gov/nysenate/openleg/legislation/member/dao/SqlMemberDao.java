@@ -44,7 +44,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public SessionMember getMemberById(int id, SessionYear session) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("memberId", id);
-        params.addValue("sessionYear", session.getYear());
+        params.addValue("sessionYear", session.year());
         return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
@@ -87,7 +87,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                                               Chamber chamber) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName.trim());
-        params.addValue("sessionYear", sessionYear.getYear());
+        params.addValue("sessionYear", sessionYear.year());
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
@@ -109,7 +109,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+    public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("last_name", sortOrder);
         return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
                 new MapSqlParameterSource(), new MemberRowMapper());
@@ -118,7 +118,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     /** {@inheritDoc} */
     @Override
     public List<FullMember> getAllFullMembers() {
-        return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        return getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
                 .collect(Collectors.groupingBy(sm -> sm.getMember().getMemberId(),
                         LinkedHashMap::new, Collectors.toList()))
                 .values().stream().map(FullMember::new).collect(Collectors.toList());
@@ -183,7 +183,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         return getMemberParams(sessionMember.getMember())
                 .addValue("sessionMemberId", sessionMember.getSessionMemberId())
                 .addValue("lbdcShortName", sessionMember.getLbdcShortName())
-                .addValue("sessionYear", Optional.ofNullable(sessionMember.getSessionYear()).map(SessionYear::getYear).orElse(null))
+                .addValue("sessionYear", Optional.ofNullable(sessionMember.getSessionYear()).map(SessionYear::year).orElse(null))
                 .addValue("districtCode", sessionMember.getDistrictCode())
                 .addValue("alternate", sessionMember.isAlternate());
     }

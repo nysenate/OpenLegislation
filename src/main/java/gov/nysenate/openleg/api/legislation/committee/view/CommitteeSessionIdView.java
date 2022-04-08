@@ -9,7 +9,7 @@ public class CommitteeSessionIdView extends CommitteeIdView {
     public CommitteeSessionIdView(CommitteeSessionId committeeSessionId) {
         super(committeeSessionId);
         if (committeeSessionId != null) {
-            this.sessionYear = committeeSessionId.getSession() != null ? committeeSessionId.getSession().getYear() : 0;
+            this.sessionYear = committeeSessionId.getSession() != null ? committeeSessionId.getSession().year() : 0;
         }
     }
 

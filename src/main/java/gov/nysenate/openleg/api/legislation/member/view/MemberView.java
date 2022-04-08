@@ -59,7 +59,7 @@ public class MemberView implements ViewObject
     }
 
     public int getSessionYear() {
-        return relatedSessionMember.getSessionYear().getYear();
+        return relatedSessionMember.getSessionYear().year();
     }
 
     public int getDistrictCode() {

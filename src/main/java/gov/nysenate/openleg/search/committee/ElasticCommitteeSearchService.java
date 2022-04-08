@@ -3,12 +3,11 @@ package gov.nysenate.openleg.search.committee;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -149,7 +148,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     }
 
     QueryBuilder getSessionFilter(SessionYear sessionYear) {
-        return QueryBuilders.termQuery("sessionYear", sessionYear.getYear());
+        return QueryBuilders.termQuery("sessionYear", sessionYear.year());
     }
 
     private SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder postFilter,

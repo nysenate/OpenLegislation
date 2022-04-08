@@ -73,7 +73,7 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
                 LocalDateTime.now());
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>(reportId);
 
-        SessionYear sessionYear = SessionYear.of(start);
+        SessionYear sessionYear = SessionYear.of(start.getYear());
 
         logger.info("Running Bill Spotcheck against {} for {} session...", env.getOpenlegRefUrl(), sessionYear);
 

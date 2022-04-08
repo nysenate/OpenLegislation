@@ -6,15 +6,15 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillAction;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.spotchecks.daybreak.*;
-import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.common.util.FileIOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -703,7 +703,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private MapSqlParameterSource getDaybreakBillIdParams(DaybreakBillId daybreakBillId){
         MapSqlParameterSource params = getReportDateParams(daybreakBillId.getReportDate());
         params.addValue("billPrintNo", daybreakBillId.getBaseBillId().getBasePrintNo());
-        params.addValue("billSessionYear", daybreakBillId.getBaseBillId().getSession().getYear());
+        params.addValue("billSessionYear", daybreakBillId.getBaseBillId().getSession().year());
         return params;
     }
 
@@ -726,7 +726,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private MapSqlParameterSource getPageFileEntryParams(PageFileEntry pageFileEntry){
         MapSqlParameterSource params = getReportDateParams(pageFileEntry.getReportDate());
         params.addValue("fileName", pageFileEntry.getDaybreakFile().getFileName());
-        params.addValue("billSessionYear", pageFileEntry.getBillIds().get(0).getSession().getYear());
+        params.addValue("billSessionYear", pageFileEntry.getBillIds().get(0).getSession().year());
         params.addValue("billPrintNo", pageFileEntry.getBillIds().get(0).getBasePrintNo());
         params.addValue("billPublishDate", toDate(pageFileEntry.getPublishedDate()));
         params.addValue("pageCount", pageFileEntry.getPageCount());

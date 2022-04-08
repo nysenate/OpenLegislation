@@ -22,7 +22,7 @@ final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMem
 
     @Override
     protected List<SessionMember> getAllMembersFromDao() {
-        return memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL);
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL);
     }
 
     @Override

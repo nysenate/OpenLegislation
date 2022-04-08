@@ -160,6 +160,6 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
      * @return QueryBuilder
      */
     private QueryBuilder requireSessionYear(SessionYear sessionYear) {
-        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
+        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.year());
     }
 }

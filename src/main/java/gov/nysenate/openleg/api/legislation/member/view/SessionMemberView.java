@@ -22,7 +22,7 @@ public class SessionMemberView implements ViewObject
             this.sessionMemberId = sessionMember.getSessionMemberId();
             this.member = sessionMember.getMember();
             this.shortName = sessionMember.getLbdcShortName();
-            this.sessionYear = sessionMember.getSessionYear().getYear();
+            this.sessionYear = sessionMember.getSessionYear().year();
             this.districtCode = sessionMember.getDistrictCode();
             this.alternate = sessionMember.isAlternate();
         }

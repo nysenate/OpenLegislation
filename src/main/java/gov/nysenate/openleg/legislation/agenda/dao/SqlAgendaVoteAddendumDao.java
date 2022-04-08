@@ -220,7 +220,7 @@ public class SqlAgendaVoteAddendumDao extends SqlBaseDao {
      */
     static void addAgendaVoteAttendParams(AgendaVoteAttendance attendance, MapSqlParameterSource voteCommParams) {
         voteCommParams.addValue("sessionMemberId", attendance.getMember().getSessionMemberId());
-        voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear().getYear());
+        voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear().year());
         voteCommParams.addValue("lbdcShortName", attendance.getMember().getLbdcShortName());
         voteCommParams.addValue("rank", attendance.getRank());
         voteCommParams.addValue("party", attendance.getParty());
@@ -242,7 +242,7 @@ public class SqlAgendaVoteAddendumDao extends SqlBaseDao {
 
         BillVote billVote = voteBill.getBillVote();
         voteCommParams.addValue("billPrintNo", billVote.getBillId().getBasePrintNo());
-        voteCommParams.addValue("sessionYear", billVote.getBillId().getSession().getYear());
+        voteCommParams.addValue("sessionYear", billVote.getBillId().getSession().year());
         voteCommParams.addValue("amendVersion", billVote.getBillId().getVersion().toString());
         voteCommParams.addValue("voteDate", toDate(billVote.getVoteDate()));
         voteCommParams.addValue("sequenceNo", billVote.getSequenceNo());

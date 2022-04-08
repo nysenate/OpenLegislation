@@ -61,7 +61,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         return searchBills(
             QueryBuilders.boolQuery()
                     .must(QueryBuilders.matchAllQuery())
-                    .filter(QueryBuilders.termQuery("session", session.getYear())),
+                    .filter(QueryBuilders.termQuery("session", session.year())),
             null, null, sort, limOff);
     }
 
@@ -77,7 +77,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         query = smartSearch(query);
-        TermQueryBuilder sessionFilter = QueryBuilders.termQuery("session", session.getYear());
+        TermQueryBuilder sessionFilter = QueryBuilders.termQuery("session", session.year());
         return searchBills(
             QueryBuilders.boolQuery()
                     .must(QueryBuilders.queryStringQuery(query))
@@ -192,7 +192,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             final LinkedBlockingQueue<BaseBillId> billIdQueue = new LinkedBlockingQueue<>();
             for (SessionYear session = sessions.get().lowerEndpoint();
                  session.compareTo(sessions.get().upperEndpoint()) < 1;
-                 session = session.next()) {
+                 session = session.nextSessionYear()) {
                 billIdQueue.addAll(billDataService.getBillIds(session, LimitOffset.ALL));
             }
 

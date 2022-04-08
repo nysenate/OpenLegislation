@@ -27,7 +27,7 @@ final class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, Se
 
     @Override
     protected List<SessionMember> getAllMembersFromDao() {
-        return memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
                 .filter(mem -> mem.getSessionYear().equals(SessionYear.current())).toList();
     }
 

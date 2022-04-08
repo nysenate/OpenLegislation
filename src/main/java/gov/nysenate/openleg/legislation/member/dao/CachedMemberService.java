@@ -78,7 +78,7 @@ public class CachedMemberService implements MemberService {
     /** {@inheritDoc} */
     @Override
     public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
-        return memberDao.getAllMembers(sortOrder, limOff);
+        return memberDao.getAllSessionMembers(sortOrder, limOff);
     }
 
     /** {@inheritDoc} */

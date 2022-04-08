@@ -28,7 +28,7 @@ public abstract class AbstractMemberCacheIT<Key, Value> extends AbstractCacheTes
 
     protected abstract Tuple<Key, Value> getSampleData();
 
-    public void basicMemberTest() {
+    protected void basicMemberTest() {
         Tuple<Key, Value> data = getSampleData();
         Key key = data.v1();
         Value value = data.v2();

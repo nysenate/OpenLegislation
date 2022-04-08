@@ -64,7 +64,7 @@ public interface MemberDao
      * Retrieve members from all years and both chambers.
      * @return
      */
-    List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
+    List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff);
 
     /**
      * Using session member data, creates al full members.

@@ -6,11 +6,11 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -72,7 +72,8 @@ public class ElasticBillSearchServiceTests extends BaseTests
         // Run several times to allow times to converge on lower limit.
         for (int run = 1; run <= 4; run++) {
             Stopwatch sw = Stopwatch.createStarted();
-            for (SessionYear s = SessionYear.of(2009); s.compareTo(SessionYear.current()) <= 0; s = s.next()) {
+            for (SessionYear s = SessionYear.of(2009); s.compareTo(SessionYear.current()) <= 0;
+                 s = s.nextSessionYear()) {
                 logger.info("Getting bills for session {}", s);
                 int sessionTotal = Integer.MAX_VALUE;
                 for (LimitOffset limoff = LimitOffset.HUNDRED; limoff.getOffsetStart() < sessionTotal; limoff = limoff.next()) {

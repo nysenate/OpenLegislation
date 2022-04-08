@@ -2,12 +2,12 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.agenda;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.calendar.CalendarEntry;
 import gov.nysenate.openleg.legislation.calendar.CalendarActiveListId;
+import gov.nysenate.openleg.legislation.calendar.CalendarEntry;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.spotchecks.model.ActiveListSpotcheckReference;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -85,11 +85,11 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
     public MapSqlParameterSource getEntryParams(int keyId, CalendarEntry entry){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("bill_print_no", entry.getBillId().getPrintNo());
-        params.addValue("bill_session_no", entry.getBillId().getSession().getYear());
+        params.addValue("bill_session_no", entry.getBillId().getSession().year());
         params.addValue("bill_calendar_no", entry.getBillCalNo());
         params.addValue("active_list_reference_id", keyId);
         params.addValue("bill_amend_version", entry.getBillId().getVersion().toString());
-        params.addValue("bill_session_year", entry.getBillId().getSession().getYear());
+        params.addValue("bill_session_year", entry.getBillId().getSession().year());
         params.addValue("created_date_time", entry.getBillId().getSession());
 
         return params;
@@ -97,7 +97,7 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
     public MapSqlParameterSource getEntryParams(CalendarActiveListId cal, CalendarEntry entry){
         MapSqlParameterSource params = getActiveListIdParams(cal);
         params.addValue("bill_print_no", entry.getBillId().getPrintNo());
-        params.addValue("bill_session_no", entry.getBillId().getSession().getYear());
+        params.addValue("bill_session_no", entry.getBillId().getSession().year());
         params.addValue("bill_calendar_no", entry.getBillCalNo());
         return params;
     }

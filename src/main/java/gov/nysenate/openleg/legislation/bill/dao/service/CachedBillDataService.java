@@ -85,7 +85,7 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
                     logger.info("Caching Bill Info instances for session year: {}", sessionYear);
                     getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBillInfo);
                 }
-                sessionYear = sessionYear.next();
+                sessionYear = sessionYear.nextSessionYear();
             }
         }
         logger.info("Done warming up bill cache.");

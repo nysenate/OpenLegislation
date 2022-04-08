@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.scraping.LRSScraper;
 import gov.nysenate.openleg.spotchecks.scraping.ScrapingException;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.HttpResponse;
@@ -77,6 +77,6 @@ public class BillScraper extends LRSScraper {
     public String constructUrl(BaseBillId billId) {
         return StringSubstitutor.replace(URL_TEMPLATE,
                 ImmutableMap.of("printNo", billId.getPrintNo(),
-                        "sessionYear", Integer.toString(billId.getSession().getYear())));
+                        "sessionYear", Integer.toString(billId.getSession().year())));
     }
 }

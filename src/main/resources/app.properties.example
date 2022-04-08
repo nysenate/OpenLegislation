@@ -123,6 +123,8 @@ bill_info.cache.entries.size = 40000
 calendar.cache.entries.size = 50
 # Uses about 50 MB.
 law.cache.entries.size = 150
+# Uses about 2 MB.
+session_member.cache.entries.size = 4000
 # Uses <1 MB.
 shortname.cache.entries.size = 250
 
@@ -134,7 +136,6 @@ committee.cache.heap.size = 2
 full_member.cache.heap.size = 5
 notification.cache.heap.size = 2
 shiro.cache.heap.size = 2
-session_member.cache.heap.size = 5
 
 # --- Postgres Database Configuration -----------------------------------------
 

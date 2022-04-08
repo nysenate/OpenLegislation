@@ -4,12 +4,12 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.VetoId;
 import gov.nysenate.openleg.legislation.bill.VetoMessage;
 import gov.nysenate.openleg.legislation.bill.VetoType;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -106,7 +106,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
     private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getVetoIdParams(vetoMessage.getVetoId());
         params.addValue("printNum", vetoMessage.getBillId().getBasePrintNo());
-        params.addValue("sessionYear", vetoMessage.getSession().getYear());
+        params.addValue("sessionYear", vetoMessage.getSession().year());
         params.addValue("chapter", vetoMessage.getChapter());
         params.addValue("page", vetoMessage.getBillPage());
         params.addValue("lineStart", vetoMessage.getLineStart());
@@ -123,7 +123,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
     private MapSqlParameterSource getBaseBillIdParams(BaseBillId baseBillId){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNum", baseBillId.getBasePrintNo());
-        params.addValue("sessionYear", baseBillId.getSession().getYear());
+        params.addValue("sessionYear", baseBillId.getSession().year());
         return params;
     }
 }

@@ -4,11 +4,11 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.legislation.calendar.*;
-import gov.nysenate.openleg.legislation.calendar.Calendar;
-import gov.nysenate.openleg.legislation.calendar.dao.SqlCalendarDao;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.calendar.Calendar;
+import gov.nysenate.openleg.legislation.calendar.*;
+import gov.nysenate.openleg.legislation.calendar.dao.SqlCalendarDao;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarAlertFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -375,7 +375,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
         addBillIdParams(entry.getBillId(), params);
         BillId subBillId = entry.getSubBillId();
         params.addValue("subPrintNo", (subBillId != null) ? subBillId.getBasePrintNo() : null);
-        params.addValue("subSession", (subBillId != null) ? subBillId.getSession().getYear() : null);
+        params.addValue("subSession", (subBillId != null) ? subBillId.getSession().year() : null);
         params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion().toString() : null);
         params.addValue("high", entry.getBillHigh());
         addLastFile(file, params);
@@ -412,7 +412,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     private static void addBillIdParams(BillId billId, MapSqlParameterSource params) {
         params.addValue("printNo", billId.getBasePrintNo());
-        params.addValue("session", billId.getSession().getYear());
+        params.addValue("session", billId.getSession().year());
         params.addValue("amendVersion", billId.getVersion().toString());
     }
 

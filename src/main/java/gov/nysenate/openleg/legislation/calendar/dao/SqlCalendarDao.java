@@ -464,7 +464,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         addBillIdParams(entry.getBillId(), params);
         BillId subBillId = entry.getSubBillId();
         params.addValue("subPrintNo", (subBillId != null) ? subBillId.getBasePrintNo() : null);
-        params.addValue("subSession", (subBillId != null) ? subBillId.getSession().getYear() : null);
+        params.addValue("subSession", (subBillId != null) ? subBillId.getSession().year() : null);
         params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion().toString() : null);
         params.addValue("high", entry.getBillHigh());
         addLastFragmentParam(fragment, params);
@@ -501,7 +501,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     protected static void addBillIdParams(BillId billId, MapSqlParameterSource params) {
         params.addValue("printNo", billId.getBasePrintNo());
-        params.addValue("session", billId.getSession().getYear());
+        params.addValue("session", billId.getSession().year());
         params.addValue("amendVersion", billId.getVersion().toString());
     }
 }

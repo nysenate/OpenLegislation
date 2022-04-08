@@ -70,7 +70,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     private File createScrapeFile(File stagingDir, BaseBillId baseBillId) {
         String file = StringSubstitutor.replace(FILE_TEMPLATE, ImmutableMap.<String, String>builder()
-                .put("sessionYear", Integer.toString(baseBillId.getSession().getYear()))
+                .put("sessionYear", Integer.toString(baseBillId.getSession().year()))
                 .put("printNo", baseBillId.getPrintNo())
                 .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))
                 .build());
@@ -146,7 +146,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public int stageArchivedScrapeFiles(SessionYear sessionYear) {
         String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql(schema());
-        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.getYear());
+        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.year());
         return jdbcNamed.update(sql, params);
     }
 
@@ -200,7 +200,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     public MapSqlParameterSource getQueueParams(BaseBillId id, int priority) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", id.getPrintNo());
-        params.addValue("sessionYear", id.getSession().getYear());
+        params.addValue("sessionYear", id.getSession().year());
         params.addValue("priority", priority);
         return params;
     }

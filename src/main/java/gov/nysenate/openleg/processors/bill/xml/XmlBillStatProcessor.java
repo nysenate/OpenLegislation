@@ -1,18 +1,17 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.legislation.PublishStatus;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.processors.LegDataProcessor;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
+import gov.nysenate.openleg.processors.bill.BillActionParser;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.bill.BillActionParser;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -120,7 +119,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
         }
         if (reprinted) {
             bill.setReprintOf(
-                    new BillId(reprintBillhse + rprtBillno, billId.getSession().getYear(), rprtVersion));
+                    new BillId(reprintBillhse + rprtBillno, billId.getSession().year(), rprtVersion));
         } else {
             bill.setReprintOf(null);
         }
