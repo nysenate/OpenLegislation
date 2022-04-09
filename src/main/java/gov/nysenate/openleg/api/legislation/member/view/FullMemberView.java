@@ -16,7 +16,7 @@ public class FullMemberView extends MemberView {
 
     public FullMemberView(FullMember member) {
         super(member.getLatestSessionMember().orElse(null));
-        this.personView = new PersonView(member);
+        this.personView = new PersonView(member.getPerson());
         this.sessionShortNameMap = member.getSessionMemberMap().keySet().stream()
                 .collect(Collectors.toMap(SessionYear::year,
                         session -> member.getSessionMemberMap().get(session).stream()

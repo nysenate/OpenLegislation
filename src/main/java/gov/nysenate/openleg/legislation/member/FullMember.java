@@ -19,7 +19,7 @@ public class FullMember extends Member {
     public FullMember(Collection<SessionMember> sessionMembers) {
         super(sessionMembers.stream().max(SessionMember::compareTo).orElse(new SessionMember()).member);
         for (var sm : sessionMembers) {
-            if (sm.member.memberId != this.memberId) {
+            if (sm.member.getMemberId() != this.getMemberId()) {
                 throw new IllegalArgumentException("All supplied session members must have" +
                         "the same member id");
             }

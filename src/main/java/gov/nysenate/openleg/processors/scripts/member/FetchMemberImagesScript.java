@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processors.scripts.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.common.script.BaseScript;
 import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.common.util.HttpUtils;
+import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import org.apache.commons.cli.CommandLine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +41,10 @@ import java.util.stream.Collectors;
 @Component
 public class FetchMemberImagesScript extends BaseScript {
 
-    private MemberService memberService;
-    private ObjectMapper objectMapper;
-    private String sourceCodeDir;
-    private String memberImgDir;
+    private final MemberService memberService;
+    private final ObjectMapper objectMapper;
+    private final String sourceCodeDir;
+    private final String memberImgDir;
 
     @Autowired
     public FetchMemberImagesScript(MemberService memberService, ObjectMapper objectMapper,
@@ -68,8 +68,7 @@ public class FetchMemberImagesScript extends BaseScript {
     public void execute(CommandLine opts) throws Exception {
         List<FullMember> updatedMembers = new ArrayList<>();
         List<FullMember> membersMissingImages = memberService.getAllFullMembers().stream()
-                .filter(m -> m.getImgName() == null || m.getImgName().isEmpty() || m.getImgName().equals("no_image.jpg"))
-                .collect(Collectors.toList());
+                .filter(m -> m.getPerson().getImgName().equals("no_image.jpg")).toList();
 
         Map<Integer, MemberJsonFeedView> memberIdToJsonMember = getMembersFromJsonFeed();
 
@@ -89,7 +88,7 @@ public class FetchMemberImagesScript extends BaseScript {
         MemberJsonFeedView jsonFeedMember = memberIdToJsonMember.get(member.getMemberId());
         // Get image and write to file.
         InputStream in = new UrlResource(jsonFeedMember.getImg()).getInputStream();
-        FileIOUtils.writeToFile(in, memberImgDir + member.getSuggestedImageFileName());
+        FileIOUtils.writeToFile(in, memberImgDir + member.getPerson().getSuggestedImageFileName());
     }
 
     private void createMigration(List<FullMember> members) throws IOException {
@@ -102,10 +101,10 @@ public class FetchMemberImagesScript extends BaseScript {
         for (FullMember m : members) {
             builder.append("UPDATE public.person SET img_name = ");
             builder.append("'");
-            builder.append(m.getSuggestedImageFileName());
+            builder.append(m.getPerson().getSuggestedImageFileName());
             builder.append("' ");
             builder.append("WHERE id = ");
-            builder.append(m.getPersonId());
+            builder.append(m.getPerson().getPersonId());
             builder.append(";");
             builder.append("\n\n");
         }

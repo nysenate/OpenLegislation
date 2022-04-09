@@ -138,19 +138,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             sessionMember.setDistrictCode(rs.getInt("district_code"));
             sessionMember.setAlternate(rs.getBoolean("alternate"));
 
-            Member member = new Member(rs.getInt("member_id"));
-            member.setChamber(Chamber.getValue(rs.getString("chamber")));
-            member.setIncumbent(rs.getBoolean("incumbent"));
-            member.setPersonId(rs.getInt("person_id"));
-            member.setFullName(rs.getString("full_name"));
-            member.setPrefix(rs.getString("prefix"));
-            member.setFirstName(rs.getString("first_name"));
-            member.setMiddleName(rs.getString("middle_name"));
-            member.setLastName(rs.getString("last_name"));
-            member.setSuffix(rs.getString("suffix"));
-            member.setImgName(rs.getString("img_name"));
-            member.setEmail(rs.getString("email"));
-
+            Person person = new Person(rs.getInt("person_id"), rs.getString("full_name"),
+                    rs.getString("first_name"), rs.getString("middle_name"),
+                    rs.getString("last_name"), rs.getString("email"), rs.getString("prefix"),
+                    rs.getString("suffix"), rs.getString("img_name"));
+            Member member = new Member(person, rs.getInt("member_id"),
+                    Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
             sessionMember.setMember(member);
             return sessionMember;
         }
@@ -172,11 +165,11 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     }
 
     private MapSqlParameterSource getMemberParams(Member member) {
-        return getPersonParams(member)
+        return getPersonParams(member.getPerson())
                 .addValue("memberId", member.getMemberId())
                 .addValue("chamber", Optional.ofNullable(member.getChamber()).map(Chamber::asSqlEnum).orElse(null))
                 .addValue("incumbent", member.isIncumbent())
-                .addValue("fullName", member.getFullName());
+                .addValue("fullName", member.getPerson().getFullName());
     }
 
     private MapSqlParameterSource getSessionMemberParams(SessionMember sessionMember) {

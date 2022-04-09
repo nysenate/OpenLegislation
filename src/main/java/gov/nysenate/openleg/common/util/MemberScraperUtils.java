@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Quick and dirty member scraping. This scraper will break with site redesigns so always test first.
  */
@@ -37,22 +35,18 @@ public class MemberScraperUtils
         Elements districtElements = listingPage.select(".email2");
         Elements picElements = directoryPage.select(".mem-pic a img");
         Elements fullNameElements = directoryPage.select(".leader-info strong a");
-        List<String> fullNames = fullNameElements.stream().map(Element::text).collect(toList());
+        List<String> fullNames = fullNameElements.stream().map(Element::text).toList();
         Pattern districtPattern = Pattern.compile("(\\d+)\\w+");
         List<Integer> districts = districtElements.stream().map(e -> {
             Matcher m = districtPattern.matcher(e.text());
             m.matches();
             return Integer.parseInt(m.group(1));
-        }).collect(toList());
-        List<String> lastNames = csvNameElements.stream().map(e -> e.text().split(",")[0]).collect(toList());
-        List<String> imageNames = picElements.stream().map(i -> i.attr("src")).collect(toList());
+        }).toList();
+        List<String> lastNames = csvNameElements.stream().map(e -> e.text().split(",")[0]).toList();
+        List<String> imageNames = picElements.stream().map(i -> i.attr("src")).toList();
         List<SessionMember> sessionMembers = new ArrayList<>();
         for (int i = 0; i < lastNames.size(); i++) {
-            Member m = new Member();
-            m.setLastName(lastNames.get(i));
-            m.setFullName(fullNames.get(i));
-            m.setImgName(imageNames.get(i));
-            m.setChamber(Chamber.ASSEMBLY);
+            Member m = new Member(lastNames.get(i), fullNames.get(i), imageNames.get(i), Chamber.ASSEMBLY);
 
             SessionMember sm = new SessionMember();
             sm.setDistrictCode(districts.get(i));
@@ -72,22 +66,18 @@ public class MemberScraperUtils
         Elements nameElems = nodes.select(".views-field-field-last-name-value .field-content > a");
         Elements districtElems = nodes.select(".views-field-field-senators-district-nid span");
         List<String> imageUrls = imageElems.stream()
-            .map(i -> i.attr("src")).collect(toList());
-        List<String> names = nameElems.stream().map(Element::text).collect(toList());
+                .map(i -> i.attr("src")).toList();
+        List<String> names = nameElems.stream().map(Element::text).toList();
         Pattern districtPattern = Pattern.compile("District (\\d+)");
         List<Integer> districts = districtElems.stream().map(d -> {
             Matcher m = districtPattern.matcher(d.text());
             m.find();
             return Integer.parseInt(m.group(1));
-        }).collect(toList());
+        }).toList();
         List<SessionMember> senators = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
             String[] splitName = names.get(i).split(",");
-            Member m = new Member();
-            m.setLastName(splitName[0]);
-            m.setFullName(splitName[1] + " " + splitName[0]);
-            m.setImgName(imageUrls.get(i));
-            m.setChamber(Chamber.SENATE);
+            Member m = new Member(splitName[0], splitName[1] + " " + splitName[0], imageUrls.get(i), Chamber.SENATE);
 
             SessionMember sm = new SessionMember();
             sm.setDistrictCode(districts.get(i));

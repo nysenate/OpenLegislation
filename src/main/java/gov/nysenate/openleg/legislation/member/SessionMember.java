@@ -36,11 +36,6 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
 
     public SessionMember() {}
 
-    public SessionMember(int memberId, SessionYear sessionYear) {
-        this.member = new Member(memberId);
-        this.sessionYear = sessionYear;
-    }
-
     public SessionMember(int sessionMemberId, Member member, String lbdcShortName,
                          SessionYear sessionYear, Integer districtCode, boolean alternate) {
         this.sessionMemberId = sessionMemberId;
@@ -64,8 +59,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
      * Updates a session member with the fields of other.
      */
     public void updateFromOther(SessionMember other) {
-        this.member = new Member();
-        this.member.updateFromOther(other.member);
+        this.member = new Member(other.member);
         this.sessionMemberId = other.getSessionMemberId();
         this.lbdcShortName = other.getLbdcShortName();
         this.alternate = other.isAlternate();
@@ -95,7 +89,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
 
     @Override
     public String toString() {
-        return lbdcShortName + " (year: " + sessionYear + ", id: " + member.memberId + ")";
+        return lbdcShortName + " (year: " + sessionYear + ", id: " + member.getMemberId() + ")";
     }
 
     @Override

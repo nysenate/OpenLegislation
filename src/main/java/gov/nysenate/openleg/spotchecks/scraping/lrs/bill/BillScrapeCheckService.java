@@ -2,15 +2,15 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import gov.nysenate.openleg.common.util.BillTextCheckUtils;
+import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
-import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
-import gov.nysenate.openleg.common.util.BillTextCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,7 +125,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
                 for (SessionMember sessionMember : vote.getMembersByVote(code)) {
-                    voteMultiList.put(code, sessionMember.getMember().getLastName());
+                    voteMultiList.put(code, sessionMember.getMember().getPerson().getLastName());
                 }
             }
             BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);

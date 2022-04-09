@@ -22,10 +22,10 @@ public class MemberView implements ViewObject
             this.memberId = member.getMemberId();
             this.chamber = member.getChamber() == null ? "" : member.getChamber().name();
             this.incumbent = member.isIncumbent();
-            this.fullName = member.getFullName();
+            this.fullName = member.getPerson().getFullName();
             this.shortName = sessionMember.getLbdcShortName();
             // This is actually associated with a person, not a member.
-            this.imgName = member.getImgName();
+            this.imgName = member.getPerson().getImgName();
             this.relatedSessionMember = sessionMember;
         }
     }

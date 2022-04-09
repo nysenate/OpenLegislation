@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processors.scripts.member;
 
-import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.common.script.BaseScript;
-import gov.nysenate.openleg.common.util.MemberScraperUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.common.util.MemberScraperUtils;
 import gov.nysenate.openleg.common.util.RandomUtils;
+import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public class MemberScraperCLI extends BaseScript
     @Override
     protected void execute(CommandLine opts) throws Exception {
         List<SessionMember> assemblyMembers = MemberScraperUtils.getAssemblyMembers();
-        assemblyMembers.stream().forEach(sm -> {
+        assemblyMembers.forEach(sm -> {
             try {
-                InputStream in = new UrlResource(sm.getMember().getImgName()).getInputStream();
+                InputStream in = new UrlResource(sm.getMember().getPerson().getImgName()).getInputStream();
                 FileIOUtils.writeToFile(in, "/tmp/assembly/" + RandomUtils.getRandomString(10) + ".jpg");
             } catch (IOException e) {
                 logger.error("Failed to ", e);
