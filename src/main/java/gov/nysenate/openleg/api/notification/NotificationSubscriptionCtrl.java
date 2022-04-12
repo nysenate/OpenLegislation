@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.notification;
 
+import gov.nysenate.openleg.api.notification.view.NotificationTypesView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,23 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
 {
     @Autowired
     private NotificationSubscriptionDataService subscriptionDataService;
+
+    /**
+     * Notification Types API
+     * --------------------------
+     *
+     * Get all notification types and mediums (GET) /api/3/admin/notifications/types
+     *
+     * Returns collections of all possible notification types and notification mediums.
+     */
+    @RequiresPermissions("admin:notification-subscribe")
+    @RequestMapping(value = "/types")
+    public BaseResponse notificationTypes() {
+        return new ViewObjectResponse<>(new NotificationTypesView(
+                EnumSet.allOf(NotificationType.class),
+                EnumSet.allOf(NotificationMedium.class))
+        );
+    }
 
     /**
      * Notification Subscription API
