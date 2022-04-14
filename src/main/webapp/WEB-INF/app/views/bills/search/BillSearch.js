@@ -16,12 +16,13 @@ import AdvancedSearchTips from "app/views/bills/search/AdvancedSearchTips";
 import ErrorMessage from "app/shared/ErrorMessage";
 
 export default function BillSearch() {
-  const [ response, setResponse ] = React.useState({ result: { items: [] } })
+  const [ response, setResponse ] = React.useState([])
   const [ loading, setLoading ] = React.useState(true)
   const location = useLocation()
   const history = useHistory()
   const params = queryString.parse(location.search)
   const limit = 6
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   /**
    * Whenever the query params are changed perform a new search.
@@ -55,13 +56,14 @@ export default function BillSearch() {
 
   const doSearch = (term, session, limit, offset, sort) => {
     setLoading(true)
+    setErrorMsg("")
     billSearch(term, session, limit, offset, sort)
       .then((response) => {
         setResponse(response)
       })
       .catch((error) => {
-        // TODO properly handle errors
-        console.warn(`${error}`)
+        setResponse([])
+        setErrorMsg(error.message)
       })
       .finally(() => {
         setLoading(false)
@@ -76,12 +78,19 @@ export default function BillSearch() {
   return (
     <div className="p-3">
       <BillSearchForm searchTerm={params.term} />
-      {loading
-        ? <LoadingIndicator />
-        : <BillSearchResults response={response}
-                             limit={limit}
-                             page={params.page}
-                             onPageChange={onPageChange} />
+      {loading &&
+        <LoadingIndicator />
+      }
+      {!loading && errorMsg &&
+        <div className="text-center">
+          <ErrorMessage>{errorMsg}</ErrorMessage>
+        </div>
+      }
+      {!loading && !errorMsg &&
+        <BillSearchResults response={response}
+                           limit={limit}
+                           page={params.page}
+                           onPageChange={onPageChange} />
       }
       <div className="m-3">
         <QuickSearchTips />

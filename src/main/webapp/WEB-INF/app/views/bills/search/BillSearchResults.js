@@ -4,9 +4,9 @@ import BillListing from "app/shared/BillListing";
 
 export default function BillSearchResults({ response, limit, page, onPageChange }) {
 
-  if (response.result.items.length === 0) {
+  if (!Array.isArray(response.result?.items) || !response.result.items.length) {
     return (
-      <div>
+      <div className="flex justify-center mb-10">
         No results found
       </div>
     )
