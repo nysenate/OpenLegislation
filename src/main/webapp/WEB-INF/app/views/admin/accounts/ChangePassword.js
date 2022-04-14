@@ -1,6 +1,7 @@
 import React from "react"
 import Input from "app/shared/Input";
 import { changePassword } from "app/apis/adminAccountApi";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 
 const registerReducer = function (state, action) {
@@ -101,7 +102,7 @@ export default function ChangePassword() {
       </form>
       <div className="my-3">
         {state.error &&
-          <p className="text text--error">{state.errorMsg}</p>
+          <ErrorMessage>{state.errorMsg}</ErrorMessage>
         }
         {state.successMsg &&
           <p className="text text-green-700">{state.successMsg}</p>

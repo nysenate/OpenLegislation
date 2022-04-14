@@ -1,6 +1,7 @@
 import React from 'react'
 import apiSignup from "app/apis/apiSignup";
 import { Warning } from "phosphor-react";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 const breakingChangesSub = {
   title: 'Breaking Changes', enumVal: 'BREAKING_CHANGES', checked: true,
@@ -153,8 +154,9 @@ export default function SignUp() {
         <button className="btn btn--primary my-3 w-36" type="submit">Get API Key</button>
       </form>
       {state.errorMsg &&
-        <h3 className="h5 text text--error flex items-center justify-center gap-x-1">
-          <Warning size="1.2rem" />{state.errorMsg}</h3>
+        <ErrorMessage>
+           {state.errorMsg}
+        </ErrorMessage>
       }
       {state.registeredMsg &&
         <h3 className="h5">Thanks for signing up, please check your email to receive your API key.</h3>

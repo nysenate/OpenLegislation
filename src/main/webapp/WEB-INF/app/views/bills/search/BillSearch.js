@@ -13,6 +13,7 @@ import {
 } from "app/views/bills/search/billSearchUtils";
 import QuickSearchTips from "app/views/bills/search/QuickSearchTips";
 import AdvancedSearchTips from "app/views/bills/search/AdvancedSearchTips";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 export default function BillSearch() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
