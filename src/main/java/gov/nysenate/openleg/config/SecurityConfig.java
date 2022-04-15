@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.auth.shiro.ShiroCacheManager;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -69,13 +68,8 @@ public class SecurityConfig
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
-        defaultWebSecurityManager.setCacheManager(shiroCacheManager());
+        defaultWebSecurityManager.setCacheManager(new ShiroCacheManager());
         return defaultWebSecurityManager;
-    }
-
-    @Bean(name = "shiroCacheManager")
-    public CacheManager shiroCacheManager() {
-        return new ShiroCacheManager();
     }
 
     /**

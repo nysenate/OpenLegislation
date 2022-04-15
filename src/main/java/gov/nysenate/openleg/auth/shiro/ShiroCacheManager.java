@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ShiroCacheManager extends org.apache.shiro.cache.AbstractCacheManager {
     @Autowired
-    private ShiroCachingService shiroCachingService;
+    private ShiroCachingService cachingService;
 
     @Override
     protected org.apache.shiro.cache.Cache<Object, Object> createCache(String s) throws CacheException {
-        return new ShiroCache(shiroCachingService.getEhcache());
+        System.err.println("Name in createCache: " + s);
+        return new ShiroCache(cachingService.getCache());
     }
 }

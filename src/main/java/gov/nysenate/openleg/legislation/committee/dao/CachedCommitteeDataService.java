@@ -141,13 +141,13 @@ public class CachedCommitteeDataService
 
         if (committeeSessionId == null)
             throw new IllegalArgumentException("CommitteeSessionId cannot be null!");
-        List<Committee> committeeHistory = cache.get(committeeSessionId);
+        List<Committee> committeeHistory = getCacheValue(committeeSessionId);
         if (committeeHistory != null)
             logger.debug("Committee cache hit for {}", committeeSessionId);
         else {
             try {
                 committeeHistory = committeeDao.getCommitteeHistory(committeeSessionId);
-                cache.put(committeeSessionId, new CommitteeList(committeeHistory));
+                putCacheEntry(committeeSessionId, new CommitteeList(committeeHistory));
                 logger.debug("Added committee history {} to cache", committeeSessionId);
             }
             catch (EmptyResultDataAccessException ex){
@@ -179,13 +179,9 @@ public class CachedCommitteeDataService
     public void saveCommittee(Committee committee, LegDataFragment legDataFragment) {
         if (committee == null)
             throw new IllegalArgumentException("Committee cannot be null.");
-        // Update the database.
         committeeDao.updateCommittee(committee, legDataFragment);
-
-        // Update the cache.
         List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
-        cache.put(committee.getSessionId(), new CommitteeList(committeeHistory));
-
+        putCacheEntry(committee.getSessionId(), new CommitteeList(committeeHistory));
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 

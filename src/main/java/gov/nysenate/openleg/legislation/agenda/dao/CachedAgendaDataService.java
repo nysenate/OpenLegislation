@@ -31,8 +31,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     }
 
     /**
-     * Pre-load the agenda cache by first clearing its current contents and then requesting every agenda
-     * in the past 4 years.
+     * Clears out the cache, then fills it with the 8 most recent agendas from this year.
      */
     public void warmCaches() {
         evictCache();
@@ -51,11 +50,10 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
             throw new IllegalArgumentException("AgendaId cannot be null.");
         }
         try {
-            Agenda agenda = cache.get(agendaId);
+            Agenda agenda = getCacheValue(agendaId);
             if (agenda == null) {
-                logger.debug("Fetching agenda {}", agendaId);
                 agenda = agendaDao.getAgenda(agendaId);
-                cache.put(agendaId, agenda);
+                putCacheEntry(agendaId, agenda);
             }
             return agenda;
         }
@@ -88,7 +86,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
         }
         logger.debug("Persisting agenda {}", agenda.getId());
         agendaDao.updateAgenda(agenda, legDataFragment);
-        cache.put(agenda.getId(), agenda);
+        putCacheEntry(agenda.getId(), agenda);
         if (postUpdateEvent) {
             eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));
         }
@@ -98,6 +96,6 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Override
     public void deleteAgenda(AgendaId agendaId) {
         agendaDao.deleteAgenda(agendaId);
-        cache.remove(agendaId);
+        evictContent(agendaId);
     }
 }

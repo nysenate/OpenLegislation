@@ -15,6 +15,7 @@ import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
+import org.elasticsearch.core.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -68,7 +70,7 @@ public abstract class CachingService<Key, Value> {
             this.cache = currCache;
             return;
         }
-
+        var initialEntries = initialEntries();
         String propertyStr = type.name().toLowerCase() + ".cache." +
                 (type.isSizedByEntries() ? "entries" : "heap") + ".size";
         int numUnits = Integer.parseInt(Objects.requireNonNull(environment.getProperty(propertyStr)));
@@ -87,6 +89,19 @@ public abstract class CachingService<Key, Value> {
     protected void cleanUp() {
         evictCache();
         cacheManager.removeCache(cacheType().name());
+    }
+
+    protected Value getCacheValue(Key key) {
+        return cache == null ? null : cache.get(key);
+    }
+
+    protected void putCacheEntry(Key key, Value value) {
+        if (cache != null)
+            cache.put(key, value);
+    }
+
+    public List<Tuple<Key, Value>> initialEntries() {
+        return List.of();
     }
 
     /**

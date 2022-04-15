@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,15 +26,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class CachedSqlApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
-    private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
+public class CachedApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
+    private static final Logger logger = LoggerFactory.getLogger(CachedApiUserService.class);
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
     private final OpenLegEnvironment environment;
 
-    public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService,
-                                   OpenLegEnvironment environment) {
+    public CachedApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService,
+                                OpenLegEnvironment environment) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
         this.environment = environment;
@@ -53,7 +52,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         evictCache();
         logger.info("Warming up API User Cache");
         // Feed in all the api users from the database into the cache
-        apiUserDao.getAllUsers().forEach(this::cacheApiUser);
+        apiUserDao.getAllUsers().forEach(user -> putCacheEntry(user.getApiKey(), user));
     }
 
     /** --- ApiUserService Implementation --- */
@@ -120,7 +119,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
                 user.setActive(true);
                 user.setAuthenticated(true);
                 apiUserDao.updateUser(user);
-                cacheApiUser(user);
+                putCacheEntry(user.getApiKey(), user);
                 sendNewApiUserNotification(user);
             }
             sendApikeyEmail(user);
@@ -143,7 +142,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.addRole(role);
         apiUserDao.updateUser(user);
-        cacheApiUser(user);
+        putCacheEntry(user.getApiKey(), user);
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
 
@@ -153,7 +152,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.removeRole(role);
         apiUserDao.updateUser(user);
-        cacheApiUser(user);
+        putCacheEntry(user.getApiKey(), user);
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
 
@@ -171,7 +170,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.addSubscription(subscription);
         apiUserDao.updateUser(user);
-        cacheApiUser(user);
+        putCacheEntry(user.getApiKey(), user);
     }
 
     /** {@inheritDoc} */
@@ -180,7 +179,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setSubscriptions(subscriptions);
         apiUserDao.updateUser(user);
-        cacheApiUser(user);
+        putCacheEntry(user.getApiKey(), user);
     }
 
     /** {@inheritDoc} */
@@ -189,7 +188,7 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.removeSubscription(subscription);
         apiUserDao.updateUser(user);
-        cacheApiUser(user);
+        putCacheEntry(user.getApiKey(), user);
     }
 
     /**
@@ -203,30 +202,19 @@ public class CachedSqlApiUserService extends CachingService<String, ApiUser> imp
         if (apiKey == null) {
             return Optional.empty();
         }
-        Optional<ApiUser> userOpt = Optional.ofNullable(cache.get(apiKey));
-        if (userOpt.isPresent()) {
-            return userOpt;
+        ApiUser user = getCacheValue(apiKey);
+        if (user == null) {
+            try {
+                user = apiUserDao.getApiUserFromKey(apiKey);
+            } catch (EmptyResultDataAccessException ex) {
+                return Optional.empty();
+            }
         }
-        try {
-            ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
-            cacheApiUser(user);
-            return Optional.of(user);
-        } catch (EmptyResultDataAccessException ex) {
-            return Optional.empty();
-        }
+        return Optional.of(user);
     }
 
     public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
         return apiUserDao.getUsersWithSubscription(subscriptionType);
-    }
-
-    /** --- Internal Methods --- */
-
-    /***
-     * Inserts the given api user into the cache
-     */
-    private void cacheApiUser(@Nonnull ApiUser apiUser) {
-        cache.put(apiUser.getApiKey(), apiUser);
     }
 
     /**

@@ -31,6 +31,6 @@ final class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
 
     @Override
     protected void putMemberInCache(FullMember member) {
-        cache.put(member.getMemberId(), member);
+        putCacheEntry(member.getMemberId(), member);
     }
 }

@@ -24,12 +24,6 @@ public interface NotificationSubscriptionDataService {
     Set<NotificationSubscription> getSubscriptions(NotificationType type);
 
     /**
-     * Get every single subscription.
-     * @return {@link Set<NotificationSubscription>}
-     */
-    Set<NotificationSubscription> getAllSubscriptions();
-
-    /**
      * Update a subscription
      * @param subscription NotificationSubscription
      * @return {@link NotificationSubscription} the updated subscription

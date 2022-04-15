@@ -49,14 +49,14 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
         if (calendarId == null)
             throw new IllegalArgumentException("CalendarId cannot be null.");
 
-        Calendar cal = cache.get(calendarId);
+        Calendar cal = getCacheValue(calendarId);
         if (cal != null) {
             logger.debug("Calendar Cache HIT !! {}", calendarId);
             return cal;
         }
         try {
             Calendar calendar = calendarDao.getCalendar(calendarId);
-            cache.put(calendarId, calendar);
+            putCacheEntry(calendarId, calendar);
             return calendar;
         }
         catch (DataAccessException ex) {
@@ -167,7 +167,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
     public void saveCalendar(Calendar calendar, LegDataFragment legDataFragment, boolean postUpdateEvent) {
         logger.debug("Persisting {}", calendar);
         calendarDao.updateCalendar(calendar, legDataFragment);
-        cache.put(calendar.getId(), calendar);
+        putCacheEntry(calendar.getId(), calendar);
         if (postUpdateEvent)
             eventBus.post(new CalendarUpdateEvent(calendar));
     }

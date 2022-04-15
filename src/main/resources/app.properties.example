@@ -115,6 +115,7 @@ elastic.search.connection_retries = 30
 
 # Uses about 4 MB.
 agenda.cache.entries.size = 20
+# TODO: bill caches should really be sized using memory, but record issue must be fixed first.
 # Uses about 300 MB.
 bill.cache.entries.size = 21000
 # Uses about 100 MB.

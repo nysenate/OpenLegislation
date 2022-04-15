@@ -14,7 +14,6 @@ import gov.nysenate.openleg.legislation.bill.dao.BillDao;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
-import org.ehcache.Cache;
 import org.ehcache.config.EvictionAdvisor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,22 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     // If a bill is already stored in the main cache, its BillInfo does not need to be stored here.
     @Autowired
     private CachedBillInfoDataService billInfoDataService;
-    private Cache<BaseBillId, BillInfo> billInfoCache;
+
+    @Service
+    public static class CachedBillInfoDataService extends CachingService<BaseBillId, BillInfo> {
+        @Override
+        protected CacheType cacheType() {
+            return CacheType.BILL_INFO;
+        }
+
+        private BillInfo get(BaseBillId baseBillId) {
+            return super.getCacheValue(baseBillId);
+        }
+
+        private void put(BaseBillId baseBillId, BillInfo billInfo) {
+            super.putCacheEntry(baseBillId, billInfo);
+        }
+    }
 
     /** --- CachingService implementation --- */
 
@@ -55,12 +69,6 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     protected EvictionAdvisor<BaseBillId, Bill> evictionAdvisor() {
         return (key, value) -> key.getSession().equals(SessionYear.current()) &&
                 value.isPublished();
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        this.billInfoCache = billInfoDataService.getBillInfoCache();
     }
 
     /**
@@ -95,13 +103,13 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     @Override
     public void evictContent(BaseBillId baseBillId) {
         super.evictContent(baseBillId);
-        billInfoCache.remove(baseBillId);
+        billInfoDataService.evictContent(baseBillId);
     }
 
     @Override
     public void evictCache() {
         super.evictCache();
-        billInfoCache.clear();
+        billInfoDataService.evictCache();
     }
 
     /* --- BillDataService implementation --- */
@@ -111,7 +119,7 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
         if (billId == null)
             throw new IllegalArgumentException("BillId cannot be null");
-        Bill bill = cache.get(billId);
+        Bill bill = getCacheValue(billId);
         if (bill != null) {
             logger.debug("Cache hit for bill {}", bill);
             try {
@@ -142,17 +150,17 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
-        Bill bill = cache.get(billId);
+        Bill bill = getCacheValue(billId);
         if (bill != null) {
             return new BillInfo(bill);
         }
-        BillInfo info = billInfoCache.get(billId);
+        BillInfo info = billInfoDataService.get(billId);
         if (info != null) {
             return info;
         }
         try {
             info = billDao.getBillInfo(billId);
-            billInfoCache.put(billId, info);
+            billInfoDataService.put(billId, info);
             return info;
         }
         catch (EmptyResultDataAccessException ex) {
@@ -241,9 +249,9 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
                 ba.setMemo("");
                 ba.clearFullTexts();
             });
-            this.cache.put(cacheBill.getBaseBillId(), cacheBill);
+            putCacheEntry(cacheBill.getBaseBillId(), cacheBill);
             // Remove entry from the bill info cache if it exists
-            this.billInfoCache.remove(cacheBill.getBaseBillId());
+            billInfoDataService.evictContent(cacheBill.getBaseBillId());
         }
         catch (CloneNotSupportedException e) {
             logger.error("Failed to cache bill!", e);

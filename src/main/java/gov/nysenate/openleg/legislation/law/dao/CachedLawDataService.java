@@ -100,10 +100,10 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
                 endPublishedDate = maxPubDates.get(lawId);
             }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
-            LawTree tree = cache.get(lawVersionId);
+            LawTree tree = getCacheValue(lawVersionId);
             if (tree == null) {
                 tree = lawDataDao.getLawTree(lawId, endPublishedDate);
-                cache.put(tree.getLawVersionId(), tree);
+                putCacheEntry(tree.getLawVersionId(), tree);
             }
             return tree;
         }
@@ -159,7 +159,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     public void saveLawTree(LawFile lawFile, LawTree lawTree) {
         if (lawTree == null) throw new IllegalArgumentException("Supplied lawTree cannot be null");
         lawDataDao.updateLawTree(lawFile, lawTree);
-        cache.put(lawTree.getLawVersionId(), lawTree);
+        putCacheEntry(lawTree.getLawVersionId(), lawTree);
         maxPubDates.clear();
     }
 

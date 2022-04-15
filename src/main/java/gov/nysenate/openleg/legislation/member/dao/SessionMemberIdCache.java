@@ -32,6 +32,6 @@ final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMem
 
     @Override
     protected void putMemberInCache(SessionMember member) {
-        cache.put(member.getSessionMemberId(), member);
+        putCacheEntry(member.getSessionMemberId(), member);
     }
 }

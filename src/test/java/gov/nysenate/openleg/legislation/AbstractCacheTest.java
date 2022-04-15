@@ -18,10 +18,6 @@ public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
         this.stats = CachingService.getStats(cachingService.cacheType());
     }
 
-    protected void putPair(Key key, Value value) {
-        cachingService.cache.put(key, value);
-    }
-
     public static void runTests(CachingService<?, ?> cachingService, Pair<?> sampleData) {
         CacheType type = cachingService.cacheType();
         cachingService.init();

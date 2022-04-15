@@ -38,6 +38,6 @@ final class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, Se
 
     @Override
     protected void putMemberInCache(SessionMember member) {
-        cache.put(new ShortNameKey(member), member);
+        putCacheEntry(new ShortNameKey(member), member);
     }
 }
