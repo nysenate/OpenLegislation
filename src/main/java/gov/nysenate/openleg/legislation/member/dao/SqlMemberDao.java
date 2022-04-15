@@ -4,10 +4,7 @@ import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
-import gov.nysenate.openleg.legislation.member.FullMember;
-import gov.nysenate.openleg.legislation.member.Member;
-import gov.nysenate.openleg.legislation.member.Person;
-import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.member.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -131,17 +128,17 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
             SessionMember sessionMember = new SessionMember();
-
             sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
             sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
             sessionMember.setSessionYear(getSessionYearFromRs(rs, "session_year"));
             sessionMember.setDistrictCode(rs.getInt("district_code"));
             sessionMember.setAlternate(rs.getBoolean("alternate"));
 
-            Person person = new Person(rs.getInt("person_id"), rs.getString("full_name"),
+            PersonName name = new PersonName(rs.getString("full_name"), rs.getString("prefix"),
                     rs.getString("first_name"), rs.getString("middle_name"),
-                    rs.getString("last_name"), rs.getString("email"), rs.getString("prefix"),
-                    rs.getString("suffix"), rs.getString("img_name"));
+                    rs.getString("last_name"), rs.getString("suffix"));
+            Person person = new Person(rs.getInt("person_id"), name,
+                    rs.getString("email"), rs.getString("img_name"));
             Member member = new Member(person, rs.getInt("member_id"),
                     Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
             sessionMember.setMember(member);
@@ -152,16 +149,17 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     /** --- Internal Methods --- */
 
     private MapSqlParameterSource getPersonParams(Person person) {
+        PersonName name = person.name();
         return new MapSqlParameterSource()
-                .addValue("personId", person.getPersonId())
-                .addValue("fullName", person.getFullName())
-                .addValue("firstName", person.getFirstName())
-                .addValue("lastName", person.getLastName())
-                .addValue("middleName", person.getMiddleName())
-                .addValue("email", person.getEmail())
-                .addValue("prefix", person.getPrefix())
-                .addValue("suffix", person.getSuffix())
-                .addValue("img_name", person.getImgName());
+                .addValue("personId", person.personId())
+                .addValue("fullName", name.fullName())
+                .addValue("firstName", name.firstName())
+                .addValue("lastName", name.lastName())
+                .addValue("middleName", name.middleName())
+                .addValue("email", person.email())
+                .addValue("prefix", name.prefix())
+                .addValue("suffix", name.suffix())
+                .addValue("img_name", person.imgName());
     }
 
     private MapSqlParameterSource getMemberParams(Member member) {
@@ -169,7 +167,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("memberId", member.getMemberId())
                 .addValue("chamber", Optional.ofNullable(member.getChamber()).map(Chamber::asSqlEnum).orElse(null))
                 .addValue("incumbent", member.isIncumbent())
-                .addValue("fullName", member.getPerson().getFullName());
+                .addValue("fullName", member.getPerson().name().fullName());
     }
 
     private MapSqlParameterSource getSessionMemberParams(SessionMember sessionMember) {

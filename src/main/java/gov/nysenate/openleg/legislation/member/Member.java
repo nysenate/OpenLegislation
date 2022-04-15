@@ -19,13 +19,6 @@ public class Member implements Comparable<Member> {
     /** Indicates if the member is currently an incumbent. */
     private final boolean incumbent;
 
-    public Member(String lastName, String fullName, String imgName, Chamber chamber) {
-        this.person = new Person(null, fullName, "", "", lastName, "", "", "", imgName);
-        this.memberId = 0;
-        this.chamber = chamber;
-        this.incumbent = false;
-    }
-
     public Member(Person person, int memberId, Chamber chamber, boolean incumbent) {
         this.person = person;
         this.memberId = memberId;

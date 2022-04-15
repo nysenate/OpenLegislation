@@ -96,7 +96,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     public void updateIndex(FullMember member) {
         if (env.isElasticIndexing() && member != null) {
-            logger.info("Indexing member {} into elastic search.", member.getPerson().getFullName());
+            logger.info("Indexing member {} into elastic search.", member.getPerson().name().lastName());
             memberSearchDao.updateMemberIndex(member);
         }
     }

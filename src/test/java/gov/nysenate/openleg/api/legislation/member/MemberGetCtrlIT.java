@@ -13,10 +13,7 @@ import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
-import gov.nysenate.openleg.legislation.member.FullMember;
-import gov.nysenate.openleg.legislation.member.Member;
-import gov.nysenate.openleg.legislation.member.Person;
-import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.search.SearchException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -59,8 +56,10 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
-        Person testP = new Person(199, "Ruth Hassell-Thompson", "Ruth", null, "Hassell-Thompson",
-                "hassellt@senate.state.ny.us", "Senator", null, "380_ruth_hassell-thompson.jpg");
+        PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", null,
+                "Hassell-Thomson", null);
+        Person testP = new Person(199, pName, "hassellt@senate.state.ny.us",
+                "380_ruth_hassell-thompson.jpg");
         Member testM = new Member(testP, 380, Chamber.SENATE, false);
         SessionMember nonAlt2011 = new SessionMember(74, testM, name + "N", new
                 SessionYear(2011), 36, false);

@@ -68,7 +68,7 @@ public class FetchMemberImagesScript extends BaseScript {
     public void execute(CommandLine opts) throws Exception {
         List<FullMember> updatedMembers = new ArrayList<>();
         List<FullMember> membersMissingImages = memberService.getAllFullMembers().stream()
-                .filter(m -> m.getPerson().getImgName().equals("no_image.jpg")).toList();
+                .filter(m -> m.getPerson().imgName().equals("no_image.jpg")).toList();
 
         Map<Integer, MemberJsonFeedView> memberIdToJsonMember = getMembersFromJsonFeed();
 
@@ -104,7 +104,7 @@ public class FetchMemberImagesScript extends BaseScript {
             builder.append(m.getPerson().getSuggestedImageFileName());
             builder.append("' ");
             builder.append("WHERE id = ");
-            builder.append(m.getPerson().getPersonId());
+            builder.append(m.getPerson().personId());
             builder.append(";");
             builder.append("\n\n");
         }
