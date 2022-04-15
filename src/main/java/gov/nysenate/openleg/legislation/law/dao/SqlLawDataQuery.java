@@ -70,12 +70,12 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "JOIN (\n" +
         "  SELECT law_id, doc_id, MAX(published_date) AS max_published_date\n" +
         "  FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
+        "  WHERE repealed_date IS NOT NULL" +
+        "    AND repealed_date BETWEEN :startDateTime AND :endDateTime" +
         "  GROUP BY law_id, doc_id\n" +
         ") tm\n" +
         "ON tm.doc_id = t.doc_id\n" +
-        "  AND tm.max_published_date = t.published_date\n" +
-        "WHERE t.repealed_date IS NOT NULL" +
-        " AND t.repealed_date BETWEEN :startDateTime AND :endDateTime"
+        "  AND tm.max_published_date = t.published_date"
     ),
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +

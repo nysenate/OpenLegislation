@@ -73,7 +73,6 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     }
 
 
-    // TODO: during testing, this query takes 12 seconds on average.
     @Override
     public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
