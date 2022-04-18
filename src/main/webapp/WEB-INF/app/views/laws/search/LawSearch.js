@@ -43,7 +43,10 @@ export default function LawSearch() {
       setErrorMsg("")
       lawSearchApi(searchParams.term, new PageParams(searchParams.page, searchParams.limit))
         .then((response) => setResponse(response))
-        .catch((error) => setErrorMsg(error.message))
+        .catch((error) => {
+          setResponse({})
+          setErrorMsg(error.message)
+        })
         .finally(() => setIsLoading(false))
     } else {
       setResponse({})
