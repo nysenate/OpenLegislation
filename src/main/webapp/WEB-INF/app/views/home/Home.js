@@ -14,6 +14,7 @@ import NavMenu from "app/views/home/NavMenu";
 import Configuration from "app/views/admin/configuration/Configuration";
 import PrivateRoute from "app/shared/PrivateRoute";
 import Admin from "app/views/admin/Admin";
+import NotFound from "app/views/NotFound";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -65,6 +66,9 @@ export default function Home() {
             </PrivateRoute>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
+            </Route>
+            <Route path="">
+              <NotFound />
             </Route>
           </Switch>
         </div>
