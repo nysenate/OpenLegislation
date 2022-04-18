@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from "react-router-dom";
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -14,9 +13,9 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-3">
-          <p>Something went wrong...</p>
-          <a href="/">Return home</a>
+        <div className="error-page text-center pt-10">
+          <p className="text-xl text-white mb-6">Uh oh, Something went wrong...</p>
+          <a href="/" className="text-white border-white">Return home</a>
         </div>
       )
     }
