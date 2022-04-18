@@ -11,29 +11,32 @@ import Home from "app/views/home/Home";
 import { AuthProvider } from "./shared/useAuth";
 import useGlobals, { GlobalsProvider } from "app/shared/useGlobals";
 import Logout from "app/views/logout/Logout";
+import ErrorBoundary from "app/views/ErrorBoundary";
 
 
 function App() {
   return (
-    <GlobalsProvider>
-      <RequireGlobals>
-        <Router>
-          <AuthProvider>
-            <Switch>
-              <Route exact path="/">
-                <PublicView />
-              </Route>
-              <Route exact path="/logout">
-                <Logout />
-              </Route>
-              <Route>
-                <Home />
-              </Route>
-            </Switch>
-          </AuthProvider>
-        </Router>
-      </RequireGlobals>
-    </GlobalsProvider>
+    <ErrorBoundary>
+      <GlobalsProvider>
+        <RequireGlobals>
+          <Router>
+            <AuthProvider>
+              <Switch>
+                <Route exact path="/">
+                  <PublicView />
+                </Route>
+                <Route exact path="/logout">
+                  <Logout />
+                </Route>
+                <Route>
+                  <Home />
+                </Route>
+              </Switch>
+            </AuthProvider>
+          </Router>
+        </RequireGlobals>
+      </GlobalsProvider>
+    </ErrorBoundary>
   )
 }
 
