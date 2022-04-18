@@ -9,6 +9,7 @@ import LawUpdatesSearchForm from "app/views/laws/updates/LawUpdatesSearchForm";
 import LawUpdatesSearchResults from "app/views/laws/updates/LawUpdatesSearchResults";
 import getLawUpdatesApi from "app/apis/getLawUpdatesApi";
 import { DateTime } from "luxon";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 
 export default function LawSearch() {
@@ -19,12 +20,13 @@ export default function LawSearch() {
   const params = queryString.parse(location.search)
   const page = params.page || 1
 
-  const [ from, setFrom ] = React.useState(() => DateTime.now().minus({ month: 1}).startOf("day"))
+  const [ from, setFrom ] = React.useState(() => DateTime.now().minus({ month: 1 }).startOf("day"))
   const [ to, setTo ] = React.useState(DateTime.now())
   const [ withSelect, setWithSelect ] = React.useState('published')
   const [ sortSelect, setSortSelect ] = React.useState('desc')
   const [ limit, setLimit ] = React.useState(6)
   const [ offset, setOffset ] = React.useState(1)
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   React.useEffect(() => {
     doSearch()
@@ -42,17 +44,11 @@ export default function LawSearch() {
 
   const doSearch = () => {
     setLoading(true)
+    setErrorMsg("")
     getLawUpdatesApi(true, from, to, withSelect, sortSelect, limit, offset)
-      .then((response) => {
-        setResponse(response)
-      })
-      .catch((error) => {
-        // TODO properly handle errors
-        console.warn(`${error}`)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+      .then((response) => setResponse(response))
+      .catch((error) => setErrorMsg(error.message))
+      .finally(() => setLoading(false))
   }
 
   const onPageChange = pageInfo => {
@@ -64,6 +60,9 @@ export default function LawSearch() {
   return (
     <div className="p-3">
       <LawUpdatesSearchForm updateValues={setSearchValues} from={from} to={to} />
+      {errorMsg &&
+      <ErrorMessage>{errorMsg}</ErrorMessage>
+      }
       {loading
         ? <LoadingIndicator />
         :

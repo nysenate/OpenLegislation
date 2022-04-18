@@ -8,7 +8,6 @@ import * as queryString from "query-string"
 
 
 export default function LawSearchForm({ term = "", filter = "" }) {
-  console.log(term)
   const [ dirtyTerm, setDirtyTerm ] = React.useState(term)
   const [ dirtyFilter, setDirtyFilter ] = React.useState(filter)
   const { search } = useLocation()

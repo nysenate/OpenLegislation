@@ -3,7 +3,8 @@ import Pagination from "app/shared/Pagination";
 
 
 export default function LawUpdatesSearchResults({ response, limit, page, onPageChange }) {
-  if (response.result.items.length === 0) {
+
+  if (!Array.isArray(response?.result?.items) || !response.result.items.length) {
     return (
       <div>
         No results found

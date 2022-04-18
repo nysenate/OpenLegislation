@@ -9,6 +9,7 @@ import LawSearchForm from "app/views/laws/search/LawSearchForm";
 import LawChapterList from "app/views/laws/search/LawChapterList";
 import LawSearchResults from "app/views/laws/search/LawSearchResults";
 import { PageParams } from "app/shared/Pagination";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 
 export default function LawSearch() {
@@ -17,6 +18,7 @@ export default function LawSearch() {
   const [ searchParams, setSearchParams ] = React.useState({})
   const [ response, setResponse ] = React.useState({})
   const [ isLoading, setIsLoading ] = React.useState(false)
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   /** Initialize search params if they are not set */
   React.useEffect(() => {
@@ -38,9 +40,10 @@ export default function LawSearch() {
   React.useEffect(() => {
     if (searchParams.term) {
       setIsLoading(true)
+      setErrorMsg("")
       lawSearchApi(searchParams.term, new PageParams(searchParams.page, searchParams.limit))
         .then((response) => setResponse(response))
-        .catch((error) => console.warn(`${error}`))
+        .catch((error) => setErrorMsg(error.message))
         .finally(() => setIsLoading(false))
     } else {
       setResponse({})
@@ -57,6 +60,9 @@ export default function LawSearch() {
   return (
     <div className="p-3">
       <LawSearchForm term={searchParams.term} filter={searchParams.chapterFilter} />
+      {errorMsg &&
+        <ErrorMessage>{errorMsg}</ErrorMessage>
+      }
       <div>
         {searchParams.term &&
           <LawSearchResults response={response}
