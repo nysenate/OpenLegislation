@@ -33,7 +33,6 @@ const sessionSort = "_score:desc,dateTime:desc"
  * The top-level function for transcripts.
  */
 export default function Transcripts({ setHeaderText }) {
-  throw new Error("Crash")
   return (
     <ContentContainer>
       <Switch>
