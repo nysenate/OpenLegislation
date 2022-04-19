@@ -10,7 +10,6 @@ import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,6 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlAgendaDao.class);
 
-    @Autowired private MemberService memberService;
     @Autowired private SqlAgendaVoteAddendumDao voteAddendumDao;
 
     /** {@inheritDoc} */

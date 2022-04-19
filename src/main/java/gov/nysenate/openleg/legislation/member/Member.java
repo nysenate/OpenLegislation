@@ -6,7 +6,7 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 /**
  * Represents a person holding a specific office
  */
-public class Member implements Comparable<Member> {
+public class Member {
 
     private final Person person;
 
@@ -39,15 +39,15 @@ public class Member implements Comparable<Member> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Member member)) return false;
-        if (!super.equals(o)) return false;
-        return memberId == member.memberId &&
+        return Objects.equal(person, member.person) &&
+                memberId == member.memberId &&
                 chamber == member.chamber &&
                 incumbent == member.incumbent;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), memberId, chamber, incumbent);
+        return Objects.hashCode(person.hashCode(), memberId, chamber, incumbent);
     }
 
     /** --- Getters / Setters --- */
@@ -66,10 +66,5 @@ public class Member implements Comparable<Member> {
 
     public boolean isIncumbent() {
         return this.incumbent;
-    }
-
-    @Override
-    public int compareTo(Member o) {
-        return 0;
     }
 }

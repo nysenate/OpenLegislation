@@ -23,7 +23,7 @@ public enum BillStatusType
     SUBSTITUTED("Substituted"),
     ADOPTED("Adopted");
 
-    String desc;
+    private final String desc;
 
     BillStatusType(String desc) {
         this.desc = desc;

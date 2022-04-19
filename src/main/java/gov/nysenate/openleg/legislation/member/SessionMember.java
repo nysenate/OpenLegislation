@@ -77,9 +77,11 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         final SessionMember other = (SessionMember) obj;
-        return Objects.equals(this.sessionYear, other.sessionYear) &&
+        return Objects.equals(this.member, other.member) &&
+               Objects.equals(this.sessionYear, other.sessionYear) &&
                Objects.equals(this.districtCode, other.districtCode) &&
-               Objects.equals(this.member, other.member);
+                (Objects.equals(this.lbdcShortName, other.lbdcShortName)
+                        || this.alternate || other.alternate);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
     @Override
     public int compareTo(SessionMember o) {
         return ComparisonChain.start()
-                .compare(this.member, o.member)
+                .compare(this.member.getMemberId(), o.member.getMemberId())
                 .compare(this.sessionYear, o.sessionYear)
                 .compareTrueFirst(this.alternate, o.alternate)
                 .compare(this.lbdcShortName, o.lbdcShortName)

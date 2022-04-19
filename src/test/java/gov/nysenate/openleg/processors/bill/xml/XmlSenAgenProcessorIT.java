@@ -1,16 +1,15 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDao;
 import gov.nysenate.openleg.legislation.agenda.*;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDao;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
-import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.common.util.OutputUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class XmlSenAgenProcessorIT extends BaseXmlProcessorTest {
     @Autowired private AgendaDao agendaDao;
 
     @Test
-    public void processSenAgenda() throws JsonProcessingException {
+    public void processSenAgenda() {
 
         AgendaId agendaId = new AgendaId(20, 2016);
         agendaDao.deleteAgenda(agendaId);

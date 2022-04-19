@@ -10,9 +10,9 @@ public record AgendaVoteBillView(BillIdView bill, String action, CommitteeIdView
                                  BillVoteView vote, boolean isAmended) implements ViewObject {
 
     public AgendaVoteBillView(AgendaVoteBill voteBill) {
-        this(new BillIdView(voteBill.getBillId()), voteBill.getVoteAction().name(),
-                voteBill.getReferCommittee() != null ? new CommitteeIdView(voteBill.getReferCommittee()) : null,
-        new BillVoteView(voteBill.getBillVote()), voteBill.isWithAmendment());
+        this(new BillIdView(voteBill.getBillId()), voteBill.voteAction().name(),
+                voteBill.referCommittee() != null ? new CommitteeIdView(voteBill.referCommittee()) : null,
+        new BillVoteView(voteBill.billVote()), voteBill.isWithAmendment());
     }
 
     @Override

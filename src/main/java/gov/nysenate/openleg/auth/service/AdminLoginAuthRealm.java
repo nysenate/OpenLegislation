@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.auth.service;
 
-import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.admin.AdminUser;
+import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -71,8 +71,7 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        if (token != null && token instanceof UsernamePasswordToken) {
-            UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+        if (token instanceof UsernamePasswordToken usernamePasswordToken) {
             logger.info("Attempting login with Admin Realm from IP {}", usernamePasswordToken.getHost());
             if (usernamePasswordToken.getHost().matches(ipWhitelist)) {
                 return queryForAuthenticationInfo(usernamePasswordToken);

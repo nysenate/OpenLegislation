@@ -57,14 +57,14 @@ public class MemberGetCtrlIT extends ApiTest {
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
         PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", null,
-                "Hassell-Thomson", null);
-        Person testP = new Person(199, pName, "hassellt@senate.state.ny.us",
+                "Hassell-Thompson", null);
+        Person testPerson = new Person(199, pName, "hassellt@senate.state.ny.us",
                 "380_ruth_hassell-thompson.jpg");
-        Member testM = new Member(testP, 380, Chamber.SENATE, false);
-        SessionMember nonAlt2011 = new SessionMember(74, testM, name + "N", new
+        Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);
+        SessionMember nonAlt2011 = new SessionMember(74, testMember, name + "N", new
                 SessionYear(2011), 36, false);
 
-        BaseResponse resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2011, false, testRequest);
+        BaseResponse resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2011, false, testRequest);
         SessionMember actualSm = ((SessionMemberView)(((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
         assertEquals(nonAlt2011, actualSm);
 
@@ -97,7 +97,7 @@ public class MemberGetCtrlIT extends ApiTest {
 
         FullMemberView testFmv = new FullMemberView(new FullMember(Arrays.asList(alt2009, nonAlt2009,
                 alt2011, nonAlt2011, alt2013, nonAlt2013, only2015)));
-        resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2015, true, testRequest);
+        resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2015, true, testRequest);
         FullMemberView actualFmv = (FullMemberView)(((ViewObjectResponse<?>) resp).getResult());
         assertTrue(isFullMemberViewEqual(testFmv, actualFmv));
     }
