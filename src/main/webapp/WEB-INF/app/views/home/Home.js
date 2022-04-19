@@ -9,6 +9,7 @@ import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
 import Calendars from "app/views/calendars/Calendars"
+import Agendas from "app/views/agendas/Agendas"
 import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
 import Configuration from "app/views/admin/configuration/Configuration";
@@ -54,6 +55,9 @@ export default function Home() {
           <Switch>
             <PrivateRoute path="/calendars">
               <Calendars setHeaderText={setHeaderText} />
+            </PrivateRoute>
+            <PrivateRoute path="/agendas">
+              <Agendas setHeaderText={setHeaderText} />
             </PrivateRoute>
             <PrivateRoute path="/bills">
               <Bills setHeaderText={setHeaderText} />
