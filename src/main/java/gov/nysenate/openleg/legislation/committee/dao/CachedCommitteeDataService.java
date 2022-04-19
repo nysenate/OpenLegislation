@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CachedCommitteeDataService
@@ -52,14 +54,10 @@ public class CachedCommitteeDataService
                 value.stream().anyMatch(Committee::isCurrent);
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void warmCaches() {
-        evictCache();
-        logger.info("Warming up committee cache.");
-        getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
-        getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);
-        logger.info("Done warming up committee cache.");
+    public Map<CommitteeSessionId, CommitteeList> initialEntries() {
+        return committeeDao.getAllSessionIds().stream().collect(Collectors.toMap(id -> id,
+                id -> new CommitteeList(committeeDao.getCommitteeHistory(id))));
     }
 
     /** --- Committee Data Services --- */

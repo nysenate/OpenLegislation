@@ -20,10 +20,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class CachedApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
@@ -48,11 +50,9 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
     /*** --- CachingService Implementation --- */
 
     @Override
-    public void warmCaches() {
-        evictCache();
-        logger.info("Warming up API User Cache");
-        // Feed in all the api users from the database into the cache
-        apiUserDao.getAllUsers().forEach(user -> putCacheEntry(user.getApiKey(), user));
+    public Map<String, ApiUser> initialEntries() {
+        return apiUserDao.getAllUsers().stream()
+                .collect(Collectors.toMap(ApiUser::getApiKey, user -> user));
     }
 
     /** --- ApiUserService Implementation --- */

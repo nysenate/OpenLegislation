@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.legislation.committee.dao;
 
-import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 
 import java.util.List;
@@ -55,17 +55,6 @@ public interface CommitteeDataService
      *@param limitOffset  @return List<Committee>
      */
     List<Committee> getCommitteeList(Chamber chamber, SessionYear sessionYear, LimitOffset limitOffset);
-
-    /**
-     * A convenient overload that gets the current committee list for the current session year
-     * @see #getCommitteeList(Chamber, SessionYear, LimitOffset)
-     * @param chamber
-     * @param limitOffset
-     * @return
-     */
-    default List<Committee> getCommitteeList(Chamber chamber, LimitOffset limitOffset) {
-        return getCommitteeList(chamber, SessionYear.current(), limitOffset);
-    }
 
     /**
      * Gets the total number of committees for the given chamber for the given session year

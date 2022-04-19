@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> implements AgendaDataService {
@@ -30,17 +32,10 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
         return CacheType.AGENDA;
     }
 
-    /**
-     * Clears out the cache, then fills it with the 8 most recent agendas from this year.
-     */
-    public void warmCaches() {
-        evictCache();
-        logger.info("Warming up agenda cache.");
-        List<AgendaId> ids = getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC);
-        // Adds up to the most recent 8 agendas.
-        for (int i = 0; i < Math.min(7, ids.size()); i++)
-            getAgenda(ids.get(i));
-        logger.info("Done warming up agenda cache.");
+    @Override
+    public Map<AgendaId, Agenda> initialEntries() {
+        return getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC).stream()
+                .limit(8).collect(Collectors.toMap(id -> id, id -> agendaDao.getAgenda(id)));
     }
 
     /** {@inheritDoc} */

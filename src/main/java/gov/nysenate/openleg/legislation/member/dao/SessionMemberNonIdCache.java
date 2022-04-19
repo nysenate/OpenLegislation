@@ -3,11 +3,11 @@ package gov.nysenate.openleg.legislation.member.dao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.CacheType;
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Used when we do not have a session member id, but have enough information to pick a
@@ -26,18 +26,14 @@ final class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, Se
     }
 
     @Override
-    protected List<SessionMember> getAllMembersFromDao() {
-        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-                .filter(mem -> mem.getSessionYear().equals(SessionYear.current())).toList();
+    public Map<ShortNameKey, SessionMember> initialEntries() {
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL)
+                .stream().collect(Collectors.toMap(ShortNameKey::new,
+                        sessionMember -> sessionMember));
     }
 
     @Override
     protected SessionMember getMemberFromDao(ShortNameKey key) {
         return memberDao.getMemberByShortName(key.lbdcShortName(), key.sessionYear(), key.chamber());
-    }
-
-    @Override
-    protected void putMemberInCache(SessionMember member) {
-        putCacheEntry(new ShortNameKey(member), member);
     }
 }

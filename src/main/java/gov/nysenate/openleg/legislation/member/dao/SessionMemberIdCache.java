@@ -6,7 +6,8 @@ import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMember> {
@@ -21,17 +22,14 @@ final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMem
     }
 
     @Override
-    protected List<SessionMember> getAllMembersFromDao() {
-        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL);
+    public Map<Integer, SessionMember> initialEntries() {
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL)
+                .stream().collect(Collectors.toMap(SessionMember::getSessionMemberId,
+                        sessionMember -> sessionMember));
     }
 
     @Override
     protected SessionMember getMemberFromDao(Integer sessionMemberId) {
         return memberDao.getMemberBySessionId(sessionMemberId);
-    }
-
-    @Override
-    protected void putMemberInCache(SessionMember member) {
-        putCacheEntry(member.getSessionMemberId(), member);
     }
 }

@@ -43,7 +43,7 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     private CachedBillInfoDataService billInfoDataService;
 
     @Service
-    public static class CachedBillInfoDataService extends CachingService<BaseBillId, BillInfo> {
+    static class CachedBillInfoDataService extends CachingService<BaseBillId, BillInfo> {
         @Override
         protected CacheType cacheType() {
             return CacheType.BILL_INFO;
@@ -69,34 +69,6 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     protected EvictionAdvisor<BaseBillId, Bill> evictionAdvisor() {
         return (key, value) -> key.getSession().equals(SessionYear.current()) &&
                 value.isPublished();
-    }
-
-    /**
-     * Pre-load the bill caches by clearing out each of their contents and then loading:
-     * Bill Cache - Current session year bills only
-     * Bill Info Cache - Bill Infos from all available session years.
-     */
-    @Override
-    public void warmCaches() {
-        evictCache();
-        logger.info("Warming up bill cache.");
-        Optional<Range<SessionYear>> sessionRange = activeSessionRange();
-        if (sessionRange.isPresent()) {
-            SessionYear sessionYear = sessionRange.get().lowerEndpoint();
-            while (sessionYear.compareTo(sessionRange.get().upperEndpoint()) <= 0) {
-                if (sessionYear.equals(SessionYear.current())) {
-                    logger.info("Caching Bill instances for current session year: {}", sessionYear);
-                    // Don't load any text because that is not cached.
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBill);
-                }
-                else {
-                    logger.info("Caching Bill Info instances for session year: {}", sessionYear);
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBillInfo);
-                }
-                sessionYear = sessionYear.nextSessionYear();
-            }
-        }
-        logger.info("Done warming up bill cache.");
     }
 
     /** {@inheritDoc} */

@@ -20,8 +20,6 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +38,6 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class CacheCtrl extends BaseCtrl {
-    private static final Logger logger = LoggerFactory.getLogger(CacheCtrl.class);
-
     @Autowired
     private EventBus eventBus;
 
@@ -186,8 +182,6 @@ public class CacheCtrl extends BaseCtrl {
             case API_USER:
                 requireParameters(request, "key", "string");
                 return request.getParameter("key");
-            case NOTIFICATION:
-                return "all subscriptions";
             default:
                 return null;
         }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,10 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
         return CacheType.CALENDAR;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void warmCaches() {
-        evictCache();
-        getCalendars(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL);
+    public Map<CalendarId, Calendar> initialEntries() {
+        return calendarDao.getCalendarIds(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL)
+                .stream().collect(Collectors.toMap(id -> id, id -> calendarDao.getCalendar(id)));
     }
 
     /** --- CalendarDataService implementation --- */

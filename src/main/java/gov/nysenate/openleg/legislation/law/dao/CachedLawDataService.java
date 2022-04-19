@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.legislation.law.dao;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.legislation.CacheEvictEvent;
@@ -7,16 +8,13 @@ import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -25,24 +23,11 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class CachedLawDataService extends CachingService<LawVersionId, LawTree> implements LawDataService {
-    private static final Logger logger = LoggerFactory.getLogger(CachedLawDataService.class);
-
     @Autowired
     private LawDataDao lawDataDao;
-    private Map<String, LocalDate> maxPubDates = new HashMap<>();
-
-    @Override
-    @PostConstruct
-    protected void init() {
-        super.init();
-        maxPubDates = lawDataDao.getLastPublishedMap();
-    }
-
-    @PreDestroy
-    protected void cleanUp() {
-        super.cleanUp();
-        maxPubDates.clear();
-    }
+    // This map is never modified: either it is replaced with an empty map,
+    // or with a map from the database.
+    private ImmutableMap<String, LocalDate> maxPubDates = ImmutableMap.of();
 
     @Override
     protected CacheType cacheType() {
@@ -57,7 +42,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(CacheType.LAW)) {
             evictCache();
-            maxPubDates.clear();
+            maxPubDates = ImmutableMap.of();
         }
     }
 
@@ -65,20 +50,14 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     @Override
     public void evictContent(LawVersionId lawVersionId) {
         super.evictContent(lawVersionId);
-        maxPubDates.clear();
+        maxPubDates = ImmutableMap.of();
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void warmCaches() {
-        try {
-            logger.info("Warming up law cache...");
-            getLawInfos().forEach(lawInfo -> getLawTree(lawInfo.getLawId(), LocalDate.now()));
-            logger.info("Finished warming up law cache.");
-        }
-        catch (LawTreeNotFoundEx ex) {
-            logger.warn("Failed to warm up law cache!.", ex);
-        }
+    public Map<LawVersionId, LawTree> initialEntries() {
+        return lawDataDao.getLawInfos().stream()
+                .map(lawInfo -> getLawTree(lawInfo.getLawId(), LocalDate.now()))
+                .collect(Collectors.toMap(LawTree::getLawVersionId, lawTree -> lawTree));
     }
 
     /** --- LawDataService implementation --- */
@@ -96,7 +75,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
         try {
             if (endPublishedDate == null) {
                 if (maxPubDates.isEmpty())
-                    maxPubDates = lawDataDao.getLastPublishedMap();
+                    maxPubDates = ImmutableMap.copyOf(lawDataDao.getLastPublishedMap());
                 endPublishedDate = maxPubDates.get(lawId);
             }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
@@ -160,7 +139,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
         if (lawTree == null) throw new IllegalArgumentException("Supplied lawTree cannot be null");
         lawDataDao.updateLawTree(lawFile, lawTree);
         putCacheEntry(lawTree.getLawVersionId(), lawTree);
-        maxPubDates.clear();
+        maxPubDates = ImmutableMap.of();
     }
 
     /** {@inheritDoc} */

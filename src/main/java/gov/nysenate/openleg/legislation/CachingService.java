@@ -10,7 +10,6 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
@@ -26,8 +25,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
-import java.util.Objects;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public abstract class CachingService<Key, Value> {
@@ -35,6 +35,8 @@ public abstract class CachingService<Key, Value> {
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
     private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
             .using(statisticsService).build(true);
+    // TODO: add this
+    private final static EnumMap<CacheType, Tuple<Class<?>, Class<?>>> classMap = new EnumMap<>(CacheType.class);
 
     @Autowired
     private Environment environment;
@@ -60,29 +62,31 @@ public abstract class CachingService<Key, Value> {
     @SuppressWarnings("unchecked")
     @PostConstruct
     protected void init() {
-        var type = cacheType();
         var classes = ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments();
-        Class<Key> keyClass = (Class<Key>) classes[0];
-        Class<Value> valueClass = (Class<Value>) classes[1];
+        var keyClass = (Class<Key>) classes[0];
+        var valueClass = (Class<Value>) classes[1];
+        var type = cacheType();
         var currCache = cacheManager.getCache(type.name().toLowerCase(), keyClass, valueClass);
         if (currCache != null) {
             this.cache = currCache;
             return;
         }
         var initialEntries = initialEntries();
-        String propertyStr = type.name().toLowerCase() + ".cache." +
-                (type.isSizedByEntries() ? "entries" : "heap") + ".size";
-        int numUnits = Integer.parseInt(Objects.requireNonNull(environment.getProperty(propertyStr)));
+        int numEntries = (int) (initialEntries.size() * 1.2);
+        if (numEntries == 0) {
+            String size = environment.getProperty(type.name().toLowerCase() + ".cache.size");
+            numEntries = size == null ? 50 : Integer.parseInt(size);
+        }
         var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder()
-                .heap(numUnits, type.isSizedByEntries() ? EntryUnit.ENTRIES : MemoryUnit.MB);
+                .heap(numEntries, EntryUnit.ENTRIES);
         var config = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(keyClass, valueClass, resourcePoolsBuilder)
-                .withSizeOfMaxObjectGraph(type.isSizedByEntries() ? 100000 : 5000)
-                .withExpiry(ExpiryPolicy.NO_EXPIRY)
+                .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
         this.cache = cacheManager.createCache(type.name(), config);
         eventBus.register(this);
+        handleCacheWarmEvent(new CacheWarmEvent(Set.of(type)));
     }
 
     @PreDestroy
@@ -100,8 +104,8 @@ public abstract class CachingService<Key, Value> {
             cache.put(key, value);
     }
 
-    public List<Tuple<Key, Value>> initialEntries() {
-        return List.of();
+    public Map<Key, Value> initialEntries() {
+        return Map.of();
     }
 
     /**
@@ -127,8 +131,9 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(cacheType()))
+        if (evictEvent.affects(cacheType())) {
             evictCache();
+        }
     }
 
     /**
@@ -138,14 +143,10 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public void handleCacheEvictIdEvent(CacheEvictIdEvent<Key> evictIdEvent) {
-        if (evictIdEvent.affects(cacheType()))
+        if (evictIdEvent.affects(cacheType())) {
             evictContent(evictIdEvent.getContentId());
+        }
     }
-
-    /**
-     * Pre-fetch a subset of currently active data and store it in the cache.
-     */
-    public void warmCaches() {}
 
     /**
      * If a CacheWarmEvent is sent out on the event bus, the caching service
@@ -155,7 +156,11 @@ public abstract class CachingService<Key, Value> {
      */
     @Subscribe
     public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(cacheType()))
-            warmCaches();
+        if (warmEvent.affects(cacheType())) {
+            evictCache();
+            for (var entry : initialEntries().entrySet()) {
+                cache.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }
