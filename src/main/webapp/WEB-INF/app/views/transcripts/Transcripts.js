@@ -23,6 +23,7 @@ import {
   capitalizePhrase
 } from "app/lib/textUtils";
 import TranscriptDisplay from "app/views/transcripts/TranscriptDisplay";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 
 const hearingSort = "_score:desc,date:desc"
@@ -78,6 +79,7 @@ function TranscriptListing({ isHearing, setHeaderText }) {
 
   const [ loading, setLoading ] = React.useState(true)
   const [ data, setData ] = React.useState({ result: { items: [] } })
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   React.useEffect(() => {
     setHeaderText(isHearing ? "Search Public Hearing Transcripts" : "Search Session Transcripts")
@@ -85,8 +87,10 @@ function TranscriptListing({ isHearing, setHeaderText }) {
 
   React.useEffect(() => {
     setLoading(true)
+    setErrorMsg("")
     transcriptApi(isHearing, params.year, params.page, params.term || "*", isHearing ? hearingSort : sessionSort)
       .then((data) => setData(data))
+      .catch((error) => setErrorMsg(error.message))
       .finally(() => setLoading(false))
   }, [ isHearing, params.year, params.page, params.term ]);
 
@@ -123,6 +127,9 @@ function TranscriptListing({ isHearing, setHeaderText }) {
         <Select label="Year" value={params.year} options={yearSortOptions(isHearing ? 2011 : 1993)}
                 onChange={onYearChange} name="year" />
       </div>
+      {errorMsg &&
+        <ErrorMessage>{errorMsg}</ErrorMessage>
+      }
 
       {bottom}
     </div>

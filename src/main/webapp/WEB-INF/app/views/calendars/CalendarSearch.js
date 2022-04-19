@@ -64,7 +64,7 @@ export default function CalendarSearch() {
   const onPageChange = pageInfo => {
     params.page = pageInfo.selectedPage
     history.push({ search: queryString.stringify(params) })
-    setOffset((page - 1) * limit + 1)
+    setOffset(pageInfo.offset)
   }
 
   return (

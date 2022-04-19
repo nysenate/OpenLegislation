@@ -9,10 +9,12 @@ import Bills from "app/views/bills/Bills"
 import Laws from "app/views/laws/Laws"
 import Transcripts from "app/views/transcripts/Transcripts";
 import Calendars from "app/views/calendars/Calendars"
+import Agendas from "app/views/agendas/Agendas"
 import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
 import PrivateRoute from "app/shared/PrivateRoute";
 import Admin from "app/views/admin/Admin";
+import NotFound from "app/views/NotFound";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -53,6 +55,9 @@ export default function Home() {
             <PrivateRoute path="/calendars">
               <Calendars setHeaderText={setHeaderText} />
             </PrivateRoute>
+            <PrivateRoute path="/agendas">
+              <Agendas setHeaderText={setHeaderText} />
+            </PrivateRoute>
             <PrivateRoute path="/bills">
               <Bills setHeaderText={setHeaderText} />
             </PrivateRoute>
@@ -64,6 +69,9 @@ export default function Home() {
             </PrivateRoute>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
+            </Route>
+            <Route path="">
+              <NotFound />
             </Route>
           </Switch>
         </div>

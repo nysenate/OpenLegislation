@@ -11,6 +11,7 @@ import { fetchAllBillUpdates } from "app/apis/billGetApi";
 import * as queryString from "query-string";
 import Pagination from "app/shared/Pagination";
 import BillUpdateResults from "app/views/bills/updates/BillUpdateResults";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 /**
  * Valid search parameters for this page.
@@ -54,11 +55,19 @@ export default function BillUpdates() {
   const history = useHistory()
   const [ response, setResponse ] = React.useState()
   const params = new SearchParams(queryString.parse(location.search, { parseBooleans: true }))
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   React.useEffect(() => {
     setResponse(undefined)
+    setErrorMsg("")
     fetchAllBillUpdates(params)
-      .then((response) => setResponse(response))
+      .then((response) => {
+        setResponse(response)
+      })
+      .catch((error) => {
+        setResponse([])
+        setErrorMsg(error.message)
+      })
   }, [ location.search ])
 
   /**
@@ -83,13 +92,20 @@ export default function BillUpdates() {
         <BillUpdatesForm doSearch={doSearch} formData={params} />
       </div>
       {!response &&
-      <div className="my-2">
-        <LoadingIndicator />
-      </div>
+        <div className="my-2">
+          <LoadingIndicator />
+        </div>
       }
-      <div className="mt-8 text-center">
-        <ResultSummary response={response} />
-      </div>
+      {errorMsg &&
+        <div className="text-center my-8">
+          <ErrorMessage>{errorMsg}</ErrorMessage>
+        </div>
+      }
+      {!errorMsg &&
+        <div className="mt-8 text-center">
+          <ResultSummary response={response} />
+        </div>
+      }
       <React.Fragment>
         <div className="my-3 mt-5">
           <Pagination

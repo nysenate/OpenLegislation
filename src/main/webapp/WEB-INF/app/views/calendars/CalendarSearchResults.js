@@ -2,7 +2,7 @@ import React from 'react'
 import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
 
-export default function CalendarUpdatesSearchResults({ response, limit, page, onPageChange, detail: activeListOnly }) {
+export default function CalendarSearchResults({ response, limit, page, onPageChange, detail: activeListOnly }) {
 
   if (response.total === 0) {
     return (
