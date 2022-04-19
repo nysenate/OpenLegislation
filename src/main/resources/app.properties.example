@@ -110,33 +110,10 @@ elastic.search.connection_retries = 30
 # --- Eh Cache Configuration --------------------------------------------------
 # Refer to app.properties.example for recommended values.
 
-# -- Element based cache config --
-# These caches are sized by number of elements, and come with an estimate of heap usage.
-
-# Uses about 4 MB.
-agenda.cache.entries.size = 20
-# TODO: bill caches should really be sized using memory, but record issue must be fixed first.
 # Uses about 300 MB.
 bill.cache.entries.size = 21000
 # Uses about 100 MB.
 bill_info.cache.entries.size = 40000
-# Uses about 3 MB.
-calendar.cache.entries.size = 50
-# Uses about 50 MB.
-law.cache.entries.size = 150
-# Uses about 2 MB.
-session_member.cache.entries.size = 4000
-# Uses <1 MB.
-shortname.cache.entries.size = 250
-
-# -- Heap based cache config --
-# These caches are sized simply by memory usage in MB.
-
-api_user.cache.heap.size = 2
-committee.cache.heap.size = 2
-full_member.cache.heap.size = 5
-notification.cache.heap.size = 2
-shiro.cache.heap.size = 2
 
 # --- Postgres Database Configuration -----------------------------------------
 

@@ -2,12 +2,14 @@ package gov.nysenate.openleg.legislation;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.Pair;
+import org.ehcache.Cache;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.junit.Assert;
 import org.junit.Before;
 
 public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
     private CachingService<Key, Value> cachingService;
+    protected Cache<Key, Value> cache;
     protected CacheStatistics stats;
 
     protected abstract CachingService<Key, Value> getCachingService();
@@ -15,6 +17,7 @@ public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
     @Before
     public void setCachingService() {
         this.cachingService = getCachingService();
+        this.cache = cachingService.cache;
         this.stats = CachingService.getStats(cachingService.cacheType());
     }
 

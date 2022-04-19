@@ -40,7 +40,7 @@ public abstract class AbstractMemberCacheIT<Key, Value> extends AbstractCacheTes
         }
 
         assertEquals(0, stats.getCachePuts());
-        getCachingService().putMemberInCache(value);
+        cache.put(key, value);
         assertEquals(1, stats.getCachePuts());
 
         assertEquals(0, stats.getCacheHits());

@@ -91,7 +91,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     @Override
     @Nonnull
     public org.springframework.cache.CacheManager cacheManager() {
-        EhcacheCachingProvider provider = (EhcacheCachingProvider) Caching.getCachingProvider();
+        var provider = (EhcacheCachingProvider) Caching.getCachingProvider();
         javax.cache.CacheManager javaxCacheManager = provider.getCacheManager(provider.getDefaultURI(),
                 CachingService.cacheManagerConfig());
         return new JCacheCacheManager(javaxCacheManager);
