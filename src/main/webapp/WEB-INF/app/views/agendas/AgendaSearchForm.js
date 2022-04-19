@@ -154,19 +154,23 @@ export default function AgendaSearchForm({ updateValues, results }) {
 
             <Select label="Agenda No.:" options={agendaNumberOptions} name="agendaNumberSelect" tabIndex="4" />
 
+          </div>
+
+          <div className="flex-grow flex justify-between p-10">
+
+
             <Select label="Committee:" options={committeeOptions} name="committeeSelect" tabIndex="5" />
 
             <Input label="Base Bill No:" placeholder="e.g. S1234" name="baseBillNo" tabIndex="6" />
 
             <Input label="Meeting Notes:" placeholder="e.g. Off the floor" name="meetingNotes" tabIndex="7" />
 
-            <button className="btn my-3 w-36" onClick={resetFilters} tabIndex="9">Search</button>
-
+            <button className="btn btn--secondary my-3 w-36" onClick={resetFilters} tabIndex="8">Reset Filters</button>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="10">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="9">Search</button>
         </div>
 
       </form>

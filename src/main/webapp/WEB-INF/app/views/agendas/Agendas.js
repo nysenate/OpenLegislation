@@ -14,9 +14,6 @@ export default function Agendas({ setHeaderText }) {
   const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname === '/agendas/browse') {
-      setHeaderText("Browse Agendas")
-    }
     if (location.pathname === '/agendas/search') {
       setHeaderText("Search For Agendas")
     }
