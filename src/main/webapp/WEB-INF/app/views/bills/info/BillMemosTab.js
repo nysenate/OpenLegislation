@@ -26,7 +26,7 @@ function AssemblyMemoNote({ bill, selectedAmd }) {
       <p>Sponsor memos are not provided for Assembly Bills.</p>
       {sameAsBill &&
       <p>You can view the sponsor memo for the Senate version of this bill here:&nbsp;
-        <Link to={`/bills/${sameAsBill.session}/${sameAsBill.basePrintNo}?tab=Memos`}>{sameAsBill.basePrintNo}</Link>
+        <Link to={`/bills/${sameAsBill.session}/${sameAsBill.basePrintNo}?tab=Memos`} className="link">{sameAsBill.basePrintNo}</Link>
       </p>
       }
     </div>

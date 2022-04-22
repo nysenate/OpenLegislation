@@ -42,7 +42,7 @@ export default function LawNodeView({ setHeaderText }) {
 
       <div className="my-5 flex items-center">
         <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
-        <a href={`/pdf/laws/${node.lawId}${node.locationId}?full=true`} target="_blank">
+        <a href={`/pdf/laws/${node.lawId}${node.locationId}?full=true`} target="_blank" className="link">
           View full {node.docType.toLocaleLowerCase()} as PDF
         </a>
       </div>

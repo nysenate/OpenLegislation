@@ -36,8 +36,7 @@ function Source({ sourceId, linkSource }) {
     )
   }
   return (
-    <Link to={`/api/3/sources/fragment/${sourceId}`}
-          target="_blank">{sourceId}</Link>
+    <Link to={`/api/3/sources/fragment/${sourceId}`} target="_blank" className="link">{sourceId}</Link>
   )
 }
 

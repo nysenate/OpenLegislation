@@ -138,7 +138,7 @@ function ApiLogSearchResultRow({ result }) {
         {result.result.processTime} ms
       </td>
       <td>
-        <Link to={`${anonymousUrl(result.result.url)}`} target="_blank">
+        <Link to={`${anonymousUrl(result.result.url)}`} target="_blank" className="link">
           {result.result.url}
         </Link>
       </td>

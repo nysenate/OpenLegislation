@@ -133,7 +133,7 @@ function SubstitutedByMsg({ bill }) {
       <FileDotted size="1.2rem" className="mx-1" />
       <p>
         This bill has been substituted by&nbsp;
-        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`}>
+        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`} className="link">
           {bill.substitutedBy.basePrintNo} - {bill.substitutedBy.session}
         </Link>
       </p>

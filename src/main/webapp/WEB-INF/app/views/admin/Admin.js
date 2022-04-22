@@ -72,9 +72,9 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Configuration</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/config">App Properties</Link></li>
-            <li><Link to="/admin/caches">In Memory Caches</Link></li>
-            <li><Link to="/admin/indices">Elastic Search Indexes</Link></li>
+            <li><Link to="/admin/config" className="link">App Properties</Link></li>
+            <li><Link to="/admin/caches" className="link">In Memory Caches</Link></li>
+            <li><Link to="/admin/indices" className="link">Elastic Search Indexes</Link></li>
           </ul>
         </div>
 
@@ -82,9 +82,9 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Manage Admin Account Settings</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/account/password">Change Password</Link></li>
-            <li><Link to="/admin/account/notifications">Configure Notifications</Link></li>
-            <li><Link to="/admin/account/users">Configure Admin Accounts</Link></li>
+            <li><Link to="/admin/account/password" className="link">Change Password</Link></li>
+            <li><Link to="/admin/account/notifications" className="link">Configure Notifications</Link></li>
+            <li><Link to="/admin/account/users" className="link">Configure Admin Accounts</Link></li>
           </ul>
         </div>
 
@@ -92,9 +92,9 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Logs</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/logs/monitor">API Monitor</Link></li>
-            <li><Link to="/admin/logs/search">API Log Search</Link></li>
-            <li><Link to="/admin/logs/dataprocess">Data Process Logs</Link></li>
+            <li><Link to="/admin/logs/monitor" className="link">API Monitor</Link></li>
+            <li><Link to="/admin/logs/search" className="link">API Log Search</Link></li>
+            <li><Link to="/admin/logs/dataprocess" className="link">Data Process Logs</Link></li>
           </ul>
         </div>
       </div>

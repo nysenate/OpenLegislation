@@ -180,7 +180,7 @@ function HearingTranscriptResultList({ hearingSearchResults }) {
     <ol>
       {hearingSearchResults.map((h) =>
         <li key={h.result.id}>
-          <Link to={`/transcripts/hearing/${h.result.id}`}>
+          <Link to={`/transcripts/hearing/${h.result.id}`} className="link">
             <div className="hover:bg-gray-200 rounded px-3 py-2">
               <div className="flex flex-wrap lg:flex-nowrap">
                 <div className="flex-none w-60 mr-3">
@@ -211,7 +211,7 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
     <ol>
       {transcriptSearchResults.map((t) =>
         <li key={t.result.dateTime}>
-          <Link to={`/transcripts/session/${t.result.dateTime}`}>
+          <Link to={`/transcripts/session/${t.result.dateTime}`} className="link">
             <div className="hover:bg-gray-200 rounded px-3 py-2">
               {formatDateTime(t.result.dateTime, DATETIME_FULL_NO_ZONE)}&nbsp;
               <span className="text">- {capitalizePhrase(t.result.sessionType)}</span>

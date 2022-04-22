@@ -13,7 +13,7 @@ export default function AdvancedSearchTips() {
             searches.
             You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
             as well as parenthesis for grouping. For more information refer to the&nbsp;
-            <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
+            <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html" className="link">Lucene query docs</a>.
           </p>
         </div>
         <table className="text text--small block w-full overflow-x-auto">

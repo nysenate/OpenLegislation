@@ -114,7 +114,7 @@ function LogEventRow({ event }) {
       <td>{event.apiResponse.statusCode}</td>
       <td>{event.apiResponse.processTime}</td>
       <td className="whitespace-nowrap text-ellipsis truncate">
-        <Link to={`${anonymousUrl(event.apiResponse.baseRequest.url)}`} target="_blank">
+        <Link to={`${anonymousUrl(event.apiResponse.baseRequest.url)}`} target="_blank" className="link">
           {event.apiResponse.baseRequest.url}
         </Link>
       </td>

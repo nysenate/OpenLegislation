@@ -101,13 +101,13 @@ function TruncatedList({ components }) {
       {!isExpanded && requiresTruncation &&
       <div className="pt-1 flex items-center" onClick={() => setIsExpanded(true)}>
         <CaretDown size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
-        <a>Show {components.length - displaySize} more</a>
+        <a className="link">Show {components.length - displaySize} more</a>
       </div>
       }
       {isExpanded && requiresTruncation &&
       <div className="pt-1 flex items-center" onClick={() => setIsExpanded(false)}>
         <CaretUp size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
-        <a>Show less</a>
+        <a className="link">Show less</a>
       </div>
       }
     </div>
