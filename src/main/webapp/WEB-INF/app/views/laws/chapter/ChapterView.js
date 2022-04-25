@@ -43,7 +43,7 @@ export default function ChapterView({ setHeaderText }) {
 
       <div className="my-5 flex items-center">
         <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
-        <a href={`/pdf/laws/${chapter.info.lawId}?full=true`} target="_blank">View full chapter text as PDF</a>
+        <a href={`/pdf/laws/${chapter.info.lawId}?full=true`} target="_blank" className="link">View full chapter text as PDF</a>
       </div>
 
       <LawNodeChildrenList nodes={chapter.documents.documents.items} />

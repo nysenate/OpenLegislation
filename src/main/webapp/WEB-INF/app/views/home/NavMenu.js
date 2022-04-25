@@ -113,7 +113,7 @@ function NavCategory({ name, icon, isOpen, isActive, onCategoryClick, children }
   navCategoryClass += isOpen ? " bg-blue-500 text-white" : " hover:bg-blue-700 hover:text-white"
   navCategoryClass += isActive ? "" : " cursor-pointer"
   return (
-    <div className="border-b-1 border-gray-300">
+    <div className="border-b-1 border-gray-300" tabIndex="-1">
       <div className={navCategoryClass} onClick={onCategoryClick}>
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
@@ -134,7 +134,7 @@ function NavChild({ name, to, icon }) {
   text-gray-700 hover:bg-blue-700 hover:text-white transition-colors`
 
   return (
-    <Link to={to}>
+    <Link to={to} tabIndex="-1">
       <div className={childClassNames}>
         <div>
           {icon}
@@ -149,7 +149,7 @@ function NavChild({ name, to, icon }) {
 
 function LogoutPage({ name, icon, to }) {
   return (
-    <Link to={to}>
+    <Link to={to} tabIndex="-1">
       <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
@@ -160,7 +160,7 @@ function LogoutPage({ name, icon, to }) {
 
 function DocPage({ name, icon, to }) {
   return (
-    <a href={to}>
+    <a href={to} tabIndex="-1">
       <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
         <div className="ml-5 mr-2 inline">{icon}</div>
         <div className="flex-grow">{name}</div>
@@ -178,7 +178,7 @@ function AdminPage({name, icon, to}) {
 
   if (auth.isAdmin()) {
     return (
-      <a href={to}>
+      <a href={to} tabIndex="-1">
         <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
           <div className="ml-5 mr-2 inline">{icon}</div>
           <div className="flex-grow">{name}</div>

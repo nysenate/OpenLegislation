@@ -33,7 +33,7 @@ export default function TranscriptDisplay({ id, isHearing, setHeaderText }) {
 
   return (
     <section className="p-3">
-      <Link to={`/transcripts/${isHearing ? "hearing" : "session"}`}>
+      <Link to={`/transcripts/${isHearing ? "hearing" : "session"}`} className="link">
         Back to search
       </Link>
       {isHearing ? <HearingHeading hearing={transcript} /> : <SessionHeading session={transcript} />}

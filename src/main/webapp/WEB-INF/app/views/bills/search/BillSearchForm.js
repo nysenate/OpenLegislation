@@ -213,7 +213,7 @@ export default function BillSearchForm() {
           </div>
           <div className="mr-8">
             <Select label="Session Year"
-                    tabindex={2}
+                    tabIndex="2"
                     value={session}
                     onChange={(e) => setSession(e.target.value)}
                     options={sessionOptions()}
@@ -221,7 +221,7 @@ export default function BillSearchForm() {
           </div>
           <div className="">
             <Select label="Sort By"
-                    tabindex={3}
+                    tabIndex="3"
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
                     highlight={false}

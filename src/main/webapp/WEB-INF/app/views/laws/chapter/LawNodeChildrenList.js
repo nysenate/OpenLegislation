@@ -17,7 +17,7 @@ function NodeRow({ node }) {
     ? `/laws/${node.lawId}/leaf/${node.locationId}`
     : `/laws/${node.lawId}/node/${node.locationId}`
   return (
-    <Link to={to}>
+    <Link to={to} className="link border-0">
       <div className="flex items-center text px-3 py-1 rounded hover:bg-gray-200">
         <div className="w-24 lg:w-32 flex-none">
           {capitalize(node.docType)} {node.docLevelId}

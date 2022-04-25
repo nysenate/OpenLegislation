@@ -58,15 +58,18 @@ export default function DataProvided() {
 
   function createDataCard(index) {
     return (
-      <div className="p-4 flex justify-start cursor-pointer text-white text-left hover:bg-gray-200 w-full lg:w-6/12">
-        <div className={`flex justify-center items-center ${dataWeProvide[index].bgclass} p-3 mr-3`}>
-          {dataWeProvide[index].icon}
+      <a href={`/static/docs/html/${dataWeProvide[index].docsPage}`} className="w-full lg:w-6/12">
+        <div className="p-4 flex justify-start cursor-pointer text-white text-left hover:bg-gray-200">
+          <div className={`flex justify-center items-center ${dataWeProvide[index].bgclass} p-3 mr-3`}>
+            {dataWeProvide[index].icon}
+          </div>
+          <div>
+            <h3 className="h5">{dataWeProvide[index].type}</h3>
+            <p className="text text--small mt-1">{dataWeProvide[index].blurb}</p>
+          </div>
         </div>
-        <div>
-          <h3 className="h5">{dataWeProvide[index].type}</h3>
-          <p className="text text--small mt-1">{dataWeProvide[index].blurb}</p>
-        </div>
-      </div>)
+      </a>
+    )
   }
 
   return (

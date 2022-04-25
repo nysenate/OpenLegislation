@@ -15,7 +15,7 @@ export default class ErrorBoundary extends React.Component {
       return (
         <div className="error-page text-center pt-10">
           <p className="text-xl text-white mb-6">Uh oh, Something went wrong...</p>
-          <a href="/" className="text-white border-white">Return home</a>
+          <a href="/" className="text-white border-white border-solid border-b-1 cursor-pointer">Return home</a>
         </div>
       )
     }

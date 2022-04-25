@@ -143,7 +143,7 @@ function AgendaCalendarReferences({ bill }) {
         {bill.committeeAgendas.items.map((agenda) => {
           return (
             <div key={`${agenda.agendaId.year}-${agenda.agendaId.number}-${agenda.committeeId.name}`}>
-              <Link to={`/agendas/${agenda.agendaId.year}/${agenda.agendaId.number}/${agenda.committeeId.name}`}>
+              <Link to={`/agendas/${agenda.agendaId.year}/${agenda.agendaId.number}/${agenda.committeeId.name}`} className="link">
                 Committee Agenda #{agenda.agendaId.number} ({agenda.agendaId.year}) - {agenda.committeeId.name}
               </Link>
             </div>
@@ -152,7 +152,7 @@ function AgendaCalendarReferences({ bill }) {
         {bill.calendars.items.map((cal) => {
           return (
             <div key={`${cal.year}-${cal.calendarNumber}`}>
-              <Link to={`/calendars/${cal.year}/${cal.calendarNumber}#${bill.printNo}`}>
+              <Link to={`/calendars/${cal.year}/${cal.calendarNumber}#${bill.printNo}`} className="link">
                 Senate Floor Calendar {cal.calendarNumber} ({cal.year})
               </Link>
             </div>

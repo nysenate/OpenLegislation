@@ -23,6 +23,7 @@ import BillVotesTab from "app/views/bills/info/BillVotesTab";
 import BillActionsTab from "app/views/bills/info/BillActionsTab";
 import BillJsonTab from "app/views/bills/info/BillJsonTab";
 import BillUpdatesTab from "app/views/bills/info/BillUpdatesTab";
+import LoadingIndicator from "app/shared/LoadingIndicator";
 
 export default function Bill({ setHeaderText }) {
 
@@ -84,7 +85,7 @@ export default function Bill({ setHeaderText }) {
   }
 
   if (loading) {
-    return (<div>Loading ...</div>)
+    return (<LoadingIndicator></LoadingIndicator>)
   }
 
   return (
@@ -131,7 +132,7 @@ function SubstitutedByMsg({ bill }) {
       <FileDotted size="1.2rem" className="mx-1" />
       <p>
         This bill has been substituted by&nbsp;
-        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`}>
+        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`} className="link">
           {bill.substitutedBy.basePrintNo} - {bill.substitutedBy.session}
         </Link>
       </p>

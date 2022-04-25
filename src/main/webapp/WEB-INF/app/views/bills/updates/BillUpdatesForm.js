@@ -103,7 +103,7 @@ export default function BillUpdatesForm({ doSearch, formData }) {
                 <input type="checkbox"
                        ref={detailRef}
                        id="detail"
-                       className="input mr-2" />
+                       className="mr-2 cursor-pointer" />
                 <label htmlFor="detail" className="label">
                   Show Detail
                 </label>

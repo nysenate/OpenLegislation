@@ -11,9 +11,9 @@ export default function OpenSource() {
       </p>
       <address className="not-italic">
         <p className="text text-left md:text-center">
-          The source code <a href="http://www.github.com/nysenate/OpenLegislation">is published on GitHub</a>.
+          The source code <a href="http://www.github.com/nysenate/OpenLegislation" className="link">is published on GitHub</a>.
           Feel free to open any tickets with issues you are having or contact the development
-          team at <a href="mailto:senatedev@nysenate.gov">senatedev@nysenate.gov</a>.
+          team at <a href="mailto:senatedev@nysenate.gov" className="link">senatedev@nysenate.gov</a>.
         </p>
       </address>
     </section>

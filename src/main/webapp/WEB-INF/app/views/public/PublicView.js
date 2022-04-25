@@ -30,7 +30,7 @@ function About() {
   return (
     <section className="card mt-12 p-6 lg:p-12 relative -mt-28">
       <p className="text text--large text-left md:text-center">
-        Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>,
+        Developed in-house at the <a href="http://www.nysenate.gov" className="link">New York State Senate</a>,
         Open Legislation is a public web service that provides access to NYS legislative data
         from the Legislative Bill Drafting Commission system through a JSON API.
       </p>

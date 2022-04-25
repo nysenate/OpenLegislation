@@ -6,7 +6,7 @@ export default function BillJsonTab({ bill }) {
     <section className="m-5">
       <div className="mb-5">
         <Link to={`/api/3/bills/${bill.session}/${bill.printNo}`}
-              target="_blank">
+              target="_blank" className="link">
           Open JSON in new window
         </Link>
       </div>

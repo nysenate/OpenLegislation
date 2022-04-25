@@ -81,7 +81,7 @@ function FullText({ amd }) {
           }
           {(state.selectedTextType !== htmlText && hasHtmlText) &&
           <div className="inline">
-            <span><a onClick={() => dispatch({ type: "showHtml", amd: amd })}>HTML</a> </span>
+            <span><a onClick={() => dispatch({ type: "showHtml", amd: amd })} className="link">HTML</a> </span>
             <span className="text-gray-400">| </span>
           </div>
           }
@@ -92,12 +92,12 @@ function FullText({ amd }) {
           }
           {state.selectedTextType !== plainText &&
           <div className="inline">
-            <span><a onClick={() => dispatch({ type: "showPlain", amd: amd })}>TXT</a> </span>
+            <span><a onClick={() => dispatch({ type: "showPlain", amd: amd })} className="link">TXT</a> </span>
             <span className="text-gray-400">| </span>
           </div>
           }
           <span>
-            <Link to={`/pdf/bills/${amd.session}/${amd.printNo}`} target="_blank">PDF</Link>
+            <Link to={`/pdf/bills/${amd.session}/${amd.printNo}`} target="_blank" className="link">PDF</Link>
           </span>
         </div>
       </div>
