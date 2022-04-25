@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.spotchecks.sensite;
 
-import gov.nysenate.openleg.spotchecks.sensite.bill.SenateSiteDao;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
+import gov.nysenate.openleg.spotchecks.sensite.bill.SenateSiteDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public abstract class BaseSenateSiteReportService<ContentKey> implements SpotChe
     public synchronized SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump dump = getMostRecentDump();
         SpotCheckReportId reportId = new SpotCheckReportId(
-                getSpotcheckRefType(), dump.getDumpId().getDumpTime(), LocalDateTime.now());
+                getSpotcheckRefType(), dump.getDumpId().dumpTime(), LocalDateTime.now());
         SpotCheckReport<ContentKey> report = new SpotCheckReport<>(reportId);
         report.setNotes(dump.getDumpId().getNotes());
         try {

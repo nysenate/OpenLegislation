@@ -17,40 +17,25 @@ import java.time.LocalDateTime;
  * have setters to allow for changes while the application is running.
  */
 @Component
-public class OpenLegEnvironment
-{
+public class OpenLegEnvironment {
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
     /** --- File system configuration --- */
 
-    /** The root directory url where all data files are contained within. */
-    @Value("${env.base}") private String envDirPath;
-
-    /** The directory url where all incoming data files are contained. */
+    /** The directories for incoming and archived files. */
     @Value("${env.staging}") private String stagingDirPath;
-
-    /** The directory url where all archived data files are contained. */
     @Value("${env.archive}") private String archiveDirPath;
 
-    private File baseDir;
     private File stagingDir;
     private File archiveDir;
-
     private File scrapedStagingDir;
 
-
     private LocalDateTime deployedDateTime;
-
-    /** --- Api Auth --- */
-
-    /** A secret key used to allow access to the API through the front-end. */
-    @Value("${api.secret}") private String apiSecret;
 
     /** --- Admin Auth --- */
 
     @Value("${default.admin.user}") private String defaultAdminName;
-    @Value("${default.admin.password}") private String defaultAdminPass;
 
     /** --- Search Index settings --- */
 
@@ -60,8 +45,7 @@ public class OpenLegEnvironment
     /** --- Processing settings --- */
 
     /** Enable processing of data. */
-    @Value("${leg.data.process.enabled:true}")
-    private boolean legDataProcessEnabled;
+    @Value("${leg.data.process.enabled:true}") private boolean legDataProcessEnabled;
 
     @Value("${data.process.enabled}") private boolean processingEnabled;
 
@@ -95,21 +79,17 @@ public class OpenLegEnvironment
 
     /** ---- Openleg Reference ---*/
 
-    @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
+    @Value("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
 
-    @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
-
-    /** Sets queue sizes for nysenate.gov bill report */
-    @Value("${spotcheck.website.bill.ref_queue_size:500}")
-    private int sensiteBillRefQueueSize;
+    @Value("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
 
     /** Sets queue sizes for nysenate.gov bill report */
-    @Value("${spotcheck.website.bill.data_queue_size:500}")
-    private int sensiteBillDataQueueSize;
+    @Value("${spotcheck.website.bill.ref_queue_size:500}") private int sensiteBillRefQueueSize;
+    @Value("${spotcheck.website.bill.data_queue_size:500}") private int sensiteBillDataQueueSize;
 
     /** --- Email Settings --- */
 
-    /** Imaps host, username, and password for the application's email account*/
+    /** Imaps host, username, and password for the application's email account. */
     @Value("${checkmail.host}") private String emailHost;
     @Value("${checkmail.user}") private String emailUser;
     @Value("${checkmail.pass}") private String emailPass;
@@ -126,19 +106,17 @@ public class OpenLegEnvironment
     @Value("${contact.email:}") private String contactEmailAddress;
 
     /** --- Notifications --- */
-    @Value("${notifications.enabled}")
-    private boolean notificationsEnabled;
+    @Value("${notifications.enabled}") private boolean notificationsEnabled;
 
-    @Value("${slack.notification.line.limit}")
-    private int slackLineLimit;
+    @Value("${slack.notification.line.limit}") private int slackLineLimit;
 
     /** --- Domain Url --- */
 
     /** The domain and the context path of the application */
-    @Value ("${domain.url}") private String url;
+    @Value("${domain.url}") private String url;
 
     /** The base url of the NYSenate.gov public website */
-    @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
+    @Value("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
 
     /** --- Constructors --- */
 
@@ -147,7 +125,6 @@ public class OpenLegEnvironment
     @PostConstruct
     private void init() {
         deployedDateTime = LocalDateTime.now();
-        this.baseDir = new File(envDirPath);
         this.stagingDir = new File(stagingDirPath);
         this.archiveDir = new File(archiveDirPath);
 
@@ -160,14 +137,6 @@ public class OpenLegEnvironment
 
     public String getSchema() {
         return schema;
-    }
-
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public File getBaseDir() {
-        return baseDir;
     }
 
     public File getStagingDir() {
@@ -198,10 +167,6 @@ public class OpenLegEnvironment
         return processLoggingEnabled;
     }
 
-    public void setProcessLoggingEnabled(boolean processLoggingEnabled) {
-        this.processLoggingEnabled = processLoggingEnabled;
-    }
-
     public boolean isLegDataBatchEnabled() {
         return legDataBatchEnabled;
     }
@@ -212,14 +177,6 @@ public class OpenLegEnvironment
 
     public int getLegDataBatchSize() {
         return legDataBatchSize;
-    }
-
-    public void setLegDataBatchSize(int legDataBatchSize) {
-        this.legDataBatchSize = legDataBatchSize;
-    }
-
-    public String getApiSecret() {
-        return apiSecret;
     }
 
     public boolean isProcessingScheduled() {
@@ -246,76 +203,32 @@ public class OpenLegEnvironment
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public int getSlackLineLimit() {
         return slackLineLimit;
-    }
-
-    public void setSlackLineLimit(int slackLineLimit) {
-        this.slackLineLimit = slackLineLimit;
     }
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
 
-    public void setBaseDir(File baseDir) {
-        this.baseDir = baseDir;
-    }
-
-    public void setStagingDir(File stagingDir) {
-        this.stagingDir = stagingDir;
-    }
-
-    public void setArchiveDir(File archiveDir) {
-        this.archiveDir = archiveDir;
-    }
-
-    public void setApiSecret(String apiSecret) {
-        this.apiSecret = apiSecret;
-    }
-
     public String getEmailHost() {
         return emailHost;
-    }
-
-    public void setEmailHost(String emailHost) {
-        this.emailHost = emailHost;
     }
 
     public String getEmailUser() {
         return emailUser;
     }
 
-    public void setEmailUser(String emailUser) {
-        this.emailUser = emailUser;
-    }
-
     public String getEmailPass() {
         return emailPass;
-    }
-
-    public void setEmailPass(String emailPass) {
-        this.emailPass = emailPass;
     }
 
     public String getEmailReceivingFolder() {
         return emailReceivingFolder;
     }
 
-    public void setEmailReceivingFolder(String emailReceivingFolder) {
-        this.emailReceivingFolder = emailReceivingFolder;
-    }
-
     public String getEmailProcessedFolder() {
         return emailProcessedFolder;
-    }
-
-    public void setEmailProcessedFolder(String emailProcessedFolder) {
-        this.emailProcessedFolder = emailProcessedFolder;
     }
 
     public String getEmailPartialDaybreakFolder() {
@@ -326,32 +239,12 @@ public class OpenLegEnvironment
         return spotcheckAlertGracePeriod;
     }
 
-    public void setSpotcheckAlertGracePeriod(Duration spotcheckAlertGracePeriod) {
-        this.spotcheckAlertGracePeriod = spotcheckAlertGracePeriod;
-    }
-
     public File getScrapedStagingDir() {
         return scrapedStagingDir;
     }
 
-    public void setScrapedStagingDir(File scrapedStagingDir) {
-        this.scrapedStagingDir = scrapedStagingDir;
-    }
-
     public String getDefaultAdminName() {
         return defaultAdminName;
-    }
-
-    public void setDefaultAdminName(String defaultAdminName) {
-        this.defaultAdminName = defaultAdminName;
-    }
-
-    public String getDefaultAdminPass() {
-        return defaultAdminPass;
-    }
-
-    public void setDefaultAdminPass(String defaultAdminPass) {
-        this.defaultAdminPass = defaultAdminPass;
     }
 
     public boolean isBillScrapeQueueEnabled() {
@@ -374,24 +267,12 @@ public class OpenLegEnvironment
         return openlegRefApiKey;
     }
 
-    public void setOpenlegRefApiKey(String refApiKey) {
-        this.openlegRefApiKey = refApiKey;
-    }
-
     public String getOpenlegRefUrl() {
         return openlegRefUrl;
     }
 
-    public void setOpenlegRefUrl(String refUrl) {
-        this.openlegRefUrl = refUrl;
-    }
-
     public String getSenSiteUrl() {
         return senSiteUrl;
-    }
-
-    public void setSenSiteUrl(String senSiteUrl) {
-        this.senSiteUrl = senSiteUrl;
     }
 
     public boolean isCheckmailEnabled() {
@@ -406,24 +287,12 @@ public class OpenLegEnvironment
         return sensiteBillRefQueueSize;
     }
 
-    public void setSensiteBillRefQueueSize(int sensiteBillRefQueueSize) {
-        this.sensiteBillRefQueueSize = sensiteBillRefQueueSize;
-    }
-
     public int getSensiteBillDataQueueSize() {
         return sensiteBillDataQueueSize;
     }
 
-    public void setSensiteBillDataQueueSize(int sensiteBillDataQueueSize) {
-        this.sensiteBillDataQueueSize = sensiteBillDataQueueSize;
-    }
-
     public String getEmailFromAddress() {
         return emailFromAddress;
-    }
-
-    public void setEmailFromAddress(String emailFromAddress) {
-        this.emailFromAddress = emailFromAddress;
     }
 
     public String getContactEmailAddress() {

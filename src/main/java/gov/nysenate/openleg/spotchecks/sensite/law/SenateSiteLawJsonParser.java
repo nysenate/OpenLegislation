@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.spotchecks.sensite.law;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class SenateSiteLawJsonParser extends SenateSiteJsonParser {
     private SenateSiteLawDoc extractLawDoc(JsonNode lawDocNode, SenateSiteDumpFragment fragment) {
         SenateSiteLawDoc.Builder docBuilder = SenateSiteLawDoc.builder();
 
-        docBuilder.setReferenceDateTime(fragment.getDumpId().getDumpTime())
+        docBuilder.setReferenceDateTime(fragment.getDumpId().dumpTime())
                 .setActiveDate(parseUnixTimeValue(lawDocNode, "field_activedate"))
                 .setChapter(getValue(lawDocNode, "field_chapter"))
                 .setDocLevelId(getValue(lawDocNode, "field_doclevelid"))

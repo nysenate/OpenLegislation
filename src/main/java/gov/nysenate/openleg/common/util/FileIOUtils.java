@@ -11,14 +11,14 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
-public class FileIOUtils {
+public final class FileIOUtils {
     private static final Set<PosixFilePermission> filePermissions = Set.of(
-            PosixFilePermission.OWNER_READ,
-            PosixFilePermission.OWNER_WRITE,
-            PosixFilePermission.GROUP_READ,
-            PosixFilePermission.OTHERS_READ);
+            PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.GROUP_READ, PosixFilePermission.OTHERS_READ);
 
     private static final String tempFilePrefix = ".in.";
+
+    private FileIOUtils() {}
 
     /**
      * Returns a collection of files sorted by file name (not file path!)
@@ -28,8 +28,8 @@ public class FileIOUtils {
      * @return Collection<File>
      * @throws java.io.IOException
      */
-    public static Collection<File> getSortedFiles(File directory, boolean recursive, String[] excludeDirs)
-            throws IOException {
+    public static Collection<File> getSortedFiles(File directory, boolean recursive,
+                                                  String[] excludeDirs) throws IOException {
         Collection<File> files = safeListFiles(directory, recursive, excludeDirs);
         ((List<File>) files).sort(Comparator.comparing(File::getName));
         return files;
@@ -45,8 +45,8 @@ public class FileIOUtils {
      * @return A collection of matching filenames
      * @throws IOException
      */
-    public static Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive)
-            throws IOException {
+    public static Collection<File> safeListFiles(File directory, String[] extensions,
+                                                 boolean recursive) throws IOException {
         // After shutdown is signalled, file moves shouldn't be attempted.
         if (Thread.currentThread().isInterrupted())
             return List.of();
@@ -65,7 +65,8 @@ public class FileIOUtils {
      * @return A collection of matching filenames
      * @throws IOException
      */
-    public static Collection<File> safeListFiles(File directory, boolean recursive, String[] excludeDirs) throws IOException {
+    public static Collection<File> safeListFiles(File directory, boolean recursive,
+                                                 String[] excludeDirs) throws IOException {
         FileUtils.forceMkdir(directory);
         IOFileFilter dirFileFilter;
         if (excludeDirs != null && excludeDirs.length > 0) {
@@ -111,7 +112,8 @@ public class FileIOUtils {
      * @param destinationPath String
      * @throws IOException
      */
-    public static void writeToFile(InputStream stuffToWrite, String destinationPath) throws IOException {
+    public static void writeToFile(InputStream stuffToWrite, String destinationPath)
+            throws IOException {
         OutputStream os = new FileOutputStream(destinationPath);
         byte[] b = new byte[2048];
         int length;
@@ -122,32 +124,6 @@ public class FileIOUtils {
         os.close();
     }
 
-    public static boolean isFileClosed(File file) throws IOException {
-        Process plsof = null;
-        BufferedReader reader = null;
-        try {
-            plsof = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
-            reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(file.getAbsolutePath())) {
-                    reader.close();
-                    plsof.destroy();
-                    return false;
-                }
-            }
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException ignored) {
-            }
-            Optional.ofNullable(plsof).ifPresent(Process::destroy);
-        }
-        return true;
-    }
-
     /**
      * Saves a character sequence to a file and sets common permissions to the file.
      * Permissions set are owner read + write, group read, and others read.
@@ -155,25 +131,10 @@ public class FileIOUtils {
      * @param file The file to save to.
      * @param data The data to save to the file.
      * @throws IOException
-     * @see FileUtils#write(File, CharSequence) for details on file saving.
+     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
      */
     public static void write(File file, CharSequence data) throws IOException {
         FileUtils.write(file, data, Charset.defaultCharset());
-        setCommonFilePermissions(file);
-    }
-
-    /**
-     * Saves a character sequence to a file and sets common permissions to the file.
-     * Permissions set are owner read + write, group read, and others read.
-     *
-     * @param file     The file to save to.
-     * @param data     The data to save to the file.
-     * @param encoding The encoding to use.
-     * @throws IOException
-     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
-     */
-    public static void write(File file, CharSequence data, Charset encoding) throws IOException {
-        FileUtils.write(file, data, encoding);
         setCommonFilePermissions(file);
     }
 
@@ -183,7 +144,7 @@ public class FileIOUtils {
      * @param file
      * @param data
      * @throws IOException
-     * @see FileUtils#writeStringToFile(File, String) for details.
+     * @see FileUtils#writeStringToFile(File, String, Charset) for details.
      */
     public static void writeStringToFile(File file, String data) throws IOException {
         FileUtils.writeStringToFile(file, data, Charset.defaultCharset());
@@ -191,35 +152,17 @@ public class FileIOUtils {
     }
 
     /**
-     * Save a string to a file with a specified encoding. Sets common permissions to the saved file.
-     *
+     * Save a string to a file with a specified encoding.
+     * Sets common permissions to the saved file.
      * @param file
      * @param data
      * @param encoding
      * @throws IOException
      * @see FileUtils#writeStringToFile(File, String, Charset) for details.
      */
-    public static void writeStringToFile(File file, String data, Charset encoding) throws IOException {
+    public static void writeStringToFile(File file, String data, Charset encoding)
+            throws IOException {
         FileUtils.writeStringToFile(file, data, encoding);
-        setCommonFilePermissions(file);
-    }
-
-    /**
-     * Saves a character sequence to a file and sets common permissions to the file.
-     * The data is initially saved to a temporary file and then moved to the destination file.
-     * This discourages use of the file while data is being written.
-     * Permissions set are owner read + write, group read, and others read.
-     *
-     * @param file     The file to save to.
-     * @param data     The data to save to the file.
-     * @param encoding The encoding to use.
-     * @throws IOException
-     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
-     */
-    public static void writeUsingTemp(File file, CharSequence data, Charset encoding) throws IOException {
-        File tempFile = getTempFile(file);
-        FileUtils.write(tempFile, data, encoding);
-        FileUtils.moveFile(tempFile, file);
         setCommonFilePermissions(file);
     }
 
@@ -236,38 +179,24 @@ public class FileIOUtils {
     }
 
     /**
-     * Saves an input stream to a file and sets common permissions to the file.
-     * Wraps the FileUtils.copyInputStreamToFile method.
-     *
-     * @param stream
-     * @param file
-     * @throws IOException
-     */
-    public static void copyInputStreamToFile(InputStream stream, File file) throws IOException {
-        FileUtils.copyInputStreamToFile(stream, file);
-        setCommonFilePermissions(file);
-    }
-
-    /**
      * Gets a file from the resource directory given its relative path.
      *
      * @param relativePath String - file path relative to the resource directory
      * @return File
      */
     public static File getResourceFile(String relativePath) {
-        return new File(
-                Objects.requireNonNull(FileIOUtils.class.getClassLoader().getResource(relativePath)).getFile()
-        );
+        return new File(Objects.requireNonNull(FileIOUtils.class.getClassLoader()
+                .getResource(relativePath)).getFile());
     }
 
     /**
      * Gzip the given {@code srcFile}.
      *
-     * On success, {@code srcFile} will remain unchanged and a gzipped version will exist in the same
-     * directory with a '.gz' extension added on to the name.
+     * On success, {@code srcFile} will remain unchanged and a gzipped version will exist in the
+     * same directory with a '.gz' extension added on to the name.
      *
-     * In the case of an error, {@code srcFile} will remain unchanged and the gzipped file will not exist
-     * and an exception will be thrown.
+     * In the case of an error, {@code srcFile} will remain unchanged and the gzipped file will not
+     * exist and an exception will be thrown.
      *
      * @param srcFile An existing file to gzip.
      * @return A File containing {@code srcFile} gzipped. '.gz' is appended to its name.

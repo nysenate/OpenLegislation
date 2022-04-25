@@ -2,13 +2,13 @@ package gov.nysenate.openleg.spotchecks.sensite.calendar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.calendar.CalendarType;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteJsonParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,7 @@ public class CalendarJsonParser extends SenateSiteJsonParser {
 
     private SenateSiteCalendar extractSenSiteCalendar(JsonNode subCalNode, CalendarId calendarId,
                                                       SenateSiteDumpFragment fragment) throws IOException {
-        SenateSiteCalendar calendar = new SenateSiteCalendar(fragment.getDumpId().getDumpTime());
+        SenateSiteCalendar calendar = new SenateSiteCalendar(fragment.getDumpId().dumpTime());
 
         calendar.setBillCalNumbers(getIntListValue(subCalNode, "field_ol_bill_cal_number"));
         calendar.setCalendarType(getCalendarType(getValue(subCalNode,"field_ol_type")));

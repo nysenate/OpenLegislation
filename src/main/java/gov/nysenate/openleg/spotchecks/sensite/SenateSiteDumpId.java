@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.spotchecks.sensite;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
@@ -9,20 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDateTime;
 
-public class SenateSiteDumpId implements Comparable<SenateSiteDumpId> {
-
-    private final SpotCheckRefType refType;
-    private final int fragmentCount;
-    private final int year;
-    private final LocalDateTime dumpTime;
-
-    public SenateSiteDumpId(SpotCheckRefType refType, int fragmentCount, int year, LocalDateTime dumpTime) {
-        this.refType = refType;
-        this.fragmentCount = fragmentCount;
-        this.year = year;
-        this.dumpTime = dumpTime;
-    }
-
+public record SenateSiteDumpId(SpotCheckRefType refType, int fragmentCount, int year,
+                               LocalDateTime dumpTime) implements Comparable<SenateSiteDumpId> {
     /* --- Functional Getters --- */
 
     public SpotCheckReferenceId getReferenceId() {
@@ -33,27 +20,9 @@ public class SenateSiteDumpId implements Comparable<SenateSiteDumpId> {
         return SessionYear.of(year);
     }
 
-    /** Description of this dumps time range. */
+    /** Description of this dumps' time range. */
     public String getNotes() {
         return "Generated from year dump: " + year;
-    }
-
-    /* --- Getters --- */
-
-    public SpotCheckRefType getRefType() {
-        return refType;
-    }
-
-    public int getFragmentCount() {
-        return fragmentCount;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public LocalDateTime getDumpTime() {
-        return dumpTime;
     }
 
     /* --- Overrides --- */
@@ -66,22 +35,6 @@ public class SenateSiteDumpId implements Comparable<SenateSiteDumpId> {
                 .append("year", year)
                 .append("dumpTime", dumpTime)
                 .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SenateSiteDumpId)) return false;
-        SenateSiteDumpId that = (SenateSiteDumpId) o;
-        return fragmentCount == that.fragmentCount &&
-                year == that.year &&
-                refType == that.refType &&
-                Objects.equal(dumpTime, that.dumpTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(refType, fragmentCount, year, dumpTime);
     }
 
     @Override

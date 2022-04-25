@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.member.FullMember;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,7 +23,7 @@ final class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
     @Override
     public Map<Integer, FullMember> initialEntries() {
         return memberDao.getAllFullMembers().stream().collect(Collectors.toMap(
-                FullMember::getMemberId, fullMember -> fullMember));
+                FullMember::getMemberId, Function.identity()));
     }
 
     @Override

@@ -5,18 +5,18 @@ import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawInfo;
 import gov.nysenate.openleg.legislation.law.LawTree;
 import gov.nysenate.openleg.legislation.law.LawTreeNode;
-import gov.nysenate.openleg.spotchecks.sensite.bill.LawSpotCheckId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.sensite.BaseSenateSiteReportService;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
+import gov.nysenate.openleg.spotchecks.sensite.bill.LawSpotCheckId;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,7 +116,7 @@ public class SenateSiteLawReportService extends BaseSenateSiteReportService<LawS
             }
         }
         // Do not do a full law id check if only a single law chapter was included in the dump
-        if (dump.getDumpId().getFragmentCount() > 1) {
+        if (dump.getDumpId().fragmentCount() > 1) {
             checkLawIds(refLawIds, report);
         }
     }

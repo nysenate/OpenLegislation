@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serial;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
@@ -216,10 +217,11 @@ public class AdminAccountCtrl extends BaseCtrl
         sendMailService.sendMessage(username, registrationEmailSubject, message);
     }
 
-    private class UserException extends RuntimeException
+    private static class UserException extends RuntimeException
     {
+        @Serial
         private static final long serialVersionUID = -6422565299854256546L;
-        private String username;
+        private final String username;
 
         public UserException(String message, String username) {
             super(message);
@@ -231,7 +233,8 @@ public class AdminAccountCtrl extends BaseCtrl
         }
     }
 
-    private class UserNotFoundException extends UserException {
+    private static class UserNotFoundException extends UserException {
+        @Serial
         private static final long serialVersionUID = 3276041543957882445L;
         public UserNotFoundException(String username) {
             super("User " + username + " was not found!", username);

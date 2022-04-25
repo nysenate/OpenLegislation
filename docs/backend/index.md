@@ -125,7 +125,7 @@ Set `default.admin.user` to your email address and `default.admin.password` to y
 
 These are references to your base data directory, staging directory, and your archive directory.
 
-Create these directories where you wish and ensure they are correctly referenced in `env.base`, `env.staging`, and `env.archive` respectively.
+Create these directories where you wish and ensure they are correctly referenced in `env.staging`, and `env.archive` respectively.
 
 #### Elasticsearch Search Configuration
 

@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.spotchecks.sensite.law;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpId;
-import gov.nysenate.openleg.common.util.FileIOUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,7 @@ public class SenateSiteLawJsonParserIT extends BaseTests {
         SenateSiteDumpId dumpId = new SenateSiteDumpId(
                 SpotCheckRefType.SENATE_SITE_LAW, 134, 2019, LocalDateTime.parse("2019-04-04T13:35:02")
         );
-        SenateSiteDumpFragment fragment = new SenateSiteDumpFragment(dumpId, 38);
-        fragment.setFragmentFile(resourceFile);
+        SenateSiteDumpFragment fragment = new SenateSiteDumpFragment(dumpId, 38, resourceFile);
         SenateSiteLawChapter senateSiteLawChapter = lawJsonParser.parseLawDumpFragment(fragment);
         assertEquals("SLG", senateSiteLawChapter.getLawId());
         assertEquals(13, senateSiteLawChapter.getDocuments().size());

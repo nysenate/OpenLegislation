@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.spotchecks.sensite;
 
-import gov.nysenate.openleg.spotchecks.sensite.bill.SenateSiteDao;
 import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
+import gov.nysenate.openleg.spotchecks.sensite.bill.SenateSiteDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +18,12 @@ public abstract class SenateSiteSpotcheckProcessService extends BaseSpotcheckPro
     }
 
     @Override
-    protected int doCollate() throws Exception {
+    protected int doCollate() {
         return 0;
     }
 
     @Override
-    protected int doIngest() throws Exception {
+    protected int doIngest() {
         return getUncheckedRefCount();
     }
 
@@ -34,7 +34,8 @@ public abstract class SenateSiteSpotcheckProcessService extends BaseSpotcheckPro
                     .filter(SenateSiteDump::isComplete)
                     .count();
         } catch (IOException e) {
-            throw new IllegalStateException("Error while looking for " + getRefType() + " dumps", e);
+            throw new IllegalStateException("Error while looking for " + getRefType() + " dumps."
+                    + "\n\nSource error is:", e);
         }
     }
 

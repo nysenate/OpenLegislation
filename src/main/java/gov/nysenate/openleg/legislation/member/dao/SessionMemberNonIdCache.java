@@ -7,6 +7,7 @@ import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +30,7 @@ final class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, Se
     public Map<ShortNameKey, SessionMember> initialEntries() {
         return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL)
                 .stream().collect(Collectors.toMap(ShortNameKey::new,
-                        sessionMember -> sessionMember));
+                        Function.identity()));
     }
 
     @Override

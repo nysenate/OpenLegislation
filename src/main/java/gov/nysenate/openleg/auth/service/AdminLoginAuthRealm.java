@@ -43,7 +43,7 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
         }
     }
 
-    private static BCryptCredentialsMatcher credentialsMatcher = new BCryptCredentialsMatcher();
+    private static final BCryptCredentialsMatcher credentialsMatcher = new BCryptCredentialsMatcher();
 
     @Autowired
     private AdminUserService adminUserService;

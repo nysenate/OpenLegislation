@@ -6,9 +6,9 @@ import gov.nysenate.openleg.api.legislation.agenda.view.AgendaItemView;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteJsonParser;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +52,7 @@ public class AgendaJsonParser extends SenateSiteJsonParser {
     }
 
     private SenateSiteAgenda extractSenSiteAgenda(JsonNode agendaNode, SenateSiteDumpFragment fragment) throws IOException {
-        SenateSiteAgenda agenda = new SenateSiteAgenda(fragment.getDumpId().getDumpTime());
+        SenateSiteAgenda agenda = new SenateSiteAgenda(fragment.getDumpId().dumpTime());
         int week = getIntValue(agendaNode,"field_ol_week");
         int year = getIntValue(agendaNode,"field_ol_year");
         agenda.setAgendaId(new AgendaId(week, year));

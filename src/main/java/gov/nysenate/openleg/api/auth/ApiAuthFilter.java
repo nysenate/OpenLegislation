@@ -27,7 +27,6 @@ public class ApiAuthFilter implements Filter
     @Autowired
     protected ApiUserService apiUserService;
 
-    @Value("${api.secret}") private String apiSecret;
     @Value("${api.auth.ip.whitelist}") private String filterAddress;
     @Value("${api.auth.enable}") private boolean enabled;
 

@@ -39,8 +39,8 @@ import java.util.Map;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
 /**
- * Implements a daybreak dao by retieving incoming files from the local filesystem
- *      and storing the resulting files, fragments, and entries in a postgresql database
+ * Implements a daybreak dao by retrieving incoming files from the local filesystem
+ * and storing the resulting files, fragments, and entries in the database
  */
 @Repository
 public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
@@ -63,45 +63,6 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     /** {@inheritDoc } */
     @Override
-    public DaybreakFile getDaybreakFile(LocalDate reportDate, String fileName) throws DataAccessException {
-        MapSqlParameterSource params = getReportDateParams(reportDate);
-        params.addValue("fileName", fileName);
-
-        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_DAYBREAK_FILE_BY_FILENAME.getSql(schema()),
-                                        params, new DaybreakFileRowMapper());
-    }
-
-    /** {@inheritDoc } */
-    @Override
-    public DaybreakFile getDaybreakFile(LocalDate reportDate, DaybreakDocType fileType) throws DataAccessException {
-        MapSqlParameterSource params = getReportDateParams(reportDate);
-        params.addValue("fileType", fileType.toString().toLowerCase());
-
-        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_DAYBREAK_FILE_BY_TYPE.getSql(schema()),
-                                            params, new DaybreakFileRowMapper());
-    }
-
-    /** {@inheritDoc } */
-    @Override
-    public DaybreakReport<DaybreakFile> getDaybreakReport(LocalDate reportDate) throws DataAccessException {
-        // Get all files for the given report date
-        MapSqlParameterSource params = getReportDateParams(reportDate);
-        List<DaybreakFile> daybreakFiles = jdbcNamed.query(
-                SqlDaybreakQuery.SELECT_DAYBREAK_FILES_FROM_REPORT.getSql(schema()),
-                params, new DaybreakFileRowMapper());
-
-        // Attempt to create a daybreak report from those files
-        try{
-            return new DaybreakReport<>(daybreakFiles);
-        }
-        catch (DaybreakReport.DaybreakReportInsertException ex){
-            logger.error(ex.getMessage());
-            return null;
-        }
-    }
-
-    /** {@inheritDoc } */
-    @Override
     public DaybreakReportSet<DaybreakFile> getIncomingReports() throws IOException {
         logger.debug("Getting incoming files from " + incomingDaybreakDir.getAbsolutePath());
         // Get all report files from the incoming directory
@@ -120,36 +81,6 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
             }
         }
         return reportSet;
-    }
-
-    /** {@inheritDoc } */
-    @Override
-    public DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId) throws DataAccessException {
-        // Get the main fragment data
-        MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        DaybreakFragment daybreakFragment = jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_DAYBREAK_FRAGMENT.getSql(schema()),
-                params, new DaybreakFragmentRowMapper());
-        // Add page file entries
-        daybreakFragment.setPageFileEntries(getPageFileEntries(daybreakBillId));
-
-        return daybreakFragment;
-    }
-
-    /** {@inheritDoc } */
-    @Override
-    public List<DaybreakFragment> getDaybreakFragments(LocalDate reportDate) throws DataAccessException {
-        // Get a list of all fragments for the report date
-        MapSqlParameterSource params = getReportDateParams(reportDate);
-        List<DaybreakFragment> daybreakFragments = jdbcNamed.query(
-                SqlDaybreakQuery.SELECT_DAYBREAK_FRAGMENTS_BY_REPORT_DATE.getSql(schema()),
-                params, new DaybreakFragmentRowMapper());
-        // Get all page file entries for the report date mapped to a base bill id
-        Map<BaseBillId, Map<BillId, PageFileEntry>> pageFileEntries = getAllPageFileEntries(reportDate);
-        // Add the corresponding page file entries to each fragment
-        for(DaybreakFragment daybreakFragment : daybreakFragments){
-            daybreakFragment.setPageFileEntries(pageFileEntries.get(BaseBillId.getBaseId(daybreakFragment.getBillId())));
-        }
-        return daybreakFragments;
     }
 
     /** {@inheritDoc } */
@@ -186,16 +117,6 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     /** {@inheritDoc } */
     @Override
-    public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId) throws DataAccessException {
-        MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        List<PageFileEntry> pageFileEntries = jdbcNamed.query(
-                SqlDaybreakQuery.SELECT_PAGE_FILE_ENTRIES_BY_BILL.getSql(schema()), params, new PageFileEntryRowMapper());
-        return Maps.uniqueIndex(pageFileEntries, daybreakBillId.getBaseBillId().getChamber() == Chamber.SENATE ?
-                PageFileEntry::getSenateBillId : PageFileEntry::getAssemblyBillId);
-    }
-
-    /** {@inheritDoc } */
-    @Override
     public Map<BaseBillId, Map<BillId, PageFileEntry>> getAllPageFileEntries(LocalDate reportDate) throws DataAccessException {
         // Get a list of all page file entries
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -225,17 +146,6 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                                         params, new DaybreakBillRowMapper());
         addAdditionalFields(daybreakBill);
         return daybreakBill;
-    }
-
-    /** {@inheritDoc } */
-    @Override
-    public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException {
-        return getDaybreakBillAtDate(baseBillId, LocalDate.now());
-    }
-
-    @Override
-    public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId, Range<LocalDate> dateRange) throws DataAccessException {
-        return getDaybreakBillAtDate(baseBillId, getCurrentReportDate(dateRange));
     }
 
     /** {@inheritDoc } */

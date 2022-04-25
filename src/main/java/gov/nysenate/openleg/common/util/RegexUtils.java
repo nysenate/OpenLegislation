@@ -6,9 +6,9 @@ import java.util.List;
 /**
  * Contains some methods to help create and use regular expressions.
  */
-public class RegexUtils {
+public final class RegexUtils {
     private static final String DELIM = "~~@@@@~~";
-    // Utility class.
+
     private RegexUtils() {}
 
     /**

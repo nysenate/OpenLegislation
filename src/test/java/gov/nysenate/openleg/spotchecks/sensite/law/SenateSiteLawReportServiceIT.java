@@ -3,7 +3,6 @@ package gov.nysenate.openleg.spotchecks.sensite.law;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.config.annotation.SillyTest;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
@@ -36,12 +35,11 @@ public class SenateSiteLawReportServiceIT extends BaseTests {
         SenateSiteDumpId dumpId = new SenateSiteDumpId(
                 SENATE_SITE_LAW, 1, 2019, LocalDateTime.parse("2019-08-01T12:31:43")
         );
-        SenateSiteDumpFragment fragment = new SenateSiteDumpFragment(dumpId, 1);
-        fragment.setFragmentFile(resourceFile);
+        SenateSiteDumpFragment fragment = new SenateSiteDumpFragment(dumpId, 1, resourceFile);
         SenateSiteDump dump = new SenateSiteDump(dumpId);
         dump.addDumpFragment(fragment);
         SpotCheckReportId reportId = new SpotCheckReportId(
-                SENATE_SITE_LAW, dump.getDumpId().getDumpTime(), LocalDateTime.now());
+                SENATE_SITE_LAW, dump.getDumpId().dumpTime(), LocalDateTime.now());
         SpotCheckReport<LawSpotCheckId> report = new SpotCheckReport<>(reportId);
         reportService.checkDump(dump, report);
         logger.info("{}", report.getMismatchTypeCounts(false));

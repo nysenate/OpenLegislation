@@ -15,9 +15,9 @@ import gov.nysenate.openleg.legislation.bill.BillAction;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillVoteCode;
 import gov.nysenate.openleg.legislation.bill.BillVoteType;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
     /* --- Internal Methods --- */
 
     private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) {
-        SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().getDumpTime());
+        SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().dumpTime());
 
         final String printNo = getValue(billNode, "field_ol_print_no");
         bill.setPrintNo(printNo);
