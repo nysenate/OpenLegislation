@@ -84,7 +84,6 @@ public abstract class AbstractDataProcessor
 
     @Resource(name = "agendaIngestCache") protected IngestCache<AgendaId, Agenda, LegDataFragment> agendaIngestCache;
     @Resource(name = "billIngestCache") protected IngestCache<BaseBillId, Bill, LegDataFragment> billIngestCache;
-    // TODO: look into this error
     @Resource(name = "calendarIngestCache") protected IngestCache<CalendarId, Calendar, LegDataFragment> calendarIngestCache;
 
     /* --- Utilities --- */
