@@ -24,9 +24,9 @@ final class SessionMemberIdCache extends AbstractMemberCache<Integer, SessionMem
 
     @Override
     public Map<Integer, SessionMember> initialEntries() {
-        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL)
-                .stream().collect(Collectors.toMap(SessionMember::getSessionMemberId,
-                        Function.identity()));
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+                .filter(sm -> sm.getMember().isIncumbent())
+                .collect(Collectors.toMap(SessionMember::getSessionMemberId, Function.identity()));
     }
 
     @Override

@@ -28,9 +28,9 @@ final class SessionMemberNonIdCache extends AbstractMemberCache<ShortNameKey, Se
 
     @Override
     public Map<ShortNameKey, SessionMember> initialEntries() {
-        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL)
-                .stream().collect(Collectors.toMap(ShortNameKey::new,
-                        Function.identity()));
+        return memberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+                .filter(sm -> sm.getMember().isIncumbent())
+                .collect(Collectors.toMap(ShortNameKey::new, Function.identity()));
     }
 
     @Override

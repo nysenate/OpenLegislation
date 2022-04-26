@@ -100,8 +100,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public List<BillScrapeFile> getIncomingScrapedBills() {
         String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
-        List<BillScrapeFile> scrapeFiles = jdbcNamed.query(sql, billScrapeFileMapper);
-        return scrapeFiles;
+        return jdbcNamed.query(sql, billScrapeFileMapper);
     }
 
     @Override

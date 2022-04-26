@@ -9,12 +9,10 @@ import org.ehcache.config.EvictionAdvisor;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.units.EntryUnit;
 import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
-import org.elasticsearch.core.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.ParameterizedType;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,8 +32,6 @@ public abstract class CachingService<Key, Value> {
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
     private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
             .using(statisticsService).build(true);
-    // TODO: add this
-    private final static EnumMap<CacheType, Tuple<Class<?>, Class<?>>> classMap = new EnumMap<>(CacheType.class);
 
     @Autowired
     private Environment environment;
@@ -78,10 +73,8 @@ public abstract class CachingService<Key, Value> {
             String size = environment.getProperty(type.name().toLowerCase() + ".cache.size");
             numEntries = size == null ? 50 : Integer.parseInt(size);
         }
-        var resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder()
-                .heap(numEntries, EntryUnit.ENTRIES);
-        var config = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(keyClass, valueClass, resourcePoolsBuilder)
+        var config = CacheConfigurationBuilder.newCacheConfigurationBuilder(keyClass, valueClass,
+                        ResourcePoolsBuilder.heap(numEntries))
                 .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
         this.cache = cacheManager.createCache(type.name(), config);

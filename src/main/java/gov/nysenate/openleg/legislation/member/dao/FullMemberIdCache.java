@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.member.FullMember;
+import gov.nysenate.openleg.legislation.member.Member;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -22,8 +23,8 @@ final class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
 
     @Override
     public Map<Integer, FullMember> initialEntries() {
-        return memberDao.getAllFullMembers().stream().collect(Collectors.toMap(
-                FullMember::getMemberId, Function.identity()));
+        return memberDao.getAllFullMembers().stream().filter(Member::isIncumbent)
+                .collect(Collectors.toMap(FullMember::getMemberId, Function.identity()));
     }
 
     @Override
