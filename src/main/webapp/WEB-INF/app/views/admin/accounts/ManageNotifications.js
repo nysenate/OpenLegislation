@@ -5,9 +5,9 @@ import {
   subscribeApi,
   unsubscribeFromNotification
 } from "app/apis/adminAccountApi";
-import { Trash } from "phosphor-react";
 import Select, { SelectOption } from "app/shared/Select";
 import Input from "app/shared/Input";
+import DeleteIcon from "app/shared/DeleteIcon";
 
 
 export default function ManageNotifications({ setHeaderText }) {
@@ -115,21 +115,12 @@ function CurrentSubscriptions({ subscriptions, onUnsubscribe }) {
             <td>{sub.target}</td>
             <td>{sub.address}</td>
             <td>
-              <DeleteIcon onUnsubscribe={() => onUnsubscribe(sub)} />
+              <DeleteIcon onClick={() => onUnsubscribe(sub)} />
             </td>
           </tr>
         ))}
         </tbody>
       </table>
     </div>
-  )
-}
-
-function DeleteIcon({ onUnsubscribe }) {
-  return (
-    <Trash onClick={() => onUnsubscribe()}
-           className="text-red-600 hover:cursor-pointer inline mr-3"
-           size="1.2rem"
-           weight="bold" />
   )
 }
