@@ -17,6 +17,7 @@ import ApiLogSearch from "app/views/admin/logs/ApiLogSearch";
 import ChangePassword from "app/views/admin/accounts/ChangePassword";
 import ManageAdminUsers from "app/views/admin/accounts/ManageAdminUsers";
 import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
+import BatchEmail from "app/views/admin/email/BatchEmail";
 
 
 export default function Admin({ setHeaderText }) {
@@ -53,6 +54,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/account/users">
           <ManageAdminUsers setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/email">
+          <BatchEmail setHeaderText={setHeaderText} />
         </PrivateRoute>
         <PrivateRoute path="/admin/index">
           <AdminDashboard setHeaderText={setHeaderText} />
@@ -107,6 +111,14 @@ function AdminDashboard({ setHeaderText }) {
           <hr className="mb-3" />
           <ul className="list">
             <li><Link to="/admin/reports" className="link">Reports</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="h4">API Users</h3>
+          <hr className="mb-3" />
+          <ul className="list">
+            <li><Link to="/admin/email" className="link">Send Batch Email</Link></li>
           </ul>
         </div>
       </div>
