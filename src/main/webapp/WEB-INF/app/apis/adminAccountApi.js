@@ -32,6 +32,27 @@ export function subscribeApi(type, medium, address) {
   return fetchUrl(url)
 }
 
+export function fetchAdminAccounts() {
+  const url = "/api/3/admin/accounts"
+  return fetchUrl(url)
+}
+
+export function createAdminUser(username, isMasterAdmin = false) {
+  const url = `/api/3/admin/accounts/${username}?master=${isMasterAdmin}`
+  const options = {
+    method: "POST"
+  }
+  return fetchUrl(url, options)
+}
+
+export function deleteAdminUser(username) {
+  const url = `/api/3/admin/accounts/${username}`
+  const options = {
+    method: "DELETE"
+  }
+  return fetchUrl(url, options)
+}
+
 async function fetchUrl(url, options) {
   const response = await fetch(url, options)
   const data = await response.json()

@@ -10,6 +10,7 @@ import PrivateRoute from "app/shared/PrivateRoute";
 import ContentContainer from "app/shared/ContentContainer";
 import Caches from "app/views/admin/caches/Caches";
 import Indices from "app/views/admin/indices/Indices";
+import Reports from "app/views/admin/reports/Reports"
 import ApiMonitor from "app/views/admin/logs/ApiMonitor";
 import DataProcessLog from "app/views/admin/logs/DataProcessLog";
 import ApiLogSearch from "app/views/admin/logs/ApiLogSearch";
@@ -31,6 +32,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/indices">
           <Indices setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/reports">
+          <Reports setHeaderText={setHeaderText} />
         </PrivateRoute>
         <PrivateRoute path="/admin/logs/monitor">
           <ApiMonitor setHeaderText={setHeaderText} />
@@ -95,6 +99,14 @@ function AdminDashboard({ setHeaderText }) {
             <li><Link to="/admin/logs/monitor" className="link">API Monitor</Link></li>
             <li><Link to="/admin/logs/search" className="link">API Log Search</Link></li>
             <li><Link to="/admin/logs/dataprocess" className="link">Data Process Logs</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="h4">Spotchecks</h3>
+          <hr className="mb-3" />
+          <ul className="list">
+            <li><Link to="/admin/reports" className="link">Reports</Link></li>
           </ul>
         </div>
       </div>

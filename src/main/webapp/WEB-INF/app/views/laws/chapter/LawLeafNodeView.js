@@ -50,7 +50,7 @@ export default function LawLeafNodeView({ setHeaderText }) {
         <div>
           <div className="flex items-center">
             <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
-            <Link to={`/pdf/laws/${match.params.chapterId}${match.params.sectionId}?full=true`} target="_blank" className="link">
+            <Link to={`/pdf/laws/${match.params.chapterId}${match.params.locationId}?full=true`} target="_blank" className="link">
               View as PDF
             </Link>
           </div>

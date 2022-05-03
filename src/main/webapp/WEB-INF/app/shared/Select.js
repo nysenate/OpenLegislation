@@ -52,10 +52,24 @@ export const sortOptions = [
   new SelectOption("desc", "Newest to Oldest")
 ]
 
-export function yearSortOptions(earliestYear) {
+/**
+ * Generates an array on SelectOptions.
+ * @param earliestYear to end array with.
+ * @param withAny if the array should start with an "any" option.
+ * @param onlySessionYears if even years should be skipped.
+ * @returns {*[]}
+ */
+export function yearSortOptions(earliestYear, withAny, onlySessionYears) {
   const currYear = new Date().getFullYear()
-  const options = [new SelectOption("", "Any")]
-  for (let i = currYear; i >= earliestYear; i--)
+  const options = []
+  if (withAny) {
+    options.push(new SelectOption("", "Any"))
+  }
+  for (let i = currYear; i >= earliestYear; i--) {
+    if (onlySessionYears && i%2 === 0) {
+      continue
+    }
     options.push(new SelectOption(i, i))
+  }
   return options
 }

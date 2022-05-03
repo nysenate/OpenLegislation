@@ -1,17 +1,15 @@
-import { billSessionYears } from "app/lib/dateUtils";
 import { getBillStatusTypes } from "app/apis/billGetApi";
 import { getMembersApi } from "app/apis/memberApi";
-import { SelectOption } from "app/shared/Select";
+import {
+  SelectOption,
+  yearSortOptions
+} from "app/shared/Select";
 
 /**
  * Option values for many of the fields in the Advanced Search section.
  */
 
-export const sessionOptions = () => {
-  let sessions = billSessionYears().map((year) => new SelectOption(year, year))
-  sessions.unshift(new SelectOption("", "Any"))
-  return sessions
-}
+export const sessionOptions = yearSortOptions(2009, true, true)
 
 export const sortOptions = [
   new SelectOption("_score:desc,session:desc", "Relevant"),

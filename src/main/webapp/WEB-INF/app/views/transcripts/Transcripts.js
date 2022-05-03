@@ -19,9 +19,7 @@ import {
   DATETIME_FULL_NO_ZONE,
   formatDateTime
 } from "app/lib/dateUtils";
-import {
-  capitalizePhrase
-} from "app/lib/textUtils";
+import { capitalizePhrase } from "app/lib/textUtils";
 import TranscriptDisplay from "app/views/transcripts/TranscriptDisplay";
 import ErrorMessage from "app/shared/ErrorMessage";
 
@@ -124,7 +122,8 @@ function TranscriptListing({ isHearing, setHeaderText }) {
     <div className="p-3">
       <SearchBox term={params.term} setSearchTerm={onTermChange} />
       <div className="my-3">
-        <Select label="Year" value={params.year} options={yearSortOptions(isHearing ? 2011 : 1993)}
+        <Select label="Year" value={params.year} options={yearSortOptions(isHearing ? 2011 : 1993,
+          true, false)}
                 onChange={onYearChange} name="year" />
       </div>
       {errorMsg &&
