@@ -15,6 +15,7 @@ const reportYears = yearSortOptions(2009, false, false)
 const billSessionYears = yearSortOptions(2009, false, true)
 
 export default function Reports({ setHeaderText }) {
+  setHeaderText("Run Reports or Add to Scrape Queue")
   return (
     <div>
       <ManualSpotchecks/>
@@ -28,10 +29,14 @@ function ManualSpotchecks() {
   const [ type, setType ] = React.useState(SpotcheckType.BOTH)
   const [ year, setYear ] = React.useState(reportYears[0].value)
   const [ response, setResponse ] = React.useState({})
+  const [ errorMsg, setErrorMsg] = React.useState("")
 
   const apiCall = (e) => {
     e.preventDefault()
+    setResponse({})
+    setErrorMsg("")
     runSpotcheck(type, year).then(response => setResponse(response))
+      .catch((error) => setErrorMsg(error.message))
   }
   return (
     <div>
@@ -52,8 +57,8 @@ function ManualSpotchecks() {
         </div>
       </form>
       <div className="my-3">
-        {response?.success === "false" ? "Warning! " : ""}
-        {response?.message}
+        {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+        {response?.message ? response.message : ""}
       </div>
     </div>)
 }
