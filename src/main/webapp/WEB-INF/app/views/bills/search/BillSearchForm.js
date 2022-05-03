@@ -51,7 +51,7 @@ const registerReducer = function (state, action) {
 export default function BillSearchForm() {
   const [ term, setTerm ] = React.useState("")
   const [ sort, setSort ] = React.useState(sortOptions[0].value)
-  const [ session, setSession ] = React.useState(sessionOptions()[0].value)
+  const [ session, setSession ] = React.useState(sessionOptions[0].value)
   const [ refine, dispatch ] = React.useReducer(registerReducer, initialRefineState)
   const location = useLocation()
   const history = useHistory()
@@ -83,7 +83,7 @@ export default function BillSearchForm() {
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
     setTerm(params.term || "")
-    setSession(params.session || sessionOptions()[0].value)
+    setSession(params.session || sessionOptions[0].value)
     setSort(params.sort || sortOptions[0].value)
     Object.entries(refine).forEach(([ key, value ]) => {
       dispatch({
@@ -216,7 +216,7 @@ export default function BillSearchForm() {
                     tabIndex="2"
                     value={session}
                     onChange={(e) => setSession(e.target.value)}
-                    options={sessionOptions()}
+                    options={sessionOptions}
                     className="w-full" />
           </div>
           <div className="">

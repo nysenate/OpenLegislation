@@ -22,7 +22,6 @@ export class SpotcheckType {
 }
 
 export function runSpotcheck(type, year) {
-  console.log("Here's the type: " + type.name)
   const typeStr = type === SpotcheckType.BOTH ? "" : `${type.name}`.toLowerCase()
   return fetchUrl(`/api/3/admin/spotcheck/run/interval/${typeStr}?year=${year}`)
 }
