@@ -84,6 +84,11 @@
         focus:border-blue-400 placeholder-gray-500 placeholder-opacity-60;
     }
 
+    .textarea {
+        @apply bg-gray-100 rounded p-1 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400 placeholder-gray-500 placeholder-opacity-60;
+    }
+
     .select {
         @apply bg-gray-100 h-8 rounded p-1 outline-none border-solid border-1 border-transparent
         focus:border-blue-400;
