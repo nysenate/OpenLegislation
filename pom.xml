@@ -116,7 +116,8 @@
     <guava.version>31.0-jre</guava.version>
     <guava.jackson.version>2.9.10</guava.jackson.version>
     <httpclient.version>4.5.13</httpclient.version>
-    <jackson.version>2.12.1</jackson.version>
+    <jackson.version>2.13.2</jackson.version>
+    <jackson-databind.version>2.13.2.2</jackson-databind.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
@@ -125,10 +126,10 @@
     <mail.version>1.6.2</mail.version>
     <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>2.0.24</pdfbox.version>
-    <postgres-jdbc.version>42.2.25</postgres-jdbc.version>
+    <postgres-jdbc.version>42.3.3</postgres-jdbc.version>
     <shiro.version>1.8.0</shiro.version>
     <slf4j.version>1.7.28</slf4j.version>
-    <spring.version>5.3.14</spring.version>
+    <spring.version>5.3.18</spring.version>
     <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
     <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
@@ -295,7 +296,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
+      <version>${jackson-databind.version}</version>
     </dependency>
 
     <dependency>

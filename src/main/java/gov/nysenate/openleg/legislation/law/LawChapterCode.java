@@ -104,6 +104,7 @@ public enum LawChapterCode
     TCP("Transportation Corporations", CONSOLIDATED),
     UCC("Uniform Commercial Code", CONSOLIDATED),
     VAT("Vehicle & Traffic", CONSOLIDATED),
+    VET("Veterans' Services", CONSOLIDATED),
     VIL("Village", CONSOLIDATED),
     VAW("Volunteer Ambulance Workers' Benefit", CONSOLIDATED),
     VOL("Volunteer Firefighters' Benefit", CONSOLIDATED),
