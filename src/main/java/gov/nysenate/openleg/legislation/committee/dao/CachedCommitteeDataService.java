@@ -56,8 +56,10 @@ public class CachedCommitteeDataService
 
     @Override
     public Map<CommitteeSessionId, CommitteeList> initialEntries() {
-        return committeeDao.getAllSessionIds().stream().collect(Collectors.toMap(id -> id,
-                id -> new CommitteeList(committeeDao.getCommitteeHistory(id))));
+        return committeeDao.getAllSessionIds().stream()
+                .filter(id -> id.getSession().equals(SessionYear.current()))
+                .collect(Collectors.toMap(id -> id, id ->
+                        new CommitteeList(committeeDao.getCommitteeHistory(id))));
     }
 
     /** --- Committee Data Services --- */
@@ -139,13 +141,13 @@ public class CachedCommitteeDataService
 
         if (committeeSessionId == null)
             throw new IllegalArgumentException("CommitteeSessionId cannot be null!");
-        List<Committee> committeeHistory = getCacheValue(committeeSessionId);
+        List<Committee> committeeHistory = cache.get(committeeSessionId);
         if (committeeHistory != null)
             logger.debug("Committee cache hit for {}", committeeSessionId);
         else {
             try {
                 committeeHistory = committeeDao.getCommitteeHistory(committeeSessionId);
-                putCacheEntry(committeeSessionId, new CommitteeList(committeeHistory));
+                cache.put(committeeSessionId, new CommitteeList(committeeHistory));
                 logger.debug("Added committee history {} to cache", committeeSessionId);
             }
             catch (EmptyResultDataAccessException ex){
@@ -179,7 +181,7 @@ public class CachedCommitteeDataService
             throw new IllegalArgumentException("Committee cannot be null.");
         committeeDao.updateCommittee(committee, legDataFragment);
         List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
-        putCacheEntry(committee.getSessionId(), new CommitteeList(committeeHistory));
+        cache.put(committee.getSessionId(), new CommitteeList(committeeHistory));
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 

@@ -51,7 +51,7 @@ public class BillCacheEvictionService {
         calendar.getSupplementalMap().values().stream()
                 .flatMap(calSup -> calSup.getAllEntries().stream())
                 .map(calSupEntry -> BillId.getBaseId(calSupEntry.getBillId()))
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
     }
 
     private void evictAgendaBills(Agenda agenda) {
@@ -59,11 +59,11 @@ public class BillCacheEvictionService {
                 .flatMap(addendum -> addendum.getCommitteeInfoMap().values().stream())
                 .flatMap(commInfo -> commInfo.getItems().stream())
                 .map(infCommItem -> BillId.getBaseId(infCommItem.getBillId()))
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
         agenda.getAgendaVoteAddenda().values().stream()
                 .flatMap(voteAdd -> voteAdd.getCommitteeVoteMap().values().stream())
                 .flatMap(voteComm -> voteComm.getVotedBills().keySet().stream())
                 .map(BillId::getBaseId)
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
     }
 }

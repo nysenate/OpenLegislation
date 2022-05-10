@@ -5,8 +5,8 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
 import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
@@ -79,7 +79,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         env.setElasticIndexing(originalIndexingSetting);
         env.setBillScrapeQueueEnabled(originalScrapeQueueSetting);
         env.setNotificationsEnabled(originalNotificationSetting);
-        eventBus.post(new CacheEvictEvent(EnumSet.allOf(CacheType.class)));
+        CachingService.clearCaches(EnumSet.allOf(CacheType.class), false);
     }
 
     /**
@@ -119,7 +119,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         processor.process(fragment);
         processor.postProcess();
         // Clear caches to ensure proper saves
-        eventBus.post(new CacheEvictEvent(EnumSet.allOf(CacheType.class)));
+        CachingService.clearCaches(EnumSet.allOf(CacheType.class), false);
     }
 
     /**

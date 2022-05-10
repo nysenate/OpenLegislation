@@ -13,8 +13,6 @@ import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CachedApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
-    private static final Logger logger = LoggerFactory.getLogger(CachedApiUserService.class);
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
@@ -119,7 +116,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
                 user.setActive(true);
                 user.setAuthenticated(true);
                 apiUserDao.updateUser(user);
-                putCacheEntry(user.getApiKey(), user);
+                cache.put(user.getApiKey(), user);
                 sendNewApiUserNotification(user);
             }
             sendApikeyEmail(user);
@@ -142,7 +139,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.addRole(role);
         apiUserDao.updateUser(user);
-        putCacheEntry(user.getApiKey(), user);
+        cache.put(user.getApiKey(), user);
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
 
@@ -152,7 +149,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.removeRole(role);
         apiUserDao.updateUser(user);
-        putCacheEntry(user.getApiKey(), user);
+        cache.put(user.getApiKey(), user);
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
 
@@ -170,7 +167,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.addSubscription(subscription);
         apiUserDao.updateUser(user);
-        putCacheEntry(user.getApiKey(), user);
+        cache.put(user.getApiKey(), user);
     }
 
     /** {@inheritDoc} */
@@ -179,7 +176,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setSubscriptions(subscriptions);
         apiUserDao.updateUser(user);
-        putCacheEntry(user.getApiKey(), user);
+        cache.put(user.getApiKey(), user);
     }
 
     /** {@inheritDoc} */
@@ -188,7 +185,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.removeSubscription(subscription);
         apiUserDao.updateUser(user);
-        putCacheEntry(user.getApiKey(), user);
+        cache.put(user.getApiKey(), user);
     }
 
     /**
@@ -202,7 +199,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         if (apiKey == null) {
             return Optional.empty();
         }
-        ApiUser user = getCacheValue(apiKey);
+        ApiUser user = cache.get(apiKey);
         if (user == null) {
             try {
                 user = apiUserDao.getApiUserFromKey(apiKey);

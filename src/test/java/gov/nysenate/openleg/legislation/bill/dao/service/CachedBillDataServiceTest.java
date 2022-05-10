@@ -4,7 +4,8 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.config.annotation.SillyTest;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
+import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import org.apache.commons.lang3.time.StopWatch;
@@ -13,6 +14,8 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Set;
 
 @Category(SillyTest.class)
 public class CachedBillDataServiceTest extends BaseTests
@@ -53,7 +56,7 @@ public class CachedBillDataServiceTest extends BaseTests
     public void evictContentTest() {
         StopWatch sw = new StopWatch();
         BaseBillId id = new BaseBillId("S1", 2015);
-        billData.evictCache();
+        CachingService.clearCaches(Set.of(CacheType.BILL), false);
         sw.start();
         billData.getBill(id);
         sw.stop();
@@ -64,7 +67,7 @@ public class CachedBillDataServiceTest extends BaseTests
         sw.stop();
         logger.info("time {}", sw.getTime());
         sw.reset();
-        billData.evictContent(id);
+        billData.evictBill(id);
         sw.start();
         billData.getBill(id);
         sw.stop();
@@ -72,8 +75,7 @@ public class CachedBillDataServiceTest extends BaseTests
     }
 
     @Test
-    public void testEvictEvent() throws Exception {
-        eventBus.register(this);
-        eventBus.post(new CacheEvictEvent(null));
+    public void testEvictEvent() {
+        CachingService.clearCaches(Set.of(CacheType.BILL), false);
     }
 }

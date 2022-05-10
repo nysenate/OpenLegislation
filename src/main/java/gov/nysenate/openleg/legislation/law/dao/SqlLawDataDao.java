@@ -6,7 +6,6 @@ import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.processors.law.LawProcessor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
@@ -43,13 +41,6 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public List<LawInfo> getLawInfos() {
         return jdbcNamed.query(SqlLawDataQuery.SELECT_LAW_INFO.getSql(schema()), lawInfoRowMapper);
-    }
-
-    @Override
-    public Map<String, LocalDate> getLastPublishedMap() {
-        List<Pair<String, LocalDate>> res = jdbcNamed.query(SqlLawDataQuery.SELECT_MAX_PUB_DATE.getSql(schema()),
-            (rs, rowNum) -> Pair.of(rs.getString("law_id"), getLocalDateFromRs(rs, "max_pub_date")));
-        return res.stream().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /** {@inheritDoc} */

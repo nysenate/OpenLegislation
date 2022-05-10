@@ -14,6 +14,7 @@ import gov.nysenate.openleg.legislation.bill.dao.BillDao;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
+import org.ehcache.Cache;
 import org.ehcache.config.EvictionAdvisor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,16 @@ import java.util.Optional;
 public class CachedBillDataService extends CachingService<BaseBillId, Bill> implements BillDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
-    // TODO: autowire this into class with generics in constructor?
     @Autowired
-    private BillDao billDao;
+    public CachedBillDataService(BillDao billDao, CachedBillInfoDataService billInfoDataService) {
+        this.billDao = billDao;
+        this.billInfoDataService = billInfoDataService;
+    }
+
+    private final BillDao billDao;
     // Bill Info cache will store BillInfo instances to speed up search and listings.
     // If a bill is already stored in the main cache, its BillInfo does not need to be stored here.
-    @Autowired
-    private CachedBillInfoDataService billInfoDataService;
+    private final CachedBillInfoDataService billInfoDataService;
 
     @Service
     static class CachedBillInfoDataService extends CachingService<BaseBillId, BillInfo> {
@@ -49,12 +53,8 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
             return CacheType.BILL_INFO;
         }
 
-        private BillInfo get(BaseBillId baseBillId) {
-            return super.getCacheValue(baseBillId);
-        }
-
-        private void put(BaseBillId baseBillId, BillInfo billInfo) {
-            super.putCacheEntry(baseBillId, billInfo);
+        private Cache<BaseBillId, BillInfo> cache() {
+            return cache;
         }
     }
 
@@ -71,17 +71,9 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
                 value.isPublished();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void evictContent(BaseBillId baseBillId) {
-        super.evictContent(baseBillId);
-        billInfoDataService.evictContent(baseBillId);
-    }
-
-    @Override
-    public void evictCache() {
-        super.evictCache();
-        billInfoDataService.evictCache();
+    public void evictBill(BaseBillId baseBillId) {
+        cache.remove(baseBillId);
+        billInfoDataService.cache().remove(baseBillId);
     }
 
     /* --- BillDataService implementation --- */
@@ -89,9 +81,10 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     /** {@inheritDoc} */
     @Override
     public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
-        if (billId == null)
+        if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
-        Bill bill = getCacheValue(billId);
+        }
+        Bill bill = cache.get(billId);
         if (bill != null) {
             logger.debug("Cache hit for bill {}", bill);
             try {
@@ -118,21 +111,21 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     /** {@inheritDoc} */
     @Override
     public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx {
-        logger.debug("Fetching bill info {}..", billId);
+        logger.debug("Fetching bill info {}...", billId);
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
-        Bill bill = getCacheValue(billId);
+        Bill bill = cache.get(billId);
         if (bill != null) {
             return new BillInfo(bill);
         }
-        BillInfo info = billInfoDataService.get(billId);
+        BillInfo info = billInfoDataService.cache().get(billId);
         if (info != null) {
             return info;
         }
         try {
             info = billDao.getBillInfo(billId);
-            billInfoDataService.put(billId, info);
+            billInfoDataService.cache().put(billId, info);
             return info;
         }
         catch (EmptyResultDataAccessException ex) {
@@ -158,18 +151,21 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
     /** {@inheritDoc} */
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        if (sessionYear == null)
+        if (sessionYear == null) {
             throw new IllegalArgumentException("SessionYear cannot be null");
-        if (limitOffset == null)
+        }
+        if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
+        }
         return billDao.getBillIds(sessionYear, limitOffset, SortOrder.ASC);
     }
 
     /** {@inheritDoc} */
     @Override
     public synchronized int getBillCount(SessionYear sessionYear) {
-        if (sessionYear == null)
+        if (sessionYear == null) {
             throw new IllegalArgumentException("SessionYear cannot be null");
+        }
         return billDao.getBillCount(sessionYear);
     }
 
@@ -179,8 +175,9 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);
-        if (postUpdateEvent)
+        if (postUpdateEvent) {
             eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
+        }
     }
 
     /** {@inheritDoc} */
@@ -213,17 +210,18 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
      * @param bill Bill
      */
     private void putStrippedBillInCache(final Bill bill) {
-        if (bill == null)
+        if (bill == null) {
             return;
+        }
         try {
             Bill cacheBill = bill.shallowClone();
             cacheBill.getAmendmentList().forEach(ba -> {
                 ba.setMemo("");
                 ba.clearFullTexts();
             });
-            putCacheEntry(cacheBill.getBaseBillId(), cacheBill);
+            cache.put(cacheBill.getBaseBillId(), cacheBill);
             // Remove entry from the bill info cache if it exists
-            billInfoDataService.evictContent(cacheBill.getBaseBillId());
+            billInfoDataService.cache().remove(cacheBill.getBaseBillId());
         }
         catch (CloneNotSupportedException e) {
             logger.error("Failed to cache bill!", e);

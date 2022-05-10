@@ -35,7 +35,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Override
     public Map<AgendaId, Agenda> initialEntries() {
         return getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC).stream()
-                .limit(8).collect(Collectors.toMap(id -> id, id -> agendaDao.getAgenda(id)));
+                .limit(20).collect(Collectors.toMap(id -> id, id -> agendaDao.getAgenda(id)));
     }
 
     /** {@inheritDoc} */
@@ -45,10 +45,10 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
             throw new IllegalArgumentException("AgendaId cannot be null.");
         }
         try {
-            Agenda agenda = getCacheValue(agendaId);
+            Agenda agenda = cache.get(agendaId);
             if (agenda == null) {
                 agenda = agendaDao.getAgenda(agendaId);
-                putCacheEntry(agendaId, agenda);
+                cache.put(agendaId, agenda);
             }
             return agenda;
         }
@@ -81,7 +81,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
         }
         logger.debug("Persisting agenda {}", agenda.getId());
         agendaDao.updateAgenda(agenda, legDataFragment);
-        putCacheEntry(agenda.getId(), agenda);
+        cache.put(agenda.getId(), agenda);
         if (postUpdateEvent) {
             eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));
         }
@@ -91,6 +91,6 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Override
     public void deleteAgenda(AgendaId agendaId) {
         agendaDao.deleteAgenda(agendaId);
-        evictContent(agendaId);
+        cache.remove(agendaId);
     }
 }

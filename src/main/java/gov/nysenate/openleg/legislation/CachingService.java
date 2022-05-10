@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.legislation;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.Configuration;
@@ -23,6 +22,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.ParameterizedType;
+import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +33,11 @@ public abstract class CachingService<Key, Value> {
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
     private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
             .using(statisticsService).build(true);
+    // Adds some extra space into caches beyond their initial entries.
+    private static final double WIGGLE_ROOM = 1.2;
+    private static final int DEFAULT_SIZE = 50;
+    private static final EnumMap<CacheType, CachingService<?, ?>> cacheTypeMap =
+            new EnumMap<>(CacheType.class);
 
     @Autowired
     private Environment environment;
@@ -65,95 +71,51 @@ public abstract class CachingService<Key, Value> {
         var currCache = cacheManager.getCache(type.name().toLowerCase(), keyClass, valueClass);
         if (currCache != null) {
             this.cache = currCache;
+            logger.warn("Class " + this.getClass() + " tried to duplicate a cache.");
             return;
         }
-        var initialEntries = initialEntries();
-        int numEntries = (int) (initialEntries.size() * 1.2);
+
+        Map<Key, Value> initialEntries = initialEntries();
+        int numEntries = (int) (initialEntries.size() * WIGGLE_ROOM);
         if (numEntries == 0) {
             String size = environment.getProperty(type.name().toLowerCase() + ".cache.size");
-            numEntries = size == null ? 50 : Integer.parseInt(size);
+            numEntries = size == null ? DEFAULT_SIZE : Integer.parseInt(size);
         }
-        var config = CacheConfigurationBuilder.newCacheConfigurationBuilder(keyClass, valueClass,
-                        ResourcePoolsBuilder.heap(numEntries))
+        var config = CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(numEntries))
                 .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
         this.cache = cacheManager.createCache(type.name(), config);
-        eventBus.register(this);
-        handleCacheWarmEvent(new CacheWarmEvent(Set.of(type)));
+        cacheTypeMap.put(type, this);
+        initialEntries.forEach((k, v) -> cache.put(k, v));
     }
 
     @PreDestroy
     protected void cleanUp() {
-        evictCache();
+        cache.clear();
         cacheManager.removeCache(cacheType().name());
-    }
-
-    protected Value getCacheValue(Key key) {
-        return cache == null ? null : cache.get(key);
-    }
-
-    protected void putCacheEntry(Key key, Value value) {
-        if (cache != null)
-            cache.put(key, value);
     }
 
     public Map<Key, Value> initialEntries() {
         return Map.of();
     }
 
-    /**
-     * Evicts a single item from the cache based on the given content id
-     */
-    public void evictContent(Key key) {
-        cache.remove(key);
-    }
-
-    /**
-     * Clears all the cache entries from this cache.
-     */
-     public void evictCache() {
-         logger.info("Clearing out the {} cache", cacheType().name());
-         cache.clear();
-    }
-
-    /**
-     * If a CacheEvictEvent is sent out on the event bus, the caching service
-     * should check to see if it has any affected caches and clear them.
-     *
-     * @param evictEvent CacheEvictEvent
-     */
-    @Subscribe
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(cacheType())) {
-            evictCache();
+    private synchronized void clearCache(boolean warmCaches) {
+        cache.clear();
+        if (warmCaches) {
+            cache.putAll(initialEntries());
         }
     }
 
-    /**
-     * Intercept an evict Id event and evict the specified content
-     * if the caching service has any of the affected caches
-     * @param evictIdEvent CacheEvictIdEvent
-     */
-    @Subscribe
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<Key> evictIdEvent) {
-        if (evictIdEvent.affects(cacheType())) {
-            evictContent(evictIdEvent.getContentId());
+    public static synchronized void clearCaches(Set<CacheType> types, boolean warmCaches) {
+        if (types.contains(CacheType.BILL) || types.contains(CacheType.BILL_INFO)) {
+            // Ensures the Set is mutable.
+            types = new HashSet<>(types);
+            types.add(CacheType.BILL);
+            types.add(CacheType.BILL_INFO);
         }
-    }
-
-    /**
-     * If a CacheWarmEvent is sent out on the event bus, the caching service
-     * should check to if it has any affected caches and warm them.
-     *
-     * @param warmEvent CacheWarmEvent
-     */
-    @Subscribe
-    public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(cacheType())) {
-            evictCache();
-            for (var entry : initialEntries().entrySet()) {
-                cache.put(entry.getKey(), entry.getValue());
-            }
+        for (var cachingService : types.stream().map(cacheTypeMap::get).toList()) {
+            cachingService.clearCache(warmCaches);
         }
     }
 }

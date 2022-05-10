@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.legislation.law.dao;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
-import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.law.*;
@@ -25,9 +22,6 @@ import static java.util.stream.Collectors.toList;
 public class CachedLawDataService extends CachingService<LawVersionId, LawTree> implements LawDataService {
     @Autowired
     private LawDataDao lawDataDao;
-    // This map is never modified: either it is replaced with an empty map,
-    // or with a map from the database.
-    private ImmutableMap<String, LocalDate> maxPubDates = ImmutableMap.of();
 
     @Override
     protected CacheType cacheType() {
@@ -36,27 +30,10 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
 
     /** --- CachingService implementation --- */
 
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(CacheType.LAW)) {
-            evictCache();
-            maxPubDates = ImmutableMap.of();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void evictContent(LawVersionId lawVersionId) {
-        super.evictContent(lawVersionId);
-        maxPubDates = ImmutableMap.of();
-    }
-
     @Override
     public Map<LawVersionId, LawTree> initialEntries() {
         return lawDataDao.getLawInfos().stream()
-                .map(lawInfo -> getLawTree(lawInfo.getLawId(), LocalDate.now()))
+                .map(lawInfo -> lawDataDao.getLawTree(lawInfo.getLawId(), LocalDate.now()))
                 .collect(Collectors.toMap(LawTree::getLawVersionId, lawTree -> lawTree));
     }
 
@@ -71,18 +48,17 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     /** {@inheritDoc} */
     @Override
     public LawTree getLawTree(String lawId, LocalDate endPublishedDate) throws LawTreeNotFoundEx {
-        if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
+        if (lawId == null) {
+            throw new IllegalArgumentException("Supplied lawId cannot be null");
+        }
+        // Defaults to most recent LawTree.
+        endPublishedDate = (endPublishedDate == null ? LocalDate.now() : endPublishedDate);
         try {
-            if (endPublishedDate == null) {
-                if (maxPubDates.isEmpty())
-                    maxPubDates = ImmutableMap.copyOf(lawDataDao.getLastPublishedMap());
-                endPublishedDate = maxPubDates.get(lawId);
-            }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
-            LawTree tree = getCacheValue(lawVersionId);
+            LawTree tree = cache.get(lawVersionId);
             if (tree == null) {
                 tree = lawDataDao.getLawTree(lawId, endPublishedDate);
-                putCacheEntry(tree.getLawVersionId(), tree);
+                cache.put(tree.getLawVersionId(), tree);
             }
             return tree;
         }
@@ -122,8 +98,12 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     /** {@inheritDoc} */
     @Override
     public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishedDate) {
-        if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
-        if (endPublishedDate == null) endPublishedDate = LocalDate.now();
+        if (lawId == null) {
+            throw new IllegalArgumentException("Supplied lawId cannot be null");
+        }
+        if (endPublishedDate == null) {
+            endPublishedDate = LocalDate.now();
+        }
         return lawDataDao.getLawDocuments(lawId.toUpperCase(), endPublishedDate);
     }
 
@@ -136,17 +116,22 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     /** {@inheritDoc} */
     @Override
     public void saveLawTree(LawFile lawFile, LawTree lawTree) {
-        if (lawTree == null) throw new IllegalArgumentException("Supplied lawTree cannot be null");
+        if (lawTree == null) {
+            throw new IllegalArgumentException("Supplied lawTree cannot be null");
+        }
         lawDataDao.updateLawTree(lawFile, lawTree);
-        putCacheEntry(lawTree.getLawVersionId(), lawTree);
-        maxPubDates = ImmutableMap.of();
+        cache.put(lawTree.getLawVersionId(), lawTree);
     }
 
     /** {@inheritDoc} */
     @Override
     public void saveLawDocument(LawFile lawFile, LawDocument lawDocument) {
-        if (lawDocument == null) throw new IllegalArgumentException("Supplied lawDocument cannot be null");
-        if (lawFile == null) throw new IllegalArgumentException("Supplied lawFile cannot be null");
+        if (lawDocument == null) {
+            throw new IllegalArgumentException("Supplied lawDocument cannot be null");
+        }
+        if (lawFile == null) {
+            throw new IllegalArgumentException("Supplied lawFile cannot be null");
+        }
         lawDataDao.updateLawDocument(lawFile, lawDocument);
     }
 }

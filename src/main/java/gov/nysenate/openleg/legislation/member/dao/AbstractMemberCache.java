@@ -14,10 +14,10 @@ abstract class AbstractMemberCache<Key, Value> extends CachingService<Key, Value
     }
 
     public Value getMember(Key key) throws MemberNotFoundEx{
-        Value member = getCacheValue(key);
+        Value member = cache.get(key);
         if (member == null) {
             member = getMemberFromDao(key);
-            putCacheEntry(key, member);
+            cache.put(key, member);
         }
         return member;
     }
