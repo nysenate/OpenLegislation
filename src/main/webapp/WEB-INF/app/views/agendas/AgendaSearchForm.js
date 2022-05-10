@@ -131,7 +131,7 @@ export default function AgendaSearchForm({ updateValues, results }) {
     baseBillNoInput.value = ""
 
     const meetingNotes = document.getElementById("meetingNotes")
-    baseBillNoInput.value = ""
+    meetingNotes.value = ""
 
   }
 
