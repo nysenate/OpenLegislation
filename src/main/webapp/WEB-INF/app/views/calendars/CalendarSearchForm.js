@@ -49,10 +49,7 @@ export default function CalendarSearchForm({ updateValues }) {
     const sortSelect = document.getElementById("sortSelect")
     console.log(sortSelect.value)
 
-    const activeListOnly = document.getElementById("activeListOnly")
-    console.log(activeListOnly.checked)
-
-    updateValues(year.value, searchBy.value, searchValue.value, sortSelect.value, activeListOnly.checked)
+    updateValues(year.value, searchBy.value, searchValue.value, sortSelect.value)
   }
 
   return (
@@ -74,14 +71,11 @@ export default function CalendarSearchForm({ updateValues }) {
 
             <Select label="Sort by" options={sortOptions} name="sortSelect" tabIndex="4"/>
 
-            <Input label="Active List Only:" type="checkbox"
-                   name="activeListOnly" tabIndex="5"/>
-
           </div>
         </div>
 
         <div className="flex justify-end">
-          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="6">Search</button>
+          <button className="btn btn--primary my-3 w-36" type="submit" tabIndex="5">Search</button>
         </div>
 
       </form>

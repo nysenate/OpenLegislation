@@ -2,7 +2,7 @@ import React from 'react'
 import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
 
-export default function CalendarSearchResults({ response, limit, page, onPageChange, detail: activeListOnly }) {
+export default function CalendarSearchResults({ response, limit, page, onPageChange }) {
 
   if (response.total === 0) {
     return (
@@ -22,7 +22,7 @@ export default function CalendarSearchResults({ response, limit, page, onPageCha
           onPageChange={onPageChange}
           total={response.total}
         />
-        <ResultList results={response.result.items} detail={activeListOnly} key={generateKey} />
+        <ResultList results={response.result.items} />
         <Pagination
           limit={limit}
           currentPage={page}
@@ -35,22 +35,18 @@ export default function CalendarSearchResults({ response, limit, page, onPageCha
   )
 }
 
-function generateKey() {
-  return new Date().getTime()
-}
-
-function ResultList({ results, detail }) {
+function ResultList({ results }) {
   console.log(results)
   return (
     <div>
       {results.map((r) =>
-        <ResultItem result={r} detail={detail} />
+        <ResultItem result={r} key={r.result.year + r.result.calendarNumber + r.result.floorCalendar.releaseDateTime}/>
       )}
     </div>
   )
 }
 
-function ResultItem({ result, detail }) {
+function ResultItem({ result }) {
   result = result.result
   // console.log(result)
 
