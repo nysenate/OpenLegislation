@@ -12,7 +12,6 @@ import Calendars from "app/views/calendars/Calendars"
 import Agendas from "app/views/agendas/Agendas"
 import { List, } from "phosphor-react";
 import NavMenu from "app/views/home/NavMenu";
-import Configuration from "app/views/admin/configuration/Configuration";
 import PrivateRoute from "app/shared/PrivateRoute";
 import Admin from "app/views/admin/Admin";
 import NotFound from "app/views/NotFound";

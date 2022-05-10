@@ -20,7 +20,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashSet;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping("/register")
 public class RegistrationPageCtrl extends BaseCtrl {
     @Autowired
@@ -35,16 +35,16 @@ public class RegistrationPageCtrl extends BaseCtrl {
      * @return The index to return them to
      */
     @RequestMapping(value = "/token/{regToken}", method = RequestMethod.GET)
-    public String index(@PathVariable String regToken) {
+    public BaseResponse register(@PathVariable String regToken) {
         try {
             apiUserService.activateUser(regToken);
         } catch (Exception e) {
             logger.error("There was an issue with activating a user's reg token!", e);
+            return new SimpleResponse(false, "Invalid token", "Email confirmation");
         }
-        return "register";
+        return new SimpleResponse(true, "Successfully confirmed email address.", "Email confirmation");
     }
 
-    @ResponseBody
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public BaseResponse signup(WebRequest webRequest, @RequestBody NewUserView body) {
         String email = body.getEmail();
