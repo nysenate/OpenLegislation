@@ -123,6 +123,7 @@
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.13.2</jackson.version>
+    <jackson-databind.version>2.13.2.2</jackson-databind.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
@@ -136,7 +137,7 @@
     <shiro.version>1.9.0</shiro.version>
     <slf4j.version>1.7.28</slf4j.version>
     <spring.version>5.3.19</spring.version>
-    <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
+    <tomcat.servlet.version>8.5.75</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
     <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
     <javax.activation.version>1.1.1</javax.activation.version>
@@ -302,7 +303,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
+      <version>${jackson-databind.version}</version>
     </dependency>
 
     <dependency>

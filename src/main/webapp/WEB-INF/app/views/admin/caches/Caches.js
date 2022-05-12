@@ -54,7 +54,7 @@ function CacheCard({ name }) {
     doWarmCache(cache.cacheName)
       .then(() => {
         setIsWarming(false)
-        loadCacheStats() // Ensure we have the most up to date cache stats.
+        loadCacheStats() // Ensure we have the most up-to-date cache stats.
       })
   }
 
@@ -71,7 +71,6 @@ function CacheCard({ name }) {
       </div>
       <div className="my-5">
         <ul>
-          <li>Memory Used: {cache.heapSizeMb} Mb</li>
           <li>Entries: {cache.size}</li>
           <li>Hits: {cache.hitCount}</li>
         </ul>

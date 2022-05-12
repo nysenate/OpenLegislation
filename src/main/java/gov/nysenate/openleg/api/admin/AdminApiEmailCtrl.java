@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.api.admin;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserBatchEmailServiceImpl;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserEmailRequest;
@@ -8,7 +10,10 @@ import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserMessage;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,9 +43,10 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      */
     @RequiresPermissions("admin:email:post")
     @RequestMapping(value = "/batchEmail", method = RequestMethod.POST)
-    public void sendEmail(@RequestBody ApiUserEmailRequest request) {
+    public BaseResponse sendEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
         apiUserBatchEmailService.sendMessage(message);
+        return new SimpleResponse(true, "Emails have been sent", "Batch Email");
     }
 
     /**
@@ -57,10 +63,11 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      */
     @RequiresPermissions("admin:email:post")
     @RequestMapping(value = "/testModeEmail", method = RequestMethod.POST)
-    public void sendTestEmail(@RequestBody ApiUserEmailRequest request) {
+    public BaseResponse sendTestEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
         String email = (String)SecurityUtils.getSubject().getPrincipal();
         apiUserBatchEmailService.sendTestMessage(email, message);
+        return new SimpleResponse(true, "Emails have been sent", "Batch Email");
     }
 
     /**

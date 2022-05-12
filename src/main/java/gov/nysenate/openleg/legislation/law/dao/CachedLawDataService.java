@@ -6,6 +6,7 @@ import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
             }
             return tree;
         }
-        catch (EmptyResultDataAccessException ex) {
+        catch (DataRetrievalFailureException ex) {
             throw new LawTreeNotFoundEx(lawId, endPublishedDate, ex.getMessage());
         }
     }

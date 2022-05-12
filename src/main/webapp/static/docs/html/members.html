@@ -185,13 +185,67 @@
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 8%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>full</p></td>
+<td><p>boolean</p></td>
+<td><p>(default true) Set to true to get a full member response instead of a summary.</p></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
 <p>Get member with id 371 during 2013 session year.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="mi">371</span>
 </pre></div>
 </div>
 <p><strong>Sample Response</strong></p>
-<p>}</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;member-sessions&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mf">371</span><span class="p">,</span>
+    <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;incumbent&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sessionShortNameMap&quot;</span> <span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;2013&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+        <span class="s2">&quot;sessionMemberId&quot;</span> <span class="o">:</span> <span class="mf">127</span><span class="p">,</span>
+        <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
+        <span class="s2">&quot;districtCode&quot;</span> <span class="o">:</span> <span class="mf">51</span><span class="p">,</span>
+        <span class="s2">&quot;alternate&quot;</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mf">371</span>
+      <span class="p">}</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;person&quot;</span> <span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;personId&quot;</span> <span class="o">:</span> <span class="mf">190</span><span class="p">,</span>
+      <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;firstName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;middleName&quot;</span> <span class="o">:</span> <span class="s2">&quot;L.&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;lastName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Seward&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;email&quot;</span> <span class="o">:</span> <span class="s2">&quot;seward@senate.state.ny.us&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;prefix&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senator&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;suffix&quot;</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="s2">&quot;verified&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="s2">&quot;imgName&quot;</span> <span class="o">:</span> <span class="s2">&quot;371_james_l._seward.jpg&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="get-a-list-of-members">
 <h2>Get a list of members<a class="headerlink" href="#get-a-list-of-members" title="Permalink to this headline">¶</a></h2>
