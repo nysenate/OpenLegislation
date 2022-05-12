@@ -13,6 +13,7 @@ import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +28,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class CachedApiUserService extends CachingService<String, ApiUser> implements ApiUserService {
-    protected final SqlApiUserDao apiUserDao;
-    protected final SendMailService sendMailService;
-
+    private final SqlApiUserDao apiUserDao;
+    private final SendMailService sendMailService;
     private final OpenLegEnvironment environment;
 
+    @Autowired
     public CachedApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService,
                                 OpenLegEnvironment environment) {
         this.apiUserDao = apiUserDao;

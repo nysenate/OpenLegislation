@@ -163,7 +163,7 @@ public class ApiUserServiceIT extends BaseTests {
 //        ApiUser apiUserTwo = new ApiUser(emailTwo);
 //        apiUserTwo.setName("Hello");
 //        apiUserTwo.setRegistrationToken("XYZ123");
-//        String apikeyTwo = apiUserTwo.getApiKey();
+//        String apikeyTwo = apiUserTwo.apiKey();
 //
 //        //pre-conditions
 //        List<ApiUser> subscribers_before = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));

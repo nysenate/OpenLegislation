@@ -64,7 +64,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     /**
      * Used to prevent Tomcat having to forcibly unregister the JDBC driver.
-     * Code taken from https://stackoverflow.com/a/23912257
+     * Code taken from <a href="https://stackoverflow.com/a/23912257">here</a>
      */
     @PreDestroy
     private void destroyContext() {

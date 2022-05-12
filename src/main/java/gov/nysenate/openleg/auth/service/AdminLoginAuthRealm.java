@@ -20,30 +20,15 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 @Component
-public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
-{
+public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginAuthRealm.class);
 
     /** The IP whitelist is used here to restrict access to admin login to internal IPs only. */
     @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
 
-    private static class BCryptCredentialsMatcher implements CredentialsMatcher {
-
-        /**
-         * Compare a hashed password from the Auth token to the stored hash.
-         * @param token The authentication credentials submitted by the user during a login attempt
-         * @param info The valid authenticaton info to compare the token to
-         * @return Whether or not the login credentials are valid
-         */
-        @Override
-        public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-            UsernamePasswordToken userToken = (UsernamePasswordToken) token;
-            String newPass = new String(userToken.getPassword());
-            return (BCrypt.checkpw(newPass, info.getCredentials().toString()));
-        }
-    }
-
-    private static final BCryptCredentialsMatcher credentialsMatcher = new BCryptCredentialsMatcher();
+    private static final CredentialsMatcher credentialsMatcher = (token, info) ->
+            BCrypt.checkpw(new String(((UsernamePasswordToken) token).getPassword()),
+                    info.getCredentials().toString());
 
     @Autowired
     private AdminUserService adminUserService;
@@ -74,7 +59,8 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
         if (token instanceof UsernamePasswordToken usernamePasswordToken) {
             logger.info("Attempting login with Admin Realm from IP {}", usernamePasswordToken.getHost());
             if (usernamePasswordToken.getHost().matches(ipWhitelist)) {
-                return queryForAuthenticationInfo(usernamePasswordToken);
+                AdminUser admin = adminUserService.getAdminUser(usernamePasswordToken.getUsername());
+                return new SimpleAuthenticationInfo(admin.getUsername(), admin.getPassword(), getName());
             }
             else {
                 logger.warn("Blocking admin login from unauthorized IP {}", usernamePasswordToken.getHost());
@@ -82,18 +68,6 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
             }
         }
         throw new UnsupportedTokenException(getName() + " only supports UsernamePasswordToken");
-    }
-
-    /**
-     * This method uses the AdminUser service to query the database and see if
-     * the given username.
-     * @param info The given UsernamePasswordToken
-     * @return A new SimpleAuthenticationInfo object if the user is a valid Admin, or AuthenticationException
-     */
-    protected AuthenticationInfo queryForAuthenticationInfo(UsernamePasswordToken info) {
-        String username = info.getUsername();
-        AdminUser admin = adminUserService.getAdminUser(username);
-        return new SimpleAuthenticationInfo(admin.getUsername(), admin.getPassword(), getName());
     }
 
     /**

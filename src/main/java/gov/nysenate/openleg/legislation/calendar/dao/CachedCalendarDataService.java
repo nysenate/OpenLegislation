@@ -168,7 +168,8 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
         logger.debug("Persisting {}", calendar);
         calendarDao.updateCalendar(calendar, legDataFragment);
         cache.put(calendar.getId(), calendar);
-        if (postUpdateEvent)
+        if (postUpdateEvent) {
             eventBus.post(new CalendarUpdateEvent(calendar));
+        }
     }
 }
