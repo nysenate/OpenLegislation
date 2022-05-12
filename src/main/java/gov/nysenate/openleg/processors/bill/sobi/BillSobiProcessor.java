@@ -1,19 +1,17 @@
 package gov.nysenate.openleg.processors.bill.sobi;
 
-import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
-import gov.nysenate.openleg.processors.config.ProcessConfig;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
+import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
+import gov.nysenate.openleg.processors.config.ProcessConfig;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -108,24 +106,23 @@ public class BillSobiProcessor extends AbstractBillProcessor
                                                           block.getStartLineNo(), block.getEndLineNo());
             try {
                 switch (block.getType()) {
-                    case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
-                    case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
-                    case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, legDataFragment, null); break;
-                    case SAME_AS:  applySameAs(data, specifiedAmendment, legDataFragment, unit); break;
-                    case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
-                    case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
-                    case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
-                    case PROGRAM_INFO:  applyProgramInfo(data, baseBill, date); break;
-                    case ACT_CLAUSE:  applyActClause(data, specifiedAmendment); break;
-                    case LAW: applyLaw(data, baseBill, specifiedAmendment, specifiedVersion, date); break;
-                    case SUMMARY:  applySummary(data, baseBill, date); break;
-                    case SPONSOR_MEMO:
-                    case RESOLUTION_TEXT:
-                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), legDataFragment); break;
-                    case VETO_APPROVE_MEMO:  applyVetoApprovalMessage(data, baseBill, date); break;
-                    case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
-                    default: {
+                    case BILL_INFO -> applyBillInfo(data, baseBill, specifiedAmendment, date, unit);
+                    case LAW_SECTION -> applyLawSection(data, baseBill, specifiedAmendment, date);
+                    case TITLE -> applyTitle(data, baseBill, date);
+                    case BILL_EVENT -> parseActions(data, baseBill, specifiedAmendment, legDataFragment, null);
+                    case SAME_AS -> applySameAs(data, specifiedAmendment, legDataFragment, unit);
+                    case SPONSOR -> applySponsor(data, baseBill, specifiedAmendment, date);
+                    case CO_SPONSOR -> applyCosponsors(data, baseBill);
+                    case MULTI_SPONSOR -> applyMultisponsors(data, baseBill);
+                    case PROGRAM_INFO -> applyProgramInfo(data, baseBill, date);
+                    case ACT_CLAUSE -> applyActClause(data, specifiedAmendment);
+                    case LAW -> applyLaw(data, baseBill, specifiedAmendment, specifiedVersion, date);
+                    case SUMMARY -> applySummary(data, baseBill, date);
+                    case SPONSOR_MEMO, RESOLUTION_TEXT, TEXT ->
+                            applyText(data, specifiedAmendment, date, block.getType(), legDataFragment);
+                    case VETO_APPROVE_MEMO -> applyVetoApprovalMessage(data, baseBill, date);
+                    case VOTE_MEMO -> applyVoteMemo(data, specifiedAmendment, date);
+                    default -> {
                         throw new ParseError("Invalid Line Code " + block.getType());
                     }
                 }
@@ -174,7 +171,7 @@ public class BillSobiProcessor extends AbstractBillProcessor
             // Set the publish status of the base amendment only if it has not been set or is currently un-published.
             if (specifiedAmendment.isBaseVersion()) {
                 Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(version);
-                if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+                if (pubStatus.isEmpty() || !pubStatus.get().isPublished()) {
                     baseBill.updatePublishStatus(version, new PublishStatus(true, date, false, data));
                 }
             }
@@ -495,8 +492,8 @@ public class BillSobiProcessor extends AbstractBillProcessor
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(billAmendment.getBaseBillId(),
+                        BillUpdateField.FULLTEXT));
             }
         }
     }

@@ -23,7 +23,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -176,7 +175,7 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);
         if (postUpdateEvent) {
-            eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
+            eventBus.post(new BillUpdateEvent(bill));
         }
     }
 

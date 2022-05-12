@@ -14,7 +14,6 @@ import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 
@@ -49,7 +47,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: \\/ )?)+)");
+        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
@@ -133,7 +131,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
      */
     protected void ensureBaseBillIsPublished(Bill baseBill, LegDataFragment fragment, String source) {
         Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-        if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+        if (pubStatus.isEmpty() || !pubStatus.get().isPublished()) {
             baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
             setModifiedDateTime(baseBill, fragment);
         }
@@ -302,8 +300,8 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
             List<String> sameAsMatches = new ArrayList<>(Arrays.asList(matches.split(", ")));
             // We're adding the same as bills to the existing list. Same as bills are explicitly cleared.
             billAmendment.getSameAs().addAll(sameAsMatches.stream()
-                    .map(sameAs -> new BillId(sameAs.replace("-", "").replace(" ", ""), baseBill.getSession()))
-                    .collect(Collectors.toList()));
+                    .map(sameAs -> new BillId(sameAs.replace("-", "").replace(" ", ""),
+                            baseBill.getSession())).toList());
             // Check for uni-bill and sync
             if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
                 billAmendment.setUniBill(true);
@@ -360,8 +358,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
                 updatedBillId = billAmendment.getBaseBillId();
             }
             if (updatedBillId != null) {
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        updatedBillId, BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(updatedBillId, BillUpdateField.FULLTEXT));
             }
         });
     }

@@ -191,7 +191,7 @@ public abstract class AbstractDataProcessor
             logger.debug("Broadcasting bill updates...");
             List<Bill> bills =
                 billIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkBillUpdateEvent(bills, LocalDateTime.now()));
+            eventBus.post(new BulkBillUpdateEvent(bills));
             billIngestCache.clearCache();
         }
     }
@@ -291,7 +291,7 @@ public abstract class AbstractDataProcessor
                 entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight(), false));
             List<Agenda> agendas =
                 agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkAgendaUpdateEvent(agendas, LocalDateTime.now()));
+            eventBus.post(new BulkAgendaUpdateEvent(agendas));
             agendaIngestCache.clearCache();
         }
     }
@@ -334,7 +334,7 @@ public abstract class AbstractDataProcessor
                 entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), false));
             List<Calendar> calendars =
                 calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkCalendarUpdateEvent(calendars, LocalDateTime.now()));
+            eventBus.post(new BulkCalendarUpdateEvent(calendars));
             calendarIngestCache.clearCache();
         }
     }

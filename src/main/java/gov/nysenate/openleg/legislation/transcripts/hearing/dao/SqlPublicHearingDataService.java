@@ -12,7 +12,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,8 +30,9 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
     /** {@inheritDoc} */
     @Override
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx {
-        if (publicHearingId == null)
+        if (publicHearingId == null) {
             throw new IllegalArgumentException("PublicHearingId cannot be null");
+        }
         try {
             return publicHearingDao.getPublicHearing(publicHearingId);
         } catch (EmptyResultDataAccessException ex) {
@@ -73,10 +73,12 @@ public class SqlPublicHearingDataService implements PublicHearingDataService {
     /** {@inheritDoc */
     @Override
     public void savePublicHearing(PublicHearing publicHearing, boolean postUpdateEvent) {
-        if (publicHearing == null)
+        if (publicHearing == null) {
             throw new IllegalArgumentException("publicHearing cannot be null");
+        }
         publicHearingDao.updatePublicHearing(publicHearing);
-        if (postUpdateEvent)
-            eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
+        if (postUpdateEvent) {
+            eventBus.post(new PublicHearingUpdateEvent(publicHearing));
+        }
     }
 }

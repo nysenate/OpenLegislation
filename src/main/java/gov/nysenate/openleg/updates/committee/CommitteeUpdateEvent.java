@@ -3,14 +3,11 @@ package gov.nysenate.openleg.updates.committee;
 import gov.nysenate.openleg.legislation.committee.Committee;
 import gov.nysenate.openleg.updates.ContentUpdateEvent;
 
-import java.time.LocalDateTime;
-
 public class CommitteeUpdateEvent extends ContentUpdateEvent {
+    private final Committee committee;
 
-    protected Committee committee;
-
-    public CommitteeUpdateEvent(Committee committee, LocalDateTime updateDateTime) {
-        super(updateDateTime);
+    public CommitteeUpdateEvent(Committee committee) {
+        super();
         this.committee = committee;
     }
 

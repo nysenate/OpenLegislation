@@ -59,14 +59,9 @@ public class SpotcheckRunService {
         // Sort report services into periodic and event driven collections
         for (SpotCheckReportService reportService : reportServices) {
             switch (reportService.getRunMode()) {
-                case EVENT_DRIVEN:
-                    eventReportsBuilder.put(reportService.getSpotcheckRefType(), reportService);
-                    break;
-                case PERIODIC:
-                    intervalReportsBuilder.add(reportService);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown run mode: " + reportService.getRunMode());
+                case EVENT_DRIVEN -> eventReportsBuilder.put(reportService.getSpotcheckRefType(), reportService);
+                case PERIODIC -> intervalReportsBuilder.add(reportService);
+                default -> throw new IllegalArgumentException("Unknown run mode: " + reportService.getRunMode());
             }
         }
 
@@ -171,10 +166,7 @@ public class SpotcheckRunService {
     private void sendMismatchEvents(SpotCheckReport<?> report) {
         for (SpotCheckObservation<?> observation : report.getObservationMap().values()) {
             for (SpotCheckMismatch mismatch : observation.getMismatches().values()) {
-                eventBus.post(new SpotcheckMismatchEvent<>(
-                        LocalDateTime.now(),
-                        observation.getKey(),
-                        mismatch));
+                eventBus.post(new SpotcheckMismatchEvent<>(observation.getKey(), mismatch));
             }
         }
     }

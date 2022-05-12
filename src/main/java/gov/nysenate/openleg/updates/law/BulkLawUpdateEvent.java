@@ -3,26 +3,14 @@ package gov.nysenate.openleg.updates.law;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.updates.ContentUpdateEvent;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 
-public class BulkLawUpdateEvent extends ContentUpdateEvent
-{
-    private Collection<LawDocument> lawDocuments = new ArrayList<>();
+public class BulkLawUpdateEvent extends ContentUpdateEvent {
+    private final Collection<LawDocument> lawDocuments;
 
-    /** --- Constructors --- */
-
-    public BulkLawUpdateEvent(Collection<LawDocument> lawDocument) {
-        this(lawDocument, LocalDateTime.now());
-    }
-
-    public BulkLawUpdateEvent(Collection<LawDocument> lawDocuments, LocalDateTime updateDateTime) {
-        super(updateDateTime);
+    public BulkLawUpdateEvent(Collection<LawDocument> lawDocuments) {
         this.lawDocuments = lawDocuments;
     }
-
-    /** --- Basic Getters --- */
 
     public Collection<LawDocument> getLawDocuments() {
         return lawDocuments;

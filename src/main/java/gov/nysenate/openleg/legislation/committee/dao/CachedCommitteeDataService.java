@@ -182,7 +182,7 @@ public class CachedCommitteeDataService
         committeeDao.updateCommittee(committee, legDataFragment);
         List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
         cache.put(committee.getSessionId(), new CommitteeList(committeeHistory));
-        eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
+        eventBus.post(new CommitteeUpdateEvent(committee));
     }
 
 }

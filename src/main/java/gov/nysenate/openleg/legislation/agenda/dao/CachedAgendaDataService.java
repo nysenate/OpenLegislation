@@ -15,7 +15,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,7 +82,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
         agendaDao.updateAgenda(agenda, legDataFragment);
         cache.put(agenda.getId(), agenda);
         if (postUpdateEvent) {
-            eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));
+            eventBus.post(new AgendaUpdateEvent(agenda));
         }
     }
 
