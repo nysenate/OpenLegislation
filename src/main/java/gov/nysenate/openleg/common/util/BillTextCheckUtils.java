@@ -3,8 +3,7 @@ package gov.nysenate.openleg.common.util;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class BillTextCheckUtils {
-
+public final class BillTextCheckUtils {
     private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
     private static final String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
     private static final String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
@@ -12,6 +11,8 @@ public class BillTextCheckUtils {
     private static final String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
     private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
             lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
+
+    private BillTextCheckUtils() {}
 
     /**
      * Performs a simple normalization to eliminate potential for mismatches that we would never care about.

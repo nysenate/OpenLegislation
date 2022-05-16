@@ -37,5 +37,3 @@ public class BillScrapeSpotcheckProcessServiceIT extends BaseTests {
         assertEquals(1, procService.ingest());
     }
 }
-
-

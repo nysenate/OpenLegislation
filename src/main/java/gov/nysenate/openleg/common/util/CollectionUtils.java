@@ -7,26 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class CollectionUtils
-{
-    /**
-     * Given the input list return a map that will have the ordinal of the element (basically
-     * the index number within the list) as the key and the element itself as the value.
-     *
-     * For example given the {@code list}: ['A', 'B', 'C'] and a {@code startOrdinal} of 1,
-     * the returned map will be: {1 ->'A', 2 -> 'B', 3 -> 'C'}
-     *
-     * @param list List<T> - The input list
-     * @param startOrdinal int - The ordinal keys will start from this number
-     * @return Map<Integer, T>
-     */
-    public static <T> Map<Integer, T> mapOrdinalsToElements(List<T> list, int startOrdinal) {
-        Map<Integer, T> ordinalMap = new HashMap<>();
-        for (int i = 0; i < list.size(); i++) {
-            ordinalMap.put((startOrdinal + i), list.get(i));
-        }
-        return ordinalMap;
-    }
+public final class CollectionUtils {
+    private CollectionUtils() {}
 
     /**
      * Given the input list return a map that will have the element as the key and the ordinal

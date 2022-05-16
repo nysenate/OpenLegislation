@@ -114,9 +114,8 @@ public class FetchMemberImagesScript extends BaseScript {
     }
 
     private Map<Integer, MemberJsonFeedView> getMembersFromJsonFeed() throws IOException {
-        HttpUtils httpUtils = new HttpUtils();
         String senatorJsonFeed = "https://www.nysenate.gov/senators-json";
-        String json = httpUtils.urlToString(senatorJsonFeed);
+        String json = HttpUtils.urlToString(senatorJsonFeed);
         MemberJsonFeedView[] jsonMembers = objectMapper.readValue(json, MemberJsonFeedView[].class);
         return Arrays.stream(jsonMembers)
                 .collect(Collectors.toMap(MemberJsonFeedView::getOpen_leg_id, Function.identity()));

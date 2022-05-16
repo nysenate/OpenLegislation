@@ -76,7 +76,7 @@ public enum SqlBillScrapeReferenceQuery implements BasicSqlQuery {
     /** --- Scrape Queue --- */
 
     INSERT_SCRAPE_QUEUE(
-        "INSERT INTO ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+        "INSERT INTO ${schema}." + SqlTable.BILL_SCRAPE_QUEUE+"\n" +
         "(print_no, session_year, priority) " +
         "VALUES(:printNo, :sessionYear, :priority)"
     ),
@@ -86,7 +86,7 @@ public enum SqlBillScrapeReferenceQuery implements BasicSqlQuery {
         "WHERE session_year = :sessionYear AND print_no = :printNo"
     ),
     SELECT_SCRAPE_QUEUE(
-        "SELECT *, COUNT(*) OVER () AS total FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE
+        "SELECT *, COUNT(*) OVER () AS total FROM ${schema}."+ SqlTable.BILL_SCRAPE_QUEUE
     ),
     DELETE_SCRAPE_QUEUE(
         "DELETE FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +

@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-public abstract class DateUtils {
-    /** --- Date Formats --- */
+public final class DateUtils {
+    private DateUtils() {}
 
     public static final DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd"),
             LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy"),

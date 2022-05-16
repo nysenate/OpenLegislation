@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -119,7 +120,8 @@ public class SenateSiteDumpFragParser {
 
     /** Exceptions */
 
-    public static class SenateSiteDumpFragParserException extends RuntimeException {
+    public static final class SenateSiteDumpFragParserException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = 5133300734005459879L;
 
         private SenateSiteDumpFragParserException(String message) {

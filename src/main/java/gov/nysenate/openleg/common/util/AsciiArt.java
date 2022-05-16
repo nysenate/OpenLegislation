@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.common.util;
 
-public enum AsciiArt
-{
+public enum AsciiArt {
     // ASCII Art generated at http://patorjk.com/software/taag/
     // OpenLeg 3.x font = Big
     // Start Elastic Search font = Star Wars
