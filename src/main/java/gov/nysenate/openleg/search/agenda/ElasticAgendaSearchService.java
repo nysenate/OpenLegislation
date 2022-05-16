@@ -130,8 +130,8 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Subscribe
     @Override
     public synchronized void handleAgendaUpdateEvent(AgendaUpdateEvent agendaUpdateEvent) {
-        if (agendaUpdateEvent != null && agendaUpdateEvent.getAgenda() != null) {
-            updateIndex(agendaUpdateEvent.getAgenda());
+        if (agendaUpdateEvent != null && agendaUpdateEvent.agenda() != null) {
+            updateIndex(agendaUpdateEvent.agenda());
         }
     }
 
@@ -139,8 +139,8 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Subscribe
     @Override
     public synchronized void handleBulkAgendaUpdateEvent(BulkAgendaUpdateEvent bulkAgendaUpdateEvent) {
-        if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.getAgendas().isEmpty()) {
-            updateIndex(bulkAgendaUpdateEvent.getAgendas());
+        if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.agendas().isEmpty()) {
+            updateIndex(bulkAgendaUpdateEvent.agendas());
         }
     }
 

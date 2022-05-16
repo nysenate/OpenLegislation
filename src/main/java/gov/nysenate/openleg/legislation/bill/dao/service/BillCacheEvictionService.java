@@ -29,22 +29,22 @@ public class BillCacheEvictionService {
 
     @Subscribe
     public void handleCalendarUpdate(CalendarUpdateEvent calendarUpdateEvent) {
-        evictCalendarBills(calendarUpdateEvent.getCalendar());
+        evictCalendarBills(calendarUpdateEvent.calendar());
     }
 
     @Subscribe
     public void handleBulkCalendarUpdate(BulkCalendarUpdateEvent bulkCalendarUpdateEvent) {
-        bulkCalendarUpdateEvent.getCalendars().forEach(this::evictCalendarBills);
+        bulkCalendarUpdateEvent.calendars().forEach(this::evictCalendarBills);
     }
 
     @Subscribe
     public void handleAgendaUpdate(AgendaUpdateEvent agendaUpdateEvent) {
-        evictAgendaBills(agendaUpdateEvent.getAgenda());
+        evictAgendaBills(agendaUpdateEvent.agenda());
     }
 
     @Subscribe
     public void handleBulkAgendaUpdate(BulkAgendaUpdateEvent bulkAgendaUpdateEvent) {
-        bulkAgendaUpdateEvent.getAgendas().forEach(this::evictAgendaBills);
+        bulkAgendaUpdateEvent.agendas().forEach(this::evictAgendaBills);
     }
 
     private void evictCalendarBills(Calendar calendar) {

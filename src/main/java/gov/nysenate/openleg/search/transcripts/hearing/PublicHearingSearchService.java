@@ -4,7 +4,6 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.updates.transcripts.hearing.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 
 public interface PublicHearingSearchService
@@ -35,10 +34,4 @@ public interface PublicHearingSearchService
      * @param publicHearingUpdateEvent
      */
     void handlePublicHearingUpdate(PublicHearingUpdateEvent publicHearingUpdateEvent);
-
-    /**
-     * Handles a batch public hearing update by indexing the supplied public hearings.
-     * @param bulkPublicHearingUpdateEvent
-     */
-    void handleBulkPublicHearingUpdate(BulkPublicHearingUpdateEvent bulkPublicHearingUpdateEvent);
 }

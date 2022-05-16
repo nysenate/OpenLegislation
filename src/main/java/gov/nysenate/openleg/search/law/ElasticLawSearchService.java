@@ -81,8 +81,8 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawUpdate(LawUpdateEvent lawUpdateEvent) {
-        if (lawUpdateEvent != null && lawUpdateEvent.getLawDoc() != null) {
-            updateIndex(lawUpdateEvent.getLawDoc());
+        if (lawUpdateEvent != null && lawUpdateEvent.lawDoc() != null) {
+            updateIndex(lawUpdateEvent.lawDoc());
         }
     }
 
@@ -90,8 +90,8 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleBulkLawUpdate(BulkLawUpdateEvent bulkLawUpdateEvent) {
-        if (bulkLawUpdateEvent != null && !bulkLawUpdateEvent.getLawDocuments().isEmpty()) {
-            updateIndex(bulkLawUpdateEvent.getLawDocuments());
+        if (bulkLawUpdateEvent != null && !bulkLawUpdateEvent.lawDocuments().isEmpty()) {
+            updateIndex(bulkLawUpdateEvent.lawDocuments());
         }
     }
 
@@ -99,7 +99,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawTreeUpdate(LawTreeUpdateEvent lawTreeUpdateEvent) {
-        String lawChapterId = lawTreeUpdateEvent.getLawChapterId();
+        String lawChapterId = lawTreeUpdateEvent.lawChapterId();
         clearLawChapter(lawChapterId);
         indexLawChapter(lawChapterId);
     }

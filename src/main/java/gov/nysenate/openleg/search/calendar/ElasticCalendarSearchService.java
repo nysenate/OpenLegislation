@@ -61,14 +61,14 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     @Override
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
 
-        updateIndex(calendarUpdateEvent.getCalendar());
+        updateIndex(calendarUpdateEvent.calendar());
     }
 
     /** {@inheritDoc} */
     @Subscribe
     @Override
     public void handleBulkCalendarUpdateEvent(BulkCalendarUpdateEvent bulkCalendarUpdateEvent) {
-        updateIndex(bulkCalendarUpdateEvent.getCalendars());
+        updateIndex(bulkCalendarUpdateEvent.calendars());
     }
 
     /** {@inheritDoc} */

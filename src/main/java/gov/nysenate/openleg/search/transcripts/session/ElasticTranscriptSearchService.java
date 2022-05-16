@@ -9,7 +9,6 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.search.*;
-import gov.nysenate.openleg.updates.transcripts.session.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -92,17 +91,8 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     @Subscribe
     public void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent) {
-        if (transcriptUpdateEvent.getTranscript() != null) {
-            updateIndex(transcriptUpdateEvent.getTranscript());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent) {
-        if (bulkTranscriptUpdateEvent.getTranscripts() != null) {
-            updateIndex(bulkTranscriptUpdateEvent.getTranscripts());
+        if (transcriptUpdateEvent.transcript() != null) {
+            updateIndex(transcriptUpdateEvent.transcript());
         }
     }
 

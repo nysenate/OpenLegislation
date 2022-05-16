@@ -57,7 +57,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     public void deletePublicHearingFromIndex(PublicHearingId publicHearingId) {
         if (publicHearingId != null) {
-            deleteEntry(publicHearingIndexName, String.valueOf(publicHearingId.getId()));
+            deleteEntry(publicHearingIndexName, String.valueOf(publicHearingId.id()));
         }
     }
 

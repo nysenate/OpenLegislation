@@ -44,13 +44,13 @@ public class BillScrapeQueueService {
         if (!env.isBillScrapeQueueEnabled()) {
             return;
         }
-        if (BillUpdateField.FULLTEXT.equals(updateEvent.getUpdateField())) {
-            logger.info("adding {} to bill scrape queue after full text update", updateEvent.getBillId());
-            btrDao.addBillToScrapeQueue(updateEvent.getBillId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
+        if (BillUpdateField.FULLTEXT.equals(updateEvent.updateField())) {
+            logger.info("adding {} to bill scrape queue after full text update", updateEvent.billId());
+            btrDao.addBillToScrapeQueue(updateEvent.billId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
         }
-        if (BillUpdateField.VOTE.equals(updateEvent.getUpdateField())) {
-            logger.info("adding {} to bill scrape queue after vote update", updateEvent.getBillId());
-            btrDao.addBillToScrapeQueue(updateEvent.getBillId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
+        if (BillUpdateField.VOTE.equals(updateEvent.updateField())) {
+            logger.info("adding {} to bill scrape queue after vote update", updateEvent.billId());
+            btrDao.addBillToScrapeQueue(updateEvent.billId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
         }
     }
 
@@ -60,10 +60,10 @@ public class BillScrapeQueueService {
      */
     @Subscribe
     public void handlePageCountSpotcheckMismatch(SpotcheckMismatchEvent<BillId> mismatchEvent) {
-        if (SpotCheckMismatchType.BILL_FULLTEXT_PAGE_COUNT.equals(mismatchEvent.getMismatch().getMismatchType()) &&
+        if (SpotCheckMismatchType.BILL_FULLTEXT_PAGE_COUNT.equals(mismatchEvent.mismatch().getMismatchType()) &&
                 env.isBillScrapeQueueEnabled()) {
-            logger.info("adding {} to bill scrape queue after spotcheck", mismatchEvent.getContentId());
-            btrDao.addBillToScrapeQueue(BaseBillId.of(mismatchEvent.getContentId()),
+            logger.info("adding {} to bill scrape queue after spotcheck", mismatchEvent.contentId());
+            btrDao.addBillToScrapeQueue(BaseBillId.of(mismatchEvent.contentId()),
                     ScrapeQueuePriority.SPOTCHECK_TRIGGERED.getPriority());
         }
     }

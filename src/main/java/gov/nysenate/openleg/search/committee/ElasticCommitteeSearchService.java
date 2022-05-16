@@ -82,7 +82,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     @Subscribe
     @Override
     public void handleCommitteeUpdateEvent(CommitteeUpdateEvent committeeUpdateEvent) {
-        updateIndex(committeeUpdateEvent.getCommittee().getSessionId());
+        updateIndex(committeeUpdateEvent.committee().getSessionId());
     }
 
     /**

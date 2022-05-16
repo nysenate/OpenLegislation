@@ -119,8 +119,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     @Subscribe
     public void handleBillUpdate(BillUpdateEvent billUpdateEvent) {
-        if (billUpdateEvent.getBill() != null) {
-            updateIndex(billUpdateEvent.getBill());
+        if (billUpdateEvent.bill() != null) {
+            updateIndex(billUpdateEvent.bill());
         }
     }
 
@@ -128,8 +128,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     @Subscribe
     public void handleBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent) {
-        if (bulkBillUpdateEvent.getBills() != null) {
-            updateIndex(bulkBillUpdateEvent.getBills());
+        if (bulkBillUpdateEvent.bills() != null) {
+            updateIndex(bulkBillUpdateEvent.bills());
         }
     }
 

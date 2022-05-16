@@ -9,7 +9,6 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDataService;
 import gov.nysenate.openleg.search.*;
-import gov.nysenate.openleg.updates.transcripts.hearing.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.hearing.PublicHearingUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -86,17 +85,8 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     @Subscribe
     public void handlePublicHearingUpdate(PublicHearingUpdateEvent publicHearingUpdateEvent) {
-        if (publicHearingUpdateEvent.getPublicHearing() != null) {
-            updateIndex(publicHearingUpdateEvent.getPublicHearing());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleBulkPublicHearingUpdate(BulkPublicHearingUpdateEvent bulkPublicHearingUpdateEvent) {
-        if (bulkPublicHearingUpdateEvent.getPublicHearings() != null) {
-            updateIndex(bulkPublicHearingUpdateEvent.getPublicHearings());
+        if (publicHearingUpdateEvent.hearing() != null) {
+            updateIndex(publicHearingUpdateEvent.hearing());
         }
     }
 
