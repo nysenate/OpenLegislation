@@ -33,7 +33,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     /** {@inheritDoc} */
     @Override
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
-        var params = new MapSqlParameterSource("id", publicHearingId.getId());
+        var params = new MapSqlParameterSource("id", publicHearingId.id());
         PublicHearing publicHearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID.getSql(schema()), params, HEARING_ROW_MAPPER);
         if (publicHearing != null)
             publicHearing.setHosts(hearingHostDao.getHearingHosts(publicHearingId));
@@ -49,7 +49,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao 
     /** {@inheritDoc} */
     @Override
     public String getFilename(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
-        var params = new MapSqlParameterSource("id", publicHearingId.getId());
+        var params = new MapSqlParameterSource("id", publicHearingId.id());
         return jdbcNamed.queryForObject(SELECT_FILENAME_BY_ID.getSql(schema()), params, FILENAME_ROW_MAPPER);
     }
 

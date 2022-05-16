@@ -4,6 +4,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,8 @@ public class PublicHearingInfoView extends PublicHearingIdView {
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     private final String title, address, startTime, endTime;
-    protected LocalDate date;
-    protected List<HearingHost> committees;
+    private final LocalDate date;
+    private final List<HearingHost> committees;
 
     public PublicHearingInfoView(PublicHearing publicHearing) {
         super(publicHearing.getId(), publicHearing.getFilename());
@@ -22,8 +23,12 @@ public class PublicHearingInfoView extends PublicHearingIdView {
         this.date = publicHearing.getDate();
         this.committees = new ArrayList<>(publicHearing.getHosts());
         this.address = publicHearing.getAddress();
-        this.startTime = publicHearing.getStartTime() == null ? null : publicHearing.getStartTime().format(TIME_FORMAT);
-        this.endTime = publicHearing.getEndTime() == null ? null : publicHearing.getEndTime().format(TIME_FORMAT);
+        this.startTime = formatOrNull(publicHearing.getStartTime());
+        this.endTime = formatOrNull(publicHearing.getEndTime());
+    }
+
+    private static String formatOrNull(LocalTime ldt) {
+        return ldt == null ? null : ldt.format(TIME_FORMAT);
     }
 
     @Override

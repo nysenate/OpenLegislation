@@ -18,7 +18,7 @@ public class PublicHearingNotFoundEx extends RuntimeException {
     }
 
     public PublicHearingNotFoundEx(PublicHearingId id, String filename, Throwable ex) {
-        super("Public hearing " + (id == null ? filename : id.getId()) + " could not be retrieved.", ex);
+        super("Public hearing " + (id == null ? filename : id.id()) + " could not be retrieved.", ex);
         this.id = id;
         this.filename = filename;
     }

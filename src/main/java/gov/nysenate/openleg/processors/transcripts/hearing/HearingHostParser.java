@@ -9,7 +9,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HearingHostParser {
+public final class HearingHostParser {
     private static final Set<HearingHost> BUDGET_COMMITTEES = Set.of(
             new HearingHost(Chamber.SENATE, HearingHostType.COMMITTEE, "FINANCE"),
             new HearingHost(Chamber.ASSEMBLY, HearingHostType.COMMITTEE, "WAYS AND MEANS"));

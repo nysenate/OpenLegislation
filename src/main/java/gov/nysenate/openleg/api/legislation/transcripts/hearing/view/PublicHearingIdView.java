@@ -8,7 +8,7 @@ public class PublicHearingIdView implements ViewObject {
     private final String filename;
 
     public PublicHearingIdView(PublicHearingId publicHearingId, String filename) {
-        this.id = publicHearingId == null ? null : publicHearingId.getId();
+        this.id = publicHearingId == null ? null : publicHearingId.id();
         this.filename = filename;
     }
 
