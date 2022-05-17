@@ -32,9 +32,7 @@ public abstract class CachingService<Key, Value> {
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
     private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
             .using(statisticsService).build(true);
-    // Adds some extra space into caches beyond their initial entries.
-    private static final double WIGGLE_ROOM = 1.2;
-    private static final int DEFAULT_SIZE = 50;
+    private static final int FOR_ROUNDING = 20;
     private static final EnumMap<CacheType, CachingService<?, ?>> cacheTypeMap =
             new EnumMap<>(CacheType.class);
     private static final EnumMap<CacheType, Integer> cacheCapacityMap = new EnumMap<>(CacheType.class);
@@ -62,33 +60,45 @@ public abstract class CachingService<Key, Value> {
 
     @SuppressWarnings("unchecked")
     @PostConstruct
-    protected void init() {
+    protected synchronized void init() {
         var classes = ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments();
         var keyClass = (Class<Key>) classes[0];
         var valueClass = (Class<Value>) classes[1];
         var type = cacheType();
-        var currCache = cacheManager.getCache(type.name().toLowerCase(), keyClass, valueClass);
-        if (currCache != null) {
-            this.cache = currCache;
-            logger.warn("Class " + this.getClass() + " tried to duplicate a cache.");
-            return;
-        }
 
         Map<Key, Value> initialEntries = initialEntries();
-        int numEntries = (int) (initialEntries.size() * WIGGLE_ROOM);
-        if (numEntries < DEFAULT_SIZE) {
-            String size = environment.getProperty(type.name().toLowerCase() + ".cache.size");
-            numEntries = size == null ? DEFAULT_SIZE : Integer.parseInt(size);
-        }
-        cacheCapacityMap.put(type, numEntries);
+        int size = getCacheSize(initialEntries.size());
+        cacheCapacityMap.put(type, size);
         var config = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(numEntries))
+                .newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(size))
                 .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(evictionAdvisor());
         this.cache = cacheManager.createCache(type.name(), config);
         cacheTypeMap.put(type, this);
         initialEntries.forEach((k, v) -> cache.put(k, v));
+    }
+
+    /**
+     * Result is based on the number of initial entries
+     * (rounded up to the nearest multiple of FOR_ROUNDING), or based on
+     * the value in app.properties for bill caches.
+     * @return the size of the cache to be created.
+     */
+    private int getCacheSize(int initialEntriesSize) {
+        switch (cacheType()) {
+            case BILL, BILL_INFO:
+                String propertyString = cacheType().name().toLowerCase() + ".cache.size";
+                String sizeStr = environment.getProperty(propertyString);
+                if (sizeStr == null) {
+                    throw new IllegalArgumentException("Error! Size for the " + cacheType() +
+                            " cache was not configured.");
+                }
+                return Integer.parseInt(sizeStr);
+            default:
+                // 10% extra room is added, and this will return at least 20.
+                return (int) (Math.floor(initialEntriesSize * 1.1/FOR_ROUNDING) + 1) * FOR_ROUNDING;
+        }
     }
 
     @PreDestroy
@@ -101,7 +111,8 @@ public abstract class CachingService<Key, Value> {
         return Map.of();
     }
 
-    private synchronized void clearCache(boolean warmCaches) {
+    // This method is only needed to prevent type errors during compilation.
+    private void clearCache(boolean warmCaches) {
         cache.clear();
         if (warmCaches) {
             cache.putAll(initialEntries());
