@@ -10,7 +10,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import gov.nysenate.openleg.common.util.AsciiArt;
 import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
-import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -22,7 +21,6 @@ import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
-import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
@@ -32,10 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachingConfigurer;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.*;
-import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -46,7 +40,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import javax.cache.Caching;
 import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -58,8 +51,7 @@ import java.util.Enumeration;
 import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
-@EnableCaching
-public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer {
+public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
     /**
@@ -84,34 +76,6 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             } else
                 logger.trace("JDBC driver {} as it does not belong to this webapp's ClassLoader", driver);
         }
-    }
-
-    /** --- Eh Cache Spring Configuration --- */
-
-    @Override
-    @Nonnull
-    public org.springframework.cache.CacheManager cacheManager() {
-        var provider = (EhcacheCachingProvider) Caching.getCachingProvider();
-        javax.cache.CacheManager javaxCacheManager = provider.getCacheManager(provider.getDefaultURI(),
-                CachingService.cacheManagerConfig());
-        return new JCacheCacheManager(javaxCacheManager);
-    }
-
-    @Override
-    @Bean
-    public CacheResolver cacheResolver() {
-        return new SimpleCacheResolver(cacheManager());
-    }
-
-    @Override
-    @Bean
-    public KeyGenerator keyGenerator() {
-        return new SimpleKeyGenerator();
-    }
-
-    @Override
-    public CacheErrorHandler errorHandler() {
-        return new SimpleCacheErrorHandler();
     }
 
     /** --- Elastic Search Configuration --- */

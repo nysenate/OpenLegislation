@@ -3,7 +3,6 @@ package gov.nysenate.openleg.legislation;
 import com.google.common.eventbus.EventBus;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.config.Configuration;
 import org.ehcache.config.EvictionAdvisor;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
@@ -38,6 +37,7 @@ public abstract class CachingService<Key, Value> {
     private static final int DEFAULT_SIZE = 50;
     private static final EnumMap<CacheType, CachingService<?, ?>> cacheTypeMap =
             new EnumMap<>(CacheType.class);
+    private static final EnumMap<CacheType, Integer> cacheCapacityMap = new EnumMap<>(CacheType.class);
 
     @Autowired
     private Environment environment;
@@ -52,8 +52,8 @@ public abstract class CachingService<Key, Value> {
         return statisticsService.getCacheStatistics(type.name());
     }
 
-    public static Configuration cacheManagerConfig() {
-        return cacheManager.getRuntimeConfiguration();
+    public static int getCacheCapacity(CacheType type) {
+        return cacheCapacityMap.get(type);
     }
 
     protected EvictionAdvisor<Key, Value> evictionAdvisor() {
@@ -77,10 +77,11 @@ public abstract class CachingService<Key, Value> {
 
         Map<Key, Value> initialEntries = initialEntries();
         int numEntries = (int) (initialEntries.size() * WIGGLE_ROOM);
-        if (numEntries == 0) {
+        if (numEntries < DEFAULT_SIZE) {
             String size = environment.getProperty(type.name().toLowerCase() + ".cache.size");
             numEntries = size == null ? DEFAULT_SIZE : Integer.parseInt(size);
         }
+        cacheCapacityMap.put(type, numEntries);
         var config = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(numEntries))
                 .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)

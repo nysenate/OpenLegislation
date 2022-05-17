@@ -72,6 +72,7 @@ function CacheCard({ name }) {
       <div className="my-5">
         <ul>
           <li>Entries: {cache.size}</li>
+          <li>Max size: {cache.capacity}</li>
           <li>Hits: {cache.hitCount}</li>
         </ul>
       </div>
