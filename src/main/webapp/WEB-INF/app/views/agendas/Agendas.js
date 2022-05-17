@@ -8,7 +8,8 @@ import {
 import AgendaSearch from "app/views/agendas/AgendaSearch";
 import AgendaUpdates from "app/views/agendas/AgendaUpdates";
 import ContentContainer from "app/shared/ContentContainer";
-import SpecificAgenda from "app/views/agendas/SpecificAgenda";
+import AgendaView from "app/views/agendas/AgendaView";
+import CommitteeAgenda from "app/views/agendas/CommitteeAgenda";
 
 export default function Agendas({ setHeaderText }) {
   const location = useLocation()
@@ -28,8 +29,11 @@ export default function Agendas({ setHeaderText }) {
         <Route exact path="/agendas/search">
           <AgendaSearch />
         </Route>
-        <Route path="/agendas/view/:agendaYear/:agendaNumber">
-          <SpecificAgenda setHeaderText={setHeaderText} />
+        <Route exact path="/agendas/:agendaYear/:agendaNumber">
+          <AgendaView setHeaderText={setHeaderText} />
+        </Route>
+        <Route exact path="/agendas/:agendaYear/:agendaNumber/:committee">
+          <CommitteeAgenda setHeaderText={setHeaderText}/>
         </Route>
         <Route exact path="/agendas/updates">
           <AgendaUpdates />

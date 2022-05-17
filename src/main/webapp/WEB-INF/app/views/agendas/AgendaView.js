@@ -6,12 +6,11 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import getAgendaApi from "app/apis/getAgendaApi";
-import SpecificAgendaCommittee from "app/views/agendas/SpecificAgendaCommittee"
+import CommitteeAgendas from "app/views/agendas/CommitteeAgendas";
+import { fetchAgenda } from "app/apis/agendaApi";
 
 
-//setHeaderText={setHeaderText}
-export default function SpecificAgenda({ setHeaderText }) {
+export default function AgendaView({ setHeaderText }) {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
   const [ loading, setLoading ] = React.useState(true)
   const location = useLocation()
@@ -23,13 +22,10 @@ export default function SpecificAgenda({ setHeaderText }) {
     getAgenda(match.params.agendaYear, match.params.agendaNumber)
   }, [])
 
-
   const getAgenda = (agendaYear, agendaNumber) => {
     setLoading(true)
-    getAgendaApi(agendaYear, agendaNumber)
+    fetchAgenda(agendaYear, agendaNumber)
       .then((response) => {
-        console.log(response)
-        console.log(response.result.committeeAgendas)
         setHeaderText("Agenda " + response.result.id.number + " " + response.result.id.year)
         setResponse(response)
       })
@@ -41,7 +37,6 @@ export default function SpecificAgenda({ setHeaderText }) {
         setLoading(false)
       })
   }
-
 
   return (
     <div className="p-3">
@@ -55,7 +50,7 @@ export default function SpecificAgenda({ setHeaderText }) {
             | {response.result.totalBillsConsidered} Bills on Agenda | {response.result.totalBillsVotedOn} Bills Voted On</div>
           <p> Note: A committee may receive multiple updates (i.e. addenda) which can either overwrite prior meeting details or supplement it. </p>
 
-          <SpecificAgendaCommittee response={response.result.committeeAgendas}/>
+          <CommitteeAgendas committeeAgendas={response.result.committeeAgendas.items}/>
         </div>
       }
     </div>

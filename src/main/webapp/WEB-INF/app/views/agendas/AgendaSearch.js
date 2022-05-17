@@ -8,7 +8,7 @@ import LoadingIndicator from "app/shared/LoadingIndicator";
 import AgendaSearchForm from "app/views/agendas/AgendaSearchForm";
 import AgendaSearchResults from "app/views/agendas/AgendaSearchResults";
 import agendaSearchApi from "app/apis/agendaSearchApi";
-import agendaDataApi from "app/apis/agendaDataApi";
+import { fetchYearlyAgendaList } from "app/apis/agendaApi";
 
 export default function AgendaSearch() {
   const [ response, setResponse ] = React.useState({ result: { items: [] } })
@@ -49,7 +49,7 @@ export default function AgendaSearch() {
   const doSearch = () => {
     setLoading(true)
 
-    agendaDataApi(year, 100, 0)
+    fetchYearlyAgendaList(year)
       .then((response) => {
         // console.log(response)
         setResponseForForm(response)

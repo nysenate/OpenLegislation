@@ -3,54 +3,32 @@ import BillListing from "app/shared/BillListing";
 import Accordion from "app/shared/Accordion";
 import MemberListing from "app/shared/MemberListing";
 
-export default function SpecificAgendaCommittee({ response }) {
-
-  if (response.success === false) {
-    return (
-      <div>
-        No results found
-      </div>
-    )
-  }
-
-  const committees = response.items
-  // console.log(committees)
-
+export default function CommitteeAgendas({ committeeAgendas }) {
   return (
-    // <div>committees will go here</div>
     <div className="mt-8">
       <div className="pt-3">
-
-        {committees.map((r, index) =>
-            <Committee response={r} key={index}/>
+        {committeeAgendas.map((comAgenda, index) =>
+          <CommitteeAgenda committeeAgenda={comAgenda} key={index} />
         )}
       </div>
     </div>
   )
 }
 
-function Committee({response}) {
-
-  // console.log(response)
-
-  let committeeId = response.committeeId
-  let addenda = response.addenda.items
-
-  // console.log(committeeId)
-  // console.log(addenda)
+function CommitteeAgenda({ committeeAgenda }) {
+  let committeeId = committeeAgenda.committeeId
+  let addenda = committeeAgenda.addenda.items
 
   return (
     <div>
       {addenda.map((r, index) =>
-          <Addenda committeeId={committeeId} addenda={r} key={index}/>
+        <Addenda committeeId={committeeId} addenda={r} key={index} />
       )}
     </div>
   )
-
-
 }
 
-function Addenda({committeeId, addenda}) {
+function Addenda({ committeeId, addenda }) {
 
   let bills = addenda.bills
   let voteInfo = addenda.voteInfo
@@ -60,8 +38,8 @@ function Addenda({committeeId, addenda}) {
   return (
     <div>
       <Accordion title={committeeId.name} startOpen={true}>
-        <BillsList bills={ bills } />
-        <MeetingList meeting={ meeting } voteInfo={ voteInfo } committeeAgendaAddendumId={committeeAgendaAddendumId}/>
+        <BillsList bills={bills} />
+        <MeetingList meeting={meeting} voteInfo={voteInfo} committeeAgendaAddendumId={committeeAgendaAddendumId} />
       </Accordion>
     </div>
   )
@@ -70,10 +48,6 @@ function Addenda({committeeId, addenda}) {
 function MeetingList({ meeting, voteInfo, committeeAgendaAddendumId }) {
   let attendanceArray = voteInfo.attendanceList.items
 
-  console.log(attendanceArray)
-  console.log(meeting)
-  console.log(voteInfo)
-  console.log(committeeAgendaAddendumId)
 
   return (
     <div>
