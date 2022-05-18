@@ -230,7 +230,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
                 "In order to receive your API key you must first activate your account by visiting the link below. " +
                 "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
                 "Activate your account here:\n" +
-                "${" + domainPlaceholder + "}/register/token/${" + tokenPlaceholder + "}";
+                "${" + domainPlaceholder + "}/register/${" + tokenPlaceholder + "}";
         final ImmutableMap<String, String> subMap = ImmutableMap.of(
                 userPlaceholder, user.getName(),
                 domainPlaceholder, environment.getUrl(),

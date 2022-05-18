@@ -25,27 +25,25 @@ export default function CalendarSearch() {
   const [ searchBy, setSearchBy ] = React.useState('calDate')
   const [ searchValue, setSearchValue ] = React.useState('')
   const [ sort, setSort ] = React.useState('desc')
-  const [ activeListOnly, setActiveListOnly ] = React.useState(false)
 
   const [ limit, setLimit ] = React.useState(6)
   const [ offset, setOffset ] = React.useState((page - 1) * limit + 1)
 
   React.useEffect(() => {
     doSearch()
-  }, [ location, year, searchBy, searchValue, sort, activeListOnly ])
+  }, [ location, year, searchBy, searchValue, sort ])
 
   const setSearchValues = (year, searchBy, searchValue, sortSelect, activeListOnly) => {
     setYear(year)
     setSearchBy(searchBy)
     setSearchValue(searchValue)
     setSort(sortSelect)
-    setActiveListOnly(activeListOnly)
   }
 
   const doSearch = () => {
     setLoading(true)
 
-    calendarSearchApi(searchValue, activeListOnly, year, sort, searchBy, limit, offset)
+    calendarSearchApi(searchValue, year, sort, searchBy, limit, offset)
       .then((response) => {
         console.log(response)
         setResponse(response)
@@ -74,8 +72,7 @@ export default function CalendarSearch() {
         ? <LoadingIndicator />
         :
         <div>
-          <CalendarSearchResults response={response} limit={limit} page={page} onPageChange={onPageChange}
-                                 activeListOnly={activeListOnly} />
+          <CalendarSearchResults response={response} limit={limit} page={page} onPageChange={onPageChange} />
         </div>
       }
     </div>

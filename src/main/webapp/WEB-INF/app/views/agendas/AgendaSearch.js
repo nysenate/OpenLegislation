@@ -62,7 +62,7 @@ export default function AgendaSearch() {
         setLoading(false)
       })
 
-    agendaSearchApi(year, sort, weekOf, agendaNumber, committee, limit, offset)
+    agendaSearchApi(year, sort, weekOf, agendaNumber, committee, meetingNotes, baseBillNoInput, limit, offset)
       .then((response) => {
         // console.log(response)
         setResponse(response)

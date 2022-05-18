@@ -2,9 +2,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import * as queryString from "query-string";
 
-export default async function agendaSearchApi(year, sort, weekOf, agendaNumber, committee, limit = 6, offset = 1) {
-  //?term=(agenda.id.year:"2022")&sort=agenda.id.number:desc&limit=6&offset=1
-  //term=(agenda.id.year:%222022%22)%20AND%20(agenda.id.number:%222%22)%20AND%20(committee.committeeId.name:%22Aging%22)%20AND%20(agenda.weekOf:%222022-01-10%22)&sort=agenda.id.number:desc&limit=6&offset=1
+export default async function agendaSearchApi(year, sort, weekOf, agendaNumber, committee, meetingNotes, baseBillNo, limit = 6, offset = 1) {
   let term = ''
   let and = '%20AND%20'
   let yearTerm = '(agenda.id.year:"' + year + '")'
@@ -27,15 +25,16 @@ export default async function agendaSearchApi(year, sort, weekOf, agendaNumber, 
     term = term + and + weekOfTerm
   }
 
+  if (meetingNotes !== "") {
+    term = term + and + "(committee.addenda.items.meeting.notes:" + meetingNotes + ")"
+  }
+
+  if (baseBillNo !== "") {
+    term = term + and + "(committee.addenda.items.bills.items.billId.basePrintNo:" + baseBillNo + ")"
+  }
+
   term = term + '&sort=' + sortTerm
 
-  // console.log(term)
-  // console.log(`/api/3/agendas/search?` + queryString.stringify({
-  //   term: term,
-  //   full: false,
-  //   limit: limit,
-  //   offset: offset,
-  // }))
   const response = await fetch(`/api/3/agendas/search?` + queryString.stringify({
     term: term,
     full: false,

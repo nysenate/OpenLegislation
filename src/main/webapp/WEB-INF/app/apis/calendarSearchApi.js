@@ -2,7 +2,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import * as queryString from "query-string";
 
-export default async function calendarSearchApi(searchValue, activeListOnly, year, sort, searchBy, limit = 6, offset = 1) {
+export default async function calendarSearchApi(searchValue, year, sort, searchBy, limit = 6, offset = 1) {
   let term = ''
   let yearTerm = '+year:' + year
   let includeActiveListOnlyTerm = '+AND+activeLists'
@@ -14,9 +14,7 @@ export default async function calendarSearchApi(searchValue, activeListOnly, yea
   if (searchValue !== '') {
     term = term + searchByAndValue
   }
-  if (activeListOnly) {
-    term = term + includeActiveListOnlyTerm
-  }
+
   console.log(term)
   const response = await fetch(`/api/3/calendars/search?` + queryString.stringify({
     term: term,

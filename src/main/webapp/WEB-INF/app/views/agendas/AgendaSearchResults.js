@@ -24,7 +24,7 @@ export default function AgendaSearchResults({ response, limit, page, onPageChang
           onPageChange={onPageChange}
           total={response.total}
         />
-        <ResultList results={response.result.items} key={generateKey} />
+        <ResultList results={response.result.items} />
         <Pagination
           limit={limit}
           currentPage={page}
@@ -37,16 +37,13 @@ export default function AgendaSearchResults({ response, limit, page, onPageChang
   )
 }
 
-function generateKey() {
-  return new Date().getTime()
-}
-
 function ResultList({ results, detail }) {
   // console.log(results)
   return (
     <div>
       {results.map((r) =>
-        <ResultItem result={r} detail={detail} />
+        <ResultItem result={r} detail={detail} key={r.result.agendaId.number +
+        r.result.agendaId.year + r.result.weekOf + r.result.totalBillsConsidered}/>
       )}
     </div>
   )
