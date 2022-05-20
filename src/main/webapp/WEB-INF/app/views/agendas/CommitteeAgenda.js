@@ -240,7 +240,7 @@ function BillVoteListing({ billInfo, to, voteInfo }) {
         </div>
 
         <div className="w-full md:w-4/12 pr-10">
-          <h5 className="text border-b-1 mb-1">Votes</h5>
+          <h5 className="text border-b-1 my-1">Votes</h5>
           {voteInfo &&
             <div>
               <div className="flex flex-wrap">

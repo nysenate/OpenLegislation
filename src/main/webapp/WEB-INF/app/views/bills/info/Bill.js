@@ -26,6 +26,7 @@ import BillActionsTab from "app/views/bills/info/BillActionsTab";
 import BillJsonTab from "app/views/bills/info/BillJsonTab";
 import BillUpdatesTab from "app/views/bills/info/BillUpdatesTab";
 import LoadingIndicator from "app/shared/LoadingIndicator";
+import Note from "app/shared/Note";
 
 export default function Bill({ setHeaderText }) {
 
@@ -130,15 +131,17 @@ function SubstitutedByMsg({ bill }) {
     return null
   }
   return (
-    <div className="bg-yellow-50 py-2 flex items-center rounded">
-      <FileDotted size="1.2rem" className="mx-1" />
-      <p>
-        This bill has been substituted by&nbsp;
-        <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`} className="link">
-          {bill.substitutedBy.basePrintNo} - {bill.substitutedBy.session}
-        </Link>
-      </p>
-    </div>
+    <Note>
+      <div className="flex items-center">
+        <FileDotted size="1.2rem" className="mx-1" />
+        <p>
+          This bill has been substituted by&nbsp;
+          <Link to={`/bills/${bill.substitutedBy.session}/${bill.substitutedBy.basePrintNo}`} className="link">
+            {bill.substitutedBy.basePrintNo} - {bill.substitutedBy.session}
+          </Link>
+        </p>
+      </div>
+    </Note>
   )
 }
 

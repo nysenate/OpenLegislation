@@ -1,59 +1,158 @@
 import React from 'react';
 import {
-  useLocation,
-  useHistory,
-  useRouteMatch
+  Link,
+  Redirect,
+  useParams
 } from "react-router-dom";
-import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import CommitteeAgendas from "app/views/agendas/CommitteeAgendas";
 import { fetchAgenda } from "app/apis/agendaApi";
+import { formatDateTime } from "app/lib/dateUtils";
+import { DateTime } from "luxon";
+import {
+  CalendarBlank,
+  Info
+} from "phosphor-react";
+import Note from "app/shared/Note";
+
 
 
 export default function AgendaView({ setHeaderText }) {
-  const [ response, setResponse ] = React.useState({ result: { items: [] } })
-  const [ loading, setLoading ] = React.useState(true)
-  const location = useLocation()
-  const history = useHistory()
-  const params = queryString.parse(location.search)
-  const match = useRouteMatch()
+  const [ agenda, setAgenda ] = React.useState()
+  const [ isLoading, setIsLoading ] = React.useState(true)
+  const [ errorMsg, setErrorMsg ] = React.useState("")
+  const { agendaYear, agendaNumber } = useParams()
 
   React.useEffect(() => {
-    getAgenda(match.params.agendaYear, match.params.agendaNumber)
-  }, [])
+    getAgenda(agendaYear, agendaNumber)
+  }, [ agendaYear, agendaNumber ])
+
+  React.useEffect(() => {
+    setHeaderText(`Agenda ${agenda?.id?.number},  ${agenda?.id?.year}`)
+  }, [ agenda ])
 
   const getAgenda = (agendaYear, agendaNumber) => {
-    setLoading(true)
+    setIsLoading(true)
     fetchAgenda(agendaYear, agendaNumber)
-      .then((response) => {
-        setHeaderText("Agenda " + response.result.id.number + " " + response.result.id.year)
-        setResponse(response)
-      })
-      .catch((error) => {
-        // TODO properly handle errors
-        console.log(`${error}`)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+      .then(res => setAgenda(res.result))
+      .catch(error => setErrorMsg(error.message))
+      .finally(() => setIsLoading(false))
+  }
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (!isLoading && errorMsg) {
+    return <Redirect to="/404" />
   }
 
   return (
     <div className="p-3">
+      <AgendaSummary agenda={agenda} />
+      <hr className="mb-6" />
+      <div className="my-6">
+        <AgendaNote />
+      </div>
 
-      {loading
-        ? <LoadingIndicator />
-        :
-        <div>
-          <div> Week of {response.result.weekOf} | Published {response.result.publishedDateTime} </div>
-          <div> {response.result.totalAddendum} Addenda | {response.result.totalCommittees} Committee(s)
-            | {response.result.totalBillsConsidered} Bills on Agenda | {response.result.totalBillsVotedOn} Bills Voted On</div>
-          <p> Note: A committee may receive multiple updates (i.e. addenda) which can either overwrite prior meeting details or supplement it. </p>
-
-          <CommitteeAgendas committeeAgendas={response.result.committeeAgendas.items}/>
-        </div>
-      }
+      <div>
+        <AgendaCommitteeList committeeAgendas={agenda.committeeAgendas.items} />
+      </div>
     </div>
   )
+}
 
+function AgendaSummary({ agenda }) {
+  if (!agenda) {
+    return null
+  }
+
+  return (
+    <div className="px-1 pt-3 pb-6 md:px-3 flex items-center justify-between gap-x-3 flex-wrap">
+      <div>
+        <div className="flex items-center">
+          <CalendarBlank size="1.4rem" weight="bold" />&nbsp;
+          <span className="h4">Week of {formatDateTime(agenda.weekOf, DateTime.DATE_FULL)}</span>
+        </div>
+        <div className="text text--small">
+          Published on {formatDateTime(agenda.publishedDateTime, DateTime.DATETIME_SHORT)}
+        </div>
+      </div>
+      <SummaryItem count={agenda.totalAddendum} label="Addenda" />
+      <SummaryItem count={agenda.totalCommittees} label="Committee(s)" />
+      <SummaryItem count={agenda.totalBillsConsidered} label="Bills on Agenda" />
+      <SummaryItem count={agenda.totalBillsVotedOn} label="Bills Voted On" />
+    </div>
+  )
+}
+
+function SummaryItem({ count, label }) {
+  return (
+    <div className="text-center">
+      <div className="h4">{count}</div>
+      <div>{label}</div>
+    </div>
+  )
+}
+
+function SummaryItemSmall({ count, label }) {
+  return (
+    <div className="text-center">
+      <div className="font-semibold">{count}</div>
+      <div className="text text--small">{label}</div>
+    </div>
+  )
+}
+
+function AgendaNote() {
+  return (
+    <Note>
+      <div className="flex items-center px-3">
+        <Info size="1.6rem" />
+        <span className="text text--small italic">&nbsp;A committee may receive multiple updates (i.e. addenda)
+          which can either overwrite prior meeting details or supplement them.</span>
+      </div>
+    </Note>
+  )
+}
+
+function AgendaCommitteeList({ committeeAgendas }) {
+  return (
+    <div>
+      {committeeAgendas.map(ca => (
+        <div key={ca.committeeId.name}>
+          <AgendaCommitteeSummaryLink committeeAgenda={ca} />
+          <hr />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function AgendaCommitteeSummaryLink({ committeeAgenda }) {
+  return (
+    <Link to={location => `${location.pathname}/${committeeAgenda.committeeId.name}`}>
+      <div className="p-3 hover:bg-gray-200 rounded flex items-center justify-between gap-x-3 flex-wrap">
+        <div className="h5 flex-0 w-full md:w-1/3">
+          {committeeAgenda.committeeId.name}
+        </div>
+        <div className="flex-1">
+          <SummaryItemSmall count={committeeAgenda.addenda.size} label="Addenda" />
+        </div>
+        <div className="flex-1">
+          <SummaryItemSmall count={countAddendaBills(committeeAgenda)} label="Bills on Agenda" />
+        </div>
+        <div className="flex-1">
+          <SummaryItemSmall count={countVotedBills(committeeAgenda)} label="Bills Voted On" />
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+const countAddendaBills = committeeAgenda => {
+  return committeeAgenda.addenda.items.reduce((prev, curr) => prev + curr.bills.size, 0)
+}
+
+const countVotedBills = committeeAgenda => {
+  return committeeAgenda.addenda.items.reduce((prev, curr) => prev + curr.voteInfo.votesList.size, 0)
 }
