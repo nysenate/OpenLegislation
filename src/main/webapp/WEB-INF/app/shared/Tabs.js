@@ -69,7 +69,7 @@ function MobileTabs({ tabs, activeTab, setActiveTab, children}) {
 function DefaultTabs({ tabs, activeTab, setActiveTab, children }) {
   return (
     <React.Fragment>
-      <div className="flex mt-5 pl-5 border-b-1 border-blue-600">
+      <div className="flex pl-5 border-b-1 border-blue-600">
         {tabs.map((tab) => {
           return (
             <Tab key={tab.name}

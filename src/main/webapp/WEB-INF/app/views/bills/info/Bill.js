@@ -110,7 +110,7 @@ export default function Bill({ setHeaderText }) {
           <AmendmentSwitcher bill={bill} selectedAmd={selectedAmd} setSelectedAmd={onAmdChange} />
         </div>
       </div>
-      <div className="mb-5">
+      <div className="my-5">
         <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={onTabChange} />
       </div>
     </div>

@@ -15,7 +15,6 @@ import {
 import Note from "app/shared/Note";
 
 
-
 export default function AgendaView({ setHeaderText }) {
   const [ agenda, setAgenda ] = React.useState()
   const [ isLoading, setIsLoading ] = React.useState(true)
@@ -27,7 +26,9 @@ export default function AgendaView({ setHeaderText }) {
   }, [ agendaYear, agendaNumber ])
 
   React.useEffect(() => {
-    setHeaderText(`Agenda ${agenda?.id?.number},  ${agenda?.id?.year}`)
+    if (agenda) {
+      setHeaderText(`Agenda ${agenda?.id?.number},  ${agenda?.id?.year}`)
+    }
   }, [ agenda ])
 
   const getAgenda = (agendaYear, agendaNumber) => {
@@ -47,15 +48,18 @@ export default function AgendaView({ setHeaderText }) {
   }
 
   return (
-    <div className="p-3">
-      <AgendaSummary agenda={agenda} />
-      <hr className="mb-6" />
-      <div className="my-6">
-        <AgendaNote />
+    <div>
+      <div className="p-3 border-b-8 border-gray-100">
+        <AgendaSummary agenda={agenda} />
       </div>
+      <div className="px-3">
+        <div className="mt-3 mb-6">
+          <AgendaNote />
+        </div>
 
-      <div>
-        <AgendaCommitteeList committeeAgendas={agenda.committeeAgendas.items} />
+        <div className="pb-3">
+          <AgendaCommitteeList committeeAgendas={agenda.committeeAgendas.items} />
+        </div>
       </div>
     </div>
   )
@@ -67,8 +71,8 @@ function AgendaSummary({ agenda }) {
   }
 
   return (
-    <div className="px-1 pt-3 pb-6 md:px-3 flex items-center justify-between gap-x-3 flex-wrap">
-      <div>
+    <div className="px-1 py-3 md:px-3 flex items-center justify-between gap-x-3 flex-wrap">
+      <div className="w-full mb-3 md:w-auto md:mb-0">
         <div className="flex items-center">
           <CalendarBlank size="1.4rem" weight="bold" />&nbsp;
           <span className="h4">Week of {formatDateTime(agenda.weekOf, DateTime.DATE_FULL)}</span>
@@ -118,10 +122,12 @@ function AgendaNote() {
 function AgendaCommitteeList({ committeeAgendas }) {
   return (
     <div>
-      {committeeAgendas.map(ca => (
+      {committeeAgendas.map((ca, index, row) => (
         <div key={ca.committeeId.name}>
           <AgendaCommitteeSummaryLink committeeAgenda={ca} />
-          <hr />
+          {index < (row.length - 1) &&
+            <hr />
+          }
         </div>
       ))}
     </div>
@@ -132,8 +138,10 @@ function AgendaCommitteeSummaryLink({ committeeAgenda }) {
   return (
     <Link to={location => `${location.pathname}/${committeeAgenda.committeeId.name}`}>
       <div className="p-3 hover:bg-gray-200 rounded flex items-center justify-between gap-x-3 flex-wrap">
-        <div className="h5 flex-0 w-full md:w-1/3">
+        <div className="flex-0 w-full md:w-1/3 mb-2 md:mb-0">
+          <span className="text-sm lg:text-base font-semibold link">
           {committeeAgenda.committeeId.name}
+          </span>
         </div>
         <div className="flex-1">
           <SummaryItemSmall count={committeeAgenda.addenda.size} label="Addenda" />

@@ -42,7 +42,7 @@ const registerReducer = function (state, action) {
         isLoading: false,
         agenda: action.payload.result.agenda,
         committeeAgenda: action.payload.result.committee,
-        activeTab: "Initial Addendum",
+        activeTab: getAddendumName(action.payload.result.committee.addenda.items[0]),
         tabs: createTabs(action.payload.result.committee),
       }
     case "error":
@@ -101,7 +101,7 @@ export default function CommitteeAgenda({ setHeaderText }) {
           of {formatDateTime(state.agenda.weekOf, MONTH_AND_DAY)}.
         </h3>
       </div>
-      <div>
+      <div className="my-1">
         <Tabs tabs={state.tabs}
               activeTab={state.activeTab}
               setActiveTab={(selectedTabName) => dispatch({ type: "onTabChange", payload: selectedTabName })} />
@@ -146,11 +146,15 @@ function CommitteeAgendaAddendum({ addendum }) {
 const createTabs = committeeAgenda => {
   return committeeAgenda.addenda.items.map(addendum => {
     return {
-      name: addendum.addendumId === "" ? "Initial Addendum" : `Addendum ${addendum.addendumId}`,
+      name: getAddendumName(addendum),
       isDisable: false,
       component: <CommitteeAgendaAddendum addendum={addendum} />
     }
   })
+}
+
+const getAddendumName = addendum => {
+  return addendum.addendumId === "" ? "Initial Addendum" : `Addendum ${addendum.addendumId}`
 }
 
 /**
