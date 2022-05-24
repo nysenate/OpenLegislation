@@ -5,8 +5,8 @@ import {
 } from "react-router-dom";
 import * as queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
-import AgendaUpdatesForm from "app/views/agendas/AgendaUpdatesForm";
-import AgendaUpdatesResults from "app/views/agendas/AgendaUpdatesResults";
+import AgendaUpdatesForm from "app/views/agendas/updates/AgendaUpdatesForm";
+import AgendaUpdatesResults from "app/views/agendas/updates/AgendaUpdatesResults";
 import getAgendaUpdatesApi from "app/apis/getAgendaUpdatesApi";
 
 export default function AgendaUpdates() {

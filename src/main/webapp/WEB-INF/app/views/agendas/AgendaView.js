@@ -98,7 +98,7 @@ function SummaryItem({ count, label }) {
   )
 }
 
-function SummaryItemSmall({ count, label }) {
+export function SummaryItemSmall({ count, label }) {
   return (
     <div className="text-center">
       <div className="font-semibold">{count}</div>
@@ -162,5 +162,5 @@ const countAddendaBills = committeeAgenda => {
 }
 
 const countVotedBills = committeeAgenda => {
-  return committeeAgenda.addenda.items.reduce((prev, curr) => prev + curr.voteInfo.votesList.size, 0)
+  return committeeAgenda.addenda.items.reduce((prev, curr) => prev + (curr.voteInfo?.votesList?.size || 0), 0)
 }

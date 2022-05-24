@@ -5,8 +5,8 @@ import {
   useLocation
 } from "react-router-dom";
 
-import AgendaSearch from "app/views/agendas/AgendaSearch";
-import AgendaUpdates from "app/views/agendas/AgendaUpdates";
+import AgendaSearch from "app/views/agendas/search/AgendaSearch";
+import AgendaUpdates from "app/views/agendas/updates/AgendaUpdates";
 import ContentContainer from "app/shared/ContentContainer";
 import AgendaView from "app/views/agendas/AgendaView";
 import CommitteeAgenda from "app/views/agendas/CommitteeAgenda";
