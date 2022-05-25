@@ -68,9 +68,9 @@ export default function Home() {
             <PrivateRoute path="/transcripts">
               <Transcripts setHeaderText={setHeaderText} />
             </PrivateRoute>
-            <PrivateRoute path="/subscriptions">
+            <Route path="/subscriptions">
               <Subscriptions setHeaderText={setHeaderText}/>
-            </PrivateRoute>
+            </Route>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
             </Route>

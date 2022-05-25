@@ -2,13 +2,19 @@ export default function getSubscriptions(apiKey) {
   return fetchUrl(getBaseApi() + `/current?key=${apiKey}`)
 }
 
-export function setSubscriptions(apiKey, getBreakingChanges, getNewFeatures) {
-
+/**
+ *
+ * @param apiKey to change settings of.
+ * @param subs new array of subscriptions.
+ */
+export function setSubscriptions(apiKey, subs) {
+  const setSubsUrl = getBaseApi() + `/update?key=${apiKey}`
+  return fetchUrl(setSubsUrl, {method: "POST", body: subs})
 }
 
 /**
  * Changes the email of the given API user.
- * @returns {boolean} false is the email is already in use.
+ * @returns {boolean} false if the email is already in use.
  */
 export function setEmail(apiKey, email) {
   const checkEmailUrl = getBaseApi() + `/emailSearch?email=${email}`
