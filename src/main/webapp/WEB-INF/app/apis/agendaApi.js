@@ -37,6 +37,23 @@ export function searchAgendas({ from, to, committee = "", printNo = "", notes = 
   return fetchUrl(url)
 }
 
+export function searchAgendaUpdates({from, to, type, detail, sort, page, limit}) {
+  // Set time to start of "from" day and end of "to" day.
+  from = from.startOf("day")
+  to = to.endOf("day")
+
+  const pageParams = new PageParams(page, limit)
+  const searchParams = queryString.stringify({
+    type: type,
+    detail: detail,
+    order: sort,
+    limit: pageParams.limit,
+    offset: pageParams.offset,
+  })
+  const url = `/api/3/agendas/updates/${from.toISO()}/${to.toISO()}?${searchParams}`
+  return fetchUrl(url)
+}
+
 async function fetchUrl(url) {
   const response = await fetch(url)
   const data = await response.json()

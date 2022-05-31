@@ -19,7 +19,7 @@ export default function Agendas({ setHeaderText }) {
       setHeaderText("Search For Agendas")
     }
     if (location.pathname === '/agendas/updates') {
-      setHeaderText("View Agenda Updates")
+      setHeaderText("Search Agenda Updates")
     }
   }, [ location ])
 

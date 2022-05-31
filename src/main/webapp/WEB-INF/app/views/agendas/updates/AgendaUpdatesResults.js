@@ -1,13 +1,15 @@
 import React from 'react'
 import Pagination from "app/shared/Pagination";
+import { formatDateTime } from "app/lib/dateUtils";
+import { DateTime } from "luxon";
+import { Link } from "react-router-dom";
 
-export default function AgendaUpdatesSearchResults({ response, limit, page, onPageChange, detail }) {
 
-  console.log(response)
+export default function AgendaUpdatesResults({ response, pageParams, onPageChange, showDetail }) {
 
-  if (response.total === 0) {
+  if (!response.result || response.result.size === 0) {
     return (
-      <div>
+      <div className="text-center">
         No results found
       </div>
     )
@@ -15,120 +17,92 @@ export default function AgendaUpdatesSearchResults({ response, limit, page, onPa
 
   return (
     <div className="mt-8">
-      <div className="pt-3">
-
-        <Pagination
-          limit={limit}
-          currentPage={page}
-          onPageChange={onPageChange}
-          total={response.total}
-        />
-        <ResultList results={response.result.items} detail={detail} />
-        <Pagination
-          limit={limit}
-          currentPage={page}
-          onPageChange={onPageChange}
-          total={response.total}
-        />
-
+      <div className="text-center">
+        <span className="font-semibold">{response.total.toLocaleString()}</span>&nbsp;matches found.
       </div>
+      <Pagination
+        limit={pageParams.limit}
+        currentPage={pageParams.selectedPage}
+        onPageChange={onPageChange}
+        total={response.total} />
+      <ResultList results={response.result.items} showDetail={showDetail} />
+      <Pagination
+        limit={pageParams.limit}
+        currentPage={pageParams.selectedPage}
+        onPageChange={onPageChange}
+        total={response.total} />
     </div>
   )
 }
 
-function ResultList({ results, detail }) {
+function ResultList({ results, showDetail }) {
   return (
     <div>
-      {results.map((r) =>
-        <ResultItem result={r} detail={detail} key={r.processedDateTime} />
+      {results.map((r, i) =>
+        <ResultItem result={r} showDetail={showDetail} key={i} />
       )}
     </div>
   )
 }
 
-function ResultItem({ result, detail }) {
-  console.log(result)
-  console.log(detail)
-  const fields = result.fields
+function ResultItem({ result, showDetail }) {
   return (
-    <div>
-      <div className="p-3 hover:bg-gray-200 flex flex-wrap">
-        <div className="py-3 w-full">
-
-          <div className="grid grid-flow-col grid-rows-4 grid-cols-1 gap-4">
-
-            <div className="row-start-1 flex items-center text mr-5">
-              {detail && <b>{result.action} - {result.scope} {result.id.number} ({result.id.year})</b>}
-              {!detail && <b>{result.id.number} ({result.id.year})</b>}
-            </div>
-
-            <div className="row-start-2">
-              <div className="flex items-center text text--small">
-                <p><b>Published Date - {result.sourceDateTime} </b></p>
-              </div>
-            </div>
-
-            <div className="row-start-3">
-              <div className="flex items-center text text--small">
-                <p><b>Processed Date - {result.processedDateTime} </b></p>
-              </div>
-            </div>
-
-            <div className="row-start-4">
-              <div className="flex items-center text text--small">
-                <p><b>Source - {result.sourceId} </b></p>
-              </div>
-            </div>
-
-          </div>
-
-          {detail &&
-          <table className="mt-5 gap-4">
-            <thead>
-            <tr>
-              <th>Field Name</th>
-              <th>Data</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr>
-              <td>Created Date Time</td>
-              <td>{fields["Created Date Time"]}</td>
-            </tr>
-            <tr>
-              <td>Addendum Id</td>
-              <td>{fields["Addendum Id"]}</td>
-            </tr>
-            <tr>
-              <td>Committee Chamber</td>
-              <td>{fields["Committee Chamber"]}</td>
-            </tr>
-            <tr>
-              <td>Created Date Time</td>
-              <td>{fields["Created Date Time"]}</td>
-            </tr>
-            <tr>
-              <td>Chair</td>
-              <td>{fields["Chair"]}</td>
-            </tr>
-            <tr>
-              <td>Meeting Date Time</td>
-              <td>{fields["Meeting Date Time"]}</td>
-            </tr>
-            <tr>
-              <td>ID</td>
-              <td>{fields["Id"]}</td>
-            </tr>
-            </tbody>
-            <tfoot>
-            </tfoot>
-
-          </table>
-          }
-
+    <div className="mb-8">
+      <h4 className="h5">
+        {showDetail &&
+          <span>{result.action} - {result.scope} - </span>
+        }
+        <span className="link"><Link to={`/agendas/${result.id.year}/${result.id.number}`}>
+          Agenda {result.id.number} ({result.id.year})
+        </Link></span>
+      </h4>
+      <div className="text">
+        <div>
+          Published Date: {formatDateTime(result.sourceDateTime, DateTime.DATETIME_MED)}
+        </div>
+        <div>
+          Processed Date: {formatDateTime(result.processedDateTime, DateTime.DATETIME_MED)}
+        </div>
+        <div>
+          Source: <span className="link"><Link to={`/api/3/sources/fragment/${result.sourceId}`}
+                                               target="_blank">{result.sourceId}</Link></span>
         </div>
       </div>
+      {showDetail &&
+        <div className="py-2">
+          <FieldTable update={result} />
+        </div>
+      }
+
     </div>
+  )
+}
+
+function FieldTable({ update }) {
+  if (!update.fields) {
+    return null
+  }
+
+  return (
+    <table className="table table--stripe">
+      <thead>
+      <tr>
+        <th>Field Name</th>
+        <th>Data</th>
+      </tr>
+      </thead>
+      <tbody>
+      {Object.entries(update.fields).map(([ key, value ]) => {
+        return (
+          <tr key={key}>
+            <td>{key}</td>
+            <td>
+              <pre className="whitespace-pre-wrap">{value}</pre>
+            </td>
+          </tr>
+        )
+      })}
+      </tbody>
+    </table>
   )
 }
