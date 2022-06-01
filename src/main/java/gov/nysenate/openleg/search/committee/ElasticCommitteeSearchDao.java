@@ -79,7 +79,6 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     @Override
     protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
         HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("meetDay", dayOfWeekMapping);
         props.put("meetTime", basicTimeMapping);
         return props;
     }
