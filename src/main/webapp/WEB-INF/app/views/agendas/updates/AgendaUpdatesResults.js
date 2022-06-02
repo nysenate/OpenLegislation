@@ -3,6 +3,7 @@ import Pagination from "app/shared/Pagination";
 import { formatDateTime } from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
+import UpdateFieldTable from "app/shared/UpdateFieldTable";
 
 
 export default function AgendaUpdatesResults({ response, pageParams, onPageChange, showDetail }) {
@@ -70,39 +71,9 @@ function ResultItem({ result, showDetail }) {
       </div>
       {showDetail &&
         <div className="py-2">
-          <FieldTable update={result} />
+          <UpdateFieldTable updateFields={result.fields} />
         </div>
       }
-
     </div>
-  )
-}
-
-function FieldTable({ update }) {
-  if (!update.fields) {
-    return null
-  }
-
-  return (
-    <table className="table table--stripe">
-      <thead>
-      <tr>
-        <th>Field Name</th>
-        <th>Data</th>
-      </tr>
-      </thead>
-      <tbody>
-      {Object.entries(update.fields).map(([ key, value ]) => {
-        return (
-          <tr key={key}>
-            <td>{key}</td>
-            <td>
-              <pre className="whitespace-pre-wrap">{value}</pre>
-            </td>
-          </tr>
-        )
-      })}
-      </tbody>
-    </table>
   )
 }
