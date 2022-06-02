@@ -79,10 +79,11 @@ export default function AgendaSearch() {
       {errorMsg && !isLoading &&
         <ErrorMessage>{errorMsg}</ErrorMessage>
       }
-      <AgendaSearchResults response={searchResponse}
-                           pageParams={new PageParams(searchParams.page, searchParams.limit)}
-                           onPageChange={pageInfo => onPageChange(pageInfo)}
-                           isLoading={isLoading} />
+      {!isLoading &&
+        <AgendaSearchResults response={searchResponse}
+                             pageParams={new PageParams(searchParams.page, searchParams.limit)}
+                             onPageChange={pageInfo => onPageChange(pageInfo)} />
+      }
     </div>
   )
 }

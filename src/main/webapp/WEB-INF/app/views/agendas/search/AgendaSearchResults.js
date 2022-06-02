@@ -4,13 +4,9 @@ import { Link } from "react-router-dom";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import { SummaryItemSmall } from "app/views/agendas/AgendaView";
 
-export default function AgendaSearchResults({ response, pageParams, onPageChange, isLoading }) {
+export default function AgendaSearchResults({ response, pageParams, onPageChange }) {
   if (!response || !response.result) {
     return null
-  }
-
-  if (isLoading) {
-    return <LoadingIndicator />
   }
 
   if (response.total === 0) {
