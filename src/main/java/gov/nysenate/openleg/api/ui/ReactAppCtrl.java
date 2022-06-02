@@ -50,7 +50,9 @@ public class ReactAppCtrl {
             "/sources/**",
             "/reports/**",
             "/manage/**",
-            "/admin/**"
+            "/admin/**",
+            "/register/**",
+            "/subscriptions/**"
     })
     public String home(HttpServletRequest request) {
         setRequestAttributes(request);
