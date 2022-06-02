@@ -10,6 +10,7 @@ import Select, {
   SelectOption,
   sortOptions
 } from "app/shared/Select";
+import { FormCheckbox } from "app/shared/Checkbox";
 
 
 export default function AgendaUpdatesForm({ from, to, type = "published", detail = true, sort = "desc" }) {
@@ -73,17 +74,10 @@ export default function AgendaUpdatesForm({ from, to, type = "published", detail
                   options={sortOptions}
                   name="sort" />
           <div>
-            <div className="h-7"></div>
-            <div className="flex items-center">
-              <input type="checkbox"
-                     id="detail"
-                     name="detail"
-                     checked={dirtyDetail}
-                     onChange={e => setDirtyDetail(e.target.checked)} />
-              <label htmlFor="detail" className="label ml-1">
-                Show Detail
-              </label>
-            </div>
+            <FormCheckbox label="Show Detail"
+                          value={dirtyDetail}
+                          onChange={e => setDirtyDetail(e.target.checked)}
+                          name="detail" />
           </div>
         </div>
 
