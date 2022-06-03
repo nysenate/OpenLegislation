@@ -1,43 +1,43 @@
+const baseApi = "/api/3/email/subscription"
+
 export default function getSubscriptions(apiKey) {
-  return fetchUrl(getBaseApi() + `/current?key=${apiKey}`)
+  return fetchJson(`/current?key=${apiKey}`)
 }
 
-/**
- *
- * @param apiKey to change settings of.
- * @param subs new array of subscriptions.
- */
-export function setSubscriptions(apiKey, subs) {
-  const setSubsUrl = getBaseApi() + `/update?key=${apiKey}`
-  return fetchUrl(setSubsUrl, {method: "POST", body: subs})
+export function updateSubscriptions(apiKey, subs) {
+  const options = {
+    method: "POST",
+    cache: "no-cache",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(subs)
+  }
+  post(`/update?key=${apiKey}`, options)
+}
+
+export function getEmail(apiKey) {
+  return fetchJson(`/getEmail?key=${apiKey}`)
+}
+
+export function emailInUse(email) {
+  return fetchJson(`/emailSearch?email=${email}`)
 }
 
 /**
  * Changes the email of the given API user.
  * @returns {boolean} false if the email is already in use.
  */
-export function setEmail(apiKey, email) {
-  const checkEmailUrl = getBaseApi() + `/emailSearch?email=${email}`
-  const emailInUse = fetchUrl(checkEmailUrl)[0]
-  if (emailInUse) {
-    return false
-  }
-  const setEmailUrl = getBaseApi() + `/updateEmail/?key=${apiKey}`
-  fetchUrl(setEmailUrl, { method: "POST", body: email }).then()
-  return true
+export function updateEmail(apiKey, email) {
+  post(`/updateEmail?key=${apiKey}`, { method: "POST", body: email })
 }
 
-function getBaseApi() {
-  return "/api/3/email/subscription"
+// Functions from ApiUserEmailSubscriptionCtrl do not return BaseResponses
+async function fetchJson(urlSuffix, options = {method: "GET"}) {
+  const response = await fetch(baseApi + urlSuffix, options)
+  return await response.json()
 }
 
-async function fetchUrl(url, options) {
-  const response = await fetch(url, options)
-  const data = await response.json()
-  if (!data.success) {
-    let error = new Error(data.message)
-    error.errorCode = data.errorCode
-    throw error
-  }
-  return data
+function post(urlSuffix, options) {
+  fetch(baseApi + urlSuffix, options).then()
 }

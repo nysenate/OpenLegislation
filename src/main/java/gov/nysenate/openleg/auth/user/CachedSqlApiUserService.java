@@ -41,7 +41,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
-    private final String domainUrl;
     private long apiUserCacheSizeMb;
 
     private final EventBus eventBus;
@@ -53,7 +52,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
 
     public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
-                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl,
+                                   EventBus eventBus, Environment environment,
                                    @Value("${api_user.cache.heap.size}") long apiUserCacheSizeMb) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
@@ -63,7 +62,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         this.apiUserCacheSizeMb = apiUserCacheSizeMb;
         eventBus.register(this);
         setupCaches();
-        this.domainUrl = domainUrl;
     }
 
     @PreDestroy
@@ -115,7 +113,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up API User Cache");
-
         // Feed in all the api users from the database into the cache
         apiUserDao.getAllUsers().forEach(this::cacheApiUser);
     }
@@ -176,6 +173,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setEmail(email);
         apiUserDao.updateUser(user);
+        cacheApiUser(user);
     }
 
     /** {@inheritDoc} */

@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.api.auth;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +60,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
     public List<String> currentSubscriptions(@RequestParam String key) {
         Set<ApiUserSubscriptionType> subs = apiUserService.getUserByKey(key)
                 .map(ApiUser::getSubscriptions)
-                .orElseThrow(() -> new InvalidRequestParamEx(key, "key", "String", "Must be a valid API users key."));
+                .orElseThrow(() -> badApiKeyError(key));
         List<String> subStrings = new ArrayList<>();
         for(ApiUserSubscriptionType s: subs) {
             subStrings.add(s.toString());
@@ -100,15 +102,24 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      */
     @RequestMapping(value = "/emailSearch", method = RequestMethod.GET)
     public List<Boolean> emailSearch(@RequestParam String email) {
-        List<Boolean> bool = new ArrayList<>();
-        bool.add(true);
+        List<Boolean> bool = List.of(true);
         try {
             apiUserService.getUser(email);
         } catch (EmptyResultDataAccessException ex) {
-            bool.set(0, false);
+            bool = List.of(false);
         }
         return bool;
     }
 
+    @RequestMapping(value = "/getEmail", method = RequestMethod.GET)
+    public BaseResponse getEmail(@RequestParam String key) {
+        String requestType = "get-email";
+        Optional<ApiUser> user = apiUserService.getUserByKey(key);
+        return user.map(apiUser -> new SimpleResponse(true, apiUser.getEmail(), requestType))
+                .orElseGet(() -> new SimpleResponse(false, "Not a valid API key!", requestType));
+    }
 
+    private static InvalidRequestParamEx badApiKeyError(String key) {
+        return new InvalidRequestParamEx(key, "key", "String", "Must be a valid API users key.");
+    }
 }
