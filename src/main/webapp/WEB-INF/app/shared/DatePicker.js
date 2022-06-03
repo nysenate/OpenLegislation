@@ -43,7 +43,7 @@ export default function DatePicker({ label, name, date, setDate, minDate, maxDat
         showYearDropdown
         showMonthDropdown
         dropdownMode="select"
-        className={`date-picker ${className}`}
+        className={`date-picker ${className ? className : ""}`}
         {...rest} />
     </React.Fragment>
   )

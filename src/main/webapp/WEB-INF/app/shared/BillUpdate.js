@@ -2,6 +2,7 @@ import React from 'react'
 import { formatDateTime } from "app/lib/dateUtils";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
+import UpdateFieldTable from "app/shared/UpdateFieldTable";
 
 
 export default function BillUpdate({ update, linkSource = true }) {
@@ -22,7 +23,7 @@ export default function BillUpdate({ update, linkSource = true }) {
           <Source sourceId={update.sourceId} linkSource={linkSource} />
         </div>
         <div className="mt-3">
-          <FieldTable update={update} />
+          <UpdateFieldTable updateFields={update.fields} />
         </div>
       </div>
     </React.Fragment>
@@ -37,33 +38,5 @@ function Source({ sourceId, linkSource }) {
   }
   return (
     <Link to={`/api/3/sources/fragment/${sourceId}`} target="_blank" className="link">{sourceId}</Link>
-  )
-}
-
-function FieldTable({ update }) {
-  if (!update.fields) {
-    return null
-  }
-  return (
-    <table className="table table--stripe">
-      <thead>
-      <tr>
-        <th>Field Name</th>
-        <th>Data</th>
-      </tr>
-      </thead>
-      <tbody>
-      {Object.entries(update.fields).map(([ key, value ]) => {
-        return (
-          <tr key={key}>
-            <td>{key}</td>
-            <td>
-              <pre className="whitespace-pre-wrap">{value}</pre>
-            </td>
-          </tr>
-        )
-      })}
-      </tbody>
-    </table>
   )
 }

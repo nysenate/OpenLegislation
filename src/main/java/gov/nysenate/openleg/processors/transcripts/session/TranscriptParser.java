@@ -4,20 +4,22 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.processors.ParseError;
+import org.apache.commons.io.Charsets;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-public class TranscriptParser {
+public final class TranscriptParser {
+    private static final Charset CP_1252 = Charsets.toCharset("CP1252");
     private TranscriptParser() {}
 
-    protected static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
-        List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath(), StandardCharsets.ISO_8859_1);
+    static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
+        List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath(), CP_1252);
         LocalDate date = null;
         LocalTime time = null;
         String sessionType = null, location = null;

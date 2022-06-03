@@ -12,7 +12,7 @@
 @layer components {
 
     .link {
-        @apply text-blue-500 border-blue-500 border-solid border-b-1 cursor-pointer;
+        @apply text-blue-600 border-blue-600 border-solid border-b-1 cursor-pointer;
     }
 
     .h1 {
