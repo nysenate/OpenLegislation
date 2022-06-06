@@ -5,7 +5,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.CacheType;
-import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import org.apache.commons.lang3.time.StopWatch;
@@ -56,7 +56,7 @@ public class CachedBillDataServiceTest extends BaseTests
     public void evictContentTest() {
         StopWatch sw = new StopWatch();
         BaseBillId id = new BaseBillId("S1", 2015);
-        CachingService.clearCaches(Set.of(CacheType.BILL), false);
+        OpenLegCacheManager.clearCaches(Set.of(CacheType.BILL), false);
         sw.start();
         billData.getBill(id);
         sw.stop();
@@ -76,6 +76,6 @@ public class CachedBillDataServiceTest extends BaseTests
 
     @Test
     public void testEvictEvent() {
-        CachingService.clearCaches(Set.of(CacheType.BILL), false);
+        OpenLegCacheManager.clearCaches(Set.of(CacheType.BILL), false);
     }
 }

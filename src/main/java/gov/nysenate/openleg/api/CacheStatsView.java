@@ -1,14 +1,15 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.legislation.CacheType;
-import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import org.ehcache.core.statistics.CacheStatistics;
 
 public record CacheStatsView(String cacheName, long size, int capacity, long putCount, long removeCount,
                              long evictedCount, long expiredCount, long hitCount,
                              long missCount, float hitRatio) implements ViewObject {
     public CacheStatsView(CacheType type) {
-        this(type.name(), CachingService.getCacheCapacity(type), CachingService.getStats(type));
+        this(type.name(), OpenLegCacheManager.getCapacity(type),
+                OpenLegCacheManager.getCacheStats(type));
     }
 
     private CacheStatsView(String cacheName, int capacity, CacheStatistics stats) {

@@ -8,7 +8,7 @@ import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.legislation.CacheType;
-import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,7 +94,7 @@ public class CacheCtrl extends BaseCtrl {
 
     private static SimpleResponse clearCache(String cacheType, boolean warmCache) {
         String eventType = warmCache ? "warm" : "evict";
-        CachingService.clearCaches(getTargetCaches(cacheType), warmCache);
+        OpenLegCacheManager.clearCaches(getTargetCaches(cacheType), warmCache);
         return new SimpleResponse(true, "Cache " + eventType + " request sent for " + cacheType,
                 "cache-" + eventType);
     }
