@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 import CalendarSearch from "app/views/calendars/CalendarSearch";
-import CalendarUpdates from "app/views/calendars/CalendarUpdates";
+import CalendarUpdates from "app/views/calendars/updates/CalendarUpdates";
 import ContentContainer from "app/shared/ContentContainer";
 import SpecificCalendar from "app/views/calendars/SpecificCalendar";
 
@@ -31,7 +31,7 @@ export default function Calendars({ setHeaderText }) {
         <Route exact path="/calendars/search">
           <CalendarSearch />
         </Route>
-        <Route path="/calendars/view/:calendarYear/:calendarNumber">
+        <Route path="/calendars/:calendarYear/:calendarNumber">
           <SpecificCalendar setHeaderText={setHeaderText} />
         </Route>
         <Route exact path="/calendars/updates">

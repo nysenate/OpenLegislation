@@ -13,7 +13,7 @@ import Select, {
 import { FormCheckbox } from "app/shared/Checkbox";
 
 
-export default function AgendaUpdatesForm({ from, to, type = "published", detail = false, sort = "desc" }) {
+export default function CalendarUpdatesForm({ from, to, type = "published", detail = false, sort = "desc" }) {
   const [ dirtyFrom, setDirtyFrom ] = React.useState(from)
   const [ dirtyTo, setDirtyTo ] = React.useState(to)
   const [ dirtyType, setDirtyType ] = React.useState(type)
@@ -80,7 +80,6 @@ export default function AgendaUpdatesForm({ from, to, type = "published", detail
                           name="detail" />
           </div>
         </div>
-
         <div className="flex justify-end mt-3">
           <button className="btn btn--primary w-36" type="submit">Submit</button>
         </div>
