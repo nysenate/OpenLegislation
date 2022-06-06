@@ -5,7 +5,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-import CalendarSearch from "app/views/calendars/CalendarSearch";
+import CalendarSearch from "app/views/calendars/search/CalendarSearch";
 import CalendarUpdates from "app/views/calendars/updates/CalendarUpdates";
 import ContentContainer from "app/shared/ContentContainer";
 import SpecificCalendar from "app/views/calendars/SpecificCalendar";
