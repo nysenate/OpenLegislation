@@ -15,6 +15,7 @@ import NavMenu from "app/views/home/NavMenu";
 import PrivateRoute from "app/shared/PrivateRoute";
 import Admin from "app/views/admin/Admin";
 import NotFound from "app/views/NotFound";
+import ApiUserInfo from "app/views/apiUser/ApiUserInfo";
 
 const fakeHeaderText = "New York State Laws";
 
@@ -67,6 +68,9 @@ export default function Home() {
             <PrivateRoute path="/transcripts">
               <Transcripts setHeaderText={setHeaderText} />
             </PrivateRoute>
+            <Route path="/subscriptions">
+              <ApiUserInfo setHeaderText={setHeaderText}/>
+            </Route>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
             </Route>

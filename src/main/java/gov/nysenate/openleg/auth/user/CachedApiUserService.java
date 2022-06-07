@@ -98,6 +98,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setEmail(email);
         apiUserDao.updateUser(user);
+        cache.put(apiKey, user);
     }
 
     /** {@inheritDoc} */

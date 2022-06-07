@@ -1,9 +1,6 @@
 import React from "react";
 import MemberListing from "app/shared/MemberListing";
-import {
-  CaretDown,
-  CaretUp
-} from "phosphor-react";
+import TruncatedList from "app/shared/TruncatedList";
 
 
 export default function BillSponsorsTab({ bill, selectedAmd }) {
@@ -34,7 +31,7 @@ function CoPrimeList({ bill }) {
       <header>
         <h3 className="h5 mb-1">Co Prime Sponsors</h3>
       </header>
-      <TruncatedList components={coPrimeComponents} />
+      <TruncatedList list={coPrimeComponents} />
     </section>
   )
 }
@@ -55,7 +52,7 @@ function CoSponsorsList({ amendment }) {
       <header>
         <h3 className="h5 mb-1">Co Sponsors</h3>
       </header>
-      <TruncatedList components={coSponsorComponents} />
+      <TruncatedList list={coSponsorComponents} />
     </section>
   )
 }
@@ -72,44 +69,7 @@ function MultiSponsorList({ amendment }) {
       <header>
         <h3 className="h5 mb-1">Multi Sponsors</h3>
       </header>
-      <TruncatedList components={multiSponsorEls} />
+      <TruncatedList list={multiSponsorEls} />
     </section>
-  )
-}
-
-function TruncatedList({ components }) {
-  const displaySize = 3
-  const requiresTruncation = components.length > displaySize
-  const [ isExpanded, setIsExpanded ] = React.useState(false)
-  const [ displayedComponents, setDisplayedComponents ] = React.useState([])
-
-  React.useEffect(() => {
-    if (isExpanded) {
-      setDisplayedComponents(components)
-    } else {
-      setDisplayedComponents(components.slice(0, displaySize))
-    }
-  }, [ isExpanded ])
-
-  return (
-    <div className="px-5">
-      {displayedComponents.map((el, index) =>
-        <div className="py-1" key={index}>
-          {el}
-        </div>
-      )}
-      {!isExpanded && requiresTruncation &&
-      <div className="pt-1 flex items-center" onClick={() => setIsExpanded(true)}>
-        <CaretDown size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
-        <a className="link">Show {components.length - displaySize} more</a>
-      </div>
-      }
-      {isExpanded && requiresTruncation &&
-      <div className="pt-1 flex items-center" onClick={() => setIsExpanded(false)}>
-        <CaretUp size="1.25rem" weight="bold" className="text-blue-500 mr-1" />
-        <a className="link">Show less</a>
-      </div>
-      }
-    </div>
   )
 }

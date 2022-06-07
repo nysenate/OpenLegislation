@@ -368,11 +368,6 @@ public abstract class ElasticBaseDao
             "format", "hour_minute"
     );
 
-    protected static final ImmutableMap<String, Object> dayOfWeekMapping = ImmutableMap.of(
-            "type", "date",
-            "format", "E"
-    );
-
     /* --- Internal Methods --- */
 
     private boolean indicesExist(String... indices) {

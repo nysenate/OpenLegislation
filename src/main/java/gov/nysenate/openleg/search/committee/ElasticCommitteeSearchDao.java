@@ -2,14 +2,14 @@ package gov.nysenate.openleg.search.committee;
 
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.*;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -79,7 +79,6 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     @Override
     protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
         HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("meetDay", dayOfWeekMapping);
         props.put("meetTime", basicTimeMapping);
         return props;
     }
