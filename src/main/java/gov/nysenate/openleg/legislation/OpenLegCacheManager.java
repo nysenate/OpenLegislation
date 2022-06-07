@@ -15,6 +15,9 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Contains various methods to manage caches and get statistics about them.
+ */
 public final class OpenLegCacheManager {
     private static final StatisticsService statisticsService = new DefaultStatisticsService();
     private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()

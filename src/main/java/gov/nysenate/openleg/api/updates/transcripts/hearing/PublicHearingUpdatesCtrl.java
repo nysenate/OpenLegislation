@@ -31,35 +31,35 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
     @Autowired private PublicHearingDao publicHearingDao;
 
     /**
-     * Public Hearing Updates API.
-     * -----------------
+     * Public Hearing Updates API
+     * ----------------------
      *
-     * Returns a List of public hearing ids that have been inserted or updated on or after the supplied date.
-     * Usage: (GET) /api/3/hearings/updates/{from datetime}
+     * Returns a List of Hearing ids that have been inserted or updated on or after the supplied date.
+     *
+     * Usages:
+     * (GET) /api/3/hearings/updates/             (last 7 days)
+     * (GET) /api/3/hearings/updates/{from}       (from date to now)
+     * (GET) /api/3/hearings/updates/{from}/{to}
+     *
+     * Where 'from' and 'to' are ISO date times.
      *
      * Request Params:  limit - Limit the number of results
      *                  offset - Start results from an offset.
      *
      * Expected Output: List of PublicHearingUpdateTokenView
      */
+
+    @RequestMapping(value = "/updates")
+    public BaseResponse getNewRecentTranscripts(WebRequest request) {
+        return getNewPublicHearingsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE.atStartOfDay(), request);
+    }
+
     @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsSince(@PathVariable String from,
                                                   WebRequest request) {
         return getNewPublicHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    /**
-     * Public Hearing Updates API.
-     *  -----------------
-     *
-     * Returns a list of public hearing ids that have been inserted or updated during a supplied date time range.
-     * Usage: (GET) /api/3/hearings/updates/{from datetime}/{to datetime}
-     *
-     * Request Params:  limit - Limit the number of results
-     *                  offset - Start results from an offset.
-     *
-     * Expected Output: List of PublicHearingUpdateTokenView
-     */
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsDuring(@PathVariable String from,
                                                    @PathVariable String to,

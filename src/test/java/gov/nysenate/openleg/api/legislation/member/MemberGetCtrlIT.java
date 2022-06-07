@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -46,7 +45,7 @@ public class MemberGetCtrlIT extends ApiTest {
 
         listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);;
         FullMemberView testFmv = (FullMemberView) listResponse.getResult().getItems().stream().filter(fm ->
-                fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).collect(Collectors.toList()).get(0);
+                fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).toList().get(0);
         assertEquals(2, testFmv.getSessionShortNameMap().get(2013).size());
     }
 
