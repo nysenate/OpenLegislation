@@ -1,22 +1,22 @@
 package gov.nysenate.openleg.api.updates.calendar;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
-import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +123,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
     @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo,
-                DateUtils.LONG_AGO.atStartOfDay().toString(), LocalDateTime.now().toString(), webRequest);
+                DateUtils.LONG_AGO.toString(), LocalDateTime.now().toString(), webRequest);
     }
 
     @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")

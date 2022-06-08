@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.spotchecks.model;
 
-import gov.nysenate.openleg.common.util.StringDiffer;
+import gov.nysenate.openleg.common.util.stringDiffer.Diff;
+import gov.nysenate.openleg.common.util.stringDiffer.StringDiffer;
 
 import java.util.*;
 
@@ -59,9 +60,9 @@ public class SpotCheckMismatch
      * @param simple boolean - Set to true to make the results of the diff less granular.
      * @return LinkedList<StringDiffer.Diff>
      */
-    public LinkedList<StringDiffer.Diff> getDiff(boolean simple) {
+    public LinkedList<Diff> getDiff(boolean simple) {
         StringDiffer stringDiffer = new StringDiffer();
-        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(referenceData, observedData);
+        LinkedList<Diff> diffs = stringDiffer.diffMain(referenceData, observedData);
         if (simple) {
             stringDiffer.diff_cleanupSemantic(diffs);
         }

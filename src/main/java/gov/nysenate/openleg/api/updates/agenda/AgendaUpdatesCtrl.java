@@ -1,21 +1,21 @@
 package gov.nysenate.openleg.api.updates.agenda;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
-import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.updates.agenda.AgendaUpdatesDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.updates.agenda.AgendaUpdatesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
 
     @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, WebRequest request) {
-        return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), DateUtils.LONG_AGO.atStartOfDay(),
+        return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), DateUtils.LONG_AGO,
             LocalDateTime.now(), request);
     }
 

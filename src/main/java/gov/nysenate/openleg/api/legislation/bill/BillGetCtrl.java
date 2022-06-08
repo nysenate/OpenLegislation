@@ -9,7 +9,8 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.util.StringDiffer;
+import gov.nysenate.openleg.common.util.stringDiffer.Diff;
+import gov.nysenate.openleg.common.util.stringDiffer.StringDiffer;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
@@ -206,11 +207,11 @@ public class BillGetCtrl extends BaseCtrl
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
         String fullText1 = BillTextUtils.getPlainTextWithoutLineNumbers(amend1);
         String fullText2 = BillTextUtils.getPlainTextWithoutLineNumbers(amend2);
-        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);
+        LinkedList<Diff> diffs = stringDiffer.diffMain(fullText1, fullText2);
         stringDiffer.diff_cleanupEfficiency(diffs);
         stringDiffer.diff_cleanupSemantic(diffs);
-        stringDiffer.diff_cleanupMerge(diffs);
-        String prettyHtml = stringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
+        StringDiffer.diff_cleanupMerge(diffs);
+        String prettyHtml = StringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
         return new ViewObjectResponse<>(
             new BillDiffView(
                 new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),

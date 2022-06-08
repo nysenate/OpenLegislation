@@ -1,19 +1,22 @@
 package gov.nysenate.openleg.api.updates.transcripts.session;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -51,13 +54,13 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
 
     @RequestMapping(value = "/updates")
     public BaseResponse getNewRecentTranscripts(WebRequest request) {
-        return getNewTranscriptsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getNewTranscriptsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getNewTranscriptsSince(@PathVariable String from, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
-        return getNewTranscriptsDuring(fromDateTime, DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getNewTranscriptsDuring(fromDateTime, DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")

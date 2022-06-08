@@ -51,13 +51,13 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
 
     @RequestMapping(value = "/updates")
     public BaseResponse getNewRecentTranscripts(WebRequest request) {
-        return getNewPublicHearingsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getNewPublicHearingsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsSince(@PathVariable String from,
                                                   WebRequest request) {
-        return getNewPublicHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getNewPublicHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")

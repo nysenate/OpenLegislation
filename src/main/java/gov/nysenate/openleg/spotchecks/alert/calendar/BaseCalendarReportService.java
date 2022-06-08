@@ -95,7 +95,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     private LocalDateTime getMostRecentReference(List<Calendar> references) {
-        LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO.atStartOfDay());
+        LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO);
         for (Calendar cal : references) {
             if (cal.getPublishedDateTime().isAfter(dateTime)) {
                 dateTime = cal.getPublishedDateTime();

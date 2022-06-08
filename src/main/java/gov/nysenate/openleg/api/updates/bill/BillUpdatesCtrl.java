@@ -1,29 +1,29 @@
 package gov.nysenate.openleg.api.updates.bill;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
 import gov.nysenate.openleg.api.legislation.bill.view.SimpleBillInfoView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestModelView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenModelView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.BillUpdateField;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +118,7 @@ public class BillUpdatesCtrl extends BaseCtrl
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
-        return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO.atStartOfDay(),
+        return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO,
                 LocalDateTime.now(), request);
     }
 

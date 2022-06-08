@@ -1,27 +1,30 @@
 package gov.nysenate.openleg.api.updates.law;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.law.view.LawDocIdView;
 import gov.nysenate.openleg.api.legislation.law.view.LawVersionIdView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.law.LawUpdatesDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.updates.law.LawUpdatesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -105,7 +108,7 @@ public class LawUpdatesCtrl extends BaseCtrl
 
         LocalDateTime parsedFromDateTime = Optional.ofNullable(from)
                 .map(tdt -> parseISODateTime(tdt, "from"))
-                .orElse(DateUtils.LONG_AGO.atStartOfDay());
+                .orElse(DateUtils.LONG_AGO);
         LocalDateTime parsedToDateTime = Optional.ofNullable(to)
                 .map(tdt -> parseISODateTime(tdt, "to"))
                 .orElse(LocalDateTime.now());
@@ -132,12 +135,12 @@ public class LawUpdatesCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{lawId:[\\w]{3}}/updates")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, WebRequest request) {
-        return getUpdatesForLaw(lawId, DateUtils.LONG_AGO.atStartOfDay(), DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getUpdatesForLaw(lawId, DateUtils.LONG_AGO, DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, WebRequest request) {
-        return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
@@ -160,15 +163,15 @@ public class LawUpdatesCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{lawId}/{locationId}/updates")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId, WebRequest request) {
-        return getUpdatesForLawDoc(lawId, locationId, DateUtils.LONG_AGO.atStartOfDay(),
-                                   DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getUpdatesForLawDoc(lawId, locationId, DateUtils.LONG_AGO,
+                                   DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/{lawId}/{locationId}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
                                             @PathVariable String from, WebRequest request) {
         return getUpdatesForLawDoc(lawId, locationId, parseISODateTime(from, "from"),
-                                   DateUtils.THE_FUTURE.atStartOfDay(), request);
+                                   DateUtils.THE_FUTURE, request);
     }
 
     @RequestMapping(value = "/{lawId}/{locationId}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")

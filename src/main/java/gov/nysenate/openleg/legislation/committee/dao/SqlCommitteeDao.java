@@ -51,7 +51,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
              year = year.previousSessionYear()) {
             try {
                 committee = getCommittee(new CommitteeVersionId(
-                        committeeId, year, DateUtils.THE_FUTURE.atStartOfDay()));
+                        committeeId, year, DateUtils.THE_FUTURE));
                 return committee;
             }
             catch (EmptyResultDataAccessException ignored){}
