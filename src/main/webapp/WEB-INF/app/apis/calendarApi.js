@@ -4,6 +4,11 @@ import * as queryString from "query-string";
 import { PageParams } from "app/shared/Pagination";
 
 
+export function fetchCalendar(year, number) {
+  const url = `/api/3/calendars/${year}/${number}`
+  return fetchUrl(url)
+}
+
 export function searchCalendars({year, calendarNo, printNo, billCalendarNo, page, limit, sort}) {
   const pageParams = new PageParams(page, limit)
   let term = `year:${year}`

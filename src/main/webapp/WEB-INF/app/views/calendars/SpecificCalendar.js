@@ -1,59 +1,64 @@
 import React from 'react';
 import {
-  useLocation,
-  useHistory,
-  useRouteMatch
+  useParams
 } from "react-router-dom";
-import * as queryString from "query-string";
-import LoadingIndicator from "app/shared/LoadingIndicator";
-import getCalendarsApi from "app/apis/getCalendarApi";
-import ActiveLists from "app/views/calendars/SpecificCalendarActiveLists";
-import Floor from "app/views/calendars/SpecificCalendarFloor";
+import { fetchCalendar } from "app/apis/calendarApi";
+import { DateTime } from "luxon";
+import { formatDateTime } from "app/lib/dateUtils";
+import Tabs from "app/shared/Tabs";
+import ActiveList from "app/views/calendars/ActiveList";
 
+
+// TODO
+// - Loading
+// - error message
+// - set initial selected tab
 
 export default function SpecificCalendar({ setHeaderText }) {
-  const [ response, setResponse ] = React.useState({ result: { items: [] } })
+  const [ response, setResponse ] = React.useState()
   const [ loading, setLoading ] = React.useState(true)
-  const location = useLocation()
-  const history = useHistory()
-  const params = queryString.parse(location.search)
-  const match = useRouteMatch()
+  const [ tabs, setTabs ] = React.useState([])
+  const [ activeTab, setActiveTab ] = React.useState("")
+  const { year, number } = useParams()
 
   React.useEffect(() => {
-    getCalendar(match.params.calendarYear, match.params.calendarNumber)
+    getCalendar(year, number)
   }, [])
 
+  React.useEffect(() => {
+    if (response) {
+      const calDate = formatDateTime(DateTime.fromISO(response.result.calDate), DateTime.DATE_MED)
+      setHeaderText(`Senate Calendar #${response.result.calendarNumber} - ${calDate}`)
 
-  const getCalendar = (calendarYear, calendarNumber) => {
+      setTabs([
+        {
+          name: "Active List",
+          quantity: response.result.activeLists.size || null,
+          isDisable: false,
+          component: <ActiveList activeList={response.result.activeLists} />
+        }
+      ])
+    }
+  }, [ response ])
+
+  // TODO how to handle invalid url? Error message or 404?
+  const getCalendar = (year, number) => {
     setLoading(true)
-    getCalendarsApi(calendarYear, calendarNumber)
-      .then((response) => {
-        // console.log(response)
-        setHeaderText("Calendar " + response.result.calendarNumber + " " + response.result.year)
-        setResponse(response)
-      })
+    setResponse(null)
+    fetchCalendar(year, number)
+      .then(res => setResponse(res))
       .catch((error) => {
         // TODO properly handle errors
         console.log(`${error}`)
       })
-      .finally(() => {
-        setLoading(false)
-      })
+      .finally(() => setLoading(false))
   }
 
-
   return (
-    <div className="p-3">
-
-      {loading
-        ? <LoadingIndicator />
-        :
-        <div>
-          <ActiveLists response={response} />
-          <Floor response={response} />
-        </div>
-      }
+    <div className="my-6">
+      <Tabs tabs={tabs}
+            activeTab={activeTab}
+            setActiveTab={tab => setActiveTab(tab)} />
     </div>
   )
-
 }

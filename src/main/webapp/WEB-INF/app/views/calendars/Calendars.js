@@ -31,7 +31,7 @@ export default function Calendars({ setHeaderText }) {
         <Route exact path="/calendars/search">
           <CalendarSearch />
         </Route>
-        <Route path="/calendars/:calendarYear/:calendarNumber">
+        <Route path="/calendars/:year/:number">
           <SpecificCalendar setHeaderText={setHeaderText} />
         </Route>
         <Route exact path="/calendars/updates">

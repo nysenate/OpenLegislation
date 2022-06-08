@@ -9,15 +9,16 @@ import React from "react"
  * @returns {JSX.Element}
  * @constructor
  */
-export function Checkbox({label, value, onChange, name}) {
+export function Checkbox({ label, value, onChange, name }) {
   return (
     <div className="flex items-center">
       <input type="checkbox"
              id={name}
              name={name}
              checked={value}
-             onChange={onChange} />
-      <label htmlFor={name} className="label ml-1">
+             onChange={onChange}
+             className="cursor-pointer" />
+      <label htmlFor={name} className="label ml-1 cursor-pointer">
         {label}
       </label>
     </div>
@@ -27,7 +28,7 @@ export function Checkbox({label, value, onChange, name}) {
 /**
  * Similar to Checkbox, except this adds a spacer to make it align well with Select and Input components.
  */
-export function FormCheckbox({label, value, onChange, name}) {
+export function FormCheckbox({ label, value, onChange, name }) {
   return (
     <div>
       <div className="h-7"></div>
