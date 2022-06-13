@@ -27,6 +27,7 @@ import BillJsonTab from "app/views/bills/info/BillJsonTab";
 import BillUpdatesTab from "app/views/bills/info/BillUpdatesTab";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import Note from "app/shared/Note";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 export default function Bill({ setHeaderText }) {
 
@@ -35,19 +36,23 @@ export default function Bill({ setHeaderText }) {
   const [ selectedAmd, setSelectedAmd ] = React.useState()
   const [ tabs, setTabs ] = React.useState([])
   const [ activeTab, setActiveTab ] = React.useState()
+  const [ errorMsg, setErrorMsg ] = React.useState("")
   const match = useRouteMatch()
   const location = useLocation()
   const history = useHistory()
 
   // Initialize data when a bill page is navigated to
   React.useEffect(() => {
+    setErrorMsg("")
+    setLoading(true)
     getBillApi(match.params.sessionYear, match.params.printNo, { view: "with_refs_no_fulltext" })
       .then((res) => {
         setBill(res.result)
         setStateFromSearchParams("Summary", res.result.activeVersion)
         setHeaderText(headerTextForBill(res.result))
-        setLoading(false)
       })
+      .catch((err) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }, [ match.params.sessionYear, match.params.printNo ])
 
   // Update tab labels and content whenever bill or selected amd change.
@@ -89,6 +94,14 @@ export default function Bill({ setHeaderText }) {
 
   if (loading) {
     return (<LoadingIndicator></LoadingIndicator>)
+  }
+
+  if (!loading && errorMsg) {
+    return (
+      <div className="p-6">
+        <ErrorMessage>{errorMsg}</ErrorMessage>
+      </div>
+    )
   }
 
   return (
