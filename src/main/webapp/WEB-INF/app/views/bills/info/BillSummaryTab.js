@@ -27,7 +27,7 @@ function SameAs({ bill, selectedAmd }) {
       </header>
       <div className="mx-2">
         {bill.amendments.items[selectedAmd].sameAs.items.map((sameAs) => {
-            return <BillListingQueried bill={sameAs} key={sameAs.basePrintNo} />
+            return <BillListingQueried billInfo={sameAs} key={sameAs.basePrintNo} />
           }
         )}
       </div>
@@ -121,7 +121,7 @@ function PreviousVersions({ bill }) {
       </header>
       <div className="mx-2">
         {bill.previousVersions.items.map((sameAs) => {
-            return <BillListingQueried bill={sameAs} key={sameAs.basePrintNo} />
+            return <BillListingQueried billInfo={sameAs} key={sameAs.basePrintNo} />
           }
         )}
       </div>
