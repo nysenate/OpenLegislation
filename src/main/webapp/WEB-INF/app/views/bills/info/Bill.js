@@ -8,7 +8,7 @@ import {
   Link,
   useHistory,
   useLocation,
-  useRouteMatch
+  useParams,
 } from "react-router-dom";
 import {
   FileDotted,
@@ -37,7 +37,7 @@ export default function Bill({ setHeaderText }) {
   const [ tabs, setTabs ] = React.useState([])
   const [ activeTab, setActiveTab ] = React.useState()
   const [ errorMsg, setErrorMsg ] = React.useState("")
-  const match = useRouteMatch()
+  const {sessionYear, printNo} = useParams()
   const location = useLocation()
   const history = useHistory()
 
@@ -45,7 +45,8 @@ export default function Bill({ setHeaderText }) {
   React.useEffect(() => {
     setErrorMsg("")
     setLoading(true)
-    getBillApi(match.params.sessionYear, match.params.printNo, { view: "with_refs_no_fulltext" })
+    setBill(undefined)
+    getBillApi(sessionYear, printNo, { view: "with_refs_no_fulltext" })
       .then((res) => {
         setBill(res.result)
         setStateFromSearchParams("Summary", res.result.activeVersion)
@@ -53,7 +54,7 @@ export default function Bill({ setHeaderText }) {
       })
       .catch((err) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
-  }, [ match.params.sessionYear, match.params.printNo ])
+  }, [ sessionYear, printNo ])
 
   // Update tab labels and content whenever bill or selected amd change.
   React.useEffect(() => {
@@ -210,9 +211,9 @@ const billInfoTabs = (bill, selectedAmd) => {
     {
       name: "Sponsors",
       quantity: undefined,
-      isDisabled: (bill.additionalSponsors.size
-        + bill.amendments.items[selectedAmd].coSponsors.size
-        + bill.amendments.items[selectedAmd].multiSponsors.size) === 0,
+      isDisabled: (bill.additionalSponsors?.size
+        + bill.amendments.items[selectedAmd]?.coSponsors.size
+        + bill.amendments.items[selectedAmd]?.multiSponsors.size) === 0,
       component: <BillSponsorsTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
@@ -223,7 +224,7 @@ const billInfoTabs = (bill, selectedAmd) => {
     },
     {
       name: "Memos",
-      quantity: (bill.amendments.items[selectedAmd].memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
+      quantity: (bill.amendments.items[selectedAmd]?.memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
       isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd].memo,
       component: <BillMemosTab bill={bill} selectedAmd={selectedAmd} />
     },
