@@ -58,6 +58,7 @@ export default function SpecificCalendar({ setHeaderText }) {
     setLoading(true)
     setResponse(null)
     setErrorMsg("")
+    setHeaderText(`Senate Calendar #${number}`)
     fetchCalendar(year, number)
       .then(res => setResponse(res))
       .catch((error) => setErrorMsg(error.message))
@@ -65,7 +66,7 @@ export default function SpecificCalendar({ setHeaderText }) {
   }
 
   return (
-    <div className="my-6">
+    <div className="mt-6 mb-3">
       {loading &&
         <LoadingIndicator />
       }

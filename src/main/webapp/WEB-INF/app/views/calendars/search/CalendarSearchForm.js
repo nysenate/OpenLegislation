@@ -47,7 +47,7 @@ export default function CalendarSearchForm({
   }
 
   return (<div>
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="mb-3">
       <div className="flex gap-x-6 gap-y-3 flex-wrap">
         <Select label="Year"
                 value={dirtyYear}
