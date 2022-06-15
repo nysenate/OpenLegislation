@@ -16,7 +16,7 @@ export default function Subscriptions({ apiKey }) {
         setChangesNotif(data.includes(BREAKING_CHANGES))
         setNewFeaturesNotif(data.includes(NEW_FEATURES))
       })
-  }, [apiKey]);
+  }, [ apiKey ]);
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -37,11 +37,11 @@ export default function Subscriptions({ apiKey }) {
         <div>Check all email subscriptions you would like to receive:</div>
         <div>
           <Checkbox name={BREAKING_CHANGES} checked={changesNotif}
-                    setChecked={setChangesNotif}/>
+                    setChecked={setChangesNotif} />
         </div>
         <div>
           <Checkbox name={NEW_FEATURES} checked={newFeaturesNotif}
-                    setChecked={setNewFeaturesNotif}/>
+                    setChecked={setNewFeaturesNotif} />
         </div>
         <button className="btn btn--primary my-3 w-55" type="submit">Update subscriptions</button>
         <div>{message}</div>
@@ -56,7 +56,7 @@ function Checkbox({ name, checked, setChecked }) {
       <input name={name}
              type="checkbox"
              checked={checked}
-             onChange={() => setChecked(!checked)}/>
+             onChange={() => setChecked(!checked)} />
       {capitalizePhrase(name.replaceAll("_", " "))}
     </label>
   );

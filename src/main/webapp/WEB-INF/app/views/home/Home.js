@@ -48,7 +48,7 @@ export default function Home() {
           <NavMenu isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} />
         </div>
         {isMenuOpen &&
-          <div className="page-mask" onClick={() => setMenuOpen(false)}/>
+          <div className="page-mask" onClick={() => setMenuOpen(false)} />
         }
 
         <div className="pl-0 2xl:pl-80 pt-16 md:min-h-screen">
@@ -69,7 +69,7 @@ export default function Home() {
               <Transcripts setHeaderText={setHeaderText} />
             </PrivateRoute>
             <Route path="/subscriptions">
-              <ApiUserInfo setHeaderText={setHeaderText}/>
+              <ApiUserInfo setHeaderText={setHeaderText} />
             </Route>
             <Route path="/admin">
               <Admin setHeaderText={setHeaderText} />
