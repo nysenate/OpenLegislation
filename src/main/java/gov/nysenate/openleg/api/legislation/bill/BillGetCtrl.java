@@ -42,15 +42,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class BillGetCtrl extends BaseCtrl
-{
+public class BillGetCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
 
     @Autowired protected BillDataService billData;
     @Autowired protected BillSearchService billSearch;
 
-    protected enum BillViewLevel
-    {
+    protected enum BillViewLevel {
         DEFAULT,                // Basic bill view (models the BillView class)
         INFO,                   // Bill info view
         NO_FULLTEXT,            // Basic bill view with full text stripped
@@ -86,7 +84,7 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: List of BillInfoView or BillView
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
                                  @RequestParam(defaultValue = "publishedDateTime:asc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
@@ -123,26 +121,19 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         BillViewLevel level = BillViewLevel.getValue(request.getParameter("view"));
         ViewObject viewObject;
         LinkedHashSet<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         switch (level) {
-            case INFO:
-                viewObject = new BillInfoView(billData.getBillInfo(baseBillId));
-                break;
-            case WITH_REFS:
-                viewObject = new DetailBillView(billData.getBill(baseBillId), billData, fullTextFormats);
-                break;
-            case NO_FULLTEXT:
-                viewObject = new BillView(getFullTextStrippedBill(baseBillId), new HashSet<>());
-                break;
-            case WITH_REFS_NO_FULLTEXT:
-                viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData, new HashSet<>());
-                break;
-            case ONLY_FULLTEXT: {
+            case INFO -> viewObject = new BillInfoView(billData.getBillInfo(baseBillId));
+            case WITH_REFS -> viewObject = new DetailBillView(billData.getBill(baseBillId), billData, fullTextFormats);
+            case NO_FULLTEXT -> viewObject = new BillView(getFullTextStrippedBill(baseBillId), new HashSet<>());
+            case WITH_REFS_NO_FULLTEXT ->
+                    viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData, new HashSet<>());
+            case ONLY_FULLTEXT -> {
                 Version amdVersion = Version.ORIGINAL;
                 if (request.getParameter("version") != null) {
                     amdVersion = parseVersion(request.getParameter("version"), "version");
@@ -154,9 +145,8 @@ public class BillGetCtrl extends BaseCtrl
                 String fullText = bill.getAmendment(amdVersion).getFullText(firstFormat);
                 viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(),
                         fullText, firstFormat);
-                break;
             }
-            default: viewObject = new BillView(billData.getBill(baseBillId), fullTextFormats);
+            default -> viewObject = new BillView(billData.getBill(baseBillId), fullTextFormats);
         }
         return new ViewObjectResponse<>(viewObject, "Data for bill " + baseBillId);
     }
@@ -181,7 +171,7 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}.pdf")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}.pdf")
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
@@ -197,32 +187,28 @@ public class BillGetCtrl extends BaseCtrl
      *
      * TODO: Handle case with default amendment. Or rather make it so that it's possible to diff any two bills.
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/diff/{version1}/{version2}")
-    public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo, @PathVariable String version1,
-                            @PathVariable String version2) {
-        StringDiffer stringDiffer = new StringDiffer();
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/diff/{version1}/{version2}")
+    public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo,
+                                    @PathVariable String version1, @PathVariable String version2) {
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(baseBillId);
         BillAmendment amend1 = bill.getAmendment(parseVersion(version1, "version1"));
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
         String fullText1 = BillTextUtils.getPlainTextWithoutLineNumbers(amend1);
         String fullText2 = BillTextUtils.getPlainTextWithoutLineNumbers(amend2);
-        LinkedList<Diff> diffs = stringDiffer.diffMain(fullText1, fullText2);
-        stringDiffer.diff_cleanupEfficiency(diffs);
-        stringDiffer.diff_cleanupSemantic(diffs);
-        StringDiffer.diff_cleanupMerge(diffs);
-        String prettyHtml = StringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
-        return new ViewObjectResponse<>(
-            new BillDiffView(
-                new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),
-                    prettyHtml));
+        LinkedList<Diff> diffs = StringDiffer.diffMain(fullText1, fullText2);
+        StringDiffer.cleanupEfficiency(diffs);
+        StringDiffer.cleanupSemantic(diffs);
+        StringDiffer.cleanupMerge(diffs);
+        String prettyHtml = StringDiffer.prettyHtml(diffs).replace("&para;", " ");
+        return new ViewObjectResponse<>(new BillDiffView(new BaseBillIdView(baseBillId),
+                amend1.getVersion().toString(), amend2.getVersion().toString(), prettyHtml));
     }
 
     @RequestMapping(value = "/status-types")
     public BaseResponse getBillStatusTypes() {
         return ListViewResponse.of(Arrays.stream(BillStatusType.values())
-                .map(BillStatusTypeView::new)
-                .collect(Collectors.toList()));
+                .map(BillStatusTypeView::new).toList());
     }
 
 
