@@ -68,7 +68,7 @@ const reducer = function (state, action) {
 const initState = {
   sectionMap: new Map(),
   checkboxes: new Map(),
-  pageParams: new PageParams(1, 8),
+  pageParams: new PageParams(1, 6),
   bills: [],
   total: 0, // Total count of bills matching selected supplementals and text filter.
   filter: "",
@@ -132,6 +132,6 @@ const filterBills = (suppMap, checkboxes, filter, pageParams) => {
   }
   const total = bills.length
   // Get only the bills for the current page.
-  bills = bills.slice(pageParams.offset - 1, pageParams.offset + pageParams.limit)
+  bills = bills.slice(pageParams.offset - 1, pageParams.offset - 1 + pageParams.limit)
   return [ bills, total ]
 }
