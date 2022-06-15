@@ -36,12 +36,13 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *                                      to be subscribed to.
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public void updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
+    public BaseResponse updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for (String sub : body) {
             subscriptions.add(getEnumParameter("subscriptions", sub, ApiUserSubscriptionType.class));
         }
         apiUserService.setSubscriptions(key, subscriptions);
+        return new SimpleResponse(true, "Successfully updated subscriptions", "emailSubscriptions");
     }
 
     /**
@@ -81,8 +82,9 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *  Request body: body (string) - The new email the user would like to use
      */
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
-    public void updateEmail(@RequestParam String key, @RequestBody String body) {
+    public BaseResponse updateEmail(@RequestParam String key, @RequestBody String body) {
         apiUserService.updateEmail(key, body);
+        return new SimpleResponse(true, "Successfully update email", "updateEmail");
     }
 
     /**
