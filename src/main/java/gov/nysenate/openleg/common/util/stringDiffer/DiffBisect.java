@@ -2,10 +2,11 @@ package gov.nysenate.openleg.common.util.stringDiffer;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import static gov.nysenate.openleg.common.util.stringDiffer.Operation.DELETE;
 import static gov.nysenate.openleg.common.util.stringDiffer.Operation.INSERT;
-import static gov.nysenate.openleg.common.util.stringDiffer.StringDiffer.diffBisectSplit;
+import static gov.nysenate.openleg.common.util.stringDiffer.StringDiffer.internalDiffMain;
 
 public class DiffBisect {
     private final long deadline;
@@ -101,6 +102,27 @@ public class DiffBisect {
                 }
             }
         }
+    }
+
+    /**
+     * Given the location of the 'middle snake', split the diff in two parts
+     * and recurse.
+     * @param text1 Old string to be diffed.
+     * @param text2 New string to be diffed.
+     * @param x Index of split point in text1.
+     * @param y Index of split point in text2.
+     * @param deadline Time at which to bail if not yet complete.
+     * @return LinkedList of Diff objects.
+     */
+    private static LinkedList<Diff> diffBisectSplit(String text1, String text2,
+                                              int x, int y, long deadline) {
+        // Compute both diffs serially.
+        LinkedList<Diff> diffs = internalDiffMain(text1.substring(0, x), text2.substring(0, y),
+                false, deadline);
+        List<Diff> diffsb = internalDiffMain(text1.substring(x), text2.substring(y),
+                false, deadline);
+        diffs.addAll(diffsb);
+        return diffs;
     }
 
     private static boolean hasValue(int[] ar, int index) {

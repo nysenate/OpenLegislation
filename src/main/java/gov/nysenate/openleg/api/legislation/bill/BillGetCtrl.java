@@ -31,7 +31,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
@@ -196,10 +196,7 @@ public class BillGetCtrl extends BaseCtrl {
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
         String fullText1 = BillTextUtils.getPlainTextWithoutLineNumbers(amend1);
         String fullText2 = BillTextUtils.getPlainTextWithoutLineNumbers(amend2);
-        LinkedList<Diff> diffs = StringDiffer.diffMain(fullText1, fullText2);
-        StringDiffer.cleanupEfficiency(diffs);
-        StringDiffer.cleanupSemantic(diffs);
-        StringDiffer.cleanupMerge(diffs);
+        List<Diff> diffs = StringDiffer.getCleanedDiffs(fullText1, fullText2);
         String prettyHtml = StringDiffer.prettyHtml(diffs).replace("&para;", " ");
         return new ViewObjectResponse<>(new BillDiffView(new BaseBillIdView(baseBillId),
                 amend1.getVersion().toString(), amend2.getVersion().toString(), prettyHtml));

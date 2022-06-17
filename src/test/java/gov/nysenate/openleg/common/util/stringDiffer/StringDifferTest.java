@@ -402,45 +402,45 @@ public class StringDifferTest {
      public void testDiffMain() {
         // Perform a trivial diff.
         List<Diff> diffs = diffList();
-        assertEquals("diffMain: Null case.", diffs, diffMain("", "", false));
+        assertEquals("Null case.", diffs, diffMain("", "", false));
 
         diffs = diffList(new Diff(EQUAL, "abc"));
-        assertEquals("diffMain: Equality.", diffs, diffMain("abc", "abc", false));
+        assertEquals("Equality.", diffs, diffMain("abc", "abc", false));
 
         diffs = diffList(new Diff(EQUAL, "ab"), new Diff(INSERT, "123"), new Diff(EQUAL, "c"));
-        assertEquals("diffMain: Simple insertion.", diffs, diffMain("abc", "ab123c", false));
+        assertEquals("Simple insertion.", diffs, diffMain("abc", "ab123c", false));
 
         diffs = diffList(new Diff(EQUAL, "a"), new Diff(DELETE, "123"), new Diff(EQUAL, "bc"));
-        assertEquals("diffMain: Simple deletion.", diffs, diffMain("a123bc", "abc", false));
+        assertEquals("Simple deletion.", diffs, diffMain("a123bc", "abc", false));
 
         diffs = diffList(new Diff(EQUAL, "a"), new Diff(INSERT, "123"), new Diff(EQUAL, "b"), new Diff(INSERT, "456"), new Diff(EQUAL, "c"));
-        assertEquals("diffMain: Two insertions.", diffs, diffMain("abc", "a123b456c", false));
+        assertEquals("Two insertions.", diffs, diffMain("abc", "a123b456c", false));
 
         diffs = diffList(new Diff(EQUAL, "a"), new Diff(DELETE, "123"), new Diff(EQUAL, "b"), new Diff(DELETE, "456"), new Diff(EQUAL, "c"));
-        assertEquals("diffMain: Two deletions.", diffs, diffMain("a123b456c", "abc", false));
+        assertEquals("Two deletions.", diffs, diffMain("a123b456c", "abc", false));
 
         // Perform a real diff.
         // Switch off the timeout.
         diffs = diffList(new Diff(DELETE, "a"), new Diff(INSERT, "b"));
-        assertEquals("diffMain: Simple case #1.", diffs, diffMain("a", "b", false, 0));
+        assertEquals("Simple case #1.", diffs, diffMain("a", "b", false, 0));
 
         diffs = diffList(new Diff(DELETE, "Apple"), new Diff(INSERT, "Banana"), new Diff(EQUAL, "s are a"), new Diff(INSERT, "lso"), new Diff(EQUAL, " fruit."));
-        assertEquals("diffMain: Simple case #2.", diffs, diffMain("Apples are a fruit.", "Bananas are also fruit.", false, 0));
+        assertEquals("Simple case #2.", diffs, diffMain("Apples are a fruit.", "Bananas are also fruit.", false, 0));
 
         diffs = diffList(new Diff(DELETE, "a"), new Diff(INSERT, "\u0680"), new Diff(EQUAL, "x"), new Diff(DELETE, "\t"), new Diff(INSERT, "\000"));
-        assertEquals("diffMain: Simple case #3.", diffs, diffMain("ax\t", "\u0680x\000", false, 0));
+        assertEquals("Simple case #3.", diffs, diffMain("ax\t", "\u0680x\000", false, 0));
 
         diffs = diffList(new Diff(DELETE, "1"), new Diff(EQUAL, "a"), new Diff(DELETE, "y"), new Diff(EQUAL, "b"), new Diff(DELETE, "2"), new Diff(INSERT, "xab"));
-        assertEquals("diffMain: Overlap #1.", diffs, diffMain("1ayb2", "abxab", false, 0));
+        assertEquals("Overlap #1.", diffs, diffMain("1ayb2", "abxab", false, 0));
 
         diffs = diffList(new Diff(INSERT, "xaxcx"), new Diff(EQUAL, "abc"), new Diff(DELETE, "y"));
-        assertEquals("diffMain: Overlap #2.", diffs, diffMain("abcy", "xaxcxabc", false, 0));
+        assertEquals("Overlap #2.", diffs, diffMain("abcy", "xaxcxabc", false, 0));
 
         diffs = diffList(new Diff(DELETE, "ABCD"), new Diff(EQUAL, "a"), new Diff(DELETE, "="), new Diff(INSERT, "-"), new Diff(EQUAL, "bcd"), new Diff(DELETE, "="), new Diff(INSERT, "-"), new Diff(EQUAL, "efghijklmnopqrs"), new Diff(DELETE, "EFGHIJKLMNOefg"));
-        assertEquals("diffMain: Overlap #3.", diffs, diffMain("ABCDa=bcd=efghijklmnopqrsEFGHIJKLMNOefg", "a-bcd-efghijklmnopqrs", false, 0));
+        assertEquals("Overlap #3.", diffs, diffMain("ABCDa=bcd=efghijklmnopqrsEFGHIJKLMNOefg", "a-bcd-efghijklmnopqrs", false, 0));
 
         diffs = diffList(new Diff(INSERT, " "), new Diff(EQUAL, "a"), new Diff(INSERT, "nd"), new Diff(EQUAL, " [[Pennsylvania]]"), new Diff(DELETE, " and [[New"));
-        assertEquals("diffMain: Large equality.", diffs, diffMain("a [[Pennsylvania]] and [[New", " and [[Pennsylvania]]", false, 0));
+        assertEquals("Large equality.", diffs, diffMain("a [[Pennsylvania]] and [[New", " and [[Pennsylvania]]", false, 0));
 
         // Long Strings ensure a timeout.
         String a = "`Twas brillig, and the slithy toves\nDid gyre and gimble in the wabe:\nAll mimsy were the borogoves,\nAnd the mome raths outgrabe.\n".repeat(10);
@@ -477,7 +477,7 @@ public class StringDifferTest {
 
         // Test null inputs.
         try {
-            diffMain(null, null);
+            getCleanedDiffs(null, null);
             fail("Null inputs.");
         } catch (IllegalArgumentException ignored) {
             // Error expected.
