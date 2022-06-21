@@ -1,11 +1,31 @@
+/*
+ * Diff Match and Patch
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package gov.nysenate.openleg.common.util.stringDiffer;
 
+import java.util.Objects;
+
 /**
- * Class representing one diff operation.
+ * Class representing one diff operation. Split out and simplified from the original version.
  */
 public class Diff {
-    public Operation operation;
-    public String text;
+    protected Operation operation;
+    protected String text;
 
     /**
      * Constructor.  Initializes the diff with the provided values.
@@ -23,21 +43,7 @@ public class Diff {
      * @return text version.
      */
     public String toString() {
-        String prettyText = this.text.replace('\n', '\u00b6');
-        return "Diff(" + this.operation + ",\"" + prettyText + "\")";
-    }
-
-    /**
-     * Create a numeric hash value for a Diff.
-     * This function is not used by DMP.
-     * @return Hash value.
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = (operation == null) ? 0 : operation.hashCode();
-        result += prime * ((text == null) ? 0 : text.hashCode());
-        return result;
+        return "Diff(" + operation + ",\"" + text.replace('\n', '\u00b6') + "\")";
     }
 
     /**
@@ -50,18 +56,9 @@ public class Diff {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof Diff other)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Diff other = (Diff) obj;
-        if (operation != other.operation) {
-            return false;
-        }
-        if (text == null) {
-            return other.text == null;
-        } else return text.equals(other.text);
+        return operation == other.operation && Objects.equals(text, other.text);
     }
 }

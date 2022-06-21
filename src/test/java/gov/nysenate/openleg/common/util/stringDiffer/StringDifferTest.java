@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 
+
 package gov.nysenate.openleg.common.util.stringDiffer;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,35 +32,11 @@ import static gov.nysenate.openleg.common.util.stringDiffer.Operation.*;
 import static gov.nysenate.openleg.common.util.stringDiffer.StringDiffer.*;
 import static org.junit.Assert.*;
 
+/**
+ * Split out and modified from the original version.
+ */
 @Category(UnitTest.class)
 public class StringDifferTest {
-   @Test
-   public void testDiffCommonPrefix() {
-      assertEquals("Null case.", 0, commonPrefixLength("abc", "xyz"));
-      assertEquals("Non-null case.", 4, commonPrefixLength("1234abcdef", "1234xyz"));
-      assertEquals("Whole case.", 4, commonPrefixLength("1234", "1234xyz"));
-   }
-
-   @Test
-   public void testDiffCommonSuffix() {
-      assertEquals("Null case.", 0, commonSuffixLength("abc", "xyz"));
-      assertEquals("Non-null case.", 4, commonSuffixLength("abcdef1234", "xyz1234"));
-      assertEquals("Whole case.", 4, commonSuffixLength("1234", "xyz1234"));
-   }
-
-   @Test
-   public void testDiffCommonOverlap() {
-      // Detect any suffix/prefix overlap.
-      assertEquals("Null case.", 0, commonOverlapLength("", "abcd"));
-      assertEquals("Whole case.", 3, commonOverlapLength("abc", "abcd"));
-      assertEquals("No overlap.", 0, commonOverlapLength("123456", "abcd"));
-      assertEquals("Overlap.", 3, commonOverlapLength("123456xxx", "xxxabcd"));
-
-      // Some overly clever languages (C#) may treat ligatures as equal to their
-      // component letters.  E.g. U+FB01 == 'fi'
-      assertEquals("Unicode.", 0, commonOverlapLength("fi", "\ufb01i"));
-   }
-
    @Test
    public void testDiffHalfmatch() {
       // Detect a halfmatch.
@@ -96,33 +74,23 @@ public class StringDifferTest {
 
    @Test
    public void testDiffLinesToChars() {
-      List<String> tmpVector = new ArrayList<>();
-      tmpVector.add("");
-      tmpVector.add("alpha\n");
-      tmpVector.add("beta\n");
+      List<String> tmpVector = List.of("", "alpha\n", "beta\n");
       assertEquals("Shared lines.",
               new LinesToCharsResult("\u0001\u0002\u0001", "\u0002\u0001\u0002", tmpVector),
               linesToChars("alpha\nbeta\nalpha\n", "beta\nalpha\nbeta\n"));
 
-      tmpVector.clear();
-      tmpVector.add("");
-      tmpVector.add("alpha\r\n");
-      tmpVector.add("beta\r\n");
-      tmpVector.add("\r\n");
+      tmpVector = List.of("", "alpha\r\n", "beta\r\n", "\r\n");
       assertEquals("Empty string and blank lines.",
               new LinesToCharsResult("", "\u0001\u0002\u0003\u0003", tmpVector),
               linesToChars("", "alpha\r\nbeta\r\n\r\n\r\n"));
 
-      tmpVector.clear();
-      tmpVector.add("");
-      tmpVector.add("a");
-      tmpVector.add("b");
+      tmpVector = List.of("", "a", "b");
       assertEquals(new LinesToCharsResult("\u0001", "\u0002", tmpVector),
               linesToChars("a", "b"));
 
       // More than 256 to reveal any 8-bit limitations.
       int n = 300;
-      tmpVector.clear();
+      tmpVector = new ArrayList<>();
       StringBuilder lineList = new StringBuilder();
       StringBuilder charList = new StringBuilder();
       for (int i = 1; i < n + 1; i++) {
@@ -131,13 +99,11 @@ public class StringDifferTest {
          charList.append((char) i);
       }
       assertEquals("Test initialization fail #1.", n, tmpVector.size());
-      String lines = lineList.toString();
-      String chars = charList.toString();
-      assertEquals("Test initialization fail #2.", n, chars.length());
+      assertEquals("Test initialization fail #2.", n, charList.length());
       tmpVector.add(0, "");
       assertEquals("More than 256.",
-              new LinesToCharsResult(chars, "", tmpVector),
-              linesToChars(lines, ""));
+              new LinesToCharsResult(charList.toString(), "", tmpVector),
+              linesToChars(lineList.toString(), ""));
    }
 
      @Test
@@ -186,194 +152,6 @@ public class StringDifferTest {
         diffs = diffList(new Diff(INSERT, results.chars1()));
         charsToLines(diffs, results.lineArray());
         assertEquals("More than 65536.", chars, diffs.getFirst().text);
-    }
-
-     @Test
-     public void testDiffCleanupMerge() {
-        // Cleanup a messy diff.
-        diffCleanupMergeCompare("Null case.", diffList());
-        LinkedList<Diff> diffs;
-
-        diffCleanupMergeCompare("No change case.",
-                diffList(new Diff(EQUAL, "a"), new Diff(DELETE, "b"), new Diff(INSERT, "c")),
-                new Diff(EQUAL, "a"), new Diff(DELETE, "b"), new Diff(INSERT, "c"));
-
-        diffCleanupMergeCompare("Merge equalities.",
-                diffList(new Diff(EQUAL, "a"), new Diff(EQUAL, "b"), new Diff(EQUAL, "c")),
-                new Diff(EQUAL, "abc"));
-
-        diffCleanupMergeCompare("Merge deletions.",
-                diffList(new Diff(DELETE, "a"), new Diff(DELETE, "b"), new Diff(DELETE, "c")),
-                new Diff(DELETE, "abc"));
-
-        diffCleanupMergeCompare("Merge insertions.",
-                diffList(new Diff(INSERT, "a"), new Diff(INSERT, "b"), new Diff(INSERT, "c")),
-                new Diff(INSERT, "abc"));
-
-        diffCleanupMergeCompare("Merge interweave.",
-                diffList(new Diff(DELETE, "a"), new Diff(INSERT, "b"), new Diff(DELETE, "c"),
-                        new Diff(INSERT, "d"), new Diff(EQUAL, "e"), new Diff(EQUAL, "f")),
-                new Diff(DELETE, "ac"), new Diff(INSERT, "bd"), new Diff(EQUAL, "ef"));
-
-        diffCleanupMergeCompare("Prefix and suffix detection.",
-                diffList(new Diff(DELETE, "a"), new Diff(INSERT, "abc"), new Diff(DELETE, "dc")),
-                new Diff(EQUAL, "a"), new Diff(DELETE, "d"), new Diff(INSERT, "b"),
-                new Diff(EQUAL, "c"));
-
-        diffCleanupMergeCompare("Prefix and suffix detection with equalities.",
-                diffList(new Diff(EQUAL, "x"), new Diff(DELETE, "a"), new Diff(INSERT, "abc"),
-                        new Diff(DELETE, "dc"), new Diff(EQUAL, "y")),
-                new Diff(EQUAL, "xa"), new Diff(DELETE, "d"), new Diff(INSERT, "b"), new Diff(EQUAL, "cy"));
-
-
-        diffs = diffList(new Diff(EQUAL, "a"), new Diff(INSERT, "ba"), new Diff(EQUAL, "c"));
-        cleanupMerge(diffs);
-        assertEquals("Slide edit left.", diffList(new Diff(INSERT, "ab"), new Diff(EQUAL, "ac")),
-                diffs);
-
-        diffs = diffList(new Diff(EQUAL, "c"), new Diff(INSERT, "ab"), new Diff(EQUAL, "a"));
-        cleanupMerge(diffs);
-        assertEquals("Slide edit right.", diffList(new Diff(EQUAL, "ca"), new Diff(INSERT, "ba")),
-                diffs);
-
-        diffs = diffList(new Diff(EQUAL, "a"), new Diff(DELETE, "b"), new Diff(EQUAL, "c"),
-                new Diff(DELETE, "ac"), new Diff(EQUAL, "x"));
-        cleanupMerge(diffs);
-        assertEquals("Slide edit left recursive.", diffList(new Diff(DELETE, "abc"),
-                new Diff(EQUAL, "acx")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "x"), new Diff(DELETE, "ca"), new Diff(EQUAL, "c"),
-                new Diff(DELETE, "b"), new Diff(EQUAL, "a"));
-        cleanupMerge(diffs);
-        assertEquals("Slide edit right recursive.", diffList(new Diff(EQUAL, "xca"),
-                new Diff(DELETE, "cba")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "b"), new Diff(INSERT, "ab"), new Diff(EQUAL, "c"));
-        cleanupMerge(diffs);
-        assertEquals("Empty merge.", diffList(new Diff(INSERT, "a"), new Diff(EQUAL, "bc")),
-                diffs);
-
-        diffs = diffList(new Diff(EQUAL, ""), new Diff(INSERT, "a"), new Diff(EQUAL, "b"));
-        cleanupMerge(diffs);
-        assertEquals("Empty equality.", diffList(new Diff(INSERT, "a"), new Diff(EQUAL, "b")),
-                diffs);
-    }
-
-    private static void diffCleanupMergeCompare(String message, LinkedList<Diff> input, Diff... expected) {
-        cleanupMerge(input);
-        assertEquals(message, diffList(expected), input);
-    }
-
-     @Test
-     public void testDiffCleanupSemanticLossless() {
-        // Slide diffs to match logical boundaries.
-        List<Diff> diffs = diffList();
-        cleanupSemanticLossless(diffs);
-        assertEquals("Null case.", diffList(), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "AAA\r\n\r\nBBB"), new Diff(INSERT, "\r\nDDD\r\n\r\nBBB"), new Diff(EQUAL, "\r\nEEE"));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Blank lines.", diffList(new Diff(EQUAL, "AAA\r\n\r\n"), new Diff(INSERT, "BBB\r\nDDD\r\n\r\n"), new Diff(EQUAL, "BBB\r\nEEE")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "AAA\r\nBBB"), new Diff(INSERT, " DDD\r\nBBB"), new Diff(EQUAL, " EEE"));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Line boundaries.", diffList(new Diff(EQUAL, "AAA\r\n"), new Diff(INSERT, "BBB DDD\r\n"), new Diff(EQUAL, "BBB EEE")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "The c"), new Diff(INSERT, "ow and the c"), new Diff(EQUAL, "at."));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Word boundaries.", diffList(new Diff(EQUAL, "The "), new Diff(INSERT, "cow and the "), new Diff(EQUAL, "cat.")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "The-c"), new Diff(INSERT, "ow-and-the-c"), new Diff(EQUAL, "at."));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Alphanumeric boundaries.", diffList(new Diff(EQUAL, "The-"), new Diff(INSERT, "cow-and-the-"), new Diff(EQUAL, "cat.")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "a"), new Diff(DELETE, "a"), new Diff(EQUAL, "ax"));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Hitting the start.", diffList(new Diff(DELETE, "a"), new Diff(EQUAL, "aax")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "xa"), new Diff(DELETE, "a"), new Diff(EQUAL, "a"));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Hitting the end.", diffList(new Diff(EQUAL, "xaa"), new Diff(DELETE, "a")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "The xxx. The "), new Diff(INSERT, "zzz. The "), new Diff(EQUAL, "yyy."));
-        cleanupSemanticLossless(diffs);
-        assertEquals("Sentence boundaries.", diffList(new Diff(EQUAL, "The xxx."), new Diff(INSERT, " The zzz."), new Diff(EQUAL, " The yyy.")), diffs);
-    }
-
-     @Test
-     public void testDiffCleanupSemantic() {
-        // Cleanup semantically trivial equalities.
-        LinkedList<Diff> diffs = diffList();
-        cleanupSemantic(diffs);
-        assertEquals("Null case.", diffList(), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "cd"), new Diff(EQUAL, "12"), new Diff(DELETE, "e"));
-        cleanupSemantic(diffs);
-        assertEquals("No elimination #1.", diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "cd"), new Diff(EQUAL, "12"), new Diff(DELETE, "e")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "abc"), new Diff(INSERT, "ABC"), new Diff(EQUAL, "1234"), new Diff(DELETE, "wxyz"));
-        cleanupSemantic(diffs);
-        assertEquals("No elimination #2.", diffList(new Diff(DELETE, "abc"), new Diff(INSERT, "ABC"), new Diff(EQUAL, "1234"), new Diff(DELETE, "wxyz")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "a"), new Diff(EQUAL, "b"), new Diff(DELETE, "c"));
-        cleanupSemantic(diffs);
-        assertEquals("Simple elimination.", diffList(new Diff(DELETE, "abc"), new Diff(INSERT, "b")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(EQUAL, "cd"), new Diff(DELETE, "e"), new Diff(EQUAL, "f"), new Diff(INSERT, "g"));
-        cleanupSemantic(diffs);
-        assertEquals("Backpass elimination.", diffList(new Diff(DELETE, "abcdef"), new Diff(INSERT, "cdfg")), diffs);
-
-        diffs = diffList(new Diff(INSERT, "1"), new Diff(EQUAL, "A"), new Diff(DELETE, "B"), new Diff(INSERT, "2"), new Diff(EQUAL, "_"), new Diff(INSERT, "1"), new Diff(EQUAL, "A"), new Diff(DELETE, "B"), new Diff(INSERT, "2"));
-        cleanupSemantic(diffs);
-        assertEquals("Multiple elimination.", diffList(new Diff(DELETE, "AB_AB"), new Diff(INSERT, "1A2_1A2")), diffs);
-
-        diffs = diffList(new Diff(EQUAL, "The c"), new Diff(DELETE, "ow and the c"), new Diff(EQUAL, "at."));
-        cleanupSemantic(diffs);
-        assertEquals("Word boundaries.", diffList(new Diff(EQUAL, "The "), new Diff(DELETE, "cow and the "), new Diff(EQUAL, "cat.")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "abcxx"), new Diff(INSERT, "xxdef"));
-        cleanupSemantic(diffs);
-        assertEquals("No overlap elimination.", diffList(new Diff(DELETE, "abcxx"), new Diff(INSERT, "xxdef")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "abcxxx"), new Diff(INSERT, "xxxdef"));
-        cleanupSemantic(diffs);
-        assertEquals("Overlap elimination.", diffList(new Diff(DELETE, "abc"), new Diff(EQUAL, "xxx"), new Diff(INSERT, "def")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "xxxabc"), new Diff(INSERT, "defxxx"));
-        cleanupSemantic(diffs);
-        assertEquals("Reverse overlap elimination.", diffList(new Diff(INSERT, "def"), new Diff(EQUAL, "xxx"), new Diff(DELETE, "abc")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "abcd1212"), new Diff(INSERT, "1212efghi"), new Diff(EQUAL, "----"), new Diff(DELETE, "A3"), new Diff(INSERT, "3BC"));
-        cleanupSemantic(diffs);
-        assertEquals("Two overlap eliminations.", diffList(new Diff(DELETE, "abcd"), new Diff(EQUAL, "1212"), new Diff(INSERT, "efghi"), new Diff(EQUAL, "----"), new Diff(DELETE, "A"), new Diff(EQUAL, "3"), new Diff(INSERT, "BC")), diffs);
-     }
-
-     @Test
-     public void testDiffCleanupEfficiency() {
-        // Cleanup operationally trivial equalities.
-        LinkedList<Diff> diffs = diffList();
-        cleanupEfficiency(diffs);
-        assertEquals("cleanupEfficiency: Null case.", diffList(), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "12"), new Diff(EQUAL, "wxyz"), new Diff(DELETE, "cd"), new Diff(INSERT, "34"));
-        cleanupEfficiency(diffs);
-        assertEquals("cleanupEfficiency: No elimination.", diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "12"), new Diff(EQUAL, "wxyz"), new Diff(DELETE, "cd"), new Diff(INSERT, "34")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "12"), new Diff(EQUAL, "xyz"), new Diff(DELETE, "cd"), new Diff(INSERT, "34"));
-        cleanupEfficiency(diffs);
-        assertEquals("cleanupEfficiency: Four-edit elimination.", diffList(new Diff(DELETE, "abxyzcd"), new Diff(INSERT, "12xyz34")), diffs);
-
-        diffs = diffList(new Diff(INSERT, "12"), new Diff(EQUAL, "x"), new Diff(DELETE, "cd"), new Diff(INSERT, "34"));
-        cleanupEfficiency(diffs);
-        assertEquals("cleanupEfficiency: Three-edit elimination.", diffList(new Diff(DELETE, "xcd"), new Diff(INSERT, "12x34")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "12"), new Diff(EQUAL, "xy"), new Diff(INSERT, "34"), new Diff(EQUAL, "z"), new Diff(DELETE, "cd"), new Diff(INSERT, "56"));
-        cleanupEfficiency(diffs);
-        assertEquals("cleanupEfficiency: Backpass elimination.", diffList(new Diff(DELETE, "abxyzcd"), new Diff(INSERT, "12xy34z56")), diffs);
-
-        diffs = diffList(new Diff(DELETE, "ab"), new Diff(INSERT, "12"), new Diff(EQUAL, "wxyz"), new Diff(DELETE, "cd"), new Diff(INSERT, "34"));
-        cleanupEfficiency(diffs, (short) 5);
-        assertEquals("cleanupEfficiency: High cost elimination.", diffList(new Diff(DELETE, "abwxyzcd"), new Diff(INSERT, "12wxyz34")), diffs);
     }
 
      @Test
@@ -459,14 +237,13 @@ public class StringDifferTest {
 
         // Test the linemode speedup.
         // Must be long to pass the 100 char cutoff.
-        final String nums = "1234567890";
-        final String letters = "abcdefghij";
-        List<String> numList = new ArrayList<>(13);
-        List<String> letterList = new ArrayList<>(13);
-        for (int i = 0; i < 13; i++) {
-            numList.add(nums);
-            letterList.add(letters);
-        }
+        int arrayLength = 13;
+        String[] numAr = new String[arrayLength];
+        Arrays.fill(numAr, "1234567890");
+        String[] lettersAr = new String[arrayLength];
+        Arrays.fill(lettersAr, "abcdefghij");
+        List<String> numList = List.of(numAr);
+        List<String> letterList = List.of(lettersAr);
         a = String.join("\n", numList);
         b = String.join("\n", letterList);
         assertEquals("Simple line-mode.", diffMain(a, b, true, 0), diffMain(a, b, false, 0));
@@ -474,14 +251,17 @@ public class StringDifferTest {
         a = String.join("", numList);
         b = String.join("", letterList);
         assertEquals("Single line-mode.", diffMain(a, b, true, 0), diffMain(a, b, false, 0));
+    }
 
-        // Test null inputs.
-        try {
-            getCleanedDiffs(null, null);
-            fail("Null inputs.");
-        } catch (IllegalArgumentException ignored) {
-            // Error expected.
-        }
+    @Test
+    public void getCleanedDiffsTest() {
+       try {
+          getCleanedDiffs(null, null);
+          fail("Null inputs.");
+       } catch (IllegalArgumentException ignored) {
+          // Error expected.
+       }
+       assertTrue(getCleanedDiffs("", "").isEmpty());
     }
 
     private static LinkedList<Diff> diffList(Diff... diffs) {

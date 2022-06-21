@@ -1,3 +1,21 @@
+/*
+ * Diff Match and Patch
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package gov.nysenate.openleg.common.util.stringDiffer;
 
 import java.util.Arrays;
@@ -8,6 +26,12 @@ import static gov.nysenate.openleg.common.util.stringDiffer.Operation.DELETE;
 import static gov.nysenate.openleg.common.util.stringDiffer.Operation.INSERT;
 import static gov.nysenate.openleg.common.util.stringDiffer.StringDiffer.internalDiffMain;
 
+/**
+ * Find the 'middle snake' of a diff, split the problem in two
+ * and return the recursively constructed diff.
+ * See Myers 1986 paper: An O(ND) Difference Algorithm and Its Variations.
+ * Split out and heavily modified from the original version.
+ */
 public class DiffBisect {
     private final long deadline;
     private final String text1;
@@ -22,6 +46,11 @@ public class DiffBisect {
     private final DiffBisectBoundaries frontBoundary = new DiffBisectBoundaries();
     private final DiffBisectBoundaries reverseBoundary = new DiffBisectBoundaries();
 
+    /**
+     * @param text1 Old string to be diffed.
+     * @param text2 New string to be diffed.
+     * @param deadline Time at which to bail if not yet complete.
+     */
     public DiffBisect(String text1, String text2, long deadline) {
         this.deadline = deadline;
         this.text1 = text1;
