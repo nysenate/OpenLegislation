@@ -2,7 +2,6 @@ package gov.nysenate.openleg.api.ui;
 
 import gov.nysenate.openleg.api.auth.AuthedUser;
 import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
@@ -11,7 +10,6 @@ import gov.nysenate.openleg.auth.model.ApiKeyLoginToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
