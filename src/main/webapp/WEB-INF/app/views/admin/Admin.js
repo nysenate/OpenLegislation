@@ -2,6 +2,7 @@ import React from 'react'
 import AdminLogin from "app/views/admin/AdminLogin";
 import {
   Link,
+  Redirect,
   Route,
   Switch
 } from "react-router-dom";
@@ -18,9 +19,11 @@ import ChangePassword from "app/views/admin/accounts/ChangePassword";
 import ManageAdminUsers from "app/views/admin/accounts/ManageAdminUsers";
 import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
 import BatchEmail from "app/views/admin/email/BatchEmail";
+import useAuth from "app/shared/useAuth";
 
 
 export default function Admin({ setHeaderText }) {
+  const auth = useAuth()
 
   return (
     <ContentContainer>
@@ -61,8 +64,14 @@ export default function Admin({ setHeaderText }) {
         <PrivateRoute path="/admin/index">
           <AdminDashboard setHeaderText={setHeaderText} />
         </PrivateRoute>
-        <Route path="/admin">
+        <Route path="/admin/login">
           <AdminLogin setHeaderText={setHeaderText} />
+        </Route>
+        <Route path="/admin">
+          {auth.isAuthed()
+            ? <Redirect to="/admin/index" />
+            : <Redirect to="/admin/login" />
+          }
         </Route>
       </Switch>
     </ContentContainer>
