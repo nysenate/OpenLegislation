@@ -225,7 +225,7 @@ const billInfoTabs = (bill, selectedAmd) => {
     {
       name: "Memos",
       quantity: (bill.amendments.items[selectedAmd]?.memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
-      isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd].memo,
+      isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd]?.memo,
       component: <BillMemosTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
