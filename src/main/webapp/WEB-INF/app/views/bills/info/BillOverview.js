@@ -13,7 +13,7 @@ export default function BillOverview({ bill }) {
   return (
     <div className="flex justify-start flex-wrap">
       <div className="flex items-center pr-8">
-        <MemberThumbnail member={bill.sponsor.member} />
+        <MemberThumbnail member={bill.sponsor?.member} />
         <SponsorInfo sponsor={bill.sponsor} />
       </div>
       {billStatusMessages(bill).map((s) =>
@@ -35,7 +35,10 @@ function billStatusMessages(bill) {
 }
 
 function SponsorInfo({ sponsor }) {
-  if (sponsor.budget) {
+  if (!sponsor) {
+    return null
+  }
+  else if (sponsor.budget) {
     return (
       <div>
         <h4 className="h4">Budget Bill</h4>
