@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.agenda;
 
-import gov.nysenate.openleg.spotchecks.scraping.LRSScraper;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.spotchecks.scraping.LRSScraper;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  */
 @Repository
 public class SenateAgnScraper extends LRSScraper {
-    private static final Logger logger = LogManager.getLogger(LRSScraper.class);
+    private static final Logger logger = LoggerFactory.getLogger(LRSScraper.class);
     private static final String senateAgendaLandingPage =
             "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
 

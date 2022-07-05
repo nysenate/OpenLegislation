@@ -1,23 +1,21 @@
 package gov.nysenate.openleg.processors.committee;
 
+import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.Committee;
 import gov.nysenate.openleg.legislation.committee.CommitteeMember;
 import gov.nysenate.openleg.legislation.committee.CommitteeMemberTitle;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -33,7 +31,7 @@ import java.util.List;
 @Service
 public class XmlSenCommProcessor extends AbstractLegDataProcessor
 {
-    private static final Logger logger = LogManager.getLogger(XmlSenCommProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlSenCommProcessor.class);
 
     private static final DateTimeFormatter meetTimeSDF = DateTimeFormatter.ofPattern("hh:mm a");
 

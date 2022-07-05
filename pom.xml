@@ -110,32 +110,31 @@
 
   <properties>
     <c3p0.version>0.9.5.5</c3p0.version>
-    <commons-cli.version>1.4</commons-cli.version>
-    <commons-csv.version>1.5</commons-csv.version>
+    <commons-cli.version>1.5.0</commons-cli.version>
+    <commons-csv.version>1.9.0</commons-csv.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <commons-lang.version>3.9</commons-lang.version>
-    <commons-text.version>1.8</commons-text.version>
-    <commons-validator.version>1.6</commons-validator.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
+    <commons-text.version>1.9</commons-text.version>
+    <commons-validator.version>1.7</commons-validator.version>
     <ehcache.version>3.9.9</ehcache.version>
     <elasticsearch.version>7.17.1</elasticsearch.version>
-    <flying-saucer.version>9.1.18</flying-saucer.version>
+    <flying-saucer.version>9.1.22</flying-saucer.version>
     <gson.version>2.9.0</gson.version>
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
-    <jackson.version>2.13.2</jackson.version>
-    <jackson-databind.version>2.13.2.2</jackson-databind.version>
+    <jackson.version>2.13.3</jackson.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
-    <log4j.version>2.17.1</log4j.version>
+    <log4j.version>2.17.2</log4j.version>
     <mail.version>1.6.2</mail.version>
-    <mockito.version>4.3.1</mockito.version>
-    <pdfbox.version>2.0.24</pdfbox.version>
+    <mockito.version>4.6.1</mockito.version>
+    <pdfbox.version>2.0.26</pdfbox.version>
     <postgres-jdbc.version>42.3.3</postgres-jdbc.version>
     <shiro.version>1.9.0</shiro.version>
-    <slf4j.version>1.7.28</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <spring.version>5.3.19</spring.version>
     <tomcat.servlet.version>8.5.75</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
@@ -303,7 +302,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -324,11 +323,6 @@
       <version>${woodstox.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${javax.xml.bind.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>

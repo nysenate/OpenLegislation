@@ -22,8 +22,8 @@
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.springframework.jdbc" level="warn"/>
         <Logger name="com.mchange.v2" level="warn"/>
-        <Logger name="logger.net.sf.ehcache" level="warn"/>
         <Logger name="org.elasticsearch.client.RestHighLevelClient" level="warn"/>
+        <Logger name="org.ehcache.core.EhcacheManager" level = "warn"/>
         <Root level="info">
             <AppenderRef ref="stdout"/>
         </Root>
