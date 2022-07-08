@@ -11,10 +11,7 @@ import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -26,8 +23,12 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class CacheCtrl extends BaseCtrl {
+    private final EventBus eventBus;
+
     @Autowired
-    private EventBus eventBus;
+    public CacheCtrl(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     @PostConstruct
     private void init() {
@@ -41,11 +42,12 @@ public class CacheCtrl extends BaseCtrl {
      * Gets stats for all memory caches: (GET) /api/3/admin/cache/
      */
     @RequiresPermissions("admin:cacheEdit")
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping(value = "")
     public BaseResponse getCacheStats() {
         List<CacheStatsView> views = new ArrayList<>();
-        for (var type : CacheType.values())
+        for (var type : CacheType.values()) {
             views.add(new CacheStatsView(type));
+        }
         return ListViewResponse.of(views);
     }
 
@@ -56,7 +58,7 @@ public class CacheCtrl extends BaseCtrl {
      * Get stats for a single cache: (GET) /api/3/admin/cache/{cacheType}
      */
     @RequiresPermissions("admin:cacheEdit")
-    @RequestMapping(value = "/{cacheType}", method = RequestMethod.GET)
+    @GetMapping(value = "/{cacheType}")
     public BaseResponse getSingleCacheStats(@PathVariable String cacheType) {
         var type = CacheType.valueOf(cacheType.toUpperCase());
         return new ViewObjectResponse<>(new CacheStatsView(type));
@@ -66,7 +68,7 @@ public class CacheCtrl extends BaseCtrl {
      * Cache Warming API
      * -----------------
      *
-     * This api can be used to clear out and pre-load a pre-determined subset of data into the cache
+     * This api can be used to clear out and preload a pre-determined subset of data into the cache
      * to boost performance of commonly used api calls.
      *
      * Warm memory caches: (PUT) /api/3/admin/cache/{cacheType}
@@ -74,7 +76,7 @@ public class CacheCtrl extends BaseCtrl {
      * {@link CacheType} enumeration.
      */
     @RequiresPermissions("admin:cacheEdit")
-    @RequestMapping(value = "/{cacheType}", method = RequestMethod.PUT)
+    @PutMapping(value = "/{cacheType}")
     public BaseResponse warmCache(@PathVariable String cacheType) {
         return clearCache(cacheType, true);
     }
@@ -87,7 +89,7 @@ public class CacheCtrl extends BaseCtrl {
      * @see #warmCache(String) for details about 'cacheType'
      */
     @RequiresPermissions("admin:cacheEdit")
-    @RequestMapping(value = "/{cacheType}", method = {RequestMethod.DELETE})
+    @DeleteMapping(value = "/{cacheType}")
     public BaseResponse deleteCache(@PathVariable String cacheType) {
         return clearCache(cacheType, false);
     }

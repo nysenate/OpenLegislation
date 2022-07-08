@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.api;
 
-public class InvalidRequestParamEx extends RuntimeException
-{
+import java.io.Serial;
+
+public class InvalidRequestParamEx extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = -4090577171105617540L;
 
     protected String parameterName;

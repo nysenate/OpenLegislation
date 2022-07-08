@@ -2,7 +2,6 @@ package gov.nysenate.openleg.api.admin;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.config.EnvVarNotFoundException;
@@ -22,48 +21,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/environment")
-public class EnvironmentCtrl extends BaseCtrl
-{
+public class EnvironmentCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentCtrl.class);
+    // A set of variables whose values are not allowed to be shown through this API.
+    private static final Set<String> hiddenProperties =
+            Set.of("emailPass", "apiSecret", "defaultAdminPass");
 
-    /** A set of variables that are allowed to be modified, mapped to their respective setter functions */
-    private ImmutableMap<String, Consumer<String>> mutableProperties;
-
-    /** A set of variables whose values are not allowed to be shown through this api */
-    private static final ImmutableSet<String> hiddenProperties = ImmutableSet.<String>builder()
-            .add("emailPass")
-            .add("apiSecret")
-            .add("defaultAdminPass")
-            .build();
-
+    private final OpenLegEnvironment env;
+    private final ImmutableMap<String, Consumer<Boolean>> mutableProperties;
 
     @Autowired
-    OpenLegEnvironment env;
-
-    @PostConstruct
-    public void init() {
-        mutableProperties = ImmutableMap.<String, Consumer<String>>builder()
-                .put("processingEnabled", setBoolean(env::setProcessingEnabled))
-                .put("processingScheduled", setBoolean(env::setProcessingScheduled))
-                .put("spotcheckScheduled", setBoolean(env::setSpotcheckScheduled))
-                .put("notificationsEnabled", setBoolean(env::setNotificationsEnabled))
-                .put("billScrapeQueueEnabled", setBoolean(env::setBillScrapeQueueEnabled))
-                .put("checkmailEnabled", setBoolean(env::setCheckmailEnabled))
-                .put("sobiBatchEnabled", setBoolean(env::setLegDataBatchEnabled))
+    public EnvironmentCtrl(OpenLegEnvironment env) {
+        this.env = env;
+        mutableProperties = ImmutableMap.<String, Consumer<Boolean>>builder()
+                .put("processingEnabled", env::setProcessingEnabled)
+                .put("processingScheduled", env::setProcessingScheduled)
+                .put("spotcheckScheduled", env::setSpotcheckScheduled)
+                .put("notificationsEnabled", env::setNotificationsEnabled)
+                .put("billScrapeQueueEnabled", env::setBillScrapeQueueEnabled)
+                .put("checkmailEnabled", env::setCheckmailEnabled)
+                .put("sobiBatchEnabled", env::setLegDataBatchEnabled)
                 .build();
     }
 
@@ -82,11 +72,13 @@ public class EnvironmentCtrl extends BaseCtrl
     @RequestMapping(value = "/set")
     public BaseResponse setVariable(@RequestParam String varName,
                                     @RequestParam String value) {
-        if (mutableProperties.containsKey(varName)) {
+        var method = mutableProperties.get(varName);
+        if (method != null) {
             String user = SecurityUtils.getSubject().getPrincipal().toString();
-            logger.info("Setting environment variable '{}' to '{}'    user: {}", varName, value, user);
-            mutableProperties.get(varName).accept(value);
-            return new ViewObjectResponse<>(getVariable(varName), "OpenLegEnvironment variable value successfully changed");
+            logger.info("{} is setting environment variable '{}' to '{}'", user, varName, value);
+            method.accept(Boolean.parseBoolean(value));
+            return new ViewObjectResponse<>(getVariable(varName),
+                    "OpenLegEnvironment variable value successfully changed");
         } else {
             throw new ImmutableEnvVarException(getVariable(varName));
         }
@@ -103,14 +95,12 @@ public class EnvironmentCtrl extends BaseCtrl
      *                 mutableOnly - boolean - default false - gets only mutable variables when set to true
      */
     @RequiresPermissions("admin:envEdit")
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping(value = "")
     public BaseResponse getVariables(@RequestParam(defaultValue = "") String[] varName,
                                      @RequestParam(defaultValue = "false") boolean mutableOnly) {
         List<EnvironmentVariableView> variables = new ArrayList<>();
         if (varName.length > 0) {
-            Arrays.asList(varName).stream()
-                    .map(this::getVariable)
-                    .forEach(variables::add);
+            Arrays.stream(varName).map(this::getVariable).forEach(variables::add);
         } else {
             for (Field field : OpenLegEnvironment.class.getDeclaredFields()) {
                 try {
@@ -118,14 +108,12 @@ public class EnvironmentCtrl extends BaseCtrl
                 } catch (NoSuchMethodException ignored) {}
             }
         }
-        return new ViewObjectResponse<>(ListView.of(
-                variables.stream()
-                        .filter(var -> !mutableOnly || var.isMutable())
+        return new ViewObjectResponse<>(ListView.of(variables.stream()
+                        .filter(var -> !mutableOnly || var.mutable())
                         .sorted((a, b) -> ComparisonChain.start()
-                                .compareFalseFirst(a.isMutable(), b.isMutable())
-                                .compare(a.getName(), b.getName())
-                                .result())
-                        .collect(Collectors.toList())));
+                                .compareFalseFirst(a.mutable(), b.mutable())
+                                .compare(a.name(), b.name())
+                                .result()).toList()));
     }
 
     @ExceptionHandler(EnvVarNotFoundException.class)
@@ -156,10 +144,6 @@ public class EnvironmentCtrl extends BaseCtrl
                 mutableProperties.containsKey(field.getName()));
     }
 
-    private Consumer<String> setBoolean(Consumer<Boolean> setter) {
-        return val -> setter.accept(Boolean.parseBoolean(val));
-    }
-
     private Object getVarValue(Field field, Method getter) {
         if (hiddenProperties.contains(field.getName())) {
             return "* HIDDEN *";
@@ -172,7 +156,7 @@ public class EnvironmentCtrl extends BaseCtrl
         }
     }
 
-    private Method getGetter(Field field) throws NoSuchMethodException {
+    private static Method getGetter(Field field) throws NoSuchMethodException {
         String getterSuffix = StringUtils.capitalize(field.getName());
         try {
             return OpenLegEnvironment.class.getDeclaredMethod("get" + getterSuffix);

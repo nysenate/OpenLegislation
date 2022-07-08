@@ -4,26 +4,8 @@ import gov.nysenate.openleg.api.ViewObject;
 
 import java.util.Set;
 
-public class NewUserView implements ViewObject {
-
-    protected String name;
-    protected String email;
-    protected Set<String> subscriptions;
-
-    protected NewUserView() {}
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Set<String> getSubscriptions() {
-        return subscriptions;
-    }
-
+public record NewUserView(String name, String email, Set<String> subscriptions)
+        implements ViewObject {
     @Override
     public String getViewType() {
         return "new-user";

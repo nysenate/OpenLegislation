@@ -20,49 +20,46 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component("apiAuthFilter")
-public class ApiAuthFilter implements Filter
-{
+public class ApiAuthFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(ApiAuthFilter.class);
 
+    private final ApiUserService apiUserService;
+    @Value("${api.auth.ip.whitelist}")
+    private String filterAddress;
+    @Value("${api.auth.enable}")
+    private boolean enabled;
+
     @Autowired
-    protected ApiUserService apiUserService;
-
-    @Value("${api.auth.ip.whitelist}") private String filterAddress;
-    @Value("${api.auth.enable}") private boolean enabled;
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
+    public ApiAuthFilter(ApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain filterChain) throws IOException, ServletException {
 
-        String key = servletRequest.getParameter("key");
-        String forwardedForIp = request.getHeader("x-forwarded-for");
+        String key = request.getParameter("key");
+        String forwardedForIp = ((HttpServletRequest) request).getHeader("x-forwarded-for");
         String ipAddress = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
 
         Subject subject = SecurityUtils.getSubject();
-
         if (!enabled || authenticate(subject, ipAddress, key)) {
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(request, response);
         } else {
             logger.warn("Invalid key used in API request. ip: [{}] key: [{}]", ipAddress, key);
             if (subject.isRemembered()) {
-                // when user tried WRONG apikey, we should logout current session for security purpose.
+                // We should log out of the current session for security purposes.
                 subject.logout();
             }
-            writeErrorResponse(response);
+            writeErrorResponse((HttpServletResponse) response);
         }
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
 
     /**
      * Authenticate the subject using one of two authentication methods
@@ -78,7 +75,6 @@ public class ApiAuthFilter implements Filter
         if (!StringUtils.isEmpty(key)) {
             return authenticateKey(subject, ipAddress, key);
         }
-
         // Grant access if user is in ip whitelist, or authenticated via the ui
         return !StringUtils.isEmpty(ipAddress) && ipAddress.matches(filterAddress) ||
                 subject.isPermitted("ui:view");
@@ -108,7 +104,7 @@ public class ApiAuthFilter implements Filter
     /**
      * Write an error json response
      * @param response HttpServletResponse
-     * @throws IOException
+     * @throws IOException if it failed to write or flush buffer.
      */
     private void writeErrorResponse(HttpServletResponse response) throws IOException {
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);

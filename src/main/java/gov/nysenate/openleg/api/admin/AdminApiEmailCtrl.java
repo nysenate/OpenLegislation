@@ -10,9 +10,9 @@ import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserMessage;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
@@ -24,10 +24,12 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 @RestController
 @RequestMapping(BASE_ADMIN_API_PATH + "/email")
 public class AdminApiEmailCtrl extends BaseCtrl {
+    private final ApiUserBatchEmailServiceImpl apiUserBatchEmailService;
 
     @Autowired
-    ApiUserBatchEmailServiceImpl apiUserBatchEmailService;
-
+    public AdminApiEmailCtrl(ApiUserBatchEmailServiceImpl apiUserBatchEmailService) {
+        this.apiUserBatchEmailService = apiUserBatchEmailService;
+    }
 
     /**
      *  Send A Batch Email
@@ -42,7 +44,7 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *                  email will be sent out to.
      */
     @RequiresPermissions("admin:email:post")
-    @RequestMapping(value = "/batchEmail", method = RequestMethod.POST)
+    @PostMapping(value = "/batchEmail")
     public BaseResponse sendEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
         apiUserBatchEmailService.sendMessage(message);
@@ -62,7 +64,7 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *                  email would be sent out to if it were not a test email.
      */
     @RequiresPermissions("admin:email:post")
-    @RequestMapping(value = "/testModeEmail", method = RequestMethod.POST)
+    @PostMapping(value = "/testModeEmail")
     public BaseResponse sendTestEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
         String email = (String)SecurityUtils.getSubject().getPrincipal();
