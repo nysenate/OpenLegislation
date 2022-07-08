@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.search;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Enumeration of all the search indices.
  */
@@ -28,6 +32,9 @@ public enum SearchIndex
         this(indexName);
         this.primaryStore = primaryStore;
     }
+
+    public static final Set<SearchIndex> nonPrimaryIndices = Arrays.stream(values())
+            .filter(index -> !index.isPrimaryStore()).collect(Collectors.toSet());
 
     public String getIndexName() {
         return indexName;
