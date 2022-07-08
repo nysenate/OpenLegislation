@@ -38,7 +38,7 @@ public class LawTree
         this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
         this.lawInfo = lawInfo;
-        this.publishedDates = rootNode.getAllNodes().stream().map(LawTreeNode::getPublishDate).distinct().collect(Collectors.toList());
+        this.publishedDates = rootNode.getAllNodes().stream().map(LawTreeNode::getPublishDate).distinct().toList();
     }
 
     /** --- Method --- */

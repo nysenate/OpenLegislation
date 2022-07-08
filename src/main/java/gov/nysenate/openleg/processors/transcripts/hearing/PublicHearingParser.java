@@ -68,7 +68,7 @@ public class PublicHearingParser {
                 .collect(Collectors.joining("\n")).split("PRESIDING|PRESENT|SPONSORS")[0];
         String splitPattern = isWrongFormat ? "\n{5,}" : "-{10,}";
         return Arrays.stream(pageText.split(splitPattern, 3)).map(String::trim)
-                .filter(str -> !str.isEmpty()).collect(Collectors.toList());
+                .filter(str -> !str.isEmpty()).toList();
     }
 
     /**

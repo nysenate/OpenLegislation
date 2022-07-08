@@ -1,21 +1,20 @@
 package gov.nysenate.openleg.api.updates.aggregate;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
-import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ViewObject;
+import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.legislation.law.view.LawDocIdView;
 import gov.nysenate.openleg.api.legislation.law.view.LawVersionIdView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.aggregate.AggregateUpdatesDao;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
@@ -25,6 +24,7 @@ import gov.nysenate.openleg.updates.UpdateContentType;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
+import gov.nysenate.openleg.updates.aggregate.AggregateUpdatesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +37,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.api.BaseCtrl.*;
-import static org.springframework.http.MediaType.*;
+import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/updates", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
@@ -102,7 +101,7 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
         return DateRangeListViewResponse.of(
                 result.getResults().stream()
                         .map(this::getTokenView)
-                        .collect(Collectors.toList()),
+                        .toList(),
                 dateTimeRange, result.getTotal(), limitOffset);
     }
 
@@ -114,7 +113,7 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
         return DateRangeListViewResponse.of(
                 result.getResults().stream()
                         .map(this::getDigestView)
-                        .collect(Collectors.toList()),
+                        .toList(),
                 dateTimeRange, result.getTotal(), limitOffset);
     }
 

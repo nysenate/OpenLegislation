@@ -7,7 +7,6 @@ import org.apache.commons.text.StringSubstitutor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Common utility methods to be used by enums/classes that store sql queries.
@@ -108,7 +107,7 @@ public abstract class SqlQueryUtils
             List<String> orderClauses = sortColumns.keySet().stream()
                 .filter(column -> !sortColumns.get(column).equals(SortOrder.NONE))
                 .map(column -> column + " " + sortColumns.get(column).name())
-                .collect(Collectors.toList());
+                .toList();
             if (!orderClauses.isEmpty()) {
                 clause += " ORDER BY " + StringUtils.join(orderClauses, ", ");
             }

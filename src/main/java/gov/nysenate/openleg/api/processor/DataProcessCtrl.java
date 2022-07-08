@@ -34,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
@@ -129,7 +128,7 @@ public class DataProcessCtrl extends BaseCtrl
             .map(runInfo -> (detail)
                     ? new DataProcessRunDetailView(runInfo, processLogs.getUnits(runInfo.getRun().getProcessId(), LimitOffset.FIFTY))
                     : new DataProcessRunInfoView(runInfo))
-            .collect(toList()),
+            .toList(),
             runs.getTotal(), runs.getLimOff());
     }
 

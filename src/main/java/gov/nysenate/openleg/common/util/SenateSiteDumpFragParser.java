@@ -18,7 +18,6 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckDataSource.NYSENATE;
 
@@ -100,7 +99,7 @@ public class SenateSiteDumpFragParser {
                     .putAll(Maps.uniqueIndex(
                             EnumSet.allOf(SpotCheckRefType.class).stream()
                                     .filter(refType -> NYSENATE.equals(refType.getDataSource()))
-                                    .collect(Collectors.toList()),
+                                    .toList(),
                             SpotCheckRefType::getContentType
                     ))
                     .put(SpotCheckContentType.BILL, SpotCheckRefType.SENATE_SITE_BILLS)

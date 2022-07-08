@@ -1,20 +1,19 @@
 package gov.nysenate.openleg.spotchecks.daybreak;
 
 import com.google.common.base.Strings;
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
-import gov.nysenate.openleg.common.util.DateUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +21,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 @Service("daybreak")
 public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, DaybreakBill> {
@@ -140,13 +139,13 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .stream()
                 .map(muSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, muSpon.getLbdcShortName()))
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         List<String> refMultiSponsors = daybreakBill.getMultiSponsors().stream()
                 .map(this::cleanDaybreakShortname)
                 .map(muSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, muSpon))
                 .sorted()
-                .collect(toList());
+                .toList();
 
         // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
         if (!refMultiSponsors.isEmpty()) {
@@ -170,13 +169,13 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .stream()
                 .map(coSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, coSpon.getLbdcShortName()))
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         List<String> refCoSponsors = daybreakBill.getCosponsors().stream()
                 .map(this::cleanDaybreakShortname)
                 .map(coSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, coSpon))
                 .sorted()
-                .collect(toList());
+                .toList();
 
         // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
         if (!refCoSponsors.isEmpty()) {

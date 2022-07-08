@@ -145,21 +145,21 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
     @Override
     public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getCalendarIds(year, sortOrder, limitOffset).stream()
-                .map(this::getCalendar).collect(Collectors.toList());
+                .map(this::getCalendar).toList();
     }
 
     /** {@inheritDoc} */
     @Override
     public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getActiveListIds(year, sortOrder, limitOffset).stream()
-                .map(this::getActiveList).collect(Collectors.toList());
+                .map(this::getActiveList).toList();
     }
 
     /** {@inheritDoc} */
     @Override
     public List<CalendarSupplemental> getCalendarSupplementals(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getCalendarSupplementalIds(year, sortOrder, limitOffset).stream()
-                .map(this::getCalendarSupplemental).collect(Collectors.toList());
+                .map(this::getCalendarSupplemental).toList();
     }
 
     /** {@inheritDoc} */

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -78,6 +77,6 @@ public class TranscriptSearchCtrl extends BaseCtrl
                 (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
                         : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
                         : new TranscriptIdView(r.getResult()), r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+                .toList(), results.getTotalResults(), limOff);
     }
 }

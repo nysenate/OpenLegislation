@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<FullMember>
@@ -105,7 +104,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     public void updateIndex(Collection<FullMember> members) {
         if (env.isElasticIndexing() && !members.isEmpty()) {
-            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid members into elastic search.", indexableMembers.size());
             memberSearchDao.updateMemberIndex(indexableMembers);
         }

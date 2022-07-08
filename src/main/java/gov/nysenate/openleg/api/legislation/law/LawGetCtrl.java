@@ -51,7 +51,7 @@ public class LawGetCtrl extends BaseCtrl {
         LimitOffset limOff = getLimitOffset(webRequest, 0);
         List<LawInfo> lawInfoList = lawDataService.getLawInfos();
         ListViewResponse<LawInfoView> response = ListViewResponse.of(
-                LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).collect(toList()), limOff),
+                LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).toList(), limOff),
                 lawInfoList.size(), limOff);
         response.setMessage("Listing of consolidated and unconsolidated NYS Laws");
         return response;

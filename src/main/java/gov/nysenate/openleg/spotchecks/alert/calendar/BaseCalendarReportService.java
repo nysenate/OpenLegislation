@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public abstract class BaseCalendarReportService implements SpotCheckReportService<CalendarEntryListId> {
@@ -48,7 +47,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         List<Calendar> references = retrieveReferences(start, end).stream()
                 .filter(this::outsideGracePeriod)
-                .collect(Collectors.toList());
+                .toList();
         SpotCheckReport<CalendarEntryListId> report = initSpotCheckReport(references);
         report.setNotes(getNotes());
         report.addObservations(createObservations(references));

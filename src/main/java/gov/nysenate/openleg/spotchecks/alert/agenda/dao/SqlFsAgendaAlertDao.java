@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.alert.agenda.dao.SqlAgendaAlertQuery.*;
 
@@ -74,7 +73,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     public List<File> getIncomingAgendaAlerts() throws IOException {
         List<File> agendaAlerts = FileIOUtils.safeListFiles(incomingAgendaAlertDir, null, false).stream()
                 .filter(file -> agendaFullFilePattern.matcher(file.getName()).matches())
-                .collect(Collectors.toList());
+                .toList();
         List<File> singleAgendaAlerts = new ArrayList<>();
         for (File alert : agendaAlerts) {
             if (agendaFilePattern.matcher(alert.getName()).matches()) {
@@ -198,7 +197,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
                 .flatMap(multiMap -> multiMap.keySet().stream().map(multiMap::get))
                 .filter(aaicList -> !aaicList.isEmpty())
                 .map(aaicList -> aaicList.stream().reduce(null, AgendaAlertInfoCommittee::merge))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /** --- Row Mappers --- */

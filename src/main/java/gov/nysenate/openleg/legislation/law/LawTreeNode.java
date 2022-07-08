@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 public class LawTreeNode implements Comparable<LawTreeNode>
 {
     /** This number indicates the order in which this node appears in the tree, starting at 1. */
@@ -98,7 +96,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      * @return List<LawTreeNode>
      */
     public List<LawTreeNode> getChildNodeList() {
-        return this.children.values().stream().sorted().collect(toList());
+        return this.children.values().stream().sorted().toList();
     }
 
     /**

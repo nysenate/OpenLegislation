@@ -1,26 +1,24 @@
 package gov.nysenate.openleg.api.legislation.committee;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeNotFoundEx;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.committee.CommitteeSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
@@ -95,7 +93,7 @@ public class CommitteeSearchCtrl extends BaseCtrl {
                                 ? new CommitteeView(committeeDataService.getCommittee(result.getResult()))
                                 : new CommitteeVersionIdView(result.getResult()),
                                 result.getRank()))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 results.getTotalResults(), results.getLimitOffset()
         );
     }

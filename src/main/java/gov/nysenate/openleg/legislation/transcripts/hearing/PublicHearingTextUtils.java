@@ -23,7 +23,7 @@ public class PublicHearingTextUtils {
     public static List<List<String>> getPages(String fullText) {
         fullText = fullText.replaceAll("\r\n", "\n");
         return Splitter.on("\f").splitToList(fullText).stream().map(PublicHearingTextUtils::getLines)
-                .filter(page -> !page.isEmpty()).collect(Collectors.toList());
+                .filter(page -> !page.isEmpty()).toList();
     }
 
     private static List<String> getLines(String page) {

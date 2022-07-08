@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -168,7 +167,7 @@ public class BillUpdatesCtrl extends BaseCtrl
                         }
                         return new UpdateTokenView(token, new BaseBillIdView(token.getId()));
                     })
-                    .collect(toList());
+                    .toList();
             return DateRangeListViewResponse.of(updates, updateRange, updateTokens.getTotal(), limOff);
         }
         else {
@@ -180,7 +179,7 @@ public class BillUpdatesCtrl extends BaseCtrl
                                    : new UpdateDigestModelView(digest, new BaseBillIdView(digest.getId()),
                                                                        new SimpleBillInfoView(billData.getBillInfo(digest.getId())))
                 )
-                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.getTotal(), limOff);
         }
     }
 
@@ -195,7 +194,7 @@ public class BillUpdatesCtrl extends BaseCtrl
             getBaseBillId(printNo, sessionYear, "printNo"), updateRange, updateType, filterField, sortOrder, limOff);
         return DateRangeListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
-            .collect(toList()), updateRange, digests.getTotal(), limOff);
+            .toList(), updateRange, digests.getTotal(), limOff);
     }
 
     private BillUpdateField getUpdateFieldFromParam(String filter) {

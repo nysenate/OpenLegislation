@@ -118,7 +118,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         return getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
                 .collect(Collectors.groupingBy(sm -> sm.getMember().getMemberId(),
                         LinkedHashMap::new, Collectors.toList()))
-                .values().stream().map(FullMember::new).collect(Collectors.toList());
+                .values().stream().map(FullMember::new).toList();
     }
 
     /** --- Helper classes --- */

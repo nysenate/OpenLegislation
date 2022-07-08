@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class ElasticBillSearchServiceTests extends BaseTests
 {
@@ -49,7 +48,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
             logger.info("Retrieving bills...");
             List<Bill> bills = billDataService.getBillIds(SessionYear.current(), limitOffset).stream()
                     .map(billDataService::getBill)
-                    .collect(Collectors.toList());
+                    .toList();
             billCount = bills.size();
             if (billCount > 0) {
                 logger.info(String.format("Indexing bills %d - %d",

@@ -90,7 +90,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
                 .filter(f -> scrapeFilePattern.matcher(f.getName()).matches())
                 .filter(f -> !registeredFilenames.contains(f.getName()))
                 .map(f -> new BillScrapeFile(f.getName(), FilenameUtils.getFullPath(f.getPath())))
-                .collect(Collectors.toList());
+                .toList();
 
         newFiles.forEach(this::updateScrapedBill);
 

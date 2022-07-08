@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 import static gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertFileQuery.*;
@@ -55,7 +54,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
     public List<CalendarAlertFile> getIncomingCalendarAlerts() throws IOException {
         List<File> files = FileIOUtils.safeListFiles(incomingCalendarAlertDir, null, false).stream()
                 .filter(file -> calendarAlertFilePattern.matcher(file.getName()).matches())
-                .collect(Collectors.toList());
+                .toList();
 
         List<CalendarAlertFile> calendarAlertFiles = new ArrayList<>();
         for (File file : files) {

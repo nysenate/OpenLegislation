@@ -2,6 +2,9 @@ package gov.nysenate.openleg.api.notification;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.notification.view.NotificationSummaryView;
+import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
@@ -9,9 +12,6 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.notification.view.NotificationSummaryView;
-import gov.nysenate.openleg.api.notification.view.NotificationView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
@@ -35,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -150,7 +149,7 @@ public class NotificationCtrl extends BaseCtrl
                         full ? new NotificationView(r.getResult())
                                 : new NotificationSummaryView(r.getResult()),
                         r.getRank()))
-                .collect(Collectors.toList()), results.getTotalResults(), limitOffset);
+                .toList(), results.getTotalResults(), limitOffset);
     }
 
 
@@ -165,7 +164,7 @@ public class NotificationCtrl extends BaseCtrl
                 notificationService.getNotificationList(getNotificationTypes(request), dateRange, order, limOff);
         return DateRangeListViewResponse.of(results.getResults().stream()
                 .map(full ? NotificationView::new : NotificationSummaryView::new)
-                .collect(Collectors.toList()), dateRange, results.getTotal(), limOff);
+                .toList(), dateRange, results.getTotal(), limOff);
     }
 
     private Set<NotificationType> getNotificationTypes(WebRequest request) {

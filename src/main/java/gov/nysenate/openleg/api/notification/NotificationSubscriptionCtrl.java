@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.api.notification;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.notification.view.NotificationSubscriptionView;
 import gov.nysenate.openleg.api.notification.view.NotificationTypesView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
-import gov.nysenate.openleg.api.notification.view.NotificationSubscriptionView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.notifications.model.NotificationMedium;
 import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
@@ -134,7 +134,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
         Set<NotificationSubscription> userSubscriptions = subscriptionDataService.getSubscriptions(user);
         return ListViewResponse.of(userSubscriptions.stream()
                 .map(NotificationSubscriptionView::new)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     /** --- Internal --- */

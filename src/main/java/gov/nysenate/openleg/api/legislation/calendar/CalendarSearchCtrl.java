@@ -1,25 +1,23 @@
 package gov.nysenate.openleg.api.legislation.calendar;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.api.legislation.calendar.view.SimpleCalendarView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.search.calendar.CalendarSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
@@ -117,7 +115,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                                 calendarDataService.getCalendar(result.getResult()))
                                 : new SimpleCalendarView(calendarDataService.getCalendar(result.getResult())),
                                 result.getRank()))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 results.getTotalResults(), results.getLimitOffset() );
     }
 }

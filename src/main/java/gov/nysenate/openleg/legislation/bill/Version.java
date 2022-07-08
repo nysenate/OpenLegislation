@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Enumeration of all possible character based versions which includes an entry for a default version.
  * Using this enumeration instead of a string will address issues pertaining to normalizing
@@ -48,7 +46,7 @@ public enum Version
      * @return List<Version>
      */
     public static List<Version> before(Version v) {
-        return Arrays.stream(values()).filter(p -> p.compareTo(v) < 0).collect(toList());
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) < 0).toList();
     }
 
     /**
@@ -58,7 +56,7 @@ public enum Version
      * @return List<Version>
      */
     public static List<Version> after(Version v) {
-        return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).collect(toList());
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).toList();
     }
 
     /**

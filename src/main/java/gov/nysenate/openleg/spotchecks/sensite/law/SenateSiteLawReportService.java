@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
 
@@ -128,7 +127,7 @@ public class SenateSiteLawReportService extends BaseSenateSiteReportService<LawS
         );
         List<String> dataLawIds = lawDataService.getLawInfos().stream()
                 .map(LawInfo::getLawId)
-                .collect(Collectors.toList());
+                .toList();
         spotCheckUtils.checkCollection(dataLawIds, refLawIds, obs, LAW_IDS, String::toString, "\n", true);
         report.addObservation(obs);
     }

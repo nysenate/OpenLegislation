@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticPublicHearingSearchService implements PublicHearingSearchService, IndexedSearchService<PublicHearing>
@@ -103,7 +102,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     public void updateIndex(Collection<PublicHearing> publicHearings) {
         if (env.isElasticIndexing() && !publicHearings.isEmpty()) {
-            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} public hearings into elastic search.", indexablePublicHearings.size());
             publicHearingSearchDao.updatePublicHearingIndex(indexablePublicHearings);
         }

@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.legislation.law.dao;
 
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.processors.law.LawFile;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,6 @@ import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 import static gov.nysenate.openleg.common.util.FileIOUtils.safeListFiles;
-import static java.util.stream.Collectors.toList;
 
 @Repository
 public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
@@ -41,7 +40,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     @Override
     public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException {
         List<File> files = new ArrayList<>(safeListFiles(this.incomingLawDir, false, null));
-        List<LawFile> lawFiles = files.stream().map(LawFile::new).collect(toList());
+        List<LawFile> lawFiles = files.stream().map(LawFile::new).toList();
 
         // Use the comparator defined in LawFile to do the sorting
         sortLaws(sortByDate, lawFiles);

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -75,6 +74,6 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
         PaginatedList<PublicHearingUpdateToken> updates = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.getResults().stream()
                 .map(r -> new PublicHearingUpdateTokenView(r, publicHearingDao.getFilename(r.getPublicHearingId())))
-                .collect(Collectors.toList()), updates.getTotal(), limOff);
+                .toList(), updates.getTotal(), limOff);
     }
 }

@@ -1,17 +1,16 @@
 package gov.nysenate.openleg.api.legislation.bill.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import gov.nysenate.openleg.legislation.bill.BillAmendment;
-import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
 import gov.nysenate.openleg.legislation.PublishStatus;
+import gov.nysenate.openleg.legislation.bill.BillAmendment;
+import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BillAmendmentView extends BillIdView
@@ -39,7 +38,7 @@ public class BillAmendmentView extends BillIdView
         if (billAmendment != null) {
             this.publishDate = publishStatus.getEffectDateTime().toLocalDate();
             this.sameAs = ListView.of(billAmendment.getSameAs().stream()
-                .map(BillIdView::new).collect(Collectors.toList()));
+                .map(BillIdView::new).toList());
             this.memo = billAmendment.getMemo();
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLawCode();
@@ -55,9 +54,9 @@ public class BillAmendmentView extends BillIdView
                 this.fullTextTemplate = billAmendment.getFullText(BillTextFormat.TEMPLATE);
             }
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
-                .map(MemberView::new).collect(Collectors.toList()));
+                .map(MemberView::new).toList());
             this.multiSponsors = ListView.of(billAmendment.getMultiSponsors().stream()
-                .map(MemberView::new).collect(Collectors.toList()));
+                .map(MemberView::new).toList());
             this.uniBill = billAmendment.isUniBill();
             this.isStricken = billAmendment.isStricken();
 

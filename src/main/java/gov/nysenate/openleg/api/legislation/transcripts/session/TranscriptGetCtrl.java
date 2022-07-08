@@ -27,7 +27,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -136,7 +135,7 @@ public class TranscriptGetCtrl extends BaseCtrl
             (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
                     : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
                     : new TranscriptIdView(r.getResult()))
-            .collect(Collectors.toList()), results.getTotalResults(), limOff);
+            .toList(), results.getTotalResults(), limOff);
     }
 
     @ExceptionHandler(TranscriptNotFoundEx.class)

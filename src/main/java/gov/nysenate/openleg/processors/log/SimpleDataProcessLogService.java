@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class SimpleDataProcessLogService implements DataProcessLogService
 {
@@ -46,7 +44,7 @@ public class SimpleDataProcessLogService implements DataProcessLogService
     public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
                                                          boolean showActivityOnly) {
         PaginatedList<DataProcessRun> runs = processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
-        List<DataProcessRunInfo> runInfos = runs.getResults().stream().map(this::getRunInfoFromRun).collect(toList());
+        List<DataProcessRunInfo> runInfos = runs.getResults().stream().map(this::getRunInfoFromRun).toList();
         return new PaginatedList<>(runs.getTotal(), runs.getLimOff(), runInfos);
     }
 

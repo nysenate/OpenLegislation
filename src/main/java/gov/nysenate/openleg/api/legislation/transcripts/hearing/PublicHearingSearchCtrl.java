@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -79,7 +78,7 @@ public class PublicHearingSearchCtrl extends BaseCtrl {
     private BaseResponse getSearchResponse(boolean full, boolean summary, LimitOffset limOff, SearchResults<PublicHearingId> results) {
         return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
                         getHearingViewObject(r.getResult(), full, summary), r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+                .toList(), results.getTotalResults(), limOff);
     }
 
     private ViewObject getHearingViewObject(PublicHearingId id, boolean full, boolean summary) {

@@ -49,7 +49,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The AbstractDataProcessor class is intended to serve as a common base for all the
@@ -190,7 +189,7 @@ public abstract class AbstractDataProcessor
                 billDataService.saveBill(entry.getLeft(), entry.getRight(), false));
             logger.debug("Broadcasting bill updates...");
             List<Bill> bills =
-                billIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
+                billIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
             eventBus.post(new BulkBillUpdateEvent(bills));
             billIngestCache.clearCache();
         }
@@ -290,7 +289,7 @@ public abstract class AbstractDataProcessor
             agendaIngestCache.getCurrentCache().forEach(
                 entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight(), false));
             List<Agenda> agendas =
-                agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
+                agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
             eventBus.post(new BulkAgendaUpdateEvent(agendas));
             agendaIngestCache.clearCache();
         }
@@ -333,7 +332,7 @@ public abstract class AbstractDataProcessor
             calendarIngestCache.getCurrentCache().forEach(
                 entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), false));
             List<Calendar> calendars =
-                calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
+                calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
             eventBus.post(new BulkCalendarUpdateEvent(calendars));
             calendarIngestCache.clearCache();
         }

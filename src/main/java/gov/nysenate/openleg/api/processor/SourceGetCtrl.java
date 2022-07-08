@@ -1,21 +1,21 @@
 package gov.nysenate.openleg.api.processor;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.processor.view.SourceFileView;
+import gov.nysenate.openleg.api.processor.view.SourceIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
-import gov.nysenate.openleg.api.processor.view.SourceFileView;
-import gov.nysenate.openleg.api.processor.view.SourceIdView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.processors.bill.SourceFile;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
 import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import gov.nysenate.openleg.processors.bill.SourceFile;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
@@ -68,7 +67,7 @@ public class SourceGetCtrl extends BaseCtrl {
                 sourceFiles.getResults().stream()
                         .map(sourceFile -> new SourceIdView(sourceFile.getSourceType().name(),
                                 sourceFile.getFileName(), sourceFile.getPublishedDateTime()))
-                        .collect(Collectors.toList()), sourceFiles.getTotal(), limOff);
+                        .toList(), sourceFiles.getTotal(), limOff);
     }
 
     /**
@@ -86,7 +85,7 @@ public class SourceGetCtrl extends BaseCtrl {
         List<SourceFileView> fragList = legDataFragmentDao.getLegDataFragments(sourceFileName, SortOrder.ASC).stream()
                 .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
                         sf.getPublishedDateTime(), sf.getText()))
-                .collect(Collectors.toList());
+                .toList();
         return ListViewResponse.of(fragList, fragList.size(), LimitOffset.ALL);
     }
 

@@ -12,7 +12,6 @@ import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Category(SillyTest.class)
 public class SlackChatServiceTest extends BaseTests {
@@ -103,7 +102,7 @@ public class SlackChatServiceTest extends BaseTests {
     private static List<SlackAddress> getAddresses(String channel, List<String> slackers) {
         return slackers.stream()
                 .map(slacker -> new SlackAddress(channel, slacker))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static String getStackInfo() {

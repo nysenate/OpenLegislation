@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by kyle on 11/21/14.
@@ -43,7 +42,7 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
         act.getEntries().forEach(entry -> addActiveListEntry(alId, entry));
         act.getEntries().stream()
                 .map(CalendarEntry::getBillId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     void addActiveListEntry(int keyId, CalendarEntry entry){

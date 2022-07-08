@@ -3,10 +3,9 @@ package gov.nysenate.openleg.processors.bill.xml;
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,8 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -233,12 +234,12 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
 
         List<String> actualCoSponsors = amendment.getCoSponsors().stream()
                 .map(SessionMember::getLbdcShortName)
-                .collect(Collectors.toList());
+                .toList();
         assertEquals(billId + " Co-Sponsors", expectedCoSponsors, actualCoSponsors);
 
         List<String> actualMultiSponsors = amendment.getMultiSponsors().stream()
                 .map(SessionMember::getLbdcShortName)
-                .collect(Collectors.toList());
+                .toList();
         assertEquals(billId + " Multi-Sponsors", expectedMultiSponsors, actualMultiSponsors);
     }
 

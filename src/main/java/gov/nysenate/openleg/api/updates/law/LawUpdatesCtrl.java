@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -217,13 +216,13 @@ public class LawUpdatesCtrl extends BaseCtrl
     private BaseResponse getTokenListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateToken<LawVersionId>> updateTokens) {
         return DateRangeListViewResponse.of(updateTokens.getResults().stream()
                 .map(token -> new UpdateTokenView(token, new LawVersionIdView(token.getId())))
-                .collect(toList()), params.updateRange, updateTokens.getTotal(), params.limOff);
+                .toList(), params.updateRange, updateTokens.getTotal(), params.limOff);
     }
 
     private BaseResponse getDigestListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateDigest<LawDocId>> updateDigests) {
         return DateRangeListViewResponse.of(updateDigests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new LawDocIdView(digest.getId())))
-            .collect(toList()), params.updateRange, updateDigests.getTotal(), params.limOff);
+            .toList(), params.updateRange, updateDigests.getTotal(), params.limOff);
     }
 
     private static class BaseLawUpdatesParams {

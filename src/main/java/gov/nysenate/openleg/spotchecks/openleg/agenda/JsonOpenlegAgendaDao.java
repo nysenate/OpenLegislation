@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
@@ -45,7 +44,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
                 .map(AgendaSummaryView::getId)
                 .map(aiv -> new AgendaId(aiv.number(), aiv.year()))
                 .map(this::getAgendaView)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

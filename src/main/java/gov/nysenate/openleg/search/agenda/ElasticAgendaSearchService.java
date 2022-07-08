@@ -27,8 +27,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class ElasticAgendaSearchService implements AgendaSearchService, IndexedSearchService<Agenda>
 {
@@ -101,7 +99,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         clearIndex();
         for (int year = 2009; year <= LocalDate.now().getYear(); year++) {
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
-            List<Agenda> agendas = agendaIds.stream().map(aid -> agendaDataService.getAgenda(aid)).collect(toList());
+            List<Agenda> agendas = agendaIds.stream().map(aid -> agendaDataService.getAgenda(aid)).toList();
             logger.info("Reindexing {} agendas from {}", agendas.size(), year);
             agendaSearchDao.updateAgendaIndex(agendas);
         }

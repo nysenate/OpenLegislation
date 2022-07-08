@@ -39,7 +39,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.dao.SortOrder.ASC;
 import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
@@ -634,7 +633,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<Integer> existingCoSponsorIds = getCoSponsorIds(amendParams);
         List<Integer> newCoSponsorIds = billAmendment.getCoSponsors().stream()
                 .map(SessionMember::getSessionMemberId)
-                .collect(Collectors.toList());
+                .toList();
         MapDifference<Integer, Integer> diff = difference(existingCoSponsorIds, newCoSponsorIds, 1);
         // Delete old cosponsors
         diff.entriesOnlyOnLeft().forEach((smid,ordinal) -> {
@@ -662,7 +661,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<Integer> existingMultiSponsorIds = getMultiSponsorIds(amendParams);
         List<Integer> newMultiSponsorIds = billAmendment.getMultiSponsors().stream()
                 .map(SessionMember::getSessionMemberId)
-                .collect(Collectors.toList());
+                .toList();
         MapDifference<Integer, Integer> diff = difference(existingMultiSponsorIds, newMultiSponsorIds, 1);
         // Delete old multisponsors
         diff.entriesOnlyOnLeft().forEach((smid,ordinal) -> {

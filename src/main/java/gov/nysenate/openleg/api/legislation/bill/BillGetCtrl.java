@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -105,8 +104,7 @@ public class BillGetCtrl extends BaseCtrl {
                         return new BillView(billData.getBill(baseBillId), getFullTextFormats(webRequest));
                     }
                     return new BillInfoView(billData.getBillInfo(baseBillId));
-                })
-                .collect(Collectors.toList()), results.getTotalResults(), limOff);
+                }).toList(), results.getTotalResults(), limOff);
     }
 
     /**

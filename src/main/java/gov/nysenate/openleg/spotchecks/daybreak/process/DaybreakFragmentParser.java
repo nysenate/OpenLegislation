@@ -2,15 +2,15 @@ package gov.nysenate.openleg.spotchecks.daybreak.process;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BillAction;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBillAmendment;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.spotchecks.daybreak.DaybreakFragment;
 import gov.nysenate.openleg.spotchecks.daybreak.PageFileEntry;
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBillAmendment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Contains a method that parses a daybreak fragment into a daybreak bill
@@ -111,7 +110,7 @@ public class DaybreakFragmentParser {
     private static Map<Version, DaybreakBillAmendment> parsePageFileEntries(Map<BillId, PageFileEntry> pageFileEntries){
         List<DaybreakBillAmendment> amendments = pageFileEntries.entrySet().stream()
                 .map(entry -> parsePageFileEntry(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+                .toList();
         return Maps.uniqueIndex(amendments, amend -> amend.getBillId().getVersion());
     }
 

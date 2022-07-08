@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillVoteCode.*;
 
@@ -38,7 +37,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
     public List<SenateSiteBill> parseBills(SenateSiteDump billDump) throws ParseError {
         return billDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractBillsFromFragment(fragment).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
@@ -119,7 +118,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
         Optional<List<MemberView>> memberList = deserializeValue(billNode, memberFieldName, memberListType);
         return memberList.orElse(Collections.emptyList()).stream()
                 .map(MemberView::getShortName)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<BillId> getBillIdList(JsonNode billNode, String fieldName) {
@@ -127,7 +126,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
         Optional<List<BillIdView>> billIdViews = deserializeValue(billNode, fieldName, billIdListType);
         return billIdViews.orElse(Collections.emptyList()).stream()
                 .map(BillIdView::toBillId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<BillAction> getActionList(JsonNode billNode, String fieldName) {
@@ -137,7 +136,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
                 .map(ListView::getItems)
                 .orElse(ImmutableList.of()).stream()
                 .map(BillActionView::toBillAction)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<SenateSiteBillVote> getVotes(JsonNode billNode, BillId billId) {
@@ -145,7 +144,7 @@ public class SenateSiteBillJsonParser extends SenateSiteJsonParser {
         return jsonVotes.stream()
                 .filter(JsonNode::isObject)
                 .map(voteNode -> parseVote(voteNode, billId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private SenateSiteBillVote parseVote(JsonNode voteNode, BillId billId) {

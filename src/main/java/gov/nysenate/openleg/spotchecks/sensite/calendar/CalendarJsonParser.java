@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 /**
  * Created by PKS on 2/25/16.
@@ -29,7 +28,7 @@ public class CalendarJsonParser extends SenateSiteJsonParser {
     public List<SenateSiteCalendar> parseCalendars(SenateSiteDump calendarDump) throws ParseError {
         return calendarDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractCalendarsFromFragment(fragment).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<SenateSiteCalendar> extractCalendarsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
@@ -84,7 +83,7 @@ public class CalendarJsonParser extends SenateSiteJsonParser {
     }
 
     private List<BillId> getBillId(List<String> billNos, int year){
-        List<BillId> billId = billNos.stream().map(billNo -> new BillId(billNo, SessionYear.of(year))).collect(Collectors.toList());
+        List<BillId> billId = billNos.stream().map(billNo -> new BillId(billNo, SessionYear.of(year))).toList();
         return billId;
     }
 

@@ -144,7 +144,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             if (!updateTable.columns.isEmpty()) {
                 List<String> existKeys = updateTable.columns.stream()
                     .map(column -> "exist(data, '" + column + "')")
-                    .collect(Collectors.toList());
+                    .toList();
                 whereClause.append(" AND ").append("( ").append(String.join(" OR ", existKeys)).append(") ");
             }
             return whereClause.toString();

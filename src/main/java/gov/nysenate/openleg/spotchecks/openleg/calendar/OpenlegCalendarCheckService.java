@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.spotchecks.openleg.calendar;
 
-import gov.nysenate.openleg.api.legislation.calendar.view.*;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.legislation.bill.view.SimpleBillInfoView;
+import gov.nysenate.openleg.api.legislation.calendar.view.*;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
 
@@ -101,7 +100,7 @@ public class OpenlegCalendarCheckService
         return calendarSupView.getEntriesBySection().getItems().values().stream()
                 .map(ListView::getItems)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private StringBuilder getSupEntryString(CalendarSupEntryView entry) {

@@ -8,7 +8,6 @@ import org.junit.After;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.fail;
 
@@ -54,7 +53,7 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
     @After
     public void deleteTestFiles() throws IOException {
         List<File> testFiles = FileIOUtils.safeListFiles(archiveDir, false, null)
-                .stream().filter(this::isTestFile).collect(Collectors.toList());
+                .stream().filter(this::isTestFile).toList();
         for (var file : testFiles) {
             if(!FileUtils.deleteQuietly(file))
                 fail("File " + file + " could not be deleted from the archive. May need to manually delete.");

@@ -2,11 +2,9 @@ package gov.nysenate.openleg.api.legislation.calendar.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.api.ListView;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.calendar.CalendarActiveList;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-
-import java.util.stream.Collectors;
 
 public class ActiveListView extends SimpleActiveListView implements CalendarEntryList
 {
@@ -18,7 +16,7 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
                 activeList.getEntries().stream()
                         .map(entry -> new CalendarEntryView(entry, billDataService))
                         .sorted(CalendarEntryView.calEntryViewComparator)
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 

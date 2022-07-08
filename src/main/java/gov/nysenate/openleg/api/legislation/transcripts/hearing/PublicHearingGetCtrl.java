@@ -29,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.io.IOException;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -137,7 +136,7 @@ public class PublicHearingGetCtrl extends BaseCtrl {
                                                          SearchResults<PublicHearingId> results) {
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         getHearingViewObject(r.getResult(), summary, full))
-                .collect(toList()), results.getTotalResults(), limOff);
+                .toList(), results.getTotalResults(), limOff);
     }
 
     private ViewObject getHearingViewObject(PublicHearingId id, boolean summary, boolean full) {

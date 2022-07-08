@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
 
@@ -120,7 +119,7 @@ public class OpenlegAgendaCheckService implements SpotCheckService<CommitteeAgen
                 .map(ListView::getItems)
                 .orElseGet(ImmutableList::of).stream()
                 .sorted(agendaItemViewComparator)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void checkBillListing(AgendaCommAddendumView content, AgendaCommAddendumView reference,

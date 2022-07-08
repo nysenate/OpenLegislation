@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.api.legislation.member;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.ViewObject;
+import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
+import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
-import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
-import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -125,7 +124,7 @@ public class MemberGetCtrl extends BaseCtrl
         List<ViewObject> memberList = results.getRawResults().stream()
                 .map(memberData::getFullMemberById)
                 .map(member -> full ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()))
-                .collect(Collectors.toList());
+                .toList();
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
     }
 

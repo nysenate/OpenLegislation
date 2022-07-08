@@ -7,7 +7,6 @@ import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Each day the Senate is in session an associated calendar is present which lists all the bills
@@ -112,11 +111,11 @@ public class Calendar extends BaseLegislativeContent
         calendarEntryListIds.addAll(this.getSupplementalMap().values().stream()
                 .map(CalendarSupplemental::getCalendarSupplementalId)
                 .map(CalendarSupplementalId::toCalendarEntryListId)
-                .collect(Collectors.toList()));
+                .toList());
         calendarEntryListIds.addAll(this.getActiveListMap().values().stream()
                 .map(CalendarActiveList::getCalendarActiveListId)
                 .map(CalendarActiveListId::toCalendarEntryListId)
-                .collect(Collectors.toList()));
+                .toList());
         return calendarEntryListIds;
     }
 

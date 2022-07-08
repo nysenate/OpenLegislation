@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @SillyTest
 public class PdfTest extends ApiTest {
@@ -43,7 +42,7 @@ public class PdfTest extends ApiTest {
         Set<String> badDocIds = new HashSet<>();
         Set<Integer> badCodePoints = new HashSet<>();
         int docIdCount = 0;
-        var lawIds = lawDataDao.getLawInfos().stream().map(LawInfo::getLawId).collect(Collectors.toList());
+        var lawIds = lawDataDao.getLawInfos().stream().map(LawInfo::getLawId).toList();
         for (var lawId : lawIds) {
             var lawTree = lawDataDao.getLawTree(lawId, LocalDate.now());
             for (var docNode : lawTree.getRootNode().getAllNodes()) {

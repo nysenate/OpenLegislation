@@ -1,17 +1,17 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.bill.ctrl;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
-import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.spotcheck.view.BillScrapeQueueEntryView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeReferenceDao;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeQueueEntry;
+import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeReferenceDao;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.ScrapeQueuePriority;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -20,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.stream.Collectors;
-
-import static gov.nysenate.openleg.api.BaseCtrl.*;
+import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/scraping/billqueue")
@@ -52,7 +50,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl
         return ListViewResponse.of(
                 results.getResults().stream()
                         .map(BillScrapeQueueEntryView::new)
-                        .collect(Collectors.toList()),
+                        .toList(),
                 results.getTotal(), results.getLimOff()
         );
     }

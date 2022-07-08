@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api.logs;
 
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/apiLogs")
@@ -38,6 +37,6 @@ public class ApiLogCtrl extends BaseCtrl
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> new SearchResultView(r.getResult(), r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+                .toList(), results.getTotalResults(), limOff);
     }
 }

@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument>
@@ -118,7 +117,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         if (env.isElasticIndexing()) {
             List<LawDocument> indexableDocs = content.stream()
                     .filter(this::isLawDocIndexable)
-                    .collect(Collectors.toList());
+                    .toList();
             lawSearchDao.updateLawIndex(indexableDocs);
         }
     }

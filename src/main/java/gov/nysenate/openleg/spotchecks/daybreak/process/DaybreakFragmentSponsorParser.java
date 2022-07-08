@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class DaybreakFragmentSponsorParser {
 
@@ -102,6 +101,6 @@ public class DaybreakFragmentSponsorParser {
     private static List<String> parseCSVSponsors(String csvString){
         return Arrays.asList(csvString.split(",")).stream()
                 .map(DaybreakFragmentSponsorParser::formatShortName)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -22,7 +22,7 @@ public class FullMemberView extends MemberView {
                         session -> member.getSessionMemberMap().get(session).stream()
                                 .map(SessionMemberView::new)
                                 .sorted((sm1, sm2) -> Boolean.compare(sm1.alternate, sm2.alternate))
-                                .collect(Collectors.toList())));
+                                .toList()));
     }
 
     public FullMemberView(Collection<SessionMember> sessionMembers) {

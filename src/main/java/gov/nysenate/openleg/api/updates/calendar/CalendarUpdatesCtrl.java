@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -88,7 +87,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             response = DateRangeListViewResponse.of(
                 updateTokens.getResults().stream()
                     .map(token -> new UpdateTokenView(token, new CalendarIdView(token.getId())))
-                    .collect(Collectors.toList()),
+                    .toList(),
                 updateRange, updateTokens.getTotal(), updateTokens.getLimOff()
             );
         }
@@ -98,7 +97,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             response = DateRangeListViewResponse.of(
                 updateDigests.getResults().stream()
                         .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 updateRange, updateDigests.getTotal(), updateDigests.getLimOff()
             );
         }
@@ -148,7 +147,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return DateRangeListViewResponse.of(
             updateDigests.getResults().stream()
                 .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
-                    .collect(Collectors.toList()),
+                    .toList(),
             updateDigests.getTotal(), LimitOffset.ALL
         );
     }

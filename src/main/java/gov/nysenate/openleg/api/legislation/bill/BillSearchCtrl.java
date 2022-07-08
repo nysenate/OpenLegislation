@@ -1,19 +1,19 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.api.search.view.SearchResultView;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.bill.view.BillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillInfoView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
-import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ListViewResponse;
+import gov.nysenate.openleg.api.search.view.SearchResultView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Set;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -96,6 +95,6 @@ public class BillSearchCtrl extends BaseCtrl
                         : (idOnly)
                             ? new BillIdView(r.getResult())
                             : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+                .toList(), results.getTotalResults(), limOff);
     }
 }

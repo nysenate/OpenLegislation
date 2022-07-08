@@ -14,8 +14,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Service interface for retrieving and saving NYS Law data.
  */
@@ -43,7 +41,7 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
     /** {@inheritDoc} */
     @Override
     public List<LawInfo> getLawInfos() {
-        return lawDataDao.getLawInfos().stream().sorted().collect(toList());
+        return lawDataDao.getLawInfos().stream().sorted().toList();
     }
 
     /** {@inheritDoc} */

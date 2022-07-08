@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Created by PKS on 4/28/16.
@@ -28,7 +27,7 @@ public class AgendaJsonParser extends SenateSiteJsonParser {
     public List<SenateSiteAgenda> parseAgendas(SenateSiteDump agendaDump) throws ParseError {
         return agendaDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractAgendasFromFragment(fragment).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<SenateSiteAgenda> extractAgendasFromFragment(SenateSiteDumpFragment fragment) throws ParseError{

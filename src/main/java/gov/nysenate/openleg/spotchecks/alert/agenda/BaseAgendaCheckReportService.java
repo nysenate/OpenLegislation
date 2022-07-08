@@ -52,7 +52,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
         List<AgendaAlertInfoCommittee> allReferences = getReferences(start, end);
         List<AgendaAlertInfoCommittee> references = allReferences.stream()
                 .filter(this::outsideGracePeriod)
-                .collect(Collectors.toList());
+                .toList();
 
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx( "All unchecked agenda references (" +

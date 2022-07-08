@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
@@ -140,7 +139,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
                 .map(BillAmendment::getVotesList)
                 .flatMap(Collection::stream)
                 .filter(v -> v.getVoteType() == BillVoteType.FLOOR)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void checkMemoText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){

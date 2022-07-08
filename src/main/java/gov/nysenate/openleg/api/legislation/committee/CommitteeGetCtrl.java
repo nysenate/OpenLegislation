@@ -1,20 +1,20 @@
 package gov.nysenate.openleg.api.legislation.committee;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeSessionIdView;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeSessionIdView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
-import gov.nysenate.openleg.legislation.committee.*;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
@@ -97,7 +96,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                 committeeDataService.getCommitteeList(chamber, session, limitOffset).stream()
                         .map(committee -> full ? new CommitteeView(committee)
                                                : new CommitteeVersionIdView(committee.getVersionId()) )
-                        .collect(Collectors.toList()),
+                        .toList(),
                 committeeDataService.getCommitteeListCount(chamber, session), limitOffset );
     }
 
@@ -159,7 +158,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                 committeeCollection.stream()
                         .map(committee -> full ? new CommitteeView(committee)
                                 : new CommitteeVersionIdView(committee.getVersionId()) )
-                        .collect(Collectors.toList()),
+                        .toList(),
                 totalCount, limitOffset
         );
     }

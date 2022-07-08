@@ -4,7 +4,6 @@ import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.legislation.committee.Committee;
 
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 public class CommitteeView extends CommitteeVersionIdView{
     /** Time format to match our Elasticsearch mappings.*/
@@ -29,7 +28,7 @@ public class CommitteeView extends CommitteeVersionIdView{
             this.meetAltWeekText = committee.getMeetAltWeekText();
             this.committeeMembers = ListView.of(committee.getMembers().stream()
                     .map(CommitteeMemberView::new)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
     }
 

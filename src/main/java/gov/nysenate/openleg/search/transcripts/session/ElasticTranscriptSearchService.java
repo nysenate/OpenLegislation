@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticTranscriptSearchService implements TranscriptSearchService, IndexedSearchService<Transcript> {
@@ -109,7 +108,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void updateIndex(Collection<Transcript> transcripts) {
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
-            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid transcripts into elasticsearch.", indexableTranscripts.size());
             transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
         }

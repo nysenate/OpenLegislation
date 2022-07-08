@@ -34,8 +34,7 @@ public class BillVoteView implements ViewObject
                     .collect(Collectors.toMap(BillVoteCode::name, voteCode ->
                         ListView.of(billVote.getMembersByVote(voteCode).stream()
                             .map(MemberView::new)
-                            .sorted(Comparator.comparing(MemberView::getShortName))
-                            .collect(Collectors.toList()))))
+                            .sorted(Comparator.comparing(MemberView::getShortName)).toList())))
             );
         }
     }

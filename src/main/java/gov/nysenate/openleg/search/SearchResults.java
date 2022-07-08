@@ -5,7 +5,6 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents the basic structure of a search response with additional information such
@@ -63,13 +62,13 @@ public class SearchResults<ResultType>
 
     public PaginatedList<ResultType> toPaginatedList() {
         return new PaginatedList<>(totalResults, limitOffset,
-                results.stream().map(SearchResult::getResult).collect(Collectors.toList()));
+                results.stream().map(SearchResult::getResult).toList());
     }
 
     public List<ResultType> getRawResults() {
         return results.stream()
                 .map(SearchResult::getResult)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /** --- Basic Getters/Setters --- */

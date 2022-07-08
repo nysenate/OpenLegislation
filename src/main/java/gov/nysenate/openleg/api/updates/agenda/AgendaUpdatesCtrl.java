@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -132,14 +131,14 @@ public class AgendaUpdatesCtrl extends BaseCtrl
                 agendaUpdatesDao.getUpdates(updateRange, updateType, sortOrder, limOff);
             return DateRangeListViewResponse.of(updateTokens.getResults().stream()
                 .map(token -> new UpdateTokenView(token, new AgendaIdView(token.getId())))
-                .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
+                .toList(), updateRange, updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<AgendaId>> updateDigests =
                 agendaUpdatesDao.getDetailedUpdates(updateRange, updateType, sortOrder, limOff);
             return DateRangeListViewResponse.of(updateDigests.getResults().stream()
                 .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.getTotal(), limOff);
         }
     }
 
@@ -153,6 +152,6 @@ public class AgendaUpdatesCtrl extends BaseCtrl
             agendaId, updateRange, updateType, sortOrder, limOff);
         return DateRangeListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-            .collect(toList()), updateRange, digests.getTotal(), limOff);
+                .toList(), updateRange, digests.getTotal(), limOff);
     }
 }
