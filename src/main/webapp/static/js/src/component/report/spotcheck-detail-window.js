@@ -40,7 +40,7 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatchList, index, sourc
         removeLinePageNums: false
     };
 
-    var lineNumberRegex = /^( {4}\d| {3}\d\d)/;
+    var lineNumberRegex = /^( {4}\d| {3}\d\d)/; // TODO does not work, sometimes its 5 and 4 spaces
     var pageNumberRegex = /^ {7}[A|S]\. \d+(--[A-Z])?[ ]+\d+([ ]+[A|S]\. \d+(--[A-Z])?)?$/;
     var budgetPageNumberRegex = /^[ ]{42,43}\d+[ ]+\d+-\d+-\d+$/;
     var explanationRegex = /^[ ]+EXPLANATION--Matter in ITALICS \(underscored\) is new; matter in brackets\n/;
