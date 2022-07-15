@@ -135,7 +135,7 @@ public class SpotCheckCtrl extends BaseCtrl {
     @RequestMapping(value = "/mismatches/{id}/htmldiff", method = RequestMethod.GET)
     public BaseResponse getMismatchHtmlDiff(@PathVariable int id,
                                             @RequestParam(required = false, defaultValue = "NONE") String whitespaceOption,
-                                            @RequestParam(required = false, defaultValue = "NONE") String[] characterOptions) {
+                                            @RequestParam(required = false, defaultValue = "") String[] characterOptions) {
         var mismatch = spotCheckReportDao.getMismatch(id);
         var whitespaceOptionEnum = getEnumParameter("whitespaceOption", whitespaceOption, WhitespaceOption.class);
         var characterOptionEnums = Arrays.stream(characterOptions)

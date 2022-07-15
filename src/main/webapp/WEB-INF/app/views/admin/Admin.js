@@ -20,6 +20,7 @@ import ManageAdminUsers from "app/views/admin/accounts/ManageAdminUsers";
 import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
 import BatchEmail from "app/views/admin/email/BatchEmail";
 import useAuth from "app/shared/useAuth";
+import SpotcheckReports from "app/views/admin/spotchecks/SpotcheckReports";
 
 
 export default function Admin({ setHeaderText }) {
@@ -60,6 +61,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/email">
           <BatchEmail setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/spotchecks">
+          <SpotcheckReports setHeaderText={setHeaderText} />
         </PrivateRoute>
         <PrivateRoute path="/admin/index">
           <AdminDashboard setHeaderText={setHeaderText} />
@@ -119,7 +123,8 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Spotchecks</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/reports" className="link">Reports</Link></li>
+            <li><Link to="/admin/reports" className="link">Run Reports</Link></li>
+            <li><Link to="/admin/spotchecks" className="link">View Spotchecks</Link></li>
           </ul>
         </div>
 

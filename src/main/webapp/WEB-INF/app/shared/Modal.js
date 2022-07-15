@@ -14,9 +14,9 @@ import "@reach/dialog/styles.css";
  * @param ariaLabel {string} A label which identifies the purpose of this modal. Used by screen readers.
  * @param children {JSX.Element} This will be rendered inside the modal.
  */
-export default function Modal({ isOpen, onDismiss, ariaLabel, children }) {
+export default function Modal({ isOpen, onDismiss, ariaLabel, children, className }) {
   return (
-    <DialogOverlay isOpen={isOpen} onDismiss={onDismiss} className="z-20">
+    <DialogOverlay isOpen={isOpen} onDismiss={onDismiss} className={`z-20 ${className}`}>
       <DialogContent className="rounded" aria-label={ariaLabel}>
         {children}
       </DialogContent>
