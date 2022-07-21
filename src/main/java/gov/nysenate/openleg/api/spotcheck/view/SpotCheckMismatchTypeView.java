@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.api.spotcheck.model;
+package gov.nysenate.openleg.api.spotcheck.view;
 
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;

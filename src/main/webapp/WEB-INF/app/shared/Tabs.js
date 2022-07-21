@@ -8,9 +8,11 @@ import { List } from "phosphor-react";
  * @param tabs An array of tabs, each tab should be an object with 'name', 'quantity', 'isDisable',
  * and 'component' fields. The 'component' is the component to render when this tab is active.
  * @param activeTab The 'name' of the currently active tab.
- * @param setActiveTab A callback to set the 'name' of the selected tab.
+ * @param setActiveTab A callback which is executed whenever a users selects a tab.
+ *                     It is passed the name of the selected tab.
+ * @param showZeroQuantity If true a count will be shown even if it is zero.
  */
-export default function Tabs({ tabs, activeTab, setActiveTab }) {
+export default function Tabs({ tabs, activeTab, setActiveTab, showZeroQuantity = false }) {
   const [ tabComponent, setTabComponent ] = React.useState()
   const windowSize = useWindowSize()
 
@@ -24,13 +26,13 @@ export default function Tabs({ tabs, activeTab, setActiveTab }) {
 
   if (windowSize[0] >= 768) {
     return (
-      <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}>
+      <DefaultTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} showZeroQuantity={showZeroQuantity}>
         {tabComponent}
       </DefaultTabs>
     )
   } else {
     return (
-      <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}>
+      <MobileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} showZeroQuantity={showZeroQuantity}>
         {tabComponent}
       </MobileTabs>
     )
@@ -38,9 +40,9 @@ export default function Tabs({ tabs, activeTab, setActiveTab }) {
 }
 
 /**
-* "Tab" component for mobile or small displays
-*/
-function MobileTabs({ tabs, activeTab, setActiveTab, children}) {
+ * "Tab" component for mobile or small displays
+ */
+function MobileTabs({ tabs, activeTab, setActiveTab, showZeroQuantity, children }) {
   return (
     <React.Fragment>
       <div className="mx-5">
@@ -52,7 +54,7 @@ function MobileTabs({ tabs, activeTab, setActiveTab, children}) {
           <select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="py-1 w-full">
             {tabs.map((tab) =>
               <option key={tab.name} value={tab.name} disabled={tab.isDisabled}>
-                {tabLabel(tab)}
+                {tabLabel(tab, showZeroQuantity)}
               </option>
             )}
           </select>
@@ -64,9 +66,9 @@ function MobileTabs({ tabs, activeTab, setActiveTab, children}) {
 }
 
 /**
-* The default tab component, rendered on medium to large size screens.
-*/
-function DefaultTabs({ tabs, activeTab, setActiveTab, children }) {
+ * The default tab component, rendered on medium to large size screens.
+ */
+function DefaultTabs({ tabs, activeTab, setActiveTab, showZeroQuantity, children }) {
   return (
     <React.Fragment>
       <div className="flex pl-5 border-b-1 border-blue-600">
@@ -75,7 +77,8 @@ function DefaultTabs({ tabs, activeTab, setActiveTab, children }) {
             <Tab key={tab.name}
                  tab={tab}
                  isActive={tab.name === activeTab}
-                 setActiveTab={setActiveTab} />
+                 setActiveTab={setActiveTab}
+                 showZeroQuantity={showZeroQuantity} />
           )
         })}
       </div>
@@ -84,7 +87,7 @@ function DefaultTabs({ tabs, activeTab, setActiveTab, children }) {
   )
 }
 
-function Tab({ tab, isActive, setActiveTab }) {
+function Tab({ tab, isActive, setActiveTab, showZeroQuantity }) {
   let tabClass = "px-3 py-1 mr-3 whitespace-nowrap border-t-1 border-l-1 border-r-1"
 
   if (tab.isDisabled) {
@@ -98,11 +101,14 @@ function Tab({ tab, isActive, setActiveTab }) {
   return (
     <div className={tabClass}
          onClick={tab.isDisabled ? undefined : () => setActiveTab(tab.name)}>
-      {tabLabel(tab)}
+      {tabLabel(tab, showZeroQuantity)}
     </div>
   )
 }
 
-const tabLabel = (tab) => {
-  return tab.name + (tab.quantity ? ` (${tab.quantity})` : "")
+const tabLabel = (tab, showZeroQuantity) => {
+  if (!showZeroQuantity) {
+    return tab.name + (tab.quantity ? ` (${tab.quantity})` : "")
+  }
+  return tab.name + ((tab.quantity || tab.quantity === 0) ? ` (${tab.quantity})` : "")
 }

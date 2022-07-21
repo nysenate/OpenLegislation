@@ -115,15 +115,15 @@ public final class MismatchHtmlDiff {
         String formattedObservedData = HtmlDiffFormatter.normalizeLineEndings(this.mismatch.getObservedData());
         String formattedReferenceData = HtmlDiffFormatter.normalizeLineEndings(this.mismatch.getReferenceData());
 
-        // Apply whitespace options.
-        formattedObservedData = HtmlDiffFormatter.applyWhitespaceOption(formattedObservedData, this.whitespaceOption);
-        formattedReferenceData = HtmlDiffFormatter.applyWhitespaceOption(formattedReferenceData, this.whitespaceOption);
-
         // Apply Character options.
         for (CharacterOption opt : this.characterOptions) {
             formattedObservedData = HtmlDiffFormatter.applyCharacterOption(formattedObservedData, opt);
             formattedReferenceData = HtmlDiffFormatter.applyCharacterOption(formattedReferenceData, opt);
         }
+
+        // Apply whitespace options.
+        formattedObservedData = HtmlDiffFormatter.applyWhitespaceOption(formattedObservedData, this.whitespaceOption);
+        formattedReferenceData = HtmlDiffFormatter.applyWhitespaceOption(formattedReferenceData, this.whitespaceOption);
 
         // Create and return diffs
         this.diffs = dmp.diffMain(formattedObservedData, formattedReferenceData);

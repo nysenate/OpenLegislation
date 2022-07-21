@@ -1,9 +1,12 @@
-package gov.nysenate.openleg.api.spotcheck.model;
+package gov.nysenate.openleg.api.spotcheck;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
+import gov.nysenate.openleg.api.spotcheck.view.SpotCheckMismatchTypeView;
+import gov.nysenate.openleg.api.spotcheck.view.SpotCheckRefTypeView;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,4 +38,19 @@ public class SpotCheckModelDataCtrl extends BaseCtrl {
         return ListViewResponse.of(mismatchTypes);
     }
 
+    /**
+     * Reference Types API
+     * ------------------
+     *
+     * Returns the enum name and display name for all SpotCheckRefType's.
+     * Usage: (GET) /api/3/admin/spotcheck/reference-types
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/reference-types", method = RequestMethod.GET)
+    public BaseResponse getRefTypes() {
+        var refTypes = EnumSet.allOf(SpotCheckRefType.class).stream()
+                .map(SpotCheckRefTypeView::new)
+                .collect(Collectors.toList());
+        return ListViewResponse.of(refTypes);
+    }
 }

@@ -17,8 +17,8 @@ import "react-datepicker/dist/react-datepicker.css";
  * @param name The value to use for the input's "name" and label's "for" attributes.
  * @param date A luxon DateTime object representing the initial date.
  * @param setDate Callback method which receives a Luxon DateTime representing the selected date time.
- * @param minDate Optional - The minimum selectable date.
- * @param maxDate Optional - The maximum selectable date.
+ * @param minDate Optional - The minimum selectable date. A Luxon DateTime object.
+ * @param maxDate Optional - The maximum selectable date. A Luxon DateTime object.
  * @param className Optional - Additional classes for styling the date picker.
  * @param rest Any additional configuration necessary for an individual date picker.
  *             - See https://reactdatepicker.com/ for options.
@@ -29,7 +29,7 @@ import "react-datepicker/dist/react-datepicker.css";
  */
 export default function DatePicker({ label, name, date, setDate, minDate, maxDate, className, ...rest }) {
   return (
-    <React.Fragment>
+    <div>
       <label className="label label--top" htmlFor={name}>
         {label} <CalendarBlank color="#374151" size="1.2rem" className="inline" />
       </label>
@@ -45,7 +45,7 @@ export default function DatePicker({ label, name, date, setDate, minDate, maxDat
         dropdownMode="select"
         className={`date-picker ${className ? className : ""}`}
         {...rest} />
-    </React.Fragment>
+    </div>
   )
 }
 

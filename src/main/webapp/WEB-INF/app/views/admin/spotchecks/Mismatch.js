@@ -50,8 +50,7 @@ export default function Mismatch({ mismatchId, mismatchTypeToDisplayName }) {
         <div>
           <ul>
             <li>Last Reported: {formatDateTime(mismatch.observedDateTime, DateTime.DATETIME_SHORT)}</li>
-            <li>Session: {mismatch.key.session.year}</li>
-            <li>Print No: {mismatch.key.printNo}</li>
+            {mismatchContentFields(mismatch)}
             <li>Error Type: {mismatchTypeToDisplayName.get(mismatch.mismatchType)}</li>
           </ul>
         </div>
@@ -85,7 +84,7 @@ export default function Mismatch({ mismatchId, mismatchTypeToDisplayName }) {
                               contentKey={mismatch.key} />
             </div>
             <div className="mx-3">
-            <pre className="whitespace-pre font-mono text-sm overflow-auto h-[calc(55vh-10px)"
+            <pre className="whitespace-pre font-mono text-sm overflow-auto h-[calc(55vh-10px)]"
                  dangerouslySetInnerHTML={{ __html: mismatch.referenceHtmlDiff }} />
             </div>
           </div>
@@ -97,7 +96,7 @@ export default function Mismatch({ mismatchId, mismatchTypeToDisplayName }) {
                               contentKey={mismatch.key} />
             </div>
             <div className="mx-3">
-            <pre className="whitespace-pre font-mono text-sm overflow-auto h-[calc(55vh-10px)"
+            <div className="whitespace-pre font-mono text-sm overflow-auto h-[calc(55vh-10px)]"
                  dangerouslySetInnerHTML={{ __html: mismatch.observedHtmlDiff }} />
             </div>
           </div>
@@ -112,3 +111,39 @@ const whitespaceOptions = [
   new SelectOption("NORMALIZE_WHITESPACE", "Normalize Whitespace"),
   new SelectOption("REMOVE_WHITESPACE", "Remove All Whitespace"),
 ]
+
+const mismatchContentFields = mismatch => {
+  switch (mismatch.contentType) {
+    case "BILL":
+    case "BILL_AMENDMENT":
+      return <>
+        <li>Session: {mismatch.key.session.year}</li>
+        <li>Print No: {mismatch.key.printNo}</li>
+      </>
+    case "CALENDAR":
+      return <>
+        <li>Year: {mismatch.key.year}</li>
+        <li>Cal No: {mismatch.key.calNo}</li>
+        <li>Type: {mismatch.key.type}</li>
+      </>
+    case "AGENDA":
+      return <>
+        <li>Year: {mismatch.key.agendaId.year}</li>
+        <li>Agenda No: {mismatch.key.agendaId.number}</li>
+        <li>Committee: {mismatch.key.committeeId.name}</li>
+      </>
+    case "AGENDA_WEEK":
+      return <>
+        <li>Week of: {mismatch.key.weekOf}</li>
+        <li>Committee: {mismatch.key.committeeId.name}</li>
+      </>
+    case "LAW":
+      if (mismatch.mismatchType === "LAW_IDS") {
+        return <li>Chapter: All</li>
+      }
+      return <>
+        <li>Chapter: {mismatch.key.lawChapter}</li>
+        <li>Loc Id: {mismatch.key.locationId}</li>
+      </>
+  }
+}

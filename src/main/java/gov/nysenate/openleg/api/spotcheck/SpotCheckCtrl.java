@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.spotchecks;
+package gov.nysenate.openleg.api.spotcheck;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -14,6 +14,8 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.spotchecks.MismatchOrderBy;
+import gov.nysenate.openleg.spotchecks.SpotCheckReportDao;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckRunService;
 import gov.nysenate.openleg.spotchecks.mismatch.CharacterOption;
 import gov.nysenate.openleg.spotchecks.mismatch.WhitespaceOption;
