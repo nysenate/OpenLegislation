@@ -1,0 +1,127 @@
+package gov.nysenate.openleg.processors.transcripts.hearing;
+
+import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
+import gov.nysenate.openleg.legislation.transcripts.hearing.HearingFile;
+import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingFileDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+@Service
+public class ManagedHearingProcessService implements HearingProcessService
+{
+    private static final Logger logger = LoggerFactory.getLogger(ManagedHearingProcessService.class);
+
+    @Autowired
+    private HearingFileDao hearingFileDao;
+
+    @Autowired
+    private HearingDataService hearingDataService;
+
+    /** --- Implemented Methods --- */
+
+    /** {@inheritDoc} */
+    @Override
+    public int collate() {
+        return collateHearingFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int ingest() {
+        return processHearingFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getCollateType() {
+        return "public hearing file";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int collateHearingFiles() {
+        int numCollated = 0;
+        try {
+            List<HearingFile> hearingFiles;
+            do {
+                hearingFiles = hearingFileDao.getIncomingHearingFiles(LimitOffset.FIFTY);
+                for (HearingFile file : hearingFiles) {
+                    file.setPendingProcessing(true);
+                    hearingFileDao.archiveHearingFile(file);
+                    hearingFileDao.updateHearingFile(file);
+                    numCollated++;
+                }
+            }
+            while (!hearingFiles.isEmpty());
+        }
+        catch (IOException ex) {
+            logger.error("Error retrieving public hearing files during collation.", ex);
+        }
+        logger.debug("Collated {} hearing files.", numCollated);
+        return numCollated;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<HearingFile> getPendingHearingFiles(LimitOffset limitOffset) {
+        return hearingFileDao.getPendingHearingFile(limitOffset);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int processHearingFiles(List<HearingFile> hearingFiles) {
+        SortedMap<HearingFile, Hearing> processed = new TreeMap<>(
+                Comparator.comparing(HearingFile::isManualFix)
+                        .thenComparing(HearingFile::getFileName));
+        int processCount = 0;
+        for (HearingFile file : hearingFiles) {
+            try {
+                logger.info("Processing hearing file {}", file.getFileName());
+                processed.put(file, HearingParser.process(file));
+                file.setProcessedCount(file.getProcessedCount() + 1);
+                file.setPendingProcessing(false);
+                file.setProcessedDateTime(LocalDateTime.now());
+                hearingFileDao.updateHearingFile(file);
+                processCount++;
+            }
+            catch (IOException ex) {
+                logger.error("Error reading from HearingFile: " + file.getFileName(), ex);
+            }
+        }
+        logger.debug("Saving {} hearings", processCount);
+        for (var hearing : processed.values())
+            hearingDataService.saveHearing(hearing, true);
+        return processCount;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int processHearingFiles() {
+        List<HearingFile> hearingFiles;
+        int processCount = 0;
+        do {
+            hearingFiles = getPendingHearingFiles(LimitOffset.FIFTY);
+            processCount += processHearingFiles(hearingFiles);
+        }
+        while (!hearingFiles.isEmpty());
+        return processCount;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updatePendingProcessing(HearingId hearingId, boolean pendingProcessing) {
+        throw new UnsupportedOperationException();
+    }
+}

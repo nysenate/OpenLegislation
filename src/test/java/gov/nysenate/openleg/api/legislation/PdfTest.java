@@ -2,14 +2,14 @@ package gov.nysenate.openleg.api.legislation;
 
 import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.api.legislation.law.LawPdfCtrl;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.PublicHearingGetCtrl;
+import gov.nysenate.openleg.api.legislation.transcripts.hearing.HearingGetCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.TranscriptGetCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.law.LawInfo;
 import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDao;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDao;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,9 @@ public class PdfTest extends ApiTest {
     private TranscriptDao transcriptDao;
 
     @Autowired
-    private PublicHearingGetCtrl publicHearingGetCtrl;
+    private HearingGetCtrl hearingGetCtrl;
     @Autowired
-    private PublicHearingDao publicHearingDao;
+    private HearingDao hearingDao;
 
     // TODO: bill tests
     @Test
@@ -74,9 +74,9 @@ public class PdfTest extends ApiTest {
 
     @Test
     public void fullHearingTest() throws IOException {
-        var ids = publicHearingDao.getPublicHearingIds(SortOrder.ASC, LimitOffset.ALL);
+        var ids = hearingDao.getHearingIds(SortOrder.ASC, LimitOffset.ALL);
         for (var id : ids)
-            publicHearingGetCtrl.getHearingPdf(String.valueOf(id.id()));
+            hearingGetCtrl.getHearingPdf(String.valueOf(id.id()));
     }
 
     static Set<Integer> alphaNum = new HashSet<>(), punctuation = new HashSet<>(), accentChars = new HashSet<>();

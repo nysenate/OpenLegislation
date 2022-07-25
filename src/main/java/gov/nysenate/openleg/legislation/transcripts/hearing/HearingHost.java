@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Contains data about what group is hosting a public hearing.
+ * Contains data about what group is hosting a hearing.
  */
 public record HearingHost(Chamber chamber, HearingHostType type, String name) {
     private static final String IRRELEVANT_TEXT = "^(\\s?(ON|FOR|THE|AND|,))+|((,|THE|AND|;)\\s?)+$";
