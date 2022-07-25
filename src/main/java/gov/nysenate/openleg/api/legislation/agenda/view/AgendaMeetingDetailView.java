@@ -9,22 +9,17 @@ import java.time.LocalDate;
 /**
  * Adds the agenda/committee ids to the meeting view.
  */
-public class AgendaMeetingDetailView extends CommAgendaIdView implements ViewObject
-{
-    protected String addendum;
-    protected LocalDate weekOf;
-    protected AgendaMeetingView meeting;
+public class AgendaMeetingDetailView extends CommAgendaIdView implements ViewObject {
+    private final String addendum;
+    private final LocalDate weekOf;
+    private final AgendaMeetingView meeting;
 
-    public AgendaMeetingDetailView(CommitteeAgendaId committeeAgendaId, AgendaInfoCommittee infoComm, String addendum,
+    public AgendaMeetingDetailView(AgendaInfoCommittee infoComm, String addendum,
                                    LocalDate weekOf) {
-        super(committeeAgendaId);
-        this.meeting = new AgendaMeetingView(getOrDefault(infoComm));
+        super(new CommitteeAgendaId(infoComm.getAgendaId(), infoComm.getCommitteeId()));
+        this.meeting = new AgendaMeetingView(infoComm);
         this.addendum = addendum;
         this.weekOf = weekOf;
-    }
-
-    private static AgendaInfoCommittee getOrDefault(AgendaInfoCommittee infoComm) {
-        return infoComm == null ? new AgendaInfoCommittee() : infoComm;
     }
 
     @Override

@@ -13,32 +13,38 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.search.agenda.AgendaSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/agendas", method = RequestMethod.GET)
 public class AgendaGetCtrl extends BaseCtrl {
-    @Autowired private AgendaDataService agendaData;
-    @Autowired private AgendaSearchService agendaSearch;
-    @Autowired private BillDataService billData;
+    private static final Comparator<AgendaMeetingDetailView> amdvComparator =
+            Comparator.comparing((AgendaMeetingDetailView o) -> o.getMeeting().meetingDateTime())
+                    // We only need to sort on the meetingDateTime, while ensuring two committees
+                    // are never treated as equal aren't treated as equal.
+                    .thenComparingInt(Object::hashCode);
+    private final AgendaDataService agendaData;
+    private final AgendaBillUtils agendaBillUtils;
+
+    @Autowired
+    public AgendaGetCtrl(AgendaDataService agendaData, AgendaBillUtils agendaBillUtils) {
+        this.agendaData = agendaData;
+        this.agendaBillUtils = agendaBillUtils;
+    }
 
     /**
      * Agenda List Retrieval API
@@ -52,7 +58,7 @@ public class AgendaGetCtrl extends BaseCtrl {
         return ListViewResponse.of(
                 agendaIds.stream()
                         .map(aid -> new AgendaSummaryView(agendaData.getAgenda(aid)))
-                        .collect(Collectors.toList()), agendaIds.size(), LimitOffset.ALL);
+                        .toList(), agendaIds.size(), LimitOffset.ALL);
     }
 
     /**
@@ -65,10 +71,10 @@ public class AgendaGetCtrl extends BaseCtrl {
      * where 'year' is the calendar year of the agenda and agendaNo is the number that identifies
      * the agenda. This response will contain data for committee agendas.
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo) {
         Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
-        return new ViewObjectResponse<>(new AgendaView(agenda, billData));
+        return new ViewObjectResponse<>(new AgendaView(agenda, agendaBillUtils.getBillInfoMap(agenda, null)));
     }
 
     /**
@@ -84,7 +90,7 @@ public class AgendaGetCtrl extends BaseCtrl {
     public ViewObjectResponse<AgendaView> getAgenda(@PathVariable String weekOf) {
         LocalDate weekOfDate = parseISODate(weekOf, "weekOf");
         Agenda agenda = agendaData.getAgenda(weekOfDate);
-        return new ViewObjectResponse<>(new AgendaView(agenda, billData));
+        return new ViewObjectResponse<>(new AgendaView(agenda, agendaBillUtils.getBillInfoMap(agenda, null)));
     }
 
     /**
@@ -97,12 +103,12 @@ public class AgendaGetCtrl extends BaseCtrl {
      * where year and agendaNo are the same as {@link #getAgenda(int, int)} and 'committeeName' refers to the
      * name of the senate committee.
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/{commName}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/{commName}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String commName) {
         Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, commName);
         if (agenda.hasCommittee(committeeId)) {
-            return new ViewObjectResponse<>(new AgendaCommFlatView(agenda, committeeId, billData));
+            return new ViewObjectResponse<>(new AgendaCommFlatView(agenda, committeeId, agendaBillUtils.getBillInfoMap(agenda, committeeId)));
         }
         else {
             return new ViewObjectErrorResponse(
@@ -115,30 +121,22 @@ public class AgendaGetCtrl extends BaseCtrl {
      * ----------------------
      *
      * Retrieve a list of committee meetings between from and to date/time, ordered by earliest first.
-     * (GET) /api/3/agendas/meetings/{from datetime}/{to datetime}
+     * (GET) /api/3/agendas/meetings/{from}/{to}
      */
     @RequestMapping(value = "/meetings/{from}/{to}")
-    public BaseResponse getAgendaMeetings(@PathVariable String from, @PathVariable String to) throws SearchException {
+    public BaseResponse getAgendaMeetings(@PathVariable String from, @PathVariable String to) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        String meetingQuery = String.format("\\*.meetingDateTime:[%s TO %s]", fromDateTime.toString(), toDateTime.toString());
-        String sort = "committee.addenda.items.meeting.meetingDateTime:ASC";
-        SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(meetingQuery, sort, LimitOffset.THOUSAND);
-        List<AgendaMeetingDetailView> meetingViews = new ArrayList<>();
-        results.getResults().forEach(r -> {
-            // Create a flat listing of detailed meeting views.
-            CommitteeAgendaId commAgendaId = r.getResult();
-            agendaData.getAgenda(commAgendaId.getAgendaId())
-                    .getAgendaInfoAddenda().values()
-                    .forEach(addn -> {
-                        if (addn.getCommitteeInfoMap().containsKey(commAgendaId.getCommitteeId())) {
-                            meetingViews.add(new AgendaMeetingDetailView(
-                                commAgendaId, addn.getCommittee(commAgendaId.getCommitteeId()), addn.getId(), addn.getWeekOf()));
-                        }
-                    });
-        });
-        return DateRangeListViewResponse.of(
-                meetingViews, getClosedRange(fromDateTime, toDateTime, "from", "to"), meetingViews.size(), LimitOffset.ALL);
+        WeekOfAgendaInfoMap agendaInfoMap = agendaData.getWeekOfMap(fromDateTime, toDateTime);
+        SortedSet<AgendaMeetingDetailView> sortedViewSet = new TreeSet<>(amdvComparator);
+        for (var date : agendaInfoMap.keySet()) {
+            for (var comm : agendaInfoMap.get(date)) {
+                sortedViewSet.add(new AgendaMeetingDetailView(comm, comm.getAddendum().toString(), date));
+            }
+        }
+        return DateRangeListViewResponse.of(sortedViewSet.stream().toList(),
+                getClosedRange(fromDateTime, toDateTime, "from", "to"),
+                sortedViewSet.size(), LimitOffset.ALL);
     }
 
     /** --- Exception Handlers --- */
@@ -146,6 +144,7 @@ public class AgendaGetCtrl extends BaseCtrl {
     @ExceptionHandler(AgendaNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ViewObjectErrorResponse agendaNotFoundHandler(AgendaNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.AGENDA_NOT_FOUND, new AgendaIdView(ex.getAgendaId()));
+        return new ViewObjectErrorResponse(ErrorCode.AGENDA_NOT_FOUND,
+                new AgendaIdView(ex.getAgendaId()));
     }
 }

@@ -3,14 +3,15 @@ package gov.nysenate.openleg.legislation.agenda;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Identifies a specific committee within an agenda.
  */
-public class CommitteeAgendaId implements Serializable, Comparable<CommitteeAgendaId>
-{
+public class CommitteeAgendaId implements Serializable, Comparable<CommitteeAgendaId> {
+    @Serial
     private static final long serialVersionUID = 6484855429442267908L;
 
     private AgendaId agendaId;

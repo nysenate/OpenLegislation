@@ -7,6 +7,7 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -16,11 +17,11 @@ import java.util.stream.Stream;
 /**
  * An Agenda is essentially a list of items (bills) that are brought up for discussion in
  * committees. This Agenda class models the agendas closely to how LBDC sends the source data.
- * It is comprised of a collection of addenda which either contains committee meeting information
+ * It comprises a collection of addenda which either contains committee meeting information
  * including bills that are to be brought up, or committee votes.
  */
-public class Agenda extends BaseLegislativeContent implements Serializable
-{
+public class Agenda extends BaseLegislativeContent implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6763891242038699549L;
 
     /** The agenda id. */
@@ -95,8 +96,8 @@ public class Agenda extends BaseLegislativeContent implements Serializable
      */
     public Optional<LocalDate> getWeekOf() {
         return agendaInfoAddenda.values().stream()
-            .filter(ia -> ia.getWeekOf() != null)
-            .map(ia -> ia.getWeekOf())
+            .map(AgendaInfoAddendum::getWeekOf)
+            .filter(Objects::nonNull)
             .findAny();
     }
 
@@ -107,11 +108,9 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     public Integer totalBillsConsidered(Optional<CommitteeId> committeeId) {
         return agendaInfoAddenda.values().stream()
             .flatMap(ia ->
-                    (committeeId.isPresent())
-                    ? (ia.getCommitteeInfoMap().containsKey(committeeId.get()))
-                        ? Stream.of(ia.getCommitteeInfoMap().get(committeeId.get()))
-                        : Stream.empty()
-                    : ia.getCommitteeInfoMap().values().stream()
+                    committeeId.<Stream<AgendaInfoCommittee>>map(value -> (ia.getCommitteeInfoMap().containsKey(value))
+                            ? Stream.of(ia.getCommitteeInfoMap().get(value))
+                            : Stream.empty()).orElseGet(() -> ia.getCommitteeInfoMap().values().stream())
             )
             .map(ic -> ic.getItems().size())
             .reduce(0, Integer::sum);
@@ -124,11 +123,9 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     public Integer totalBillsVoted(Optional<CommitteeId> committeeId) {
         return agendaVoteAddenda.values().stream()
             .flatMap(ia ->
-                (committeeId.isPresent())
-                    ? (ia.getCommitteeVoteMap().containsKey(committeeId.get()))
-                        ? Stream.of(ia.getCommitteeVoteMap().get(committeeId.get()))
-                        : Stream.empty()
-                    : ia.getCommitteeVoteMap().values().stream()
+                    committeeId.<Stream<AgendaVoteCommittee>>map(value -> (ia.getCommitteeVoteMap().containsKey(value))
+                            ? Stream.of(ia.getCommitteeVoteMap().get(value))
+                            : Stream.empty()).orElseGet(() -> ia.getCommitteeVoteMap().values().stream())
             )
             .map(ic -> ic.getVotedBills().size())
             .reduce(0, Integer::sum);
@@ -147,8 +144,7 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     public boolean hasCommittee(CommitteeId committeeId) {
         return agendaInfoAddenda.values().stream()
             .map(a -> a.getCommitteeInfoMap().keySet())
-            .filter(a -> a.contains(committeeId))
-            .findAny().isPresent();
+            .anyMatch(a -> a.contains(committeeId));
     }
 
     /**
@@ -203,7 +199,7 @@ public class Agenda extends BaseLegislativeContent implements Serializable
                 .flatMap(agendaInfoAddendum -> agendaInfoAddendum.getCommitteeInfoMap().values().stream())
                 .map(agendaInfoCommittee -> new CommitteeAgendaAddendumId(agendaInfoCommittee.getAgendaId(),
                         agendaInfoCommittee.getCommitteeId(),
-                        agendaInfoCommittee.getAddendum())).collect(Collectors.toList());
+                        agendaInfoCommittee.getAddendum())).toList();
     }
 
     /**
@@ -234,6 +230,6 @@ public class Agenda extends BaseLegislativeContent implements Serializable
         return this.getAgendaVoteAddenda().values().stream()
                 .map(a -> a.getCommitteeVoteMap().get(committeeId))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

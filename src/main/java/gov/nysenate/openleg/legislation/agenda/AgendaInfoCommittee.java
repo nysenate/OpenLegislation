@@ -16,8 +16,7 @@ import java.util.Objects;
  * pertaining to a meeting, the actual meeting info must be derived via any preceding/subsequent
  * addenda and especially though the data contained within the 'notes' field.
  */
-public class AgendaInfoCommittee implements Serializable
-{
+public class AgendaInfoCommittee implements Serializable {
     @Serial
     private static final long serialVersionUID = 6788116636375650193L;
 
@@ -65,10 +64,6 @@ public class AgendaInfoCommittee implements Serializable
 
     public void addCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
-    }
-
-    public CommitteeAgendaAddendumId getId() {
-        return new CommitteeAgendaAddendumId(agendaId, committeeId, addendum);
     }
 
     /** --- Overrides --- */

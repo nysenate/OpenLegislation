@@ -15,8 +15,7 @@ import java.io.Serializable;
  * @param billVote Details regarding the vote.
  */
 public record AgendaVoteBill(AgendaVoteAction voteAction, CommitteeId referCommittee,
-                             boolean isWithAmendment, BillVote billVote) implements Serializable
-{
+                             boolean isWithAmendment, BillVote billVote) implements Serializable {
     @Serial
     private static final long serialVersionUID = 8418895620868449773L;
 

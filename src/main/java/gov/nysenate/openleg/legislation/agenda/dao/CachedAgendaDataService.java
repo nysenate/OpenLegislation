@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
+import gov.nysenate.openleg.api.legislation.agenda.WeekOfAgendaInfoMap;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
@@ -15,6 +16,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,8 +25,12 @@ import java.util.stream.Collectors;
 public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> implements AgendaDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedAgendaDataService.class);
 
+    private final AgendaDao agendaDao;
+
     @Autowired
-    private AgendaDao agendaDao;
+    public CachedAgendaDataService(AgendaDao agendaDao) {
+        this.agendaDao = agendaDao;
+    }
 
     @Override
     protected CacheType cacheType() {
@@ -34,7 +40,7 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Override
     public Map<AgendaId, Agenda> initialEntries() {
         return getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC).stream()
-                .limit(20).collect(Collectors.toMap(id -> id, id -> agendaDao.getAgenda(id)));
+                .limit(20).collect(Collectors.toMap(id -> id, agendaDao::getAgenda));
     }
 
     /** {@inheritDoc} */
@@ -70,6 +76,12 @@ public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> im
     @Override
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
         return agendaDao.getAgendaIds(year, idOrder);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public WeekOfAgendaInfoMap getWeekOfMap(LocalDateTime from, LocalDateTime to) {
+        return agendaDao.getWeekOfMap(from, to);
     }
 
     /** {@inheritDoc} */

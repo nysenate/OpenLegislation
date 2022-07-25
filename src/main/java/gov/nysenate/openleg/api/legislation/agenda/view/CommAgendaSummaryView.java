@@ -6,9 +6,8 @@ import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import java.time.LocalDate;
 import java.util.Optional;
 
-public class CommAgendaSummaryView extends CommAgendaIdView
-{
-    protected LocalDate weekOf;
+public class CommAgendaSummaryView extends CommAgendaIdView {
+    private final LocalDate weekOf;
     private final long totalAddendum;
     private final int totalBillsConsidered;
     private final int totalBillsVotedOn;

@@ -6,13 +6,14 @@ import gov.nysenate.openleg.api.legislation.bill.view.BillVoteView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
 import gov.nysenate.openleg.legislation.agenda.AgendaVoteBill;
 
-public record AgendaVoteBillView(BillIdView bill, String action, CommitteeIdView referCommittee,
-                                 BillVoteView vote, boolean isAmended) implements ViewObject {
+public record AgendaVoteBillView(BillIdView bill, String action, boolean amended, CommitteeIdView referCommittee,
+                                 BillVoteView vote) implements ViewObject {
 
     public AgendaVoteBillView(AgendaVoteBill voteBill) {
         this(new BillIdView(voteBill.getBillId()), voteBill.voteAction().name(),
+                voteBill.isWithAmendment(),
                 voteBill.referCommittee() != null ? new CommitteeIdView(voteBill.referCommittee()) : null,
-        new BillVoteView(voteBill.billVote()), voteBill.isWithAmendment());
+                new BillVoteView(voteBill.billVote()));
     }
 
     @Override
