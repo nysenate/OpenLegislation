@@ -4,7 +4,6 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBillId;
-import gov.nysenate.openleg.spotchecks.daybreak.process.DaybreakFragmentSponsorParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -16,16 +15,14 @@ import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
 public class DaybreakFragmentSponsorParserTest {
-
-    private DaybreakBill senateBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("S100", 2017), LocalDate.now()));
-    private DaybreakBill assemblyBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("A100", 2017), LocalDate.now()));
+    private final DaybreakBill senateBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("S100", 2017), LocalDate.now()));
+    private final DaybreakBill assemblyBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("A100", 2017), LocalDate.now()));
 
     @Test
     public void parseSenateSponsor() {
         String sponsorsLine = "MURPHY";
-        String expectedSponsor = "MURPHY";
         DaybreakFragmentSponsorParser.parseSponsors(senateBill, sponsorsLine);
-        assertEquals(expectedSponsor, senateBill.getSponsor());
+        assertEquals(sponsorsLine, senateBill.getSponsor());
     }
 
     @Test
@@ -43,9 +40,8 @@ public class DaybreakFragmentSponsorParserTest {
     @Test
     public void parseAssemblySponsor() {
         String sponsorsLine = "CAHILL";
-        String expectedSponsor = "CAHILL";
         DaybreakFragmentSponsorParser.parseSponsors(assemblyBill, sponsorsLine);
-        assertEquals(expectedSponsor, assemblyBill.getSponsor());
+        assertEquals(sponsorsLine, assemblyBill.getSponsor());
     }
 
     @Test
@@ -88,8 +84,8 @@ public class DaybreakFragmentSponsorParserTest {
     public void parsesMillers(){
         String sponsorsLine = "M. G. MILLER, M. L. MILLER; M-S: M. G. Miller";
         String expectedSponsor = "MILLER MG";
-        List<String> expectedCoSponsor = Arrays.asList("MILLER ML");
-        List<String> expectedMultiSponsor = Arrays.asList("Miller MG");
+        List<String> expectedCoSponsor = List.of("MILLER ML");
+        List<String> expectedMultiSponsor = List.of("Miller MG");
         DaybreakFragmentSponsorParser.parseSponsors(assemblyBill, sponsorsLine);
         assertEquals(expectedSponsor, assemblyBill.getSponsor());
         assertEquals(expectedCoSponsor, assemblyBill.getCosponsors());
@@ -108,7 +104,7 @@ public class DaybreakFragmentSponsorParserTest {
     public void parsesRulesWithSponsors() {
         String sponsorsLine = "RULES COM (Request of Heastie, Morelle)";
         String expectedSponsor = "RULES (Heastie)";
-        List<String> expectedCoSponsors = Arrays.asList("Morelle");
+        List<String> expectedCoSponsors = List.of("Morelle");
         DaybreakFragmentSponsorParser.parseSponsors(assemblyBill, sponsorsLine);
         assertEquals(expectedSponsor, assemblyBill.getSponsor());
         assertEquals(expectedCoSponsors, assemblyBill.getCosponsors());

@@ -40,7 +40,7 @@ public enum MismatchOrderBy {
     LAW_LOC_ID("key->'location_id'"),
     ;
 
-    private String columnName;
+    private final String columnName;
 
     MismatchOrderBy(String colName) {
         this.columnName = colName;

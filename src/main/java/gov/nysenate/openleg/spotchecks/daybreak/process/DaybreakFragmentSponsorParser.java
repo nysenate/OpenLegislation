@@ -6,17 +6,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class DaybreakFragmentSponsorParser {
+public final class DaybreakFragmentSponsorParser {
 
     /**
      * Pattern for detecting short names that contain the member's initials
      * Examples: P. LOPEZ -> LOPEZ P
      *           M. G. MILLER -> MILLER MG
      */
-    private static String shortNameInitialRegex = "((?<firstInitial>[A-Z])\\. )?(?<secondInitial>[A-Z])\\. (?<shortName>[A-Za-z\\-' ]*)";
+    private static final String shortNameInitialRegex = "((?<firstInitial>[A-Z])\\. )?(?<secondInitial>[A-Z])\\. (?<shortName>[A-Za-z\\-' ]*)";
     /** Pattern for extracting sponsors from Rules sponsors */
-    private static Pattern rulesSponsorPattern = Pattern.compile("RULES COM \\(Request of ([A-Za-z\\-\\.', ]*)\\)");
+    private static final Pattern rulesSponsorPattern = Pattern.compile("RULES COM \\(Request of ([A-Za-z\\-\\.', ]*)\\)");
+
+    private DaybreakFragmentSponsorParser() {}
 
     /**
      * Given a line containing sponsor data, calls the correct parser depending on the bill's chamber
@@ -29,10 +32,8 @@ public class DaybreakFragmentSponsorParser {
         }
         else {
             switch (daybreakBill.getBaseBillId().getChamber()) {
-                case SENATE:
-                    parseSenateSponsors(daybreakBill, sponsorLine); break;
-                case ASSEMBLY:
-                    parseAssemblySponsors(daybreakBill, sponsorLine); break;
+                case SENATE -> parseSenateSponsors(daybreakBill, sponsorLine);
+                case ASSEMBLY -> parseAssemblySponsors(daybreakBill, sponsorLine);
             }
         }
     }
@@ -73,7 +74,7 @@ public class DaybreakFragmentSponsorParser {
      */
     private static void parseRulesSponsors(DaybreakBill daybreakBill, String sponsorLine){
         Matcher rulesSponsorMatcher = rulesSponsorPattern.matcher(sponsorLine);
-        if(rulesSponsorMatcher.matches()){
+        if (rulesSponsorMatcher.matches()){
             List<String> sponsors = parseCSVSponsors(rulesSponsorMatcher.group(1));
             daybreakBill.setSponsor("RULES (" + sponsors.remove(0) + ")");  //Set the first sponsor as the main sponsor
             daybreakBill.setCosponsors(sponsors);
@@ -99,8 +100,8 @@ public class DaybreakFragmentSponsorParser {
      * @return
      */
     private static List<String> parseCSVSponsors(String csvString){
-        return Arrays.asList(csvString.split(",")).stream()
+        return Arrays.stream(csvString.split(","))
                 .map(DaybreakFragmentSponsorParser::formatShortName)
-                .toList();
+                .collect(Collectors.toList());
     }
 }
