@@ -113,9 +113,9 @@ These are properties that need to be modified for a typical installation.  This 
 
 #### API authentication
 
-Set `api.auth.enable = false` if you do not want to deal with api authentication.
+Set `api.auth.enable = false` if you do not want to deal with API authentication.
    
-Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce api authentication on matched hosts/ips.
+Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce API authentication on matched hosts/ips.
 
 #### Admin Settings
 
@@ -151,9 +151,9 @@ If true, the app will scrape qa data from LBDC every data process cycle.
 
 #### Mail Configuration
 
-The `checkmail` properties are only useful if you are interested running spotcheck data qa reports.
+The `checkmail` properties are only useful if you are interested running spotcheck data QA reports.
 
-Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for api key registration.
+Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for API key registration.
 
 #### Domain Configuration
 

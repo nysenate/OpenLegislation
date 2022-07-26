@@ -6,12 +6,12 @@ import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 
 import java.time.LocalDateTime;
 
-public class NotificationSummaryView implements ViewObject{
+public class NotificationSummaryView implements ViewObject {
 
-    protected long id;
-    protected NotificationType notificationType;
-    protected LocalDateTime occurred;
-    protected String summary;
+    private final long id;
+    private final NotificationType notificationType;
+    private final LocalDateTime occurred;
+    private final String summary;
 
     public NotificationSummaryView(RegisteredNotification notification) {
         this.id = notification.getId();
@@ -24,32 +24,16 @@ public class NotificationSummaryView implements ViewObject{
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public NotificationType getNotificationType() {
         return notificationType;
-    }
-
-    public void setNotificationType(NotificationType notificationType) {
-        this.notificationType = notificationType;
     }
 
     public LocalDateTime getOccurred() {
         return occurred;
     }
 
-    public void setOccurred(LocalDateTime occurred) {
-        this.occurred = occurred;
-    }
-
     public String getSummary() {
         return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
     }
 
     @Override

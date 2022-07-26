@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api.response.error;
 
-import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.ViewObject;
 
 public class InvalidParameterView implements ViewObject {
 
@@ -20,13 +20,5 @@ public class InvalidParameterView implements ViewObject {
     @Override
     public String getViewType() {
         return "invalid-parameter";
-    }
-
-    public ConstrainedParameterView getParameterConstraint() {
-        return parameterConstraint;
-    }
-
-    public String getReceivedValue() {
-        return receivedValue;
     }
 }

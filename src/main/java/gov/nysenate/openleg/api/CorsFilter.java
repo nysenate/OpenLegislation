@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -13,10 +11,7 @@ import java.io.IOException;
  * This will allow external sites to utilize the OpenLeg API on the client side without needing JSONP.
  */
 @Component("corsFilter")
-public class CorsFilter implements Filter
-{
-    private static final Logger logger = LoggerFactory.getLogger(CorsFilter.class);
-
+public class CorsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;

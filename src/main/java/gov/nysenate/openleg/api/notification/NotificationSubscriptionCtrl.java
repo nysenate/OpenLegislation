@@ -18,7 +18,6 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -29,10 +28,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
 @RestController
 @RequestMapping(value = BaseCtrl.BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class NotificationSubscriptionCtrl extends BaseCtrl
-{
+public class NotificationSubscriptionCtrl extends BaseCtrl {
+    private final NotificationSubscriptionDataService subscriptionDataService;
+
     @Autowired
-    private NotificationSubscriptionDataService subscriptionDataService;
+    public NotificationSubscriptionCtrl(NotificationSubscriptionDataService subscriptionDataService) {
+        this.subscriptionDataService = subscriptionDataService;
+    }
 
     /**
      * Notification Types API
@@ -129,7 +131,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscriptions")
-    public BaseResponse viewSubscriptions(WebRequest request) {
+    public BaseResponse viewSubscriptions() {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
         Set<NotificationSubscription> userSubscriptions = subscriptionDataService.getSubscriptions(user);
         return ListViewResponse.of(userSubscriptions.stream()
@@ -153,7 +155,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                 .build();
     }
 
-    private NotificationMedium getNotificationTargetFromString(String text) {
+    private static NotificationMedium getNotificationTargetFromString(String text) {
         try {
             return NotificationMedium.getValue(text);
         } catch (IllegalArgumentException e) {

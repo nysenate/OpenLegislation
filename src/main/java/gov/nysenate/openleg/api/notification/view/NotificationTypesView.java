@@ -9,24 +9,9 @@ import java.util.Collection;
 /**
  * Returns collections of all possible notification types and notification mediums.
  */
-public class NotificationTypesView implements ViewObject {
-
-    private Collection<NotificationType> notificationTypes;
-    private Collection<NotificationMedium> notificationMediums;
-
-    public NotificationTypesView(Collection<NotificationType> notificationTypes,
-                                 Collection<NotificationMedium> notificationMediums) {
-        this.notificationTypes = notificationTypes;
-        this.notificationMediums = notificationMediums;
-    }
-
-    public Collection<NotificationType> getNotificationTypes() {
-        return notificationTypes;
-    }
-
-    public Collection<NotificationMedium> getNotificationMediums() {
-        return notificationMediums;
-    }
+public record NotificationTypesView(Collection<NotificationType> notificationTypes,
+                                    Collection<NotificationMedium> notificationMediums)
+        implements ViewObject {
 
     @Override
     public String getViewType() {

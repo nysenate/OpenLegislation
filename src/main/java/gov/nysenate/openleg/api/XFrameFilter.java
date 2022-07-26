@@ -11,7 +11,6 @@ import java.io.IOException;
 
 @Component("xFrameFilter")
 public class XFrameFilter extends OncePerRequestFilter {
-
     @Override
     protected void doFilterInternal(HttpServletRequest httpRequest,
                                     HttpServletResponse httpResponse,

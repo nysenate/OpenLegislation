@@ -2,9 +2,8 @@ package gov.nysenate.openleg.api.notification.view;
 
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 
-public class NotificationView extends NotificationSummaryView
-{
-    protected String message;
+public class NotificationView extends NotificationSummaryView {
+    private final String message;
 
     public NotificationView(RegisteredNotification notification) {
         super(notification);
@@ -13,9 +12,5 @@ public class NotificationView extends NotificationSummaryView
 
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
