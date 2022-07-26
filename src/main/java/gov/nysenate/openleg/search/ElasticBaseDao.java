@@ -114,7 +114,6 @@ public abstract class ElasticBaseDao
                 null, null, sort, limitOffset, false, hitMapper);
     }
 
-
     /**
      * Performs a search with support for various functions.
      *
