@@ -7,8 +7,7 @@ import java.util.stream.Collectors;
 /**
  * Enumeration of all the search indices.
  */
-public enum SearchIndex
-{
+public enum SearchIndex {
     BILL("bills"),
     AGENDA("agendas"),
     CALENDAR("calendars"),
