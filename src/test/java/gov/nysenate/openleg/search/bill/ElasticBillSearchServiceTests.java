@@ -36,8 +36,8 @@ public class ElasticBillSearchServiceTests extends BaseTests
 
     @Test
     public void testSearch() throws Exception {
-        billSearchService.searchBills("explore", null, LimitOffset.TEN).getResults()
-            .forEach(r -> logger.info("{}", r.getResult()));
+        billSearchService.searchBills("explore", null, LimitOffset.TEN).resultList()
+            .forEach(r -> logger.info("{}", r.result()));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
                 int sessionTotal = Integer.MAX_VALUE;
                 for (LimitOffset limoff = LimitOffset.HUNDRED; limoff.getOffsetStart() < sessionTotal; limoff = limoff.next()) {
                     SearchResults<BaseBillId> results = billSearchService.searchBills(s, "publishedDateTime:asc", limoff);
-                    sessionTotal = results.getTotalResults();
+                    sessionTotal = results.totalResults();
                 }
             }
             logger.info("Run {}: Iterated through all sessions in {}.", run, sw.stop());

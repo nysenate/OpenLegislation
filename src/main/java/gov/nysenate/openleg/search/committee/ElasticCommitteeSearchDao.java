@@ -97,8 +97,8 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         SearchResults<CommitteeVersionId> searchResults = searchCommittees(
                 getCommitteeSessionQuery(committeeSessionId), null, Collections.emptyList(), LimitOffset.ALL);
 
-        searchResults.getResults().stream()
-                .map(SearchResult::getResult)
+        searchResults.resultList().stream()
+                .map(SearchResult::result)
                 .map(this::getCommitteeVersionDeleteRequest)
                 .forEach(request::add);
 

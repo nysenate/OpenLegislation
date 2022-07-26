@@ -10,8 +10,6 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +24,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class TranscriptUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptUpdatesCtrl.class);
+public class TranscriptUpdatesCtrl extends BaseCtrl {
+    private final TranscriptDao transcriptDao;
 
-    @Autowired private TranscriptDao transcriptDao;
+    @Autowired
+    public TranscriptUpdatesCtrl(TranscriptDao transcriptDao) {
+        this.transcriptDao = transcriptDao;
+    }
 
     /**
      * Transcript Updates API
@@ -75,8 +75,8 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
         LimitOffset limOff = getLimitOffset(request, 25);
         Range<LocalDateTime> range = getOpenRange(from, to, "from", "to");
         PaginatedList<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
-        return ListViewResponse.of(updates.getResults().stream()
+        return ListViewResponse.of(updates.results().stream()
                 .map(TranscriptUpdateTokenView::new)
-                .toList(), updates.getTotal(), limOff);
+                .toList(), updates.total(), limOff);
     }
 }

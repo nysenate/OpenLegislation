@@ -91,13 +91,13 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
             // Get bills from ref. API
             PaginatedList<BillView> paginatedBillViews = openlegBillDao.getBillViews(sessionYear, limoff);
             // Set the total based on the response.
-            totalRefBills = paginatedBillViews.getTotal();
+            totalRefBills = paginatedBillViews.total();
 
             logger.info("Checking bills {} - {} of {}",
                     limoff.getOffsetStart(), limoff.getOffsetEnd(), totalRefBills);
 
             // Check each bill in the result.
-            for (BillView refBill : paginatedBillViews.getResults()) {
+            for (BillView refBill : paginatedBillViews.results()) {
                 BaseBillId baseBillId = refBill.toBaseBillId();
                 try {
                     if (!localBillIds.contains(baseBillId)) {

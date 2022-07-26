@@ -154,7 +154,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
                 billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            List<UpdateTokenView> updates = updateTokens.getResults().stream()
+            List<UpdateTokenView> updates = updateTokens.results().stream()
                     .map(token -> {
                         if (fullBill) {
                             Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
@@ -168,18 +168,18 @@ public class BillUpdatesCtrl extends BaseCtrl
                         return new UpdateTokenView(token, new BaseBillIdView(token.getId()));
                     })
                     .toList();
-            return DateRangeListViewResponse.of(updates, updateRange, updateTokens.getTotal(), limOff);
+            return DateRangeListViewResponse.of(updates, updateRange, updateTokens.total(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
                 billUpdatesDao.getDetailedUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.results().stream()
                 .map(digest ->
                         (!summary) ? new UpdateDigestView(digest, new BaseBillIdView(digest.getId()))
                                    : new UpdateDigestModelView(digest, new BaseBillIdView(digest.getId()),
                                                                        new SimpleBillInfoView(billData.getBillInfo(digest.getId())))
                 )
-                .toList(), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.total(), limOff);
         }
     }
 
@@ -192,9 +192,9 @@ public class BillUpdatesCtrl extends BaseCtrl
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
             getBaseBillId(printNo, sessionYear, "printNo"), updateRange, updateType, filterField, sortOrder, limOff);
-        return DateRangeListViewResponse.of(digests.getResults().stream()
+        return DateRangeListViewResponse.of(digests.results().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
-            .toList(), updateRange, digests.getTotal(), limOff);
+            .toList(), updateRange, digests.total(), limOff);
     }
 
     private BillUpdateField getUpdateFieldFromParam(String filter) {

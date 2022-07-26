@@ -152,10 +152,10 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public BaseBillId getScrapeQueueHead() throws EmptyResultDataAccessException {
         PaginatedList<BillScrapeQueueEntry> scrapeQueue = getScrapeQueue(LimitOffset.ONE, SortOrder.DESC);
-        if (scrapeQueue.getResults().isEmpty()) {
+        if (scrapeQueue.results().isEmpty()) {
             throw new EmptyResultDataAccessException("no bills in scrape queue", 1);
         }
-        return scrapeQueue.getResults().get(0).getBaseBillId();
+        return scrapeQueue.results().get(0).getBaseBillId();
     }
 
     @Override

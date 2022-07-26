@@ -124,12 +124,12 @@ public class DataProcessCtrl extends BaseCtrl
         boolean detail = getBooleanParam(request, "detail", false);
 
         PaginatedList<DataProcessRunInfo> runs = processLogs.getRunInfos(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
-        return ListViewResponse.of(runs.getResults().stream()
+        return ListViewResponse.of(runs.results().stream()
             .map(runInfo -> (detail)
                     ? new DataProcessRunDetailView(runInfo, processLogs.getUnits(runInfo.getRun().getProcessId(), LimitOffset.FIFTY))
                     : new DataProcessRunInfoView(runInfo))
             .toList(),
-            runs.getTotal(), runs.getLimOff());
+            runs.total(), runs.limOff());
     }
 
     /**

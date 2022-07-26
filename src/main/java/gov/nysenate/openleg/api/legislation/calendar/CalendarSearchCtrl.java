@@ -13,8 +13,6 @@ import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.calendar.CalendarSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -23,18 +21,19 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET)
-public class CalendarSearchCtrl extends BaseCtrl{
-
-    private static final Logger logger = LoggerFactory.getLogger(CalendarSearchCtrl.class);
-
-    @Autowired
-    private CalendarSearchService calendarSearchService;
+public class CalendarSearchCtrl extends BaseCtrl {
+    private final CalendarSearchService calendarSearchService;
+    private final CalendarDataService calendarDataService;
+    private final CalendarViewFactory calendarViewFactory;
 
     @Autowired
-    private CalendarDataService calendarDataService;
-
-    @Autowired
-    private CalendarViewFactory calendarViewFactory;
+    public CalendarSearchCtrl(CalendarSearchService calendarSearchService,
+                              CalendarDataService calendarDataService,
+                              CalendarViewFactory calendarViewFactory) {
+        this.calendarSearchService = calendarSearchService;
+        this.calendarDataService = calendarDataService;
+        this.calendarViewFactory = calendarViewFactory;
+    }
 
     /** --- Request Handlers --- */
 
@@ -85,14 +84,6 @@ public class CalendarSearchCtrl extends BaseCtrl{
 
     /**
      * Performs a calendar search based on the input parameters and returns a search response
-     *
-     * @param term
-     * @param sort
-     * @param limitOffset
-     * @param year
-     * @return
-     * @throws SearchException
-     * @throws InvalidRequestParamEx
      */
     private BaseResponse getCalendarSearchResponse(String term, String sort, LimitOffset limitOffset, Integer year, boolean detail)
             throws SearchException, InvalidRequestParamEx {
@@ -109,13 +100,12 @@ public class CalendarSearchCtrl extends BaseCtrl{
      */
     private BaseResponse getCalendarSearchResultResponse(SearchResults<CalendarId> results, boolean detail) {
         return ListViewResponse.of(
-                results.getResults().stream()
+                results.resultList().stream()
                         .map(result -> new SearchResultView((detail)
                                 ? calendarViewFactory.getCalendarView(
-                                calendarDataService.getCalendar(result.getResult()))
-                                : new SimpleCalendarView(calendarDataService.getCalendar(result.getResult())),
-                                result.getRank()))
-                        .toList(),
-                results.getTotalResults(), results.getLimitOffset() );
+                                calendarDataService.getCalendar(result.result()))
+                                : new SimpleCalendarView(calendarDataService.getCalendar(result.result())),
+                                result.rank())).toList(),
+                results.totalResults(), results.limitOffset() );
     }
 }

@@ -9,8 +9,6 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.logs.ApiLogSearchService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,11 +19,13 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/apiLogs")
-public class ApiLogCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(ApiLogCtrl.class);
+public class ApiLogCtrl extends BaseCtrl {
+    private final ApiLogSearchService logSearchService;
 
-    @Autowired private ApiLogSearchService logSearchService;
+    @Autowired
+    public ApiLogCtrl(ApiLogSearchService logSearchService) {
+        this.logSearchService = logSearchService;
+    }
 
     @RequiresPermissions("admin:apilog:view")
     @RequestMapping("")
@@ -35,8 +35,8 @@ public class ApiLogCtrl extends BaseCtrl
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<ApiLogItemView> results = logSearchService.searchApiLogs(term, sort, limOff);
         return ListViewResponse.of(
-            results.getResults().stream()
-                .map(r -> new SearchResultView(r.getResult(), r.getRank(), r.getHighlights()))
-                .toList(), results.getTotalResults(), limOff);
+            results.resultList().stream()
+                .map(r -> new SearchResultView(r.result(), r.rank(), r.highlights()))
+                .toList(), results.totalResults(), limOff);
     }
 }

@@ -44,8 +44,8 @@ public class SimpleDataProcessLogService implements DataProcessLogService
     public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
                                                          boolean showActivityOnly) {
         PaginatedList<DataProcessRun> runs = processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
-        List<DataProcessRunInfo> runInfos = runs.getResults().stream().map(this::getRunInfoFromRun).toList();
-        return new PaginatedList<>(runs.getTotal(), runs.getLimOff(), runInfos);
+        List<DataProcessRunInfo> runInfos = runs.results().stream().map(this::getRunInfoFromRun).toList();
+        return new PaginatedList<>(runs.total(), runs.limOff(), runInfos);
     }
 
     /** {@inheritDoc} */

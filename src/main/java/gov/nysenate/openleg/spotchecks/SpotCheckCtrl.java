@@ -20,8 +20,6 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckRunService;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -35,10 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", produces = APPLICATION_JSON_VALUE)
-public class SpotCheckCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
-
+public class SpotCheckCtrl extends BaseCtrl {
     private final SpotcheckRunService spotcheckRunService;
     private final SpotCheckReportDao spotCheckReportDao;
 
@@ -62,11 +57,11 @@ public class SpotCheckCtrl extends BaseCtrl
      *                                       Defaults to current date.
      *                     <li>mismatchType - string - optional, default all mismatch types. - retrieves mismatches of the specified type.
      *                     <li>ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
-     *                     <li>orderBy - string - optional, order results by the specified field, must be a valid {@link MismatchOrderBy} value.
+     *                     <li>orderBy - string - optional, order resultList by the specified field, must be a valid {@link MismatchOrderBy} value.
      *                              - Defaults to REFERENCE_DATE.
      *                     <li>sort - string - optional, a SortOrder value representing the sort order. Defaults to DESC
-     *                     <li>limit - int - limit the number of results.
-     *                     <li>offset - int - start results from an offset.
+     *                     <li>limit - int - limit the number of resultList.
+     *                     <li>offset - int - start resultList from an offset.
      *                     </ul>
      */
     @RequiresPermissions("admin:view")
@@ -96,10 +91,10 @@ public class SpotCheckCtrl extends BaseCtrl
 
         PaginatedList<DeNormSpotCheckMismatch<?>> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
         List<MismatchView<?>> mismatchViews = new ArrayList<>();
-        for (DeNormSpotCheckMismatch<?> mm : mismatches.getResults()) {
+        for (DeNormSpotCheckMismatch<?> mm : mismatches.results()) {
             mismatchViews.add(new MismatchView(mm));
         }
-        return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
+        return ListViewResponse.of(mismatchViews, mismatches.total(), mismatches.limOff());
     }
 
     /**
@@ -275,7 +270,7 @@ public class SpotCheckCtrl extends BaseCtrl
         Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
         refTypes.forEach(spotcheckRunService::runReports);
         return new ViewObjectResponse<>(ListView.ofStringList(
-                refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
+                refTypes.stream().map(SpotCheckRefType::toString).toList()),
                 "spotcheck reports run");
     }
 
@@ -302,7 +297,7 @@ public class SpotCheckCtrl extends BaseCtrl
         }
         refTypes.forEach(spotcheckRunService::runReports);
         return new ViewObjectResponse<>(ListView.ofStringList(
-                refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
+                refTypes.stream().map(SpotCheckRefType::toString).toList()),
                 "spotcheck reports run");
     }
 
@@ -394,7 +389,7 @@ public class SpotCheckCtrl extends BaseCtrl
      * Used to convert orderBy and sort request parameters into an OrderBy object.
      * Defaults to ordering by REFERENCE_DATE descending if orderByString and sortString are null.
      * When ordering by a field other than REFERENCE_DATE, a secondary order by on
-     * REFERENCE_DATE desc is added so the most recent results are always displayed first.
+     * REFERENCE_DATE desc is added so the most recent resultList are always displayed first.
      *
      * @param orderByString String representing a MismatchOrderBy value.
      * @param sortString String representing a SortOrder value.
@@ -403,7 +398,7 @@ public class SpotCheckCtrl extends BaseCtrl
      * @throws InvalidRequestParamEx if orderByString or sortString
      * are not valid values.
      */
-    private OrderBy getOrderBy(String orderByString, String sortString) {
+    private static OrderBy getOrderBy(String orderByString, String sortString) {
         MismatchOrderBy orderBy = orderByString == null
                 ? MismatchOrderBy.REFERENCE_DATE
                 : getEnumParameter("orderBy", orderByString, MismatchOrderBy.class);
@@ -420,7 +415,7 @@ public class SpotCheckCtrl extends BaseCtrl
         return new OrderBy(orderBy.getColumnName(), sortOrder);
     }
 
-    private SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {
+    private static SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {
         SpotCheckRefType result = getEnumParameter(parameter, SpotCheckRefType.class, null);
         if (result == null) {
             result = getEnumParameterByValue(SpotCheckRefType.class, SpotCheckRefType::getByRefName,
@@ -429,7 +424,7 @@ public class SpotCheckCtrl extends BaseCtrl
         return result;
     }
 
-    private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
+    private static Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
         return parameters == null
                 ? EnumSet.allOf(SpotCheckRefType.class)
                 : Arrays.stream(parameters)

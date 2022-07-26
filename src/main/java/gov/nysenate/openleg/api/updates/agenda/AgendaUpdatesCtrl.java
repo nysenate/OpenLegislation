@@ -129,16 +129,16 @@ public class AgendaUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<AgendaId>> updateTokens =
                 agendaUpdatesDao.getUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
+            return DateRangeListViewResponse.of(updateTokens.results().stream()
                 .map(token -> new UpdateTokenView(token, new AgendaIdView(token.getId())))
-                .toList(), updateRange, updateTokens.getTotal(), limOff);
+                .toList(), updateRange, updateTokens.total(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<AgendaId>> updateDigests =
                 agendaUpdatesDao.getDetailedUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.results().stream()
                 .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-                .toList(), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.total(), limOff);
         }
     }
 
@@ -150,8 +150,8 @@ public class AgendaUpdatesCtrl extends BaseCtrl
 
         PaginatedList<UpdateDigest<AgendaId>> digests = agendaUpdatesDao.getDetailedUpdatesForAgenda(
             agendaId, updateRange, updateType, sortOrder, limOff);
-        return DateRangeListViewResponse.of(digests.getResults().stream()
+        return DateRangeListViewResponse.of(digests.results().stream()
             .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-                .toList(), updateRange, digests.getTotal(), limOff);
+                .toList(), updateRange, digests.total(), limOff);
     }
 }

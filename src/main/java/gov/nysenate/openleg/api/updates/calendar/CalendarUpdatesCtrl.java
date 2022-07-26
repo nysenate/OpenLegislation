@@ -85,20 +85,20 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             PaginatedList<UpdateToken<CalendarId>> updateTokens =
                 calendarUpdatesDao.getUpdates(updateType, updateRange, dateOrder, limitOffset);
             response = DateRangeListViewResponse.of(
-                updateTokens.getResults().stream()
+                updateTokens.results().stream()
                     .map(token -> new UpdateTokenView(token, new CalendarIdView(token.getId())))
                     .toList(),
-                updateRange, updateTokens.getTotal(), updateTokens.getLimOff()
+                updateRange, updateTokens.total(), updateTokens.limOff()
             );
         }
         else {
             PaginatedList<UpdateDigest<CalendarId>> updateDigests =
                 calendarUpdatesDao.getDetailedUpdates(updateType, updateRange, dateOrder, limitOffset);
             response = DateRangeListViewResponse.of(
-                updateDigests.getResults().stream()
+                updateDigests.results().stream()
                         .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
                         .toList(),
-                updateRange, updateDigests.getTotal(), updateDigests.getLimOff()
+                updateRange, updateDigests.total(), updateDigests.limOff()
             );
         }
         return response;
@@ -145,10 +145,10 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             calendarUpdatesDao.getDetailedUpdatesForCalendar(updateType, new CalendarId(calendarNo, year),
                 updateRange, dateOrder, limitOffset);
         return DateRangeListViewResponse.of(
-            updateDigests.getResults().stream()
+            updateDigests.results().stream()
                 .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
                     .toList(),
-            updateDigests.getTotal(), LimitOffset.ALL
+            updateDigests.total(), LimitOffset.ALL
         );
     }
 }

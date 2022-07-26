@@ -40,7 +40,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
         PaginatedList<AgendaSummaryView> agendaSummaries =
                 jsonOpenlegDaoUtils.queryForViewObjects(AgendaSummaryView.class, agendasForYearUri, LimitOffset.ALL);
 
-        return agendaSummaries.getResults().stream()
+        return agendaSummaries.results().stream()
                 .map(AgendaSummaryView::getId)
                 .map(aiv -> new AgendaId(aiv.number(), aiv.year()))
                 .map(this::getAgendaView)

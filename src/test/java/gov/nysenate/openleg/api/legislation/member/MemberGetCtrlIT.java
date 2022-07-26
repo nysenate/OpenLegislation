@@ -63,7 +63,7 @@ public class MemberGetCtrlIT extends ApiTest {
         SessionMember nonAlt2011 = new SessionMember(74, testMember, name + "N", new
                 SessionYear(2011), 36, false);
 
-        BaseResponse resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2011, false, testRequest);
+        BaseResponse resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2011, false);
         SessionMember actualSm = ((SessionMemberView)(((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
         assertEquals(nonAlt2011, actualSm);
 
@@ -96,7 +96,7 @@ public class MemberGetCtrlIT extends ApiTest {
 
         FullMemberView testFmv = new FullMemberView(new FullMember(Arrays.asList(alt2009, nonAlt2009,
                 alt2011, nonAlt2011, alt2013, nonAlt2013, only2015)));
-        resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2015, true, testRequest);
+        resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2015, true);
         FullMemberView actualFmv = (FullMemberView)(((ViewObjectResponse<?>) resp).getResult());
         assertTrue(isFullMemberViewEqual(testFmv, actualFmv));
     }

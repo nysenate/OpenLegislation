@@ -108,14 +108,14 @@ public class SqlTranscriptDaoIT extends BaseTests {
 
         List<TranscriptUpdateToken> results = dao.transcriptsUpdatedDuring(
                 Range.closed(rangePoints.get(0), rangePoints.get(2)),
-                SortOrder.ASC, LimitOffset.ALL).getResults();
+                SortOrder.ASC, LimitOffset.ALL).results();
 
         // We should expect 1 here.
         assertEquals(2, results.size());
 
         results = dao.transcriptsUpdatedDuring(Range.closed(rangePoints.get(2),
                 LocalDateTime.now()), SortOrder.NONE, LimitOffset.ALL)
-                .getResults();
+                .results();
 
         assertEquals(1, results.size());
         assertEquals(TRANSCRIPTS.get(0).getDateTime(), results.get(0).getTranscriptId().getDateTime());

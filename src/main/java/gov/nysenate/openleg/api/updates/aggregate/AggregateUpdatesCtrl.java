@@ -99,10 +99,10 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
         PaginatedList<UpdateToken<Map<String, String>>> result =
                 updatesDao.getUpdateTokens(dateTimeRange, contentTypes, updateType, order, limitOffset);
         return DateRangeListViewResponse.of(
-                result.getResults().stream()
+                result.results().stream()
                         .map(this::getTokenView)
                         .toList(),
-                dateTimeRange, result.getTotal(), limitOffset);
+                dateTimeRange, result.total(), limitOffset);
     }
 
     private BaseResponse getDigestResponse(Range<LocalDateTime> dateTimeRange, UpdateType updateType,
@@ -111,10 +111,10 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
         PaginatedList<UpdateDigest<Map<String, String>>> result =
                 updatesDao.getUpdateDigests(dateTimeRange, contentTypes, updateType, order, limitOffset, fields);
         return DateRangeListViewResponse.of(
-                result.getResults().stream()
+                result.results().stream()
                         .map(this::getDigestView)
                         .toList(),
-                dateTimeRange, result.getTotal(), limitOffset);
+                dateTimeRange, result.total(), limitOffset);
     }
 
     private Set<UpdateContentType> getContentTypes(WebRequest webRequest) {

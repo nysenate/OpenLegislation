@@ -214,15 +214,15 @@ public class LawUpdatesCtrl extends BaseCtrl
     }
 
     private BaseResponse getTokenListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateToken<LawVersionId>> updateTokens) {
-        return DateRangeListViewResponse.of(updateTokens.getResults().stream()
+        return DateRangeListViewResponse.of(updateTokens.results().stream()
                 .map(token -> new UpdateTokenView(token, new LawVersionIdView(token.getId())))
-                .toList(), params.updateRange, updateTokens.getTotal(), params.limOff);
+                .toList(), params.updateRange, updateTokens.total(), params.limOff);
     }
 
     private BaseResponse getDigestListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateDigest<LawDocId>> updateDigests) {
-        return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+        return DateRangeListViewResponse.of(updateDigests.results().stream()
             .map(digest -> new UpdateDigestView(digest, new LawDocIdView(digest.getId())))
-            .toList(), params.updateRange, updateDigests.getTotal(), params.limOff);
+            .toList(), params.updateRange, updateDigests.total(), params.limOff);
     }
 
     private static class BaseLawUpdatesParams {

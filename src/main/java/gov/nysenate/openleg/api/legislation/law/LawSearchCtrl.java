@@ -59,10 +59,10 @@ public class LawSearchCtrl extends BaseCtrl
 
     private BaseResponse getLawDocSearchResults(LimitOffset limOff, SearchResults<LawDocId> results) {
         return ListViewResponse.of(
-            results.getResults().stream()
+            results.resultList().stream()
                 .map(r -> new SearchResultView(
-                    new LawDocInfoView(lawData.getLawDocInfo(r.getResult().getDocumentId(), r.getResult().getPublishedDate())),
-                        r.getRank(), r.getHighlights()))
-                .toList(), results.getTotalResults(), limOff);
+                    new LawDocInfoView(lawData.getLawDocInfo(r.result().getDocumentId(), r.result().getPublishedDate())),
+                        r.rank(), r.highlights()))
+                .toList(), results.totalResults(), limOff);
     }
 }

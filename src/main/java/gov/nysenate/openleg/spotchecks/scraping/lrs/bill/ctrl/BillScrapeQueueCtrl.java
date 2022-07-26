@@ -48,10 +48,10 @@ public class BillScrapeQueueCtrl extends BaseCtrl
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         PaginatedList<BillScrapeQueueEntry> results = btrDao.getScrapeQueue(limitOffset, order);
         return ListViewResponse.of(
-                results.getResults().stream()
+                results.results().stream()
                         .map(BillScrapeQueueEntryView::new)
                         .toList(),
-                results.getTotal(), results.getLimOff()
+                results.total(), results.limOff()
         );
     }
 

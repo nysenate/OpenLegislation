@@ -50,7 +50,7 @@ public class SourceGetCtrl extends BaseCtrl {
      * Retrieve a list of sobi files that were published between the given date range.
      * Usage: (GET) /api/3/sources/sobi/{from datetime}/{to datetime}
      * <p>
-     * Params: order (string) - Order the results
+     * Params: order (string) - Order the resultList
      * limit, offset (int) - Pagination
      * <p>
      * Expected Output: List of SourceViewIds
@@ -64,10 +64,10 @@ public class SourceGetCtrl extends BaseCtrl {
         Range<LocalDateTime> dateTimeRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         PaginatedList<SourceFile> sourceFiles = sourceFileDao.getSourceFilesDuring(dateTimeRange, order, limOff);
         return ListViewResponse.of(
-                sourceFiles.getResults().stream()
+                sourceFiles.results().stream()
                         .map(sourceFile -> new SourceIdView(sourceFile.getSourceType().name(),
                                 sourceFile.getFileName(), sourceFile.getPublishedDateTime()))
-                        .toList(), sourceFiles.getTotal(), limOff);
+                        .toList(), sourceFiles.total(), limOff);
     }
 
     /**

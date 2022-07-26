@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckNotificationService;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class BillScrapeSpotcheckProcessService extends BaseSpotcheckProcessServi
 
     @Override
     protected int getUncheckedRefCount() {
-        return btrDao.getPendingScrapeBills(LimitOffset.ONE).getTotal();
+        return btrDao.getPendingScrapeBills(LimitOffset.ONE).total();
     }
 
     @Override

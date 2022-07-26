@@ -16,8 +16,8 @@ public class DataProcessRunDetailView extends DataProcessRunInfoView implements 
         super(runInfo);
         if (units != null) {
             this.details = ListViewResponse.of(
-                units.getResults().stream().map(DataProcessUnitView::new).toList(),
-                units.getTotal(), units.getLimOff());
+                units.results().stream().map(DataProcessUnitView::new).toList(),
+                units.total(), units.limOff());
         }
     }
 

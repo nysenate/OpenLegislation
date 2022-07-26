@@ -15,8 +15,6 @@ import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.bill.BillSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -31,12 +29,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class BillSearchCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(BillSearchCtrl.class);
+public class BillSearchCtrl extends BaseCtrl {
+    private final BillDataService billData;
+    private final BillSearchService billSearch;
 
-    @Autowired protected BillDataService billData;
-    @Autowired protected BillSearchService billSearch;
+    @Autowired
+    public BillSearchCtrl(BillDataService billData, BillSearchService billSearch) {
+        this.billData = billData;
+        this.billSearch = billSearch;
+    }
 
     /**
      * Bill Search API
@@ -89,12 +90,12 @@ public class BillSearchCtrl extends BaseCtrl
                                                WebRequest request) {
         Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         return ListViewResponse.of(
-            results.getResults().stream()
+            results.resultList().stream()
                 .map(r -> new SearchResultView((full)
-                        ? new BillView(billData.getBill(r.getResult()), fullTextFormats)
+                        ? new BillView(billData.getBill(r.result()), fullTextFormats)
                         : (idOnly)
-                            ? new BillIdView(r.getResult())
-                            : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
-                .toList(), results.getTotalResults(), limOff);
+                            ? new BillIdView(r.result())
+                            : new BillInfoView(billData.getBillInfo(r.result())), r.rank(), r.highlights()))
+                .toList(), results.totalResults(), limOff);
     }
 }

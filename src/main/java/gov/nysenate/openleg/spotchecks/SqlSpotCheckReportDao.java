@@ -232,7 +232,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
                                                 Sets.newHashSet(report.getReferenceType().getContentType()))
                 .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class))
                 .withKeys(report.getReferenceType().getContentType(), keys);
-        return getMismatches(query, LimitOffset.ALL).getResults();
+        return getMismatches(query, LimitOffset.ALL).results();
     }
 
     private int insertReport(SpotCheckReport<?> report) {

@@ -212,13 +212,13 @@ public class SpotcheckReportDaoIT extends BaseTests {
     private DeNormSpotCheckMismatch<?> queryMostRecentOpenMismatch() {
         MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
                 MismatchStatus.OPEN, Set.of(SpotCheckContentType.BILL));
-        return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
+        return reportDao.getMismatches(query, LimitOffset.ALL).results().get(0);
     }
 
     private DeNormSpotCheckMismatch<?> queryMostRecentClosedMismatch() {
         MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
                 MismatchStatus.RESOLVED, Collections.singleton(SpotCheckContentType.BILL));
-        return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
+        return reportDao.getMismatches(query, LimitOffset.ALL).results().get(0);
     }
 
     private static SpotCheckReport<BaseBillId> createMismatchReport(LocalDateTime refDateTime) {

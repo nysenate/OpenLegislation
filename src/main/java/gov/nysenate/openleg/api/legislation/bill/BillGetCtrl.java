@@ -20,8 +20,6 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +40,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class BillGetCtrl extends BaseCtrl {
-    private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
+    private final BillDataService billData;
+    private final BillSearchService billSearch;
 
-    @Autowired protected BillDataService billData;
-    @Autowired protected BillSearchService billSearch;
+    @Autowired
+    public BillGetCtrl(BillDataService billData, BillSearchService billSearch) {
+        this.billData = billData;
+        this.billSearch = billSearch;
+    }
 
-    protected enum BillViewLevel {
+    private enum BillViewLevel {
         DEFAULT,                // Basic bill view (models the BillView class)
         INFO,                   // Bill info view
         NO_FULLTEXT,            // Basic bill view with full text stripped
@@ -94,9 +96,9 @@ public class BillGetCtrl extends BaseCtrl {
             billSearch.searchBills(getSessionYearParam(sessionYear, "sessionYear"), sort, limOff);
         // The bill data is retrieved from the data service so the data is always fresh.
         return ListViewResponse.of(
-            results.getResults().stream()
+            results.resultList().stream()
                 .map(r -> {
-                    BaseBillId baseBillId = r.getResult();
+                    BaseBillId baseBillId = r.result();
                     if (idsOnly) {
                         return new BaseBillIdView(baseBillId);
                     }
@@ -104,7 +106,7 @@ public class BillGetCtrl extends BaseCtrl {
                         return new BillView(billData.getBill(baseBillId), getFullTextFormats(webRequest));
                     }
                     return new BillInfoView(billData.getBillInfo(baseBillId));
-                }).toList(), results.getTotalResults(), limOff);
+                }).toList(), results.totalResults(), limOff);
     }
 
     /**

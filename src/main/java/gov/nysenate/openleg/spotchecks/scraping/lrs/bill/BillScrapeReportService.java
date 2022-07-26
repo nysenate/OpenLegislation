@@ -4,9 +4,9 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -52,10 +52,10 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, IOException {
         PaginatedList<BillScrapeFile> pendingScrapeFiles = dao.getPendingScrapeBills(new LimitOffset(maxBillsPerReport));
-        if (pendingScrapeFiles.getTotal() > maxBillsPerReport) {
-            logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.getTotal());
+        if (pendingScrapeFiles.total() > maxBillsPerReport) {
+            logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.total());
         }
-        List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.getResults());
+        List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.results());
 
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx();
@@ -70,7 +70,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
                 .forEach(report::addObservation);
 
         // Set each reference as checked
-        for (BillScrapeFile file : pendingScrapeFiles.getResults()) {
+        for (BillScrapeFile file : pendingScrapeFiles.results()) {
             file.setPendingProcessing(false);
             dao.updateScrapedBill(file);
         }
