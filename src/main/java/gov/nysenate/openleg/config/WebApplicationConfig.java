@@ -33,14 +33,18 @@ import java.util.List;
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
 @Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class, WebSocketsConfig.class})
-public class WebApplicationConfig implements WebMvcConfigurer
-{
+public class WebApplicationConfig implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
-
     private static final String resourcePath = "/static/**";
     private static final String resourceLocation = "/static/";
+    private static final int CACHE_PERIOD = 64000;
 
-    @Autowired ApplicationConfig appConfig;
+    private final ApplicationConfig appConfig;
+
+    @Autowired
+    public WebApplicationConfig(ApplicationConfig appConfig) {
+        this.appConfig = appConfig;
+    }
 
     @PostConstruct
     public void init() {
@@ -51,11 +55,11 @@ public class WebApplicationConfig implements WebMvcConfigurer
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         logger.info("Registering resource path {} for files under {}", resourcePath, resourceLocation);
-        registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(64000);
+        registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
         logger.info("Registering resource path {} for files under {}", "/favicon.ico", resourceLocation);
-        registry.addResourceHandler("/favicon.ico").addResourceLocations(resourceLocation).setCachePeriod(64000);
+        registry.addResourceHandler("/favicon.ico").addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
         logger.info("Registering resource path {} for files under {}", "/apple-touch-icon.png", resourceLocation);
-        registry.addResourceHandler("/apple-touch-icon.png").addResourceLocations(resourceLocation).setCachePeriod(64000);
+        registry.addResourceHandler("/apple-touch-icon.png").addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
     }
 
     /**

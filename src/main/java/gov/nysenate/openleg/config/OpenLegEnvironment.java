@@ -21,7 +21,7 @@ public class OpenLegEnvironment {
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
-    /** --- File system configuration --- */
+    /* --- File system configuration --- */
 
     /** The directories for incoming and archived files. */
     @Value("${env.staging}") private String stagingDirPath;
@@ -58,7 +58,7 @@ public class OpenLegEnvironment {
     /** If leg data batch is enabled, this specifies the maximum batch size. */
     @Value("${leg.data.batch.process.size}") private int legDataBatchSize;
 
-    /** --- Scheduling Settings --- */
+    /* --- Scheduling Settings --- */
 
     /** Enable processing of data at scheduled intervals. */
     @Value("${scheduler.process.enabled}") private boolean processingScheduled;
@@ -87,7 +87,7 @@ public class OpenLegEnvironment {
     @Value("${spotcheck.website.bill.ref_queue_size:500}") private int sensiteBillRefQueueSize;
     @Value("${spotcheck.website.bill.data_queue_size:500}") private int sensiteBillDataQueueSize;
 
-    /** --- Email Settings --- */
+    /* --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account. */
     @Value("${checkmail.host}") private String emailHost;
@@ -110,7 +110,7 @@ public class OpenLegEnvironment {
 
     @Value("${slack.notification.line.limit}") private int slackLineLimit;
 
-    /** --- Domain Url --- */
+    /* --- Domain Url --- */
 
     /** The domain and the context path of the application */
     @Value("${domain.url}") private String url;
@@ -124,12 +124,10 @@ public class OpenLegEnvironment {
 
     @PostConstruct
     private void init() {
-        deployedDateTime = LocalDateTime.now();
+        this.deployedDateTime = LocalDateTime.now();
         this.stagingDir = new File(stagingDirPath);
         this.archiveDir = new File(archiveDirPath);
-
         this.scrapedStagingDir = new File(stagingDir, "scraped");
-
         this.spotcheckAlertGracePeriod = Duration.ofMinutes(rawAlertGracePeriod);
     }
 
@@ -259,6 +257,7 @@ public class OpenLegEnvironment {
         return deployedDateTime;
     }
 
+    // TODO: why is this never used?
     public boolean getLegDataProcessEnabled() {
         return legDataProcessEnabled;
     }

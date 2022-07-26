@@ -18,8 +18,7 @@ import static javax.servlet.DispatcherType.*;
 /**
  * Basically the web.xml in programmatic form.
  */
-public class WebInitializer implements WebApplicationInitializer
-{
+public class WebInitializer implements WebApplicationInitializer {
     protected static String DISPATCHER_SERVLET_NAME = "legislation";
 
     /**
@@ -29,20 +28,20 @@ public class WebInitializer implements WebApplicationInitializer
      */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        /** Create the root Spring application context. */
+        /* Create the root Spring application context. */
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 
-        /** Manage the lifecycle of the root application context. */
+        /* Manage the lifecycle of the root application context. */
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        /** The dispatcher servlet has it's own application context in which it can override
+        /* The dispatcher servlet has it's own application context in which it can override
          * beans from the parent root context. */
         AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
         dispatcherContext.setServletContext(servletContext);
         dispatcherContext.setParent(rootContext);
         dispatcherContext.register(WebApplicationConfig.class);
 
-        /** Register the dispatcher servlet which basically serves as the front controller for Spring.
+        /* Register the dispatcher servlet which basically serves as the front controller for Spring.
          * The servlet has to be mapped to the root path "/". */
         ServletRegistration.Dynamic dispatcher;
         dispatcher = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(dispatcherContext));
@@ -50,35 +49,35 @@ public class WebInitializer implements WebApplicationInitializer
         dispatcher.addMapping("/");
         dispatcher.setAsyncSupported(true);
 
-        /** Encoding filter - sets Content-Type charset to UTF-8 */
+        /* Encoding filter - sets Content-Type charset to UTF-8 */
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
         encodingFilter.setForceEncoding(true);
         servletContext.addFilter("encodingFilter", encodingFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
-        /** Register Apache Shiro */
+        /* Register Apache Shiro */
         DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
         shiroFilter.setTargetFilterLifecycle(true);
         servletContext.addFilter("shiroFilter", shiroFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
-        /** Cross Origin Resource Sharing Filter */
+        /* Cross Origin Resource Sharing Filter */
         DelegatingFilterProxy corsFilter = new DelegatingFilterProxy("corsFilter", dispatcherContext);
         servletContext.addFilter("corsFilter", corsFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
-        /** XFrameFilter to prevent clickjacking */
+        /* XFrameFilter to prevent clickjacking */
         DelegatingFilterProxy xFrameFilter = new DelegatingFilterProxy("xFrameFilter", dispatcherContext);
         servletContext.addFilter("xFrameFilter", xFrameFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
-        /** Api Request Logging */
+        /* Api Request Logging */
         DelegatingFilterProxy apiLogFilter = new DelegatingFilterProxy("apiLogFilter", dispatcherContext);
         servletContext.addFilter("apiLogFilter", apiLogFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
-        /** Api Key Authentication */
+        /* Api Key Authentication */
         DelegatingFilterProxy apiAuthFilter = new DelegatingFilterProxy("apiAuthFilter", dispatcherContext);
         servletContext.addFilter("apiAuthFilter", apiAuthFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");

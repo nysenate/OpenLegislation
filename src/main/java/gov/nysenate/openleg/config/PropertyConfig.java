@@ -20,7 +20,7 @@ public class PropertyConfig {
      */
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
-        PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+        var pspc = new PropertySourcesPlaceholderConfigurer();
         pspc.setIgnoreUnresolvablePlaceholders(true);
         return pspc;
     }
