@@ -1,10 +1,9 @@
 package gov.nysenate.openleg.auth.user;
 
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import gov.nysenate.openleg.auth.model.ApiUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +17,16 @@ import java.util.Optional;
  * Intercepts API requests and fires off log events to record the API usage.
  */
 @Component ("apiLogFilter")
-public class ApiLogFilter implements Filter
-{
-    private static final Logger logger = LoggerFactory.getLogger(ApiLogFilter.class);
+public class ApiLogFilter implements Filter {
+    private static final String ignoredPaths = BaseCtrl.BASE_ADMIN_API_PATH + "/(apiLog|runs).*";
+    private final EventBus eventBus;
+    private final ApiUserService apiUserService;
 
-    @Autowired protected EventBus eventBus;
-    @Autowired protected ApiUserService apiUserService;
-
-    private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog", "/api/3/admin/process/runs/"};
+    @Autowired
+    public ApiLogFilter(EventBus eventBus, ApiUserService apiUserService) {
+        this.eventBus = eventBus;
+        this.apiUserService = apiUserService;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) {}
@@ -35,22 +36,14 @@ public class ApiLogFilter implements Filter
         throws IOException, ServletException {
         LocalDateTime requestStart = LocalDateTime.now();
         filterChain.doFilter(servletRequest, servletResponse);
-        boolean ignoreApiReq = false;
-        for (String path : IGNORED_PATHS) {
-            if (((HttpServletRequest) servletRequest).getRequestURI().contains(path)) {
-                ignoreApiReq = true;
-                break;
-            }
+        if (((HttpServletRequest) servletRequest).getRequestURI().matches(ignoredPaths)) {
+            return;
         }
-        if (!ignoreApiReq) {
-            ApiLogEvent apiLogEvent = new ApiLogEvent(servletRequest, servletResponse, requestStart, LocalDateTime.now());
-            String apiKey = apiLogEvent.getApiResponse().getBaseRequest().getApiKey();
-            Optional<ApiUser> userByKey = apiUserService.getUserByKey(apiKey);
-            if (userByKey.isPresent()) {
-                apiLogEvent.getApiResponse().getBaseRequest().setApiUser(userByKey.get());
-            }
-            eventBus.post(apiLogEvent);
-        }
+        ApiLogEvent apiLogEvent = new ApiLogEvent(servletRequest, servletResponse, requestStart, LocalDateTime.now());
+        String apiKey = apiLogEvent.getApiResponse().getBaseRequest().getApiKey();
+        Optional<ApiUser> userByKey = apiUserService.getUserByKey(apiKey);
+        userByKey.ifPresent(apiUser -> apiLogEvent.getApiResponse().getBaseRequest().setApiUser(apiUser));
+        eventBus.post(apiLogEvent);
     }
 
     @Override
