@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The LimitOffset class is intended to be used for limiting the number of results
+ * The LimitOffset class is intended to be used for limiting the number of resultList
  * returned by query methods.
  */
-public class LimitOffset
-{
+public class LimitOffset {
     /** Use this reference when no limit is desired. */
     public static final LimitOffset ALL = new LimitOffset(0,0),
 
@@ -23,7 +22,7 @@ public class LimitOffset
     private final int limit;
 
     /** The offset position used in conjunction with the limit. The offset starts from 1
-     *  which is the same as not offsetting the results. */
+     *  which is the same as not offsetting the resultList. */
     private final int offset;
 
     /** --- Constructors --- */
@@ -89,8 +88,7 @@ public class LimitOffset
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LimitOffset)) return false;
-        LimitOffset that = (LimitOffset) o;
+        if (!(o instanceof LimitOffset that)) return false;
         if (limit != that.limit) return false;
         return offset == that.offset;
     }
