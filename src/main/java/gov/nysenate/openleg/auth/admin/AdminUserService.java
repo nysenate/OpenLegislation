@@ -5,8 +5,7 @@ import org.apache.shiro.authc.AuthenticationException;
 
 import java.util.List;
 
-public interface AdminUserService
-{
+public interface AdminUserService {
 
     /**
      * Create a new admin user

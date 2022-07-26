@@ -2,8 +2,6 @@ package gov.nysenate.openleg.auth.admin;
 
 import gov.nysenate.openleg.auth.exception.InvalidUsernameException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,15 +12,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-public class SqlAdminUserService implements AdminUserService
-{
-    private static final Logger logger = LoggerFactory.getLogger(SqlAdminUserService.class);
-
-    @Autowired
-    protected SqlAdminUserDao adminDao;
+public class SqlAdminUserService implements AdminUserService {
+    private final SqlAdminUserDao adminDao;
     @Value("${admin.email.regex}")
     private String emailRegex;
     private Pattern emailRegexPattern;
+
+    @Autowired
+    public SqlAdminUserService(SqlAdminUserDao adminDao) {
+        this.adminDao = adminDao;
+    }
 
     @PostConstruct
     public void init() {

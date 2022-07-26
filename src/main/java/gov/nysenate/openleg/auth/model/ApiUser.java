@@ -26,7 +26,7 @@ public class ApiUser implements Serializable {
     private String organizationName;
 
     /**
-     * Whether or not the user has confirmed their email address.
+     * Whether the user has confirmed their email address.
      */
     private boolean authenticated;
 

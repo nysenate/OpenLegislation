@@ -22,19 +22,20 @@ import java.util.Collection;
 @Component
 public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginAuthRealm.class);
-
-    /** The IP whitelist is used here to restrict access to admin login to internal IPs only. */
-    @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
-
     private static final CredentialsMatcher credentialsMatcher = (token, info) ->
             BCrypt.checkpw(new String(((UsernamePasswordToken) token).getPassword()),
                     info.getCredentials().toString());
 
-    @Autowired
-    private AdminUserService adminUserService;
-
+    private final AdminUserService adminUserService;
+    /** The IP whitelist is used here to restrict access to admin login to internal IPs only. */
+    @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
     @Value("${default.admin.user}") private String defaultAdminName;
     @Value("${default.admin.password}") private String defaultAdminPass;
+
+    @Autowired
+    public AdminLoginAuthRealm(AdminUserService adminUserService) {
+        this.adminUserService = adminUserService;
+    }
 
     @PostConstruct
     public void setup() {

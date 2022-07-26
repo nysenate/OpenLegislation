@@ -38,8 +38,14 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
         }
     };
 
-    @Autowired private ApiUserService apiUserService;
-    @Autowired private EventBus eventBus;
+    private final ApiUserService apiUserService;
+    private final EventBus eventBus;
+
+    @Autowired
+    public ApiUserLoginAuthRealm(ApiUserService apiUserService, EventBus eventBus) {
+        this.apiUserService = apiUserService;
+        this.eventBus = eventBus;
+    }
 
     @Override
     public void onInit() {

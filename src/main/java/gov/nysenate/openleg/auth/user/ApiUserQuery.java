@@ -64,10 +64,9 @@ enum ApiUserQuery implements BasicSqlQuery {
                     SqlTable.API_USER_SUBSCRIPTION + " s" + "\n" +
                     "WHERE u.apikey = s.apikey ) as a" + "\n" +
                     "WHERE a.subscription_type = :subscription_type::public.apiuser_subscription_type"
-    ),
-    ;
+    );
 
-    private String sql;
+    private final String sql;
 
     ApiUserQuery(String sql) {
         this.sql = sql;
