@@ -24,7 +24,6 @@ public class AgendaBillUtils {
         this.billData = billData;
     }
 
-    // TODO: this gets base bill infos, which isn't good enough
     public Map<AgendaInfoCommittee, List<AgendaBillInfo>> getBillInfoMap(Agenda agenda, CommitteeId committeeId) {
         List<AgendaInfoCommittee> infoComms = agenda.getAgendaInfoAddenda().values().stream()
                 .flatMap(infoAddendum -> getInfoCommittees(infoAddendum, committeeId).stream())

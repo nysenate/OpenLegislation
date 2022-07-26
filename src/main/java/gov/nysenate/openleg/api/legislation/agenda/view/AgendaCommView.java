@@ -44,7 +44,7 @@ public record AgendaCommView(CommitteeId committeeId, ListView<AgendaCommAddendu
             }
             if (infoComm != null) {
                 addendaList.add(new AgendaCommAddendumView(id, modifiedDateTime, infoComm,
-                        voteComm, infoCommMap.get(infoComm)));
+                        voteComm, infoCommMap == null ? null : infoCommMap.get(infoComm)));
             }
         }
         return addendaList;
