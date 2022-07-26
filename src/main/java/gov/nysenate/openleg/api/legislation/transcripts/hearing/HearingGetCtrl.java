@@ -17,6 +17,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingNotFoundEx;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
 import gov.nysenate.openleg.search.SearchException;
+import gov.nysenate.openleg.search.transcripts.hearing.HearingSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class HearingGetCtrl extends BaseHearingCtrl {
     private final HearingDataService hearingData;
+    private final HearingSearchService hearingSearch;
 
     @Autowired
-    public HearingGetCtrl(HearingDataService hearingData) {
+    public HearingGetCtrl(HearingDataService hearingData, HearingSearchService hearingSearch) {
         this.hearingData = hearingData;
+        this.hearingSearch = hearingSearch;
     }
 
     /**
@@ -58,8 +61,8 @@ public class HearingGetCtrl extends BaseHearingCtrl {
      * <p>
      * Request Parameters : sort - Lucene syntax for sorting by any field of a hearing response.
      * full - If true, the full hearing view is returned. Otherwise, just its id.
-     * limit - Limit the number of resultList
-     * offset - Start resultList from an offset.
+     * limit - Limit the number of results
+     * offset - Start results from an offset.
      * <p>
      * Expected Output: List of HearingIdView or HearingView.
      */
@@ -69,13 +72,14 @@ public class HearingGetCtrl extends BaseHearingCtrl {
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest) throws SearchException {
-        // TODO: include sort?
         return getHearings(Integer.parseInt(strYear), sort, summary, full, webRequest);
     }
 
-    private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full, WebRequest webRequest) {
+    private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full,
+                                     WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        List<ViewObject> results = hearingData.getHearings(year).stream()
+        List<ViewObject> results = hearingSearch.searchHearings(year, sort, limOff).resultList().stream()
+                .map(searchResult -> hearingData.getHearing(searchResult.result()))
                 .map(hearing -> getHearingViewObject(hearing, summary, full)).toList();
         return ListViewResponse.of(results, results.size(), limOff);
     }
