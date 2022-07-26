@@ -16,8 +16,6 @@ import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.SourceFile;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
 import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -36,12 +34,14 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/sources", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 public class SourceGetCtrl extends BaseCtrl {
-    private static final Logger logger = LoggerFactory.getLogger(SourceGetCtrl.class);
+    private final SourceFileRefDao sourceFileDao;
+    private final LegDataFragmentDao legDataFragmentDao;
 
     @Autowired
-    private SourceFileRefDao sourceFileDao;
-    @Autowired
-    private LegDataFragmentDao legDataFragmentDao;
+    public SourceGetCtrl(SourceFileRefDao sourceFileDao, LegDataFragmentDao legDataFragmentDao) {
+        this.sourceFileDao = sourceFileDao;
+        this.legDataFragmentDao = legDataFragmentDao;
+    }
 
     /**
      * SOBI File API
@@ -50,7 +50,7 @@ public class SourceGetCtrl extends BaseCtrl {
      * Retrieve a list of sobi files that were published between the given date range.
      * Usage: (GET) /api/3/sources/sobi/{from datetime}/{to datetime}
      * <p>
-     * Params: order (string) - Order the resultList
+     * Params: order (string) - Order the results
      * limit, offset (int) - Pagination
      * <p>
      * Expected Output: List of SourceViewIds
@@ -86,7 +86,7 @@ public class SourceGetCtrl extends BaseCtrl {
                 .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
                         sf.getPublishedDateTime(), sf.getText()))
                 .toList();
-        return ListViewResponse.of(fragList, fragList.size(), LimitOffset.ALL);
+        return ListViewResponse.of(fragList, fragList.size(), limOff);
     }
 
     /**

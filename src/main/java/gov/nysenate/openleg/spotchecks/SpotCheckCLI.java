@@ -1,30 +1,25 @@
 package gov.nysenate.openleg.spotchecks;
 
-import gov.nysenate.openleg.spotchecks.daybreak.process.DaybreakProcessService;
 import gov.nysenate.openleg.common.script.BaseScript;
 import gov.nysenate.openleg.spotchecks.daybreak.DaybreakCheckMailService;
-import gov.nysenate.openleg.spotchecks.daybreak.DaybreakSpotcheckProcessService;
+import gov.nysenate.openleg.spotchecks.daybreak.process.DaybreakProcessService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpotCheckCLI extends BaseScript
-{
-    private static final Logger logger = LoggerFactory.getLogger(SpotCheckCLI.class);
+public class SpotCheckCLI extends BaseScript {
+    private final DaybreakCheckMailService checkMailService;
+    private final DaybreakProcessService daybreakProcessService;
 
     @Autowired
-    protected DaybreakSpotcheckProcessService spotcheckRunService;
-
-    @Autowired
-    protected DaybreakCheckMailService checkMailService;
-
-    @Autowired
-    protected DaybreakProcessService daybreakProcessService;
+    public SpotCheckCLI(DaybreakCheckMailService checkMailService,
+                        DaybreakProcessService daybreakProcessService) {
+        this.checkMailService = checkMailService;
+        this.daybreakProcessService = daybreakProcessService;
+    }
 
     public static void main(String[] args) throws Exception {
         AnnotationConfigApplicationContext ctx = init();

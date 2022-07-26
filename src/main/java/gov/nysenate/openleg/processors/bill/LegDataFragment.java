@@ -73,47 +73,49 @@ public class LegDataFragment extends BaseSourceData {
     @JsonIgnore
     public List<SobiBlock> getSobiBlocks() {
         List<SobiBlock> blocks = new ArrayList<>();
-        if (isBlockFormat()) {
-            SobiBlock block = null;
-            List<String> lines = new ArrayList<>(Arrays.asList(this.text.split("\\r?\\n")));
-            lines.add(""); // Add a trailing line to end the last block and remove edge cases
-            for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
-                // Replace NULL bytes with spaces to properly format lines.
-                String line = lines.get(lineNo).replace('\0', ' ');
-                // Source file is not assumed to be 100% SOBI so we filter out other lines
-                Matcher headerMatcher = SobiBlock.blockPattern.matcher(line);
-                if (headerMatcher.find()) {
-                    if (block == null) {
-                        // No active block with a new matching line: create new block
-                        block = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
-                    }
-                    else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
-                        // Active multi-line block with a new matching line: extend block
-                        block.extend(line);
-                    }
-                    else {
-                        // Active block does not match new line or can't be extended: create new block
-                        block.setEndLineNo(lineNo - 1);
-                        blocks.add(block);
-                        SobiBlock newBlock = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
-                        // Handle certain SOBI grouping edge cases.
-                        if (newBlock.getBillHeader().equals(block.getBillHeader())) {
-                            // The law code line can be omitted when blank but it always precedes the 'C' line
-                            if (newBlock.getType().equals(SobiLineType.SUMMARY) && !block.getType().equals(SobiLineType.LAW)) {
-                                blocks.add(new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo,
-                                           block.getBillHeader() + SobiLineType.LAW.getTypeCode()));
-                            }
-                        }
-                        // Start a new block
-                        block = newBlock;
-                    }
+        if (!isBlockFormat()) {
+            return blocks;
+        }
+
+        SobiBlock block = null;
+        List<String> lines = new ArrayList<>(Arrays.asList(this.text.split("\\r?\\n")));
+        lines.add(""); // Add a trailing line to end the last block and remove edge cases
+        for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
+            // Replace NULL bytes with spaces to properly format lines.
+            String line = lines.get(lineNo).replace('\0', ' ');
+            // Source file is not assumed to be 100% SOBI so we filter out other lines
+            Matcher headerMatcher = SobiBlock.blockPattern.matcher(line);
+            if (headerMatcher.find()) {
+                if (block == null) {
+                    // No active block with a new matching line: create new block
+                    block = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
                 }
-                else if (block != null) {
-                    // Active block with non-matching line: end the current block. Any non-matching line ends the current block
+                else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
+                    // Active multi-line block with a new matching line: extend block
+                    block.extend(line);
+                }
+                else {
+                    // Active block does not match new line or can't be extended: create new block
                     block.setEndLineNo(lineNo - 1);
                     blocks.add(block);
-                    block = null;
+                    SobiBlock newBlock = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
+                    // Handle certain SOBI grouping edge cases.
+                    if (newBlock.getBillHeader().equals(block.getBillHeader())) {
+                        // The law code line can be omitted when blank but it always precedes the 'C' line
+                        if (newBlock.getType().equals(SobiLineType.SUMMARY) && !block.getType().equals(SobiLineType.LAW)) {
+                            blocks.add(new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo,
+                                    block.getBillHeader() + SobiLineType.LAW.getTypeCode()));
+                        }
+                    }
+                    // Start a new block
+                    block = newBlock;
                 }
+            }
+            else if (block != null) {
+                // Active block with non-matching line: end the current block. Any non-matching line ends the current block
+                block.setEndLineNo(lineNo - 1);
+                blocks.add(block);
+                block = null;
             }
         }
         return blocks;

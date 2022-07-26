@@ -89,7 +89,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
      */
     private void sortLaws(SortOrder sortByDate, List<LawFile> lawFiles) {
         if (sortByDate.equals(SortOrder.ASC)) {
-            Collections.sort(lawFiles);
+            Collections.sort(new ArrayList<>(lawFiles));
         }
         else {
             lawFiles.sort(Collections.reverseOrder());

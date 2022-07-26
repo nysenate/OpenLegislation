@@ -57,11 +57,11 @@ public class SpotCheckCtrl extends BaseCtrl {
      *                                       Defaults to current date.
      *                     <li>mismatchType - string - optional, default all mismatch types. - retrieves mismatches of the specified type.
      *                     <li>ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
-     *                     <li>orderBy - string - optional, order resultList by the specified field, must be a valid {@link MismatchOrderBy} value.
+     *                     <li>orderBy - string - optional, order results by the specified field, must be a valid {@link MismatchOrderBy} value.
      *                              - Defaults to REFERENCE_DATE.
      *                     <li>sort - string - optional, a SortOrder value representing the sort order. Defaults to DESC
-     *                     <li>limit - int - limit the number of resultList.
-     *                     <li>offset - int - start resultList from an offset.
+     *                     <li>limit - int - limit the number of results.
+     *                     <li>offset - int - start results from an offset.
      *                     </ul>
      */
     @RequiresPermissions("admin:view")
@@ -389,7 +389,7 @@ public class SpotCheckCtrl extends BaseCtrl {
      * Used to convert orderBy and sort request parameters into an OrderBy object.
      * Defaults to ordering by REFERENCE_DATE descending if orderByString and sortString are null.
      * When ordering by a field other than REFERENCE_DATE, a secondary order by on
-     * REFERENCE_DATE desc is added so the most recent resultList are always displayed first.
+     * REFERENCE_DATE desc is added so the most recent results are always displayed first.
      *
      * @param orderByString String representing a MismatchOrderBy value.
      * @param sortString String representing a SortOrder value.

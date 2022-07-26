@@ -44,8 +44,7 @@ import java.util.function.Function;
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.notifications.model.NotificationType.REQUEST_EXCEPTION;
 
-public abstract class BaseCtrl
-{
+public abstract class BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(BaseCtrl.class);
 
     public static final String BASE_API_PATH = "/api/3";
@@ -194,20 +193,6 @@ public abstract class BaseCtrl
     }
 
     /**
-     * Validate and return a session year from the given webrequest.
-     *
-     * @param request WebRequest
-     * @param paramName String
-     * @return {@link SessionYear}
-     */
-    protected static SessionYear getSessionYearParam(WebRequest request, String paramName) {
-        return getSessionYearParam(
-                getIntegerParam(request, paramName),
-                paramName
-        );
-    }
-
-    /**
      * Attempts to return a base bill id from the given print number and session
      * @param printNo String
      * @param session int
@@ -326,30 +311,6 @@ public abstract class BaseCtrl
     }
 
     /**
-     * Extracts and parses an integer param from the given web request, throws an exception if it doesn't parse
-     */
-    protected static int getIntegerParam(WebRequest request, String paramName) {
-        String intString = request.getParameter(paramName);
-        try {
-            return Integer.parseInt(intString);
-        } catch (NullPointerException | NumberFormatException ex) {
-            throw new InvalidRequestParamEx(intString, paramName, "integer", "integer");
-        }
-    }
-
-    /**
-     * An overload of getIntegerParam that returns a default int value if there is a parsing error
-     * @see #getIntegerParam
-     */
-    protected static int getIntegerParam(WebRequest request, String paramName, int defaultVal) {
-        try {
-            return getIntegerParam(request, paramName);
-        } catch (InvalidRequestParamEx ex) {
-            return defaultVal;
-        }
-    }
-
-    /**
      * Parses the specified query param as a boolean or returns the default value if the param is not set.
      *
      * @param param WebRequest
@@ -440,20 +401,6 @@ public abstract class BaseCtrl
                 throw new MissingServletRequestParameterException(paramName, paramNamesAndTypes.get(paramName));
             }
         }
-    }
-
-    /**
-     * A convenient overload of requireParameters that constructs the paramNamesAndTypes map from an array
-     *  in the format [name1, type1, name2, type2, ... ]
-     *  @see #requireParameters
-     */
-    protected static void requireParameters(WebRequest request, String... paramNamesAndTypes)
-            throws MissingServletRequestParameterException {
-        Map<String, String> paramMap = new HashMap<>();
-        for (int i = 0; i < paramNamesAndTypes.length / 2; i++) {
-            paramMap.put(paramNamesAndTypes[2 * i], paramNamesAndTypes[2 * i + 1]);
-        }
-        requireParameters(request, paramMap);
     }
 
     /** --- Generic Exception Handlers --- */

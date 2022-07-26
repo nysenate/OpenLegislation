@@ -3,10 +3,11 @@ package gov.nysenate.openleg.legislation.bill;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class ApprovalMessage extends BaseLegislativeContent implements Serializable, Comparable<ApprovalMessage> {
-
+    @Serial
     private static final long serialVersionUID = -857517100026638357L;
 
     /** The id of the approved bill */
@@ -26,7 +27,7 @@ public class ApprovalMessage extends BaseLegislativeContent implements Serializa
 
     /** --- Constructors --- */
 
-    public ApprovalMessage(){
+    public ApprovalMessage() {
         billId = null;
         memoText = null;
         signer = null;

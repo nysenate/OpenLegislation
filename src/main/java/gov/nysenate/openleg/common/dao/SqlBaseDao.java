@@ -9,7 +9,6 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.UpdateType;
 import org.apache.commons.text.StringSubstitutor;
-import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,9 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
@@ -35,8 +36,7 @@ import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
  */
-public abstract class SqlBaseDao
-{
+public abstract class SqlBaseDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlBaseDao.class);
 
     /** JdbcTemplate reference for use by sub classes to execute SQL queries */
@@ -261,30 +261,6 @@ public abstract class SqlBaseDao
     public static LocalTime getLocalTimeFromRs(ResultSet rs, String column) throws SQLException {
         if (rs.getTime(column) == null) return null;
         return rs.getTime(column).toLocalTime();
-    }
-
-    /**
-     * Read the 'column' interval value from the result set and cast it to a Period.
-     * Return null if the column value is null.
-     */
-    public static Period getPeriodFromRs(ResultSet rs, String column) throws SQLException {
-        PGInterval interval = (PGInterval) rs.getObject(column);
-        return interval != null ? Period.of(interval.getYears(), interval.getMonths(), interval.getDays()) : null;
-    }
-
-    /**
-     * Read the 'column' interval value from the result set and cast it to a Duration.
-     * Values beyond a day are ignored due to variable length of months/years
-     * Return null if the column value is null.
-     */
-    public static Duration getDurationFromRs(ResultSet rs, String column) throws SQLException {
-        PGInterval interval = (PGInterval) rs.getObject(column);
-        return interval != null
-                ? Duration.ofMillis((long) (interval.getSeconds() * 1000) +
-                        interval.getMinutes() * 1000 * 60 +
-                        interval.getHours() * 1000 * 60 * 60 +
-                        interval.getDays() * 1000 * 60 * 60 * 24)
-                : null;
     }
 
     /**

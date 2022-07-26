@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * This class encapsulates a set of daybreak documents that have not yet been grouped into reports
  * Daybreak documents are fed individually into a DaybreakReportSet object and grouped into reports.
- * Once all documents are fed in, complete reports, partial reports and duplicate documents can be retrieved
+ * Once all documents are fed in, complete reports, partial reports and duplicate documents can be retrieved.
  */
 public class DaybreakReportSet<DaybreakDoc extends DaybreakDocument> {
 

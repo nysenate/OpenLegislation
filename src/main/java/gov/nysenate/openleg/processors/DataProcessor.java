@@ -7,7 +7,7 @@ import gov.nysenate.openleg.common.util.AsyncUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.law.LawProcessService;
 import gov.nysenate.openleg.processors.log.*;
-import gov.nysenate.openleg.processors.transcripts.hearing.PublicHearingProcessService;
+import gov.nysenate.openleg.processors.transcripts.hearing.HearingProcessService;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptProcessService;
 import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -42,7 +42,7 @@ public class DataProcessor
     @Autowired private LegDataProcessService legDataProcessService;
 
     @Autowired private TranscriptProcessService transcriptProcessService;
-    @Autowired private PublicHearingProcessService publicHearingProcessService;
+    @Autowired private HearingProcessService hearingProcessService;
     @Autowired private LawProcessService lawProcessService;
 
     @Autowired private List<BaseSpotcheckProcessService> spotcheckProcessServices;
@@ -58,7 +58,7 @@ public class DataProcessor
         processServices = ImmutableList.<ProcessService>builder()
             .add(legDataProcessService)
             .add(transcriptProcessService)
-            .add(publicHearingProcessService)
+            .add(hearingProcessService)
             .add(lawProcessService)
             .addAll(spotcheckProcessServices)
             .build();

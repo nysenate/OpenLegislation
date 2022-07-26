@@ -6,16 +6,11 @@ import com.google.common.collect.ImmutableMap;
  * OrderBy associates column names with a sort order. This should be used within
  * the dao layer to append order by clauses to sql queries.
  */
-public class OrderBy
-{
-    private static OrderBy NO_ORDER = new OrderBy();
-
+public class OrderBy {
     /** An immutable mapping of column names to sort order. */
-    private ImmutableMap<String, SortOrder> sortColumns = ImmutableMap.of();
+    private final ImmutableMap<String, SortOrder> sortColumns;
 
     /** --- Constructors --- */
-
-    public OrderBy() {}
 
     public OrderBy(ImmutableMap<String, SortOrder> sortColumns) {
         this.sortColumns = sortColumns;

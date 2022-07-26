@@ -36,7 +36,7 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
     protected OpenLegEnvironment environment;
     private File incomingSourceDir;
     private File archiveSourceDir;
-    private Pattern xmlType = Pattern.compile("(?:_)(\\w+)(?:_)");
+    private static final Pattern xmlType = Pattern.compile("(?:_)(\\w+)(?:_)");
 
     /**
      * This method sets up the directories of the incoming and archiving files.

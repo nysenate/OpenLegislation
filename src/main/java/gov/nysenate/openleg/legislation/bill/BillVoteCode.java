@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,19 +7,14 @@ import java.util.Set;
 /**
  * Represents the possible voting code prefixes.
  */
-public enum BillVoteCode
-{
-    AYE   (ImmutableSet.of("AYE", "YES")),
-    NAY   (ImmutableSet.of("NAY", "NO")),
-    EXC   (ImmutableSet.of("EXC", "EXCUSED")),
-    ABS   (ImmutableSet.of("ABS", "ABSENT")),
-    ABD   (ImmutableSet.of("ABD", "ABSTAINED")),
-    AYEWR (ImmutableSet.of("AYEWR", "AYE W/R")); // 'Aye, with reservations'
+public enum BillVoteCode {
+    AYE("YES"), NAY("NO"), EXC("EXCUSED"), ABS("ABSENT"),
+    ABD("ABSTAINED"), AYEWR("AYE W/R"); // 'Aye, with reservations'
 
-    private Set<String> acceptableStrings;
+    private final Set<String> acceptableStrings;
 
     // Lookup string names quickly
-    private static Map<String, BillVoteCode> nameLookupMap = new HashMap<>();
+    private static final Map<String, BillVoteCode> nameLookupMap = new HashMap<>();
     static {
         for (BillVoteCode voteCode : values()) {
             for (String s : voteCode.acceptableStrings) {
@@ -30,8 +23,8 @@ public enum BillVoteCode
         }
     }
 
-    BillVoteCode(Set<String> acceptableStrings) {
-        this.acceptableStrings = acceptableStrings;
+    BillVoteCode(String alternateString) {
+        this.acceptableStrings = Set.of(name(), alternateString);
     }
 
     /**
