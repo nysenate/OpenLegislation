@@ -19,6 +19,7 @@ import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,12 +54,14 @@ public class AgendaGetCtrl extends BaseCtrl {
      * Returns a list of agenda ids in ascending order that occur in the given 'year'.
      */
     @RequestMapping(value = "/{year:\\d{4}}")
-    public BaseResponse getAgendas(@PathVariable int year) {
+    public BaseResponse getAgendas(@PathVariable int year, WebRequest webRequest) {
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         List<AgendaId> agendaIds = agendaData.getAgendaIds(year, SortOrder.ASC);
+        agendaIds = LimitOffset.limitList(agendaIds, limOff);
         return ListViewResponse.of(
                 agendaIds.stream()
                         .map(aid -> new AgendaSummaryView(agendaData.getAgenda(aid)))
-                        .toList(), agendaIds.size(), LimitOffset.ALL);
+                        .toList(), agendaIds.size(), limOff);
     }
 
     /**
@@ -124,7 +127,9 @@ public class AgendaGetCtrl extends BaseCtrl {
      * (GET) /api/3/agendas/meetings/{from}/{to}
      */
     @RequestMapping(value = "/meetings/{from}/{to}")
-    public BaseResponse getAgendaMeetings(@PathVariable String from, @PathVariable String to) {
+    public BaseResponse getAgendaMeetings(@PathVariable String from, @PathVariable String to,
+                                          WebRequest webRequest) {
+        LimitOffset limOff = getLimitOffset(webRequest, 0);
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         WeekOfAgendaInfoMap agendaInfoMap = agendaData.getWeekOfMap(fromDateTime, toDateTime);
@@ -136,7 +141,7 @@ public class AgendaGetCtrl extends BaseCtrl {
         }
         return DateRangeListViewResponse.of(sortedViewSet.stream().toList(),
                 getClosedRange(fromDateTime, toDateTime, "from", "to"),
-                sortedViewSet.size(), LimitOffset.ALL);
+                sortedViewSet.size(), limOff);
     }
 
     /** --- Exception Handlers --- */
