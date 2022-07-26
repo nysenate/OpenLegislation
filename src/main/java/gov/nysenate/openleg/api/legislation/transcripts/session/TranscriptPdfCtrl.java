@@ -20,12 +20,14 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "/pdf/transcripts")
-public class TranscriptPdfCtrl extends BaseCtrl
-{
+public class TranscriptPdfCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptPdfCtrl.class);
+    private final TranscriptDataService transcriptData;
 
     @Autowired
-    private TranscriptDataService transcriptData;
+    public TranscriptPdfCtrl(TranscriptDataService transcriptData) {
+        this.transcriptData = transcriptData;
+    }
 
     /**
      * Single Transcript PDF retrieval

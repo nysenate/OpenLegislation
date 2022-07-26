@@ -3,9 +3,8 @@ package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 
-public class TranscriptIdView implements ViewObject
-{
-    protected String dateTime;
+public class TranscriptIdView implements ViewObject {
+    private final String dateTime;
 
     public TranscriptIdView(TranscriptId transcriptId) {
         this.dateTime = transcriptId.getDateTime().toString();

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts;
 
-import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.api.legislation.BasePdfView;
 
 import java.awt.*;
 import java.io.IOException;

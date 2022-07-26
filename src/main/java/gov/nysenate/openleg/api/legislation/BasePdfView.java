@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.api;
+package gov.nysenate.openleg.api.legislation;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
