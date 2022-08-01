@@ -15,12 +15,16 @@ const reportYears = yearSortOptions(2009, false, false)
 const billSessionYears = yearSortOptions(2009, false, true)
 
 export default function Reports({ setHeaderText }) {
-  setHeaderText("Run Reports or Add to Scrape Queue")
+
+  React.useEffect(() => {
+    setHeaderText("Run Reports or Add to Scrape Queue")
+  }, [])
+
   return (
-    <div>
-      <ManualSpotchecks/>
-      <ModifyScrapeQueue addTo = {true}/>
-      <ModifyScrapeQueue addTo = {false}/>
+    <div className="p-3">
+      <ManualSpotchecks />
+      <ModifyScrapeQueue addTo={true} />
+      <ModifyScrapeQueue addTo={false} />
     </div>
   )
 }
@@ -29,7 +33,7 @@ function ManualSpotchecks() {
   const [ type, setType ] = React.useState(SpotcheckType.BOTH)
   const [ year, setYear ] = React.useState(reportYears[0].value)
   const [ response, setResponse ] = React.useState({})
-  const [ errorMsg, setErrorMsg] = React.useState("")
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   const apiCall = (e) => {
     e.preventDefault()
@@ -63,11 +67,11 @@ function ManualSpotchecks() {
     </div>)
 }
 
-function ModifyScrapeQueue({addTo}) {
+function ModifyScrapeQueue({ addTo }) {
   const [ sessionYear, setSessionYear ] = React.useState(billSessionYears[0].value)
   const [ printNo, setPrintNo ] = React.useState("")
   const [ response, setResponse ] = React.useState({})
-  const [ errorMsg, setErrorMsg] = React.useState("")
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   const getMessage = (response) => response.result ?
     `${response.result.basePrintNoStr} has been ${addTo ? "added to" : "removed from"} the queue.`
