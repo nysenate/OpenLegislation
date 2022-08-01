@@ -72,7 +72,7 @@ export default function Admin({ setHeaderText }) {
           <AdminLogin setHeaderText={setHeaderText} />
         </Route>
         <Route path="/admin">
-          {auth.isAuthed()
+          {auth.isAdmin()
             ? <Redirect to="/admin/index" />
             : <Redirect to="/admin/login" />
           }
