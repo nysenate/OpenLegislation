@@ -118,7 +118,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
                 .results();
 
         assertEquals(1, results.size());
-        assertEquals(TRANSCRIPTS.get(0).getDateTime(), results.get(0).getTranscriptId().getDateTime());
+        assertEquals(TRANSCRIPTS.get(0).getDateTime(), results.get(0).getTranscriptId().dateTime());
     }
 
 //    @Test
@@ -147,7 +147,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
         LocalDateTime end = TRANSCRIPTS.get(TRANSCRIPTS.size()-1).getDateTime();
         List<TranscriptId> ret = new ArrayList<>();
         for (TranscriptId id : list) {
-            LocalDateTime currLDT = id.getDateTime();
+            LocalDateTime currLDT = id.dateTime();
             if (currLDT.equals(start) || currLDT.equals(end))
                 ret.add(id);
             else if (currLDT.isAfter(start) && currLDT.isBefore(end))

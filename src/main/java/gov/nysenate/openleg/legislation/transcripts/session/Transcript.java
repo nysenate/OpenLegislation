@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * A Transcript is a written record of Senate sessions.
+ * A Transcript is a written record of a Senate session.
  */
 public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
@@ -20,7 +20,7 @@ public class Transcript extends BaseLegislativeContent {
     public Transcript(TranscriptId id, String filename, String sessionType, String location, String text) {
         this.id = id;
         this.sessionType = sessionType;
-        this.dateTime = id.getDateTime();
+        this.dateTime = id.dateTime();
         this.location = location;
         this.text =  text;
         this.filename = filename;

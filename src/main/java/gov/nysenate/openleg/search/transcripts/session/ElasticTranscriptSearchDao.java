@@ -2,12 +2,12 @@ package gov.nysenate.openleg.search.transcripts.session;
 
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
+import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -63,7 +63,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     public void deleteTranscriptFromIndex(TranscriptId transcriptId) {
         if (transcriptId != null) {
-            deleteEntry(transcriptIndexName, transcriptId.getDateTime().toString());
+            deleteEntry(transcriptIndexName, transcriptId.dateTime().toString());
         }
     }
 

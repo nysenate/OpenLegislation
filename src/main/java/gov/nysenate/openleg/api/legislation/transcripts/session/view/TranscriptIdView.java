@@ -7,7 +7,7 @@ public class TranscriptIdView implements ViewObject {
     private final String dateTime;
 
     public TranscriptIdView(TranscriptId transcriptId) {
-        this.dateTime = transcriptId.getDateTime().toString();
+        this.dateTime = transcriptId.dateTime().toString();
     }
 
     public String getDateTime() {

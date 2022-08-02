@@ -66,7 +66,7 @@ public class PdfTest extends ApiTest {
         int limit = 500;
         var ids = transcriptDao.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL);
         for (int i = 0; i < ids.size(); i++) {
-            transcriptGetCtrl.getTranscriptPdf(ids.get(i).getDateTime().toString());
+            transcriptGetCtrl.getTranscriptPdf(ids.get(i).dateTime().toString());
             if (i%limit == 0)
                 System.out.println(limit + " done!");
         }

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors;
 
 import com.google.common.collect.Maps;
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
@@ -41,7 +40,6 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     @Autowired private SourceFileRefDao sourceFileRefDao;
     @Autowired private LegDataFragmentDao legDataFragmentDao;
     @Autowired private OpenLegEnvironment env;
-    @Autowired private EventBus eventBus;
     @Autowired private List<LegDataProcessor> processors;
 
     private Map<LegDataFragmentType, LegDataProcessor> processorMap;

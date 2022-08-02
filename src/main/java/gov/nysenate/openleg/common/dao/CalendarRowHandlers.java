@@ -63,14 +63,14 @@ public final class CalendarRowHandlers {
     }
 
     public static class ActiveListRowHandler implements RowCallbackHandler {
-        private final CalendarActiveListRowMapper calendarActiveListRowMapper;
+        private final CalendarActiveListRowMapper calendarActiveListRowMapper
+                = new CalendarActiveListRowMapper();
         private final CalendarActiveListEntryRowMapper calendarActiveListEntryRowMapper
                 = new CalendarActiveListEntryRowMapper();
         private final Map<Integer, CalendarActiveList> resultMap = new LinkedHashMap<>();
         private final boolean isAlertCal;
 
         public ActiveListRowHandler(boolean isAlertCal) {
-            this.calendarActiveListRowMapper = new CalendarActiveListRowMapper(isAlertCal);
             this.isAlertCal = isAlertCal;
         }
 
@@ -120,7 +120,7 @@ public final class CalendarRowHandlers {
         }
     }
 
-    private record CalendarActiveListRowMapper(boolean hasNotes) implements RowMapper<CalendarActiveList> {
+    private static class CalendarActiveListRowMapper implements RowMapper<CalendarActiveList> {
         @Override
         public CalendarActiveList mapRow(ResultSet rs, int rowNum) throws SQLException {
             CalendarActiveList activeList = new CalendarActiveList();
@@ -128,9 +128,7 @@ public final class CalendarRowHandlers {
             activeList.setCalendarId(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
             activeList.setCalDate(getLocalDateFromRs(rs, "calendar_date"));
             activeList.setReleaseDateTime(getLocalDateTimeFromRs(rs, "release_date_time"));
-            if (hasNotes) {
-                activeList.setNotes(rs.getString("notes"));
-            }
+            activeList.setNotes(rs.getString("notes"));
             setModPubDatesFromResultSet(activeList, rs);
             return activeList;
         }
