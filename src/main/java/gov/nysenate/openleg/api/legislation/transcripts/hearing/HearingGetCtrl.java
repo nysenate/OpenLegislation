@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingInfoView;
@@ -32,7 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class HearingGetCtrl extends BaseHearingCtrl {
+public class HearingGetCtrl extends BaseCtrl {
     private final HearingDataService hearingData;
     private final HearingSearchService hearingSearch;
 

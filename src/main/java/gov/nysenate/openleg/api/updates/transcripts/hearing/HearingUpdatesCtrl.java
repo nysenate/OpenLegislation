@@ -51,25 +51,21 @@ public class HearingUpdatesCtrl extends BaseCtrl {
      * Expected Output: List of HearingUpdateTokenView
      */
 
-//    @RequestMapping(value = "/updates")
-//    public BaseResponse getNewRecentHearings(WebRequest request) {
-//        return getNewHearingsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE, request);
-//    }
-//
-//    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
-//    public BaseResponse getNewHearingsSince(@PathVariable String from, WebRequest request) {
-//        return getNewHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
-//    }
+    @RequestMapping(value = "/updates")
+    public BaseResponse getNewRecentHearings(WebRequest request) {
+        return getNewHearingsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE, request);
+    }
 
-    // TODO: test
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
+    public BaseResponse getNewHearingsSince(@PathVariable String from, WebRequest request) {
+        return getNewHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
+    }
+
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getNewHearingsDuring(@PathVariable(required = false) String from,
                                              @PathVariable(required = false) String to,
                                              WebRequest request) {
-        LocalDateTime fromLDT = from == null ? LocalDateTime.now().minusDays(7) : parseISODateTime(from, "from");
-        LocalDateTime toLDT = to == null ? DateUtils.THE_FUTURE : parseISODateTime(from, "to");
-        return getNewHearingsDuring(fromLDT, toLDT, request);
-//        return getNewHearingsDuring(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
+        return getNewHearingsDuring(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
     }
 
     /** --- Internal Methods --- */

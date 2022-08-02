@@ -117,10 +117,10 @@ public enum SqlTable {
     TRANSCRIPT                   ("transcript"),
     TRANSCRIPT_FILE              ("transcript_file"),
 
-    PUBLIC_HEARING               ("public_hearing"),
+    HEARING                      ("hearing"),
     HEARING_HOST                 ("hearing_host"),
     HEARING_HOST_PUBLIC_HEARINGS ("hearing_host_public_hearings"),
-    PUBLIC_HEARING_FILE          ("public_hearing_file");
+    HEARING_FILE                 ("hearing_file");
 
     private final String tableName;
 
