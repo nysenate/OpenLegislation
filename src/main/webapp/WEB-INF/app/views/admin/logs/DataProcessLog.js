@@ -1,10 +1,14 @@
 import React from "react"
-import { getDataProcessLogs } from "app/apis/logsApi";
+import {
+  getDataProcessLogs,
+  runDataProcess
+} from "app/apis/logsApi";
 import { DateTime } from "luxon";
 import DatePicker from "app/shared/DatePicker";
 import { formatDateTime } from "app/lib/dateUtils";
 import Pagination, { PageParams } from "app/shared/Pagination";
 import LoadingIndicator from "app/shared/LoadingIndicator";
+import { FormCheckbox } from "app/shared/Checkbox";
 
 
 const defaultLimit = 16
@@ -22,7 +26,7 @@ export default function DataProcessLog({ setHeaderText }) {
 
   React.useEffect(() => {
     setPageParams(new PageParams(1, defaultLimit))
-  }, [ from, to, hideEmpty])
+  }, [ from, to, hideEmpty ])
 
   React.useEffect(() => {
     fetchDataProcessLogs(pageParams.limit, pageParams.offset)
@@ -60,22 +64,27 @@ export default function DataProcessLog({ setHeaderText }) {
                       selectsEnd />
         </div>
         <div>
-          <input id="hideempty"
-                 name="hideempty"
-                 onChange={e => setHideEmpty(e.target.checked)}
-                 defaultChecked={hideEmpty}
-                 type="checkbox"
-                 className="cursor-pointer" />
-          <label htmlFor="hideempty" className="label cursor-pointer m-2">Hide empty runs</label>
+          <FormCheckbox label="Hide empty runs"
+                        value={hideEmpty}
+                        onChange={e => setHideEmpty(e.target.checked)}
+                        name="hideempty" />
+        </div>
+        <div className="ml-auto">
+          <button className="btn btn--primary" onClick={() => runDataProcess()}>Execute Data Process</button>
         </div>
       </div>
 
       <div className="mt-6 mb-3">
         {logsResponse?.result?.items &&
-          <DataProcessLogSearchResults logs={logsResponse.result.items}
-                                       total={logsResponse.total}
-                                       pageParams={pageParams}
-                                       onPageChange={onPageChange} />
+          <div>
+            <div className="text-center">
+              <span className="font-semibold">{logsResponse.total}</span> data process runs found.
+            </div>
+            <DataProcessLogSearchResults logs={logsResponse.result.items}
+                                         total={logsResponse.total}
+                                         pageParams={pageParams}
+                                         onPageChange={onPageChange} />
+          </div>
         }
       </div>
       {!logsResponse &&

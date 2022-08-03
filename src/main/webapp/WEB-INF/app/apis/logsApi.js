@@ -21,8 +21,14 @@ export function searchApiLogs(term, from, to, sort, limit, offset) {
   return fetchUrl(url)
 }
 
-async function fetchUrl(url) {
-  const response = await fetch(url)
+export function runDataProcess() {
+  const url = "/api/3/admin/process/run"
+  const options = { method: "POST" }
+  return fetchUrl(url, options)
+}
+
+async function fetchUrl(url, options) {
+  const response = await fetch(url, options)
   const data = await response.json()
   if (!data.success) {
     throw new Error(data.message)
