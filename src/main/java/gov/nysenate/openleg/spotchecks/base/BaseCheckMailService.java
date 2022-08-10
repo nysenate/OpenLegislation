@@ -22,6 +22,9 @@ public abstract class BaseCheckMailService implements CheckMailService {
 
     @Override
     public int checkMail() {
+        if (!environment.isCheckmailEnabled()) {
+            return 0;
+        }
         int savedCount = 0;
         try {
             mailUtils.createCheckMailConnection();

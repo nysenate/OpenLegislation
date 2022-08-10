@@ -17,26 +17,28 @@ import java.util.List;
 
 @Service
 public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService {
-
     private final Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
+    private final ActiveListAlertCheckMailService activeListMailService;
+    private final FloorCalAlertCheckMailService supplementalMailService;
+    private final SqlFsCalendarAlertFileDao fileDao;
+    private final SqlCalendarAlertDao calendarAlertDao;
+    private final CalendarAlertProcessor processor;
+    private final SpotCheckNotificationService notificationService;
 
     @Autowired
-    private ActiveListAlertCheckMailService activeListMailService;
-
-    @Autowired
-    private FloorCalAlertCheckMailService supplementalMailService;
-
-    @Autowired
-    private SqlFsCalendarAlertFileDao fileDao;
-
-    @Autowired
-    private SqlCalendarAlertDao calendarAlertDao;
-
-    @Autowired
-    private CalendarAlertProcessor processor;
-
-    @Autowired
-    SpotCheckNotificationService notificationService;
+    public CalendarSpotCheckProcessService(ActiveListAlertCheckMailService activeListMailService,
+                                           FloorCalAlertCheckMailService supplementalMailService,
+                                           SqlFsCalendarAlertFileDao fileDao,
+                                           SqlCalendarAlertDao calendarAlertDao,
+                                           CalendarAlertProcessor processor,
+                                           SpotCheckNotificationService notificationService) {
+        this.activeListMailService = activeListMailService;
+        this.supplementalMailService = supplementalMailService;
+        this.fileDao = fileDao;
+        this.calendarAlertDao = calendarAlertDao;
+        this.processor = processor;
+        this.notificationService = notificationService;
+    }
 
     @Override
     protected int doCollate() throws Exception {
@@ -52,7 +54,7 @@ public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService
     }
 
     @Override
-    protected int doIngest() throws Exception {
+    protected int doIngest() {
         int processedCount = 0;
         List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
         if (!files.isEmpty())

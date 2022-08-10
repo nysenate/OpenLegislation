@@ -31,16 +31,17 @@ import java.util.Set;
 @Service
 public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
-    private MimeSendMailService mimeSender;
+    private final MimeSendMailService mimeSender;
     private final OpenLegEnvironment env;
     private final ApiUserService apiUserService;
     private final AdminUserService adminUserService;
-    private EmailValidator validator = EmailValidator.getInstance();
+    private final EmailValidator validator = EmailValidator.getInstance();
 
     @Autowired
-    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, ApiUserService apiUserService,
+    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env,
+                                        ApiUserService apiUserService,
                                         AdminUserService adminUserService) {
-        mimeSender = new MimeSendMailService(mailUtils, env);
+        this.mimeSender = new MimeSendMailService(mailUtils, env);
         this.apiUserService = apiUserService;
         this.env = env;
         this.adminUserService = adminUserService;

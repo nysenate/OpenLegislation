@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Service
 public class AgendaAlertCheckMailService extends SimpleCheckMailService {
     private static final Pattern agendaAlertSubjectPattern =
-            Pattern.compile("^Senate\\s+Agenda\\s+for\\s+week\\s+of\\s+" + datePattern + "$");
+            Pattern.compile("^Senate Agenda for week of " + datePattern + "$");
 
     @Override
     protected Pattern getPattern() {
@@ -19,14 +19,14 @@ public class AgendaAlertCheckMailService extends SimpleCheckMailService {
     }
 
     @Override
-    protected String getCheckMailType() {
-        return "full agenda";
+    protected String getFilename(String sentDate, Matcher matcher) {
+        LocalDate date = LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        return String.format("agenda_alert-%s-full-%s.html",
+                date.format(DateTimeFormatter.BASIC_ISO_DATE), sentDate);
     }
 
     @Override
-    protected String getFilename(String sentDate, Matcher matcher) {
-        LocalDate date = LocalDate.parse(matcher.group("date"), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        return String.format("agenda_alert-%s-full-%s.html", date.format(DateTimeFormatter.BASIC_ISO_DATE),
-                sentDate);
+    protected String getCheckMailType() {
+        return "full agenda";
     }
 }

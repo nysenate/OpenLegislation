@@ -83,7 +83,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
      * @param calendarAlertFile
      */
     public void updateCalendarAlertFile(CalendarAlertFile calendarAlertFile) {
-        MapSqlParameterSource params = getCalanderAlertFileParams(calendarAlertFile);
+        MapSqlParameterSource params = getCalendarAlertFileParams(calendarAlertFile);
         if (jdbcNamed.update(UPDATE_CALENDAR_ALERT_FILE.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_CALENDAR_ALERT_FILE.getSql(schema()), params);
         }
@@ -112,13 +112,12 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
     }
 
     protected class CalendarAlertFileRowMapper implements RowMapper<CalendarAlertFile> {
-
         @Override
         public CalendarAlertFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String filename = rs.getString("file_name");
             boolean archived = rs.getBoolean("archived");
 
-            File file = archived ? getFileInArchivedDir(filename) : getFileInIncomingDir(filename);
+            var file = new File(archived ? archiveCalendarAlertDir : incomingCalendarAlertDir, filename);
             CalendarAlertFile calendarAlertFile = null;
             try {
                 calendarAlertFile = new CalendarAlertFile(file);
@@ -134,15 +133,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
         }
     }
 
-    private File getFileInArchivedDir(String filename) {
-        return new File(archiveCalendarAlertDir, filename);
-    }
-
-    private File getFileInIncomingDir(String filename) {
-        return new File(incomingCalendarAlertDir, filename);
-    }
-
-    private MapSqlParameterSource getCalanderAlertFileParams(CalendarAlertFile file) {
+    private static MapSqlParameterSource getCalendarAlertFileParams(CalendarAlertFile file) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fileName", file.getFile().getName());
         params.addValue("processedDateTime", toDate(file.getProcessedDateTime()));

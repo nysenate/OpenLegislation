@@ -13,7 +13,6 @@ import javax.mail.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,18 +28,27 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
 
     @Override
     protected int saveReports() throws MessagingException {
-        List<Message> messages = getMatchingMessages(mailUtils.getIncomingMessages());
-        List<Message> savedMessages = new ArrayList<>();
-        for (Message message : messages) {
+        var messages = new ArrayList<Message>();
+        for (Message message : mailUtils.getIncomingMessages()) {
+            String subject = message.getSubject().replaceAll("\\s+", " ");
+            var subjectMatcher = getPattern().matcher(subject);
+            if (!subjectMatcher.matches()) {
+                continue;
+            }
+            messages.add(message);
+            logger.info("Saving {} email message with subject: {}", getCheckMailType(), subject);
             try {
-                saveMessage(message, getSaveFile(message));
-                savedMessages.add(message);
-            } catch (Exception ex) {
-                logger.error("Could not save message {}", message.getSubject());
+                String sentDate = DateUtils.getLocalDateTime(message.getSentDate())
+                        .format(DateUtils.BASIC_ISO_DATE_TIME);
+                var file = new File(mailStagingDir, getFilename(sentDate, subjectMatcher));
+                saveMessage(message, file);
+            }
+            catch (Exception ex) {
+                logger.error("Could not save message {}", subject);
             }
         }
-        mailUtils.moveMessages(savedMessages, true);
-        return savedMessages.size();
+        mailUtils.moveMessages(messages, true);
+        return messages.size();
     }
 
     @Override
@@ -63,28 +71,5 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
 
     protected abstract String getFilename(String sentDateTime, Matcher matcher) throws MessagingException;
 
-    /** Designates where a matched message will be saved */
-    protected File getSaveFile(Message message) throws MessagingException {
-        Matcher subjectMatcher = getPattern().matcher(message.getSubject());
-        // TODO: this repeats getMatchingMessages
-        if (subjectMatcher.matches()) {
-            String sentDate = DateUtils.getLocalDateTime(message.getSentDate()).format(DateUtils.BASIC_ISO_DATE_TIME);
-            return new File(mailStagingDir, getFilename(sentDate, subjectMatcher));
-        }
-        throw new IllegalArgumentException();
-    }
-
     protected abstract String getCheckMailType();
-
-    /** Gets all messages from the source folder whose subjects match the given pattern */
-    private List<Message> getMatchingMessages(Message[] sourceMessages) throws MessagingException {
-        var messages = new ArrayList<Message>();
-        for (Message message : sourceMessages) {
-            if (getPattern().matcher(message.getSubject()).matches()) {
-                messages.add(message);
-                logger.info("Saving {} email message with subject: {}", getCheckMailType(), message.getSubject());
-            }
-        }
-        return messages;
-    }
 }

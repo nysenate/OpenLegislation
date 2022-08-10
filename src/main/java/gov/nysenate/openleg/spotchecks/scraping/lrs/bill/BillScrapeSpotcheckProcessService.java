@@ -2,10 +2,7 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckNotificationService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +14,13 @@ import java.util.List;
  */
 @Service
 public class BillScrapeSpotcheckProcessService extends BaseSpotcheckProcessService {
-
-    private static final Logger logger = LoggerFactory.getLogger(BillScrapeSpotcheckProcessService.class);
-
-    private BillScrapeReferenceDao btrDao;
-    private BillScraper scraper;
-    private SpotCheckNotificationService notificationService;
+    private final BillScrapeReferenceDao btrDao;
+    private final BillScraper scraper;
 
     @Autowired
-    public BillScrapeSpotcheckProcessService(BillScrapeReferenceDao btrDao, BillScraper scraper,
-                                             SpotCheckNotificationService notificationService) {
+    public BillScrapeSpotcheckProcessService(BillScrapeReferenceDao btrDao, BillScraper scraper) {
         this.btrDao = btrDao;
         this.scraper = scraper;
-        this.notificationService = notificationService;
     }
 
     @Override

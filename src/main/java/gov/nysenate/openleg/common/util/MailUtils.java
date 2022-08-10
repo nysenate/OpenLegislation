@@ -21,15 +21,16 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_
 
 @Service
 public class MailUtils {
-    @Autowired
-    private EventBus eventBus;
-    private final String storeProtocol, smtpUser, smtpPass;
+    private final EventBus eventBus;
+    private final String smtpUser, smtpPass;
     private final Properties mailProperties;
     private final OpenLegEnvironment environment;
     private Store store;
     private Folder sourceFolder, archiveFolder, partialFolder;
 
-    public MailUtils(@Value("${mail.smtp.host}") String host,
+    @Autowired
+    public MailUtils(EventBus eventBus,
+                     @Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
                      @Value("${mail.smtp.auth:false}") boolean auth,
                      @Value("${mail.smtp.user:}") String smtpUser,
@@ -44,7 +45,7 @@ public class MailUtils {
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
                      OpenLegEnvironment environment) {
-        this.storeProtocol = storeProtocol;
+        this.eventBus = eventBus;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
         this.mailProperties = new Properties();
@@ -79,12 +80,11 @@ public class MailUtils {
             store.close();
         store = null;
         try {
-            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            store = getStore();
         } catch (MessagingException ex) {
-            if (environment.isCheckmailEnabled() && eventBus != null) {
-                eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
-                        "Can't connect to checkMail.", ex.getMessage()));
-            }
+            // Shouldn't attempt connection if this is false.
+            eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
+                    "Can't connect to checkMail.", ex.getMessage()));
         }
 
         this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
@@ -113,7 +113,7 @@ public class MailUtils {
      * then deletes the emails from the source folder.
      */
     public void moveMessages(List<Message> messages, boolean toArchive) throws MessagingException {
-        if (sourceFolder == null || Thread.currentThread().isInterrupted())
+        if (sourceFolder == null)
             return;
         sourceFolder.copyMessages(messages.toArray(new Message[0]), toArchive ? archiveFolder : partialFolder);
         for (Message message : messages)
@@ -137,23 +137,20 @@ public class MailUtils {
     }
 
     /**
-     * Establishes a connection to a mail server and returns the resulting connection object
+     * Establishes a connection to a mail server and returns the resulting connection object.
      * The store must be closed on its own.
      *
-     * @param host     the mail host
-     * @param user     the username of the mail account
-     * @param password the password for the username
      * @return Store
      * @throws MessagingException if a connection cannot be established
      */
-    private Store getStore(String host, String user, String password)
+    private Store getStore()
             throws MessagingException {
         // A connection shouldn't be attempted if the program is being shutdown.
         if (Thread.currentThread().isInterrupted())
             return null;
-        Store store = Session.getInstance(mailProperties).getStore(storeProtocol);
+        Store store = Session.getInstance(mailProperties).getStore();
         try {
-            store.connect(host, user, password);
+            store.connect(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
         } catch (MessagingException ex) {
             store.close();
             throw ex;

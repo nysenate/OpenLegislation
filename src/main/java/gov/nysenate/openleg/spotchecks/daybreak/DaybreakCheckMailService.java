@@ -33,14 +33,7 @@ public class DaybreakCheckMailService extends BaseCheckMailService {
 
     @Override
     protected void saveMessage(Message message, File file) throws MessagingException, IOException {
-        boolean isMimeType = false;
-        try {
-            isMimeType = message.isMimeType("multipart/*");
-        }
-        catch (NullPointerException ex) {
-            logger.error("Problem parsing mime type in message: {}", message);
-        }
-        if (!isMimeType)
+        if (!message.isMimeType("multipart/*"))
             return;
         Multipart content = (Multipart) message.getContent();
         int partCount = content.getCount();

@@ -10,13 +10,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DaybreakSpotcheckProcessService extends SpotcheckMailProcessService {
+    private final DaybreakCheckMailService checkMailService;
+    private final DaybreakDao daybreakDao;
+    private final DaybreakProcessService daybreakProcessService;
 
     @Autowired
-    private DaybreakCheckMailService checkMailService;
-    @Autowired
-    private DaybreakDao daybreakDao;
-    @Autowired
-    private DaybreakProcessService daybreakProcessService;
+    public DaybreakSpotcheckProcessService(DaybreakCheckMailService checkMailService,
+                                           DaybreakDao daybreakDao,
+                                           DaybreakProcessService daybreakProcessService) {
+        this.checkMailService = checkMailService;
+        this.daybreakDao = daybreakDao;
+        this.daybreakProcessService = daybreakProcessService;
+    }
 
     /** {@inheritDoc} */
     @Override
