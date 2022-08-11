@@ -1,9 +1,0 @@
-{
-  "deployDirectory": "/path/to/deployed/war-exploded",
-
-  "defaultBeep":"beep:*",
-  "scssBeep": "<%= properties.defaultBeep %>",
-  "jsBeep": "<%= properties.defaultBeep %>",
-  "docsBeep": "<%= properties.defaultBeep %>",
-  "jspBeep": "<%= properties.defaultBeep %>"
-}

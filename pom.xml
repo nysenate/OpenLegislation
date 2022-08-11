@@ -74,8 +74,7 @@
             <configuration>
               <executable>npm</executable>
               <arguments>
-                <argument>install</argument>
-                <argument>--no-audit</argument>
+                <argument>ci</argument>
               </arguments>
               <workingDirectory>src/main/webapp</workingDirectory>
             </configuration>
@@ -502,6 +501,12 @@
       <artifactId>mockito-all</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket.cowwoc</groupId>
+      <artifactId>diff-match-patch</artifactId>
+      <version>1.2</version>
     </dependency>
 
   </dependencies>

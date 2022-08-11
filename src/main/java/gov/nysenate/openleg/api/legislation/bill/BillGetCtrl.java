@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -214,6 +215,13 @@ public class BillGetCtrl extends BaseCtrl
             new BillDiffView(
                 new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),
                     prettyHtml));
+    }
+
+    @RequestMapping(value = "/status-types")
+    public BaseResponse getBillStatusTypes() {
+        return ListViewResponse.of(Arrays.stream(BillStatusType.values())
+                .map(BillStatusTypeView::new)
+                .collect(Collectors.toList()));
     }
 
 

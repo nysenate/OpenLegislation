@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingIdView;
+import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.PublicHearingView;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -11,7 +12,6 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.search.view.SearchResultView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.PublicHearingId;
@@ -46,9 +46,10 @@ public class PublicHearingGetCtrl extends BaseCtrl {
      */
     @RequestMapping(value = "")
     public BaseResponse getHearingsByYear(@RequestParam(defaultValue = "date:desc") String sort,
+                                          @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest) throws SearchException {
-        return getHearings(null, sort, full, webRequest);
+        return getHearings(null, sort, summary, full, webRequest);
     }
 
     /**
@@ -67,16 +68,17 @@ public class PublicHearingGetCtrl extends BaseCtrl {
     @RequestMapping(value = "/{strYear:\\d{4}}")
     public BaseResponse getHearingsByYear(@PathVariable String strYear,
                                           @RequestParam(defaultValue = "date:desc") String sort,
+                                          @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest) throws SearchException {
-        return getHearings(Integer.parseInt(strYear), sort, full, webRequest);
+        return getHearings(Integer.parseInt(strYear), sort, summary, full, webRequest);
     }
 
-    private BaseResponse getHearings(Integer year, String sort, boolean full, WebRequest webRequest)
+    private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full, WebRequest webRequest)
             throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(year, sort, limOff);
-        return getSearchResponse(full, limOff, results);
+        return getListResponse(summary, full, limOff, results);
     }
 
     /**
@@ -131,15 +133,18 @@ public class PublicHearingGetCtrl extends BaseCtrl {
         return new ViewObjectErrorResponse(ErrorCode.PUBLIC_HEARING_NOT_FOUND, new PublicHearingIdView(ex.getId(), ex.getFilename()));
     }
 
-    private BaseResponse getSearchResponse(boolean full, LimitOffset limOff, SearchResults<PublicHearingId> results) {
-        return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
-                        getHearingViewObject(r.getResult(), full), r.getRank(), r.getHighlights()))
+    private ListViewResponse<ViewObject> getListResponse(boolean summary, boolean full, LimitOffset limOff,
+                                                         SearchResults<PublicHearingId> results) {
+        return ListViewResponse.of(results.getResults().stream().map(r ->
+                        getHearingViewObject(r.getResult(), summary, full))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 
-    private ViewObject getHearingViewObject(PublicHearingId id, boolean full) {
+    private ViewObject getHearingViewObject(PublicHearingId id, boolean summary, boolean full) {
         if (full)
             return new PublicHearingView(hearingData.getPublicHearing(id));
+        if (summary)
+            return new PublicHearingInfoView(hearingData.getPublicHearing(id));
         return new PublicHearingIdView(id, hearingData.getFilename(id));
     }
 }

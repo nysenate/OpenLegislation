@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.api.auth;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +36,13 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *                                      to be subscribed to.
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public void updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
+    public BaseResponse updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for (String sub : body) {
             subscriptions.add(getEnumParameter("subscriptions", sub, ApiUserSubscriptionType.class));
         }
         apiUserService.setSubscriptions(key, subscriptions);
+        return new SimpleResponse(true, "Successfully updated subscriptions", "emailSubscriptions");
     }
 
     /**
@@ -58,7 +61,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
     public List<String> currentSubscriptions(@RequestParam String key) {
         Set<ApiUserSubscriptionType> subs = apiUserService.getUserByKey(key)
                 .map(ApiUser::getSubscriptions)
-                .orElseThrow(() -> new InvalidRequestParamEx(key, "key", "String", "Must be a valid API users key."));
+                .orElseThrow(() -> badApiKeyError(key));
         List<String> subStrings = new ArrayList<>();
         for(ApiUserSubscriptionType s: subs) {
             subStrings.add(s.toString());
@@ -79,8 +82,9 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *  Request body: body (string) - The new email the user would like to use
      */
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
-    public void updateEmail(@RequestParam String key, @RequestBody String body) {
+    public BaseResponse updateEmail(@RequestParam String key, @RequestBody String body) {
         apiUserService.updateEmail(key, body);
+        return new SimpleResponse(true, "Successfully update email", "updateEmail");
     }
 
     /**
@@ -100,15 +104,24 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      */
     @RequestMapping(value = "/emailSearch", method = RequestMethod.GET)
     public List<Boolean> emailSearch(@RequestParam String email) {
-        List<Boolean> bool = new ArrayList<>();
-        bool.add(true);
+        List<Boolean> bool = List.of(true);
         try {
             apiUserService.getUser(email);
         } catch (EmptyResultDataAccessException ex) {
-            bool.set(0, false);
+            bool = List.of(false);
         }
         return bool;
     }
 
+    @RequestMapping(value = "/getEmail", method = RequestMethod.GET)
+    public BaseResponse getEmail(@RequestParam String key) {
+        String requestType = "get-email";
+        Optional<ApiUser> user = apiUserService.getUserByKey(key);
+        return user.map(apiUser -> new SimpleResponse(true, apiUser.getEmail(), requestType))
+                .orElseGet(() -> new SimpleResponse(false, "Not a valid API key!", requestType));
+    }
 
+    private static InvalidRequestParamEx badApiKeyError(String key) {
+        return new InvalidRequestParamEx(key, "key", "String", "Must be a valid API users key.");
+    }
 }

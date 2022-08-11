@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -19,10 +20,9 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashSet;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping("/register")
-public class RegistrationPageCtrl extends BaseCtrl
-{
+public class RegistrationPageCtrl extends BaseCtrl {
     @Autowired
     protected ApiUserService apiUserService;
 
@@ -30,28 +30,28 @@ public class RegistrationPageCtrl extends BaseCtrl
 
     /**
      * Activate a user's account with their provided registration token.
+     *
      * @param regToken The user's registration token
      * @return The index to return them to
      */
     @RequestMapping(value = "/token/{regToken}", method = RequestMethod.GET)
-    public String index(@PathVariable String regToken) {
+    public BaseResponse register(@PathVariable String regToken) {
         try {
             apiUserService.activateUser(regToken);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("There was an issue with activating a user's reg token!", e);
+            return new SimpleResponse(false, "Invalid token", "Email confirmation");
         }
-        return "register";
+        return new SimpleResponse(true, "Successfully confirmed email address.", "Email confirmation");
     }
 
-    @ResponseBody
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public BaseResponse signup(WebRequest webRequest, @RequestBody NewUserView body) {
         String email = body.getEmail();
-        String name =  body.getName();
+        String name = body.getName();
         Set<String> subscriptions = body.getSubscriptions();
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
-        for(String sub:subscriptions) {
+        for (String sub : subscriptions) {
             subs.add(getEnumParameter("Subscriptions", sub, ApiUserSubscriptionType.class));
         }
         logger.info("{} with email {} is registering for an API key.", name, email);
@@ -64,9 +64,11 @@ public class RegistrationPageCtrl extends BaseCtrl
         try {
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "", subs);
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
-        }
-        catch (UsernameExistsException ex) {
+        } catch (UsernameExistsException | IllegalArgumentException ex) {
             return new SimpleResponse(false, ex.getMessage(), "api-signup");
+        } catch (MailAuthenticationException ex) {
+            logger.error(ex.getMessage(), ex);
+            return new SimpleResponse(false, "Error sending confirmation email.", "api-signup");
         }
     }
 }
