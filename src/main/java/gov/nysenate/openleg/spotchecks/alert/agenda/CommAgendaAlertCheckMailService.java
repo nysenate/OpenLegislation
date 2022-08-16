@@ -13,7 +13,7 @@ public class CommAgendaAlertCheckMailService extends SimpleCheckMailService {
     private static final Pattern commAgendaSubjectPattern =
             Pattern.compile("^Senate - ([A-z, ]+) - Committee Agenda " +
                     "(?:- Addendum ([A-z]) - )?for week of " + datePattern +
-                    " - Posted (\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2} (?:AM|PM)) *$");
+                    " - Posted (\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2} (AM|PM))$");
 
     @Override
     protected Pattern getPattern() {

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
-public class LawTitleParser {
+public final class LawTitleParser {
     private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
     private static final String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)", SEPARATORS = "(-|\\.|\\s|\\\\n)+",
     // The first %s will be filled with the type (ARTICLE, TITLE, and so on).
@@ -32,14 +32,14 @@ public class LawTitleParser {
     DUMMY_ID = "[\\w.-]+",
     // String to match a docType and its id, saving the latter.
     DOC_TYPE_STRING = ".*?%s *%s.*";
-    // Pattern to match a full docTypeId, and and parse out the starting number.
+    // Pattern to match a full docTypeId, and parse out the starting number.
     private static final Pattern ID_NUM_PATTERN = Pattern.compile("(\\d+)([-*]?.*)");
     private static final int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
     private static final List<String> NO_TITLES = List.of(LSA.name(), POA.name(),
             PNY.name(), PCM.name(), BAT.name(), CCT.name());
-    protected static final String NO_TITLE = "No title";
+    static final String NO_TITLE = "No title";
 
     private LawTitleParser() {}
 

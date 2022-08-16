@@ -20,7 +20,7 @@ public class TranscriptLineTest {
     public void constructorTest() {
         lineTexts = new String[]{"Here's a line!", "", "A", "\fB"};
         expected = new String[]{lineTexts[0], "", "A", "B"};
-        testHelper(TranscriptLine::getText);
+        testHelper(TranscriptLine::text);
     }
 
     @Test

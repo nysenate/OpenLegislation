@@ -30,17 +30,17 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
     protected int saveReports() throws MessagingException {
         var messages = new ArrayList<Message>();
         for (Message message : mailUtils.getIncomingMessages()) {
-            String subject = message.getSubject().replaceAll("\\s+", " ");
+            String subject = message.getSubject().replaceAll("\\s+", " ").trim();
             var subjectMatcher = getPattern().matcher(subject);
             if (!subjectMatcher.matches()) {
                 continue;
             }
             messages.add(message);
             logger.info("Saving {} email message with subject: {}", getCheckMailType(), subject);
+            String sentDate = DateUtils.getLocalDateTime(message.getSentDate())
+                    .format(DateUtils.BASIC_ISO_DATE_TIME);
+            var file = new File(mailStagingDir, getFilename(sentDate, subjectMatcher));
             try {
-                String sentDate = DateUtils.getLocalDateTime(message.getSentDate())
-                        .format(DateUtils.BASIC_ISO_DATE_TIME);
-                var file = new File(mailStagingDir, getFilename(sentDate, subjectMatcher));
                 saveMessage(message, file);
             }
             catch (Exception ex) {

@@ -12,9 +12,10 @@ import java.util.Optional;
 /**
  * Set of methods that function on individual transcript lines to help with parsing logic.
  */
-public class TranscriptLine {
+public record TranscriptLine(String text) {
     /** Regex to match any non-alphanumeric or whitespace characters. */
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
+    private static final String SESSION = "SESSION";
 
     /** All line numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
@@ -22,17 +23,10 @@ public class TranscriptLine {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hmma"),
             DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d yyyy");
 
-    /** The actual text of the line. */
-    private final String text;
-
     public TranscriptLine(@NonNull String text) {
         if (!text.isBlank())
             text = text.stripTrailing();
         this.text = text.replaceAll("\f", "");
-    }
-
-    public String getText() {
-        return text;
     }
 
     /**
@@ -64,9 +58,9 @@ public class TranscriptLine {
      * @return the location.
      */
     public Optional<String> getLocation() {
-        String temp = removeLineNumber().replaceAll("\\s+", " ");
-        if (temp.matches(("(?i).*ALBANY.*NEW.*YORK.*")))
-            return Optional.of(temp.trim().toUpperCase());
+        String temp = removeLineNumber().replaceAll("\\s+", " ").trim();
+        if (temp.matches(("(?i)ALBANY NEW YORK")))
+            return Optional.of(temp.toUpperCase());
         return Optional.empty();
     }
 
@@ -98,9 +92,13 @@ public class TranscriptLine {
     }
 
     public Optional<String> getSession() {
-        if (text.contains("SESSION"))
-            return Optional.of(removeLineNumber().replaceAll(" {2,}", " ").trim());
-        return Optional.empty();
+        if (!text.contains(SESSION))
+            return Optional.empty();
+        String[] temp = removeLineNumber().replaceAll(" {2,}", " ").trim().split(SESSION);
+        String prefix = temp[0].replaceAll(" ", "") + " ";
+        // If the suffix exists, it's a Roman numeral, and shouldn't be capitalized.
+        String suffix = temp.length > 1 ? " " + temp[1] : "";
+        return Optional.of(WordUtils.capitalizeFully( prefix + SESSION) + suffix);
     }
 
     public boolean isBlank() {
@@ -120,13 +118,11 @@ public class TranscriptLine {
      * @return Returns line text with the line number removed
      * or the text unaltered if it doesn't have a line number.
      */
-    protected String removeLineNumber() {
+    String removeLineNumber() {
         if (hasLineNumber())
             return text.replaceFirst("\\d+", "").trim();
         return text;
     }
-
-    /** --- Internal Methods --- */
 
     private static Optional<Integer> getNumber(String text) {
         try {
