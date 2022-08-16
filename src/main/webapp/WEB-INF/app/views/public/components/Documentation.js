@@ -9,7 +9,6 @@ export default function Documentation() {
       <p className="text text-left md:text-center">
         See our <a href="/static/docs/html/index.html" className="link">documentation</a> for details about our API.
       </p>
-      <iframe className="h-screen mt-6 hidden lg:block" width="100%" src="/static/docs/html/index.html" />
     </section>
   )
 }

@@ -504,6 +504,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.bitbucket.cowwoc</groupId>
+      <artifactId>diff-match-patch</artifactId>
+      <version>1.2</version>
+    </dependency>
+
   </dependencies>
 
   <pluginRepositories>

@@ -1,63 +1,44 @@
 import React from "react";
-import getSubscriptions, { updateSubscriptions } from "app/apis/subscriptionApi";
-import { capitalizePhrase } from "app/lib/textUtils";
+import { updateSubscriptions } from "app/apis/subscriptionApi";
+import { Checkbox } from "app/shared/Checkbox";
 
 const BREAKING_CHANGES = "BREAKING_CHANGES"
 const NEW_FEATURES = "NEW_FEATURES"
 
-export default function Subscriptions({ apiKey }) {
-  const [ changesNotif, setChangesNotif ] = React.useState(false)
-  const [ newFeaturesNotif, setNewFeaturesNotif ] = React.useState(false)
+export default function Subscriptions({ apiKey, subscriptions }) {
+  const [ subToBreakingChanges, setSubToBreakingChanges ] = React.useState(subscriptions.includes(BREAKING_CHANGES))
+  const [ subToNewFeatures, setSubToNewFeatures ] = React.useState(subscriptions.includes(NEW_FEATURES))
   const [ message, setMessage ] = React.useState("")
-
-  React.useEffect(() => {
-    getSubscriptions(apiKey)
-      .then((data) => {
-        setChangesNotif(data.includes(BREAKING_CHANGES))
-        setNewFeaturesNotif(data.includes(NEW_FEATURES))
-      })
-  }, [apiKey]);
 
   const onSubmit = (e) => {
     e.preventDefault()
     const subs = []
-    if (changesNotif) {
+    if (subToBreakingChanges) {
       subs.push(BREAKING_CHANGES)
     }
-    if (newFeaturesNotif) {
+    if (subToNewFeatures) {
       subs.push(NEW_FEATURES)
     }
     updateSubscriptions(apiKey, subs)
-    setMessage("Subscriptions updated!")
+      .then(() => setMessage("Subscriptions updated!"))
+      .catch(() => setMessage("Error updating subscriptions."))
   }
 
   return (
-    <form className="flex justify-center text--large" onSubmit={onSubmit}>
+    <form className="flex justify-center text--large my-3" onSubmit={onSubmit}>
       <div>
-        <div>Check all email subscriptions you would like to receive:</div>
-        <div>
-          <Checkbox name={BREAKING_CHANGES} checked={changesNotif}
-                    setChecked={setChangesNotif}/>
-        </div>
-        <div>
-          <Checkbox name={NEW_FEATURES} checked={newFeaturesNotif}
-                    setChecked={setNewFeaturesNotif}/>
-        </div>
+        <h3 className="h5 mb-3">Check all email subscriptions you would like to receive:</h3>
+        <Checkbox label="Breaking changes to the API"
+                  value={subToBreakingChanges}
+                  onChange={e => setSubToBreakingChanges(e.target.checked)}
+                  name="breakingChanges" />
+        <Checkbox label="New features added to the API"
+                  value={subToNewFeatures}
+                  onChange={e => setSubToNewFeatures(e.target.checked)}
+                  name="newFeatures" />
         <button className="btn btn--primary my-3 w-55" type="submit">Update subscriptions</button>
         <div>{message}</div>
       </div>
     </form>
   )
-}
-
-function Checkbox({ name, checked, setChecked }) {
-  return (
-    <label>
-      <input name={name}
-             type="checkbox"
-             checked={checked}
-             onChange={() => setChecked(!checked)}/>
-      {capitalizePhrase(name.replaceAll("_", " "))}
-    </label>
-  );
 }

@@ -16,12 +16,9 @@ import java.util.*;
 @RestController
 @RequestMapping(BaseCtrl.BASE_API_PATH + "/email/subscription")
 public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
-    private final ApiUserService apiUserService;
 
     @Autowired
-    public ApiUserEmailSubscriptionCtrl(ApiUserService apiUserService) {
-        this.apiUserService = apiUserService;
-    }
+    protected ApiUserService apiUserService;
 
     /**
      *  Update API User's subscriptions
@@ -38,13 +35,14 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *  Request body: body (List<string>) - The list of subscriptions the user wants
      *                                      to be subscribed to.
      */
-    @PostMapping(value = "/update")
-    public void updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public BaseResponse updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for (String sub : body) {
             subscriptions.add(getEnumParameter("subscriptions", sub, ApiUserSubscriptionType.class));
         }
         apiUserService.setSubscriptions(key, subscriptions);
+        return new SimpleResponse(true, "Successfully updated subscriptions", "emailSubscriptions");
     }
 
     /**
@@ -59,7 +57,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *
      *  @return List<String> - a list of current user subscriptions
      */
-    @GetMapping(value = "/current")
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
     public List<String> currentSubscriptions(@RequestParam String key) {
         Set<ApiUserSubscriptionType> subs = apiUserService.getUserByKey(key)
                 .map(ApiUser::getSubscriptions)
@@ -83,9 +81,10 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *
      *  Request body: body (string) - The new email the user would like to use
      */
-    @PostMapping(value = "/updateEmail")
-    public void updateEmail(@RequestParam String key, @RequestBody String body) {
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
+    public BaseResponse updateEmail(@RequestParam String key, @RequestBody String body) {
         apiUserService.updateEmail(key, body);
+        return new SimpleResponse(true, "Successfully update email", "updateEmail");
     }
 
     /**
@@ -103,7 +102,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      * @return List<bool> A list containing one boolean value; True - when the email already exists
      *                                                         False - when the email does not exist
      */
-    @GetMapping(value = "/emailSearch")
+    @RequestMapping(value = "/emailSearch", method = RequestMethod.GET)
     public List<Boolean> emailSearch(@RequestParam String email) {
         List<Boolean> bool = List.of(true);
         try {
@@ -114,7 +113,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
         return bool;
     }
 
-    @GetMapping(value = "/getEmail")
+    @RequestMapping(value = "/getEmail", method = RequestMethod.GET)
     public BaseResponse getEmail(@RequestParam String key) {
         String requestType = "get-email";
         Optional<ApiUser> user = apiUserService.getUserByKey(key);

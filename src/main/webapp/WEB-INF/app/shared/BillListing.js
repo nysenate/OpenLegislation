@@ -22,6 +22,10 @@ export default function BillListing({ bill, to, highlights }) {
     return <BillListingDetail bill={bill} highlights={highlights} />
   }
 
+  return <LinkedBillListing bill={bill} to={to} highlights={highlights} />
+}
+
+function LinkedBillListing({ bill, to, highlights }) {
   return (
     <Link to={to}>
       <div className="hover:bg-gray-200 rounded">
@@ -42,7 +46,7 @@ function BillListingDetail({ bill, highlights }) {
           </div>
           <div className="text text--small">
             {bill.sponsor && bill.sponsor.member &&
-            bill.sponsor.member.fullName}
+              bill.sponsor.member.fullName}
           </div>
         </div>
       </div>
@@ -55,15 +59,29 @@ function BillListingDetail({ bill, highlights }) {
           }
         </div>
         {bill.status.actionDate &&
-        <div className="mt-1 text text-blue-600">
-          {formatDateTime(bill.status.actionDate, DateTime.DATE_FULL)} - <BillStatusDesc status={bill.status} />
-        </div>
+          <div className="mt-1 text text-blue-600">
+            {formatDateTime(bill.status.actionDate, DateTime.DATE_FULL)} - <BillStatusDesc status={bill.status} />
+          </div>
         }
         {!bill.billType.resolution &&
-        <BillMilestones milestones={bill.milestones.items}
-                        chamber={bill.billType.chamber}
-                        className="py-3" />
+          <BillMilestones milestones={bill.milestones.items}
+                          chamber={bill.billType.chamber}
+                          className="py-3" />
         }
+      </div>
+    </div>
+  )
+}
+
+/**
+ * A much simpler bill listing which only displays the print number and session year.
+ * Useful for when a bill is referenced that does not exist in our database (i.e. pre 2009 bills).
+ */
+export function BillInfoListing({ billInfo }) {
+  return (
+    <div className="p-3 flex flex-wrap">
+      <div className="text">
+        {billInfo.basePrintNo} - {billInfo.session}
       </div>
     </div>
   )

@@ -59,8 +59,8 @@ export default function DataProvided() {
   function createDataCard(index) {
     return (
       <a href={`/static/docs/html/${dataWeProvide[index].docsPage}`} className="w-full lg:w-6/12">
-        <div className="p-4 flex justify-start cursor-pointer text-white text-left hover:bg-gray-200">
-          <div className={`flex justify-center items-center ${dataWeProvide[index].bgclass} p-3 mr-3`}>
+        <div className="p-4 flex justify-start cursor-pointer text-white text-left hover:bg-gray-200 transition duration-300 rounded">
+          <div className={`flex justify-center items-center ${dataWeProvide[index].bgclass} p-3 mr-3`} style={{height: 68}}>
             {dataWeProvide[index].icon}
           </div>
           <div>

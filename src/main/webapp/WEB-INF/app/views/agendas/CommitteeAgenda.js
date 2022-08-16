@@ -82,11 +82,14 @@ export default function CommitteeAgenda({ setHeaderText }) {
   }, [ agendaYear, agendaNumber, committee ])
 
   React.useEffect(() => {
-    setHeaderText(`Agenda ${state.agenda?.id?.number} - ${capitalize(state.committeeAgenda?.committeeId?.name)}`)
+    const headerText = state.agenda.id
+      ? `Agenda ${state.agenda?.id?.number} - ${capitalize(state.committeeAgenda?.committeeId?.name)}`
+      : "Agenda"
+    setHeaderText(headerText)
   }, [ state.agenda, state.committeeAgenda ])
 
   if (state.isLoading) {
-    return <div><LoadingIndicator /></div>
+    return <div className="m-3"><LoadingIndicator /></div>
   }
 
   if (!state.isLoading && state.errorMsg) {
@@ -190,6 +193,9 @@ function MemberAttendanceListing({ memberAttendance }) {
 }
 
 function BillsOnAddendum({ addendum }) {
+  if (addendum.bills.size < 1) {
+    return null
+  }
   return (
     <div>
       <h4 className="h4 mb-3">Bills added to the agenda</h4>

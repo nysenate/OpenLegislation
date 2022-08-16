@@ -46,7 +46,7 @@ export default function AgendaSearchForm({ from, to, committee = "", printNo = "
   }
 
   return (
-    <div>
+    <div className="mb-3">
       <form onSubmit={onSubmit}>
         <div className="flex gap-x-6 gap-y-3 flex-wrap">
           <div>

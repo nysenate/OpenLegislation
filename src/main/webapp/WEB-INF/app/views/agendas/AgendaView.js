@@ -40,7 +40,11 @@ export default function AgendaView({ setHeaderText }) {
   }
 
   if (isLoading) {
-    return <LoadingIndicator />
+    return (
+      <div className="m-3">
+        <LoadingIndicator />
+      </div>
+    )
   }
 
   if (!isLoading && errorMsg) {

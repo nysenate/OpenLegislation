@@ -13,7 +13,7 @@ import Select, {
 import { FormCheckbox } from "app/shared/Checkbox";
 
 
-export default function AgendaUpdatesForm({ from, to, type = "published", detail = true, sort = "desc" }) {
+export default function AgendaUpdatesForm({ from, to, type = "published", detail = false, sort = "desc" }) {
   const [ dirtyFrom, setDirtyFrom ] = React.useState(from)
   const [ dirtyTo, setDirtyTo ] = React.useState(to)
   const [ dirtyType, setDirtyType ] = React.useState(type)

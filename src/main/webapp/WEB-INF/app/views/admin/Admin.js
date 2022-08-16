@@ -2,6 +2,7 @@ import React from 'react'
 import AdminLogin from "app/views/admin/AdminLogin";
 import {
   Link,
+  Redirect,
   Route,
   Switch
 } from "react-router-dom";
@@ -18,9 +19,12 @@ import ChangePassword from "app/views/admin/accounts/ChangePassword";
 import ManageAdminUsers from "app/views/admin/accounts/ManageAdminUsers";
 import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
 import BatchEmail from "app/views/admin/email/BatchEmail";
+import useAuth from "app/shared/useAuth";
+import SpotcheckReports from "app/views/admin/spotchecks/SpotcheckReports";
 
 
 export default function Admin({ setHeaderText }) {
+  const auth = useAuth()
 
   return (
     <ContentContainer>
@@ -58,11 +62,20 @@ export default function Admin({ setHeaderText }) {
         <PrivateRoute path="/admin/email">
           <BatchEmail setHeaderText={setHeaderText} />
         </PrivateRoute>
+        <PrivateRoute path="/admin/spotchecks">
+          <SpotcheckReports setHeaderText={setHeaderText} />
+        </PrivateRoute>
         <PrivateRoute path="/admin/index">
           <AdminDashboard setHeaderText={setHeaderText} />
         </PrivateRoute>
-        <Route path="/admin">
+        <Route path="/admin/login">
           <AdminLogin setHeaderText={setHeaderText} />
+        </Route>
+        <Route path="/admin">
+          {auth.isAdmin()
+            ? <Redirect to="/admin/index" />
+            : <Redirect to="/admin/login" />
+          }
         </Route>
       </Switch>
     </ContentContainer>
@@ -110,7 +123,8 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Spotchecks</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/reports" className="link">Reports</Link></li>
+            <li><Link to="/admin/reports" className="link">Run Reports</Link></li>
+            <li><Link to="/admin/spotchecks" className="link">View Spotchecks</Link></li>
           </ul>
         </div>
 

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import javax.servlet.SessionTrackingMode;
 import java.util.EnumSet;
 
 import static javax.servlet.DispatcherType.*;
@@ -81,5 +82,13 @@ public class WebInitializer implements WebApplicationInitializer {
         DelegatingFilterProxy apiAuthFilter = new DelegatingFilterProxy("apiAuthFilter", dispatcherContext);
         servletContext.addFilter("apiAuthFilter", apiAuthFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
+
+        /**
+         * Configure Shiro to track sessions in cookies instead of urls.
+         * This fixes an issue where trying to navigate to an admin api endpoint when not authenticated would
+         * redirect to something like `/admin/login;jsessionid=EFEF8F5FFF5033FA4C309222266185A1`
+         * instead of `/admin/login`
+         */
+        servletContext.setSessionTrackingModes(EnumSet.of(SessionTrackingMode.COOKIE));
     }
 }

@@ -72,6 +72,7 @@ function Transcript({ isHearing, setHeaderText }) {
 function TranscriptListing({ isHearing, setHeaderText }) {
   const location = useLocation()
   let params = queryString.parse(location.search)
+  const [ dirtyTerm, setDirtyTerm ] = React.useState(params.term ?? "")
   params = { year: params.year ?? "", page: params.page ?? "1", term: params.term ?? "" }
   const history = useHistory()
 
@@ -103,8 +104,9 @@ function TranscriptListing({ isHearing, setHeaderText }) {
     history.push({ search: queryString.stringify(params) })
   }
 
-  const onTermChange = term => {
-    params.term = term
+  const onSubmit = e => {
+    e.preventDefault()
+    params.term = dirtyTerm
     history.push({ search: queryString.stringify(params) })
   }
 
@@ -120,7 +122,22 @@ function TranscriptListing({ isHearing, setHeaderText }) {
 
   return (
     <div className="p-3">
-      <SearchBox term={params.term} setSearchTerm={onTermChange} />
+      <form onSubmit={onSubmit}>
+        <div className="flex flex-wrap">
+          <div className="flex-grow mr-8">
+            <Input label="Search for Transcripts"
+                   value={dirtyTerm}
+                   onChange={(e) => setDirtyTerm(e.target.value)}
+                   placeholder={"e.g. \"a phrase\" or keywords"}
+                   name="transcriptSearch"
+                   className="w-full"
+                   tabIndex="1" />
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button className="btn btn--primary my-3 w-36" type="submit">Search</button>
+        </div>
+      </form>
       <div className="my-3">
         <Select label="Year" value={params.year} options={yearSortOptions(isHearing ? 2011 : 1993,
           true, false)}
@@ -131,31 +148,6 @@ function TranscriptListing({ isHearing, setHeaderText }) {
       }
 
       {bottom}
-    </div>
-  )
-}
-
-/**
- * Displays a text book that can be used to search transcripts.
- * @param term To search for
- * @param setSearchTerm Used to change URL params.
- * @returns {JSX.Element}
- * @constructor
- */
-function SearchBox({ term, setSearchTerm }) {
-  return (
-    <div>
-      <div className="flex flex-wrap">
-        <div className="flex-grow mr-8">
-          <Input label="Search for Transcripts"
-                 value={term}
-                 onChange={(e) => setSearchTerm(e.target.value)}
-                 placeholder={"e.g. \"a phrase\" or keywords"}
-                 name="transcriptSearch"
-                 className="w-full"
-                 tabIndex="1" />
-        </div>
-      </div>
     </div>
   )
 }
@@ -213,7 +205,7 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
           <Link to={`/transcripts/session/${t.result.dateTime}`} className="link">
             <div className="hover:bg-gray-200 rounded px-3 py-2">
               {formatDateTime(t.result.dateTime, DATETIME_FULL_NO_ZONE)}&nbsp;
-              <span className="text">- {capitalizePhrase(t.result.sessionType)}</span>
+              <span className="text">- {capitalizeSessionType(t.result.sessionType)}</span>
 
               {t.highlights.text &&
                 <div className=" pt-1 pb-6">
@@ -226,6 +218,16 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
       )}
     </ol>
   )
+}
+
+function capitalizeSessionType(type) {
+  const typeSplit = type.split(' ')
+  const lastPart = typeSplit.pop()
+  // Roman numerals should remain all capitalized.
+  if (!new RegExp('^[IV]+$').test(lastPart)) {
+    return capitalizePhrase(type);
+  }
+  return capitalizePhrase(typeSplit.join(' ')) + " " + lastPart;
 }
 
 /**

@@ -157,6 +157,12 @@
             @apply m-1;
         }
     }
+
+    .spotcheck-diff-modal {
+        > [data-reach-dialog-content] {
+           @apply w-11/12;
+        }
+    }
 }
 
 /*

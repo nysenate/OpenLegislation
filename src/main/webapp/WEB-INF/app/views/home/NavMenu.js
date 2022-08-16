@@ -169,7 +169,7 @@ function DocPage({ name, icon, to }) {
   )
 }
 
-function AdminPage({name, icon, to}) {
+function AdminPage({ name, icon, to }) {
   const auth = useAuth()
 
   if (!auth.isAdmin()) {
@@ -178,12 +178,12 @@ function AdminPage({name, icon, to}) {
 
   if (auth.isAdmin()) {
     return (
-      <a href={to} tabIndex="-1">
+      <Link to={to} tabIndex="-1">
         <div className="py-4 flex items-center border-b-1 border-gray-300 cursor-pointer text-gray-700 hover:bg-blue-700 hover:text-white">
           <div className="ml-5 mr-2 inline">{icon}</div>
           <div className="flex-grow">{name}</div>
         </div>
-      </a>
+      </Link>
     )
   }
 }

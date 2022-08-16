@@ -13,7 +13,7 @@ export function updateSubscriptions(apiKey, subs) {
     },
     body: JSON.stringify(subs)
   }
-  post(`/update?key=${apiKey}`, options)
+  return fetchJson(`/update?key=${apiKey}`, options)
 }
 
 export function getEmail(apiKey) {
@@ -26,18 +26,18 @@ export function emailInUse(email) {
 
 /**
  * Changes the email of the given API user.
- * @returns {boolean} false if the email is already in use.
+ * @returns [true] if the email is already in use.
  */
 export function updateEmail(apiKey, email) {
-  post(`/updateEmail?key=${apiKey}`, { method: "POST", body: email })
+  return fetchJson(`/updateEmail?key=${apiKey}`, { method: "POST", body: email })
 }
 
-// Functions from ApiUserEmailSubscriptionCtrl do not return BaseResponses
+// Successful responses from ApiUserEmailSubscriptionCtrl do not return BaseResponses, Errors do.
 async function fetchJson(urlSuffix, options = {method: "GET"}) {
   const response = await fetch(baseApi + urlSuffix, options)
-  return await response.json()
-}
-
-function post(urlSuffix, options) {
-  fetch(baseApi + urlSuffix, options).then()
+  const data = await response.json()
+  if (data.hasOwnProperty("success") && data.success === false) {
+    throw new Error(data.message)
+  }
+  return data
 }

@@ -8,7 +8,7 @@ import {
   Link,
   useHistory,
   useLocation,
-  useRouteMatch
+  useParams,
 } from "react-router-dom";
 import { FileDotted, } from "phosphor-react";
 import BillOverview from "app/views/bills/info/BillOverview";
@@ -25,6 +25,7 @@ import BillJsonTab from "app/views/bills/info/BillJsonTab";
 import BillUpdatesTab from "app/views/bills/info/BillUpdatesTab";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import Note from "app/shared/Note";
+import ErrorMessage from "app/shared/ErrorMessage";
 
 export default function Bill({ setHeaderText }) {
 
@@ -33,20 +34,25 @@ export default function Bill({ setHeaderText }) {
   const [ selectedAmd, setSelectedAmd ] = React.useState()
   const [ tabs, setTabs ] = React.useState([])
   const [ activeTab, setActiveTab ] = React.useState()
-  const match = useRouteMatch()
+  const [ errorMsg, setErrorMsg ] = React.useState("")
+  const {sessionYear, printNo} = useParams()
   const location = useLocation()
   const history = useHistory()
 
   // Initialize data when a bill page is navigated to
   React.useEffect(() => {
-    getBillApi(match.params.sessionYear, match.params.printNo, { view: "with_refs_no_fulltext" })
+    setErrorMsg("")
+    setLoading(true)
+    setBill(undefined)
+    getBillApi(sessionYear, printNo, { view: "with_refs_no_fulltext" })
       .then((res) => {
         setBill(res.result)
         setStateFromSearchParams("Summary", res.result.activeVersion)
         setHeaderText(headerTextForBill(res.result))
-        setLoading(false)
       })
-  }, [ match.params.sessionYear, match.params.printNo ])
+      .catch((err) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
+  }, [ sessionYear, printNo ])
 
   // Update tab labels and content whenever bill or selected amd change.
   React.useEffect(() => {
@@ -87,6 +93,14 @@ export default function Bill({ setHeaderText }) {
 
   if (loading) {
     return (<LoadingIndicator></LoadingIndicator>)
+  }
+
+  if (!loading && errorMsg) {
+    return (
+      <div className="p-6">
+        <ErrorMessage>{errorMsg}</ErrorMessage>
+      </div>
+    )
   }
 
   return (
@@ -195,9 +209,9 @@ const billInfoTabs = (bill, selectedAmd) => {
     {
       name: "Sponsors",
       quantity: undefined,
-      isDisabled: (bill.additionalSponsors.size
-        + bill.amendments.items[selectedAmd].coSponsors.size
-        + bill.amendments.items[selectedAmd].multiSponsors.size) === 0,
+      isDisabled: (bill.additionalSponsors?.size
+        + bill.amendments.items[selectedAmd]?.coSponsors.size
+        + bill.amendments.items[selectedAmd]?.multiSponsors.size) === 0,
       component: <BillSponsorsTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
@@ -208,8 +222,8 @@ const billInfoTabs = (bill, selectedAmd) => {
     },
     {
       name: "Memos",
-      quantity: (bill.amendments.items[selectedAmd].memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
-      isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd].memo,
+      quantity: (bill.amendments.items[selectedAmd]?.memo ? 1 : 0) + bill.vetoMessages.size + (bill.approvalMessage ? 1 : 0),
+      isDisabled: bill.billType.resolution || !bill.amendments.items[selectedAmd]?.memo,
       component: <BillMemosTab bill={bill} selectedAmd={selectedAmd} />
     },
     {
