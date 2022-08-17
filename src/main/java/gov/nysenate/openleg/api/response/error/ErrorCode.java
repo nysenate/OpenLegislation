@@ -42,7 +42,7 @@ public enum ErrorCode {
     USER_DOES_NOT_EXIST(192, "The entered username is not currently registered as a user"),
     SAME_PASSWORD(193, "The new password cannot match the existing password"),
     CANNOT_DELETE_ADMIN(194, "The default administrator cannot be deleted"),
-
+    EMAIL_IN_USE(200, "This email is already in use"),
 
     /** --- General --- */
 

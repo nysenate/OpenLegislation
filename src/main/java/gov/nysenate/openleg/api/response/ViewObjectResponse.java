@@ -2,9 +2,8 @@ package gov.nysenate.openleg.api.response;
 
 import gov.nysenate.openleg.api.ViewObject;
 
-public class ViewObjectResponse<ViewType extends ViewObject> extends BaseResponse
-{
-    private ViewType result;
+public class ViewObjectResponse<ViewType extends ViewObject> extends BaseResponse {
+    private final ViewType result;
 
     public ViewObjectResponse(ViewType result) {
         this(result, "");
