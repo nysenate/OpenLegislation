@@ -94,6 +94,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
         return getTranscriptResponse(summary, full, limOff, results);
     }
 
+
     /**
      * Single Transcript Retrieval API
      * -------------------------------
@@ -108,9 +109,28 @@ public class TranscriptGetCtrl extends BaseCtrl {
     public BaseResponse getTranscript(@PathVariable String dateTime) {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
-            new TranscriptView(transcriptData.getTranscript(new TranscriptId(localDateTime))),
+                new TranscriptView(transcriptData.getTranscriptByDateTime(localDateTime)),
                 "Data for transcript " + dateTime);
     }
+
+    /**
+     * Single Transcript Retrieval API
+     * -------------------------------
+     *
+     * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{dateTime}/{sessionType}
+     *
+     * <p>Request Parameters: None.</p>
+     *
+     * Expected Output: TranscriptView
+     */
+    @RequestMapping("/{dateTime:.*}/{sessionType:.*}")
+    public BaseResponse getTranscript(@PathVariable String dateTime, @PathVariable String sessionType) {
+        var id = new TranscriptId(parseISODateTime(dateTime, "dateTime"), sessionType);
+        return new ViewObjectResponse<>(new TranscriptView(transcriptData.getTranscript(id)),
+                "Data for transcript " + dateTime);
+    }
+
+    // TODO: add API call for PDF
 
     /**
      * Single Transcript PDF retrieval API
@@ -126,8 +146,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
-        TranscriptId transcriptId = new TranscriptId(localDateTime);
-        Transcript transcript = transcriptData.getTranscript(transcriptId);
+        Transcript transcript = transcriptData.getTranscriptByDateTime(localDateTime);
         return new TranscriptPdfView(transcript).writeData();
     }
 

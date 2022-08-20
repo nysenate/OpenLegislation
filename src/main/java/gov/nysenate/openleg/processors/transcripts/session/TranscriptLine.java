@@ -59,7 +59,7 @@ public record TranscriptLine(String text) {
      */
     public Optional<String> getLocation() {
         String temp = removeLineNumber().replaceAll("\\s+", " ").trim();
-        if (temp.matches(("(?i)ALBANY NEW YORK")))
+        if (temp.matches(("(?i)ALBANY[ ,]+NEW YORK")))
             return Optional.of(temp.toUpperCase());
         return Optional.empty();
     }
@@ -98,7 +98,7 @@ public record TranscriptLine(String text) {
         String prefix = temp[0].replaceAll(" ", "") + " ";
         // If the suffix exists, it's a Roman numeral, and shouldn't be capitalized.
         String suffix = temp.length > 1 ? " " + temp[1] : "";
-        return Optional.of(WordUtils.capitalizeFully( prefix + SESSION) + suffix);
+        return Optional.of(WordUtils.capitalizeFully(prefix + SESSION) + suffix);
     }
 
     public boolean isBlank() {

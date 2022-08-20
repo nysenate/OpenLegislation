@@ -20,22 +20,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
 
 @Service
 public class ElasticTranscriptSearchService implements TranscriptSearchService, IndexedSearchService<Transcript> {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchService.class);
 
-    @Autowired protected OpenLegEnvironment env;
-    @Autowired protected EventBus eventBus;
-    @Autowired protected ElasticTranscriptSearchDao transcriptSearchDao;
-    @Autowired protected TranscriptDataService transcriptDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticTranscriptSearchDao transcriptSearchDao;
+    private final TranscriptDataService transcriptDataService;
 
-    @PostConstruct
-    protected void init() {
+    @Autowired
+    public ElasticTranscriptSearchService(OpenLegEnvironment env,
+                                          ElasticTranscriptSearchDao transcriptSearchDao,
+                                          TranscriptDataService transcriptDataService,
+                                          EventBus eventBus) {
+        this.env = env;
+        this.transcriptSearchDao = transcriptSearchDao;
+        this.transcriptDataService = transcriptDataService;
         eventBus.register(this);
     }
 

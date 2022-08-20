@@ -42,9 +42,8 @@ public class SqlTranscriptDaoIT extends BaseTests {
     static {
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
             LDTS.add(LocalDate.of(2020, Month.JULY, 30).atStartOfDay().plusHours(i));
-            Transcript curr = new Transcript(new TranscriptId(LDTS.get(i)),
-                    "t" + i + ".txt", "REGULAR SESSION",
-                    "NYNY", "the text " + i);
+            Transcript curr = new Transcript(new TranscriptId(LDTS.get(i), "REGULAR SESSION"),
+                    "t" + i + ".txt", "NYNY", "the text " + i);
             TRANSCRIPTS.add(curr);
             try {
                 TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
@@ -54,7 +53,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
         }
         Transcript curr = TRANSCRIPTS.get(0);
         UPDATE = new Transcript(curr.getId(), "t0v1.txt",
-                curr.getSessionType(), curr.getLocation(), curr.getText() + "v1");
+                curr.getLocation(), curr.getText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
         } catch (FileNotFoundException e) {
@@ -120,22 +119,6 @@ public class SqlTranscriptDaoIT extends BaseTests {
         assertEquals(1, results.size());
         assertEquals(TRANSCRIPTS.get(0).getDateTime(), results.get(0).getTranscriptId().dateTime());
     }
-
-//    @Test
-//    public void weirdBug() throws InterruptedException {
-//        System.out.println("Time before first database change: " + LocalDateTime.now().toLocalTime());
-//        fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(0));
-//        System.out.println("Time after first database change: " + LocalDateTime.now().toLocalTime());
-//        dao.updateTranscript(TRANSCRIPTS.get(0));
-//        // Something to take up time.
-//        Thread.sleep(1000);
-//        fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(1));
-//        dao.updateTranscript(TRANSCRIPTS.get(1));
-//        Transcript zero = dao.getTranscript(TRANSCRIPTS.get(0).getTranscriptId());
-//        Transcript one = dao.getTranscript(TRANSCRIPTS.get(1).getTranscriptId());
-//        System.out.println(zero.getModifiedDateTime().toLocalTime() + ", " + one.getModifiedDateTime().toLocalTime());
-//        System.out.println(zero.getPublishedDateTime().toLocalTime() + ", " + one.getPublishedDateTime().toLocalTime());
-//    }
 
     /**
      * Only returns the new Transcripts added in the test.

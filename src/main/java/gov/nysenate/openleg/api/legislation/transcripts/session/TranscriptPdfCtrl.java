@@ -43,7 +43,7 @@ public class TranscriptPdfCtrl extends BaseCtrl {
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, HttpServletResponse response)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
-        TranscriptId transcriptId = new TranscriptId(localDateTime);
+        TranscriptId transcriptId = new TranscriptId(localDateTime, null);
         try {
             Transcript transcript = transcriptData.getTranscript(transcriptId);
             return new TranscriptPdfView(transcript).writeData();

@@ -11,13 +11,13 @@ public abstract class BaseSourceData {
     private LocalDateTime stagedDateTime;
 
     /** If true, this source data is awaiting processing. */
-    private boolean pendingProcessing;
+    protected boolean pendingProcessing;
 
     /** The number of times this data has been processed. */
-    private int processedCount;
+    protected int processedCount;
 
     /** The datetime when the source data was last processed. */
-    private LocalDateTime processedDateTime;
+    protected LocalDateTime processedDateTime;
 
     /** True if this source is a non-canonical patch */
     private boolean manualFix = false;

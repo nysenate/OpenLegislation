@@ -4,6 +4,7 @@ import gov.nysenate.openleg.processors.BaseSourceData;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
 
 public abstract class AbstractTranscriptsFile extends BaseSourceData implements Comparable<AbstractTranscriptsFile> {
     /** Reference to the actual file. */
@@ -47,5 +48,11 @@ public abstract class AbstractTranscriptsFile extends BaseSourceData implements 
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public void markAsProcessed() {
+        processedCount++;
+        pendingProcessing = false;
+        processedDateTime = LocalDateTime.now();
     }
 }

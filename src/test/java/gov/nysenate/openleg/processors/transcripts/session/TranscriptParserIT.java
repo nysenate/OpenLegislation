@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import static gov.nysenate.openleg.processors.transcripts.session.TranscriptParser.getTranscriptFromFile;
+import static gov.nysenate.openleg.processors.transcripts.session.TranscriptParser.process;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -48,13 +48,13 @@ public class TranscriptParserIT extends BaseTests {
 
     @Test
     public void testProcess() throws IOException {
-        TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0));
-        Transcript expectedTranscript = new Transcript(testId, FILENAMES[0],
-                "REGULAR SESSION", "ALBANY, NEW YORK", FILE_TEXT);
+        TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0),
+                "Regular Session");
+        Transcript expectedTranscript = new Transcript(testId, FILENAMES[0], "ALBANY, NEW YORK", FILE_TEXT);
         TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[0]));
 
         transcriptFileDao.updateTranscriptFile(transcriptFile);
-        transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true);
+        transcriptDataService.saveTranscript(process(transcriptFile), true);
         Transcript actualTranscript = transcriptDataService.getTranscript(testId);
         assertEquals(expectedTranscript, actualTranscript);
     }
@@ -63,10 +63,10 @@ public class TranscriptParserIT extends BaseTests {
     public void testParseError() throws IOException {
         final TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[1]));
         assertThrows(ParseError.class, () ->
-                transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile), true));
+                transcriptDataService.saveTranscript(process(transcriptFile), true));
 
         final TranscriptFile transcriptFile2 = new TranscriptFile(new File(TEST_DIR + FILENAMES[2]));
         assertThrows(ParseError.class, () ->
-                transcriptDataService.saveTranscript(getTranscriptFromFile(transcriptFile2), true));
+                transcriptDataService.saveTranscript(process(transcriptFile2), true));
     }
 }

@@ -11,20 +11,17 @@ import java.util.Objects;
  */
 public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
-    private final LocalDateTime dateTime;
-    private final String sessionType, location, text;
+    private final String location, text;
     private String filename;
 
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId id, String filename, String sessionType, String location, String text) {
+    public Transcript(TranscriptId id, String filename, String location, String text) {
         this.id = id;
-        this.sessionType = sessionType;
-        this.dateTime = id.dateTime();
         this.location = location;
         this.text =  text;
         this.filename = filename;
-        this.year = this.dateTime.getYear();
+        this.year = id.dateTime().getYear();
         this.session = SessionYear.of(this.year);
     }
 
@@ -32,12 +29,12 @@ public class Transcript extends BaseLegislativeContent {
         return id;
     }
 
-    public String getSessionType() {
-        return sessionType;
+    public LocalDateTime getDateTime() {
+        return id.dateTime();
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public String getSessionType() {
+        return id.sessionType();
     }
 
     public String getLocation() {
@@ -62,8 +59,6 @@ public class Transcript extends BaseLegislativeContent {
         if (o == null || getClass() != o.getClass()) return false;
         Transcript that = (Transcript) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(sessionType, that.sessionType) &&
-                Objects.equals(dateTime, that.dateTime) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(text, that.text) &&
                 Objects.equals(filename, that.filename);
@@ -71,6 +66,6 @@ public class Transcript extends BaseLegislativeContent {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, sessionType, dateTime, location, text, filename);
+        return Objects.hash(super.hashCode(), id, location, text, filename);
     }
 }

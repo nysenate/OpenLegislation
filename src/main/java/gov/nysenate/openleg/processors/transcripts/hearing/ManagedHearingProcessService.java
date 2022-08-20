@@ -12,22 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Service
-public class ManagedHearingProcessService implements HearingProcessService
-{
+public class ManagedHearingProcessService implements HearingProcessService {
     private static final Logger logger = LoggerFactory.getLogger(ManagedHearingProcessService.class);
+    private final HearingFileDao hearingFileDao;
+    private final HearingDataService hearingDataService;
 
     @Autowired
-    private HearingFileDao hearingFileDao;
-
-    @Autowired
-    private HearingDataService hearingDataService;
+    public ManagedHearingProcessService(HearingFileDao hearingFileDao, HearingDataService hearingDataService) {
+        this.hearingFileDao = hearingFileDao;
+        this.hearingDataService = hearingDataService;
+    }
 
     /** --- Implemented Methods --- */
 
@@ -82,17 +81,13 @@ public class ManagedHearingProcessService implements HearingProcessService
     /** {@inheritDoc} */
     @Override
     public int processHearingFiles(List<HearingFile> hearingFiles) {
-        SortedMap<HearingFile, Hearing> processed = new TreeMap<>(
-                Comparator.comparing(HearingFile::isManualFix)
-                        .thenComparing(HearingFile::getFileName));
+        SortedMap<HearingFile, Hearing> processed = new TreeMap<>();
         int processCount = 0;
         for (HearingFile file : hearingFiles) {
             try {
                 logger.info("Processing hearing file {}", file.getFileName());
                 processed.put(file, HearingParser.process(file));
-                file.setProcessedCount(file.getProcessedCount() + 1);
-                file.setPendingProcessing(false);
-                file.setProcessedDateTime(LocalDateTime.now());
+                file.markAsProcessed();
                 hearingFileDao.updateHearingFile(file);
                 processCount++;
             }

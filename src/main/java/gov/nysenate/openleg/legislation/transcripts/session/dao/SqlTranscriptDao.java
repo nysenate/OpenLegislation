@@ -18,20 +18,24 @@ import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 import static gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptQuery.*;
 
 @Repository
-public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
-{
+public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     /** {@inheritDoc} */
     @Override
     public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("date_time", sortOrder);
+        OrderBy orderBy = new OrderBy("date_time", sortOrder, "session_type", SortOrder.getOpposite(sortOrder));
         return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), transcriptIdRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public Transcript getTranscript(TranscriptId transcriptId) throws DataAccessException {
-        MapSqlParameterSource params = getTranscriptIdParams(transcriptId);
-        return jdbcNamed.queryForObject(SELECT_TRANSCRIPT_BY_ID.getSql(schema()), params, transcriptRowMapper);
+        var params = new MapSqlParameterSource("dateTime", DateUtils.toDate(transcriptId.dateTime()));
+        SqlTranscriptQuery query = SELECT_TRANSCRIPT_BY_DATE_TIME;
+        if (transcriptId.sessionType() != null) {
+            params.addValue("sessionType", transcriptId.sessionType());
+            query = SELECT_TRANSCRIPT_BY_ID;
+        }
+        return jdbcNamed.queryForObject(query.getSql(schema()), params, transcriptRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -56,7 +60,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     /** --- Param Source Methods --- */
 
-    private MapSqlParameterSource getTranscriptParams(Transcript transcript) {
+    private static MapSqlParameterSource getTranscriptParams(Transcript transcript) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("transcriptFilename", transcript.getFilename());
         params.addValue("sessionType", transcript.getSessionType());
@@ -67,27 +71,24 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
         return params;
     }
 
-    private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
-        return new MapSqlParameterSource("dateTime", DateUtils.toDate(transcriptId.dateTime()));
-    }
-
     /** --- Row Mapper Instances --- */
 
-    static RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
         LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
-        TranscriptId id = new TranscriptId(dateTime);
-        Transcript transcript = new Transcript(id, rs.getString("transcript_filename"), rs.getString("session_type"),
+        TranscriptId id = new TranscriptId(dateTime, rs.getString("session_type"));
+        Transcript transcript = new Transcript(id, rs.getString("transcript_filename"),
                 rs.getString("location"), rs.getString("text"));
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return transcript;
     };
 
-    static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"));
+    private static final RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
+        new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type"));
 
 
     private static final RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
-            new TranscriptUpdateToken(new TranscriptId(getLocalDateTimeFromRs(rs, "date_time")),
+            new TranscriptUpdateToken(new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"),
+                    rs.getString("session_type")),
                     getLocalDateTimeFromRs(rs, "modified_date_time"));
 }

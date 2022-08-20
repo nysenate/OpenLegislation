@@ -18,7 +18,7 @@ public final class TranscriptParser {
     private static final Charset CP_1252 = Charsets.toCharset("CP1252");
     private TranscriptParser() {}
 
-    static Transcript getTranscriptFromFile(TranscriptFile transcriptFile) throws IOException {
+    static Transcript process(TranscriptFile transcriptFile) throws IOException {
         List<String> lines = Files.readAllLines(transcriptFile.getFile().toPath(), CP_1252);
         LocalDate date = null;
         LocalTime time = null;
@@ -34,9 +34,9 @@ public final class TranscriptParser {
         }
 
         if (date == null || time == null)
-            throw new ParseError("Date or time could not be parsed from TranscriptFile " + transcriptFile.getOriginalFilename());
-        TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time));
+            throw new ParseError("Date or time could not be parsed from TranscriptFile " + transcriptFile.getFileName());
+        TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), sessionType == null ? "" : sessionType);
         String transcriptText = String.join("\n", lines) + "\n";
-        return new Transcript(transcriptId, transcriptFile.getFileName(), sessionType, location, transcriptText);
+        return new Transcript(transcriptId, transcriptFile.getFileName(), location, transcriptText);
     }
 }

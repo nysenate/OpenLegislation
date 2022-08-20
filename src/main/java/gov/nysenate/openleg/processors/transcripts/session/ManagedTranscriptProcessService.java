@@ -12,22 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Service
-public class ManagedTranscriptProcessService implements TranscriptProcessService
-{
+public class ManagedTranscriptProcessService implements TranscriptProcessService {
     private static final Logger logger = LoggerFactory.getLogger(ManagedTranscriptProcessService.class);
+    private final TranscriptFileDao transcriptFileDao;
+    private final TranscriptDataService transcriptDataService;
 
     @Autowired
-    private TranscriptFileDao transcriptFileDao;
-
-    @Autowired
-    private TranscriptDataService transcriptDataService;
+    public ManagedTranscriptProcessService(TranscriptFileDao transcriptFileDao, TranscriptDataService transcriptDataService) {
+        this.transcriptFileDao = transcriptFileDao;
+        this.transcriptDataService = transcriptDataService;
+    }
 
 
     /* --- Implemented Methods --- */
@@ -76,33 +75,15 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
 
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptFile> getPendingTranscriptFiles(LimitOffset limitOffset) {
-        return transcriptFileDao.getPendingTranscriptFiles(limitOffset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public int processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
-        // Ensures transcripts are saved in a reliable order, with manual fixes processed last.
-        SortedMap<TranscriptFile, Transcript> processed = new TreeMap<>(
-                Comparator.comparing(TranscriptFile::isManualFix)
-                        .thenComparing(TranscriptFile::getDateTime)
-                        .thenComparing(TranscriptFile::getFileName));
-
+        SortedMap<TranscriptFile, Transcript> processed = new TreeMap<>();
         int processCount = 0;
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
-                var currTranscript = TranscriptParser.getTranscriptFromFile(file);
-
-                file.setDateTime(currTranscript.getDateTime());
-                file.setProcessedCount(file.getProcessedCount() + 1);
-                file.setPendingProcessing(false);
-                file.setProcessedDateTime(LocalDateTime.now());
+                processed.put(file, TranscriptParser.process(file));
+                file.markAsProcessed();
                 transcriptFileDao.updateTranscriptFile(file);
-
-                currTranscript.setFilename(file.getFileName());
-                processed.put(file, currTranscript);
                 processCount++;
             }
             catch (IOException ex) {
@@ -121,7 +102,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         List<TranscriptFile> transcriptFiles;
         int processCount = 0;
         do {
-            transcriptFiles = getPendingTranscriptFiles(LimitOffset.FIFTY);
+            transcriptFiles = transcriptFileDao.getPendingTranscriptFiles(LimitOffset.FIFTY);
             processCount += processTranscriptFiles(transcriptFiles);
         }
         while (!transcriptFiles.isEmpty());
