@@ -95,7 +95,7 @@ public class SqlFsHearingFileDao extends SqlBaseDao implements HearingFileDao {
             String fileName = rs.getString("filename");
             boolean archived = rs.getBoolean("archived");
 
-            File file = archived ? getFileInArchiveDir(fileName) : getFileInIncomingDir(fileName);
+            File file = new File(archived ? archiveHearingDir : incomingHearingDir, fileName);
             HearingFile hearingFile = null;
             try {
                 hearingFile = new HearingFile(file);
@@ -103,24 +103,16 @@ public class SqlFsHearingFileDao extends SqlBaseDao implements HearingFileDao {
                 hearingFile.setProcessedCount(rs.getInt("processed_count"));
                 hearingFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 hearingFile.setPendingProcessing(rs.getBoolean("pending_processing"));
-                hearingFile.setArchived(rs.getBoolean("archived"));
+                hearingFile.setArchived(archived);
             }
             catch (FileNotFoundException ex) {
                 logger.error("Hearing File " + fileName + " was not found in the expected location.", ex);
             }
-
             return hearingFile;
-        }
-
-        private File getFileInArchiveDir(String fileName) {
-            return new File(archiveHearingDir, fileName);
-        }
-
-        private File getFileInIncomingDir(String fileName) {
-            return new File(incomingHearingDir, fileName);
         }
     }
 
+    // TODO: combine with transcript processing
     /** --- Param Source Methods --- */
 
     private static MapSqlParameterSource getHearingFileParams(HearingFile hearingFile) {

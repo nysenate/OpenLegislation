@@ -95,6 +95,8 @@ public record TranscriptLine(String text) {
         if (!text.contains(SESSION))
             return Optional.empty();
         String[] temp = removeLineNumber().replaceAll(" {2,}", " ").trim().split(SESSION);
+        if (temp.length == 0)
+            return Optional.empty();
         String prefix = temp[0].replaceAll(" ", "") + " ";
         // If the suffix exists, it's a Roman numeral, and shouldn't be capitalized.
         String suffix = temp.length > 1 ? " " + temp[1] : "";
