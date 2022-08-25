@@ -13,8 +13,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,13 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 
 @Repository
-public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSearchDao
-{
-    private static final Logger logger = LoggerFactory.getLogger(ElasticApiLogSearchDao.class);
-
+public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSearchDao {
     private static final String logIndexName = SearchIndex.API_LOG.getIndexName();
+    private final ObjectMapper objectMapper;
 
-    @Autowired protected ObjectMapper objectMapper;
+    @Autowired
+    public ElasticApiLogSearchDao(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     /** {@inheritDoc} */
     @Override

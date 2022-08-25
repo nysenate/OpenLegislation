@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.common.dao;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
@@ -9,8 +8,6 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.UpdateType;
 import org.apache.commons.text.StringSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,11 +20,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -37,8 +31,6 @@ import static gov.nysenate.openleg.common.util.DateUtils.toDate;
  * Base class for SQL data access layer classes to inherit common functionality from.
  */
 public abstract class SqlBaseDao {
-    private static final Logger logger = LoggerFactory.getLogger(SqlBaseDao.class);
-
     /** JdbcTemplate reference for use by sub classes to execute SQL queries */
     @Autowired protected JdbcTemplate jdbc;
 
@@ -212,29 +204,6 @@ public abstract class SqlBaseDao {
     }
 
     /** --- Date Methods -- */
-
-    /**
-     * Given a sobi fragment id, parse out the date/time. Returns null if the fragment id has a different pattern
-     * than usual..
-     *
-     * @param fragmentId String
-     * @return LocalDateTime
-     */
-    public static LocalDateTime getLocalDateTimeFromLegDataFragmentId(String fragmentId) {
-        if (fragmentId != null && !fragmentId.isEmpty()) {
-            List<String> parts = Splitter.on(".").splitToList(fragmentId);
-            if (parts.size() == 4) {
-                try {
-                    return LocalDateTime.parse(parts.get(1).substring(1) + parts.get(2).substring(1),
-                            DateTimeFormatter.ofPattern("yyMMddHHmmss"));
-                }
-                catch (DateTimeParseException ex) {
-                    logger.warn("Failed to parse date time from leg data fragment {}", fragmentId, ex);
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * Read the 'column' date value from the result set and cast it to a LocalDateTime.

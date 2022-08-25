@@ -4,15 +4,13 @@ import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.ProgramInfo;
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
-import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class is responsible for Processing the Sponsor Sobi Fragments
@@ -36,11 +33,7 @@ import java.util.regex.Pattern;
  */
 @Service
 public class XmlLDSponProcessor extends AbstractBillProcessor {
-
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
-
-    /** The format for program info lines. */
-    protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     @Override
     public LegDataFragmentType getSupportedType() {

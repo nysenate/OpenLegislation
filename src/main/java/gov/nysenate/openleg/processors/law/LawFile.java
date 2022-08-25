@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class LawFile extends BaseSourceData implements Comparable<LawFile> {
     private static final Pattern
             INITIAL_FILE_PATTERN = Pattern.compile("DATABASE\\.LAW.+"), // Initial dump filename pattern.
-            UPDATE_FILE_PATTERN = Pattern.compile("([0-9]{8})\\.UPDATE(\\.fixed)?"); // Law updates filename pattern.
+            UPDATE_FILE_PATTERN = Pattern.compile("(\\d{8})\\.UPDATE(\\.fixed)?"); // Law updates filename pattern.
 
     /** Received the initial data dumps from LBDC on this date. */
     private static final LocalDate INITIAL_PUBLISH_DATE = LocalDate.of(2014, 9, 22);

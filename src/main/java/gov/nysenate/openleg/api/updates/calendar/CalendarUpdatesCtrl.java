@@ -17,8 +17,6 @@ import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -31,11 +29,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class CalendarUpdatesCtrl extends BaseCtrl {
+    private final CalendarUpdatesDao calendarUpdatesDao;
 
-    private static final Logger logger = LoggerFactory.getLogger(CalendarUpdatesCtrl.class);
-
-    @Autowired protected CalendarUpdatesDao calendarUpdatesDao;
-    @Autowired protected CalendarDataService calendarDataService;
+    @Autowired
+    public CalendarUpdatesCtrl(CalendarUpdatesDao calendarUpdatesDao, CalendarDataService calendarDataService) {
+        this.calendarUpdatesDao = calendarUpdatesDao;
+    }
 
     /**
      * Updated Calendars API
@@ -119,19 +118,19 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
      * Request parameters:  order - The sort order of the update response (orderd by published date) (default DESC)
      *                      limit, offset - Paginate
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo,
                 DateUtils.LONG_AGO.toString(), LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, @PathVariable String from,
                                               WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo, from, LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendarDuring(@PathVariable int year, @PathVariable int calendarNo,
                                                     @PathVariable String from, @PathVariable String to,
                                                     WebRequest webRequest) {

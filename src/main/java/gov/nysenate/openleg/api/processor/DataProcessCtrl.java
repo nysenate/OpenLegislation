@@ -14,7 +14,6 @@ import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.DataProcessor;
 import gov.nysenate.openleg.processors.log.DataProcessLogService;
 import gov.nysenate.openleg.processors.log.DataProcessRun;
@@ -37,13 +36,16 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
-public class DataProcessCtrl extends BaseCtrl
-{
+public class DataProcessCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessCtrl.class);
+    private final DataProcessLogService processLogs;
+    private final DataProcessor dataProcessor;
 
-    @Autowired private OpenLegEnvironment env;
-    @Autowired private DataProcessLogService processLogs;
-    @Autowired private DataProcessor dataProcessor;
+    @Autowired
+    public DataProcessCtrl(DataProcessLogService processLogs, DataProcessor dataProcessor) {
+        this.processLogs = processLogs;
+        this.dataProcessor = dataProcessor;
+    }
 
     /**
      * Data Process API
@@ -64,7 +66,7 @@ public class DataProcessCtrl extends BaseCtrl
             }
             return new ErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED);
         } catch (Exception ex) {
-            logger.error("DataProcess exception: \n{}", ex);
+            logger.error("DataProcess exception: \n{}", ex.getMessage());
             return new ViewObjectErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED, ExceptionUtils.getStackTrace(ex));
         }
     }
@@ -144,7 +146,7 @@ public class DataProcessCtrl extends BaseCtrl
      * Expected Output: DataProcessRunDetailView
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping("/runs/id/{id:[0-9]+}")
+    @RequestMapping("/runs/id/{id:\\d+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
         Optional<DataProcessRunInfo> runInfo = processLogs.getRunInfo(id);

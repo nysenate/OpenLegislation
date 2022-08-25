@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
-import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,12 +16,11 @@ public class Transcript extends BaseLegislativeContent {
     /** --- Constructors --- */
 
     public Transcript(TranscriptId id, String filename, String location, String text) {
+        super(id.dateTime().getYear());
         this.id = id;
         this.location = location;
         this.text =  text;
         this.filename = filename;
-        this.year = id.dateTime().getYear();
-        this.session = SessionYear.of(this.year);
     }
 
     public TranscriptId getId() {

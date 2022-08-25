@@ -19,8 +19,14 @@ import javax.annotation.PostConstruct;
  */
 @Service
 public class BillCacheEvictionService {
-    @Autowired private EventBus eventBus;
-    @Autowired private CachedBillDataService billDataService;
+    private final EventBus eventBus;
+    private final CachedBillDataService billDataService;
+
+    @Autowired
+    public BillCacheEvictionService(EventBus eventBus, CachedBillDataService billDataService) {
+        this.eventBus = eventBus;
+        this.billDataService = billDataService;
+    }
 
     @PostConstruct
     public void init() {

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -20,7 +21,7 @@ public class HearingDateTimeParser {
     private static final Pattern DATE = Pattern.compile("(?i)(" + DAYS_OF_THE_WEEK + ")?(, )?" +
                 "(?<date>(" + MONTHS + ") \\d{1,2}, \\d{4})"), TIME = Pattern.compile(TIME_STR),
             ALT_END_TIME = Pattern.compile("Whereupon.+at.+?(?<altTime>" + TIME_STR +")");
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d, yyyy"),
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("[EEEE, ]MMMM d, yyyy"),
             TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
     /**
@@ -35,14 +36,20 @@ public class HearingDateTimeParser {
     private final LocalDate date;
     private final LocalTime startTime, endTime;
 
+    // TODO: test
     public HearingDateTimeParser(String dateTimeText, List<String> lastPage) {
-        dateTimeText = dateTimeText.replaceAll("(\\n|\\s*(Date|Time):?\\s*)", " ")
-                .replaceAll(", at", "").replaceAll("\\s+", " ");
-        Matcher dateMatcher = DATE.matcher(dateTimeText);
-        if (!dateMatcher.find()) {
+        String[] dateTimeAr = dateTimeText.replaceAll("( *(Date|Time):? *)", " ")
+                .replaceAll(", at", "\n").replaceAll(" +", " ").trim().split("\n");
+//        Matcher dateMatcher = DATE.matcher(dateTimeAr[0]);
+//        if (!dateMatcher.find()) {
+//            throw new ParseError("No date found in public hearing!");
+//        }
+        try {
+            this.date = LocalDate.parse(dateTimeAr[0], DATE_FORMATTER);
+        }
+        catch (DateTimeParseException ex) {
             throw new ParseError("No date found in public hearing!");
         }
-        this.date = LocalDate.parse(dateMatcher.group("date"), DATE_FORMATTER);
         Matcher timeMatcher = TIME.matcher(dateTimeText);
         this.startTime = timeMatcher.find() ? formatAmPm(timeMatcher.group()) : null;
         String endTimeStr = timeMatcher.find() ? timeMatcher.group() : altEndTime(lastPage);

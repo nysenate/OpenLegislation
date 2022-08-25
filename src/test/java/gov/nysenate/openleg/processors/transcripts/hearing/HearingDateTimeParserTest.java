@@ -13,7 +13,6 @@ import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
 public class HearingDateTimeParserTest {
-
     @Test
     public void singleDigitHoursParse() {
         testHearingDate("06-04-14 Opioid Addiction Test.txt", LocalDate.of(2014, 6, 4),

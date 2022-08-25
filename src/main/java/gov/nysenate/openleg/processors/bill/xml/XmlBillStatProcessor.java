@@ -28,7 +28,6 @@ import java.util.Optional;
  */
 @Service
 public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDataProcessor {
-
     private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
 
     @Override
@@ -55,15 +54,10 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
 
             final String action = xmlHelper.getString("@action", billStatusNode).trim();
             switch (action) {
-                case "remove":
-                    removeCase(bill, legDataFragment);
-                    break;
-                case "replace":
-                    replaceCase(billStatusNode, bill, billId, legDataFragment);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unrecognized xml action: " + action + " in fragment: " + legDataFragment);
+                case "remove" -> removeCase(bill, legDataFragment);
+                case "replace" -> replaceCase(billStatusNode, bill, billId, legDataFragment);
+                default -> throw new IllegalArgumentException(
+                        "Unrecognized xml action: " + action + " in fragment: " + legDataFragment);
             }
 
             bill.setModifiedDateTime(legDataFragment.getPublishedDateTime());
@@ -103,7 +97,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
         // Publish the base version if not already done
         if (billAmendment.isBaseVersion()) {
             Optional<PublishStatus> pubStatus = bill.getPublishStatus(billAmendment.getVersion());
-            if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+            if (pubStatus.isEmpty() || !pubStatus.get().isPublished()) {
                 bill.updatePublishStatus(billAmendment.getVersion(),
                         new PublishStatus(true, fragment.getPublishedDateTime(), false, ""));
             }
@@ -146,7 +140,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDa
      *
      * @param str bill action string
      */
-    private String reformatBillActions(String str) {
+    private static String reformatBillActions(String str) {
         if (str.isEmpty())
             return str;
         return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)", "\n$0").substring(1);

@@ -6,8 +6,7 @@ import java.util.Objects;
 /**
  * Basic info that is common to all pieces of legislative content.
  */
-public abstract class BaseLegislativeContent
-{
+public abstract class BaseLegislativeContent {
     /** The session this object was created in. */
     protected SessionYear session;
 
@@ -25,6 +24,10 @@ public abstract class BaseLegislativeContent
     /** --- Constructors --- */
 
     public BaseLegislativeContent() {}
+
+    protected BaseLegislativeContent(int year) {
+        this.session = new SessionYear(year);
+    }
 
     public BaseLegislativeContent(BaseLegislativeContent other) {
         this.modifiedDateTime = other.modifiedDateTime;

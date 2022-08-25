@@ -25,25 +25,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument>
-{
+public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchService.class);
 
-    @Autowired private EventBus eventBus;
-    @Autowired private OpenLegEnvironment env;
-    @Autowired private ElasticLawSearchDao lawSearchDao;
-    @Autowired private LawDataDao lawDataDao;
-    @Autowired private LawDataService lawDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticLawSearchDao lawSearchDao;
+    private final LawDataDao lawDataDao;
+    private final LawDataService lawDataService;
 
-    @PostConstruct
-    private void init() {
+    @Autowired
+    public ElasticLawSearchService(OpenLegEnvironment env, ElasticLawSearchDao lawSearchDao,
+                                   LawDataDao lawDataDao, LawDataService lawDataService,
+                                   EventBus eventBus) {
+        this.env = env;
+        this.lawSearchDao = lawSearchDao;
+        this.lawDataDao = lawDataDao;
+        this.lawDataService = lawDataService;
         eventBus.register(this);
     }
 

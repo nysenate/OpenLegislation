@@ -14,24 +14,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 /** Adds bills to the bill text scrape queue based on certain events */
 @Service
 public class BillScrapeQueueService {
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeQueueService.class);
+    private final BillScrapeReferenceDao btrDao;
+    private final OpenLegEnvironment env;
 
     @Autowired
-    BillScrapeReferenceDao btrDao;
-
-    @Autowired
-    EventBus eventBus;
-
-    @Autowired
-    OpenLegEnvironment env;
-
-    @PostConstruct
-    public void init() {
+    public BillScrapeQueueService(BillScrapeReferenceDao btrDao, OpenLegEnvironment env, EventBus eventBus) {
+        this.btrDao = btrDao;
+        this.env = env;
         eventBus.register(this);
     }
 

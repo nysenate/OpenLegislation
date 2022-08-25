@@ -32,12 +32,14 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/committees", method = RequestMethod.GET)
-public class CommitteeGetCtrl extends BaseCtrl
-{
+public class CommitteeGetCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(CommitteeGetCtrl.class);
+    private final CommitteeDataService committeeDataService;
 
     @Autowired
-    CommitteeDataService committeeDataService;
+    public CommitteeGetCtrl(CommitteeDataService committeeDataService) {
+        this.committeeDataService = committeeDataService;
+    }
 
     /** --- Request Handlers --- */
 

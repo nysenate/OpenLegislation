@@ -9,6 +9,7 @@ import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -24,9 +25,9 @@ import java.util.stream.Stream;
  */
 @Service
 public class SpotCheckUtils {
-
     private final MemberService memberService;
 
+    @Autowired
     public SpotCheckUtils(MemberService memberService) {
         this.memberService = memberService;
     }
@@ -40,7 +41,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public void checkString(String content, String reference,
-                               SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
+                               SpotCheckObservation<?> observation, SpotCheckMismatchType mismatchType) {
         // Ensure that the mismatch can be reported in the observation.
         observation.checkReportable(mismatchType);
 
@@ -61,7 +62,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public void checkStringUpper(String content, String reference,
-                                    SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
+                                    SpotCheckObservation<?> observation, SpotCheckMismatchType mismatchType) {
         checkString(StringUtils.upperCase(content), StringUtils.upperCase(reference), observation, mismatchType);
     }
 
@@ -76,7 +77,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public <T> void checkObject(T content, T reference, Function<T, String> toStringFn,
-                                SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
+                                SpotCheckObservation<?> observation, SpotCheckMismatchType mismatchType) {
         checkString(toStringFn.apply(content), toStringFn.apply(reference), observation, mismatchType);
     }
 
@@ -90,7 +91,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public void checkObject(Object content, Object reference,
-                               SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
+                               SpotCheckObservation<?> observation, SpotCheckMismatchType mismatchType) {
         checkObject(content, reference, Objects::toString, observation, mismatchType);
     }
 
@@ -104,7 +105,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public void checkBoolean(boolean content, boolean reference, String condition,
-                                SpotCheckObservation observation,
+                                SpotCheckObservation<?> observation,
                                 SpotCheckMismatchType mismatchType) {
         checkString(getBooleanString(content, condition),
                 getBooleanString(reference, condition),
@@ -119,12 +120,12 @@ public class SpotCheckUtils {
      * @param reference String
      * @param observation {@link SpotCheckObservation}
      * @param mismatchType {@link SpotCheckMismatchType}
-     * @param toString Function used to convert each item in each collections to a string
-     * @param split String string used as a delimiter for each item
-     * @param sort boolean if true, the string values of each collections items will be sorted before concatenation.
+     * @param toString Function used to convert each item in each collection to a String
+     * @param split String used as a delimiter for each item
+     * @param sort boolean if true, the string values of each collections' items will be sorted before concatenation.
      */
     public <T> void checkCollection(Collection<T> content, Collection<T> reference,
-                                       SpotCheckObservation observation,
+                                       SpotCheckObservation<?> observation,
                                        SpotCheckMismatchType mismatchType,
                                        Function<? super T, ? extends CharSequence> toString,
                                        String split,
@@ -143,11 +144,11 @@ public class SpotCheckUtils {
      * @param reference String
      * @param observation {@link SpotCheckObservation}
      * @param mismatchType {@link SpotCheckMismatchType}
-     * @param toString Function used to convert each item in each collections to a string
-     * @param split String string used as a delimiter for each item
+     * @param toString Function used to convert each item in each collection to a string
+     * @param split String used as a delimiter for each item
      */
     public <T> void checkCollection(Collection<T> content, Collection<T> reference,
-                                       SpotCheckObservation observation,
+                                       SpotCheckObservation<?> observation,
                                        SpotCheckMismatchType mismatchType,
                                        Function<? super T, ? extends CharSequence> toString,
                                        String split) {
@@ -165,7 +166,7 @@ public class SpotCheckUtils {
      * @param mismatchType {@link SpotCheckMismatchType}
      */
     public <T> void checkCollection(Collection<T> content, Collection<T> reference,
-                                       SpotCheckObservation observation,
+                                       SpotCheckObservation<?> observation,
                                        SpotCheckMismatchType mismatchType) {
         checkCollection(content, reference, observation, mismatchType, Objects::toString, " ");
     }
@@ -200,11 +201,11 @@ public class SpotCheckUtils {
 
     /* --- Internal Methods --- */
 
-    private String getBooleanString(boolean value, String condition) {
+    private static String getBooleanString(boolean value, String condition) {
         return condition + ": " + (value ? "YES" : "NO");
     }
 
-    private <T> String stringifyCollection(Collection<T> collection,
+    private static <T> String stringifyCollection(Collection<T> collection,
                                            Function<? super T, ? extends CharSequence> toString,
                                            String split,
                                            boolean sort) {

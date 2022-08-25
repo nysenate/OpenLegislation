@@ -16,8 +16,6 @@ import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
 import gov.nysenate.openleg.updates.agenda.AgendaUpdatesDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,11 +34,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/agendas", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class AgendaUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AgendaUpdatesCtrl.class);
+public class AgendaUpdatesCtrl extends BaseCtrl {
+    private final AgendaUpdatesDao agendaUpdatesDao;
 
-    @Autowired protected AgendaUpdatesDao agendaUpdatesDao;
+    @Autowired
+    public AgendaUpdatesCtrl(AgendaUpdatesDao agendaUpdatesDao) {
+        this.agendaUpdatesDao = agendaUpdatesDao;
+    }
 
     /**
      * Updated Agendas API
@@ -95,20 +95,20 @@ public class AgendaUpdatesCtrl extends BaseCtrl
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, WebRequest request) {
         return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), DateUtils.LONG_AGO,
             LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String from,
                                           WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String from,
                                                 @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");

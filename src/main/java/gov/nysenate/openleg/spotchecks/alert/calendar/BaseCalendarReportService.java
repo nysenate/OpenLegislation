@@ -4,10 +4,10 @@ import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
+import gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertDao;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +18,19 @@ import java.util.List;
 
 @Service
 public abstract class BaseCalendarReportService implements SpotCheckReportService<CalendarEntryListId> {
-
-    private static final Logger logger = LoggerFactory.getLogger(BaseCalendarReportService.class);
+    private final CalendarCheckService checkService;
+    private final OpenLegEnvironment environment;
+    protected final CalendarDataService calendarDataService;
+    protected final SqlCalendarAlertDao alertDao;
 
     @Autowired
-    private CalendarCheckService checkService;
-
-    @Autowired
-    private OpenLegEnvironment environment;
+    public BaseCalendarReportService(CalendarCheckService checkService, OpenLegEnvironment environment,
+                                     SqlCalendarAlertDao alertDao, CalendarDataService calendarDataService) {
+        this.checkService = checkService;
+        this.environment = environment;
+        this.alertDao = alertDao;
+        this.calendarDataService = calendarDataService;
+    }
 
     protected abstract String getNotes();
 
@@ -44,7 +49,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     @Override
-    public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         List<Calendar> references = retrieveReferences(start, end).stream()
                 .filter(this::outsideGracePeriod)
                 .toList();
@@ -63,7 +68,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
         return references;
     }
 
-    // Returns true if this references is outside of the specified grace period.
+    // Returns true if this references is outside the specified grace period.
     // This ensures openleg has time to process the data before we create a mismatch.
     private boolean outsideGracePeriod(Calendar cal) {
         return LocalDateTime.now().minus(environment.getSpotcheckAlertGracePeriod())
@@ -93,7 +98,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
         return observations;
     }
 
-    private LocalDateTime getMostRecentReference(List<Calendar> references) {
+    private static LocalDateTime getMostRecentReference(List<Calendar> references) {
         LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO);
         for (Calendar cal : references) {
             if (cal.getPublishedDateTime().isAfter(dateTime)) {

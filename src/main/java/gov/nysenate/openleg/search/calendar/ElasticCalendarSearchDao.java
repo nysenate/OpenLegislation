@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -26,11 +26,13 @@ import java.util.List;
 
 @Repository
 public class ElasticCalendarSearchDao extends ElasticBaseDao implements CalendarSearchDao {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchDao.class);
+    private final CalendarViewFactory calendarViewFactory;
 
     @Autowired
-    CalendarViewFactory calendarViewFactory;
+    public ElasticCalendarSearchDao(CalendarViewFactory calendarViewFactory) {
+        this.calendarViewFactory = calendarViewFactory;
+    }
 
     /* --- Index Names --- */
 

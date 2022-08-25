@@ -4,12 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
-import gov.nysenate.openleg.processors.DataProcessor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_EXCEPTION;
@@ -17,20 +15,14 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_
 
 @Service
 public class DataProcessNotificationService {
-
-    @Autowired
-    private EventBus eventBus;
-
-    @Autowired
-    OpenLegEnvironment environment;
-
-    @Autowired
-    DataProcessor dataProcessor;
-
     private static final String dataProcessRunPath = "/api/3/admin/process/runs/id";
+    private final OpenLegEnvironment environment;
+    private final EventBus eventBus;
 
-    @PostConstruct
-    public void init() {
+    @Autowired
+    public DataProcessNotificationService(OpenLegEnvironment environment, EventBus eventBus) {
+        this.environment = environment;
+        this.eventBus = eventBus;
         eventBus.register(this);
     }
 

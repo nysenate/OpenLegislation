@@ -28,8 +28,12 @@ public class CachedCommitteeDataService
         extends CachingService<CommitteeSessionId, CachedCommitteeDataService.CommitteeList>
         implements CommitteeDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
+    private final CommitteeDao committeeDao;
+
     @Autowired
-    private CommitteeDao committeeDao;
+    public CachedCommitteeDataService(CommitteeDao committeeDao) {
+        this.committeeDao = committeeDao;
+    }
 
     /**
      * This is a strange class, only needed for accurate type-checking of cache Values.

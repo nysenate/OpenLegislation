@@ -128,7 +128,7 @@
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
-    <log4j.version>2.17.2</log4j.version>
+    <log4j.version>2.18.0</log4j.version>
     <mail.version>1.6.2</mail.version>
     <mockito.version>4.6.1</mockito.version>
     <pdfbox.version>2.0.26</pdfbox.version>

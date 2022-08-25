@@ -48,10 +48,4 @@ public record HearingHost(Chamber chamber, HearingHostType type, String name) {
         return name.toUpperCase().replaceAll("\\s+", " ").replaceAll(", AND| &", " AND")
                 .replaceAll(IRRELEVANT_TEXT, "").trim();
     }
-
-    @Override
-    public String toString() {
-        return "HearingHost{chamber=" + chamber + ", type=" + type +
-                ", name='" + name + '\'' + '}';
-    }
 }

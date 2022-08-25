@@ -15,28 +15,22 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 @Service
-public class ElasticCommitteeSearchService implements CommitteeSearchService
-{
+public class ElasticCommitteeSearchService implements CommitteeSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchService.class);
 
-    @Autowired
-    ElasticCommitteeSearchDao committeeSearchDao;
+    private final ElasticCommitteeSearchDao committeeSearchDao;
+    private final CommitteeDataService committeeDataService;
 
-    @Autowired
-    CommitteeDataService committeeDataService;
-
-    @Autowired
-    EventBus eventBus;
-
-    @PostConstruct
-    private void init() {
+    public ElasticCommitteeSearchService(ElasticCommitteeSearchDao committeeSearchDao,
+                                         CommitteeDataService committeeDataService,
+                                         EventBus eventBus) {
+        this.committeeSearchDao = committeeSearchDao;
+        this.committeeDataService = committeeDataService;
         eventBus.register(this);
     }
 

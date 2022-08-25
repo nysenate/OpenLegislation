@@ -8,7 +8,6 @@ import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.apache.commons.lang3.StringUtils;
@@ -26,14 +25,17 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
  */
 @Service
 public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill, BillScrapeReference> {
+    private final BillScrapeVoteMismatchService voteMismatchService;
 
-    @Autowired private SpotCheckUtils spotCheckUtils;
-    @Autowired private BillScrapeVoteMismatchService voteMismatchService;
+    @Autowired
+    public BillScrapeCheckService(BillScrapeVoteMismatchService voteMismatchService) {
+        this.voteMismatchService = voteMismatchService;
+    }
 
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill, BillScrapeReference reference) {
         if (reference == null) {
-            throw new IllegalArgumentException("BillScrapeSpotcheckReference cannot be null when performing spot check");
+            throw new IllegalArgumentException("BillScrapeSpotcheckReference cannot be null when performing spotcheck");
         }
 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), bill.getBaseBillId());

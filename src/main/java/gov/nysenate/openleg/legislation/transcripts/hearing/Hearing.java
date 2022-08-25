@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
-import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +19,7 @@ public class Hearing extends BaseLegislativeContent {
 
     public Hearing(String filename, String text, String title, String address,
                    LocalDate date, LocalTime startTime, LocalTime endTime) {
+        super(date.getYear());
         this.filename = filename;
         this.date = date;
         this.text = text;
@@ -27,8 +27,6 @@ public class Hearing extends BaseLegislativeContent {
         this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.year = this.date.getYear();
-        this.session = SessionYear.of(this.getYear());
     }
 
     @Override

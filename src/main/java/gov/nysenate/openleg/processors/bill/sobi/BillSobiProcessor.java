@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,42 +35,23 @@ import java.util.regex.Pattern;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractBillProcessor
-{
+public class BillSobiProcessor extends AbstractBillProcessor {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
-    /** --- Patterns --- */
-
-    /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
-    protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
-    /** The expected format for the first line of the vote memo [V] block data. */
-    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
-
-    /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
-    protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
-
-    /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
-    protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
-
     /** The expected format for Bill Info [1] block data. */
-    public static final Pattern billInfoPattern =
-        Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8})(.*)");
-
-    /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
-    protected static final Pattern rulesSponsorPattern =
-        Pattern.compile("RULES COM \\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
-
-    /** The format for program info lines. */
-    protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
+    private static final Pattern billInfoPattern =
+        Pattern.compile("(.{20})(\\d{5}[ A-Z])(.{33})([ A-Z]\\d{5}[ `\\-A-Z\\d])(.{8})(.*)");
 
     /** Used to tokenize chunks of veto/approval messages by newlines that follow an end or delete line */
-    protected static final String vetoApprovalSplitter =
+    private static final String vetoApprovalSplitter =
         "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
 
-    @Autowired
     private ProcessConfig processConfig;
+
+    @Autowired
+    public BillSobiProcessor(ProcessConfig processConfig) {
+        this.processConfig = processConfig;
+    }
 
     /** --- Constructors --- */
 
@@ -101,7 +81,6 @@ public class BillSobiProcessor extends AbstractBillProcessor
             Bill baseBill = getOrCreateBaseBill(billId, legDataFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
-            BillAmendment activeAmendment = baseBill.getActiveAmendment();
             logger.debug("Updating {} - {} | Line {}-{}", billId, block.getType(),
                                                           block.getStartLineNo(), block.getEndLineNo());
             try {

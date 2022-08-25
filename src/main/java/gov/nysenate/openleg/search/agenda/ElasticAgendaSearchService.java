@@ -22,23 +22,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Service
-public class ElasticAgendaSearchService implements AgendaSearchService, IndexedSearchService<Agenda>
-{
+public class ElasticAgendaSearchService implements AgendaSearchService, IndexedSearchService<Agenda> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchService.class);
 
-    @Autowired private OpenLegEnvironment env;
-    @Autowired private EventBus eventBus;
-    @Autowired private ElasticAgendaSearchDao agendaSearchDao;
-    @Autowired private AgendaDataService agendaDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticAgendaSearchDao agendaSearchDao;
+    private final AgendaDataService agendaDataService;
 
-    @PostConstruct
-    protected void init() {
+    @Autowired
+    public ElasticAgendaSearchService(OpenLegEnvironment env,
+                                      ElasticAgendaSearchDao agendaSearchDao,
+                                      AgendaDataService agendaDataService, EventBus eventBus) {
+        this.env = env;
+        this.agendaSearchDao = agendaSearchDao;
+        this.agendaDataService = agendaDataService;
         eventBus.register(this);
     }
 
@@ -99,7 +101,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         clearIndex();
         for (int year = 2009; year <= LocalDate.now().getYear(); year++) {
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
-            List<Agenda> agendas = agendaIds.stream().map(aid -> agendaDataService.getAgenda(aid)).toList();
+            List<Agenda> agendas = agendaIds.stream().map(agendaDataService::getAgenda).toList();
             logger.info("Reindexing {} agendas from {}", agendas.size(), year);
             agendaSearchDao.updateAgendaIndex(agendas);
         }

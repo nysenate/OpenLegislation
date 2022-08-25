@@ -28,15 +28,24 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.REFERE
  */
 @Service
 public class BillScrapeReportService implements SpotCheckReportService<BaseBillId> {
-
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeReportService.class);
-
     private static final int maxBillsPerReport = 5000;
 
-    @Autowired private SqlFsBillScrapeReferenceDao dao;
-    @Autowired private BillDataService billDataService;
-    @Autowired private BillScrapeCheckService billScrapeCheckService;
-    @Autowired private BillScrapeReferenceFactory billScrapeReferenceFactory;
+    private final SqlFsBillScrapeReferenceDao dao;
+    private final BillDataService billDataService;
+    private final BillScrapeCheckService billScrapeCheckService;
+    private final BillScrapeReferenceFactory billScrapeReferenceFactory;
+
+    @Autowired
+    public BillScrapeReportService(SqlFsBillScrapeReferenceDao dao,
+                                   BillDataService billDataService,
+                                   BillScrapeCheckService billScrapeCheckService,
+                                   BillScrapeReferenceFactory billScrapeReferenceFactory) {
+        this.dao = dao;
+        this.billDataService = billDataService;
+        this.billScrapeCheckService = billScrapeCheckService;
+        this.billScrapeReferenceFactory = billScrapeReferenceFactory;
+    }
 
     /**
      * {@inheritDoc}
@@ -65,10 +74,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
         report.setNotes(createNotes(references));
 
         // Get observations for each reference
-        references.stream()
-                .map(this::generateObservation)
-                .forEach(report::addObservation);
-
+        references.stream().map(this::generateObservation).forEach(report::addObservation);
         // Set each reference as checked
         for (BillScrapeFile file : pendingScrapeFiles.results()) {
             file.setPendingProcessing(false);
@@ -98,7 +104,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
         return report;
     }
 
-    // Set checked billids as notes
+    // Set checked BillIds as notes
     private String createNotes(List<BillScrapeReference> references) {
         return references.stream()
                 .map(btr -> btr.getBaseBillId().toString())

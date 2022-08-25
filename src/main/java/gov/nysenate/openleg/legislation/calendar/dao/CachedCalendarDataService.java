@@ -24,9 +24,12 @@ import java.util.stream.Collectors;
 @Service
 public class CachedCalendarDataService extends CachingService<CalendarId, Calendar> implements CalendarDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedCalendarDataService.class);
+    private final CalendarDao calendarDao;
 
     @Autowired
-    private CalendarDao calendarDao;
+    public CachedCalendarDataService(CalendarDao calendarDao) {
+        this.calendarDao = calendarDao;
+    }
 
     /** --- CachingService implementation --- */
 

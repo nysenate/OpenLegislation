@@ -28,8 +28,7 @@ import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
  * The AbstractBillProcessor serves as a base class for actual bill processor implementations to provide unified
  * helper methods to address some of the quirks that are present when processing bill data.
  */
-public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
-{
+public abstract class AbstractBillProcessor extends AbstractLegDataProcessor {
     /* --- Patterns --- */
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
@@ -47,7 +46,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
+        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?\\d{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");

@@ -2,8 +2,8 @@ package gov.nysenate.openleg.api.legislation.calendar.view;
 
 import gov.nysenate.openleg.api.legislation.bill.view.SimpleBillInfoView;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.calendar.CalendarSupplementalEntry;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.calendar.CalendarSupplementalEntry;
 
 import java.util.Comparator;
 
@@ -15,6 +15,7 @@ public class CalendarSupEntryView extends CalendarEntryView {
 
     protected boolean billHigh;
 
+    // TODO: fix this god awful design
     public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillDataService billDataService) {
         super(supEntry, billDataService);
 

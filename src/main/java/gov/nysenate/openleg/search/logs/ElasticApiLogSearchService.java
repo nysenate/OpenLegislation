@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,19 +22,17 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 @Service
-public class ElasticApiLogSearchService implements ApiLogSearchService
-{
+public class ElasticApiLogSearchService implements ApiLogSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticApiLogSearchService.class);
 
-    @Autowired private EventBus eventBus;
-    @Autowired private ElasticApiLogSearchDao apiLogSearchDao;
+    private final ElasticApiLogSearchDao apiLogSearchDao;
 
     private final BlockingQueue<ApiResponse> indexQueue = new ArrayBlockingQueue<>(50000);
 
-
-    @PostConstruct
-    public void init() {
-        this.eventBus.register(this);
+    @Autowired
+    public ElasticApiLogSearchService(ElasticApiLogSearchDao apiLogSearchDao, EventBus eventBus) {
+        this.apiLogSearchDao = apiLogSearchDao;
+        eventBus.register(this);
     }
 
     @Override

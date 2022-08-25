@@ -13,55 +13,46 @@ import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Process all the things.
  */
 @Service
-public class DataProcessor
-{
+public class DataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessor.class);
 
-    @Autowired private OpenLegEnvironment env;
-    @Autowired private EventBus eventBus;
-    @Autowired private DataProcessLogService processLogService;
-    @Autowired private AsyncUtils asyncUtils;
-
-    @Autowired private LegDataProcessService legDataProcessService;
-
-    @Autowired private TranscriptProcessService transcriptProcessService;
-    @Autowired private HearingProcessService hearingProcessService;
-    @Autowired private LawProcessService lawProcessService;
-
-    @Autowired private List<BaseSpotcheckProcessService> spotcheckProcessServices;
-
-    private List<ProcessService> processServices;
+    private final OpenLegEnvironment env;
+    private final EventBus eventBus;
+    private final DataProcessLogService processLogService;
+    private final AsyncUtils asyncUtils;
+    private final List<ProcessService> processServices;
 
     /** Hold a reference to the current data process run instance for event-based logging purposes. */
     private volatile DataProcessRun currentRun;
 
-    @PostConstruct
-    public void init() {
+    public DataProcessor(OpenLegEnvironment env, EventBus eventBus,
+                         DataProcessLogService processLogService, AsyncUtils asyncUtils,
+                         LegDataProcessService legDataProcessService,
+                         TranscriptProcessService transcriptProcessService,
+                         HearingProcessService hearingProcessService,
+                         LawProcessService lawProcessService,
+                         List<BaseSpotcheckProcessService> spotcheckProcessServices) {
+        this.env = env;
+        this.eventBus = eventBus;
+        this.processLogService = processLogService;
+        this.asyncUtils = asyncUtils;
         eventBus.register(this);
-        processServices = ImmutableList.<ProcessService>builder()
-            .add(legDataProcessService)
-            .add(transcriptProcessService)
-            .add(hearingProcessService)
-            .add(lawProcessService)
-            .addAll(spotcheckProcessServices)
-            .build();
+        this.processServices = ImmutableList.<ProcessService>builder().add(legDataProcessService)
+                .add(transcriptProcessService).add(hearingProcessService)
+                .add(lawProcessService).addAll(spotcheckProcessServices).build();
     }
 
     /* --- Main Methods --- */
@@ -140,11 +131,11 @@ public class DataProcessor
 
     /* --- Processing methods --- */
 
-    protected synchronized void collateAll() throws IOException {
+    protected synchronized void collateAll() {
         processAll(true);
     }
 
-    protected synchronized void ingestAll() throws IOException {
+    protected synchronized void ingestAll() {
         processAll(false);
     }
 
@@ -175,10 +166,6 @@ public class DataProcessor
             logger.info(processedCounts.entrySet().stream()
                     .map(pair -> "\t" + pair.getKey() + ": " + pair.getValue()).collect(Collectors.joining(", ")));
         }
-    }
-
-    public Optional<DataProcessRun> getCurrentRun() {
-        return Optional.ofNullable(currentRun);
     }
 
     /* --- Internal Methods --- */

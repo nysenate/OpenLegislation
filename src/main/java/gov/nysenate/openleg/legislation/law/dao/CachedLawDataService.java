@@ -19,8 +19,12 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CachedLawDataService extends CachingService<LawVersionId, LawTree> implements LawDataService {
+    private final LawDataDao lawDataDao;
+
     @Autowired
-    private LawDataDao lawDataDao;
+    public CachedLawDataService(LawDataDao lawDataDao) {
+        this.lawDataDao = lawDataDao;
+    }
 
     @Override
     protected CacheType cacheType() {

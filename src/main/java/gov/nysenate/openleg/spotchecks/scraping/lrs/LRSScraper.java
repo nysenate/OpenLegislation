@@ -18,29 +18,25 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LRSScraper extends BaseScript
-{
+public class LRSScraper extends BaseScript {
     private static final Logger logger = LogManager.getLogger(LRSScraper.class);
+    private static final String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
+    private static final String assemblyAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
+    private static final String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=ASMAGEN";
 
-    public static void main(String[] args) throws Exception
-    {
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("'D'yyyyMMdd'.T'HHmmss");
+    private static final Pattern relativeBasePattern = Pattern.compile("(http://.+/).*");
+    private static final Pattern absoluteBasePattern = Pattern.compile("(http://.+?)/.*");
+    private static final Pattern linkPattern = Pattern.compile("<a href=\"(.*?)\">(.+?)</a>");
+    private static final Pattern bottomPattern = Pattern.compile("src=\"(frmload\\.cgi\\?BOT-(\\d+))\">");
+
+    public static void main(String[] args) throws Exception {
         logger.info("running");
         CommandLine cmd = getCommandLine(new Options(), args);
         new LRSScraper().execute(cmd);
     }
 
-    String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
-    String assemblyAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
-    String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=ASMAGEN";
-
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("'D'yyyyMMdd'.T'HHmmss");
-    private final Pattern relativeBasePattern = Pattern.compile("(http://.+/).*");
-    private final Pattern absoluteBasePattern = Pattern.compile("(http://.+?)/.*");
-    private final Pattern linkPattern = Pattern.compile("<a href=\\\"(.*?)\\\">(.+?)</a>");
-    private final Pattern bottomPattern = Pattern.compile("src=\\\"(frmload\\.cgi\\?BOT-([0-9]+))\\\">");
-
-    public void scrapeCalendars(URL landingURL, File directory, Date currentTime) throws IOException
-    {
+    public void scrapeCalendars(URL landingURL, File directory, Date currentTime) throws IOException {
         logger.info("Fetching landing page.");
         String landingPage = IOUtils.toString(landingURL.openStream(), Charset.defaultCharset());
         Matcher tokenMatcher = bottomPattern.matcher(landingPage);
@@ -65,8 +61,7 @@ public class LRSScraper extends BaseScript
         }
     }
 
-    public void scrapeAgendas(URL landingURL, File directory, Date currentTime) throws IOException
-    {
+    public void scrapeAgendas(URL landingURL, File directory, Date currentTime) throws IOException {
         logger.info("Fetching landing page.");
         String landingPage = IOUtils.toString(landingURL.openStream(), Charset.defaultCharset());
         Matcher tokenMatcher = bottomPattern.matcher(landingPage);
@@ -91,15 +86,13 @@ public class LRSScraper extends BaseScript
                     FileIOUtils.write(outfile, contents);
                 }
             }
-        }
-        else {
+        } else {
             logger.error("NO MATCH on pattern: "+tokenMatcher.toString());
             logger.error(landingPage);
         }
     }
 
-    public void execute(CommandLine opts) throws IOException
-    {
+    public void execute(CommandLine opts) throws IOException {
         String[] args = opts.getArgs();
         File directory = new File(args[0]);
         Date currentTime = new Date();
@@ -108,15 +101,13 @@ public class LRSScraper extends BaseScript
         scrapeAgendas(new URL(assemblyAgendas), new File(directory, "ASMAGEN"), currentTime);
     }
 
-    public URL resolveLink(URL url, String link) throws MalformedURLException
-    {
+    public URL resolveLink(URL url, String link) throws MalformedURLException {
         Pattern basePattern = link.startsWith("/") ? absoluteBasePattern : relativeBasePattern;
         Matcher baseMatcher = basePattern.matcher(url.toString());
         if (baseMatcher.find()) {
             String base = baseMatcher.group(1);
             return new URL(base+link);
-        }
-        else {
+        } else {
             logger.error("Couldn't extract the link base");
             return null;
         }

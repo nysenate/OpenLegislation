@@ -30,10 +30,13 @@ import java.util.Set;
 
 @Service
 public class ElasticNotificationService implements NotificationService {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationService.class);
+    private final NotificationSearchDao notificationDao;
 
-    @Autowired protected NotificationSearchDao notificationDao;
+    @Autowired
+    public ElasticNotificationService(NotificationSearchDao notificationDao) {
+        this.notificationDao = notificationDao;
+    }
 
     /** {@inheritDoc} */
     @Override

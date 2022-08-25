@@ -18,8 +18,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -35,15 +33,16 @@ import java.util.regex.Pattern;
 
 @Repository
 public class ElasticCommitteeSearchDao extends ElasticBaseDao implements CommitteeSearchDao {
-
-    private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchDao.class);
-
     private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
-
     private static final Pattern committeeSearchIdPattern =
             Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(\\d{4})-(.*)");
 
-    @Autowired private CommitteeDataService committeeDataService;
+    private final CommitteeDataService committeeDataService;
+
+    @Autowired
+    public ElasticCommitteeSearchDao(CommitteeDataService committeeDataService) {
+        this.committeeDataService = committeeDataService;
+    }
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,

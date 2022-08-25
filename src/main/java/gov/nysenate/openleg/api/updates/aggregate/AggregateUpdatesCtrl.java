@@ -44,8 +44,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/updates", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class AggregateUpdatesCtrl extends BaseCtrl {
+    private final AggregateUpdatesDao updatesDao;
 
-    @Autowired AggregateUpdatesDao updatesDao;
+    @Autowired
+    public AggregateUpdatesCtrl(AggregateUpdatesDao updatesDao) {
+        this.updatesDao = updatesDao;
+    }
 
     /**
      * Aggregate Updates API

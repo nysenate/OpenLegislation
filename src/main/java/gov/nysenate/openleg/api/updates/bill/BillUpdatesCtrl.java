@@ -24,8 +24,6 @@ import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
 import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,12 +45,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class BillUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(BillUpdatesCtrl.class);
+public class BillUpdatesCtrl extends BaseCtrl {
+    private final BillUpdatesDao billUpdatesDao;
+    private final BillDataService billData;
 
-    @Autowired protected BillUpdatesDao billUpdatesDao;
-    @Autowired protected BillDataService billData;
+    @Autowired
+    public BillUpdatesCtrl(BillUpdatesDao billUpdatesDao, BillDataService billData) {
+        this.billUpdatesDao = billUpdatesDao;
+        this.billData = billData;
+    }
 
     /**
      * Updated Bills API
@@ -115,13 +116,13 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
         return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO,
                 LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo,
                                           @PathVariable String from,
                                           WebRequest request) {
@@ -129,7 +130,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesForBillDuring(sessionYear, printNo, fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
                                                 @PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");

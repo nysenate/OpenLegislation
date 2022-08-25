@@ -13,8 +13,6 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +22,17 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET)
-public class CalendarGetCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(CalendarGetCtrl.class);
+public class CalendarGetCtrl extends BaseCtrl {
+    private final CalendarDataService calendarDataService;
+    private final CalendarViewFactory calendarViewFactory;
 
     @Autowired
-    private CalendarDataService calendarDataService;
+    public CalendarGetCtrl(CalendarDataService calendarDataService,
+                           CalendarViewFactory calendarViewFactory) {
+        this.calendarDataService = calendarDataService;
+        this.calendarViewFactory = calendarViewFactory;
+    }
 
-    @Autowired
-    private CalendarViewFactory calendarViewFactory;
 
     /** --- Request Handlers --- */
 

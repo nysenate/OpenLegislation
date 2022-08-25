@@ -18,10 +18,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -33,13 +31,16 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchService.class);
 
-    @Autowired private ElasticCalendarSearchDao calendarSearchDao;
-    @Autowired private CalendarDataService calendarDataService;
-    @Autowired private OpenLegEnvironment env;
-    @Autowired private EventBus eventBus;
+    private final ElasticCalendarSearchDao calendarSearchDao;
+    private final CalendarDataService calendarDataService;
+    private final OpenLegEnvironment env;
 
-    @PostConstruct
-    private void init() {
+    public ElasticCalendarSearchService(ElasticCalendarSearchDao calendarSearchDao,
+                                        CalendarDataService calendarDataService,
+                                        OpenLegEnvironment env, EventBus eventBus) {
+        this.calendarSearchDao = calendarSearchDao;
+        this.calendarDataService = calendarDataService;
+        this.env = env;
         eventBus.register(this);
     }
 
@@ -177,7 +178,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         }
     }
 
-    private String smartSearch(String query) {
+    private static String smartSearch(String query) {
         if (query != null && !query.contains(":")) {
             Matcher matcher = CalendarId.calendarIdPattern.matcher(query.replace("\\s+", ""));
             if (matcher.matches()) {

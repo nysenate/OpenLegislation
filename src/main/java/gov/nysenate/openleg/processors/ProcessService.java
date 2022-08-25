@@ -4,8 +4,7 @@ package gov.nysenate.openleg.processors;
  * An interface that describes a generic data process service that processes data in two steps:
  * collate and ingest
  */
-public interface ProcessService
-{
+public interface ProcessService {
     /**
      * Perform pre-processing steps
      * @return int the number of collated items

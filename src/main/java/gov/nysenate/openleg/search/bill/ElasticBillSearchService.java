@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -35,21 +34,24 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 @Service
-public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill>
-{
+public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
-
     private static final int billReindexThreadCount = 4;
     private static final int billReindexBatchSize = 100;
 
-    @Autowired protected OpenLegEnvironment env;
-    @Autowired protected EventBus eventBus;
-    @Autowired protected ElasticBillSearchDao billSearchDao;
-    @Autowired protected BillDataService billDataService;
-    @Autowired private AsyncUtils asyncUtils;
+    private final OpenLegEnvironment env;
+    private final ElasticBillSearchDao billSearchDao;
+    private final BillDataService billDataService;
+    private final AsyncUtils asyncUtils;
 
-    @PostConstruct
-    protected void init() {
+    @Autowired
+    public ElasticBillSearchService(OpenLegEnvironment env, EventBus eventBus,
+                                    ElasticBillSearchDao billSearchDao,
+                                    BillDataService billDataService, AsyncUtils asyncUtils) {
+        this.env = env;
+        this.billSearchDao = billSearchDao;
+        this.billDataService = billDataService;
+        this.asyncUtils = asyncUtils;
         eventBus.register(this);
     }
 
@@ -180,7 +182,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public void rebuildIndex() {
         clearIndex();
         Optional<Range<SessionYear>> sessions = billDataService.activeSessionRange();
-        if (!sessions.isPresent()) {
+        if (sessions.isEmpty()) {
             logger.info("Can't rebuild the bill search index because there are no bills. Cleared it instead!");
             return;
         }
@@ -271,7 +273,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
                     billIdQueue.drainTo(billIdBatch, billReindexBatchSize);
 
                     List<Bill> bills = billIdBatch.stream()
-                            .map((billId) -> billDataService.getBill(billId))
+                            .map(billDataService::getBill)
                             .collect(Collectors.toCollection(() -> new ArrayList<>(billReindexBatchSize)));
 
                     updateIndex(bills);
