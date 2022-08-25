@@ -2,58 +2,36 @@ package gov.nysenate.openleg.processors.transcripts.hearing;
 
 import gov.nysenate.openleg.processors.ParseError;
 
-import java.time.DayOfWeek;
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-public class HearingDateTimeParser {
-    private static final String TIME_STR = "\\d{1,2}:\\d{2} (a.m.|p.m.)",
-            DAYS_OF_THE_WEEK = toOptionString(DayOfWeek.values()),
-            MONTHS = toOptionString(Month.values());
-    private static final Pattern DATE = Pattern.compile("(?i)(" + DAYS_OF_THE_WEEK + ")?(, )?" +
-                "(?<date>(" + MONTHS + ") \\d{1,2}, \\d{4})"), TIME = Pattern.compile(TIME_STR),
-            ALT_END_TIME = Pattern.compile("Whereupon.+at.+?(?<altTime>" + TIME_STR +")");
+final class HearingDateTimeParser {
+    private static final String TIME_STR = "\\d{1,2}:\\d{2} (a.m.|p.m.)";
+    private static final Pattern ALT_END_TIME = Pattern.compile("Whereupon.+at.+?(?<altTime>" + TIME_STR +")");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("[EEEE, ]MMMM d, yyyy"),
             TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
-
-    /**
-     * Utility method to match enums.
-     * @param enums from a certain class.
-     * @return Pattern string.
-     */
-    private static String toOptionString(Enum<?>... enums) {
-        return Arrays.stream(enums).map(Enum::name).collect(Collectors.joining("|"));
-    }
 
     private final LocalDate date;
     private final LocalTime startTime, endTime;
 
-    // TODO: test
     public HearingDateTimeParser(String dateTimeText, List<String> lastPage) {
         String[] dateTimeAr = dateTimeText.replaceAll("( *(Date|Time):? *)", " ")
-                .replaceAll(", at", "\n").replaceAll(" +", " ").trim().split("\n");
-//        Matcher dateMatcher = DATE.matcher(dateTimeAr[0]);
-//        if (!dateMatcher.find()) {
-//            throw new ParseError("No date found in public hearing!");
-//        }
+                .replaceAll(", at", "\n").replaceAll(" +", " ").trim().split("\n", 2);
         try {
             this.date = LocalDate.parse(dateTimeAr[0], DATE_FORMATTER);
         }
         catch (DateTimeParseException ex) {
             throw new ParseError("No date found in public hearing!");
         }
-        Matcher timeMatcher = TIME.matcher(dateTimeText);
-        this.startTime = timeMatcher.find() ? formatAmPm(timeMatcher.group()) : null;
-        String endTimeStr = timeMatcher.find() ? timeMatcher.group() : altEndTime(lastPage);
-        this.endTime = formatAmPm(endTimeStr);
+        String[] timeAr = (dateTimeAr.length > 1 ? dateTimeAr[1] : "").split("(-|to|–)+");
+        this.startTime = formatAmPm(timeAr[0]);
+        this.endTime = formatAmPm(timeAr.length > 1 ? timeAr[1] : altEndTime(lastPage));
     }
 
     public LocalDate getDate() {
@@ -69,18 +47,21 @@ public class HearingDateTimeParser {
     }
 
     private static LocalTime formatAmPm(String time) {
-        if (time == null) {
+        time = time.toUpperCase().replaceAll("\\.", "").trim();
+        try {
+            return LocalTime.parse(time, TIME_FORMATTER);
+        }
+        catch (DateTimeParseException ex) {
             return null;
         }
-        time = time.toUpperCase().replaceAll("\\.", "");
-        return LocalTime.parse(time, TIME_FORMATTER);
     }
 
+    @Nonnull
     private static String altEndTime(List<String> lastPage) {
         String wholePage = String.join(" ", lastPage);
         Matcher matcher = ALT_END_TIME.matcher(wholePage);
         if (!matcher.find()) {
-            return null;
+            return "";
         }
         return matcher.group("altTime");
     }

@@ -31,7 +31,6 @@ public class HearingDateTimeParserTest {
                 null,null);
     }
 
-    // TODO: what invalid chars?
     @Test
     public void invalidCharactersParse() {
         testHearingDate("08-22-13 Buffalo Martins Test.txt", LocalDate.of(2013, 8, 22),

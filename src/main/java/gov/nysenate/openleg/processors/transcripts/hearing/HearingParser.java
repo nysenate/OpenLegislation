@@ -21,10 +21,9 @@ public final class HearingParser {
     private HearingParser() {}
 
     /**
-     * Parses a {@link HearingFile}, extracting a
-     * {@link Hearing Hearing}.
-     * @param hearingFile
-     * @throws IOException
+     * Extracts a {@link Hearing Hearing}.
+     * @param hearingFile The file to pull data from.
+     * @throws IOException Thrown if the file could not be read from.
      */
     public static Hearing process(HearingFile hearingFile) throws IOException {
         String fullText = Files.readString(hearingFile.getFile().toPath(), CP_1252);
