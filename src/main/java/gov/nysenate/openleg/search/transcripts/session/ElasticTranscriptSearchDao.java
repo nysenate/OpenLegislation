@@ -16,6 +16,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,6 +82,6 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
 
     private TranscriptId getTranscriptIdFromHit(SearchHit hit) {
         String[] data = hit.getId().split(Pattern.quote(idSeparator));
-        return new TranscriptId(data[0], data[1]);
+        return new TranscriptId(LocalDateTime.parse(data[0]), data[1]);
     }
 }

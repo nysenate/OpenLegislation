@@ -12,13 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import static gov.nysenate.openleg.processors.transcripts.session.TranscriptParser.process;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
 public class TranscriptParserTest {
-    private static final String[] FILENAMES = {"simple.txt", "noDate.txt", "noTime.txt"};
     private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
     FILE_TEXT = """
                                                                           10
@@ -39,25 +37,20 @@ public class TranscriptParserTest {
     @Test
     public void testProcess() throws IOException {
         TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0),
-                "Regular Session");
-        Transcript expectedTranscript = new Transcript(testId, FILENAMES[0], "ALBANY, NEW YORK", FILE_TEXT);
-        TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[0]));
-        Transcript actualTranscript = process(transcriptFile);
+                "REGULAR SESSION");
+        String filename = "simple.txt";
+        Transcript expectedTranscript = new Transcript(testId, filename, "ALBANY, NEW YORK", FILE_TEXT);
+        Transcript actualTranscript = processFilename(filename);
         assertEquals(expectedTranscript, actualTranscript);
     }
 
     @Test
-    public void testParseError() throws IOException {
-        final TranscriptFile transcriptFile = new TranscriptFile(new File(TEST_DIR + FILENAMES[1]));
-        assertThrows(ParseError.class, () -> process(transcriptFile));
-
-        final TranscriptFile transcriptFile2 = new TranscriptFile(new File(TEST_DIR + FILENAMES[2]));
-        assertThrows(ParseError.class, () -> process(transcriptFile2));
+    public void testParseError() {
+        assertThrows(ParseError.class, () -> processFilename("noDate.txt"));
+        assertThrows(ParseError.class, () -> processFilename("noTime.txt"));
     }
 
-    // TODO: remove
-    @Test
-    public void TESTTEST() throws IOException {
-        process(new TranscriptFile(new File(TEST_DIR + "031793.v1")));
+    private static Transcript processFilename(String filename) throws IOException {
+        return TranscriptParser.process(new TranscriptFile(new File(TEST_DIR + filename)));
     }
 }

@@ -1,12 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import org.apache.commons.text.WordUtils;
 import org.springframework.lang.NonNull;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 /**
@@ -15,13 +10,9 @@ import java.util.Optional;
 public record TranscriptLine(String text) {
     /** Regex to match any non-alphanumeric or whitespace characters. */
     private static final String INVALID_CHARACTERS_REGEX = "[^\\w .,?-]+";
-    private static final String SESSION = "SESSION";
 
     /** All line numbers occur in the first 10 characters of a line. */
     private static final int MAX_PAGE_NUM_INDEX = 10, MAX_PAGE_LINES = 25;
-
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hmma"),
-            DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM d yyyy");
 
     public TranscriptLine(@NonNull String text) {
         if (!text.isBlank())
@@ -51,56 +42,6 @@ public record TranscriptLine(String text) {
         if (num.isEmpty())
             return false;
         return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
-    }
-
-    /**
-     * Extracts and returns the location data from a TranscriptLine.
-     * @return the location.
-     */
-    public Optional<String> getLocation() {
-        String temp = removeLineNumber().replaceAll("\\s+", " ").trim();
-        if (temp.matches(("(?i)ALBANY[ ,]+NEW YORK")))
-            return Optional.of(temp.toUpperCase());
-        return Optional.empty();
-    }
-
-    /**
-     * Extracts the date from the line if possible.
-     * @return the Optional, which will have a date if one was found.
-     */
-    public Optional<LocalDate> getDate() {
-        String temp = WordUtils.capitalizeFully(removeLineNumber().replaceAll("[ ,]+", " ")
-                .replace(".", "").trim());
-        try {
-            return Optional.of(LocalDate.parse(temp, DATE_FORMATTER));
-        } catch (DateTimeParseException ex) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Extracts the time from the line if possible.
-     * @return the Optional, which will have a time if one was found.
-     */
-    public Optional<LocalTime> getTime() {
-        String time = removeLineNumber().replaceAll("[:. ]", "").replace("Noon", "pm").trim().toUpperCase();
-        try {
-            return Optional.of(LocalTime.parse(time, TIME_FORMATTER));
-        } catch (DateTimeParseException ex) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<String> getSession() {
-        if (!text.contains(SESSION))
-            return Optional.empty();
-        String[] temp = removeLineNumber().replaceAll(" {2,}", " ").trim().split(SESSION);
-        if (temp.length == 0)
-            return Optional.empty();
-        String prefix = temp[0].replaceAll(" ", "") + " ";
-        // If the suffix exists, it's a Roman numeral, and shouldn't be capitalized.
-        String suffix = temp.length > 1 ? " " + temp[1] : "";
-        return Optional.of(WordUtils.capitalizeFully(prefix + SESSION) + suffix);
     }
 
     public boolean isBlank() {
