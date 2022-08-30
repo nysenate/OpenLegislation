@@ -64,7 +64,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
     @Test
     public void getTranscriptIdsTest() {
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
-            fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(i));
+            fileDao.updateFile(TRANSCRIPT_FILES.get(i));
             dao.updateTranscript(TRANSCRIPTS.get(i));
         }
         List<TranscriptId> ids = getNewIds(dao.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL));
@@ -80,16 +80,16 @@ public class SqlTranscriptDaoIT extends BaseTests {
 
     @Test
     public void getTranscriptTest() {
-        fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(0));
+        fileDao.updateFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
         assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test
     public void updateTranscriptTest() {
-        fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(0));
+        fileDao.updateFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
-        fileDao.updateTranscriptFile(UPDATE_FILE);
+        fileDao.updateFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
         assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
@@ -99,10 +99,10 @@ public class SqlTranscriptDaoIT extends BaseTests {
         List<LocalDateTime> rangePoints = new ArrayList<>();
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
             rangePoints.add(LocalDateTime.now());
-            fileDao.updateTranscriptFile(TRANSCRIPT_FILES.get(i));
+            fileDao.updateFile(TRANSCRIPT_FILES.get(i));
             dao.updateTranscript(TRANSCRIPTS.get(i));
         }
-        fileDao.updateTranscriptFile(UPDATE_FILE);
+        fileDao.updateFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
 
         List<TranscriptUpdateToken> results = dao.transcriptsUpdatedDuring(

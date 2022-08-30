@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
@@ -17,13 +16,6 @@ public interface HearingProcessService extends ProcessService {
     int collateHearingFiles();
 
     /**
-     * Retrieves a list of Public Hearing Files that are awaiting processing.
-     * @param limitOffset Restricts the number retrieved.
-     * @return
-     */
-    List<HearingFile> getPendingHearingFiles(LimitOffset limitOffset);
-
-    /**
      * Reads the content of a Public Hearing File and generates a Hearing object.
      * The Hearing object is saved into the backing store and the Public Hearing File
      * is updated to signify it has been processed.
@@ -33,8 +25,7 @@ public interface HearingProcessService extends ProcessService {
     int processHearingFiles(List<HearingFile> hearingFiles);
 
     /**
-     * Processes all the Hearing Files via calls to
-     * {@link #getPendingHearingFiles(LimitOffset)}
+     * Processes all the Hearing Files.
      * and {@link #processHearingFiles(java.util.List)}.
      */
     int processHearingFiles();

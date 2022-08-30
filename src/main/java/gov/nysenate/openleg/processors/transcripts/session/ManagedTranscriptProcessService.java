@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -23,7 +22,8 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     private final TranscriptDataService transcriptDataService;
 
     @Autowired
-    public ManagedTranscriptProcessService(TranscriptFileDao transcriptFileDao, TranscriptDataService transcriptDataService) {
+    public ManagedTranscriptProcessService(TranscriptFileDao transcriptFileDao,
+                                           TranscriptDataService transcriptDataService) {
         this.transcriptFileDao = transcriptFileDao;
         this.transcriptDataService = transcriptDataService;
     }
@@ -56,11 +56,11 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         try {
             List<TranscriptFile> transcriptFiles;
             do {
-                transcriptFiles = transcriptFileDao.getIncomingTranscriptFiles(LimitOffset.FIFTY);
+                transcriptFiles = transcriptFileDao.getIncomingFiles();
                 for (TranscriptFile file : transcriptFiles) {
                     file.setPendingProcessing(true);
-                    transcriptFileDao.archiveTranscriptFile(file);
-                    transcriptFileDao.updateTranscriptFile(file);
+                    transcriptFileDao.archiveFile(file);
+                    transcriptFileDao.updateFile(file);
                     numCollated++;
                 }
             }
@@ -83,7 +83,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 logger.info("Processing transcript file {}", file.getFileName());
                 processed.put(file, TranscriptParser.process(file));
                 file.markAsProcessed();
-                transcriptFileDao.updateTranscriptFile(file);
+                transcriptFileDao.updateFile(file);
                 processCount++;
             }
             catch (IOException ex) {
@@ -102,7 +102,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         List<TranscriptFile> transcriptFiles;
         int processCount = 0;
         do {
-            transcriptFiles = transcriptFileDao.getPendingTranscriptFiles(LimitOffset.FIFTY);
+            transcriptFiles = transcriptFileDao.getPendingFiles();
             processCount += processTranscriptFiles(transcriptFiles);
         }
         while (!transcriptFiles.isEmpty());

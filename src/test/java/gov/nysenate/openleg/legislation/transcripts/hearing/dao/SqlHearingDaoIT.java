@@ -36,7 +36,7 @@ public class SqlHearingDaoIT extends BaseTests {
                 now.toLocalTime(), now.plusHours(1).toLocalTime());
         testHearing.setHosts(Set.of(sampleHost1, sampleHost2));
 
-        hearingFileDao.updateHearingFile(new HearingFile(new File(DIRECTORY + testHearing.getFilename())));
+        hearingFileDao.updateFile(new HearingFile(new File(DIRECTORY + testHearing.getFilename())));
         hearingDao.updateHearing(testHearing);
 
         HearingId id = hearingDao.getHearingIds(SortOrder.DESC, LimitOffset.ONE).get(0);

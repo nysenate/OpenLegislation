@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingFile;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
@@ -23,7 +22,8 @@ public class ManagedHearingProcessService implements HearingProcessService {
     private final HearingDataService hearingDataService;
 
     @Autowired
-    public ManagedHearingProcessService(HearingFileDao hearingFileDao, HearingDataService hearingDataService) {
+    public ManagedHearingProcessService(HearingFileDao hearingFileDao,
+                                        HearingDataService hearingDataService) {
         this.hearingFileDao = hearingFileDao;
         this.hearingDataService = hearingDataService;
     }
@@ -55,11 +55,11 @@ public class ManagedHearingProcessService implements HearingProcessService {
         try {
             List<HearingFile> hearingFiles;
             do {
-                hearingFiles = hearingFileDao.getIncomingHearingFiles(LimitOffset.FIFTY);
+                hearingFiles = hearingFileDao.getIncomingFiles();
                 for (HearingFile file : hearingFiles) {
                     file.setPendingProcessing(true);
-                    hearingFileDao.archiveHearingFile(file);
-                    hearingFileDao.updateHearingFile(file);
+                    hearingFileDao.archiveFile(file);
+                    hearingFileDao.updateFile(file);
                     numCollated++;
                 }
             }
@@ -74,12 +74,6 @@ public class ManagedHearingProcessService implements HearingProcessService {
 
     /** {@inheritDoc} */
     @Override
-    public List<HearingFile> getPendingHearingFiles(LimitOffset limitOffset) {
-        return hearingFileDao.getPendingHearingFile(limitOffset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public int processHearingFiles(List<HearingFile> hearingFiles) {
         SortedMap<HearingFile, Hearing> processed = new TreeMap<>();
         int processCount = 0;
@@ -88,7 +82,7 @@ public class ManagedHearingProcessService implements HearingProcessService {
                 logger.info("Processing hearing file {}", file.getFileName());
                 processed.put(file, HearingParser.process(file));
                 file.markAsProcessed();
-                hearingFileDao.updateHearingFile(file);
+                hearingFileDao.updateFile(file);
                 processCount++;
             }
             catch (IOException ex) {
@@ -107,7 +101,7 @@ public class ManagedHearingProcessService implements HearingProcessService {
         List<HearingFile> hearingFiles;
         int processCount = 0;
         do {
-            hearingFiles = getPendingHearingFiles(LimitOffset.FIFTY);
+            hearingFiles = hearingFileDao.getPendingFiles();
             processCount += processHearingFiles(hearingFiles);
         }
         while (!hearingFiles.isEmpty());

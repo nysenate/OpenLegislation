@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -39,9 +38,6 @@ public abstract class SqlBaseDao {
 
     /** Reference to the environment in which the data is stored */
     @Autowired protected OpenLegEnvironment environment;
-
-    @PostConstruct
-    private void init() {}
 
     /** --- Common Param Methods --- */
 
