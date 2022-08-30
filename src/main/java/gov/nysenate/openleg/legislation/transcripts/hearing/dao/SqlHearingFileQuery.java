@@ -12,7 +12,7 @@ public enum SqlHearingFileQuery implements BasicSqlQuery {
         "INSERT INTO ${schema}." + SqlTable.HEARING_FILE + "\n" +
         "(filename,  processed_date_time, processed_count," +
         "pending_processing, archived)" +  "\n" +
-        "VALUES (:fileName, :processedDateTime, :processedCount," +
+        "VALUES (:filename, :processedDateTime, :processedCount," +
         ":pendingProcessing, :archived)"
     ),
     UPDATE_HEARING_FILE(
