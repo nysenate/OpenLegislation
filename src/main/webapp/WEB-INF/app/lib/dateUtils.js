@@ -8,15 +8,6 @@ export function sessionYear(year = new Date().getFullYear()) {
   return (year % 2 === 0) ? year - 1 : year
 }
 
-export function billSessionYears() {
-  const earliestBillSession = 2009;
-  const sessionYears = [];
-  for (let session = sessionYear(); session >= earliestBillSession; session -= 2) {
-    sessionYears.push(session);
-  }
-  return sessionYears;
-}
-
 /**
  * Converts an ISO date or datetime into the specified format.
  * @param dateString A String representing an ISO date time.
@@ -26,6 +17,12 @@ export function billSessionYears() {
  */
 export function formatDateTime(dateString, format) {
   return DateTime.fromISO(dateString).toLocaleString(format)
+}
+
+export const DATE_FULL = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
 }
 
 /**

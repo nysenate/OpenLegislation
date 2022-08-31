@@ -16,6 +16,7 @@ import Input from "app/shared/Input";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import HighlightedText from "app/shared/HighlightedText";
 import {
+  DATE_FULL,
   DATETIME_FULL_NO_ZONE,
   formatDateTime
 } from "app/lib/dateUtils";
@@ -176,7 +177,7 @@ function HearingTranscriptResultList({ hearingSearchResults }) {
               <div className="flex flex-wrap lg:flex-nowrap">
                 <div className="flex-none w-60 mr-3">
                   <div>
-                    {formatDateTime(h.result.date, DATETIME_FULL_NO_ZONE)}
+                    {formatDateTime(h.result.date, DATE_FULL)}
                   </div>
                 </div>
                 <div className="text w-full">
