@@ -35,7 +35,7 @@ public enum SearchIndex {
     public static final Set<SearchIndex> nonPrimaryIndices = Arrays.stream(values())
             .filter(index -> !index.isPrimaryStore()).collect(Collectors.toSet());
 
-    public String getIndexName() {
+    public String getName() {
         return indexName;
     }
 

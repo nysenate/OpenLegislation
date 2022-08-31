@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.search.transcripts.hearing;
 
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
@@ -23,7 +22,7 @@ import java.util.List;
 
 @Repository
 public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSearchDao {
-    private static final String hearingIndexName = SearchIndex.HEARING.getIndexName();
+    private static final String hearingIndexName = SearchIndex.HEARING.getName();
     private static final List<HighlightBuilder.Field> highlightedFields =
             List.of(new HighlightBuilder.Field("text").numOfFragments(2),
                           new HighlightBuilder.Field("hosts").numOfFragments(0),
@@ -49,7 +48,7 @@ public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSe
         BulkRequest bulkRequest = new BulkRequest();
         hearings.stream()
                 .map(HearingView::new)
-                .map(phv -> getJsonIndexRequest(hearingIndexName, String.valueOf(phv.getId()), phv))
+                .map(hearingView -> getJsonIndexRequest(hearingIndexName, String.valueOf(hearingView.getId()), hearingView))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
     }
@@ -64,8 +63,8 @@ public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSe
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Lists.newArrayList(hearingIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.HEARING;
     }
 
     @Override

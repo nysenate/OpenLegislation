@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
@@ -25,7 +24,7 @@ import java.util.regex.Pattern;
 
 @Repository
 public class ElasticTranscriptSearchDao extends ElasticBaseDao implements TranscriptSearchDao {
-    private static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getIndexName();
+    private static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getName();
     private static final List<HighlightBuilder.Field> highlightedFields =
             Collections.singletonList(new HighlightBuilder.Field("text").numOfFragments(3));
     private static final String idSeparator = "|**|";
@@ -67,8 +66,8 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Lists.newArrayList(transcriptIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.TRANSCRIPT;
     }
 
     @Override

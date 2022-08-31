@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.search.calendar;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -36,7 +35,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     /* --- Index Names --- */
 
-    protected static final String calIndexName = SearchIndex.CALENDAR.getIndexName();
+    protected static final String calIndexName = SearchIndex.CALENDAR.getName();
 
     /* --- Implementations --- */
 
@@ -73,8 +72,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * {@inheritDoc}
      */
     @Override
-    protected List<String> getIndices() {
-        return Lists.newArrayList(calIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.CALENDAR;
     }
 
     /**

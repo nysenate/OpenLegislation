@@ -18,13 +18,12 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 @Repository
 public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSearchDao {
-    private static final String logIndexName = SearchIndex.API_LOG.getIndexName();
+    private static final String logIndexName = SearchIndex.API_LOG.getName();
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -70,8 +69,8 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Collections.singletonList(logIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.API_LOG;
     }
 
     /**

@@ -6,7 +6,7 @@ import gov.nysenate.openleg.search.SearchIndex;
 public record SearchIndexInfoView(String name, String indexName, boolean primaryStore) implements ViewObject {
 
     public SearchIndexInfoView(SearchIndex searchIndex) {
-        this(searchIndex.name(), searchIndex.getIndexName(), searchIndex.isPrimaryStore());
+        this(searchIndex.name(), searchIndex.getName(), searchIndex.isPrimaryStore());
     }
 
     @Override
