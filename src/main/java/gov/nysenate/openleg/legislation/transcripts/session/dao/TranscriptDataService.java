@@ -18,7 +18,7 @@ public interface TranscriptDataService {
      * Attempts to fetch a transcript based only on it's dateTime.
      * @throws DuplicateTranscriptEx if multiple transcripts have the same dateTime.
      */
-    Transcript getTranscriptByDateTime(LocalDateTime localDateTime) throws DuplicateTranscriptEx;
+    Transcript getTranscriptByDateTime(LocalDateTime localDateTime) throws TranscriptNotFoundEx, DuplicateTranscriptEx;
 
     /**
      * Fetch a transcript given an id.

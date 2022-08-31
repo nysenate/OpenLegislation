@@ -67,8 +67,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         params.addValue("dateTime", toDate(transcript.getDateTime()));
         params.addValue("location", transcript.getLocation());
         params.addValue("text", transcript.getText());
-        params.addValue("modified_date_time", toDate(LocalDateTime.now()));
-        return params;
+        return params.addValue("modified_date_time", toDate(LocalDateTime.now()));
     }
 
     /** --- Row Mapper Instances --- */

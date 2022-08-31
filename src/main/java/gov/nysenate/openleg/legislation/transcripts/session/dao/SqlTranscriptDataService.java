@@ -10,6 +10,7 @@ import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,15 +29,19 @@ public class SqlTranscriptDataService implements TranscriptDataService {
     }
 
     public Transcript getTranscriptByDateTime(LocalDateTime localDateTime)
-            throws DuplicateTranscriptEx {
+            throws TranscriptNotFoundEx, DuplicateTranscriptEx {
         if (localDateTime == null) {
             throw new IllegalArgumentException("TranscriptId cannot be null");
         }
+        var id = new TranscriptId(localDateTime, null);
         try {
-            return transcriptDao.getTranscript(new TranscriptId(localDateTime, null));
+            return transcriptDao.getTranscript(id);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            throw new TranscriptNotFoundEx(id, ex);
         }
         catch (DataAccessException ex) {
-            throw new TranscriptNotFoundEx(new TranscriptId(localDateTime, null), ex);
+            throw new DuplicateTranscriptEx(id.dateTime());
         }
     }
 

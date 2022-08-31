@@ -3,14 +3,14 @@ package gov.nysenate.openleg.legislation.transcripts.session;
 import java.time.LocalDateTime;
 
 public class DuplicateTranscriptEx extends RuntimeException {
-    private final LocalDateTime localDateTime;
+    private final String dateTime;
 
     public DuplicateTranscriptEx(LocalDateTime localDateTime) {
         super("There are multiple transcripts at " + localDateTime + ". Please specify.");
-        this.localDateTime = localDateTime;
+        this.dateTime = localDateTime.toString();
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public String getDateTime() {
+        return dateTime;
     }
 }

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
+import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
@@ -33,25 +34,37 @@ public class TranscriptPdfCtrl extends BaseCtrl {
      * Single Transcript PDF retrieval
      * -------------------------------
      *
-     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{dateTime}/
+     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{dateTime}/{optional sessionType}
      *
      * Request Parameters: None.
      *
      * Expected Output: PDF response.
      */
+
     @RequestMapping("/{dateTime}")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, HttpServletResponse response)
+    public ResponseEntity<byte[]> getTranscriptPdfByDateTime(@PathVariable String dateTime, HttpServletResponse response)
             throws IOException {
-        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
-        TranscriptId transcriptId = new TranscriptId(localDateTime, null);
+        return pdfHelper(dateTime, null, response);
+    }
+
+    @RequestMapping("/{dateTime}/{sessionType}")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType, HttpServletResponse response)
+            throws IOException {
+        return pdfHelper(dateTime, sessionType, response);
+    }
+
+    private ResponseEntity<byte[]> pdfHelper(String dateTime, String sessionType,
+                                                    HttpServletResponse response) throws IOException {
+        LocalDateTime ldt = parseISODateTime(dateTime, "dateTime");
         try {
-            Transcript transcript = transcriptData.getTranscript(transcriptId);
+            Transcript transcript = sessionType == null ?
+                    transcriptData.getTranscriptByDateTime(ldt) :
+                    transcriptData.getTranscript(new TranscriptId(ldt, sessionType));
             return new TranscriptPdfView(transcript).writeData();
         }
-        catch (TranscriptNotFoundEx ex) {
+        catch (DuplicateTranscriptEx | TranscriptNotFoundEx ex) {
             response.sendError(404, ex.getMessage());
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logger.error("Failed to return transcript PDF", ex);
             response.sendError(404, ex.getMessage());
         }

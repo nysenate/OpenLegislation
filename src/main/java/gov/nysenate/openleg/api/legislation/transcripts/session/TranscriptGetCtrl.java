@@ -12,6 +12,7 @@ import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
@@ -105,7 +106,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
      *
      * Expected Output: TranscriptView
      */
-    @RequestMapping("/{dateTime:.*}")
+    @RequestMapping("/{dateTime}")
     public BaseResponse getTranscript(@PathVariable String dateTime) {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
@@ -123,14 +124,12 @@ public class TranscriptGetCtrl extends BaseCtrl {
      *
      * Expected Output: TranscriptView
      */
-    @RequestMapping("/{dateTime:.*}/{sessionType:.*}")
+    @RequestMapping("/{dateTime}/{sessionType}")
     public BaseResponse getTranscript(@PathVariable String dateTime, @PathVariable String sessionType) {
         var id = new TranscriptId(parseISODateTime(dateTime, "dateTime"), sessionType);
         return new ViewObjectResponse<>(new TranscriptView(transcriptData.getTranscript(id)),
                 "Data for transcript " + dateTime);
     }
-
-    // TODO: add API call for PDF
 
     /**
      * Single Transcript PDF retrieval API
@@ -142,11 +141,21 @@ public class TranscriptGetCtrl extends BaseCtrl {
      *
      * Expected Output: PDF response.
      */
+
     @RequestMapping("/{dateTime}.pdf")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         Transcript transcript = transcriptData.getTranscriptByDateTime(localDateTime);
+        return new TranscriptPdfView(transcript).writeData();
+    }
+
+    @RequestMapping("/{dateTime}/{sessionType}.pdf")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType)
+            throws IOException {
+        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
+        var id = new TranscriptId(localDateTime, sessionType);
+        Transcript transcript = transcriptData.getTranscript(id);
         return new TranscriptPdfView(transcript).writeData();
     }
 
@@ -163,7 +172,12 @@ public class TranscriptGetCtrl extends BaseCtrl {
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
-        // TODO: Openleg UI doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
+    }
+
+    @ExceptionHandler(DuplicateTranscriptEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorResponse handleTranscriptNotFoundEx(DuplicateTranscriptEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.DUPLICATE_TRANSCRIPT, ex.getDateTime());
     }
 }
