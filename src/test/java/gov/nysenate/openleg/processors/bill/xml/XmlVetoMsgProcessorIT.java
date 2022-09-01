@@ -2,8 +2,8 @@ package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by uros on 3/7/17.
@@ -102,43 +102,45 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
         vetoMessage.setBillId(new BaseBillId("A9000",2016));
 
-        vetoMessage.setMemoText(" \n" +
-                "                  STATE OF NEW YORK--EXECUTIVE CHAMBER\n" +
-                " \n" +
-                "TO THE ASSEMBLY:                                        April 13, 2016\n" +
-                " \n" +
-                "     I  hereby transmit pursuant to the provisions of section 7 of Arti-\n" +
-                "cle IV and section 4 of Article VII of the Constitution, a statement  of\n" +
-                "items  to which I object and which I do not approve, contained in Assem-\n" +
-                "bly Bill Number 9000--D, entitled:\n" +
-                " \n" +
-                "CHAPTER 50\n" +
-                " \n" +
-                "LINE VETO #2\n" +
-                " \n" +
-                "\"AN ACT making appropriations for the support of government\n" +
-                " \n" +
-                "                          STATE OPERATIONS BUDGET\"\n" +
-                " \n" +
-                "Bill Page 124, Line 31 through Line 35, inclusive\n" +
-                " \n" +
-                "NOT APPROVED\n" +
-                "____________\n" +
-                " \n" +
-                "                          EDUCATION DEPARTMENT\n" +
-                " \n" +
-                " \"For services and expenses for the supervision of  institutions  regis-\n" +
-                "    tered  pursuant  to  section  5001  of  the  education  law, and for\n" +
-                "    services and expenses of supervisory programs and payment of associ-\n" +
-                "    ated indirect costs and general state charges.\n" +
-                "  Personal service--regular ... 1,747,000 ............... (re. $200,000)\"\n" +
-                " \n" +
-                "This item passed by the Legislature,  to  which  I  object  and  do  not\n" +
-                "approve,  is  not needed because adequate funding for State agency oper-\n" +
-                "ations is already provided for in the budget. Accordingly, this item  is\n" +
-                "disapproved.\n" +
-                " \n" +
-                "                                              (signed) ANDREW M. CUOMO\n");
+        vetoMessage.setMemoText("""
+                \s
+                                  STATE OF NEW YORK--EXECUTIVE CHAMBER
+                \s
+                TO THE ASSEMBLY:                                        April 13, 2016
+                \s
+                     I  hereby transmit pursuant to the provisions of section 7 of Arti-
+                cle IV and section 4 of Article VII of the Constitution, a statement  of
+                items  to which I object and which I do not approve, contained in Assem-
+                bly Bill Number 9000--D, entitled:
+                \s
+                CHAPTER 50
+                \s
+                LINE VETO #2
+                \s
+                "AN ACT making appropriations for the support of government
+                \s
+                                          STATE OPERATIONS BUDGET"
+                \s
+                Bill Page 124, Line 31 through Line 35, inclusive
+                \s
+                NOT APPROVED
+                ____________
+                \s
+                                          EDUCATION DEPARTMENT
+                \s
+                 "For services and expenses for the supervision of  institutions  regis-
+                    tered  pursuant  to  section  5001  of  the  education  law, and for
+                    services and expenses of supervisory programs and payment of associ-
+                    ated indirect costs and general state charges.
+                  Personal service--regular ... 1,747,000 ............... (re. $200,000)"
+                \s
+                This item passed by the Legislature,  to  which  I  object  and  do  not
+                approve,  is  not needed because adequate funding for State agency oper-
+                ations is already provided for in the budget. Accordingly, this item  is
+                disapproved.
+                \s
+                                                              (signed) ANDREW M. CUOMO
+                """);
         vetoMessage.setVetoNumber(002);
         vetoMessage.setSigner("ANDREW M. CUOMO");
         vetoMessage.setYear(2016);
@@ -183,7 +185,7 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
         VetoMessage storedMsgObject = bill.getVetoMessages().get(id);
 
         //checking if the vetoMessage is in the map
-        assertTrue(storedMsgObject.getBillId().equals(vetoMessage.getBillId()));
+        assertEquals(storedMsgObject.getBillId(), vetoMessage.getBillId());
 
         //removing vetoMessage
         String xmlPath1 = "processor/bill/vetomessage/2016-11-28-23.56.28.935222_VETOMSG_2016-00233.XML";
@@ -192,6 +194,6 @@ public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
         Bill bill1 = billDataService.getBill(new BaseBillId("A9000", 2016));
         VetoMessage removedMsgObject = bill1.getVetoMessages().get(id);
 
-        assertTrue(removedMsgObject == null);
+        assertNull(removedMsgObject);
     }
 }

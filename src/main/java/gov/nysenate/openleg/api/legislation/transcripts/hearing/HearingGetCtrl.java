@@ -47,7 +47,7 @@ public class HearingGetCtrl extends BaseCtrl {
      * Retrieve all hearings: (GET) /api/3/hearings/
      */
     @RequestMapping(value = "")
-    public BaseResponse getHearingsByYear(@RequestParam(defaultValue = "date:desc") String sort,
+    public BaseResponse getHearings(@RequestParam(defaultValue = "date:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest) throws SearchException {
@@ -79,6 +79,7 @@ public class HearingGetCtrl extends BaseCtrl {
     private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
+        // TODO: just use the hearingData
         List<ViewObject> results = hearingSearch.searchHearings(year, sort, limOff).resultList().stream()
                 .map(searchResult -> hearingData.getHearing(searchResult.result()))
                 .map(hearing -> getHearingViewObject(hearing, summary, full)).toList();
