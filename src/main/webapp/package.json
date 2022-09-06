@@ -6,28 +6,50 @@
   },
   "license": "(BSD-2-Clause OR GPL-3.0)",
   "dependencies": {
-    "autoprefixer": "^6.7.7",
-    "bower": "^1.8.8",
-    "caniuse-db": "^1.0.30001165",
-    "cssnano": "^4.1.10",
-    "fast-xml-parser": "^3.17.4",
-    "grunt": "^1.3.0",
-    "grunt-beep": "^1.0.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-file-exists": "^0.1.4",
-    "grunt-postcss": "^0.9.0",
-    "grunt-sass": "^3.1.0",
-    "grunt-shell": "^1.1.1",
-    "node-gyp": "^3.7.0",
-    "node-sass": "^7.0.1",
-    "pixrem": "^3.0.2"
+    "@reach/dialog": "^0.17.0",
+    "@stomp/stompjs": "^6.1.2",
+    "@tippyjs/react": "^4.2.5",
+    "core-js": "^3.18.3",
+    "luxon": "^1.28.0",
+    "phosphor-react": "^1.3.1",
+    "query-string": "^7.1.1",
+    "react": "^17.0.1",
+    "react-datepicker": "^4.7.0",
+    "react-dom": "^17.0.1",
+    "react-paginate": "^7.1.3",
+    "react-router-dom": "^5.3.0",
+    "regenerator-runtime": "^0.13.9",
+    "sockjs-client": "^1.6.1",
+    "use-debounce": "^8.0.1"
   },
   "scripts": {
-    "postinstall": "bower install && grunt process",
-    "docs": "grunt docs"
-  }
+    "build": "NODE_ENV='production' webpack",
+    "start": "webpack serve",
+    "postinstall": "npm run build"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-react": "^7.14.5",
+    "autoprefixer": "^9.8.8",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^5.2.7",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "html-webpack-plugin": "^5.5.0",
+    "postcss": "^8.4.6",
+    "postcss-loader": "^6.2.1",
+    "postcss-nested": "^5.0.6",
+    "style-loader": "^2.0.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
+  },
+  "browserslist": "defaults"
 }

@@ -60,14 +60,14 @@ public class WebApplicationConfig implements WebMvcConfigurer
     }
 
     /**
-     * This view resolver will map view names returned from the controllers to jsp files stored in the
+     * This view resolver will map view names returned from the controllers to html files stored in the
      * configured 'prefix' url.
      */
     @Bean(name = "viewResolver")
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/view/");
-        viewResolver.setSuffix(".jsp");
+        viewResolver.setPrefix("/static/dist/");
+        viewResolver.setSuffix(".html");
         return viewResolver;
     }
 

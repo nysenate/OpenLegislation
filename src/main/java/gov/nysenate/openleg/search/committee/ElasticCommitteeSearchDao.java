@@ -40,15 +40,12 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
 
-    private static final Pattern committeeSearchIdPattern =
-            Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(\\d{4})-(.*)");
-
     @Autowired private CommitteeDataService committeeDataService;
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder<?>> sort, LimitOffset limitOffset) {
-        return search(committeeSearchIndexName, query, filter, sort, limitOffset, this::getCommitteeVersionId);
+        return search(committeeSearchIndexName, query, filter, null, null, sort, limitOffset, true, this::getCommitteeVersionId);
     }
 
     @Override
@@ -167,12 +164,12 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     }
 
     private CommitteeVersionId getCommitteeVersionId(SearchHit hit) {
-        Matcher versionIdMatcher = committeeSearchIdPattern.matcher(hit.getId());
-        if (!versionIdMatcher.find()){
-            return null;
-        }
-        return new CommitteeVersionId(Chamber.getValue(versionIdMatcher.group(1)), versionIdMatcher.group(2),
-                new SessionYear(Integer.parseInt(versionIdMatcher.group(3))),
-                LocalDateTime.parse(versionIdMatcher.group(4), DateTimeFormatter.ISO_DATE_TIME));
+        var sourceMap = hit.getSourceAsMap();
+        var chamber = Chamber.getValue((String)sourceMap.get("chamber"));
+        var name = (String) sourceMap.get("name");
+        var sessionYear = new SessionYear((int) sourceMap.get("sessionYear"));
+        var referenceDate = LocalDateTime.parse((String)sourceMap.get("referenceDate"), DateTimeFormatter.ISO_DATE_TIME);
+
+        return new CommitteeVersionId(chamber, name, sessionYear, referenceDate);
     }
 }

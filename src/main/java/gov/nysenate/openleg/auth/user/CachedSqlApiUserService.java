@@ -41,7 +41,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     protected final SqlApiUserDao apiUserDao;
     protected final SendMailService sendMailService;
 
-    private final String domainUrl;
     private long apiUserCacheSizeMb;
 
     private final EventBus eventBus;
@@ -53,7 +52,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
 
     public CachedSqlApiUserService(SqlApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
-                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl,
+                                   EventBus eventBus, Environment environment,
                                    @Value("${api_user.cache.heap.size}") long apiUserCacheSizeMb) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
@@ -63,7 +62,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         this.apiUserCacheSizeMb = apiUserCacheSizeMb;
         eventBus.register(this);
         setupCaches();
-        this.domainUrl = domainUrl;
     }
 
     @PreDestroy
@@ -115,7 +113,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up API User Cache");
-
         // Feed in all the api users from the database into the cache
         apiUserDao.getAllUsers().forEach(this::cacheApiUser);
     }
@@ -153,12 +150,15 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         newUser.setRegistrationToken(RandomStringUtils.randomAlphanumeric(32));
         newUser.setActive(true);
 
+        // Try to send the registration email before saving the user's info into the DB.
+        // If sending the email fails, the use should be able to try signing up again with the same info.
+        sendRegistrationEmail(newUser);
+
         apiUserDao.insertUser(newUser);
 
         newUser.setSubscriptions(subscriptions);
         apiUserDao.updateUser(newUser);
 
-        sendRegistrationEmail(newUser);
         return newUser;
     }
 
@@ -173,6 +173,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setEmail(email);
         apiUserDao.updateUser(user);
+        cacheApiUser(user);
     }
 
     /** {@inheritDoc} */
@@ -326,7 +327,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
                 "In order to receive your API key you must first activate your account by visiting the link below. " +
                 "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
                 "Activate your account here:\n" +
-                "${" + domainPlaceholder + "}/register/token/${" + tokenPlaceholder + "}";
+                "${" + domainPlaceholder + "}/register/${" + tokenPlaceholder + "}";
         final ImmutableMap<String, String> subMap = ImmutableMap.of(
                 userPlaceholder, user.getName(),
                 domainPlaceholder, environment.getUrl(),

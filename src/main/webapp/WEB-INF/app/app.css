@@ -1,0 +1,205 @@
+/* Import tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+
+}
+
+/* Custom css classes */
+@layer components {
+
+    .link {
+        @apply text-blue-600 border-blue-600 border-solid border-b-1 cursor-pointer;
+    }
+
+    .h1 {
+        @apply text-gray-700 text-4xl md:text-6xl lg:text-7xl;
+    }
+
+    .h2 {
+        @apply text-gray-700 text-2xl lg:text-3xl;
+    }
+
+    .h3 {
+        @apply text-gray-700 text-xl lg:text-2xl;
+    }
+
+    .h4 {
+        @apply text-gray-700 text-lg lg:text-xl;
+    }
+
+    .h5 {
+        @apply text-gray-700 text-sm lg:text-base font-semibold;
+    }
+
+    .text {
+        @apply text-sm lg:text-base text-gray-700;
+    }
+
+    .text--large {
+        @apply text-base lg:text-lg;
+    }
+
+    .text--small {
+        @apply text-xs lg:text-sm font-light;
+    }
+
+    .text--error {
+        @apply text-red-600 font-semibold;
+    }
+
+    .tooltip {
+        @apply bg-gray-500 rounded-lg
+    }
+
+    .tooltip__text {
+        @apply text-xs lg:text-sm text-white
+    }
+
+    .btn {
+        @apply py-1 px-2 shadow-md text-base font-medium cursor-pointer text-center rounded
+        transform active:translate-y-0.5 outline-none transition-colors
+        disabled:shadow-none disabled:cursor-default;
+    }
+
+    .btn--primary {
+        @apply text-white bg-blue-700 border-0 hover:bg-blue-500 focus:bg-blue-500
+        disabled:opacity-70 disabled:bg-blue-700;
+    }
+
+    .btn--secondary {
+        @apply text-white bg-gray-450 border-0 hover:bg-gray-400 focus:bg-gray-400
+        disabled:opacity-50 disabled:bg-gray-450;
+    }
+
+    .btn--danger {
+        @apply text-white bg-red-600 border-0 hover:bg-red-400 focus:bg-red-400;
+    }
+
+    .input {
+        @apply bg-gray-100 rounded p-1 h-8 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400 placeholder-gray-500 placeholder-opacity-60;
+    }
+
+    .textarea {
+        @apply bg-gray-100 rounded p-1 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400 placeholder-gray-500 placeholder-opacity-60;
+    }
+
+    .select {
+        @apply bg-gray-100 h-8 rounded p-1 outline-none border-solid border-1 border-transparent
+        focus:border-blue-400;
+    }
+
+    .date-picker {
+        @apply input;
+
+        div {
+            @apply items-center border-0;
+        }
+    }
+
+    .label {
+        @apply font-light;
+    }
+
+    .label--top {
+        @apply block leading-7;
+    }
+
+    .table {
+        thead {
+            @apply border-b-1 border-gray-400;
+        }
+
+        th {
+            @apply font-semibold px-3 text-left;
+        }
+
+        td {
+            @apply px-3 py-1;
+        }
+    }
+
+    .table--stripe {
+        tr:nth-child(even) {
+            @apply bg-gray-100;
+        }
+    }
+
+    .highlight {
+        em {
+            background-color: #fff6b4;
+        }
+    }
+
+    .card {
+        @apply p-3 bg-white rounded shadow-lg border;
+    }
+
+    .card__title {
+        @apply h5 border-b-1 border-gray-200;
+    }
+
+    .page-mask {
+        @apply bg-black opacity-50 top-16 left-0 right-0 bottom-0 fixed z-10;
+    }
+
+    .error-page {
+        @apply bg-blue-700 inset-0 fixed z-20 text-white;
+    }
+
+    .list {
+        li {
+            @apply m-1;
+        }
+    }
+
+    .spotcheck-diff-modal {
+        > [data-reach-dialog-content] {
+           @apply w-11/12;
+        }
+    }
+}
+
+/*
+ * Other styles
+ * Only put styles here if its very inconvenient or impossible to describe them with @apply like above.
+*/
+
+.loading-indicator {
+    width: 100%;
+    height: 0.35rem;
+    overflow: hidden;
+    background-color: #c4e7f8;
+
+    div {
+        background-color: #1F77A1;
+        width: 25%;
+        height: 100%;
+        margin-top: 0;
+        margin-left: -25%;
+        animation: bounce_loadingProgress 1.5s infinite ease-in-out both;
+    }
+}
+
+@keyframes bounce_loadingProgress {
+    0% {
+        margin-left: -25%;
+    }
+    50% {
+        margin-left: 100%;
+    }
+}
+
+@-webkit-keyframes bounce_loadingProgress {
+    0% {
+        margin-left: -25%;
+    }
+    50% {
+        margin-left: 100%;
+    }
+}
