@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class SqlHearingDaoIT extends BaseTests {
-    private static final String DIRECTORY = "src/test/resources/hearing_transcripts/";
+    private static final String DIRECTORY = "src/test/resources/hearingTranscripts/";
 
     @Autowired
     private HearingFileDao hearingFileDao;

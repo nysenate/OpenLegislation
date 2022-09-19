@@ -35,7 +35,7 @@ public class HearingProcessServiceTest extends AbstractProcessServiceTest {
 
     @Override
     protected String getName() {
-        return "hearing_transcripts";
+        return "hearingTranscripts";
     }
 
     @Override

@@ -16,7 +16,7 @@ public final class HearingTestHelper {
     public static Hearing getHearingFromFilename(String filename) {
         String fullText = "";
         try {
-            File file = TestUtils.openTestResource("hearing_transcripts/" + filename);
+            File file = TestUtils.openTestResource("hearingTranscripts/" + filename);
             fullText = Files.readString(file.toPath());
         }
         catch (URISyntaxException | IOException e) {
