@@ -179,7 +179,7 @@ public class SpotcheckReportDaoIT extends BaseTests {
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>(reportId);
 
         List<BaseBillId> baseBillIds = new ArrayList<>();
-        for (int i = 0; i < 400; i++) {
+        for (int i = 2; i < 400; i++) {
             String house = i % 2 == 0 ? "S" : "A";
             String printNo = house + i / 2;
             BaseBillId baseBillId = new BaseBillId(printNo, session);
