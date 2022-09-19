@@ -2,7 +2,6 @@ package gov.nysenate.openleg.api.admin;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.CacheStatsView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;

@@ -60,16 +60,6 @@ public class CalendarSupplemental extends BaseLegislativeContent
         }
     }
 
-    /**
-     * Retrieves a list of CalendarSupplementalEntry of the given sectionType.
-     *
-     * @param sectionType CalendarSectionType
-     * @return List<CalendarSupplementalEntry>
-     */
-    public List<CalendarSupplementalEntry> getEntriesBySection(CalendarSectionType sectionType) {
-        return this.sectionEntries.get(sectionType);
-    }
-
     /** --- Overrides --- */
 
     @Override
@@ -135,9 +125,5 @@ public class CalendarSupplemental extends BaseLegislativeContent
 
     public LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> getSectionEntries() {
         return sectionEntries;
-    }
-
-    public void setSectionEntries(LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> sectionEntries) {
-        this.sectionEntries = sectionEntries;
     }
 }

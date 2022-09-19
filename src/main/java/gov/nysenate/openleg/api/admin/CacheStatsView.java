@@ -1,5 +1,6 @@
-package gov.nysenate.openleg.api;
+package gov.nysenate.openleg.api.admin;
 
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import org.ehcache.core.statistics.CacheStatistics;

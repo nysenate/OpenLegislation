@@ -263,7 +263,7 @@ public class BillId implements Serializable, Comparable<BillId>
             throw new IllegalArgumentException("PrintNo when constructing BillId cannot be null/empty.");
         }
         // Remove all non-alphanumeric characters from the printNo.
-        printNo = printNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
+        printNo = printNo.trim().toUpperCase().replaceAll("[^\\dA-Z]", "");
         // Check that printNo matches the pattern
         if (!PRINT_NUMBER_PATTERN.matcher(printNo).matches()) {
             throw new IllegalArgumentException(

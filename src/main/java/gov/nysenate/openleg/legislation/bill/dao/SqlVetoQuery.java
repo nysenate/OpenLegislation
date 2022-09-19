@@ -3,8 +3,7 @@ package gov.nysenate.openleg.legislation.bill.dao;
 import gov.nysenate.openleg.common.dao.BasicSqlQuery;
 import gov.nysenate.openleg.common.dao.SqlTable;
 
-public enum SqlVetoQuery implements BasicSqlQuery
-{
+public enum SqlVetoQuery implements BasicSqlQuery {
     SELECT_VETO_MESSAGE_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
         "WHERE veto_number = :vetoNumber AND year = :year"
@@ -35,10 +34,9 @@ public enum SqlVetoQuery implements BasicSqlQuery
     DELETE_BILL_VETOES(
         "DELETE FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
         "WHERE bill_print_no = :printNum AND bill_session_year = :sessionYear"
-    )
-    ;
+    );
 
-    private String sql;
+    private final String sql;
 
     SqlVetoQuery(String sql) {
         this.sql = sql;

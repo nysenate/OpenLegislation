@@ -178,19 +178,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
         // Update the publish statuses of the amendments
         updateBillAmendPublishStatus(bill, legDataFragment, billParams);
-        // Update the sponsor
         updateBillSponsor(bill, legDataFragment, billParams);
-        // Update the milestones
         updateBillMilestones(bill, legDataFragment, billParams);
         // Determine which actions need to be inserted/deleted. Individual actions are never updated.
         updateActions(bill, legDataFragment, billParams);
         // Determine if the previous versions have changed and insert accordingly.
         updatePreviousBillVersion(bill, legDataFragment, billParams);
-        // Update associated committees
         updateBillCommittees(bill, legDataFragment, billParams);
-        // Update veto messages
         updateVetoMessages(bill, legDataFragment);
-        // Update approval message
         updateApprovalMessage(bill, legDataFragment);
     }
 

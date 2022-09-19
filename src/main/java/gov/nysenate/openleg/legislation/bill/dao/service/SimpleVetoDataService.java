@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.legislation.bill.dao.service;
 
-import gov.nysenate.openleg.legislation.bill.dao.VetoDao;
-import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.VetoId;
 import gov.nysenate.openleg.legislation.bill.VetoMessage;
+import gov.nysenate.openleg.legislation.bill.dao.VetoDao;
+import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,17 +13,18 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class SimpleVetoDataService implements VetoDataService
-{
-    private static final Logger logger = LoggerFactory.getLogger(SimpleVetoDataService.class);
+public class SimpleVetoDataService implements VetoDataService {
+    private final VetoDao vetoDao;
 
     @Autowired
-    private VetoDao vetoDao;
+    public SimpleVetoDataService(VetoDao vetoDao) {
+        this.vetoDao = vetoDao;
+    }
 
     /** {@inheritDoc} */
     @Override
     public VetoMessage getVetoMessage(VetoId vetoId) throws VetoNotFoundException {
-        if (vetoId==null) {
+        if (vetoId == null) {
             throw new IllegalArgumentException("vetoId cannot be null!");
         }
         try {

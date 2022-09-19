@@ -15,11 +15,11 @@ public enum AgendaVoteAction
     RESTORED_TO_THIRD("R3"),
     SPECIAL("S");
 
-    private static Map<String, AgendaVoteAction> codeMap =
+    private static final Map<String, AgendaVoteAction> codeMap =
         Maps.uniqueIndex(Arrays.asList(values()), AgendaVoteAction::getCode);
 
     /** Code referenced by the sobi files. */
-    private String code;
+    private final String code;
 
     AgendaVoteAction(String code) {
         this.code = code;

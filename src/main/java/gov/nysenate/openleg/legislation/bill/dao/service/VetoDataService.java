@@ -1,15 +1,14 @@
 package gov.nysenate.openleg.legislation.bill.dao.service;
 
-import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.VetoId;
 import gov.nysenate.openleg.legislation.bill.VetoMessage;
+import gov.nysenate.openleg.legislation.bill.exception.VetoNotFoundException;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 
 import java.util.Map;
 
-public interface VetoDataService
-{
+public interface VetoDataService {
     /**
      * Get a specific veto via its veto number
      *

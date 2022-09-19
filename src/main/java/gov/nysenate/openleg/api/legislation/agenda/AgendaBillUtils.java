@@ -41,7 +41,7 @@ public class AgendaBillUtils {
             return infoAddendum.getCommitteeInfoMap().values();
         }
         var comm = infoAddendum.getCommittee(id);
-        return comm == null ? List.of() : List.of(infoAddendum.getCommittee(id));
+        return comm == null ? List.of() : List.of(comm);
     }
 
     private AgendaBillInfo getAgendaBillInfo(AgendaInfoCommitteeItem item) {

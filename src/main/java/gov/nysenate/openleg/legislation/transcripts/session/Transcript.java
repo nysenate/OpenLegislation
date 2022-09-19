@@ -10,8 +10,7 @@ import java.util.Objects;
  */
 public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
-    private final String location, text;
-    private String filename;
+    private final String location, text, filename;
 
     /** --- Constructors --- */
 
@@ -45,10 +44,6 @@ public class Transcript extends BaseLegislativeContent {
 
     public String getFilename() {
         return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
     }
 
     @Override

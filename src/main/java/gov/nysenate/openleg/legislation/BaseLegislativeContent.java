@@ -26,6 +26,7 @@ public abstract class BaseLegislativeContent {
     public BaseLegislativeContent() {}
 
     protected BaseLegislativeContent(int year) {
+        this.year = year;
         this.session = new SessionYear(year);
     }
 
