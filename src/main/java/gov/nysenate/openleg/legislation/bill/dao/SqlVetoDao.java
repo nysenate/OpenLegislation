@@ -26,8 +26,7 @@ import java.util.Map;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
 @Repository
-public class SqlVetoDao extends SqlBaseDao implements VetoDao
-{
+public class SqlVetoDao extends SqlBaseDao implements VetoDao {
     public static final Logger logger = LoggerFactory.getLogger(SqlVetoDao.class);
 
     /** @inheritDoc */
@@ -74,8 +73,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         jdbcNamed.update(SqlVetoQuery.DELETE_BILL_VETOES.getSql(schema()), params);
     }
 
-    private class VetoRowMapper implements RowMapper<VetoMessage>
-    {
+    private static class VetoRowMapper implements RowMapper<VetoMessage> {
         @Override
         public VetoMessage mapRow(ResultSet rs, int rowNum) throws SQLException {
             VetoMessage vetoMessage = new VetoMessage();
@@ -96,14 +94,13 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         }
     }
 
-    private MapSqlParameterSource getVetoIdParams(VetoId vetoId){
+    private static MapSqlParameterSource getVetoIdParams(VetoId vetoId){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("vetoNumber", vetoId.getVetoNumber());
-        params.addValue("year", vetoId.getYear());
-        return params;
+        return params.addValue("year", vetoId.getYear());
     }
 
-    private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, LegDataFragment legDataFragment){
+    private static MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getVetoIdParams(vetoMessage.getVetoId());
         params.addValue("printNum", vetoMessage.getBillId().getBasePrintNo());
         params.addValue("sessionYear", vetoMessage.getSession().year());
@@ -120,10 +117,9 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         return params;
     }
 
-    private MapSqlParameterSource getBaseBillIdParams(BaseBillId baseBillId){
+    private static MapSqlParameterSource getBaseBillIdParams(BaseBillId baseBillId){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNum", baseBillId.getBasePrintNo());
-        params.addValue("sessionYear", baseBillId.getSession().year());
-        return params;
+        return params.addValue("sessionYear", baseBillId.getSession().year());
     }
 }

@@ -13,8 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Just the essentials for displaying a Bill in a search result for example.
  */
-public class BillInfoView extends SimpleBillInfoView implements ViewObject
-{
+public class BillInfoView extends SimpleBillInfoView implements ViewObject {
     protected String summary;
     protected boolean signed;
     protected boolean adopted;

@@ -14,7 +14,7 @@ import java.util.Map;
 @Service
 public abstract class CachingService<Key, Value> {
     private static final int FOR_ROUNDING = 20;
-
+    // Note: these are better left as field injections, to simplify the sublasses' constructors.
     @Autowired
     private Environment environment;
     @Autowired
