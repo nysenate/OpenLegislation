@@ -49,7 +49,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
      *                          offset - Start results from offset (default 1)
      */
     @RequestMapping(value = "/search")
-    public BaseResponse searchCalendars(@RequestParam(required = true) String term,
+    public BaseResponse searchCalendars(@RequestParam String term,
                                         @RequestParam(defaultValue = "") String sort,
                                         @RequestParam(defaultValue = "false") boolean detail,
                                         WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
@@ -70,7 +70,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
      */
     @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse searchCalendarsOfYear(@PathVariable Integer year,
-                                              @RequestParam(required = true) String term,
+                                              @RequestParam String term,
                                               @RequestParam(defaultValue = "") String sort,
                                               @RequestParam(defaultValue = "false") boolean detail,
                                       WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
@@ -101,9 +101,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
     private BaseResponse getCalendarSearchResultResponse(SearchResults<CalendarId> results, boolean detail) {
         return ListViewResponse.of(
                 results.resultList().stream()
-                        .map(result -> new SearchResultView((detail)
-                                ? calendarViewFactory.getCalendarView(
-                                calendarDataService.getCalendar(result.result()))
+                        .map(result -> new SearchResultView(detail ? calendarViewFactory.getCalendarView(calendarDataService.getCalendar(result.result()))
                                 : new SimpleCalendarView(calendarDataService.getCalendar(result.result())),
                                 result.rank())).toList(),
                 results.totalResults(), results.limitOffset() );

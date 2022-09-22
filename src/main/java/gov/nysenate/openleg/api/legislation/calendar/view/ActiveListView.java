@@ -2,20 +2,24 @@ package gov.nysenate.openleg.api.legislation.calendar.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.api.ListView;
+import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.BillInfo;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.calendar.CalendarActiveList;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 
-public class ActiveListView extends SimpleActiveListView implements CalendarEntryList
-{
+import java.util.Comparator;
+import java.util.Map;
+
+public class ActiveListView extends SimpleActiveListView implements CalendarEntryList {
     private ListView<CalendarEntryView> entries;
 
-    public ActiveListView(CalendarActiveList activeList, BillDataService billDataService) {
+    public ActiveListView(CalendarActiveList activeList, Map<BillId, BillInfo> infoMap) {
         super(activeList);
         this.entries = ListView.of(
                 activeList.getEntries().stream()
-                        .map(entry -> new CalendarEntryView(entry, billDataService))
-                        .sorted(CalendarEntryView.calEntryViewComparator)
+                        .map(entry -> new CalendarEntryView(entry, infoMap.get(entry.getBillId())))
+                        .sorted(Comparator.comparingInt(CalendarEntryView::getBillCalNo))
                         .toList()
         );
     }

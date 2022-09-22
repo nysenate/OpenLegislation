@@ -57,9 +57,7 @@ public class CalendarGetCtrl extends BaseCtrl {
                 calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
                         .map(full ? calendarViewFactory::getCalendarView : SimpleCalendarView::new)
                         .toList(),
-                calendarDataService.getCalendarCount(year),
-                limitOffset
-        );
+                calendarDataService.getCalendarCount(year), limitOffset);
     }
 
     /**

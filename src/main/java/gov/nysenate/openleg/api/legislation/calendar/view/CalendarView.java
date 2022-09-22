@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api.legislation.calendar.view;
 
 import gov.nysenate.openleg.api.MapView;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.BillInfo;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -18,28 +18,25 @@ public class CalendarView extends CalendarIdView {
     protected MapView<Integer, ActiveListView> activeLists;
     protected LocalDate calDate;
 
-    public CalendarView(Calendar calendar, BillDataService billDataService) {
+    public CalendarView(Calendar calendar, Map<BillId, BillInfo> infoMap) {
         super(calendar.getId());
-        if (calendar.getSupplemental(Version.ORIGINAL) != null) {
-            this.floorCalendar = new CalendarSupView(calendar.getSupplemental(Version.ORIGINAL), billDataService);
-        }
-        this.supplementalCalendars = MapView.of((Map<String, CalendarSupView>)
-                calendar.getSupplementalMap().values().stream()
-                        .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
-                        .map(calSup -> new CalendarSupView(calSup, billDataService))
+        var calendars = calendar.getSupplementalMap().values().stream()
+                        .map(calSup -> new CalendarSupView(calSup, infoMap))
                         .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, Function.identity(),
-                                (a, b) -> b, TreeMap::new))
-        );
-        this.activeLists = MapView.of((Map<Integer, ActiveListView>)
+                                (a, b) -> b, TreeMap::new));
+        this.floorCalendar = calendars.remove("floor");
+        this.supplementalCalendars = MapView.of(calendars);
+
+        this.activeLists = MapView.of(
                 calendar.getActiveListMap().values().stream()
-                        .map(activeList -> new ActiveListView(activeList, billDataService))
+                        .map(activeList -> new ActiveListView(activeList, infoMap))
                         .collect(Collectors.toMap(ActiveListView::getSequenceNumber, Function.identity(),
                                 (a, b) -> b, TreeMap::new))
         );
         calDate = calendar.getCalDate();
     }
 
-    //Added for Json deserialization
+    // Added for Json deserialization
     protected CalendarView() {}
 
     public CalendarSupView getFloorCalendar() {

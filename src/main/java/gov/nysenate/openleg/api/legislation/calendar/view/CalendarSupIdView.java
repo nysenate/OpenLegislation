@@ -6,7 +6,6 @@ import gov.nysenate.openleg.legislation.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 
 public class CalendarSupIdView extends CalendarIdView {
-
     protected String version;
 
     public CalendarSupIdView(CalendarSupplementalId calendarSupplementalId) {
@@ -18,8 +17,7 @@ public class CalendarSupIdView extends CalendarIdView {
     }
 
     //Added for Json deserialization
-    protected CalendarSupIdView() {
-    }
+    protected CalendarSupIdView() {}
 
     public String getVersion() {
         return version;
