@@ -11,7 +11,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -112,8 +114,8 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
 
     /** {@inheritDoc} */
     @Override
-    public Set<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange) {
-        return new HashSet<>(lawDataDao.getRepealedLaws(dateRange));
+    public List<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange) {
+        return lawDataDao.getRepealedLaws(dateRange);
     }
 
     /** {@inheritDoc} */

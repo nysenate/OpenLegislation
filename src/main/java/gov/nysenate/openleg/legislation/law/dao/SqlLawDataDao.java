@@ -6,8 +6,6 @@ import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.processors.law.LawProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +25,7 @@ import java.util.Map;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
 @Repository
-public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
-{
-    private static final Logger logger = LoggerFactory.getLogger(SqlLawDataDao.class);
-
+public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
     /** {@inheritDoc} */
     @Override
     public LawInfo getLawInfo(String lawId) throws DataAccessException {
@@ -63,7 +59,6 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         return lawTree;
     }
 
-
     @Override
     public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
@@ -71,7 +66,12 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
                 .addValue("endDateTime", toDate(dateRange.upperEndpoint())));
 
         final String sql = SqlLawDataQuery.SELECT_REPEALED_LAWS.getSql(schema());
-        return jdbcNamed.query(sql, params, repealedLawDocIdRowMapper);
+        // We only want the results with the maximum publish date.
+        var docIdMap = new MaxValueMap<String, RepealedLawDocId>(Comparator.comparing(
+                RepealedLawDocId::getPublishedDate));
+        jdbcNamed.query(sql, params, repealedLawDocIdRowMapper)
+                .forEach(id -> docIdMap.put(id.getDocumentId(), id));
+        return docIdMap.values();
     }
 
     /** {@inheritDoc} */
@@ -126,8 +126,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs a LawTree from the result set.
      */
-    protected static class LawTreeRowCallbackHandler implements RowCallbackHandler
-    {
+    private static class LawTreeRowCallbackHandler implements RowCallbackHandler {
         private LinkedHashMap<String, LawTreeNode> treeNodeMap = new LinkedHashMap<>();
         private LawInfo info;
         private LawTreeNode root = null;
@@ -179,16 +178,15 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs LawDocId from result set.
      */
-    protected static RowMapper<RepealedLawDocId> repealedLawDocIdRowMapper = (rs, rowNum) ->
-            new RepealedLawDocId(new LawDocId(
-                    rs.getString("document_id"),
-                    getLocalDateFromRs(rs, "published_date")
-            ), getLocalDateFromRs(rs, "repealed_date"));
+    private static final RowMapper<RepealedLawDocId> repealedLawDocIdRowMapper = (rs, rowNum) ->
+            new RepealedLawDocId(rs.getString("document_id"),
+                    getLocalDateFromRs(rs, "published_date"),
+                    getLocalDateFromRs(rs, "repealed_date"));
 
     /**
      * Constructs LawDocInfo from result set.
      */
-    protected static RowMapper<LawDocInfo> lawDocInfoRowMapper = (rs, rowNum) ->
+    private static final RowMapper<LawDocInfo> lawDocInfoRowMapper = (rs, rowNum) ->
         new LawDocInfo(
                 rs.getString("document_id"),
                 rs.getString("law_id"),
@@ -203,7 +201,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs a LawInfo from the result set.
      */
-    protected static RowMapper<LawInfo> lawInfoRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<LawInfo> lawInfoRowMapper = (rs, rowNum) -> {
         LawInfo lawInfo = new LawInfo();
         lawInfo.setLawId(rs.getString("law_id"));
         lawInfo.setChapterId(rs.getString("chapter_id"));
@@ -215,13 +213,13 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     /**
      * Constructs LawDocInfo from result set.
      */
-    protected static RowMapper<LawDocument> lawDocRowMapper = (rs, rowNum) ->
+    private static final RowMapper<LawDocument> lawDocRowMapper = (rs, rowNum) ->
         new LawDocument(lawDocInfoRowMapper.mapRow(rs, rowNum), rs.getString("text"));
 
 
     /** --- Param Source Methods --- */
 
-    protected MapSqlParameterSource getLawDocumentParams(LawFile lawFile, LawDocument lawDocument) {
+    private static MapSqlParameterSource getLawDocumentParams(LawFile lawFile, LawDocument lawDocument) {
         return new MapSqlParameterSource()
                 .addValue("documentId", lawDocument.getDocumentId())
                 .addValue("publishedDate", toDate(lawDocument.getPublishedDate()))
@@ -235,7 +233,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
                 .addValue("lawFileName", (lawFile != null) ? lawFile.getFileName() : null);
     }
 
-    protected MapSqlParameterSource getLawInfoParams(LawInfo lawInfo) {
+    private static MapSqlParameterSource getLawInfoParams(LawInfo lawInfo) {
         return new MapSqlParameterSource()
             .addValue("lawId", lawInfo.getLawId())
             .addValue("chapterId", lawInfo.getChapterId())
@@ -243,13 +241,13 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
             .addValue("name", lawInfo.getName());
     }
 
-    protected MapSqlParameterSource getLawTreeParams(LawTree lawTree) {
+    private static MapSqlParameterSource getLawTreeParams(LawTree lawTree) {
         return new MapSqlParameterSource()
             .addValue("lawId", lawTree.getLawId())
             .addValue("publishedDate", toDate(lawTree.getPublishedDate()));
     }
 
-    protected MapSqlParameterSource getLawTreeNodeParams(LawFile lawFile, LawTree lawTree, LawTreeNode lawTreeNode) {
+    private static MapSqlParameterSource getLawTreeNodeParams(LawFile lawFile, LawTree lawTree, LawTreeNode lawTreeNode) {
         return getLawTreeParams(lawTree)
             .addValue("docId", lawTreeNode.getDocumentId())
             .addValue("docPublishedDate", toDate(lawTreeNode.getPublishDate()))

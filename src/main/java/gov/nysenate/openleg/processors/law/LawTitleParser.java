@@ -111,7 +111,7 @@ public final class LawTitleParser {
             sectionMatcher = sectionPattern(docInfo.getLawId(), DUMMY_ID).matcher(text);
             if (sectionMatcher.matches()) {
                 title = sectionMatcher.group("title");
-                logger.warn("Title was able to be guessed.");
+                logger.warn("Title was guessed.");
             }
             else
                 logger.warn("Unable to guess section title.");

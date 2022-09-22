@@ -5,8 +5,8 @@ import java.time.LocalDate;
 public class RepealedLawDocId extends LawDocId {
     private final LocalDate repealedDate;
 
-    public RepealedLawDocId(LawDocId other, LocalDate repealedDate) {
-        super(other);
+    public RepealedLawDocId(String docId, LocalDate publishedDate, LocalDate repealedDate) {
+        super(docId, publishedDate);
         this.repealedDate = repealedDate;
     }
 
