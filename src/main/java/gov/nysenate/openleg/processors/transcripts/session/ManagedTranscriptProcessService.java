@@ -81,7 +81,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
-                processed.put(file, TranscriptParser.process(file));
+                processed.put(file, TranscriptParser.parse(file));
                 file.markAsProcessed();
                 transcriptFileDao.updateFile(file);
                 processCount++;

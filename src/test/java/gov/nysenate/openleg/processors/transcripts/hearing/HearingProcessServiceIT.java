@@ -21,8 +21,7 @@ import static gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostTy
 import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
-public class HearingProcessServiceTest extends AbstractProcessServiceTest {
-
+public class HearingProcessServiceIT extends AbstractProcessServiceTest {
     @Autowired
     private HearingProcessService processService;
     @Autowired
@@ -34,7 +33,12 @@ public class HearingProcessServiceTest extends AbstractProcessServiceTest {
     }
 
     @Override
-    protected String getName() {
+    protected String processDirName() {
+        return "hearing_transcripts";
+    }
+
+    @Override
+    protected String testFileLocation() {
         return "hearingTranscripts";
     }
 

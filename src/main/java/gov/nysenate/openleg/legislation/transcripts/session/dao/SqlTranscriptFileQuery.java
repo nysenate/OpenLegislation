@@ -13,7 +13,7 @@ public enum SqlTranscriptFileQuery implements BasicSqlQuery {
         "INSERT INTO ${schema}." + TRANSCRIPT_FILE + "\n" +
         "(file_name, processed_date_time, processed_count, " +
         "pending_processing, archived)" + "\n" +
-        "VALUES (:fileName, :processedDateTime, :processedCount, " +
+        "VALUES (:filename, :processedDateTime, :processedCount, " +
         ":pendingProcessing, :archived)"
     ),
     UPDATE_TRANSCRIPT_FILE (
@@ -22,7 +22,7 @@ public enum SqlTranscriptFileQuery implements BasicSqlQuery {
         "    processed_count = :processedCount," +
         "    pending_processing = :pendingProcessing," +
         "    archived = :archived" + "\n" +
-        "WHERE file_name = :fileName"
+        "WHERE file_name = :filename"
     );
 
     private final String sql;

@@ -51,6 +51,6 @@ public class TranscriptParserTest {
     }
 
     private static Transcript processFilename(String filename) throws IOException {
-        return TranscriptParser.process(new TranscriptFile(new File(TEST_DIR + filename)));
+        return TranscriptParser.parse(new TranscriptFile(new File(TEST_DIR + filename)));
     }
 }

@@ -20,13 +20,14 @@ import java.util.Scanner;
 
 final class TranscriptParser {
     private static final Charset CP_1252 = Charsets.toCharset("CP1252");
+    // The maximum number of lines of relevant data.
     private static final int MAX_DATA_LENGTH = 4;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h[:][ ]mm a");
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
     private TranscriptParser() {}
 
-    static Transcript process(TranscriptFile transcriptFile) throws IOException {
+    static Transcript parse(TranscriptFile transcriptFile) throws IOException {
         var scanner = new Scanner(transcriptFile.getFile(), CP_1252);
         List<String> data = new ArrayList<>(MAX_DATA_LENGTH);
         String location = null;
@@ -37,6 +38,7 @@ final class TranscriptParser {
                 data.add(line);
             }
             String temp = line.replaceAll("\\s+", " ");
+            // Relevant data appears after the location label.
             if (temp.matches(("(?i)ALBANY[ ,]*NEW YORK"))) {
                 location = temp;
             }
@@ -47,10 +49,10 @@ final class TranscriptParser {
             String tempTime = data.get(1).replace(".", "").replace("Noon", "pm").toUpperCase();
             String sessionType = data.get(2).replaceFirst("EXTRA ORDINARY", "EXTRAORDINARY")
                     .replaceAll("\\s+", " ");
-            String transcriptText = Files.readString(transcriptFile.getFile().toPath(), CP_1252);
             LocalDate date = LocalDate.parse(tempDate, DATE_FORMATTER);
             LocalTime time = LocalTime.parse(tempTime, TIME_FORMATTER);
             TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), sessionType);
+            String transcriptText = Files.readString(transcriptFile.getFile().toPath(), CP_1252);
             return new Transcript(transcriptId, transcriptFile.getFileName(), location, transcriptText);
         }
         catch (RuntimeException ex) {

@@ -86,13 +86,11 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
     }
 
     private MapSqlParameterSource getTranscriptFileParams(T transcriptFile) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue(isHearing() ? "filename" : "fileName", transcriptFile.getFileName());
-        params.addValue("processedDateTime", toDate(transcriptFile.getProcessedDateTime()));
-        params.addValue("processedCount", transcriptFile.getProcessedCount());
-        params.addValue("pendingProcessing", transcriptFile.isPendingProcessing());
-        params.addValue("archived", transcriptFile.isArchived());
-        return params;
+        return new MapSqlParameterSource().addValue("filename", transcriptFile.getFileName())
+                .addValue("processedDateTime", toDate(transcriptFile.getProcessedDateTime()))
+                .addValue("processedCount", transcriptFile.getProcessedCount())
+                .addValue("pendingProcessing", transcriptFile.isPendingProcessing())
+                .addValue("archived", transcriptFile.isArchived());
     }
 
     private final class TranscriptFileRowMapper implements RowMapper<T> {

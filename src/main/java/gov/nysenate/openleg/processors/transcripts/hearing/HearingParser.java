@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class HearingParser {
+final class HearingParser {
     private static final Charset CP_1252 = Charsets.toCharset("CP1252");
     private static final String LINE_NUM = "^\\s*\\d{0,2}(\\s+|$)";
     private static final Pattern VIRTUAL_HEARING = Pattern.compile("(VIRTUAL|ONLINE).+HEARING");
@@ -25,7 +25,7 @@ public final class HearingParser {
      * @param hearingFile The file to pull data from.
      * @throws IOException Thrown if the file could not be read from.
      */
-    public static Hearing process(HearingFile hearingFile) throws IOException {
+    static Hearing process(HearingFile hearingFile) throws IOException {
         String fullText = Files.readString(hearingFile.getFile().toPath(), CP_1252);
         return getHearingFromText(hearingFile.getFileName(), fullText);
     }
