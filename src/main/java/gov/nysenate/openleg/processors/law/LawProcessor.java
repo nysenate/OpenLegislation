@@ -39,7 +39,7 @@ public class LawProcessor extends AbstractDataProcessor
 
     /** Pattern for law doc headers.  */
     private static final Pattern lawHeader =
-        Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
+        Pattern.compile("\\.{1,2}SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
 
     @Autowired private LawDataService lawDataService;
 
