@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# xferdata.sh - Pull data from the senwww FTP server, and transfer it to
-#               the open and open-beta servers.
+# xferdata.sh - Pull data from the LBDC FTP server, and transfer it to
+#               the production and development OpenLegislation servers.
 #
 # Project: OpenLegislation
 # Author: Ken Zalewski
@@ -16,6 +16,7 @@
 # Revised: 2016-07-05 - removed SSH key file, since it's no longer used
 # Revised: 2017-08-10 - re-enabled multiple targets
 # Revised: 2017-10-18 - added transfer of XML files and control over file types
+# Revised: 2022-10-24 - LAW files are now transferred from LBDC (same as XMLs)
 #
 
 prog=`basename $0`
@@ -59,6 +60,8 @@ ftp_prot=ftp
 ftp_host=
 ftp_user=
 ftp_pass=
+ftp_xml_dir=xml_files
+ftp_law_dir=law_files
 inc_data_dir=
 arc_data_dir=
 opt_inc_data_dir=
@@ -73,8 +76,16 @@ remote_only=0
 scp_opt=
 
 # There are five types of files that can be transferred:
-# XML, SOBI, NYSLAW, session transcripts, and public hearing transcripts
-declare -A xfer_filetypes=([xml]= [sobi]= [law]= [sess]= [hear]=)
+#   XML, SOBI, NYSLAW, session transcripts, and public hearing transcripts
+# XML, NYSLAW, and the now-deprecated SOBI files are transferred by this
+# script from LBDC to the OpenLegislation transfer server (which is typically
+# the same server on which this script is running).
+# Transcripts (both public hearing and session) are transferred to the
+# OL transfer server by STS staff, after receiving them from the Senate
+# stenographer.
+# Remove SOBI files from the list, as they are no longer sent by LBDC.
+#declare -A xfer_filetypes=([xml]= [sobi]= [law]= [sess]= [hear]=)
+declare -A xfer_filetypes=([xml]= [law]= [sess]= [hear]=)
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -153,17 +164,20 @@ elif [ "$inc_data_dir" = "$arc_data_dir" ]; then
   exit 1
 fi
 
-# Files are transferred through three locations:  incoming, archive, and
-# target.  Incoming is the location where files are FTP'd by LBDC to us (SOBI
-# and law files), or FTP'd by us from LBDC (XML files), or FTP'd by Maria to
-# us (hearing and session transcripts).
-# Archive is where they are placed after being processed by this script.
-# Target is the one or more locations (either local or remote) where files
-# are copied for further processing by OpenLegislation.
+# Files are transferred through three locations: incoming, archive, and target.
+# Incoming - The location where files are transferred by this script from
+#            LBDC (eg. XML, NYSLAW) or where files are deposited by STS
+#            staff (eg. session/hearing transcripts)
+# Archive - The location where these files are placed after being processed
+#           by this script.
+# Target - The location(s) (either local or remote) where files are copied
+#          for further processing by OpenLegislation.
 
 declare -A inc_dirs=([xml]=lbdc/xml [sobi]=lbdc/sobi [law]=lbdc/nyslaw [sess]=transcripts/session [hear]=transcripts/public_hearing)
 declare -A arc_dirs=([xml]=xmls [sobi]=sobis [law]=nyslaws [sess]=session_transcripts [hear]=pubhear_transcripts)
 declare -A tgt_dirs=([xml]=xmls [sobi]=sobis [law]=laws [sess]=session_transcripts [hear]=hearing_transcripts)
+
+declare -A ftp_dirs=([xml]=$ftp_xml_dir [law]=$ftp_law_dir)
 declare -A file_lists file_counts
 
 # Create the archive directory and subdirectories
@@ -177,36 +191,44 @@ cd "$inc_data_dir/" || exit 1
 
 echo "Starting data transfer at `date`"
 
-# All files are transferred by other entities (LBDC, STS) into the incoming/
-# directory except for XML files, which must be pulled from LBDC.
+# Most of the files that OpenLegislation processes are either XML files or
+# LAW files.  These files are pulled into the incoming/ directory from LBDC.
+# Some files, namely transcripts, are transferred by external users (typically
+# an STS staff member) into the incoming/ directory.
 
-if array_key_exists xfer_filetypes xml; then
-  if [ $no_remove -ne 1 ]; then
-    remove_text="and removing"
-    remove_opt="-E"
-  else
-    remove_text="but not deleting"
-    remove_opt=""
-  fi
+for f in ${!ftp_dirs[@]}; do
+  if array_key_exists xfer_filetypes "$f"; then
+    if [ $no_remove -ne 1 ]; then
+      remove_text="and removing"
+      remove_opt="-E"
+    else
+      remove_text="but not deleting"
+      remove_opt=""
+    fi
 
-  echo "Retrieving $remove_text latest XML data from $ftp_host"
-  lftp "$ftp_prot://$ftp_host" <<END_SCRIPT
+    echo "Retrieving $remove_text latest $f data from $ftp_host"
+    lftp "$ftp_prot://$ftp_host" <<END_SCRIPT
 user "$ftp_user" "$ftp_pass"
 cache off
-lcd $inc_data_dir/${inc_dirs[xml]}
-cd DATA
-mget $remove_opt *.XML
+lcd $inc_data_dir/${inc_dirs[$f]}
+cd ${ftp_dirs[$f]}
+mget $remove_opt *
 END_SCRIPT
-else
-  echo "Skipping the retrieval of XML files from $ftp_host"
-fi
+  else
+    echo "Skipping the retrieval of $f files from $ftp_host"
+  fi
+done
 
-if [ $keep_empty -ne 1 ]; then
-  echo "Removing empty SOBI files"
-  find ${inc_dirs[sobi]} -name "$sobi_file_glob" -size 240c | xargs -r -t rm
-else
-  echo "Keeping empty SOBI files"
-fi
+# Time to start deprecating the old SOBI file logic
+#if [ $keep_empty -ne 1 ]; then
+#  echo "Removing empty SOBI files"
+#  find ${inc_dirs[sobi]} -name "$sobi_file_glob" -size 240c | xargs -r -t rm
+#else
+#  echo "Keeping empty SOBI files"
+#fi
+
+
+# At this point, all files should be in the incoming/ file tree.
 
 for f in ${!xfer_filetypes[@]}; do
   pushd ${inc_dirs[$f]} >/dev/null
@@ -227,7 +249,7 @@ for f in ${!xfer_filetypes[@]}; do
       # The current target is a local destination
       if [ $remote_only -ne 1 ]; then
         echo "=> Copying $f files to local destination: $tgt/${tgt_dirs[$f]}"
-        echo "${file_lists[$f]}" | xargs -L1 -I{} cp -av "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+        echo "${file_lists[$f]}" | xargs -I{} cp -av "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
       else
         echo "Skipping local destination: $tgt"
       fi
@@ -235,7 +257,7 @@ for f in ${!xfer_filetypes[@]}; do
       # The current target is a remote destination
       if [ $local_only -ne 1 ]; then
         echo "=> Copying $f files to remote destination: $tgt/${tgt_dirs[$f]}"
-        echo "${file_lists[$f]}" | xargs -L1 -I{} scp $scp_opt "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+        echo "${file_lists[$f]}" | xargs -I{} scp $scp_opt "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
       else
         echo "Skipping remote destination: $tgt"
       fi
@@ -243,8 +265,9 @@ for f in ${!xfer_filetypes[@]}; do
   done
 
   echo "Moving ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${arc_dirs[$f]}"
-  echo "${file_lists[$f]}" | xargs -L1 -I{} mv -v "${inc_dirs[$f]}/{}" "$arc_data_dir/${arc_dirs[$f]}"
+  echo "${file_lists[$f]}" | xargs -I{} mv -v "${inc_dirs[$f]}/{}" "$arc_data_dir/${arc_dirs[$f]}"
 done
 
-exit 0
+echo "Finished data transfer at `date`"
 
+exit 0
