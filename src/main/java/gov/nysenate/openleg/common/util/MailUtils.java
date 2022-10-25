@@ -1,19 +1,16 @@
 package gov.nysenate.openleg.common.util;
 
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.notifications.model.Notification;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.mail.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_WARNING;
 
 /**
  * Contains methods that can be used to interact with mail servers
@@ -21,8 +18,9 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.PROCESS_
 
 @Service
 public class MailUtils {
-    @Autowired
-    private EventBus eventBus;
+
+    private static final Logger logger = LoggerFactory.getLogger(MailUtils.class);
+
     private final String storeProtocol, smtpUser, smtpPass;
     private final Properties mailProperties;
     private final Environment environment;
@@ -81,9 +79,8 @@ public class MailUtils {
         try {
             store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
         } catch (MessagingException ex) {
-            if (environment.isCheckmailEnabled() && eventBus != null) {
-                eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
-                        "Can't connect to checkMail.", ex.getMessage()));
+            if (environment.isCheckmailEnabled()) {
+                logger.info("Unable to connect to email account: " + environment.getEmailHost(), ex);
             }
         }
 
