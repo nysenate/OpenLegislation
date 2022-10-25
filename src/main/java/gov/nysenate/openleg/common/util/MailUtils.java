@@ -70,25 +70,27 @@ public class MailUtils {
     }
 
     /**
-     * Creates a new Store and new Folders. Ensures we can reconnect if the connection fails.
+     * Connects to the email store and folders when necessary, otherwise, it will reuse the existing connection.
      */
     public void createCheckMailConnection() throws MessagingException {
-        if (this.store != null)
-            store.close();
-        store = null;
+        if (this.store != null && this.store.isConnected()) {
+            // Current store is still valid, we can continue to use it.
+            return;
+        }
+        // Connection to the store has been lost, re-establish it.
         try {
             store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
+            this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
+            this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
+            if (sourceFolder != null)
+                sourceFolder.open(Folder.READ_WRITE);
         } catch (MessagingException ex) {
+            destroy();
             if (environment.isCheckmailEnabled()) {
                 logger.info("Unable to connect to email account: " + environment.getEmailHost(), ex);
             }
         }
-
-        this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
-        this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
-        this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
-        if (sourceFolder != null)
-            sourceFolder.open(Folder.READ_WRITE);
     }
 
     @PreDestroy
@@ -96,13 +98,18 @@ public class MailUtils {
         try {
             if (store != null)
                 store.close();
-        }
-        catch (MessagingException ignored) {}
+        } catch (MessagingException ignored) {}
     }
 
     public Message[] getIncomingMessages() throws MessagingException {
-        return sourceFolder == null || Thread.currentThread().isInterrupted() ?
-                new Message[0] : sourceFolder.getMessages();
+        try {
+            return sourceFolder == null || Thread.currentThread().isInterrupted() ?
+                    new Message[0] : sourceFolder.getMessages();
+        } catch (MessagingException ex) {
+            // The connection was closed by the mail server. Disconnect so we know to reconnect on next use.
+            destroy();
+            throw ex;
+        }
     }
 
     /**
@@ -112,19 +119,27 @@ public class MailUtils {
     public void moveMessages(List<Message> messages, boolean toArchive) throws MessagingException {
         if (sourceFolder == null || Thread.currentThread().isInterrupted())
             return;
-        sourceFolder.copyMessages(messages.toArray(new Message[0]), toArchive ? archiveFolder : partialFolder);
-        for (Message message : messages)
-            message.setFlag(Flags.Flag.DELETED, true);
-        sourceFolder.expunge();
+        try {
+            sourceFolder.copyMessages(messages.toArray(new Message[0]), toArchive ? archiveFolder : partialFolder);
+            for (Message message : messages)
+                message.setFlag(Flags.Flag.DELETED, true);
+            sourceFolder.expunge();
+        } catch (MessagingException ex) {
+            // The connection was closed by the mail server. Disconnect so we know to reconnect on next use.
+            destroy();
+            throw ex;
+        }
     }
 
     /**
      * Gets an authenticated smtp mail session
+     *
      * @return Session
      */
     public Session getSmtpSession() {
         var auth = new Authenticator() {
             private final PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
+
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return pa;
