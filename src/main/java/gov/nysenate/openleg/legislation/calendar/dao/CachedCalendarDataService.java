@@ -41,7 +41,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
     @Override
     public Map<CalendarId, Calendar> initialEntries() {
         return calendarDao.getCalendarIds(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL)
-                .stream().collect(Collectors.toMap(id -> id, id -> calendarDao.getCalendar(id)));
+                .stream().collect(Collectors.toMap(id -> id, calendarDao::getCalendar));
     }
 
     /** --- CalendarDataService implementation --- */
