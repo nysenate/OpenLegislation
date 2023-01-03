@@ -6,7 +6,6 @@ import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +90,7 @@ public class XmlBillActionAnalyzer
     /** --- Input --- */
 
     private final List<BillAction> actions;
-    private BillId billId;
+    private final BillId billId;
 
     /** --- Derived properties --- */
 
@@ -99,36 +98,30 @@ public class XmlBillActionAnalyzer
     private Version activeVersion = BillId.DEFAULT_VERSION;
 
     /** The milestones indicate key actions that have taken place on the bill. */
-    private LinkedList<BillStatus> statuses = new LinkedList<>();
+    private final LinkedList<BillStatus> statuses = new LinkedList<>();
 
     /** The bill status should reflect the latest action. */
     private BillStatus billStatus;
 
     /** Keeps a reference to the bill calendar number for both years of the session for both
      *  chambers. This is because the floor calendar events don't always have the cal no. */
-    private Table<Integer, Chamber, Integer> calNoTable = HashBasedTable.create(2, 2);
+    private final Table<Integer, Chamber, Integer> calNoTable = HashBasedTable.create(2, 2);
 
     /** PublishStatus associated with each non-base amendment version listed in the actions. */
-    private final EnumMap<Version, PublishStatus> publishStatusMap = new EnumMap<>(Version.class);
+    private final Map<Version, PublishStatus> publishStatusMap = new EnumMap<>(Version.class);
 
     /** True if the last action encountered was an enacting clause stricken. */
     private boolean stricken = false;
 
-    /** If the bill is in a committee, this reference will indicate the current committee. */
-    private CommitteeVersionId currentCommittee = null;
-
     /** All prior committees encountered while parsing the actions will be set here. */
-    private SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
+    private final SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
 
     /** Same as bill id references associated with any non-base versions. We use a map
      *  here because the substitution actions target a specific amendment version. */
-    private EnumMap<Version, BillId> sameAsMap = new EnumMap<>(Version.class);
+    private final Map<Version, BillId> sameAsMap = new EnumMap<>(Version.class);
 
     /** If the bill is substituted by another bill, that bill's bill id will be set here. */
-    private Optional<BaseBillId> substitutedBy = Optional.empty();
-
-    /** Chapter number and year if the bill was signed into law. */
-    private Optional<Pair<Integer, Integer>> chapterYearAndNum = Optional.empty();
+    private BaseBillId substitutedBy = null;
 
     /** --- Constructors --- */
 
@@ -214,31 +207,29 @@ public class XmlBillActionAnalyzer
      * @param action BillAction
      */
     protected void updateBillStatus(BillAction action) {
-        String text = action.getText();
+        final String text = action.getText();
         BillStatus currStatus = null;
-        int year = action.getDate().getYear();
         Matcher committeeMatcher = committeeEventTextPattern.matcher(text);
         Matcher passedHouseMatcher = passedHousePattern.matcher(text);
-        Matcher signedMatcher =  signedPattern.matcher(text);
         if (billId.getBillType().isResolution() && adoptedPattern.matcher(text).find()) {
             currStatus = new BillStatus(ADOPTED, action.getDate());
         }
         else if (committeeMatcher.find()) {
-            this.currentCommittee = new CommitteeVersionId(action.getChamber(),
+            CommitteeVersionId currentCommittee = new CommitteeVersionId(action.getChamber(),
                 committeeMatcher.group(2), action.getBillId().getSession(), action.getDate().atStartOfDay());
-            this.pastCommittees.add(this.currentCommittee);
+            this.pastCommittees.add(currentCommittee);
             currStatus = new BillStatus(
                 (action.getChamber().equals(Chamber.SENATE)) ? IN_SENATE_COMM : IN_ASSEMBLY_COMM, action.getDate());
-            currStatus.setCommitteeId(this.currentCommittee);
+            currStatus.setCommitteeId(currentCommittee);
         }
         else if (floorEventPattern.matcher(text).find()) {
             // Once reported to the floor, the bill is no longer held in a committee
-            this.currentCommittee = null;
             currStatus = new BillStatus(
                 (action.getChamber().equals(Chamber.SENATE)) ? SENATE_FLOOR : ASSEMBLY_FLOOR, action.getDate());
             Matcher calMatcher = floorCalPattern.matcher(text);
             // Set the bill calendar number that's referenced either in this action or a prior floor action
             // within the same year and chamber.
+            int year = action.getDate().getYear();
             if (calMatcher.find()) {
                 currStatus.setCalendarNo(Integer.parseInt(calMatcher.group(1)));
                 calNoTable.put(year, action.getChamber(), currStatus.getCalendarNo());
@@ -255,13 +246,8 @@ public class XmlBillActionAnalyzer
         else if (deliveredGovPattern.matcher(text).find()) {
             currStatus = new BillStatus(DELIVERED_TO_GOV, action.getDate());
         }
-        else if (signedMatcher.find()) {
+        else if (signedPattern.matcher(text).find()) {
             currStatus = new BillStatus(SIGNED_BY_GOV, action.getDate());
-            if (signedMatcher.group(1) != null) {
-                Integer chapNum = Integer.parseInt(signedMatcher.group(1));
-                Integer chapYear = action.getDate().getYear();
-                chapterYearAndNum = Optional.of(Pair.of(chapYear, chapNum));
-            }
         }
         else if (vetoedPattern.matcher(text).find() || pocketVetoPattern.matcher(text).find()) {
             // Ignore line item vetoes, since the bill would still have been signed.
@@ -295,14 +281,14 @@ public class XmlBillActionAnalyzer
         if (matcher.find()) {
             this.sameAsMap.put(this.activeVersion, new BillId(matcher.group(2), action.getBillId().getSession()));
             if (matcher.group(1).equals("BY")) {
-                substitutedBy = Optional.of(new BaseBillId(matcher.group(2), action.getBillId().getSession()));
+                substitutedBy = new BaseBillId(matcher.group(2), action.getBillId().getSession());
             }
         }
         else {
             // A substitution reconsidered action will nullify the prior substitution
             matcher = subsReconsideredPattern.matcher(action.getText());
             if (matcher.find()) {
-                substitutedBy = Optional.empty();
+                substitutedBy = null;
             }
         }
     }
@@ -315,42 +301,39 @@ public class XmlBillActionAnalyzer
      */
     public LinkedList<BillStatus> getMilestones() {
         LinkedList<BillStatus> milestones = new LinkedList<>();
-        if (!this.actions.isEmpty()) {
-            List<BillStatusType> milestoneTypes;
-            // Resolutions have a different set of milestones.
-            if (billId.getBillType().isResolution()) {
-                milestoneTypes = Collections.singletonList(ADOPTED);
-            }
-            // Assembly and senate bills have their milestones ordered accordingly.
-            else {
-                milestoneTypes = (billId.getChamber().equals(Chamber.SENATE)) ? senateMilestones : assemblyMilestones;
-            }
-            int lastSequenceNo = 0;
-            List<BillStatus> statusList = new ArrayList<>(this.statuses);
-            // Keep track of milestones that didn't match so they can be back-filled if a later milestone is detected.
-            Set<BillStatusType> skippedMilestones = new LinkedHashSet<>();
-            // Search through the actions list from most recent to oldest.
-            statusList.sort((a, b) -> Integer.compare(b.getActionSequenceNo(), a.getActionSequenceNo()));
-            for (BillStatusType milestoneType : milestoneTypes) {
-                for (BillStatus status : statusList) {
-                    if (status.getActionSequenceNo() <= lastSequenceNo) {
-                        // Allow for detecting a vetoed status
-                        if (milestoneType.equals(SIGNED_BY_GOV)) {
-                            break;
-                        }
-                        if (!skippedMilestones.contains(milestoneType)) {
-                            skippedMilestones.add(milestoneType);
-                        }
-                    }
-                    else if (status.getStatusType().equals(milestoneType)) {
-                        if (!skippedMilestones.isEmpty()) {
-                            skippedMilestones.forEach(s -> milestones.add(new BillStatus(s, status.getActionDate())));
-                            skippedMilestones.clear();
-                        }
-                        milestones.add(status);
-                        lastSequenceNo = status.getActionSequenceNo();
+        if (actions.isEmpty()) {
+            return milestones;
+        }
+        List<BillStatusType> milestoneTypes;
+        // Resolutions have a different set of milestones.
+        if (billId.getBillType().isResolution()) {
+            milestoneTypes = Collections.singletonList(ADOPTED);
+        }
+        // Assembly and senate bills have their milestones ordered accordingly.
+        else {
+            milestoneTypes = (billId.getChamber().equals(Chamber.SENATE)) ? senateMilestones : assemblyMilestones;
+        }
+        int lastSequenceNo = 0;
+        List<BillStatus> statusList = new ArrayList<>(statuses);
+        // Keep track of milestones that didn't match, so they can be back-filled if a later milestone is detected.
+        var skippedMilestones = new LinkedHashSet<BillStatusType>();
+        // Search through the actions list from most recent to oldest.
+        statusList.sort((a, b) -> Integer.compare(b.getActionSequenceNo(), a.getActionSequenceNo()));
+        for (BillStatusType milestoneType : milestoneTypes) {
+            for (BillStatus status : statusList) {
+                if (status.getActionSequenceNo() <= lastSequenceNo) {
+                    // Allow for detecting a vetoed status
+                    if (milestoneType.equals(SIGNED_BY_GOV)) {
                         break;
                     }
+                    skippedMilestones.add(milestoneType);
+                }
+                else if (status.getStatusType().equals(milestoneType)) {
+                    skippedMilestones.forEach(s -> milestones.add(new BillStatus(s, status.getActionDate())));
+                    skippedMilestones.clear();
+                    milestones.add(status);
+                    lastSequenceNo = status.getActionSequenceNo();
+                    break;
                 }
             }
         }
@@ -359,15 +342,11 @@ public class XmlBillActionAnalyzer
 
     /** --- Basic Getters --- */
 
-    public List<BillAction> getBillActions() {
-        return actions;
-    }
-
     public Version getActiveVersion() {
         return activeVersion;
     }
 
-    public EnumMap<Version, PublishStatus> getPublishStatusMap() {
+    public Map<Version, PublishStatus> getPublishStatusMap() {
         return publishStatusMap;
     }
 
@@ -387,19 +366,11 @@ public class XmlBillActionAnalyzer
         return sameAsMap;
     }
 
-    public CommitteeVersionId getCurrentCommittee() {
-        return currentCommittee;
-    }
-
     public SortedSet<CommitteeVersionId> getPastCommittees() {
         return pastCommittees;
     }
 
-    public Optional<BaseBillId> getSubstitutedBy() {
+    public BaseBillId getSubstitutedBy() {
         return substitutedBy;
-    }
-
-    public Optional<Pair<Integer, Integer>> getChapterYearAndNum() {
-        return chapterYearAndNum;
     }
 }

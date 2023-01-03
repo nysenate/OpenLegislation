@@ -22,9 +22,9 @@ import static org.junit.Assert.assertEquals;
 @Category(UnitTest.class)
 public class XmlBillActionAnalyzerTest {
 
-    private int testYear = 1999;
-    private BillId testBillId = new BaseBillId("S9000", testYear);
-    private PublishStatus defaultPubStatus =
+    private final int testYear = 1999;
+    private final BillId testBillId = new BaseBillId("S9000", testYear);
+    private final PublishStatus defaultPubStatus =
             new PublishStatus(true, LocalDate.ofYearDay(testYear, 1).atStartOfDay());
 
     @Test

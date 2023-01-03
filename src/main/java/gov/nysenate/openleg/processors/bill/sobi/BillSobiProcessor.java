@@ -1,19 +1,17 @@
 package gov.nysenate.openleg.processors.bill.sobi;
 
-import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
-import gov.nysenate.openleg.processors.config.ProcessConfig;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
+import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
+import gov.nysenate.openleg.processors.config.ProcessConfig;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,9 +41,6 @@ public class BillSobiProcessor extends AbstractBillProcessor
 
     /** --- Patterns --- */
 
-    /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
-    protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
     /** The expected format for the first line of the vote memo [V] block data. */
     public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
 
@@ -64,9 +58,6 @@ public class BillSobiProcessor extends AbstractBillProcessor
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
         Pattern.compile("RULES COM \\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
-
-    /** The format for program info lines. */
-    protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     /** Used to tokenize chunks of veto/approval messages by newlines that follow an end or delete line */
     protected static final String vetoApprovalSplitter =
