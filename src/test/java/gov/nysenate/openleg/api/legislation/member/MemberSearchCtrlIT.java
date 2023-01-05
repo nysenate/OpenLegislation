@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class MemberSearchCtrlIT extends ApiTest {
@@ -30,7 +30,7 @@ public class MemberSearchCtrlIT extends ApiTest {
      */
     @Test
     public void aSimpleTest() throws SearchException {
-        Person expectedPerson = new Person(498, "Aurelia Greene", "Aurelia", "", "Greene", "", "Assembly Member", "", "no_image.jpg");
+        Person expectedPerson = new Person(498, "Aurelia Greene", "", "Assembly Member", "no_image.jpg");
         Member expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
         SessionMember expectedSessionMember = new SessionMember(664, expectedMember, "GREENE", new SessionYear(2009), 77, false);
 
@@ -46,7 +46,7 @@ public class MemberSearchCtrlIT extends ApiTest {
      */
     @Test
     public void searchBySessionMemberId() throws SearchException {
-        Person testP = new Person(499, "Edward Hennessey", "Edward", null, "Hennessey", null, null, null, "no_image.jpg");
+        Person testP = new Person(499, "Edward Hennessey", null, "Assembly Member", "no_image.jpg");
         Member testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
         SessionMember testSm = new SessionMember(666, testM, "HENNESSEY", new SessionYear(2013), 3, false);
         SessionMember testSmAlt = new SessionMember(testSm);

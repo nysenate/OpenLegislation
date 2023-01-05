@@ -49,8 +49,7 @@ public class MemberScraperUtils
         List<SessionMember> sessionMembers = new ArrayList<>();
         for (int i = 0; i < lastNames.size(); i++) {
             Member m = new Member();
-            m.setLastName(lastNames.get(i));
-            m.setFullName(fullNames.get(i));
+            m.setNameFields(fullNames.get(i));
             m.setImgName(imageNames.get(i));
             m.setChamber(Chamber.ASSEMBLY);
 
@@ -84,8 +83,7 @@ public class MemberScraperUtils
         for (int i = 0; i < names.size(); i++) {
             String[] splitName = names.get(i).split(",");
             Member m = new Member();
-            m.setLastName(splitName[0]);
-            m.setFullName(splitName[1] + " " + splitName[0]);
+            m.setNameFields(splitName[1] + " " + splitName[0]);
             m.setImgName(imageUrls.get(i));
             m.setChamber(Chamber.SENATE);
 

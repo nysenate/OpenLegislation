@@ -100,15 +100,14 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     /** {@inheritDoc} */
     @Override
     public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("last_name", sortOrder);
+        OrderBy orderBy = new OrderBy("lbdc_short_name", sortOrder);
         return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
     /** --- Helper classes --- */
 
-    public static class MemberRowMapper implements RowMapper<SessionMember>
-    {
+    public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
             SessionMember sessionMember = new SessionMember();
@@ -123,12 +122,8 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setChamber(Chamber.getValue(rs.getString("chamber")));
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
-            member.setFullName(rs.getString("full_name"));
-            member.setPrefix(rs.getString("prefix"));
-            member.setFirstName(rs.getString("first_name"));
-            member.setMiddleName(rs.getString("middle_name"));
-            member.setLastName(rs.getString("last_name"));
-            member.setSuffix(rs.getString("suffix"));
+            member.setPrefix(Chamber.getValue(rs.getString("most_recent_chamber")));
+            member.setNameFields(rs.getString("full_name"));
             member.setImgName(rs.getString("img_name"));
             member.setEmail(rs.getString("email"));
 

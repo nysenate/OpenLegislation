@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.processors.committee;
 
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         Member member = new Member();
         member.setIncumbent(true);
         member.setPersonId(1237);
-        member.setFullName("RITCHIE");
+        member.setNameFields("RITCHIE RICH");
         member.setMemberId(1415);
 
         SessionMember sessionMember = new SessionMember();
