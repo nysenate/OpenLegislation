@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.legislation.member;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.legislation.committee.Chamber;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,31 +46,22 @@ public class Person implements Comparable<Person>
         this.personId = personId;
     }
 
-    public Person (String fullName) {
-        this.fullName = fullName.trim();
+    public Person(String fullName) {
+        setNameFields(fullName);
     }
 
-    public Person(Integer personId, String fullName, String firstName, String middleName, String
-            lastName, String email, String pref, String suffix, String imgName) {
+    public Person(Integer personId, String fullName, String email, String pref, String imgName) {
         this.personId = personId;
-        this.fullName = fullName;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.email = email;
         this.prefix = pref;
-        this.suffix = suffix;
+        setNameFields(fullName);
+        this.email = email;
         this.imgName = imgName;
     }
 
     public Person(Person other) {
         this.personId = other.personId;
         this.prefix = other.prefix;
-        this.fullName = other.fullName;
-        this.firstName = other.firstName;
-        this.middleName = other.middleName;
-        this.lastName = other.lastName;
-        this.suffix = other.suffix;
+        setNameFields(other.fullName);
         this.email = other.email;
         this.imgName = other.imgName;
     }
@@ -79,20 +73,27 @@ public class Person implements Comparable<Person>
     public void updateFromOther(Person other) {
         this.personId = other.getPersonId();
         this.prefix = other.getPrefix();
-        this.fullName = other.getFullName();
-        this.firstName = other.getFirstName();
-        this.middleName = other.getMiddleName();
-        this.lastName = other.getLastName();
-        this.suffix = other.getSuffix();
+        setNameFields(other.fullName);
         this.email = other.getEmail();
         this.imgName = other.getImgName();
     }
 
+    public void setNameFields(String fullName) {
+        this.fullName = fullName;
+        LinkedList<String> nameParts = new LinkedList<>(List.of(fullName.split(" ")));
+        if (nameParts.getLast().matches("[IV]+|Jr.?|Sr.?")) {
+            this.suffix = nameParts.removeLast();
+        }
+        if (nameParts.size() == 3) {
+            this.middleName = nameParts.remove(1);
+        }
+        this.firstName = nameParts.removeFirst();
+        this.lastName = nameParts.removeLast();
+    }
+
     /**
      * A consistent naming convention for image names.
-     *
      * This should be used when naming the image for all new legislators.
-     *
      * For newer images, this will likely be the same as <code>getImageName</code>, but it may
      * not be the same for older images which had a different naming conventions.
      * @return
@@ -158,32 +159,16 @@ public class Person implements Comparable<Person>
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getMiddleName() {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -202,16 +187,12 @@ public class Person implements Comparable<Person>
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public void setPrefix(Chamber mostRecentChamber) {
+        this.prefix = mostRecentChamber == Chamber.SENATE ? "Senator" : "Assembly Member";
     }
 
     public String getSuffix() {
         return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
     }
 
     /**

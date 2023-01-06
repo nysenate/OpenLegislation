@@ -21,24 +21,24 @@ public class TestData {
     private TestData() {}
 
     public static final Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
-            .put(188, new Person(188, "John L. Sampson", "John", "L.", "Sampson",
-                    "sampson@senate.state.ny.us", "Senator", null, "369_john_l._sampson.jpg"))
-            .put(263, new Person(263, "Thomas P. Morahan", "Thomas", "P.", "Morahan",
-                    "district38@nysenate.gov", "Senator", null, "no_image.jpg"))
-            .put(190, new Person(190, "James L. Seward", "James", "L.", "Seward",
-                    "seward@senate.state.ny.us", "Senator", null, "371_james_l._seward.jpg"))
-            .put(191, new Person(191, "Neil D. Breslin", "Neil", "D.", "Breslin",
-                    "breslin@senate.state.ny.us", "Senator", null, "372_neil_d._breslin.jpg"))
-            .put(942, new Person(942, "Billy Jones", "Billy", "", "Jones",
-                    "", "Assembly Member", "", "no_image.jpg"))
-            .put(944, new Person(944,	"Robert C. Carroll", "Robert", "C.", "Carroll",
-                    "CarrollR@nyassembly.gov", "Assembly Member", "", "no_image.jpg"))
-            .put(950, new Person(950, "Inez E. Dickens", "Inez", "E.", "Dickens",
-                    "", "Assembly Member", "", "no_image.jpg"))
-            .put(204, new Person(204,	"Adriano Espaillat",	"Adriano",	null,	"Espaillat",
-                    "espailla@nysenate.gov",	"Senator", null, "385_adriano_espaillat.jpg"))
-            .put(499, new Person(499, "Edward Hennessey", "Edward", null, "Hennessey",
-                    null, null, null, "no_image.jpg"))
+            .put(188, new Person(188, "John L. Sampson",
+                    "sampson@senate.state.ny.us", "Senator", "369_john_l._sampson.jpg"))
+            .put(263, new Person(263, "Thomas P. Morahan",
+                    "district38@nysenate.gov", "Senator", "no_image.jpg"))
+            .put(190, new Person(190, "James L. Seward",
+                    "seward@senate.state.ny.us", "Senator", "371_james_l._seward.jpg"))
+            .put(191, new Person(191, "Neil D. Breslin",
+                    "breslin@senate.state.ny.us", "Senator", "372_neil_d._breslin.jpg"))
+            .put(942, new Person(942, "Billy Jones",
+                    "", "Assembly Member", "no_image.jpg"))
+            .put(944, new Person(944,	"Robert C. Carroll",
+                    "CarrollR@nyassembly.gov", "Assembly Member", "no_image.jpg"))
+            .put(950, new Person(950, "Inez E. Dickens",
+                    "", "Assembly Member", "no_image.jpg"))
+            .put(204, new Person(204,	"Adriano Espaillat",
+                    "espailla@nysenate.gov",	"Senator", "385_adriano_espaillat.jpg"))
+            .put(499, new Person(499, "Edward Hennessey",
+                    null, null, "no_image.jpg"))
             .build();
 
     // TODO: test members should never be incumbents, for future-proofing, because no one is an incumbent forever.
