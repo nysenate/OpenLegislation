@@ -33,10 +33,18 @@ export const billTypeOptions = [
 
 export const fetchMembers = (session) => {
   return getMembersApi(session).then((res) => {
-    return [ new SelectOption("", "Any") ].concat(res.items.map((m) => {
-      return new SelectOption(m.memberId, `${m.person.lastName}, ${m.person.firstName}`)
+    return [ new MemberSelectOption("", "Any") ].concat(res.items.map((m) => {
+      return new MemberSelectOption(m.memberId, `${m.person.lastName}, ${m.person.firstName}`, m.chamber)
     }))
   })
+}
+
+function MemberSelectOption(value, label, chamber) {
+  return {
+    label: label,
+    value: value,
+    chamber: chamber
+  }
 }
 
 export const fetchStatusTypes = () => {
