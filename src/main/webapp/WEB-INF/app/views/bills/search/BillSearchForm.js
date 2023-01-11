@@ -136,21 +136,52 @@ export default function BillSearchForm() {
         return value.type === "select"
       })
       .map(([ key, value ]) => {
-        return (
-          <div className={filterWrapperClass} key={key}>
-            <Select label={value.label}
-                    value={value.value}
-                    onChange={(e) => dispatch({
-                      type: "update",
-                      value: e.target.value,
-                      key: key
-                    })}
-                    options={value.options}
-                    isHighlighted={value.value}
-                    className="w-full"
-            />
-          </div>
-        )
+        if (key === 'sponsor') {
+          let labelClasses = "label label--top"
+          labelClasses += value.value ? " bg-yellow-100" : "" // if value is set, highlight label.
+          // Sponsor select needs custom grouping by chamber.
+          const other = value.options.filter(o => o.chamber == null)
+          const senators = value.options.filter(o => o.chamber === 'SENATE')
+          const assemblymen = value.options.filter(o => o.chamber === 'ASSEMBLY')
+          return (
+            <div className={filterWrapperClass} key={key}>
+              <label className={labelClasses}>
+                {value.label}
+                <select value={value.value}
+                        onChange={(e) => dispatch({
+                          type: "update",
+                          value: e.target.value,
+                          key: key
+                        })}
+                        className="select block w-full">
+                  {other.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
+                  <optgroup label="Senators">
+                    {senators.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
+                  </optgroup>
+                  <optgroup label="Assemblymen">
+                    {assemblymen.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
+                  </optgroup>
+                </select>
+              </label>
+            </div>
+          )
+        } else {
+          return (
+            <div className={filterWrapperClass} key={key}>
+              <Select label={value.label}
+                      value={value.value}
+                      onChange={(e) => dispatch({
+                        type: "update",
+                        value: e.target.value,
+                        key: key
+                      })}
+                      options={value.options}
+                      isHighlighted={value.value}
+                      className="w-full"
+              />
+            </div>
+          )
+        }
       })
   }
 
@@ -253,10 +284,10 @@ export default function BillSearchForm() {
                 </p>
               </div>
               {Object.entries(refine).some(([ key, value ]) => value.value) &&
-              <div className="m-3">
+                <div className="m-3">
               <span onClick={resetFilters}
                     className="text-blue-500 font-medium cursor-pointer">Reset Advanced Filters</span>
-              </div>
+                </div>
               }
             </div>
           </Accordion>
