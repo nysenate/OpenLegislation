@@ -158,7 +158,7 @@ export default function BillSearchForm() {
                   <optgroup label="Senators">
                     {senators.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
                   </optgroup>
-                  <optgroup label="Assemblymen">
+                  <optgroup label="Assemblymembers">
                     {assemblymen.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
                   </optgroup>
                 </select>
