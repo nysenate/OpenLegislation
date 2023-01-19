@@ -2,58 +2,40 @@ package gov.nysenate.openleg.legislation.member;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.committee.Chamber;
+import org.apache.commons.text.WordUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Person implements Comparable<Person>
-{
+public class Person implements Comparable<Person> {
     /** The unique id used to globally identify the person.
      *  This value should only be set after retrieval from the persistence layer. */
     private Integer personId;
-
-    /** The full name of the person. */
     private String fullName = "";
-
-    /** The first name of the person. */
     private String firstName = "";
-
-    /** The middle name of the person. */
     private String middleName = "";
-
-    /** The last name of the person. */
     private String lastName = "";
-
-    /** The email address of the person. */
     private String email = "";
-
-    /** The prefix (Mr, Mrs, Senator, etc) */
     private String prefix = "";
-
-    /** The suffix of the person (Jr, Sr, etc) */
     private String suffix = "";
-
-    /** The name of the image for this person. */
     private String imgName = "";
 
     /** --- Constructors --- */
 
-    public Person () {}
+    public Person() {}
 
     public Person(Integer personId) {
         this.personId = personId;
     }
 
-    public Person(String fullName) {
-        setNameFields(fullName);
-    }
-
+    // Assumes that the last word is the last name.
     public Person(Integer personId, String fullName, String email, String pref, String imgName) {
         this.personId = personId;
         this.prefix = pref;
-        setNameFields(fullName);
+        var nameParts = fullName.split(" ");
+        setNameFields(fullName, nameParts[nameParts.length - 1]);
         this.email = email;
         this.imgName = imgName;
     }
@@ -61,7 +43,7 @@ public class Person implements Comparable<Person>
     public Person(Person other) {
         this.personId = other.personId;
         this.prefix = other.prefix;
-        setNameFields(other.fullName);
+        setNameFields(other.fullName, other.lastName);
         this.email = other.email;
         this.imgName = other.imgName;
     }
@@ -73,22 +55,33 @@ public class Person implements Comparable<Person>
     public void updateFromOther(Person other) {
         this.personId = other.getPersonId();
         this.prefix = other.getPrefix();
-        setNameFields(other.fullName);
+        setNameFields(other.fullName, other.lastName);
         this.email = other.getEmail();
         this.imgName = other.getImgName();
     }
 
-    public void setNameFields(String fullName) {
+    /**
+     * Sets all the name fields at once, sans the prefix.
+     * @param fullName to pull information from.
+     * @param mostRecentShortname to identify the last name.
+     */
+    public void setNameFields(String fullName, String mostRecentShortname) {
         this.fullName = fullName;
+        String[] mrsSplit = mostRecentShortname.split(" ");
+        // If there is a duplicate last name, it's followed by the first letter of the first name,
+        // and potentially of the middle name.
+        if (mrsSplit.length > 1 && mrsSplit[mrsSplit.length - 1].matches(fullName.charAt(0) + ".?")) {
+            mrsSplit[mrsSplit.length - 1] = "";
+        }
+        this.lastName = WordUtils.capitalizeFully(String.join(" ", List.of(mrsSplit)).trim());
+        fullName = fullName.replaceFirst(lastName, "").replaceAll(" {2,}", " ").trim();
+
         LinkedList<String> nameParts = new LinkedList<>(List.of(fullName.split(" ")));
         if (nameParts.getLast().matches("[IV]+|Jr.?|Sr.?")) {
             this.suffix = nameParts.removeLast();
         }
-        if (nameParts.size() == 3) {
-            this.middleName = nameParts.remove(1);
-        }
         this.firstName = nameParts.removeFirst();
-        this.lastName = nameParts.removeLast();
+        this.middleName = String.join(" ", nameParts);
     }
 
     /**
@@ -197,7 +190,6 @@ public class Person implements Comparable<Person>
 
     /**
      * The name of the image file that represents this Person.
-     *
      * If the person does not have an image use the no_image.jpg placeholder.
      * @return
      */

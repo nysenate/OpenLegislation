@@ -123,7 +123,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
             member.setPrefix(Chamber.getValue(rs.getString("most_recent_chamber")));
-            member.setNameFields(rs.getString("full_name"));
+            member.setNameFields(rs.getString("full_name"), rs.getString("most_recent_shortname"));
             member.setImgName(rs.getString("img_name"));
             member.setEmail(rs.getString("email"));
 
