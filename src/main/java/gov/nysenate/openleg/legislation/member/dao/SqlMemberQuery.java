@@ -21,7 +21,7 @@ public enum SqlMemberQuery implements BasicSqlQuery
     SELECT_MEMBER_SELECT_FRAGMENT(
         "WITH mr AS (" + SELECT_MOST_RECENT_DATA.sql + ")\n" +
         "SELECT sm.id AS session_member_id, sm.member_id, sm.lbdc_short_name, sm.session_year, sm.district_code, sm.alternate,\n" +
-        "       m.chamber, m.incumbent, p.id AS person_id, p.full_name, " +
+        "       m.chamber, m.incumbent, p.id AS person_id, p.full_name, p.alt_first_name," +
         "       p.img_name, p.email, mr.most_recent_chamber, mr.most_recent_shortname"
     ),
 
@@ -42,7 +42,7 @@ public enum SqlMemberQuery implements BasicSqlQuery
         "WITH mr AS (" + SELECT_MOST_RECENT_DATA.sql +")\n" +
         "SELECT smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
         "       m.chamber, m.incumbent,\n" +
-        "       p.id AS person_id, p.full_name, \n" +
+        "       p.id AS person_id, p.full_name, p.alt_first_name,\n" +
         "       p.img_name, p.email, mr.most_recent_chamber, mr.most_recent_shortname\n" +
         SELECT_MEMBER_TABLE_FRAGMENT.sql +
         "JOIN mr ON mr.id = p.id\n" +
