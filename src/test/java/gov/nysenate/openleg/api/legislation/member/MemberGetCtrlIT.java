@@ -59,8 +59,8 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
-        Person testP = new Person(199, "Ruth Hassell-Thompson", "Ruth", null, "Hassell-Thompson",
-                "hassellt@senate.state.ny.us", "Senator", null, "380_ruth_hassell-thompson.jpg");
+        Person testP = new Person(199, "Ruth Hassell-Thompson",
+                "hassellt@senate.state.ny.us", "Senator", "380_ruth_hassell-thompson.jpg");
         Member testM = new Member(testP, 380, Chamber.SENATE, false);
         SessionMember nonAlt2011 = new SessionMember(74, testM, name + "N", new
                 SessionYear(2011), 36, false);
