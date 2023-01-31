@@ -48,6 +48,7 @@ public class XmlBillActionAnalyzer
     /** Pattern for when the bill is vetoed. */
     private static final Pattern vetoedPattern = Pattern.compile("VETO(?:ED)? MEMO");
     private static final Pattern pocketVetoPattern = Pattern.compile("POCKET VETO");
+    private static final Pattern pocketApprovalPattern = Pattern.compile("CHAPTER \\d+");
 
     /** Pattern to detect a bill being delivered/returned from one chamber to another */
     private static final Pattern chamberDeliverPattern = Pattern.compile("(DELIVERED|RETURNED) TO (SENATE|ASSEMBLY)");
@@ -79,12 +80,12 @@ public class XmlBillActionAnalyzer
 
     private static final List<BillStatusType> senateMilestones = Arrays.asList(
         IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE, IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY,
-        DELIVERED_TO_GOV, SIGNED_BY_GOV, VETOED
+        DELIVERED_TO_GOV, SIGNED_BY_GOV, POCKET_APPROVAL, VETOED
     );
 
     private static final List<BillStatusType> assemblyMilestones = Arrays.asList(
         IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY, IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE,
-        DELIVERED_TO_GOV, SIGNED_BY_GOV, VETOED
+        DELIVERED_TO_GOV, SIGNED_BY_GOV, POCKET_APPROVAL, VETOED
     );
 
     /** --- Input --- */
@@ -248,6 +249,9 @@ public class XmlBillActionAnalyzer
         }
         else if (signedPattern.matcher(text).find()) {
             currStatus = new BillStatus(SIGNED_BY_GOV, action.getDate());
+        }
+        else if (pocketApprovalPattern.matcher(text).find()) {
+            currStatus = new BillStatus(POCKET_APPROVAL, action.getDate());
         }
         else if (vetoedPattern.matcher(text).find() || pocketVetoPattern.matcher(text).find()) {
             // Ignore line item vetoes, since the bill would still have been signed.
