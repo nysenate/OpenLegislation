@@ -20,13 +20,13 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     ),
     /** Compute the reformed column for backwards compatibility */
     SELECT_COMMITTEE_VERSION_HISTORY (
-            "WITH mrc AS (" + SqlMemberQuery.SELECT_MOST_RECENT_CHAMBER.getSql() + ")\n" +
+            "WITH mr AS (" + SqlMemberQuery.SELECT_MOST_RECENT_DATA.getSql() + ")\n" +
             "SELECT cv.*, " +
               // Session Member Info
               "smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
               "m.chamber, m.incumbent,\n" +
-               "p.id AS person_id, p.full_name,\n" +
-               "p.img_name, p.email, mrc.most_recent_chamber,\n" +
+               "p.id AS person_id, p.full_name, p.alt_first_name,\n" +
+               "p.img_name, p.email, mr.most_recent_chamber, mr.most_recent_shortname,\n" +
                "(\n" +
             "  SELECT MIN(created)\n" +
             "  FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
@@ -43,7 +43,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
                     "JOIN " + SqlTable.MEMBER + " m ON m.id = sm.member_id\n" +
                     "JOIN " + SqlTable.PERSON + " p ON p.id = m.person_id\n" +
                     "JOIN " + SqlTable.SESSION_MEMBER + " smp ON smp.member_id = sm.member_id AND smp.session_year = sm.session_year AND smp.alternate = FALSE\n" +
-                    "JOIN mrc ON p.id = mrc.id\n" +
+                    "JOIN mr ON p.id = mr.id\n" +
             "WHERE cv.committee_name = :committeeName::citext AND cv.chamber = :chamber::chamber\n" +
             "   AND cv.session_year = :sessionYear"
     ),

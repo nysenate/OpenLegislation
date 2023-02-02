@@ -15,14 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 
@@ -34,22 +30,13 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
 {
     /* --- Patterns --- */
 
-    /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
-    protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
-    /** The expected format for the first line of the vote memo [V] block data. */
-    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
-
-    /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
-    protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
-
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
         Pattern.compile("^RULES (?:COM)? *\\(?([A-Z-_']+(?: [A-Z]+)?)\\)?", Pattern.CASE_INSENSITIVE);
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: \\/ )?)+)");
+        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
@@ -110,45 +97,6 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
             billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
         }
         baseBill.setSponsor(billSponsor);
-    }
-
-    /**
-     * Un-publishes the specified bill amendment.
-     * @param baseBill Bill
-     * @param version Version
-     * @param fragment LegDataFragment
-     * @param source String - Indicates the origin of this un-publish request, e.g. restore amend in actions list.
-     */
-    protected void unpublishBillAmendment(Bill baseBill, Version version, LegDataFragment fragment, String source) {
-        baseBill.updatePublishStatus(version, new PublishStatus(false, fragment.getPublishedDateTime(), false, source));
-        setModifiedDateTime(baseBill, fragment);
-    }
-
-    /**
-     * Checks that the base bill's default amendment is published. If it isn't it will be set to published using
-     * the source file's published date.
-     * @param baseBill Bill
-     * @param fragment LegDataFragment
-     * @param source String - Indicates the origin of this publishing request, e.g. bill info line.
-     */
-    protected void ensureBaseBillIsPublished(Bill baseBill, LegDataFragment fragment, String source) {
-        Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-        if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
-            baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
-            setModifiedDateTime(baseBill, fragment);
-        }
-    }
-
-    /**
-     * Adds to the base bill's list of previous session year bill ids.
-     * @param baseBill Bill
-     * @param prevPrintNo String
-     * @param prevSessionYear Integer
-     * @param fragment LegDataFragment
-     */
-    protected void addPreviousBillId(Bill baseBill, String prevPrintNo, Integer prevSessionYear, LegDataFragment fragment) {
-        baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
-        setModifiedDateTime(baseBill, fragment);
     }
 
     /**
@@ -251,7 +199,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
             newActiveAmend.setCoSponsors(initialActiveAmend.getCoSponsors());
             newActiveAmend.setMultiSponsors(initialActiveAmend.getMultiSponsors());
         }
-        bill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
+        bill.setSubstitutedBy(analyzer.getSubstitutedBy());
         bill.setStatus(analyzer.getBillStatus());
         bill.setMilestones(analyzer.getMilestones());
         bill.setPastCommittees(analyzer.getPastCommittees());
@@ -268,64 +216,6 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor
             }
         });
         specifiedAmendment.setStricken(analyzer.isStricken());
-    }
-
-    /**
-     * Clears out any same as bill id references from the specified amendment and restores it's uni bill status
-     * to false.
-     * @param baseBill Bill
-     * @param version Version
-     * @param fragment LegDataFragment
-     */
-    protected void clearSameAs(Bill baseBill, Version version, LegDataFragment fragment) {
-        baseBill.getAmendment(version).getSameAs().clear();
-        baseBill.getAmendment(version).setUniBill(false);
-        setModifiedDateTime(baseBill, fragment);
-    }
-
-    /**
-     * For the specified amendment parse the same as data to obtain a list of same as bill id references.
-     * If the uni bill flag is detected, the bill's uni bill status will be set to true and a uni bill
-     * sync will be triggered.
-     * @param baseBill Bill
-     * @param version Version
-     * @param sameAsData String
-     * @param fragment LegDataFragment
-     * @throws ParseError
-     */
-    protected void processSameAs(Bill baseBill, Version version, String sameAsData, LegDataFragment fragment) throws ParseError {
-        Matcher sameAsMatcher = sameAsPattern.matcher(sameAsData);
-        BillAmendment billAmendment = baseBill.getAmendment(version);
-        if (sameAsMatcher.find()) {
-            // Sometimes we get S 1797-A / A 4768-A for uni bills, which should convert to S 1797-A, A 4768-A
-            String matches = sameAsMatcher.group(2).replaceAll(" / ", ", ");
-            List<String> sameAsMatches = new ArrayList<>(Arrays.asList(matches.split(", ")));
-            // We're adding the same as bills to the existing list. Same as bills are explicitly cleared.
-            billAmendment.getSameAs().addAll(sameAsMatches.stream()
-                    .map(sameAs -> new BillId(sameAs.replace("-", "").replace(" ", ""), baseBill.getSession()))
-                    .collect(Collectors.toList()));
-            // Check for uni-bill and sync
-            if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
-                billAmendment.setUniBill(true);
-                syncUniBillText(billAmendment, fragment);
-            }
-            setModifiedDateTime(baseBill, fragment);
-        }
-        else {
-            throw new ParseError("sameAsPattern not matched: " + sameAsData);
-        }
-    }
-
-    /**
-     * Sets the sponsor memo to the specified amendment.
-     * @param baseBill Bill
-     * @param version Version
-     * @param text String
-     * @param fragment LegDataFragment
-     */
-    protected void setSponsorMemo(Bill baseBill, Version version, String text, LegDataFragment fragment) {
-        baseBill.getAmendment(version).setMemo(text);
-        setModifiedDateTime(baseBill, fragment);
     }
 
     /**

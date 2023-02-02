@@ -21,9 +21,10 @@ public enum BillStatusType
     STRICKEN("Stricken"),
     LOST("Lost"),
     SUBSTITUTED("Substituted"),
-    ADOPTED("Adopted");
+    ADOPTED("Adopted"),
+    POCKET_APPROVAL("Pocket Approval");
 
-    String desc;
+    private final String desc;
 
     BillStatusType(String desc) {
         this.desc = desc;

@@ -52,7 +52,7 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         Member member = new Member();
         member.setIncumbent(true);
         member.setPersonId(1237);
-        member.setNameFields("RITCHIE RICH");
+        member.setNameFields("STEVE RITCHIE", "RITCHIE", "");
         member.setMemberId(1415);
 
         SessionMember sessionMember = new SessionMember();
