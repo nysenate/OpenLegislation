@@ -9,6 +9,7 @@ public enum NotificationType {
     PROCESS_WARNING(NotificationCategory.ERROR, NotificationUrgency.WARNING),
     SCRAPING_EXCEPTION(NotificationCategory.ERROR, NotificationUrgency.WARNING),
     LRS_OUTAGE(NotificationCategory.ERROR, NotificationUrgency.WARNING),
+    BAD_MEMBER_NAME(NotificationCategory.ERROR, NotificationUrgency.WARNING),
     BUDGET_BILL_EMPTY_TEXT(NotificationCategory.INFO, NotificationUrgency.WARNING),
     DAYBREAK_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
     CALENDAR_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
@@ -19,7 +20,7 @@ public enum NotificationType {
     SENSITE_AGENDA_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
     SENSITE_LAW_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
     OPENLEG_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
-    NEW_API_KEY(NotificationCategory.INFO, NotificationUrgency.INFO),;
+    NEW_API_KEY(NotificationCategory.INFO, NotificationUrgency.INFO);
 
     private NotificationCategory category;
     private NotificationUrgency urgency;

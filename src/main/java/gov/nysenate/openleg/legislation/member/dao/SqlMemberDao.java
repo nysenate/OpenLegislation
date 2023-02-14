@@ -34,7 +34,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<SessionMember> memberList =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
         if (memberList.isEmpty()) {
             throw new MemberNotFoundEx(id, null);
         }
@@ -65,7 +65,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         List<SessionMember> members =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
@@ -93,7 +93,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         catch (EmptyResultDataAccessException ex) {
             params.addValue("alternate", true);
             return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
-                params, new MemberRowMapper());
+                    params, new MemberRowMapper());
         }
     }
 
@@ -122,9 +122,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setChamber(Chamber.getValue(rs.getString("chamber")));
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
+            member.setFullName(rs.getString("full_name"));
             member.setPrefix(Chamber.getValue(rs.getString("most_recent_chamber")));
-            member.setNameFields(rs.getString("full_name"), rs.getString("most_recent_shortname"),
-                    rs.getString("alt_first_name"));
+            member.setFirstName(rs.getString("first_name"));
+            member.setMiddleName(rs.getString("middle_name"));
+            member.setLastName(rs.getString("last_name"));
+            member.setSuffix(rs.getString("suffix"));
             member.setImgName(rs.getString("img_name"));
             member.setEmail(rs.getString("email"));
 

@@ -2,18 +2,11 @@ package gov.nysenate.openleg.legislation.member;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.committee.Chamber;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.text.Normalizer;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Person implements Comparable<Person> {
-    private static final Logger logger = LoggerFactory.getLogger(Person.class);
-    private static final String namePattern = "(?i)(?<firstName>%s )(?<middleName>.*)(?<lastName>%s) ?(?<suffix>([IV]+|Jr.?|Sr.?)?)";
     /** The unique id used to globally identify the person.
      *  This value should only be set after retrieval from the persistence layer. */
     private Integer personId;
@@ -34,12 +27,18 @@ public class Person implements Comparable<Person> {
         this.personId = personId;
     }
 
-    // Assumes that the last word is the last name. Used for testing.
+    // Assumes a normal last name with no suffix. Used for testing.
     public Person(Integer personId, String fullName, String email, String pref, String imgName) {
         this.personId = personId;
         this.prefix = pref;
-        var nameParts = fullName.split(" ");
-        setNameFields(fullName, nameParts[nameParts.length - 1], "");
+        String[] name_split = fullName.split(" ");
+        if (name_split.length == 3) {
+            this.middleName = name_split[1];
+            name_split = new String[]{name_split[0], name_split[2]};
+        }
+        this.firstName = name_split[0];
+        this.lastName = name_split[1];
+        this.fullName = fullName;
         this.email = email;
         this.imgName = imgName;
     }
@@ -70,41 +69,6 @@ public class Person implements Comparable<Person> {
         this.suffix = other.suffix;
         this.email = other.email;
         this.imgName = other.imgName;
-    }
-
-    /**
-     * Sets all the name fields at once, sans the prefix.
-     * @param fullName to pull information from.
-     * @param mostRecentShortname to identify the last name.
-     */
-    public void setNameFields(String fullName, String mostRecentShortname, String altFirstName) {
-        this.fullName = fullName;
-        String firstNamePattern = altFirstName.isBlank() ? "[^ ]+" : altFirstName;
-        String tempLastName = getLastName(fullName.charAt(0), mostRecentShortname);
-        // Matches a version of the String without accents or diacritics.
-        Matcher m = Pattern.compile(namePattern.formatted(firstNamePattern, tempLastName))
-                .matcher(Normalizer.normalize(fullName, Normalizer.Form.NFKD)
-                        .replaceAll("\\p{M}", ""));
-        if (!m.matches()) {
-            logger.warn("There is a problem with the name " + fullName);
-            return;
-        }
-        this.firstName = getGroup(m, "firstName");
-        this.middleName = getGroup(m, "middleName");
-        this.lastName = getGroup(m, "lastName");
-        this.suffix = m.group("suffix");
-    }
-
-    private String getGroup(Matcher m, String group) {
-        return fullName.substring(m.start(group), m.end(group)).trim();
-    }
-
-    private static String getLastName(char firstInitial, String mostRecentShortname) {
-        // If there is a duplicate last name, it's followed by the first letter of the first name,
-        // and potentially of the middle name.
-        Matcher m = Pattern.compile("(.*) %c.?".formatted(firstInitial))
-                .matcher(mostRecentShortname);
-        return m.matches() ? m.group(1) : mostRecentShortname;
     }
 
     /**
@@ -171,20 +135,40 @@ public class Person implements Comparable<Person> {
         return personId;
     }
 
+    public void setPersonId(Integer personId) {
+        this.personId = personId;
+    }
+
     public String getFullName() {
         return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getMiddleName() {
         return middleName;
     }
 
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -195,8 +179,12 @@ public class Person implements Comparable<Person> {
         this.email = email;
     }
 
-    public void setPersonId(Integer personId) {
-        this.personId = personId;
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String getPrefix() {
@@ -205,10 +193,6 @@ public class Person implements Comparable<Person> {
 
     public void setPrefix(Chamber mostRecentChamber) {
         this.prefix = mostRecentChamber == Chamber.SENATE ? "Senator" : "Assembly Member";
-    }
-
-    public String getSuffix() {
-        return suffix;
     }
 
     /**

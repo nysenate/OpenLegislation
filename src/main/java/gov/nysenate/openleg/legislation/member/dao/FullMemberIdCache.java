@@ -4,15 +4,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.member.dao.MemberDao;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
-import gov.nysenate.openleg.legislation.member.FullMember;
+import gov.nysenate.openleg.legislation.*;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.notifications.model.Notification;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -28,11 +24,15 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.text.Normalizer;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.notifications.model.NotificationType.BAD_MEMBER_NAME;
 
 @Component
 public class FullMemberIdCache implements CachingService<Integer> {
@@ -160,5 +160,19 @@ public class FullMemberIdCache implements CachingService<Integer> {
 
     private void putMemberInCache(FullMember member) {
         memberCache.put(new Element(new SimpleKey(member.getMemberId()), member, true));
+        // Tests for consistency between the person's last name, and their most recent shortname
+        // (which is in all caps and has accents removed).
+        String expectedShortname = Normalizer.normalize(member.getLastName(), Normalizer.Form.NFKD)
+                .replaceAll("\\p{M}", "").toUpperCase();
+        char firstInitial = member.getFirstName().charAt(0);
+        // The shortname may have the first and middle initial appended to it.
+        String namePattern = "(%s)( %c.?)?".formatted(expectedShortname, firstInitial);
+        String currShortname = member.getLatestSessionMember()
+                .orElse(new SessionMember()).getLbdcShortName();
+        if (!currShortname.matches(namePattern)) {
+            eventBus.post(new Notification(BAD_MEMBER_NAME, LocalDateTime.now(),
+                    "There is a member name mismatch.",
+                    "Member " + member.getFullName() + "'s last name doesn't match their most recent session member."));
+        }
     }
 }
