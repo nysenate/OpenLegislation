@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.notifications.model.NotificationType.BAD_MEMBER_NAME;
+
 @Component
 final class FullMemberIdCache extends AbstractMemberCache<Integer, FullMember> {
 

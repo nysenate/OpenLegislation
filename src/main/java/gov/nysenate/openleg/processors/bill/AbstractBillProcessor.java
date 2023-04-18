@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 
@@ -46,7 +47,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor {
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?\\d{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
+        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?(?: / )?)+)");
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
@@ -248,7 +249,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor {
             newActiveAmend.setCoSponsors(initialActiveAmend.getCoSponsors());
             newActiveAmend.setMultiSponsors(initialActiveAmend.getMultiSponsors());
         }
-        bill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
+        bill.setSubstitutedBy(analyzer.getSubstitutedBy());
         bill.setStatus(analyzer.getBillStatus());
         bill.setMilestones(analyzer.getMilestones());
         bill.setPastCommittees(analyzer.getPastCommittees());
@@ -357,7 +358,8 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor {
                 updatedBillId = billAmendment.getBaseBillId();
             }
             if (updatedBillId != null) {
-                eventBus.post(new BillFieldUpdateEvent(updatedBillId, BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+                        updatedBillId, BillUpdateField.FULLTEXT));
             }
         });
     }

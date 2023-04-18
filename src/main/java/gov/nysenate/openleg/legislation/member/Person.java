@@ -20,7 +20,8 @@ public record Person(Integer personId, PersonName name, String email, String img
      * not be the same for older images which had a different naming conventions.
      */
     public String getSuggestedImageFileName() {
-        return personId + "_" + name.firstName() + "_" + name.lastName() + ".jpg";
+        String temp = getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
+        return RegexUtils.removeAccentedCharacters(temp);
     }
 
     /** --- Overrides --- */

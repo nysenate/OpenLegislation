@@ -21,7 +21,8 @@ public enum BillStatusType
     STRICKEN("Stricken"),
     LOST("Lost"),
     SUBSTITUTED("Substituted"),
-    ADOPTED("Adopted");
+    ADOPTED("Adopted"),
+    POCKET_APPROVAL("Pocket Approval");
 
     private final String desc;
 

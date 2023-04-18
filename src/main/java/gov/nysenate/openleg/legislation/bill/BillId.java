@@ -25,7 +25,7 @@ public class BillId implements Serializable, Comparable<BillId>
     public static final String PRINT_NUMBER_REGEX = "([ASLREJKBC])(\\d+)([A-Z]?)";
 
     private static final Pattern PRINT_NUMBER_PATTERN = Pattern.compile(PRINT_NUMBER_REGEX);
-    public static final Pattern BILL_ID_PATTERN = Pattern.compile("(?<printNo>" + PRINT_NUMBER_REGEX + ")-?(?<year>\\d{4})");
+    public static final Pattern BILL_ID_PATTERN = Pattern.compile("(?<printNo>" + PRINT_NUMBER_REGEX + ")-(?<year>\\d{4})");
 
     /** The default amendment version letter. */
     public static final Version DEFAULT_VERSION = Version.ORIGINAL;

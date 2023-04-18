@@ -29,7 +29,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<SessionMember> memberList =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
         if (memberList.isEmpty()) {
             throw new MemberNotFoundEx(id, null);
         }
@@ -66,7 +66,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         List<SessionMember> members =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
@@ -123,8 +123,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** --- Helper classes --- */
 
-    public static class MemberRowMapper implements RowMapper<SessionMember>
-    {
+    public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
             SessionMember sessionMember = new SessionMember();
