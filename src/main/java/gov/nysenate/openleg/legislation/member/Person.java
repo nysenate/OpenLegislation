@@ -4,15 +4,13 @@ import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.common.util.RegexUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 public record Person(Integer personId, PersonName name, String email, String imgName)
         implements Comparable<Person> {
     public Person(Integer personId, PersonName name, String email, String imgName) {
         this.personId = personId;
         this.name = name;
         this.email = email;
-        this.imgName = StringUtils.isEmpty(imgName) ? "no_image.jpg" : imgName;
+        this.imgName = StringUtils.isBlank(imgName) ? "no_image.jpg" : imgName;
     }
     /**
      * A consistent naming convention for image names.
@@ -23,24 +21,6 @@ public record Person(Integer personId, PersonName name, String email, String img
     public String getSuggestedImageFileName() {
         String temp = personId + "_" + name.firstName() + "_" + name.lastName() + ".jpg";
         return RegexUtils.removeAccentedCharacters(temp);
-    }
-
-    /** --- Overrides --- */
-
-    // TODO: are these overrides needed?
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        final Person other = (Person) obj;
-        return Objects.equals(this.personId, other.personId) &&
-               Objects.equals(this.name, other.name) &&
-               Objects.equals(this.email, other.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, email);
     }
 
     @Override

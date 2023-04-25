@@ -43,7 +43,7 @@ public class MemberGetCtrlIT extends ApiTest {
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
         assertEquals(0, numAlternates);
 
-        listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);;
+        listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);
         FullMemberView testFmv = (FullMemberView) listResponse.getResult().getItems().stream().filter(fm ->
                 fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).toList().get(0);
         assertEquals(2, testFmv.getSessionShortNameMap().get(2013).size());
@@ -55,8 +55,8 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
-        PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", null,
-                "Hassell-Thompson", null);
+        PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", "",
+                "Hassell-Thompson", "");
         Person testPerson = new Person(199, pName, "hassellt@senate.state.ny.us",
                 "380_ruth_hassell-thompson.jpg");
         Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);

@@ -25,37 +25,30 @@ public final class TestData {
 
     public static final Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
             .put(188, getPerson(188, "John L. Sampson", SENATE, "sampson@senate.state.ny.us",
-                    "369_john_l._sampson.jpg", null))
+                    "369_john_l._sampson.jpg"))
             .put(263, getPerson(263, "Thomas P. Morahan", SENATE, "district38@nysenate.gov",
-                    "no_image.jpg", null))
+                    "no_image.jpg"))
             .put(190, getPerson(190, "James L. Seward", SENATE, "seward@senate.state.ny.us",
-                    "371_james_l._seward.jpg", null))
+                    "371_james_l._seward.jpg"))
             .put(191, getPerson(191, "Neil D. Breslin", SENATE, "breslin@senate.state.ny.us",
-                    "372_neil_d._breslin.jpg", null))
+                    "372_neil_d._breslin.jpg"))
             .put(942, getPerson(942, "Billy Jones", ASSEMBLY, "",
-                    "no_image.jpg", null))
+                    "no_image.jpg"))
             .put(944, getPerson(944, "Robert C. Carroll", ASSEMBLY, "CarrollR@nyassembly.gov",
-                    "no_image.jpg", null))
+                    "no_image.jpg"))
             .put(950, getPerson(950, "Inez E. Dickens", ASSEMBLY,
-                    "", "no_image.jpg", ""))
+                    "", "no_image.jpg"))
             .put(204, getPerson(204, "Adriano Espaillat", SENATE,
-                    "espailla@nysenate.gov", "385_adriano_espaillat.jpg", null))
-            .put(499, getPerson(499, "Edward Hennessey", null,
-                    null, "no_image.jpg", null))
+                    "espailla@nysenate.gov", "385_adriano_espaillat.jpg"))
+            .put(499, getPerson(499, "Edward Hennessey", ASSEMBLY,
+                    null, "no_image.jpg"))
             .build();
 
-    private static Person getPerson(int id, String fullName, Chamber chamber, String email, String imgName, String suffix) {
-        String prefix;
-        if (chamber == SENATE)
-            prefix = "Senator";
-        else if (chamber == ASSEMBLY)
-            prefix = "Assembly Member";
-        else
-            prefix = null;
+    private static Person getPerson(int id, String fullName, Chamber chamber, String email, String imgName) {
         String[] nameParts = fullName.split(" ");
         boolean hasMiddleName = nameParts.length == 3;
-        var name = new PersonName(fullName, prefix, nameParts[0],
-                hasMiddleName ? nameParts[1] : null, nameParts[hasMiddleName ? 2 : 1], suffix);
+        var name = new PersonName(fullName, chamber, nameParts[0],
+                hasMiddleName ? nameParts[1] : "", nameParts[hasMiddleName ? 2 : 1], "");
         return new Person(id, name, email, imgName);
     }
 

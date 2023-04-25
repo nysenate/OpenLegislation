@@ -55,8 +55,8 @@ public class MemberSearchCtrlIT extends ApiTest {
     public void searchBySessionMemberId() throws SearchException {
         Person testP = TestData.PERSON_DATA.get(499);
         Member testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
-        SessionMember testSm = new SessionMember(666, testM, "HENNESSEY", new SessionYear(2013), 3,
-                false);
+        SessionMember testSm = new SessionMember(666, testM, "HENNESSEY",
+                new SessionYear(2013), 3, false);
         SessionMember testSmAlt = new SessionMember(testSm);
         testSmAlt.setSessionMemberId(667);
         testSmAlt.setLbdcShortName("HENNESSY");
