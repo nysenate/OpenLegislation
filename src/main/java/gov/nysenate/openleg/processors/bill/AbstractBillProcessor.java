@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 
@@ -358,8 +357,7 @@ public abstract class AbstractBillProcessor extends AbstractLegDataProcessor {
                 updatedBillId = billAmendment.getBaseBillId();
             }
             if (updatedBillId != null) {
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        updatedBillId, BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(updatedBillId, BillUpdateField.FULLTEXT));
             }
         });
     }

@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.common.util;
 
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.notifications.model.Notification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,8 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
-    private final EventBus eventBus;
+    private static final Logger logger = LoggerFactory.getLogger(MailUtils.class);
+
     private final String smtpUser, smtpPass;
     private final Properties mailProperties;
     private final OpenLegEnvironment environment;
@@ -27,8 +28,7 @@ public class MailUtils {
     private Folder sourceFolder, archiveFolder, partialFolder;
 
     @Autowired
-    public MailUtils(EventBus eventBus,
-                     @Value("${mail.smtp.host}") String host,
+    public MailUtils(@Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
                      @Value("${mail.smtp.auth:false}") boolean auth,
                      @Value("${mail.smtp.user:}") String smtpUser,
@@ -43,7 +43,6 @@ public class MailUtils {
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
                      OpenLegEnvironment environment) {
-        this.eventBus = eventBus;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
         this.mailProperties = new Properties();
@@ -80,7 +79,7 @@ public class MailUtils {
         }
         // Connection to the store has been lost, re-establish it.
         try {
-            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            store = getStore();
             this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
             this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
             this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
@@ -156,9 +155,6 @@ public class MailUtils {
      */
     private Store getStore()
             throws MessagingException {
-        // A connection shouldn't be attempted if the program is being shutdown.
-        if (Thread.currentThread().isInterrupted())
-            return null;
         Store store = Session.getInstance(mailProperties).getStore();
         try {
             store.connect(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());

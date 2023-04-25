@@ -1,19 +1,17 @@
 package gov.nysenate.openleg.processors.bill.sobi;
 
-import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
-import gov.nysenate.openleg.processors.config.ProcessConfig;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
+import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
+import gov.nysenate.openleg.processors.config.ProcessConfig;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -474,8 +471,7 @@ public class BillSobiProcessor extends AbstractBillProcessor {
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
             }
         }
     }
