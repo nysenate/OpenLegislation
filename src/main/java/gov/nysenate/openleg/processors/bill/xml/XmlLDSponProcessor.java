@@ -76,8 +76,8 @@ public class XmlLDSponProcessor extends AbstractBillProcessor {
                 removeProcess(amendment, baseBill);
             } else {
                 handlePrimaryMemberParsing(baseBill, prime, baseBill.getSession());
-                amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber, baseBill));
-                amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber, baseBill));
+                amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber, legDataFragment.getFragmentId()));
+                amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber, legDataFragment.getFragmentId()));
             }
             ArrayList<ProgramInfo> programInfos = new ArrayList<>();
             NodeList departdescs = doc.getElementsByTagName("departdesc");
