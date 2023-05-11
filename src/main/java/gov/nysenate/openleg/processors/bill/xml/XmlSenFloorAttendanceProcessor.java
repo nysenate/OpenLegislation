@@ -24,13 +24,15 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class XmlSenFloorAttendanceProcessor extends AbstractLegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenFloorAttendanceProcessor.class);
 
-    @Autowired private SqlSenateVoteAttendanceDao attendanceDao;
+    @Autowired
+    private SqlSenateVoteAttendanceDao attendanceDao;
 
     @Override
     public LegDataFragmentType getSupportedType() {
@@ -48,38 +50,37 @@ public class XmlSenFloorAttendanceProcessor extends AbstractLegDataProcessor {
             Node root = xmlHelper.getNode("senfloorattd", doc);
             String action = xmlHelper.getString("@action", root);
 
-            if (action.equalsIgnoreCase("remove")) {
-                // TODO no remote members.
-            } else if (action.equalsIgnoreCase("replace")) {
-                int sessyr = xmlHelper.getInteger("@sessyr", root);
-                String dateOfVote = xmlHelper.getString("@dateofvote", root).trim();
-                int dateSeqNo = xmlHelper.getInteger("@date_seqno", root);
-                String remoteMembers = xmlHelper.getString("remote_members", root).trim();
-                int year = xmlHelper.getInteger("@year", root);
+            int sessyr = xmlHelper.getInteger("@sessyr", root);
+            String dateOfVote = xmlHelper.getString("@dateofvote", root).trim();
+            int dateSeqNo = xmlHelper.getInteger("@date_seqno", root);
+            int year = xmlHelper.getInteger("@year", root);
 
-                LocalDate voteDate = LocalDate.from(voteDateFormat.parse(dateOfVote));
-                SessionYear sessionYear = SessionYear.of(sessyr);
-                List<SessionMember> remoteSessionMembers = getSessionMember(
-                        remoteMembers, sessionYear, Chamber.SENATE, fragment.getFragmentId());
+            LocalDate voteDate = LocalDate.from(voteDateFormat.parse(dateOfVote));
+            SessionYear sessionYear = SessionYear.of(sessyr);
+            VoteId voteId = new VoteId(voteDate, dateSeqNo, BillVoteType.FLOOR);
+            SenateVoteAttendance attendance = null;
 
-                VoteId voteId = new VoteId(voteDate, dateSeqNo, BillVoteType.FLOOR);
-                SenateVoteAttendance attendance = new SenateVoteAttendance(voteId, remoteSessionMembers);
-                attendance.setSession(sessionYear);
-                attendance.setYear(year);
-                attendance.setPublishedDateTime(publishedDateTime);
-                attendance.setModifiedDateTime(LocalDateTime.now());
-                attendanceDao.saveAttendance(attendance, fragment.getFragmentId());
-            }
-            else {
-                logger.warn("Unknown action found in xml {}", fragment.getFragmentId());
+            switch (action) {
+                case "replace" -> {
+                    String remoteMembers = xmlHelper.getString("remote_members", root).trim();
+                    List<SessionMember> remoteSessionMembers = getSessionMember(
+                            remoteMembers, sessionYear, Chamber.SENATE, fragment.getFragmentId());
+                    attendance = new SenateVoteAttendance(voteId, remoteSessionMembers);
+                }
+                case "remove" -> attendance = new SenateVoteAttendance(voteId, new ArrayList<>());
+                default -> logger.warn("Unknown action found in xml {}", fragment.getFragmentId());
             }
 
-        }
-        catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
+            attendance.setSession(sessionYear);
+            attendance.setYear(year);
+            attendance.setPublishedDateTime(publishedDateTime);
+            attendance.setModifiedDateTime(LocalDateTime.now());
+            attendanceDao.saveAttendance(attendance, fragment.getFragmentId());
+
+        } catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
             unit.addException("XML Sen Fl Atd parsing error", e);
             throw new ParseError("Error While Parsing XmlSenFlAtdProcessor", e);
-        }
-        finally {
+        } finally {
             postDataUnitEvent(unit);
             checkIngestCache();
         }

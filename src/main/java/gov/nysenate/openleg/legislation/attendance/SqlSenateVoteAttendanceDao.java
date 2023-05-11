@@ -198,7 +198,7 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
                 return null;
             }
             List<SessionMember> remoteMembers = sessionMemberIds.stream()
-                    .map(id -> memberService.getSessionMemberById(id, sessionYear))
+                    .map(id -> memberService.getSessionMemberBySessionId(id))
                     .collect(Collectors.toList());
             SenateVoteAttendance attendance = new SenateVoteAttendance(voteId, remoteMembers);
             attendance.setSession(sessionYear);
