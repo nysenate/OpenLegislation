@@ -40,6 +40,10 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
 
     public void saveAttendance(SenateVoteAttendance attendance, String fragmentId) {
         SenateVoteAttendance previousAttendance = getAttendance(attendance.getVoteId());
+        if (previousAttendance == null) {
+            previousAttendance = new SenateVoteAttendance(attendance);
+            previousAttendance.setRemoteMembers(new ArrayList<>());
+        }
         Map<Integer, SessionMember> prevRemoteMembers = createMemberMap(previousAttendance.getRemoteMembers());
         Map<Integer, SessionMember> newRemoteMembers = createMemberMap(attendance.getRemoteMembers());
         MapDifference<Integer, SessionMember> diff = Maps.difference(prevRemoteMembers, newRemoteMembers);
@@ -99,7 +103,7 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
         return new MapSqlParameterSource()
                 .addValue("voteDate", toDate(voteId.getVoteDate()))
                 .addValue("sequenceNo", voteId.getSequenceNo())
-                .addValue("voteType", voteId.getVoteType().name());
+                .addValue("voteType", voteId.getVoteType().name().toLowerCase());
     }
 
     private MapSqlParameterSource attendanceParams(SenateVoteAttendance attendance) {
@@ -111,35 +115,35 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
 
     private enum SqlSenateVoteAttendanceQuery implements BasicSqlQuery {
         GET_ATTENDANCE("""
-                SELECT (vote_date, sequence_no, vote_type, session_year, session_member_id,
-                  published_date_time, modified_date_time)
-                FROM {schema}.bill_vote_remote_attendance
+                SELECT vote_date, sequence_no, vote_type, session_member_id, session_year,
+                  published_date_time, modified_date_time
+                FROM ${schema}.bill_vote_remote_attendance
                 WHERE vote_date =  :voteDate
                   AND sequence_no = :sequenceNo
-                  AND vote_type = :voteType
+                  AND vote_type = :voteType::${schema}.vote_type
                 """
         ),
         INSERT_ATTENDANCE("""
-                INSERT INTO {schema}.bill_vote_remote_attendance(vote_date, sequence_no, vote_type, session_year,
+                INSERT INTO ${schema}.bill_vote_remote_attendance(vote_date, sequence_no, vote_type, session_year,
                   session_member_id, published_date_time, modified_date_time, last_fragment_id)
-                VALUES (:voteDate, :sequenceNo, :voteType, :sessionYear, :sessionMemberId, :publishedDateTime,
+                VALUES (:voteDate, :sequenceNo, :voteType::${schema}.vote_type, :sessionYear, :sessionMemberId, :publishedDateTime,
                   :modifiedDateTime, :lastFragmentId)
                 """
         ),
         UPDATE_ATTENDANCE("""
-                UPDATE {schema}.bill_vote_remote_attendance
+                UPDATE ${schema}.bill_vote_remote_attendance
                 SET modified_date_time = :modifiedDateTime,
                   last_fragment_id = :lastFragmentId
                 WHERE vote_date = :voteDate
                   AND sequence_no = :sequenceNo
-                  AND vote_type = :voteType
+                  AND vote_type = :voteType::${schema}.vote_type
                   AND session_member_id = :sessionMemberId
                 """),
         DELETE_ATTENDANCE("""
-                DELETE FROM {schema}.bill_vote_remote_attendance
+                DELETE FROM ${schema}.bill_vote_remote_attendance
                 WHERE vote_date = :voteDate
                   AND sequence_no = :sequenceNo
-                  AND vote_type = :voteType
+                  AND vote_type = :voteType::${schema}.vote_type
                   AND session_member_id = :sessionMemberId
                 """)
         ;
@@ -171,11 +175,11 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            if (voteId != null) {
+            if (voteId == null) {
                 voteId = new VoteId(
                         getLocalDateFromRs(rs, "vote_date"),
                         rs.getInt("sequence_no"),
-                        BillVoteType.valueOf(rs.getString("vote_type")));
+                        BillVoteType.getValue(rs.getString("vote_type")));
             }
             if (sessionYear == null) {
                 sessionYear = SessionYear.of(rs.getInt("session_year"));
@@ -190,6 +194,9 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
         }
 
         public SenateVoteAttendance getResults() {
+            if (voteId == null) {
+                return null;
+            }
             List<SessionMember> remoteMembers = sessionMemberIds.stream()
                     .map(id -> memberService.getSessionMemberById(id, sessionYear))
                     .collect(Collectors.toList());

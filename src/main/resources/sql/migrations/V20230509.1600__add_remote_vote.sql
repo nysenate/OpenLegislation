@@ -2,13 +2,13 @@ CREATE TABLE master.bill_vote_remote_attendance(
     vote_date           TIMESTAMP without time zone NOT NULL,
     sequence_no         SMALLINT NOT NULL,
     vote_type           master.VOTE_TYPE NOT NULL,
-    session_year        SMALLINT NOT NULL,
     session_member_id   INT NOT NULL REFERENCES public.session_member,
+    session_year        SMALLINT NOT NULL,
     published_date_time TIMESTAMP without time zone,
     modified_date_time  TIMESTAMP without time zone,
     created_date_time   TIMESTAMP without time zone NOT NULL DEFAULT now(),
     last_fragment_id    TEXT,
-    PRIMARY KEY(vote_date, sequence_no, vote_type)
+    PRIMARY KEY(vote_date, sequence_no, vote_type, session_member_id)
 );
 
 --Usually just returns the single relevant bill_pint_no,
