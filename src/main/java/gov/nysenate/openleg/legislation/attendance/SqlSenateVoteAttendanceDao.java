@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import gov.nysenate.openleg.common.dao.BasicSqlQuery;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.bill.BillVote;
 import gov.nysenate.openleg.legislation.bill.BillVoteType;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
@@ -35,15 +36,17 @@ public class SqlSenateVoteAttendanceDao extends SqlBaseDao {
         MapSqlParameterSource params = voteIdParams(voteId);
         SenateVoteAttendanceHandler handler = new SenateVoteAttendanceHandler(memberService);
         jdbcNamed.query(SqlSenateVoteAttendanceQuery.GET_ATTENDANCE.getSql(schema()), params, handler);
-        return handler.getResults();
+        SenateVoteAttendance attendance = handler.getResults();
+        if (attendance == null) {
+            // No records in the database means that there were no remote members.
+            attendance = new SenateVoteAttendance(voteId, new ArrayList<>());
+        }
+        return attendance;
     }
 
     public void saveAttendance(SenateVoteAttendance attendance, String fragmentId) {
         SenateVoteAttendance previousAttendance = getAttendance(attendance.getVoteId());
-        if (previousAttendance == null) {
-            previousAttendance = new SenateVoteAttendance(attendance);
-            previousAttendance.setRemoteMembers(new ArrayList<>());
-        }
+
         Map<Integer, SessionMember> prevRemoteMembers = createMemberMap(previousAttendance.getRemoteMembers());
         Map<Integer, SessionMember> newRemoteMembers = createMemberMap(attendance.getRemoteMembers());
         MapDifference<Integer, SessionMember> diff = Maps.difference(prevRemoteMembers, newRemoteMembers);

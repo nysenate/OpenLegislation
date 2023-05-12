@@ -4,11 +4,15 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.agenda.dao.BillVoteRowHandler;
+import gov.nysenate.openleg.legislation.attendance.SenateVoteAttendance;
+import gov.nysenate.openleg.legislation.attendance.SqlSenateVoteAttendanceDao;
+import gov.nysenate.openleg.legislation.attendance.VoteId;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.ApprovalDataService;
 import gov.nysenate.openleg.legislation.bill.dao.service.VetoDataService;
@@ -54,6 +58,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     @Autowired private MemberService memberService;
     @Autowired private VetoDataService vetoDataService;
     @Autowired private ApprovalDataService approvalDataService;
+    @Autowired private SqlSenateVoteAttendanceDao attendanceDao;
 
     /* --- Implemented Methods --- */
 
@@ -408,6 +413,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         BillVoteRowHandler voteHandler = new BillVoteRowHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES.getSql(schema()), baseParams, voteHandler);
         List<BillVote> billVotes = voteHandler.getBillVotes();
+        // Fully populate session member objects.
         for (BillVote billVote : billVotes) {
             for (SessionMember member : billVote.getMemberVotes().values()) {
                 try {
@@ -417,6 +423,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                     logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
                 }
             }
+        }
+        // Fetch vote attendance.
+        for (BillVote billVote : billVotes) {
+            SenateVoteAttendance attendance = attendanceDao.getAttendance(new VoteId(billVote));
+            billVote.setAttendance(attendance);
         }
         return billVotes;
     }
