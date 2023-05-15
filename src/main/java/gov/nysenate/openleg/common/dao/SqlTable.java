@@ -55,6 +55,7 @@ public enum SqlTable
     BILL_SCRAPE_FILE             ("bill_scrape_file"),
     BILL_SCRAPE_QUEUE            ("bill_scrape_queue"),
     BILL_ALTERNATE_PDF           ("bill_text_alternate_pdf"),
+    BILL_VOTE_REMOTE_ATTENDANCE  ("bill_vote_remote_attendance"),
 
     BILL_CHANGE_LOG              ("bill_change_log"),
 
