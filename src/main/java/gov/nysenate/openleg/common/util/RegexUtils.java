@@ -1,12 +1,13 @@
 package gov.nysenate.openleg.common.util;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Contains some methods to help create and use regular expressions.
  */
-public class RegexUtils {
+public final class RegexUtils {
     private static final String DELIM = "~~@@@@~~";
     // Utility class.
     private RegexUtils() {}
@@ -29,5 +30,10 @@ public class RegexUtils {
         for (int i = 1; i < dataList.size(); i += 2)
             pairList.add(new Pair<>(dataList.get(i), dataList.get(i + 1)));
         return pairList;
+    }
+
+    public static String removeAccentedCharacters(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFKD)
+                .replaceAll("\\p{M}", "");
     }
 }

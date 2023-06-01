@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.RegexUtils;
 import gov.nysenate.openleg.legislation.*;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.FullMember;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -162,8 +162,8 @@ public class FullMemberIdCache implements CachingService<Integer> {
         memberCache.put(new Element(new SimpleKey(member.getMemberId()), member, true));
         // Tests for consistency between the person's last name, and their most recent shortname
         // (which is in all caps and has accents removed).
-        String expectedShortname = Normalizer.normalize(member.getLastName(), Normalizer.Form.NFKD)
-                .replaceAll("\\p{M}", "").toUpperCase();
+        String expectedShortname = RegexUtils.removeAccentedCharacters(member.getLastName())
+                .toUpperCase();
         char firstInitial = member.getFirstName().charAt(0);
         // The shortname may have the first and middle initial appended to it.
         String namePattern = "(%s)( %c.?)?".formatted(expectedShortname, firstInitial);

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.legislation.member;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.common.util.RegexUtils;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 
 import java.util.Objects;
@@ -79,7 +80,8 @@ public class Person implements Comparable<Person> {
      * @return
      */
     public String getSuggestedImageFileName() {
-        return getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
+        String temp = getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
+        return RegexUtils.removeAccentedCharacters(temp);
     }
 
     /** --- Overrides --- */

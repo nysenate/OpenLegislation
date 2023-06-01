@@ -63,6 +63,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         updateMappings.put(TITLE, new BillUpdateTable(BILL, "title"));
         updateMappings.put(VETO, new BillUpdateTable(BILL_VETO));
         updateMappings.put(VOTE, new BillUpdateTable(BILL_AMENDMENT_VOTE_INFO));
+        updateMappings.put(VOTE_ATTENDANCE, new BillUpdateTable(BILL_VOTE_REMOTE_ATTENDANCE));
     }
 
     /** {@inheritDoc} */
