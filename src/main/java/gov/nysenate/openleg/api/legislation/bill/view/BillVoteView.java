@@ -41,7 +41,7 @@ public class BillVoteView implements ViewObject
                             .sorted(Comparator.comparing(MemberView::getShortName))
                             .collect(Collectors.toList()))))
             );
-            this.attendance = new SenateVoteAttendanceView(billVote.getAttendance());
+            this.attendance = billVote.getAttendance() == null ? null : new SenateVoteAttendanceView(billVote.getAttendance());
         }
     }
     public BillVoteView(){
