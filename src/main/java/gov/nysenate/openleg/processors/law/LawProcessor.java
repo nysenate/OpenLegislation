@@ -114,7 +114,8 @@ public class LawProcessor extends AbstractDataProcessor
             // Retrieve the existing law tree if it exists.
             if (!lawTrees.containsKey(block.getLawId())) {
                 try {
-                    LawTree lawTree = lawDataService.getLawTree(block.getLawId(), block.getPublishedDate());
+                    // Should retrieve the first existing law tree prior to the published date.
+                    LawTree lawTree = lawDataService.getLawTree(block.getLawId(), block.getPublishedDate().minusDays(1));
                     lawTrees.put(block.getLawId(), lawTree);
                 }
                 catch (LawTreeNotFoundEx ex) {
