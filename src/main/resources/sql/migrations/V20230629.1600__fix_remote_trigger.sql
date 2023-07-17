@@ -1,10 +1,10 @@
 -- Clears out old functions.
+DROP TRIGGER log_attendance_updates_to_change_log ON master.bill_vote_remote_attendance;
+DROP TRIGGER bill_vote_triggers_attendance_update ON master.bill_amendment_vote_info;
 DROP FUNCTION master.bill_print_nums(curr_row RECORD, table_name TEXT);
 DROP FUNCTION master.session_year(curr_row RECORD);
 DROP PROCEDURE master.bill_updates_helper(operation TEXT, old RECORD, new RECORD, table_name TEXT);
 DROP FUNCTION master.attendance_updates();
-DROP TRIGGER log_attendance_updates_to_change_log ON master.bill_vote_remote_attendance;
-DROP TRIGGER bill_vote_triggers_attendance_update ON master.bill_amendment_vote_info;
 
 -- Return values of triggers have a common structure.
 CREATE FUNCTION master.return_from_trigger(operation TEXT, old RECORD, new RECORD)
