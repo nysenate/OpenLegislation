@@ -4,6 +4,9 @@ import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.api.response.error.*;
+import gov.nysenate.openleg.auth.model.ApiUser;
+import gov.nysenate.openleg.auth.model.OpenLegRole;
+import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -21,6 +24,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +57,8 @@ public abstract class BaseCtrl
 
     /** Maximum number of results that can be requested via the query params. */
     private static final int MAX_LIMIT = 1000;
+    /** Minimum number of results that can be requested via the query params. Only Senate Site API can use a limit = 0. */
+    private static final int MIN_LIMIT = 0;
 
     @Autowired
     private EventBus eventBus;
@@ -94,28 +100,47 @@ public abstract class BaseCtrl
      * Returns the given default limit offset if no such parameters exist
      *
      * @param webRequest WebRequest
-     * @param defaultLimit int - The default limit to use, 0 for no limit
+     * @param defaultLimit int - The default limit to use, 0 for no limit. Using a limit of 0/all should be avoided
+     *                     and is disallowed for everyone except the senate site.
      * @return LimitOffset
      */
     protected LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
-        int limit = defaultLimit;
-        int offset = 0;
-        String limitStr = webRequest.getParameter("limit");
-        if (limitStr != null) {
-            if (limitStr.equalsIgnoreCase("all")) {
-                limit = 0;
-            }
-            else {
-                limit = NumberUtils.toInt(limitStr, defaultLimit);
-                if (limit > MAX_LIMIT) {
-                    throw new InvalidRequestParamEx(limitStr, "limit", "int", "Must be <= " + MAX_LIMIT);
-                }
-            }
+        String limitParam = webRequest.getParameter("limit");
+        String offsetParam = webRequest.getParameter("offset");
+        int limit = parseLimit(limitParam, defaultLimit);
+        int offset = parseOffset(offsetParam, 0);
+
+        if (limit > MAX_LIMIT || limit < MIN_LIMIT) {
+            // No one can specify a limit greater than 1,000 or less than 0.
+            throw new InvalidRequestParamEx(limitParam, "limit", "int", "Must be > 0 and <= " + MAX_LIMIT);
         }
-        if (webRequest.getParameter("offset") != null) {
-            offset = NumberUtils.toInt(webRequest.getParameter("offset"), 0);
+        if (limit == 0) {
+            if (!SecurityUtils.getSubject().hasRole(OpenLegRole.SEN_SITE_API_USER.name())) {
+                // Only API users with SEN_SITE_API_USER role can use limit = 0.
+                throw new InvalidRequestParamEx(limitParam, "limit", "int", "Must be > 0 and <= " + MAX_LIMIT);
+            }
         }
         return new LimitOffset(limit, offset);
+    }
+
+    private int parseLimit(String limitParam, int defaultLimit) {
+        int limit = defaultLimit;
+        if (limitParam != null) {
+            if (limitParam.equalsIgnoreCase("all")) {
+                limit = 0;
+            } else {
+                limit = NumberUtils.toInt(limitParam, defaultLimit);
+            }
+        }
+        return limit;
+    }
+
+    private int parseOffset(String offsetParam, int defaultOffset) {
+        int offset = defaultOffset;
+        if (offsetParam != null) {
+            offset = NumberUtils.toInt(offsetParam, defaultOffset);
+        }
+        return offset;
     }
 
     /**
