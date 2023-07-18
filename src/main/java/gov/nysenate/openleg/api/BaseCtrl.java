@@ -4,9 +4,7 @@ import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.api.response.error.*;
-import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
-import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -30,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -62,6 +61,8 @@ public abstract class BaseCtrl
 
     @Autowired
     private EventBus eventBus;
+    @Value("${limit.search.results:true}")
+    private boolean limitSearchResults;
 
     /** --- Param grabbers --- */
 
@@ -114,7 +115,7 @@ public abstract class BaseCtrl
             // No one can specify a limit greater than 1,000 or less than 0.
             throw new InvalidRequestParamEx(limitParam, "limit", "int", "Must be > 0 and <= " + MAX_LIMIT);
         }
-        if (limit == 0) {
+        if (limit == 0 && limitSearchResults) {
             if (!SecurityUtils.getSubject().hasRole(OpenLegRole.SEN_SITE_API_USER.name())) {
                 // Only API users with SEN_SITE_API_USER role can use limit = 0.
                 throw new InvalidRequestParamEx(limitParam, "limit", "int", "Must be > 0 and <= " + MAX_LIMIT);
