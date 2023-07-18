@@ -26,7 +26,6 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
 
     @Test
     public void allLawsSearch() {
-        addParam("limit", "all");
         loadTestData(true, TEST_LAW_IDS);
         try {
             var lawIds = searchLaws("locationId:1", "locationId:R1");

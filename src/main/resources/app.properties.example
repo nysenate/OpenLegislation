@@ -290,6 +290,3 @@ nysenate.gov.url = https://www.NYSenate.gov
 
 # The Open Legislation source code directory. Used by member scripts when downloading senator images.
 source.code.directory = "/home/user/OpenLegislation"
-
-# Limits search results to prevent OOM exceptions and slowdowns.
-limit.search.results = true
