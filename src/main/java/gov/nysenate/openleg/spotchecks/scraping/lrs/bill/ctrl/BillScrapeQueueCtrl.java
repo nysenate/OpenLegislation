@@ -46,7 +46,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getBillScrapeQueue(WebRequest request) {
-        LimitOffset limitOffset = getLimitOffset(request, 0);
+        LimitOffset limitOffset = getLimitOffset(request, 1000);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         PaginatedList<BillScrapeQueueEntry> results = btrDao.getScrapeQueue(limitOffset, order);
         return ListViewResponse.of(

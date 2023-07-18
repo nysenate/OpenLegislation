@@ -49,7 +49,7 @@ public class SourceGetCtrl extends BaseCtrl {
      * -------------
      * <p>
      * Retrieve a list of sobi files that were published between the given date range.
-     * Usage: (GET) /api/3/sources/sobi/{from datetime}/{to datetime}
+     * Usage: (GET) /api/3/sources/{from datetime}/{to datetime}
      * <p>
      * Params: order (string) - Order the results
      * limit, offset (int) - Pagination
@@ -76,7 +76,7 @@ public class SourceGetCtrl extends BaseCtrl {
      * -----------------
      * <p>
      * Retrieve source fragments given a sobi file name.
-     * Usage: (GET) /api/3/sources/sobi/{sobiFileName}
+     * Usage: (GET) /api/3/sources/{sobiFileName}
      * <p>
      * Expected Output: List of SourceFileView containing the fragments
      */
@@ -95,7 +95,7 @@ public class SourceGetCtrl extends BaseCtrl {
      * -----------------
      * <p>
      * Retrieve a sobi fragment given a fragment id.
-     * Usage: (GET) /api/3/sources/sobi/fragment/{fragmentId}
+     * Usage: (GET) /api/3/sources/fragment/{fragmentId}
      * <p>
      * Expected Output: SourceFileView
      */
