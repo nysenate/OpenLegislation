@@ -1,0 +1,162 @@
+<billstatus  sessyr="2023" billhse="S" billno="05186" action="replace">
+  <deadtag></deadtag>
+  <currentamd></currentamd>
+  <sponsor><![CDATA[MAYER]]></sponsor>
+  <reprint>
+    <rprtbillhse></rprtbillhse>
+    <rprtbillno></rprtbillno>
+    <rprtbillamd></rprtbillamd>
+  </reprint>
+  <lbdno>05011023</lbdno>
+  <introcomm>45</introcomm>
+  <curcomm></curcomm>
+  <curcommhse></curcommhse>
+  <law><![CDATA[Environmental Conservation Law]]></law>
+  <title><![CDATA[Requires the department of environmental conservation to implement permit regulations and guidance regarding shoreline management]]></title>
+  <billactions><![CDATA[
+02/27/23 REFERRED TO ENVIRONMENTAL CONSERVATION
+03/15/23 1ST REPORT CAL.511
+03/16/23 2ND REPORT CAL.
+03/20/23 ADVANCED TO THIRD READING
+03/22/23 PASSED SENATE
+03/22/23 DELIVERED TO ASSEMBLY
+03/22/23 referred to environmental conservation
+05/30/23 RECALLED FROM ASSEMBLY
+05/30/23 returned to senate
+05/30/23 VOTE RECONSIDERED - RESTORED TO THIRD READING
+]]></billactions>
+  <actions>
+    <action no="1">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>1</actioncode>
+      <actiontype>S</actiontype>
+      <actiondata>45</actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-02-27</actiondate>
+      <actiondesc><![CDATA[REFERRED TO ENVIRONMENTAL CONSERVATION]]></actiondesc>
+      <actionpostdate>2023-02-27</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="2">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>18</actioncode>
+      <actiontype>F</actiontype>
+      <actiondata>511</actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-15</actiondate>
+      <actiondesc><![CDATA[1ST REPORT CAL.511]]></actiondesc>
+      <actionpostdate>2023-03-15</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="3">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>19</actioncode>
+      <actiontype>F</actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-16</actiondate>
+      <actiondesc><![CDATA[2ND REPORT CAL.]]></actiondesc>
+      <actionpostdate>2023-03-16</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="4">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>32</actioncode>
+      <actiontype>F</actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-20</actiondate>
+      <actiondesc><![CDATA[ADVANCED TO THIRD READING]]></actiondesc>
+      <actionpostdate>2023-03-20</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="5">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>40</actioncode>
+      <actiontype> </actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-22</actiondate>
+      <actiondesc><![CDATA[PASSED SENATE]]></actiondesc>
+      <actionpostdate>2023-03-22</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="6">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>53</actioncode>
+      <actiontype> </actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-22</actiondate>
+      <actiondesc><![CDATA[DELIVERED TO ASSEMBLY]]></actiondesc>
+      <actionpostdate>2023-03-22</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="7">
+      <actionbillamd></actionbillamd>
+      <actionhouse>A</actionhouse>
+      <actioncode>1</actioncode>
+      <actiontype>S</actiontype>
+      <actiondata>51</actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-03-22</actiondate>
+      <actiondesc><![CDATA[referred to environmental conservation]]></actiondesc>
+      <actionpostdate>2023-03-22</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="8">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>56</actioncode>
+      <actiontype> </actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-05-30</actiondate>
+      <actiondesc><![CDATA[RECALLED FROM ASSEMBLY]]></actiondesc>
+      <actionpostdate>2023-05-30</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="9">
+      <actionbillamd></actionbillamd>
+      <actionhouse>A</actionhouse>
+      <actioncode>61</actioncode>
+      <actiontype> </actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-05-30</actiondate>
+      <actiondesc><![CDATA[returned to senate]]></actiondesc>
+      <actionpostdate>2023-05-30</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="10">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>34</actioncode>
+      <actiontype>F</actiontype>
+      <actiondata></actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-05-30</actiondate>
+      <actiondesc><![CDATA[VOTE RECONSIDERED - RESTORED TO THIRD READING]]></actiondesc>
+      <actionpostdate>2023-05-30</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+    <action no="2023">
+      <actionbillamd></actionbillamd>
+      <actionhouse>S</actionhouse>
+      <actioncode>300</actioncode>
+      <actiontype>F</actiontype>
+      <actiondata>511</actiondata>
+      <actiondataamd></actiondataamd>
+      <actiondate>2023-05-30</actiondate>
+      <actiondesc><![CDATA[on calendar]]></actiondesc>
+      <actionpostdate>2023-05-30</actionpostdate>
+      <actionactsessyr>2023</actionactsessyr>
+    </action>
+  </actions>
+</billstatus>

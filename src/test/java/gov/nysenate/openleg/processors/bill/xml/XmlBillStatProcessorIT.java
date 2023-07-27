@@ -3,6 +3,10 @@ package gov.nysenate.openleg.processors.bill.xml;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.BillStatus;
+import gov.nysenate.openleg.legislation.bill.BillStatusType;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import org.junit.Test;
@@ -11,13 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by Robert Bebber on 3/20/17.
@@ -90,6 +94,40 @@ public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
 
         Bill bill = billDataService.getBill(new BaseBillId("A04833", 2017));
         assertFalse("Base version should be unpublished", bill.isBaseVersionPublished());
+    }
+
+    @Test
+    public void restoredToSenateTest() {
+        String passedSenate = "processor/bill/billstat/2023-03-22-15.51.55.699307_BILLSTAT_S05186.XML";
+        String returnedToSenate = "processor/bill/billstat/2023-05-30-10.48.50.700972_BILLSTAT_S05186.XML";
+        String senateFloorCal = "processor/bill/billstat/2023-05-30-16.07.29.818207_BILLSTAT_S05186.XML";
+
+        processXmlFile(passedSenate);
+        BillStatus passedSenateStatus = new BillStatus(BillStatusType.PASSED_SENATE, LocalDate.of(2023, 03, 22));
+        Bill bill = billDataService.getBill(new BaseBillId("S5186", 2023));
+        assertEquals(passedSenateStatus, bill.getStatus());
+        passedSenateStatus.setActionSequenceNo(5); // ActionSequenceNo are used in milestones but not statuses. Not sure why.
+        assertTrue(bill.getMilestones().contains(passedSenateStatus));
+
+        processXmlFile(returnedToSenate);
+        BillStatus inAssemblyCommitteestatus = new BillStatus(BillStatusType.IN_ASSEMBLY_COMM, LocalDate.of(2023, 03, 22));
+        inAssemblyCommitteestatus.setCommitteeId(new CommitteeId(Chamber.ASSEMBLY, "ENVIRONMENTAL CONSERVATION"));
+        bill = billDataService.getBill(new BaseBillId("S5186", 2023));
+        assertEquals(inAssemblyCommitteestatus, bill.getStatus());
+        inAssemblyCommitteestatus.setActionSequenceNo(7); // ActionSequenceNo are used in milestones but not statuses. Not sure why.
+        // Returning to the senate does not alter the current status or milestones.
+        assertTrue(bill.getMilestones().containsAll(Arrays.asList(passedSenateStatus, inAssemblyCommitteestatus)));
+
+        processXmlFile(senateFloorCal);
+        BillStatus senateFloorStatus = new BillStatus(BillStatusType.SENATE_FLOOR, LocalDate.of(2023, 05, 30));
+        senateFloorStatus.setCalendarNo(511);
+        bill = billDataService.getBill(new BaseBillId("S5186", 2023));
+        assertEquals(BillStatusType.SENATE_FLOOR, bill.getStatus().getStatusType());
+        // An additional action. i.e. "RESTORED TO THIRD READING" will update the status and milestones.
+        // Prev passed senate and in assembly comm milestones are removed.
+        assertFalse(bill.getMilestones().containsAll(Arrays.asList(passedSenateStatus, inAssemblyCommitteestatus)));
+        senateFloorStatus.setActionSequenceNo(10); // ActionSequenceNo are used in milestones but not statuses. Not sure why.
+        assertTrue(bill.getMilestones().contains(senateFloorStatus));
     }
 
     /**
