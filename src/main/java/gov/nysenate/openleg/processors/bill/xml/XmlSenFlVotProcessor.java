@@ -91,6 +91,7 @@ public class XmlSenFlVotProcessor extends AbstractLegDataProcessor {
                 Node member = memberVotes.item(index);
                 final String howMemberVoted = xmlHelper.getString("vote",member);
                 final String shortName = xmlHelper.getString("name",member);
+                final boolean isRemote = xmlHelper.getString("remote", member).equals("Y");
 
                 BillVoteCode voteCode;
                 try {
@@ -103,6 +104,9 @@ public class XmlSenFlVotProcessor extends AbstractLegDataProcessor {
                 // Only senator votes are received. A valid member mapping is required.
                 SessionMember voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
                 vote.addMemberVote(voteCode, voter);
+                if (isRemote) {
+                    vote.getAttendance().addRemoteMember(voter);
+                }
             }
             billAmendment.updateVote(vote);
 

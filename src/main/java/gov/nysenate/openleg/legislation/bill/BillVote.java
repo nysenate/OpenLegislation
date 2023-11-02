@@ -51,10 +51,6 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     /** --- Constructors --- */
 
-    public BillVote() {
-        super();
-    }
-
     public BillVote(BillVoteId billVoteId) {
         this(billVoteId.getBillId(), billVoteId.getVoteDate(), billVoteId.getVoteType(), billVoteId.getSequenceNo());
         this.committeeId = billVoteId.getCommitteeId();
@@ -65,13 +61,14 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo) {
-        this();
+        super();
         this.billId = billId;
         this.voteDate = voteDate;
         this.setYear(voteDate.getYear());
         this.setSession(new SessionYear(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
+        this.attendance = new SenateVoteAttendance();
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo, CommitteeId committeeId) {

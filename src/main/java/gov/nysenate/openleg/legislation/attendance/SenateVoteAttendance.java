@@ -13,17 +13,20 @@ import java.util.Objects;
 public class SenateVoteAttendance extends BaseLegislativeContent {
     private List<SessionMember> remoteMembers;
 
+    public SenateVoteAttendance() {
+        this(new ArrayList<>());
+    }
+
     public SenateVoteAttendance(List<SessionMember> remoteMembers) {
         this.remoteMembers = remoteMembers;
     }
 
-    public SenateVoteAttendance(SenateVoteAttendance other) {
-        super(other);
-        this.remoteMembers = other.getRemoteMembers();
-    }
-
     public List<SessionMember> getRemoteMembers() {
         return remoteMembers;
+    }
+
+    public void addRemoteMember(SessionMember member) {
+        this.remoteMembers.add(member);
     }
 
     protected void setRemoteMembers(Collection<SessionMember> members) {

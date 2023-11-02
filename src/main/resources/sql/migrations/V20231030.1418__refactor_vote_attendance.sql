@@ -7,8 +7,8 @@ DROP TRIGGER bill_vote_attendance_update_log ON master.bill_amendment_vote_info;
 DROP FUNCTION master.return_from_trigger(operation TEXT, old RECORD, new RECORD);
 DROP FUNCTION master.get_bill_info_hstore(rec RECORD);
 DROP PROCEDURE master.bill_updates_helper(operation TEXT, old public.hstore, new public.hstore, table_name TEXT);
-DROP FUNCTION master.bill_info_triggers_attendance()
-DROP PROCEDUCE master.attendance_trigger_helper(triggered_from_info BOOLEAN, to_match RECORD,
+DROP FUNCTION master.bill_info_triggers_attendance();
+DROP PROCEDURE master.attendance_trigger_helper(triggered_from_info BOOLEAN, to_match RECORD,
     old_input public.hstore, new_input public.hstore, operation TEXT);
 DROP FUNCTION master.attendance_trigger();
 
