@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.attendance;
 
-import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
+import gov.nysenate.openleg.api.ListView;
+import gov.nysenate.openleg.api.legislation.member.view.MemberView;
 import gov.nysenate.openleg.legislation.attendance.SenateVoteAttendance;
 
 import java.util.List;
@@ -8,15 +9,16 @@ import java.util.stream.Collectors;
 
 public class SenateVoteAttendanceView {
 
-    private List<SessionMemberView> remote;
+    private ListView<MemberView> remote;
 
     public SenateVoteAttendanceView(SenateVoteAttendance attendance) {
-        this.remote = attendance.getRemoteMembers().stream()
-                .map(SessionMemberView::new)
+        List<MemberView> remoteMembers = attendance.getRemoteMembers().stream()
+                .map(MemberView::new)
                 .collect(Collectors.toList());
+        this.remote = ListView.of(remoteMembers);
     }
 
-    public List<SessionMemberView> getRemote() {
+    public ListView<MemberView> getRemote() {
         return remote;
     }
 }
