@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.bill.view;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
 import gov.nysenate.openleg.api.ViewObject;
+import gov.nysenate.openleg.api.legislation.attendance.SenateVoteAttendanceView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
 import gov.nysenate.openleg.legislation.bill.BillVote;
@@ -19,8 +20,10 @@ public class BillVoteView implements ViewObject
     protected String version;
     protected BillVoteType voteType;
     protected LocalDate voteDate;
+    protected int sequenceNo;
     protected CommitteeIdView committee;
     protected MapView<String, ListView<MemberView>> memberVotes;
+    protected SenateVoteAttendanceView attendance;
 
     public BillVoteView(BillVote billVote) {
         if(billVote != null) {
@@ -28,6 +31,7 @@ public class BillVoteView implements ViewObject
             this.version = new BillIdView(billVote.getBillId()).getVersion();
             this.voteType = billVote.getVoteType();
             this.voteDate = billVote.getVoteDate();
+            this.sequenceNo = billVote.getSequenceNo();
             this.committee = billVote.getCommitteeId() != null ? new CommitteeIdView(billVote.getCommitteeId()) : null;
             this.memberVotes = MapView.of(
                 billVote.getMemberVotes().keySet().stream()
@@ -36,6 +40,7 @@ public class BillVoteView implements ViewObject
                             .map(MemberView::new)
                             .sorted(Comparator.comparing(MemberView::getShortName)).toList())))
             );
+            this.attendance = billVote.getAttendance() == null ? null : new SenateVoteAttendanceView(billVote.getAttendance());
         }
     }
     public BillVoteView(){
@@ -62,12 +67,20 @@ public class BillVoteView implements ViewObject
         return voteDate;
     }
 
+    public int getSequenceNo() {
+        return sequenceNo;
+    }
+
     public CommitteeIdView getCommittee() {
         return committee;
     }
 
     public MapView<String, ListView<MemberView>> getMemberVotes() {
         return memberVotes;
+    }
+
+    public SenateVoteAttendanceView getAttendance() {
+        return attendance;
     }
 
     @Override

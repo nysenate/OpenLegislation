@@ -33,7 +33,6 @@ import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.updates.bill.BulkBillUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,7 +212,7 @@ public abstract class AbstractDataProcessor
      * @param chamber Bill Chamber for getting ShortName
      * @return
      */
-    protected List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber, Bill baseBill) {
+    protected List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber, String fragmentId) {
         List<String> shortNames = Lists.newArrayList(
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
         List<SessionMember> sessionMembers = new ArrayList<>();
@@ -228,8 +227,7 @@ public abstract class AbstractDataProcessor
             }
         }
         if (!badSponsors.isEmpty()) {
-            throw new ParseError(String.format("Could not parse %s multi sponsors: %s",
-                    baseBill.getBaseBillId(), StringUtils.join(shortNames, ", ")));
+            throw new ParseError(String.format("Could not parse sponsors from fragment: %s", fragmentId));
         }
         return sessionMembers;
     }

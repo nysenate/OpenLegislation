@@ -175,7 +175,7 @@ public enum SqlAgendaQuery implements BasicSqlQuery
         "       vi.bill_print_no, vi.bill_session_year, vi.bill_amend_version, vi.vote_date, vi.vote_type," +
         "       vi.sequence_no, vi.published_date_time, vi.modified_date_time," +
         "       vi.committee_name, vi.committee_chamber," +
-        "       vr.session_member_id, vr.session_year, vr.vote_code\n" +
+        "       vr.session_member_id, vr.session_year, vr.vote_code, vr.is_remote\n" +
         "FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_VOTE + " cv\n" +
         "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " vi ON cv.vote_info_id = vi.id\n" +
         "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + " vr ON vi.id = vr.vote_id\n" +

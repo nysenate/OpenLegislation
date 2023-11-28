@@ -245,8 +245,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_VOTES_ROLL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + "\n" +
-        "(vote_id, vote_code, session_member_id, member_short_name, session_year, last_fragment_id)\n" +
-        "SELECT id, :voteCode::${schema}.vote_code, :sessionMemberId, :memberShortName, :sessionYear, :lastFragmentId " +
+        "(vote_id, vote_code, session_member_id, member_short_name, session_year, last_fragment_id, is_remote)\n" +
+        "SELECT id, :voteCode::${schema}.vote_code, :sessionMemberId, :memberShortName, :sessionYear, :lastFragmentId, :isRemote " +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo\n" +

@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
  *
  * Also, be sure the property 'source.code.directory' is pointed at the location of the OpenLegislation
  * repository on your computer.
+ *
+ * TODO update this to use our java utils package instead of hitting the API (https://github.com/nysenate/nysenate-java-utils)
  */
 @Component
 public class FetchMemberImagesScript extends BaseScript {
@@ -114,7 +116,7 @@ public class FetchMemberImagesScript extends BaseScript {
     }
 
     private Map<Integer, MemberJsonFeedView> getMembersFromJsonFeed() throws IOException {
-        String senatorJsonFeed = "https://www.nysenate.gov/senators-json";
+        String senatorJsonFeed = "https://www.nysenate.gov/senators.json";
         String json = HttpUtils.urlToString(senatorJsonFeed);
         MemberJsonFeedView[] jsonMembers = objectMapper.readValue(json, MemberJsonFeedView[].class);
         return Arrays.stream(jsonMembers)

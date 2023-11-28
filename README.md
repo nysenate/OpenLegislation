@@ -24,7 +24,7 @@ Current Senate Developers
 * Kevin Caseiras <caseiras@nysenate.gov>
 * Ken Zalewski <zalewski@nysenate.gov>
 * Anthony Calabrese <calabres@nysenate.gov>
-* Jacob Keegan <jacobmkeegan@gmail.com>
+* Jacob Keegan <keegan@nysenate.gov>
 
 Past Developers
 --------------------

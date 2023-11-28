@@ -402,6 +402,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         BillVoteRowHandler voteHandler = new BillVoteRowHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES.getSql(schema()), baseParams, voteHandler);
         List<BillVote> billVotes = voteHandler.getBillVotes();
+        // Fully populate session member objects.
         for (BillVote billVote : billVotes) {
             for (SessionMember member : billVote.getMemberVotes().values()) {
                 try {
@@ -409,6 +410,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                     member.updateFromOther(fullMember);
                 } catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
+                }
+            }
+            for (SessionMember member : billVote.getAttendance().getRemoteMembers()) {
+                try {
+                    SessionMember fullMember = memberService.getSessionMemberBySessionId(member.getSessionMemberId());
+                    member.updateFromOther(fullMember);
+                } catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.error("Failed to add member vote attendance since member could not be found!", memberNotFoundEx);
                 }
             }
         }
@@ -699,6 +708,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 for (SessionMember member : billVote.getMembersByVote(voteCode)) {
                     voteParams.addValue("sessionMemberId", member.getSessionMemberId());
                     voteParams.addValue("memberShortName", member.getLbdcShortName());
+                    voteParams.addValue("isRemote", billVote.getAttendance().getRemoteMembers().contains(member));
                     jdbcNamed.update(SqlBillQuery.INSERT_BILL_VOTES_ROLL.getSql(schema()), voteParams);
                 }
             }

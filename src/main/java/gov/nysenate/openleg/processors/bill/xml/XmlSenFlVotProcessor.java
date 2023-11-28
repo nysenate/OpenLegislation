@@ -1,17 +1,13 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -91,6 +87,7 @@ public class XmlSenFlVotProcessor extends AbstractLegDataProcessor {
                 Node member = memberVotes.item(index);
                 final String howMemberVoted = xmlHelper.getString("vote",member);
                 final String shortName = xmlHelper.getString("name",member);
+                final boolean isRemote = xmlHelper.getString("remote", member).equals("Y");
 
                 BillVoteCode voteCode;
                 try {
@@ -103,6 +100,9 @@ public class XmlSenFlVotProcessor extends AbstractLegDataProcessor {
                 // Only senator votes are received. A valid member mapping is required.
                 SessionMember voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
                 vote.addMemberVote(voteCode, voter);
+                if (isRemote) {
+                    vote.getAttendance().addRemoteMember(voter);
+                }
             }
             billAmendment.updateVote(vote);
 

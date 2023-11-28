@@ -5,6 +5,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ListMultimap;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.attendance.SenateVoteAttendance;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,11 +47,9 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
      *  Currently not implemented as the source data does not contain this value. */
     private int sequenceNo;
 
-    /** --- Constructors --- */
+    private SenateVoteAttendance attendance;
 
-    public BillVote() {
-        super();
-    }
+    /** --- Constructors --- */
 
     public BillVote(BillVoteId billVoteId) {
         this(billVoteId.getBillId(), billVoteId.getVoteDate(), billVoteId.getVoteType(), billVoteId.getSequenceNo());
@@ -62,13 +61,14 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo) {
-        this();
+        super();
         this.billId = billId;
         this.voteDate = voteDate;
         this.setYear(voteDate.getYear());
         this.setSession(new SessionYear(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
+        this.attendance = new SenateVoteAttendance();
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo, CommitteeId committeeId) {
@@ -136,7 +136,8 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
                Objects.equals(this.voteDate, other.voteDate) &&
                Objects.equals(this.memberVotes, other.memberVotes) &&
                Objects.equals(this.sequenceNo, other.sequenceNo) &&
-               Objects.equals(this.committeeId, other.committeeId);
+               Objects.equals(this.committeeId, other.committeeId) &&
+               Objects.equals(this.attendance, other.attendance);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     @Override
     public int hashCode() {
-        return Objects.hash(billId, voteType, voteDate, memberVotes, sequenceNo);
+        return Objects.hash(billId, voteType, voteDate, memberVotes, sequenceNo, committeeId, attendance);
     }
 
     @Override
@@ -207,5 +208,13 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     public void setCommitteeId(CommitteeId committeeId) {
         this.committeeId = committeeId;
+    }
+
+    public SenateVoteAttendance getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(SenateVoteAttendance attendance) {
+        this.attendance = attendance;
     }
 }
