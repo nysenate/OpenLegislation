@@ -11,38 +11,22 @@ import java.util.List;
 import java.util.Objects;
 
 public class SenateVoteAttendance extends BaseLegislativeContent {
-    private VoteId voteId;
     private List<SessionMember> remoteMembers;
 
-    public SenateVoteAttendance(VoteId voteId, List<SessionMember> remoteMembers) {
-        this.voteId = voteId;
+    public SenateVoteAttendance() {
+        this(new ArrayList<>());
+    }
+
+    public SenateVoteAttendance(List<SessionMember> remoteMembers) {
         this.remoteMembers = remoteMembers;
-    }
-
-    public SenateVoteAttendance(SenateVoteAttendance other) {
-        super(other);
-        this.voteId = other.getVoteId();
-        this.remoteMembers = other.getRemoteMembers();
-    }
-
-    public VoteId getVoteId() {
-        return voteId;
-    }
-
-    public LocalDate getVoteDate() {
-        return voteId.getVoteDate();
-    }
-
-    public int getSequenceNo() {
-        return voteId.getSequenceNo();
-    }
-
-    public BillVoteType getVoteType() {
-        return voteId.getVoteType();
     }
 
     public List<SessionMember> getRemoteMembers() {
         return remoteMembers;
+    }
+
+    public void addRemoteMember(SessionMember member) {
+        this.remoteMembers.add(member);
     }
 
     protected void setRemoteMembers(Collection<SessionMember> members) {
@@ -55,11 +39,11 @@ public class SenateVoteAttendance extends BaseLegislativeContent {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SenateVoteAttendance that = (SenateVoteAttendance) o;
-        return Objects.equals(voteId, that.voteId) && Objects.equals(remoteMembers, that.remoteMembers);
+        return Objects.equals(remoteMembers, that.remoteMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), voteId, remoteMembers);
+        return Objects.hash(super.hashCode(), remoteMembers);
     }
 }

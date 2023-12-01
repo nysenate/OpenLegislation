@@ -29,8 +29,7 @@ public enum LegDataFragmentType
     SAMEAS          (true, "<sameas .+", "</sameas>.+"),                          // Same as
     SENMEMO         (true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
     VETOMSG         (true, "<veto_message .+", "</veto_message.+"),               // Veto memo
-    SENFLVOTE       (true, "<senfloorvote .+","</senfloorvote>.+"),
-    SENFLATD        (true, "<senfloorattd .+", "</senfloorattd>.+");
+    SENFLVOTE       (true, "<senfloorvote .+","</senfloorvote>.+");
 
     boolean isXml;
     String startPattern;

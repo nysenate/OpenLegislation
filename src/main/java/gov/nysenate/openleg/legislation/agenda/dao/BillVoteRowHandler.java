@@ -47,5 +47,8 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
         voter.setSessionMemberId(rs.getInt("session_member_id"));
         BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
         billVote.addMemberVote(voteCode, voter);
+        if (rs.getBoolean("is_remote")) {
+            billVote.getAttendance().addRemoteMember(voter);
+        }
     }
 }

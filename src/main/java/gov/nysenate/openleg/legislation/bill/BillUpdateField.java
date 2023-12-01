@@ -19,5 +19,4 @@ public enum BillUpdateField
     TITLE,
     VETO,
     VOTE,
-    VOTE_ATTENDANCE;
 }
