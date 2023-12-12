@@ -25,14 +25,12 @@ log4j2.xml
 log4j2-cli.xml
 test.log4j2.xml
 
-grunt.properties.json
 legislation.ipr
 legislation.iws
 
 src/main/webapp/.sass-cache/**
 src/main/webapp/META-INF/**
 src/main/webapp/node_modules/**
-src/main/webapp/static/bower_components/**
 src/main/webapp/static/css/**
 src/main/webapp/static/js/dest/**
 src/main/webapp/static/dist

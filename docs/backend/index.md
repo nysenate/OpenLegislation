@@ -42,10 +42,6 @@ e.g. `chmod -R +rx ~/tomcat8`
 
 `sudo apt-get install postgresql postgresql-contrib maven nodejs`
 
-### Bower and Grunt
-
-`sudo npm install -g bower grunt`
-
 ## Source Code Setup
 
 ### Clone Repository
@@ -103,9 +99,6 @@ Navigate to `src/main/resources` and copy the following files:
 * `app.properties.example` -> `app.properties`
 * `log4j2.xml.example` -> `log4j2.xml`
 * `flyway.conf.example` -> `flyway.conf`
-
-Also navigate to `src/main/webapp` and copy the following files:
-* `grunt.properties.example.json` -> `grunt.properties.json`
 
 ### `app.properties` Configuration
 
@@ -168,10 +161,6 @@ If you picked a name for the database that was not 'openleg', replace 'openleg' 
 Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
-
-### `grunt.properties.config` Configuration
-
-Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
 
 ### Test Configuration
 
