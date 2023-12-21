@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.spotchecks.sensite.calendar;
 
 import gov.nysenate.openleg.legislation.calendar.Calendar;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.spotchecks.sensite.BaseSenateSiteReportService;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +37,7 @@ public class SenateSiteCalendarReportService extends BaseSenateSiteReportService
     @Override
     protected void checkDump(SenateSiteDump dump, SpotCheckReport<CalendarEntryListId> report) {
         //Get openleg calendars for session
-        List<Calendar> openlegCalendars = calendarDataService.getCalendars(dump.getDumpId().getYear(), ASC, ALL);
+        List<Calendar> openlegCalendars = calendarDataService.getCalendars(dump.getDumpId().year(), ASC, ALL);
 
         // Parse senate site calendars from dump
         List<SenateSiteCalendar> senSiteCalendars = calendarJsonParser.parseCalendars(dump);

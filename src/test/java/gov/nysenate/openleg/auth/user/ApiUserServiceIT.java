@@ -2,16 +2,15 @@ package gov.nysenate.openleg.auth.user;
 
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.auth.model.ApiUser;
-import gov.nysenate.openleg.auth.user.ApiUserService;
-import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
+import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class ApiUserServiceIT extends BaseTests {
@@ -63,7 +62,7 @@ public class ApiUserServiceIT extends BaseTests {
 //    @Test
 //    public void removeSubscription() {
 //        //add two subscriptions
-//        apiUserDao.registerNewUser(apiUserOne.getEmail(), apiUserOne.getName(), apiUserOne.getOrganizationName(),
+//        apiUserDao.registerNewUser(apiUserOne.email(), apiUserOne.name(), apiUserOne.getOrganizationName(),
 //                apiUserOne.getSubscriptions());
 //        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub1));
 //        apiUserDao.addSubscription(apiKey, ApiUserSubscriptionType.valueOf(sub2));
@@ -164,7 +163,7 @@ public class ApiUserServiceIT extends BaseTests {
 //        ApiUser apiUserTwo = new ApiUser(emailTwo);
 //        apiUserTwo.setName("Hello");
 //        apiUserTwo.setRegistrationToken("XYZ123");
-//        String apikeyTwo = apiUserTwo.getApiKey();
+//        String apikeyTwo = apiUserTwo.apiKey();
 //
 //        //pre-conditions
 //        List<ApiUser> subscribers_before = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));
@@ -179,21 +178,21 @@ public class ApiUserServiceIT extends BaseTests {
 //        List<ApiUser> subscribers_after = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));
 //        List<String> email_list = new ArrayList<>();
 //        for(ApiUser user : subscribers_after) {
-//            email_list.add(user.getEmail());
+//            email_list.add(user.email());
 //        }
 //
 //        assertEquals("Number of users returned is incorrect.", 2,
 //                subscribers_after.size()-subscribers_before.size());
 //        assertTrue("Api User Bugs was not in the returned list.",
-//                email_list.contains(apiUserOne.getEmail()));
+//                email_list.contains(apiUserOne.email()));
 //        assertTrue("Api User Hello was not in the returned List.",
-//                email_list.contains(apiUserTwo.getEmail()));
+//                email_list.contains(apiUserTwo.email()));
 //
 //        //Get the list of users subscribed to 'NEW_FEATURES'
 //        subscribers_after = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub2));
 //        email_list.clear();
 //        for(ApiUser user : subscribers_after) {
-//            email_list.add(user.getEmail());
+//            email_list.add(user.email());
 //        }
 //    }
 //
@@ -204,7 +203,7 @@ public class ApiUserServiceIT extends BaseTests {
 //        apiUserDao.updateEmail(apiKey, newEmail);
 //
 //        assertEquals("User email was not updated to the new email address.",
-//                     newEmail, apiUserDao.getApiUserFromKey(apiKey).getEmail());
+//                     newEmail, apiUserDao.getApiUserFromKey(apiKey).email());
 //    }
 //
 //    @Test
@@ -213,6 +212,6 @@ public class ApiUserServiceIT extends BaseTests {
 //        apiUserDao.updateEmail(apiKey, emailOne);
 //
 //        assertEquals("User email was not updated to the new email address.",
-//                emailOne, apiUserDao.getApiUserFromKey(apiKey).getEmail());
+//                emailOne, apiUserDao.getApiUserFromKey(apiKey).email());
 //    }
 }

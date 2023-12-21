@@ -6,22 +6,11 @@ import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 
 import java.time.LocalDateTime;
 
-public class TranscriptUpdateTokenView implements ViewObject
-{
-    private TranscriptIdView transcriptId;
-    private LocalDateTime updateDateTime;
+public record TranscriptUpdateTokenView(TranscriptIdView transcriptId, LocalDateTime updateDateTime)
+        implements ViewObject {
 
     public TranscriptUpdateTokenView(TranscriptUpdateToken token) {
-        this.transcriptId = new TranscriptIdView(token.getTranscriptId());
-        this.updateDateTime = token.getUpdateDateTime();
-    }
-
-    public TranscriptIdView getTranscriptId() {
-        return transcriptId;
-    }
-
-    public LocalDateTime getUpdateDateTime() {
-        return updateDateTime;
+        this(new TranscriptIdView(token.getTranscriptId()), token.getUpdateDateTime());
     }
 
     @Override

@@ -39,7 +39,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.dao.SortOrder.ASC;
 import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
@@ -179,26 +178,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
         // Update the publish statuses of the amendments
         updateBillAmendPublishStatus(bill, legDataFragment, billParams);
-        // Update the sponsor
         updateBillSponsor(bill, legDataFragment, billParams);
-        // Update the milestones
         updateBillMilestones(bill, legDataFragment, billParams);
         // Determine which actions need to be inserted/deleted. Individual actions are never updated.
         updateActions(bill, legDataFragment, billParams);
         // Determine if the previous versions have changed and insert accordingly.
         updatePreviousBillVersion(bill, legDataFragment, billParams);
-        // Update associated committees
         updateBillCommittees(bill, legDataFragment, billParams);
-        // Update veto messages
         updateVetoMessages(bill, legDataFragment);
-        // Update approval message
         updateApprovalMessage(bill, legDataFragment);
     }
 
     /** {@inheritDoc} */
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
-        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.year()));
         OrderBy orderBy = new OrderBy("bill_print_no", billIdSort, "bill_session_year", billIdSort);
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), orderBy, limOff), params, (rs, row) ->
                 new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
@@ -213,7 +207,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /** {@inheritDoc} */
     @Override
     public int getBillCount(SessionYear sessionYear) throws DataAccessException {
-        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.year()));
         return jdbcNamed.queryForObject(SqlBillQuery.SELECT_COUNT_ALL_BILLS_IN_SESSION.getSql(schema()), params,
                 (rs, row) -> rs.getInt("total"));
     }
@@ -643,7 +637,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<Integer> existingCoSponsorIds = getCoSponsorIds(amendParams);
         List<Integer> newCoSponsorIds = billAmendment.getCoSponsors().stream()
                 .map(SessionMember::getSessionMemberId)
-                .collect(Collectors.toList());
+                .toList();
         MapDifference<Integer, Integer> diff = difference(existingCoSponsorIds, newCoSponsorIds, 1);
         // Delete old cosponsors
         diff.entriesOnlyOnLeft().forEach((smid,ordinal) -> {
@@ -671,7 +665,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<Integer> existingMultiSponsorIds = getMultiSponsorIds(amendParams);
         List<Integer> newMultiSponsorIds = billAmendment.getMultiSponsors().stream()
                 .map(SessionMember::getSessionMemberId)
-                .collect(Collectors.toList());
+                .toList();
         MapDifference<Integer, Integer> diff = difference(existingMultiSponsorIds, newMultiSponsorIds, 1);
         // Delete old multisponsors
         diff.entriesOnlyOnLeft().forEach((smid,ordinal) -> {
@@ -749,7 +743,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     public List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear) {
         MapSqlParameterSource billParams = new MapSqlParameterSource();
-        billParams.addValue("sessionYear", sessionYear.getYear());
+        billParams.addValue("sessionYear", sessionYear.year());
         OrderBy orderBy = new OrderBy(
                 "bill_session_year", ASC,
                 "bill_print_no", ASC,
@@ -920,13 +914,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     public ImmutableParams getBaseParams(BillId billId) {
         return ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("printNo", billId.getBasePrintNo())
-                .addValue("sessionYear", billId.getSession().getYear()));
+                .addValue("sessionYear", billId.getSession().year()));
     }
 
     public ImmutableParams getBillIdParams(BillId billId) {
         return ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("printNo", billId.getBasePrintNo())
-                .addValue("sessionYear", billId.getSession().getYear())
+                .addValue("sessionYear", billId.getSession().year())
                 .addValue("version", billId.getVersion().toString()));
     }
 
@@ -996,7 +990,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     private static MapSqlParameterSource getBillActionParams(BillAction billAction, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billAction.getBillId().getBasePrintNo())
-                .addValue("sessionYear", billAction.getBillId().getSession().getYear())
+                .addValue("sessionYear", billAction.getBillId().getSession().year())
                 .addValue("chamber", billAction.getChamber().toString().toLowerCase())
                 .addValue("version", billAction.getBillId().getVersion().toString())
                 .addValue("effectDate", toDate(billAction.getDate()))
@@ -1010,7 +1004,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo())
-                .addValue("sameAsSessionYear", sameAs.getSession().getYear())
+                .addValue("sameAsSessionYear", sameAs.getSession().year())
                 .addValue("sameAsVersion", sameAs.getVersion().toString());
         addLastFragmentParam(fragment, params);
         return params;
@@ -1020,7 +1014,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
         params.addValue("prevPrintNo", bill.getDirectPreviousVersion().getBasePrintNo())
-                .addValue("prevSessionYear", bill.getDirectPreviousVersion().getSession().getYear())
+                .addValue("prevSessionYear", bill.getDirectPreviousVersion().getSession().year())
                 .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().toString());
         addLastFragmentParam(fragment, params);
         return params;
@@ -1096,7 +1090,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      */
     private static void addBillIdParams(Bill bill, MapSqlParameterSource params) {
         params.addValue("printNo", bill.getBasePrintNo())
-                .addValue("sessionYear", bill.getSession().getYear());
+                .addValue("sessionYear", bill.getSession().year());
     }
 
     /**
@@ -1104,7 +1098,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      */
     private static void addBillIdParams(BillAmendment billAmendment, MapSqlParameterSource params) {
         params.addValue("printNo", billAmendment.getBasePrintNo())
-                .addValue("sessionYear", billAmendment.getSession().getYear())
+                .addValue("sessionYear", billAmendment.getSession().year())
                 .addValue("version", billAmendment.getVersion().toString());
     }
 

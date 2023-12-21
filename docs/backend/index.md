@@ -4,8 +4,8 @@
 
 General installation instructions for Ubuntu.
 
-### Java 15
-1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/archive/.
+### Java 17
+1. Download the Linux/x64 build of 17 from https://jdk.java.net/17/.
 2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
@@ -63,7 +63,7 @@ Clone the Open Legislation codebase to your computer.
     * Automatically download
         * Sources
         * Documentation
-5. Be sure to use Java 15 on this project
+5. Be sure to use Java 17 on this project
 
 ## Database Setup
 
@@ -106,9 +106,9 @@ These are properties that need to be modified for a typical installation.  This 
 
 #### API authentication
 
-Set `api.auth.enable = false` if you do not want to deal with api authentication.
+Set `api.auth.enable = false` if you do not want to deal with API authentication.
    
-Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce api authentication on matched hosts/ips.
+Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce API authentication on matched hosts/ips.
 
 #### Admin Settings
 
@@ -118,7 +118,7 @@ Set `default.admin.user` to your email address and `default.admin.password` to y
 
 These are references to your base data directory, staging directory, and your archive directory.
 
-Create these directories where you wish and ensure they are correctly referenced in `env.base`, `env.staging`, and `env.archive` respectively.
+Create these directories where you wish and ensure they are correctly referenced in `env.staging`, and `env.archive` respectively.
 
 #### Elasticsearch Search Configuration
 
@@ -144,9 +144,9 @@ If true, the app will scrape qa data from LBDC every data process cycle.
 
 #### Mail Configuration
 
-The `checkmail` properties are only useful if you are interested running spotcheck data qa reports.
+The `checkmail` properties are only useful if you are interested running spotcheck data QA reports.
 
-Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for api key registration.
+Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for API key registration.
 
 #### Domain Configuration
 

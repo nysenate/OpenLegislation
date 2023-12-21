@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Represents committee meeting data as collected from an LRS Alert */
-public class AgendaAlertInfoCommittee
-{
+public class AgendaAlertInfoCommittee {
     /** Reference to the report for which this was created */
     private SpotCheckReferenceId referenceId;
 
@@ -76,7 +75,7 @@ public class AgendaAlertInfoCommittee
 
     public AgendaMeetingWeekId getAgendaMeetingWeekId() {
         return new AgendaMeetingWeekId(getMeetingDateTime().getYear(), getWeekOf(),
-                getAddendum(), getCommitteeId().getChamber(), getCommitteeId().getName());
+                getAddendum(), getCommitteeId());
     }
 
     public ImmutableList<AgendaInfoCommitteeItem> getItems() {
@@ -85,10 +84,6 @@ public class AgendaAlertInfoCommittee
 
     public void addInfoCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
-    }
-
-    public AgendaAlertId getAlertId() {
-        return new AgendaAlertId(referenceId.getRefActiveDateTime(), weekOf);
     }
 
     /** --- Getters / Setters --- */

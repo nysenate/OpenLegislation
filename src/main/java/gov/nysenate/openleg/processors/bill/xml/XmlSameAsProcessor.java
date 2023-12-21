@@ -1,18 +1,15 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.processors.ParseError;
+import gov.nysenate.openleg.processors.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -25,17 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by uros on 2/16/17.
  */
 @Service
 public class XmlSameAsProcessor extends AbstractBillProcessor {
-
-    protected static final Pattern sameAsPattern =
-            Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
-
     @Override
     public LegDataFragmentType getSupportedType() {
         return LegDataFragmentType.SAMEAS;

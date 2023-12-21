@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation.bill;
 
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -11,6 +12,7 @@ import java.util.Objects;
  */
 public class BillStatus implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = -7302204265170618518L;
 
     protected BillStatusType statusType;

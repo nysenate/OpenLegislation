@@ -17,10 +17,8 @@ import java.time.LocalDateTime;
  * OutputUtils serves as a simple utility class to convert Objects to string representations.
  * This is primarily useful during development and debugging.
  */
-public abstract class OutputUtils
-{
+public final class OutputUtils {
     private static final Logger logger = LoggerFactory.getLogger(OutputUtils.class);
-
     private static final ObjectMapper jsonMapper = new ObjectMapper();
     static {
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -39,9 +37,7 @@ public abstract class OutputUtils
         elasticsearchJsonMapper.registerModule(module);
     }
 
-    public static ObjectMapper getJsonMapper() {
-        return jsonMapper;
-    }
+    private OutputUtils() {}
 
     /**
      * Given an object, this method will attempt to serialize it into JSON.

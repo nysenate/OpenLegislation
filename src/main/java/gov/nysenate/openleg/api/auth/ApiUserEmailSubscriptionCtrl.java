@@ -3,10 +3,14 @@ package gov.nysenate.openleg.api.auth;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
+import gov.nysenate.openleg.api.response.error.ErrorCode;
+import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
+import gov.nysenate.openleg.common.dao.LimitOffset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +19,13 @@ import java.util.*;
 
 @RestController
 @RequestMapping(BaseCtrl.BASE_API_PATH + "/email/subscription")
-public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
+public final class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
+    private final ApiUserService apiUserService;
 
     @Autowired
-    protected ApiUserService apiUserService;
+    private ApiUserEmailSubscriptionCtrl(ApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     /**
      *  Update API User's subscriptions
@@ -35,7 +42,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *  Request body: body (List<string>) - The list of subscriptions the user wants
      *                                      to be subscribed to.
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @PostMapping(value = "/update")
     public BaseResponse updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for (String sub : body) {
@@ -57,16 +64,16 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *
      *  @return List<String> - a list of current user subscriptions
      */
-    @RequestMapping(value = "/current", method = RequestMethod.GET)
-    public List<String> currentSubscriptions(@RequestParam String key) {
+    @GetMapping(value = "/current")
+    public BaseResponse currentSubscriptions(@RequestParam String key) {
         Set<ApiUserSubscriptionType> subs = apiUserService.getUserByKey(key)
                 .map(ApiUser::getSubscriptions)
                 .orElseThrow(() -> badApiKeyError(key));
         List<String> subStrings = new ArrayList<>();
-        for(ApiUserSubscriptionType s: subs) {
+        for (ApiUserSubscriptionType s: subs) {
             subStrings.add(s.toString());
         }
-        return subStrings;
+        return ListViewResponse.ofStringList(subStrings, subStrings.size(), LimitOffset.ALL);
     }
 
     /**
@@ -81,39 +88,19 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *
      *  Request body: body (string) - The new email the user would like to use
      */
-    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
-    public BaseResponse updateEmail(@RequestParam String key, @RequestBody String body) {
-        apiUserService.updateEmail(key, body);
-        return new SimpleResponse(true, "Successfully update email", "updateEmail");
-    }
-
-    /**
-     *  Search To Determine Email Existence
-     *  -----------------------------------
-     *
-     *  Determine whether the email an API user wants to use as their new email is already in
-     *  the database or not.
-     *
-     *  (GET) /api/3/email/subscription/emailSearch
-     *
-     *  Request params: email (string) The new email the API User would like to use; The email
-     *                                  we are searching the database for
-     *
-     * @return List<bool> A list containing one boolean value; True - when the email already exists
-     *                                                         False - when the email does not exist
-     */
-    @RequestMapping(value = "/emailSearch", method = RequestMethod.GET)
-    public List<Boolean> emailSearch(@RequestParam String email) {
-        List<Boolean> bool = List.of(true);
+    @PostMapping(value = "/updateEmail")
+    public BaseResponse updateEmail(@RequestParam String key, @RequestBody String email) {
         try {
             apiUserService.getUser(email);
         } catch (EmptyResultDataAccessException ex) {
-            bool = List.of(false);
+            // The new email should not already be in use.
+            apiUserService.updateEmail(key, email);
+            return new SimpleResponse(true, "Successfully update email", "updateEmail");
         }
-        return bool;
+        return new ErrorResponse(ErrorCode.EMAIL_IN_USE);
     }
 
-    @RequestMapping(value = "/getEmail", method = RequestMethod.GET)
+    @GetMapping(value = "/getEmail")
     public BaseResponse getEmail(@RequestParam String key) {
         String requestType = "get-email";
         Optional<ApiUser> user = apiUserService.getUserByKey(key);

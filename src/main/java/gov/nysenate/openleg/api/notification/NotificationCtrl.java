@@ -2,6 +2,9 @@ package gov.nysenate.openleg.api.notification;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.notification.view.NotificationSummaryView;
+import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
@@ -9,9 +12,6 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.notification.view.NotificationSummaryView;
-import gov.nysenate.openleg.api.notification.view.NotificationView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
@@ -23,8 +23,6 @@ import gov.nysenate.openleg.search.notifications.NotificationNotFoundException;
 import gov.nysenate.openleg.search.notifications.NotificationService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,19 +33,19 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class NotificationCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(NotificationCtrl.class);
+public class NotificationCtrl extends BaseCtrl {
+    private final NotificationService notificationService;
 
     @Autowired
-    private NotificationService notificationService;
+    public NotificationCtrl(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     /**
      * Single Notification Retrieval API
@@ -136,7 +134,7 @@ public class NotificationCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/search")
-    public BaseResponse searchForNotifications(@RequestParam(required = true) String term,
+    public BaseResponse searchForNotifications(@RequestParam String term,
                                                @RequestParam(defaultValue = "") String sort,
                                                WebRequest request) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(request, 25);
@@ -145,12 +143,12 @@ public class NotificationCtrl extends BaseCtrl
             term = "*";
         }
         SearchResults<RegisteredNotification> results = notificationService.notificationSearch(term, sort, limitOffset);
-        return ListViewResponse.of(results.getResults().stream()
+        return ListViewResponse.of(results.resultList().stream()
                 .map(r -> new SearchResultView(
-                        full ? new NotificationView(r.getResult())
-                                : new NotificationSummaryView(r.getResult()),
-                        r.getRank()))
-                .collect(Collectors.toList()), results.getTotalResults(), limitOffset);
+                        full ? new NotificationView(r.result())
+                                : new NotificationSummaryView(r.result()),
+                        r.rank()))
+                .toList(), results.totalResults(), limitOffset);
     }
 
 
@@ -163,17 +161,17 @@ public class NotificationCtrl extends BaseCtrl
         boolean full = getBooleanParam(request, "full", false);
         PaginatedList<RegisteredNotification> results =
                 notificationService.getNotificationList(getNotificationTypes(request), dateRange, order, limOff);
-        return DateRangeListViewResponse.of(results.getResults().stream()
+        return DateRangeListViewResponse.of(results.results().stream()
                 .map(full ? NotificationView::new : NotificationSummaryView::new)
-                .collect(Collectors.toList()), dateRange, results.getTotal(), limOff);
+                .toList(), dateRange, results.total(), limOff);
     }
 
-    private Set<NotificationType> getNotificationTypes(WebRequest request) {
+    private static Set<NotificationType> getNotificationTypes(WebRequest request) {
         String[] types = request.getParameterValues("type");
         return types == null ? EnumSet.allOf(NotificationType.class) : getTypesFromStrings(types);
     }
 
-    private Set<NotificationType> getTypesFromStrings(String[] types) {
+    private static Set<NotificationType> getTypesFromStrings(String[] types) {
         Set<NotificationType> typeSet = new HashSet<>();
         for (String type : types) {
             typeSet.add(getEnumParameter("type", type, NotificationType.class));

@@ -15,12 +15,12 @@ import java.util.Set;
 public interface SpotCheckReportDao
 {
 
-    DeNormSpotCheckMismatch getMismatch(int mismatchId);
+    DeNormSpotCheckMismatch<?> getMismatch(int mismatchId);
 
     /**
      * Get mismatches matching the given query params.
      */
-    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
+    PaginatedList<DeNormSpotCheckMismatch<?>> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
      * Get mismatch status summary counts for given datasource and report date.

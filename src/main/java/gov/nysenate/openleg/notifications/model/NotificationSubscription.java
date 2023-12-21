@@ -8,25 +8,25 @@ import com.google.common.base.Objects;
 public class NotificationSubscription {
 
     /** The unique id that references this subscription. */
-    private Integer id;
+    private final Integer id;
 
     /** The username of the subscribed user */
-    private String userName;
+    private final String userName;
 
     /** The type of notification that the user is subscribed to */
-    private NotificationType notificationType;
+    private final NotificationType notificationType;
 
     /** The medium through which the notification is sent */
-    private NotificationMedium medium;
+    private final NotificationMedium medium;
 
     /** The user's address for the specified target medium */
-    private String targetAddress;
+    private final String targetAddress;
 
     /** Determines amount of content delivered with notifications.  If false they get just the summary. */
-    private boolean detail;
+    private final boolean detail;
 
     /** Flag that prevents notification delivery if false. */
-    private boolean active;
+    private final boolean active;
 
     /* --- Constructor / Builder --- */
 
@@ -45,7 +45,7 @@ public class NotificationSubscription {
      *
      * Generic type {@link B} allows base methods to return instance of {@link Builder} implementation.
      */
-    public static class Builder<B extends Builder> {
+    public static class Builder<B extends Builder<?>> {
         Integer id;
         String userName;
         NotificationType notificationType;

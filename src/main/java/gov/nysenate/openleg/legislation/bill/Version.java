@@ -1,19 +1,14 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Enumeration of all possible character based versions which includes an entry for a default version.
  * Using this enumeration instead of a string will address issues pertaining to normalizing
  * the version strings and dealing with the default version which can be ambiguous in string form.
  */
-public enum Version
-{
+public enum Version {
     ORIGINAL, // The original version
     A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
@@ -48,7 +43,7 @@ public enum Version
      * @return List<Version>
      */
     public static List<Version> before(Version v) {
-        return Arrays.stream(values()).filter(p -> p.compareTo(v) < 0).collect(toList());
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) < 0).toList();
     }
 
     /**
@@ -58,19 +53,6 @@ public enum Version
      * @return List<Version>
      */
     public static List<Version> after(Version v) {
-        return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).collect(toList());
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).toList();
     }
-
-    /**
-     * A class to compare Versions once they are already made into strings.
-     */
-    public static class SortVersionStrings implements Comparator<String>, Serializable
-    {
-        public int compare(String str1, String str2){
-            Version v1 = of(str1);
-            Version v2 = of(str2);
-            return v1.compareTo(v2);
-        }
-    }
-
 }

@@ -33,7 +33,7 @@ public class NotificationGroup {
     private Duration period;            // The time before an error is considered fixed.
 
     public NotificationGroup(NotificationType type, Duration period) {
-        this(type, DateUtils.LONG_AGO.atStartOfDay(), DateUtils.LONG_AGO.atStartOfDay(), 0, period);
+        this(type, DateUtils.LONG_AGO, DateUtils.LONG_AGO, 0, period);
     }
 
     public NotificationGroup(NotificationType type, LocalDateTime firstSeen, LocalDateTime lastSeen,

@@ -99,7 +99,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             BaseBillId billId, Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter,
             SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource("printNo", billId.getBasePrintNo())
-                                                       .addValue("session", billId.getSession().getYear());
+                                                       .addValue("session", billId.getSession().year());
         addDateTimeRangeParams(params, dateTimeRange);
 
         String sqlQuery = getSqlQuery(true, billId, type, filter, dateOrder, limOff);
@@ -144,7 +144,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             if (!updateTable.columns.isEmpty()) {
                 List<String> existKeys = updateTable.columns.stream()
                     .map(column -> "exist(data, '" + column + "')")
-                    .collect(Collectors.toList());
+                    .toList();
                 whereClause.append(" AND ").append("( ").append(String.join(" OR ", existKeys)).append(") ");
             }
             return whereClause.toString();

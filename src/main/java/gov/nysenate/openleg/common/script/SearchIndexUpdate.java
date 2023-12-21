@@ -1,28 +1,14 @@
 package gov.nysenate.openleg.common.script;
 
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SearchIndexUpdate extends BaseScript
-{
+public class SearchIndexUpdate extends BaseScript {
     private static final Logger logger = LoggerFactory.getLogger(SearchIndexUpdate.class);
-
-    @Autowired
-    private Environment env;
-
-    @Autowired
-    private BillDataService billDataService;
-
-    @Autowired
-    private BillSearchService billSearchService;
 
     public static void main(String[] args) throws Exception {
         SCRIPT_NAME = SearchIndexUpdate.class.getCanonicalName();

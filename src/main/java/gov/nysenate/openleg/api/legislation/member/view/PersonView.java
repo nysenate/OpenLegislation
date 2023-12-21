@@ -3,8 +3,7 @@ package gov.nysenate.openleg.api.legislation.member.view;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.legislation.member.Person;
 
-public class PersonView implements ViewObject
-{
+public class PersonView implements ViewObject {
     protected int personId;
     protected String fullName;
     protected String firstName;
@@ -19,17 +18,20 @@ public class PersonView implements ViewObject
     protected String imgName;
 
     public PersonView(Person person) {
-        if (person != null) {
-            this.personId = person.getPersonId();
-            this.fullName = person.getFullName();
-            this.firstName = person.getFirstName();
-            this.middleName = person.getMiddleName();
-            this.lastName = person.getLastName();
-            this.prefix = person.getPrefix();
-            this.suffix = person.getSuffix();
-            this.email = person.getEmail();
-            this.imgName = person.getImgName();
-        }
+        if (person == null)
+            return;
+        this.personId = person.personId();
+        this.email = person.email();
+        this.imgName = person.imgName();
+        var name = person.name();
+        if (name == null)
+            return;
+        this.fullName = name.fullName();
+        this.firstName = name.firstName();
+        this.middleName = name.middleName();
+        this.lastName = name.lastName();
+        this.prefix = name.prefix();
+        this.suffix = name.suffix();
     }
 
     public int getPersonId() {

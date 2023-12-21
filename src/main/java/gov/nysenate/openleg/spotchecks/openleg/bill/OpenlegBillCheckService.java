@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.spotchecks.openleg.bill;
 
-import gov.nysenate.openleg.api.legislation.bill.view.*;
-import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaIdView;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
+import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaIdView;
+import gov.nysenate.openleg.api.legislation.bill.view.*;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
@@ -12,11 +12,11 @@ import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillAction;
 import gov.nysenate.openleg.legislation.bill.BillVoteType;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -260,7 +260,7 @@ public class OpenlegBillCheckService implements SpotCheckService<BaseBillId, Bil
     private String getCommAgendaIdStr(CommAgendaIdView id) {
         Optional<CommAgendaIdView> idOpt = Optional.ofNullable(id);
         String agendaIdStr = idOpt.map(CommAgendaIdView::getAgendaId)
-                .map(aiv -> aiv.getYear() + "#" + aiv.getNumber())
+                .map(aiv -> aiv.year() + "#" + aiv.number())
                 .orElse("null");
         String commIdStr = idOpt.map(CommAgendaIdView::getCommitteeId)
                 .map(civ -> civ.getChamber() + "-" + civ.getName())

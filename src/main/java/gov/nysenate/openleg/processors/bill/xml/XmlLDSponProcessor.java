@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
  */
 @Service
 public class XmlLDSponProcessor extends AbstractBillProcessor {
-
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
 
     @Override

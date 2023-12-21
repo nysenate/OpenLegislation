@@ -101,14 +101,14 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
     private MapSqlParameterSource getBaseBillIdParams(BaseBillId baseBillId){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("billPrintNo", baseBillId.getBasePrintNo());
-        params.addValue("sessionYear", baseBillId.getSession().getYear());
+        params.addValue("sessionYear", baseBillId.getSession().year());
         return params;
     }
 
     private MapSqlParameterSource getApprovalMessageParams(ApprovalMessage approvalMessage, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getApprovalIdParams(approvalMessage.getApprovalId());
         params.addValue("billPrintNo", approvalMessage.getBillId().getBasePrintNo());
-        params.addValue("sessionYear", approvalMessage.getBillId().getSession().getYear());
+        params.addValue("sessionYear", approvalMessage.getBillId().getSession().year());
         params.addValue("billVersion", approvalMessage.getBillId().getVersion().toString());
         params.addValue("chapter", approvalMessage.getChapter());
         params.addValue("signer", approvalMessage.getSigner());

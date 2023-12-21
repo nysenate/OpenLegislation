@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.api.config;
 
-public class EnvVarNotFoundException extends RuntimeException {
+import java.io.Serial;
 
+public class EnvVarNotFoundException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = -4046771266840167802L;
-    private String varName;
+    private final String varName;
 
     public EnvVarNotFoundException(String varName) {
         super("Environment variable " + varName + " does not exist");

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.spotchecks.keymapper;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,12 @@ public class AgendaMeetingWeekKeyMapper implements SpotCheckDaoKeyMapper<AgendaM
     @Override
     public AgendaMeetingWeekId getKeyFromMap(Map<String, String> keyMap) {
         Objects.requireNonNull(keyMap);
+        var committeeId = new CommitteeId(Chamber.getValue(keyMap.get("chamber")), keyMap.get("committee_name"));
         return new AgendaMeetingWeekId(
                 Integer.valueOf(keyMap.get("year")),
                 LocalDate.parse(keyMap.get("week_of"), DATE_FORMAT),
                 Version.of(keyMap.get("addendum")),
-                Chamber.getValue(keyMap.get("chamber")),
-                keyMap.get("committee_name")
+                committeeId
         );
     }
 
@@ -38,11 +39,11 @@ public class AgendaMeetingWeekKeyMapper implements SpotCheckDaoKeyMapper<AgendaM
     public Map<String, String> getMapFromKey(AgendaMeetingWeekId alertId) {
         Objects.requireNonNull(alertId);
         return ImmutableMap.<String, String>builder()
-                .put("year", String.valueOf(alertId.getYear()))
-                .put("week_of", alertId.getWeekOf().format(DATE_FORMAT))
-                .put("addendum", alertId.getAddendum().name())
-                .put("chamber", alertId.getCommitteeId().getChamber().asSqlEnum())
-                .put("committee_name", alertId.getCommitteeId().getName())
+                .put("year", String.valueOf(alertId.year()))
+                .put("week_of", alertId.weekOf().format(DATE_FORMAT))
+                .put("addendum", alertId.addendum().name())
+                .put("chamber", alertId.committeeId().getChamber().asSqlEnum())
+                .put("committee_name", alertId.committeeId().getName())
                 .build();
     }
 }

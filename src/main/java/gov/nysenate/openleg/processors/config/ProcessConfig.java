@@ -3,14 +3,13 @@ package gov.nysenate.openleg.processors.config;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
-import gov.nysenate.openleg.processors.bill.sobi.SobiBlock;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.processors.bill.sobi.SobiBlock;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Coordinates data fragment selection from multiple data sources (SOBI and XML)
@@ -55,7 +54,7 @@ public class ProcessConfig {
     public List<LegDataFragment> filterFileFragments(List<LegDataFragment> fragments) {
         return fragments.stream()
                 .filter(this::acceptFragment)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -68,7 +67,7 @@ public class ProcessConfig {
     public List<SobiBlock> filterSobiBlocks(List<SobiBlock> blocks) {
         return blocks.stream()
                 .filter(this::acceptBlock)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

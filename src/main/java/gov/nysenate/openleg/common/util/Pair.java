@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.common.util;
 
-import org.elasticsearch.common.collect.Tuple;
+import org.elasticsearch.core.Tuple;
 
 public class Pair<T> extends Tuple<T, T> {
     public Pair(T t, T t2) {

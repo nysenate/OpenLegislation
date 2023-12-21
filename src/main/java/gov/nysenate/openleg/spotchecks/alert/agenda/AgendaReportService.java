@@ -2,8 +2,8 @@ package gov.nysenate.openleg.spotchecks.alert.agenda;
 
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.legislation.agenda.dao.CachedAgendaDataService;
+import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,12 @@ import java.util.List;
 
 @Service
 public class AgendaReportService extends BaseAgendaCheckReportService {
+    private final CachedAgendaDataService agendaDataService;
 
     @Autowired
-    CachedAgendaDataService agendaDataService;
+    public AgendaReportService(CachedAgendaDataService agendaDataService) {
+        this.agendaDataService = agendaDataService;
+    }
 
     /** {@inheritDoc} */
     @Override

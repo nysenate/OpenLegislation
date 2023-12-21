@@ -10,9 +10,7 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import {
-  FileDotted,
-} from "phosphor-react";
+import { FileDotted, } from "phosphor-react";
 import BillOverview from "app/views/bills/info/BillOverview";
 import { DateTime } from "luxon";
 import Tabs from "app/shared/Tabs";

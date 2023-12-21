@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  CalendarBlank,
-} from "phosphor-react";
+import { CalendarBlank, } from "phosphor-react";
 import { DateTime } from "luxon";
 import ReactDatePicker from "react-datepicker";
 

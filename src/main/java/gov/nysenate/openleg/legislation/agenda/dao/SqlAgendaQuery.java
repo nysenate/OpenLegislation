@@ -45,6 +45,10 @@ public enum SqlAgendaQuery implements BasicSqlQuery
     SELECT_AGENDA_INFO_ADDENDUM(
         SELECT_AGENDA_INFO_ADDENDA.sql + " AND addendum_id = :addendumId"
     ),
+    // A variant of the query above, used when we only need the week_of.
+    SELECT_WEEK_OF_AGENDA_INFO_ADDENDUM(
+            SELECT_AGENDA_INFO_ADDENDUM.sql.replace("*", "week_of")
+    ),
     UPDATE_AGENDA_INFO_ADDENDUM(
         "UPDATE ${schema}." + SqlTable.AGENDA_INFO_ADDENDUM + "\n" +
         "SET modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
@@ -66,6 +70,10 @@ public enum SqlAgendaQuery implements BasicSqlQuery
     SELECT_AGENDA_INFO_COMMITTEES(
         "SELECT * FROM ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + "\n" +
         "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId"
+    ),
+    SELECT_AGENDA_INFO_COMMITTEE_BY_DATE_RANGE(
+            "SELECT * FROM ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + "\n" +
+            "WHERE meeting_date_time >= :from AND meeting_date_time <= :to"
     ),
     SELECT_AGENDA_INFO_COMMITTEE_ID(
         "SELECT id FROM ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + "\n" +
@@ -186,7 +194,7 @@ public enum SqlAgendaQuery implements BasicSqlQuery
         "      vi.vote_type = :voteType::${schema}.vote_type"
     );
 
-    private String sql;
+    private final String sql;
 
     SqlAgendaQuery(String sql) {
         this.sql = sql;

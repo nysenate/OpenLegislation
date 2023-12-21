@@ -5,16 +5,17 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ListView<ViewType> implements ViewObject
-{
+public class ListView<ViewType> implements ViewObject {
     protected ImmutableList<ViewType> items;
 
     public static <ViewType extends ViewObject> ListView<ViewType> of(List<ViewType> items) {
         return new ListView<>(items);
     }
+
     public static ListView<String> ofStringList(List<String> items) {
         return new ListView<>(items);
     }
+
     public static ListView<Integer> ofIntList(List<Integer> items) {
         return new ListView<>(items);
     }

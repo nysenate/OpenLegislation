@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.law.dao.LawFileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class ManagedLawProcessService implements LawProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedLawProcessService.class);
 
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private LawFileDao lawFileDao;
     @Autowired private LawProcessor lawProcessor;
 

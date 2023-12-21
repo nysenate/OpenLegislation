@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.spotchecks.openleg.calendar;
 
 import com.google.common.collect.ImmutableMap;
-import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.spotchecks.openleg.JsonOpenlegDaoUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -30,6 +30,6 @@ public class JsonOpenlegCalendarDao implements OpenlegCalendarDao {
     @Override
     public List<CalendarView> getCalendarViews(int year) {
         final String getCalsUri = StringSubstitutor.replace(getCalendarsUriTemplate, ImmutableMap.of("year", year));
-        return jsonOpenlegDaoUtils.queryForViewObjects(CalendarView.class, getCalsUri, LimitOffset.ALL).getResults();
+        return jsonOpenlegDaoUtils.queryForViewObjects(CalendarView.class, getCalsUri, LimitOffset.ALL).results();
     }
 }

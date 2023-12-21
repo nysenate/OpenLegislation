@@ -4,7 +4,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
 /** Utilities for scraping html */
-public abstract class ScrapeUtils {
+public final class ScrapeUtils {
+
+    private ScrapeUtils() {}
 
     /**
      * Given a jsoup element, gets all contained text preserving formatting by tags such as <br>

@@ -14,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -31,8 +30,8 @@ public class RulesLawBuilderTest {
         RulesLawBuilder senateBuilder = initRulesBuilder(Chamber.SENATE);
         testRulesLawBuilder(assemblyBuilder);
         testRulesLawBuilder(senateBuilder);
-        List<LawDocument> assemblyJointDocs = assemblyBuilder.lawDocMap.values().stream().filter(n -> n.getDocumentId().startsWith("JR")).collect(Collectors.toList());
-        List<LawDocument> senateJointDocs = senateBuilder.lawDocMap.values().stream().filter(n -> n.getDocumentId().startsWith("JR")).collect(Collectors.toList());
+        List<LawDocument> assemblyJointDocs = assemblyBuilder.lawDocMap.values().stream().filter(n -> n.getDocumentId().startsWith("JR")).toList();
+        List<LawDocument> senateJointDocs = senateBuilder.lawDocMap.values().stream().filter(n -> n.getDocumentId().startsWith("JR")).toList();
         assertEquals(assemblyJointDocs.size(), senateJointDocs.size());
         for (String locId : JOINT_RULE_LOC_IDS) {
             LawDocument assemblyDoc = assemblyBuilder.lawDocMap.get(LawChapterCode.CMA.name() + locId);

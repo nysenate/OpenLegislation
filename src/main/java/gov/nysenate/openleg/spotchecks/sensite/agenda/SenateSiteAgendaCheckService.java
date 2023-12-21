@@ -8,13 +8,15 @@ import gov.nysenate.openleg.legislation.agenda.*;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillVote;
 import gov.nysenate.openleg.legislation.bill.BillVoteCode;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
 
@@ -104,7 +106,7 @@ public class SenateSiteAgendaCheckService
                 // If billId has votes in this vote addendum
                 if (agendaVoteBill != null) {
                     // Add votes to table.
-                    BillVote billVote = agendaVoteBill.getBillVote();
+                    BillVote billVote = agendaVoteBill.billVote();
                     voteCountTable.row(billId).putAll(billVote.getVoteCounts());
                 }
             }

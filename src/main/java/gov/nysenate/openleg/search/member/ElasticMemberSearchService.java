@@ -2,14 +2,12 @@ package gov.nysenate.openleg.search.member;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.legislation.member.dao.MemberService;
-import gov.nysenate.openleg.search.SearchIndex;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
-import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -17,27 +15,26 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
-public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<FullMember>
-{
+public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<FullMember> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
 
-    @Autowired protected Environment env;
-    @Autowired protected EventBus eventBus;
-    @Autowired protected ElasticMemberSearchDao memberSearchDao;
-    @Autowired protected MemberService memberDataService;
+    protected final OpenLegEnvironment env;
+    protected final ElasticMemberSearchDao memberSearchDao;
+    protected final MemberService memberDataService;
 
-    @PostConstruct
-    protected void init() {
+    public ElasticMemberSearchService(OpenLegEnvironment env,
+                                      ElasticMemberSearchDao memberSearchDao,
+                                      MemberService memberDataService, EventBus eventBus) {
+        this.env = env;
+        this.memberSearchDao = memberSearchDao;
+        this.memberDataService = memberDataService;
         eventBus.register(this);
         this.rebuildIndex();
     }
@@ -97,7 +94,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     public void updateIndex(FullMember member) {
         if (env.isElasticIndexing() && member != null) {
-            logger.info("Indexing member {} into elastic search.", member.getFullName());
+            logger.info("Indexing member {} into elastic search.", member.getPerson().name().lastName());
             memberSearchDao.updateMemberIndex(member);
         }
     }
@@ -106,7 +103,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     public void updateIndex(Collection<FullMember> members) {
         if (env.isElasticIndexing() && !members.isEmpty()) {
-            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid members into elastic search.", indexableMembers.size());
             memberSearchDao.updateMemberIndex(indexableMembers);
         }
@@ -147,20 +144,13 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         }
     }
 
-    /* --- Internal Methods --- */
-
-    private void updateSessionMember(SessionMember sessionMember) {
-        FullMember member = memberDataService.getFullMemberById(sessionMember.getMember().getMemberId());
-        updateIndex(member);
-    }
-
     /**
      * Generate a query that matches members that were active on the given session year.
      *
      * @param sessionYear {@link SessionYear}
      * @return QueryBuilder
      */
-    private QueryBuilder requireSessionYear(SessionYear sessionYear) {
-        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
+    private static QueryBuilder requireSessionYear(SessionYear sessionYear) {
+        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.year());
     }
 }

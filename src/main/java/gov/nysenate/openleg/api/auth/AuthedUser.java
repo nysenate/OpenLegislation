@@ -7,8 +7,7 @@ public class AuthedUser implements ViewObject {
     private boolean isAuthed;
     private boolean isAdmin;
 
-    public AuthedUser() {
-    }
+    public AuthedUser() {}
 
     public AuthedUser(boolean isAuthed, boolean isAdmin) {
         this.isAuthed = isAuthed;

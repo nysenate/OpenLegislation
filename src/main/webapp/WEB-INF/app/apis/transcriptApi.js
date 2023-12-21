@@ -15,8 +15,9 @@ export default function transcriptApi(isHearing, year, pageNum, searchTerm, sort
   return fetchUrl(url)
 }
 
-export function getTranscript(isHearing, id) {
-  return fetchUrl(getBaseApi(isHearing) + `/${id}`)
+export function getTranscript(isHearing, params) {
+  const suffix = isHearing ? `/${params.id}` : `/${params.dateTime}/${params.sessionType}`
+  return fetchUrl(getBaseApi(isHearing) + suffix)
 }
 
 function getBaseApi(isHearing) {

@@ -5,12 +5,9 @@ import gov.nysenate.openleg.legislation.calendar.CalendarSupplemental;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class SimpleCalendarSupView extends CalendarSupIdView{
-
+public class SimpleCalendarSupView extends CalendarSupIdView {
     protected LocalDate calDate;
-
     protected LocalDateTime releaseDateTime;
-
     protected int totalEntries;
 
     public SimpleCalendarSupView(CalendarSupplemental calendarSupplemental) {

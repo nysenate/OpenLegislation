@@ -12,6 +12,7 @@ import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
@@ -27,7 +28,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -37,13 +37,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class TranscriptGetCtrl extends BaseCtrl
-{
-    @Autowired
-    private TranscriptDataService transcriptData;
+public class TranscriptGetCtrl extends BaseCtrl {
+    private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
+    private final TranscriptDataService transcriptData;
+    private final TranscriptSearchService transcriptSearch;
 
     @Autowired
-    private TranscriptSearchService transcriptSearch;
+    public TranscriptGetCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
+        this.transcriptData = transcriptData;
+        this.transcriptSearch = transcriptSearch;
+    }
 
     /**
      * Transcript Listing API
@@ -52,7 +55,7 @@ public class TranscriptGetCtrl extends BaseCtrl
      * Retrieve all transcripts: (GET) /api/3/transcripts/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
-     *                      full - If true, the full transcript view is returned. Otherwise just its filename.
+     *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      *
@@ -63,7 +66,7 @@ public class TranscriptGetCtrl extends BaseCtrl
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff);
         return getTranscriptResponse(summary, full, limOff, results);
     }
@@ -75,22 +78,23 @@ public class TranscriptGetCtrl extends BaseCtrl
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
-     *                      full - If true, the full transcript view is returned. Otherwise just its filename.
+     *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      *
      * Expected Output: List of TranscriptIdView or TranscriptView
      */
-    @RequestMapping("/{year:[\\d]{4}}")
+    @RequestMapping("/{year:\\d{4}}")
     public BaseResponse getTranscriptsByYear(@PathVariable int year,
                                              @RequestParam(defaultValue = "dateTime:desc") String sort,
                                              @RequestParam(defaultValue = "false") boolean summary,
                                              @RequestParam(defaultValue = "false") boolean full,
                                              WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff);
         return getTranscriptResponse(summary, full, limOff, results);
     }
+
 
     /**
      * Single Transcript Retrieval API
@@ -102,11 +106,28 @@ public class TranscriptGetCtrl extends BaseCtrl
      *
      * Expected Output: TranscriptView
      */
-    @RequestMapping("/{dateTime:.*}")
+    @RequestMapping("/{dateTime}")
     public BaseResponse getTranscript(@PathVariable String dateTime) {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
-            new TranscriptView(transcriptData.getTranscript(new TranscriptId(localDateTime))),
+                new TranscriptView(transcriptData.getTranscriptByDateTime(localDateTime)),
+                "Data for transcript " + dateTime);
+    }
+
+    /**
+     * Single Transcript Retrieval API
+     * -------------------------------
+     *
+     * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{dateTime}/{sessionType}
+     *
+     * <p>Request Parameters: None.</p>
+     *
+     * Expected Output: TranscriptView
+     */
+    @RequestMapping("/{dateTime}/{sessionType}")
+    public BaseResponse getTranscript(@PathVariable String dateTime, @PathVariable String sessionType) {
+        var id = new TranscriptId(parseISODateTime(dateTime, "dateTime"), sessionType);
+        return new ViewObjectResponse<>(new TranscriptView(transcriptData.getTranscript(id)),
                 "Data for transcript " + dateTime);
     }
 
@@ -120,29 +141,43 @@ public class TranscriptGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response.
      */
+
     @RequestMapping("/{dateTime}.pdf")
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
-        TranscriptId transcriptId = new TranscriptId(localDateTime);
-        Transcript transcript = transcriptData.getTranscript(transcriptId);
+        Transcript transcript = transcriptData.getTranscriptByDateTime(localDateTime);
+        return new TranscriptPdfView(transcript).writeData();
+    }
+
+    @RequestMapping("/{dateTime}/{sessionType}.pdf")
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType)
+            throws IOException {
+        LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
+        var id = new TranscriptId(localDateTime, sessionType);
+        Transcript transcript = transcriptData.getTranscript(id);
         return new TranscriptPdfView(transcript).writeData();
     }
 
     /** --- Internal --- */
 
     private BaseResponse getTranscriptResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
-        return ListViewResponse.of(results.getResults().stream().map(r ->
-            (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
-                    : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
-                    : new TranscriptIdView(r.getResult()))
-            .collect(Collectors.toList()), results.getTotalResults(), limOff);
+        return ListViewResponse.of(results.resultList().stream().map(r ->
+            (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
+                    : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
+                    : new TranscriptIdView(r.result()))
+            .toList(), results.totalResults(), limOff);
     }
 
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
-        // TODO: Openleg UI doesn't display anything on the webpage, even though the response is received.
         return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
+    }
+
+    @ExceptionHandler(DuplicateTranscriptEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorResponse handleTranscriptNotFoundEx(DuplicateTranscriptEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.DUPLICATE_TRANSCRIPT, ex.getDateTime());
     }
 }

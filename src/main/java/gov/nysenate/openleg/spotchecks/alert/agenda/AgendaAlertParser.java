@@ -17,8 +17,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,20 +30,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AgendaAlertParser {
-
-    private static final Logger logger = LoggerFactory.getLogger(AgendaAlertParser.class);
-
+public final class AgendaAlertParser {
+    private AgendaAlertParser() {}
     private static final Pattern agendaAlertFilenamePattern =
-            Pattern.compile("^agenda_alert-(\\d{8})-[A-z\\._]+-([A-z]+)-(\\d{8}T\\d{6}).html$");
-//  This pattern parses both full and individual agenda alert filenames, but currently we can't reliably process full alerts
-//            Pattern.compile("^agenda_alert-(\\d{8})-[A-z\\._-]+(\\d{8}T\\d{6}).html$");
+            Pattern.compile("^agenda_alert-(\\d{8})-[A-z._]+-([A-z]+)-(\\d{8}T\\d{6}).html$");
+    // This pattern parses both full and individual agenda alert filenames, but currently we can't reliably process full alerts
+    //      Pattern.compile("^agenda_alert-(\\d{8})-[A-z\\._-]+(\\d{8}T\\d{6}).html$");
 
     private static final Pattern committeeNamePattern =
             Pattern.compile("^\\s*Senate\\s+Standing\\s+Committee\\s+on\\s+([A-z, ]+)\\s*$");
-
-    private static final Pattern chairPattern = Pattern.compile("^\\s*Senator\\s+([A-z\\.'\\-, ]*),\\s+Chair\\s*$");
-
+    private static final Pattern chairPattern = Pattern.compile("^\\s*Senator\\s+([A-z.'\\-, ]*),\\s+Chair\\s*$");
     private static final Pattern meetingTimePattern =
             Pattern.compile("^\\s*(?:(\\d{1,2}:\\d{2} (?:AM|PM)|12 Noon)\\s*,\\s+)?(?:[A-z]+day\\s*,\\s+)?([A-z]+ \\d+, \\d{4})\\s*$");
 
@@ -90,7 +84,9 @@ public class AgendaAlertParser {
                 if (headerElement != null) {
                     alertInfoCommittees.add(parseInfoCommittee(refDateTime, weekOf,
                             headerElement, notesElement, billTableElement, addendum));
-                    headerElement = notesElement = billTableElement = null;
+                    headerElement = null;
+                    notesElement = null;
+                    billTableElement = null;
                 }
                 if ("h3".equalsIgnoreCase(currentElement.tag().getName())) {
                     headerElement = currentElement;

@@ -19,7 +19,7 @@ public class CalendarAlertFile extends BaseSourceData {
                     "-(?<calNo>\\d+)(?<floorSup>[A-Z])?-?(?<activeListSup>\\d+)?" +
                     "-(?<pubDateTime>\\d{8}T\\d{6}).html$");
 
-    private Matcher filenameMatcher;
+    private final Matcher filenameMatcher;
 
     /** Reference to the actual file. */
     private final File file;
@@ -41,8 +41,8 @@ public class CalendarAlertFile extends BaseSourceData {
     }
 
     public CalendarId getCalendarId() {
-        int year = Integer.valueOf(filenameMatcher.group("calYear"));
-        int calNo = Integer.valueOf(filenameMatcher.group("calNo"));
+        int year = Integer.parseInt(filenameMatcher.group("calYear"));
+        int calNo = Integer.parseInt(filenameMatcher.group("calNo"));
         return new CalendarId(calNo, year);
     }
 

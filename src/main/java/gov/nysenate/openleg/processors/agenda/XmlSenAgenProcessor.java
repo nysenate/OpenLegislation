@@ -1,19 +1,17 @@
 package gov.nysenate.openleg.processors.agenda;
 
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.common.util.XmlHelper;
 import gov.nysenate.openleg.legislation.agenda.*;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
-import gov.nysenate.openleg.processors.bill.SourceType;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.bill.SourceType;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

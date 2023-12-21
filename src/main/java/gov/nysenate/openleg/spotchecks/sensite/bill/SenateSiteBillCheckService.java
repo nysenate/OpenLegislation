@@ -2,24 +2,23 @@ package gov.nysenate.openleg.spotchecks.sensite.bill;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.api.legislation.bill.view.*;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
+import gov.nysenate.openleg.api.legislation.bill.view.*;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
-import gov.nysenate.openleg.legislation.bill.*;
+import gov.nysenate.openleg.common.util.BillTextCheckUtils;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.*;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
-import gov.nysenate.openleg.common.util.BillTextCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillVoteType.COMMITTEE;
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Service
@@ -150,7 +148,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
     private void checkIsAmended(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         List<PublishStatusView> published = content.getPublishStatusMap().getItems().values().stream()
                 .filter(PublishStatusView::isPublished)
-                .collect(toList());
+                .toList();
         boolean olIsAmended = published.size() > 1;
         boolean refIsAmended = reference.isAmended();
         spotCheckUtils.checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
@@ -185,7 +183,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
                 .orElse(ImmutableList.of())
                 .stream()
                 .map(BillActionView::toBillAction)
-                .collect(toList());
+                .toList();
         spotCheckUtils.checkCollection(contentActions, reference.getActions(), observation, BILL_ACTION,
                 this::billActionToString, "\n");
     }
@@ -247,7 +245,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
                 .orElse(ImmutableList.of())
                 .stream()
                 .map(mv -> spotCheckUtils.getPrimaryShortname(session, mv.getMemberId()))
-                .collect(toList());
+                .toList();
     }
 
     private void checkCoSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -256,7 +254,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
         List<String> contentCoSponsors = extractShortnames(session, content.getCoSponsors());
         List<String> refCoSponsors = reference.getCoSponsors().stream()
                 .map(sn -> spotCheckUtils.getPrimaryShortname(session, chamber, sn))
-                .collect(toList());
+                .toList();
         spotCheckUtils.checkCollection(contentCoSponsors, refCoSponsors, observation, BILL_COSPONSOR);
     }
 
@@ -266,7 +264,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
         List<String> contentMultiSponsors = extractShortnames(session, content.getMultiSponsors());
         List<String> refMultiSponsors = reference.getMultiSponsors().stream()
                 .map(sn -> spotCheckUtils.getPrimaryShortname(session, chamber, sn))
-                .collect(toList());
+                .toList();
         spotCheckUtils.checkCollection(contentMultiSponsors, refMultiSponsors, observation, BILL_MULTISPONSOR);
     }
 
@@ -301,7 +299,7 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
         List<SenateSiteBillVote> contentVoteList = content.getVotes().getItems().stream()
                 .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().toString()))
                 .map(SenateSiteBillVote::new)
-                .collect(toList());
+                .toList();
         TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList);
         TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes());
 
@@ -324,11 +322,11 @@ public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill
         // Get lists of content and ref votes that are present in both
         List<SenateSiteBillVote> checkedContentVotes = intersection.stream()
                 .map(contentVoteMap::get)
-                .collect(toList());
+                .toList();
 
         List<SenateSiteBillVote> checkedRefVotes = intersection.stream()
                 .map(refVoteMap::get)
-                .collect(toList());
+                .toList();
 
         spotCheckUtils.checkCollection(checkedContentVotes, checkedRefVotes, obs, BILL_VOTE_ROLL, this::getVoteString, "\n");
     }

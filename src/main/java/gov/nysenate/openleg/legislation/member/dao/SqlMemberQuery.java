@@ -52,7 +52,7 @@ public enum SqlMemberQuery implements BasicSqlQuery
     ),
     SELECT_MEMBER_BY_SHORTNAME_SQL(
         SELECT_MEMBER_FRAGMENT.sql + "\n" +
-        //     We use the first 15 letters to compare due to how some of the source data is formatted.
+        //     We use the first 15 letters to compare due to how some source data is formatted.
         "WHERE substr(sm.lbdc_short_name, 1, 15) ILIKE substr(:shortName, 1, 15) AND m.chamber = :chamber::chamber " +
         "      AND sm.alternate = :alternate "
     ),

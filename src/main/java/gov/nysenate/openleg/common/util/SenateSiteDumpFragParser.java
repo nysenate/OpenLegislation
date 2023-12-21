@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckDataSource.NYSENATE;
 
@@ -99,7 +99,7 @@ public class SenateSiteDumpFragParser {
                     .putAll(Maps.uniqueIndex(
                             EnumSet.allOf(SpotCheckRefType.class).stream()
                                     .filter(refType -> NYSENATE.equals(refType.getDataSource()))
-                                    .collect(Collectors.toList()),
+                                    .toList(),
                             SpotCheckRefType::getContentType
                     ))
                     .put(SpotCheckContentType.BILL, SpotCheckRefType.SENATE_SITE_BILLS)
@@ -119,7 +119,8 @@ public class SenateSiteDumpFragParser {
 
     /** Exceptions */
 
-    public static class SenateSiteDumpFragParserException extends RuntimeException {
+    public static final class SenateSiteDumpFragParserException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = 5133300734005459879L;
 
         private SenateSiteDumpFragParserException(String message) {

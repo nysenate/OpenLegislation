@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.spotchecks.base;
 
 import gov.nysenate.openleg.common.util.MailUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +16,15 @@ public abstract class BaseCheckMailService implements CheckMailService {
     private static final Logger logger = LoggerFactory.getLogger(BaseCheckMailService.class);
 
     @Autowired
-    protected Environment environment;
+    protected OpenLegEnvironment environment;
     @Autowired
     protected MailUtils mailUtils;
 
     @Override
     public int checkMail() {
+        if (!environment.isCheckmailEnabled()) {
+            return 0;
+        }
         int savedCount = 0;
         try {
             mailUtils.createCheckMailConnection();

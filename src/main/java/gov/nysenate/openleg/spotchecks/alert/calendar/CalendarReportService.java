@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar;
 
-import gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertDao;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.legislation.calendar.CalendarNotFoundEx;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
+import gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +15,11 @@ import java.util.List;
 
 @Service
 public class CalendarReportService extends BaseCalendarReportService {
-
     @Autowired
-    private SqlCalendarAlertDao alertDao;
-
-    @Autowired
-    private CalendarDataService calendarDataService;
+    public CalendarReportService(CalendarCheckService checkService, OpenLegEnvironment environment,
+                                 SqlCalendarAlertDao alertDao, CalendarDataService calendarDataService) {
+        super(checkService, environment, alertDao, calendarDataService);
+    }
 
     @Override
     protected String getNotes() {

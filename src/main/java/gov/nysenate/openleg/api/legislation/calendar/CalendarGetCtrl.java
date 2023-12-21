@@ -1,40 +1,38 @@
 package gov.nysenate.openleg.api.legislation.calendar;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.calendar.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.stream.Collectors;
-
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET)
-public class CalendarGetCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(CalendarGetCtrl.class);
+public class CalendarGetCtrl extends BaseCtrl {
+    private final CalendarDataService calendarDataService;
+    private final CalendarViewFactory calendarViewFactory;
 
     @Autowired
-    private CalendarDataService calendarDataService;
+    public CalendarGetCtrl(CalendarDataService calendarDataService,
+                           CalendarViewFactory calendarViewFactory) {
+        this.calendarDataService = calendarDataService;
+        this.calendarViewFactory = calendarViewFactory;
+    }
 
-    @Autowired
-    private CalendarViewFactory calendarViewFactory;
 
     /** --- Request Handlers --- */
 
@@ -58,10 +56,8 @@ public class CalendarGetCtrl extends BaseCtrl
         return ListViewResponse.of(
                 calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
                         .map(full ? calendarViewFactory::getCalendarView : SimpleCalendarView::new)
-                        .collect(Collectors.toList()),
-                calendarDataService.getCalendarCount(year),
-                limitOffset
-        );
+                        .toList(),
+                calendarDataService.getCalendarCount(year), limitOffset);
     }
 
     /**
@@ -83,7 +79,7 @@ public class CalendarGetCtrl extends BaseCtrl
         return ListViewResponse.of(
                 calendarDataService.getActiveLists(year, sortOrder, limitOffset).stream()
                         .map(full ? calendarViewFactory::getActiveListView : SimpleActiveListView::new)
-                        .collect(Collectors.toList()),
+                        .toList(),
                 calendarDataService.getActiveListCount(year),
                 limitOffset
         );
@@ -108,7 +104,7 @@ public class CalendarGetCtrl extends BaseCtrl
         return ListViewResponse.of(
                 calendarDataService.getCalendarSupplementals(year, sortOrder, limitOffset).stream()
                         .map(full ? calendarViewFactory::getCalendarSupView : SimpleCalendarSupView::new)
-                        .collect(Collectors.toList()),
+                        .toList(),
                 calendarDataService.getSupplementalCount(year),
                 limitOffset
         );

@@ -41,7 +41,7 @@ export default function Transcripts({ setHeaderText }) {
         <Route exact path="/transcripts/hearing">
           <HearingListing setHeaderText={setHeaderText} />
         </Route>
-        <Route path="/transcripts/session/:id">
+        <Route path="/transcripts/session/:dateTime/:sessionType">
           <Transcript isHearing={false} setHeaderText={setHeaderText} />
         </Route>
         <Route path="/transcripts/hearing/:id">
@@ -64,7 +64,7 @@ function HearingListing({ setHeaderText }) {
  * Needed because useRouteMatch() doesn't work if called in default function.
  */
 function Transcript({ isHearing, setHeaderText }) {
-  return <TranscriptDisplay isHearing={isHearing} id={useRouteMatch().params.id} setHeaderText={setHeaderText} />
+  return <TranscriptDisplay isHearing={isHearing} params={useRouteMatch().params} setHeaderText={setHeaderText} />
 }
 
 /**
@@ -82,7 +82,7 @@ function TranscriptListing({ isHearing, setHeaderText }) {
   const [ errorMsg, setErrorMsg ] = React.useState("")
 
   React.useEffect(() => {
-    setHeaderText(isHearing ? "Search Public Hearing Transcripts" : "Search Session Transcripts")
+    setHeaderText(isHearing ? "Search Hearing Transcripts" : "Search Session Transcripts")
   }, [ isHearing ])
 
   React.useEffect(() => {
@@ -202,8 +202,8 @@ function SessionTranscriptResultList({ transcriptSearchResults }) {
   return (
     <ol>
       {transcriptSearchResults.map((t) =>
-        <li key={t.result.dateTime}>
-          <Link to={`/transcripts/session/${t.result.dateTime}`} className="link">
+        <li key={t.result.dateTime + t.result.sessionType}>
+          <Link to={`/transcripts/session/${t.result.dateTime}/${t.result.sessionType}`} className="link">
             <div className="hover:bg-gray-200 rounded px-3 py-2">
               {formatDateTime(t.result.dateTime, DATETIME_FULL_NO_ZONE)}&nbsp;
               <span className="text">- {capitalizeSessionType(t.result.sessionType)}</span>

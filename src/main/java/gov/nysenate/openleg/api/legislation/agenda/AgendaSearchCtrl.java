@@ -1,37 +1,38 @@
 package gov.nysenate.openleg.api.legislation.agenda;
 
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ListViewResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommFlatView;
 import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaSummaryView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.search.agenda.AgendaSearchService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.stream.Collectors;
-
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/agendas/", method = RequestMethod.GET)
-public class AgendaSearchCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AgendaSearchCtrl.class);
+@RequestMapping(value = BASE_API_PATH + "/agendas", method = RequestMethod.GET)
+public class AgendaSearchCtrl extends BaseCtrl {
+    private final AgendaDataService agendaData;
+    private final AgendaSearchService agendaSearch;
+    private final AgendaBillUtils agendaBillUtils;
 
-    @Autowired private AgendaDataService agendaData;
-    @Autowired private AgendaSearchService agendaSearch;
-    @Autowired private BillDataService billData;
+    @Autowired
+    public AgendaSearchCtrl(AgendaDataService agendaData, AgendaSearchService agendaSearch,
+                         AgendaBillUtils agendaBillUtils) {
+        this.agendaData = agendaData;
+        this.agendaSearch = agendaSearch;
+        this.agendaBillUtils = agendaBillUtils;
+    }
 
     /**
      * Agenda Search API
@@ -42,7 +43,7 @@ public class AgendaSearchCtrl extends BaseCtrl
      * for query parameter details.
      */
     @RequestMapping(value = "/search")
-    public BaseResponse searchAgendas(@RequestParam(required = true) String term,
+    public BaseResponse searchAgendas(@RequestParam String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
@@ -62,9 +63,9 @@ public class AgendaSearchCtrl extends BaseCtrl
      *                                  limit - Limit the number of results
      *                                  offset - Start the results from offset
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/search")
+    @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse searchAgendas(@PathVariable int year,
-                                      @RequestParam(required = true) String term,
+                                      @RequestParam String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
@@ -73,15 +74,19 @@ public class AgendaSearchCtrl extends BaseCtrl
         return getAgendaSearchResponse(full, limOff, results);
     }
 
-    private BaseResponse getAgendaSearchResponse(boolean full, LimitOffset limOff, SearchResults<CommitteeAgendaId> results) {
-        return ListViewResponse.of(
-            results.getResults().stream()
-                .map(r ->
-                    new SearchResultView((full)
-                        ? new AgendaCommFlatView(agendaData.getAgenda(r.getResult().getAgendaId()),
-                                                 r.getResult().getCommitteeId(), billData)
-                        : new CommAgendaSummaryView(r.getResult(), agendaData.getAgenda(r.getResult().getAgendaId())),
-                    r.getRank()))
-                .collect(Collectors.toList()), results.getTotalResults(), limOff);
+    private BaseResponse getAgendaSearchResponse(boolean full, LimitOffset limOff,
+                                                 SearchResults<CommitteeAgendaId> results) {
+        return ListViewResponse.of(results.resultList().stream()
+                        .map(r -> new SearchResultView(getView(full, r.result()), r.rank())).toList(),
+                results.totalResults(), limOff);
+    }
+
+    private ViewObject getView(boolean full, CommitteeAgendaId id) {
+        var agenda = agendaData.getAgenda(id.getAgendaId());
+        if (!full) {
+            return new CommAgendaSummaryView(id, agenda);
+        }
+        return new AgendaCommFlatView(agenda, id.getCommitteeId(),
+                agendaBillUtils.getBillInfoMap(agenda, id.getCommitteeId()));
     }
 }

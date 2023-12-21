@@ -23,23 +23,24 @@ public class LawTreeView implements ViewObject
     }
 
     public LawTreeView(LawTree lawTree, String fromLocation, Integer depth, Map<String, LawDocument> docMap) {
-        if (lawTree != null) {
-            lawVersion = new LawVersionIdView(lawTree.getLawVersionId());
-            info = new LawInfoView(lawTree.getLawInfo());
-            publishedDates = lawTree.getPublishedDates();
-            if (fromLocation != null && !fromLocation.isEmpty()) {
-                Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.getLawId() + fromLocation, false);
-                if (fromNode.isPresent()) {
-                    documents = new LawNodeView(fromNode.get(), depth, docMap);
-                }
-                else {
-                    throw new LawDocumentNotFoundEx(info.getLawId(), LocalDate.now(),
-                            "The location " + fromLocation + " does not exist for this law tree,");
-                }
+        if (lawTree == null) {
+            return;
+        }
+        lawVersion = new LawVersionIdView(lawTree.getLawVersionId());
+        info = new LawInfoView(lawTree.getLawInfo());
+        publishedDates = lawTree.getPublishedDates();
+        if (fromLocation != null && !fromLocation.isEmpty()) {
+            Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.getLawId() + fromLocation, false);
+            if (fromNode.isPresent()) {
+                documents = new LawNodeView(fromNode.get(), depth, docMap);
             }
             else {
-                documents = new LawNodeView(lawTree.getRootNode(), depth, docMap);
+                throw new LawDocumentNotFoundEx(info.getLawId(), LocalDate.now(),
+                        "The location " + fromLocation + " does not exist for this law tree,");
             }
+        }
+        else {
+            documents = new LawNodeView(lawTree.getRootNode(), depth, docMap);
         }
     }
 

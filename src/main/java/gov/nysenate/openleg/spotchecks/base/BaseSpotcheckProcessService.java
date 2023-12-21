@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.spotchecks.base;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.processors.ProcessService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceEvent;
-import gov.nysenate.openleg.processors.ProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public abstract class BaseSpotcheckProcessService implements ProcessService
 
     @Autowired private EventBus eventBus;
 
-    @Autowired private Environment environment;
+    @Autowired private OpenLegEnvironment environment;
 
     /**
      * {@inheritDoc}

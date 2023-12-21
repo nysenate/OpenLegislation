@@ -6,8 +6,7 @@ import gov.nysenate.openleg.legislation.agenda.Agenda;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class AgendaSummaryView implements ViewObject
-{
+public class AgendaSummaryView implements ViewObject {
     private AgendaIdView id;
     private LocalDate weekOf;
     private LocalDateTime publishedDateTime;
@@ -17,18 +16,19 @@ public class AgendaSummaryView implements ViewObject
     private long totalCommittees;
 
     public AgendaSummaryView(Agenda agenda) {
-        if (agenda != null) {
-            this.id = new AgendaIdView(agenda.getId());
-            this.weekOf = agenda.getWeekOf().orElse(null);
-            this.publishedDateTime = agenda.getPublishedDateTime();
-            this.totalAddendum = agenda.getAgendaInfoAddenda().size();
-            this.totalBillsConsidered = agenda.totalBillsConsidered();
-            this.totalBillsVotedOn = agenda.totalBillsVoted();
-            this.totalCommittees = agenda.totalCommittees();
+        if (agenda == null) {
+            return;
         }
+        this.id = new AgendaIdView(agenda.getId());
+        this.weekOf = agenda.getWeekOf().orElse(null);
+        this.publishedDateTime = agenda.getPublishedDateTime();
+        this.totalAddendum = agenda.getAgendaInfoAddenda().size();
+        this.totalBillsConsidered = agenda.totalBillsConsidered();
+        this.totalBillsVotedOn = agenda.totalBillsVoted();
+        this.totalCommittees = agenda.totalCommittees();
     }
 
-    //Added for Json Deserialization
+    // Added for Json Deserialization
     protected AgendaSummaryView() {}
 
     public AgendaIdView getId() {

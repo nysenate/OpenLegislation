@@ -4,7 +4,9 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FullMemberView extends MemberView {
@@ -14,13 +16,13 @@ public class FullMemberView extends MemberView {
 
     public FullMemberView(FullMember member) {
         super(member.getLatestSessionMember().orElse(null));
-        this.personView = new PersonView(member);
+        this.personView = new PersonView(member.getPerson());
         this.sessionShortNameMap = member.getSessionMemberMap().keySet().stream()
-                .collect(Collectors.toMap(SessionYear::getYear,
+                .collect(Collectors.toMap(SessionYear::year,
                         session -> member.getSessionMemberMap().get(session).stream()
                                 .map(SessionMemberView::new)
                                 .sorted((sm1, sm2) -> Boolean.compare(sm1.alternate, sm2.alternate))
-                                .collect(Collectors.toList())));
+                                .toList()));
     }
 
     public FullMemberView(Collection<SessionMember> sessionMembers) {

@@ -8,8 +8,7 @@ import java.util.Map;
  * These sections designate a bill's stage within it's lifecycle after being reported
  * out of a committee.
  */
-public enum CalendarSectionType
-{
+public enum CalendarSectionType {
     RESOLUTIONS(100, "RESOLUTIONS"),
     ORDER_OF_THE_FIRST_REPORT(150, "BILLS ON ORDER OF FIRST REPORT"),
     ORDER_OF_THE_SECOND_REPORT(200, "BILLS ON ORDER OF SECOND REPORT"),
@@ -18,33 +17,19 @@ public enum CalendarSectionType
     THIRD_READING(400, "BILLS ON THIRD READING"),
     STARRED_ON_THIRD_READING(450, "BILLS STARRED ON THIRD READING");
 
-
-
     /** This code is used in the source sobi data to identify the section. */
-    int code;
+    private final int code;
 
     /** The way this section type is displayed on LRS */
-    String lrsRepresentation;
+    private final String lrsRepresentation;
 
-    static Map<Integer, CalendarSectionType> codeMap = new HashMap<>();
-    static Map<String, CalendarSectionType> lrsMap = new HashMap<>();
+    private static final Map<Integer, CalendarSectionType> codeMap = new HashMap<>();
+    private static final Map<String, CalendarSectionType> lrsMap = new HashMap<>();
     static {
         for (CalendarSectionType cst : CalendarSectionType.values()) {
             codeMap.put(cst.code, cst);
             lrsMap.put(cst.lrsRepresentation, cst);
         }
-    }
-
-    CalendarSectionType(int code) {
-        this.code = code;
-    }
-    CalendarSectionType(int code, String lrsRepresentation) {
-        this(code);
-        this.lrsRepresentation = lrsRepresentation;
-    }
-
-    public int getCode() {
-        return code;
     }
 
     public static CalendarSectionType valueOfCode(int code) {
@@ -59,5 +44,14 @@ public enum CalendarSectionType
             throw new IllegalArgumentException("No CalendarSectionType matches lrsRepresentation " + lrsRepresentation);
         }
         return lrsMap.get(lrsRepresentation);
+    }
+
+    CalendarSectionType(int code, String lrsRepresentation) {
+        this.code = code;
+        this.lrsRepresentation = lrsRepresentation;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

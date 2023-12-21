@@ -8,5 +8,4 @@ import java.lang.annotation.RetentionPolicy;
  * Integration tests may test more than one module (unlike a {@link UnitTest})
  */
 @Retention(RetentionPolicy.SOURCE)
-public @interface IntegrationTest {
-}
+public @interface IntegrationTest {}

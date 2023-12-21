@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class XmlHelper
-{
+public class XmlHelper {
     private final DocumentBuilder dBuilder;
     private final XPath xpath;
 

@@ -55,7 +55,7 @@ public class SourceFileRowMapper implements RowMapper<SourceFile> {
         try {
 
             SourceFile sourceFile;
-            if (extension.toLowerCase().equals("xml")) {
+            if (extension.equalsIgnoreCase("xml")) {
                 sourceFile = new XmlFile(file, encoding);
             } else {
                 sourceFile = new SobiFile(file, encoding);

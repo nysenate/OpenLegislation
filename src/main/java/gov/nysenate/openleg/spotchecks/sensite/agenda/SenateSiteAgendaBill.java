@@ -28,7 +28,7 @@ public class SenateSiteAgendaBill {
 
     public BillId getBillId() {
         return Optional.ofNullable(billName)
-                .map(AgendaItemView::getBillId)
+                .map(AgendaItemView::billId)
                 .map(BillIdView::toBillId)
                 .orElse(null);
     }

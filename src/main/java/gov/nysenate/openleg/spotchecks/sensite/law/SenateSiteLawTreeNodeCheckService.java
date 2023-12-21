@@ -98,7 +98,7 @@ public class SenateSiteLawTreeNodeCheckService implements SpotCheckService<LawSp
             return;
         }
         List<String> contentParentLocIds = content.getAllParents().stream()
-                .map(LawTreeNode::getLocationId).collect(Collectors.toList());
+                .map(LawTreeNode::getLocationId).toList();
         spotCheckUtils.checkCollection(
                 contentParentLocIds, ref.getParentLocationIds(), obs, LAW_DOC_PARENT_LOC_IDS, Function.identity(), "\n");
     }

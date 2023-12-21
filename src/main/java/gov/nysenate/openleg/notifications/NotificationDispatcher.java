@@ -1,12 +1,15 @@
 package gov.nysenate.openleg.notifications;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.search.notifications.NotificationService;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.*;
 import gov.nysenate.openleg.notifications.subscription.NotificationSubscriptionDataService;
+import gov.nysenate.openleg.search.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,7 +28,7 @@ public class NotificationDispatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationDispatcher.class);
 
-    private final Environment environment;
+    private final OpenLegEnvironment environment;
     private final NotificationService notificationService;
     private final NotificationSubscriptionDataService subDataService;
 
@@ -38,7 +42,7 @@ public class NotificationDispatcher {
 
     @Autowired
     public NotificationDispatcher(EventBus eventBus,
-                                  Environment environment,
+                                  OpenLegEnvironment environment,
                                   NotificationService notificationService,
                                   NotificationSubscriptionDataService subDataService,
                                   List<NotificationSender> notificationSenders) {

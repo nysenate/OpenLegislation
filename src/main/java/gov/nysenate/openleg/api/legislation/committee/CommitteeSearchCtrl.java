@@ -1,39 +1,36 @@
 package gov.nysenate.openleg.api.legislation.committee;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
-import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeNotFoundEx;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.committee.CommitteeSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/committees", method = RequestMethod.GET)
 public class CommitteeSearchCtrl extends BaseCtrl {
-
-    private static final Logger logger = LoggerFactory.getLogger(CommitteeSearchCtrl.class);
+    private final CommitteeSearchService committeeSearchService;
+    private final CommitteeDataService committeeDataService;
 
     @Autowired
-    CommitteeSearchService committeeSearchService;
-    @Autowired
-    CommitteeDataService committeeDataService;
+    public CommitteeSearchCtrl(CommitteeSearchService committeeSearchService, CommitteeDataService committeeDataService) {
+        this.committeeSearchService = committeeSearchService;
+        this.committeeDataService = committeeDataService;
+    }
 
     /** --- Request Handlers --- */
 
@@ -50,7 +47,7 @@ public class CommitteeSearchCtrl extends BaseCtrl {
      *                          offset - Start results from offset (default 1)
      */
     @RequestMapping(value = "/search")
-    public BaseResponse searchAllCommittees(@RequestParam(required = true) String term,
+    public BaseResponse searchAllCommittees(@RequestParam String term,
                                             @RequestParam(defaultValue = "") String sort,
                                             @RequestParam(defaultValue = "true") boolean current,
                                             @RequestParam(defaultValue = "false") boolean full,
@@ -70,7 +67,7 @@ public class CommitteeSearchCtrl extends BaseCtrl {
      */
     @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse searchCommitteesForSession(@PathVariable int year,
-                                                   @RequestParam(required = true) String term,
+                                                   @RequestParam String term,
                                                    @RequestParam(defaultValue = "") String sort,
                                                    @RequestParam(defaultValue = "true") boolean current,
                                                    @RequestParam(defaultValue = "false") boolean full,
@@ -90,13 +87,12 @@ public class CommitteeSearchCtrl extends BaseCtrl {
     protected BaseResponse getCommitteeSearchResponse(SearchResults<CommitteeVersionId> results, boolean full)
             throws CommitteeNotFoundEx {
         return ListViewResponse.of(
-                results.getResults().stream()
+                results.resultList().stream()
                         .map(result -> new SearchResultView(full
-                                ? new CommitteeView(committeeDataService.getCommittee(result.getResult()))
-                                : new CommitteeVersionIdView(result.getResult()),
-                                result.getRank()))
-                        .collect(Collectors.toList()),
-                results.getTotalResults(), results.getLimitOffset()
+                                ? new CommitteeView(committeeDataService.getCommittee(result.result()))
+                                : new CommitteeVersionIdView(result.result()),
+                                result.rank())).toList(),
+                results.totalResults(), results.limitOffset()
         );
     }
 }

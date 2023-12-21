@@ -4,6 +4,7 @@ import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,8 +16,8 @@ import java.util.Objects;
  * Info for an Agenda is constructed via a series of addenda that are either
  * added, updated, or removed from the parent Agenda container.
  */
-public class AgendaInfoAddendum extends BaseLegislativeContent implements Serializable
-{
+public class AgendaInfoAddendum extends BaseLegislativeContent implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8661290465080663674L;
 
     /** Reference to the parent agenda. */

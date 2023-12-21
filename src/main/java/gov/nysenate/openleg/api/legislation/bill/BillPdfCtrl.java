@@ -25,13 +25,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/pdf/bills")
-public class BillPdfCtrl extends BaseCtrl
-{
+public class BillPdfCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(BillPdfCtrl.class);
+    private final BillDataService billData;
 
-    @Autowired protected BillDataService billData;
+    @Autowired
+    public BillPdfCtrl(BillDataService billData) {
+        this.billData = billData;
+    }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}")
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo,
                                              WebRequest request, HttpServletResponse response)
             throws IOException {

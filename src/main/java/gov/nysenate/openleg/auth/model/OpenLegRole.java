@@ -4,35 +4,26 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.WildcardPermission;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Defines roles and the permissions implied by them.
  */
-public enum OpenLegRole
-{
-    MASTER_ADMIN(Collections.singletonList("*")),
-    READONLY_ADMIN(Arrays.asList("admin:view", "ui:view")),
-    INTERNAL_USER(Collections.singletonList("ui:view")),
-    API_USER(Collections.singletonList("ui:view")),
-    SEN_SITE_API_USER(Collections.singletonList("senatesite:*:*"))
-    ;
+public enum OpenLegRole {
+    MASTER_ADMIN("*"),
+    READONLY_ADMIN("admin:view", "ui:view"),
+    INTERNAL_USER("ui:view"),
+    API_USER("ui:view"),
+    SEN_SITE_API_USER("senatesite:*:*");
 
-    private final List<String> permissions;
     private final List<Permission> wildcardPermissions;
 
-    OpenLegRole(List<String> permissions) {
-        this.permissions = permissions;
+    OpenLegRole(String... permissions) {
         this.wildcardPermissions =
-            this.permissions.stream()
+            Arrays.stream(permissions)
                 .map(WildcardPermission::new)
                 .collect(Collectors.toList());
-    }
-
-    public List<String> getPermissionStrings() {
-        return permissions;
     }
 
     public List<Permission> getWildcardPermissions() {

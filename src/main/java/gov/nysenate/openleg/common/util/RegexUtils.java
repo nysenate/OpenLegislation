@@ -9,7 +9,7 @@ import java.util.List;
  */
 public final class RegexUtils {
     private static final String DELIM = "~~@@@@~~";
-    // Utility class.
+
     private RegexUtils() {}
 
     /**

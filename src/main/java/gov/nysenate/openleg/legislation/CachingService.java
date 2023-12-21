@@ -1,100 +1,77 @@
 package gov.nysenate.openleg.legislation;
 
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.SizeOfPolicyConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.eventbus.EventBus;
+import org.ehcache.Cache;
+import org.ehcache.config.EvictionAdvisor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.Map;
 
-import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.CONTINUE;
+@Service
+public abstract class CachingService<Key, Value> {
+    private static final int FOR_ROUNDING = 20;
+    // Note: these are better left as field injections, to simplify subclass constructors.
+    @Autowired
+    private Environment environment;
+    @Autowired
+    protected EventBus eventBus;
+    protected Cache<Key, Value> cache;
 
-public interface CachingService<ContentId>
-{
-    Logger logger = LoggerFactory.getLogger(CachingService.class);
+    protected abstract CacheType cacheType();
+
+    protected EvictionAdvisor<Key, Value> evictionAdvisor() {
+        return null;
+    }
+
+    @PostConstruct
+    private synchronized void init() {
+        Map<Key, Value> initialEntries = initialEntries();
+        int size = getCacheSize(initialEntries.size());
+        this.cache = OpenLegCacheManager.createCache(this, size);
+        initialEntries.forEach((k, v) -> cache.put(k, v));
+    }
 
     /**
-     * Performs cache creation and any pre-caching of data.
+     * Result is based on the number of initial entries
+     * (rounded up to the nearest multiple of FOR_ROUNDING), or based on
+     * the value in app.properties for bill caches.
+     * @return the size of the cache to be created.
      */
-    void setupCaches();
-
-    /**
-     * Returns all cache instances.
-     */
-    List<Ehcache> getCaches();
-
-    /**
-     * Evicts a single item from the cache based on the given content id
-     */
-    void evictContent(ContentId contentId);
-
-    /**
-     * (Default Method)
-     * Clears all the cache entries from all caches.
-     */
-    default void evictCaches() {
-        if (getCaches() != null && !getCaches().isEmpty()) {
-            getCaches().forEach(c -> {
-                logger.info("Clearing out {} cache", c.getName());
-                c.removeAll();
-            });
+    private int getCacheSize(int initialEntriesSize) {
+        switch (cacheType()) {
+            case BILL, BILL_INFO:
+                String propertyString = cacheType().name().toLowerCase() + ".cache.size";
+                String sizeStr = environment.getProperty(propertyString);
+                if (sizeStr == null) {
+                    throw new IllegalArgumentException("Error! Size for the " + cacheType() +
+                            " cache was not configured.");
+                }
+                return Integer.parseInt(sizeStr);
+            default:
+                // 10% extra room is added, and this will return at least 20.
+                return (int) (Math.floor(initialEntriesSize * 1.1/FOR_ROUNDING) + 1) * FOR_ROUNDING;
         }
     }
 
-    /**
-     * If a CacheEvictEvent is sent out on the event bus, the caching service
-     * should check to see if it has any affected caches and clear them.
-     *
-     * @param evictEvent CacheEvictEvent
-     */
-    void handleCacheEvictEvent(CacheEvictEvent evictEvent);
-
-    /**
-     * Intercept an evict Id event and evict the specified content
-     * if the caching service has any of the affected caches
-     * @param evictIdEvent CacheEvictIdEvent
-     */
-    void handleCacheEvictIdEvent(CacheEvictIdEvent<ContentId> evictIdEvent);
-
-    /**
-     * Pre-fetch a subset of currently active data and store it in the cache.
-     */
-    void warmCaches();
-
-    /**
-     * If a CacheWarmEvent is sent out on the event bus, the caching service
-     * should check to if it has any affected caches and warm them.
-     *
-     * @param warmEvent CacheWarmEvent
-     */
-    void handleCacheWarmEvent(CacheWarmEvent warmEvent);
-
-    /**
-     * The default side of configuration to use with caches sized by bytes on heap.
-     * Sets the maximum limit for how many nodes are traversed when computing the heap
-     * size of an object before raising a warning.
-     *
-     * Keep this low so we get warning messages when a cache's performance may be impacted
-     * by the size of its object graph.
-     *
-     * @return SizeOfPolicyConfiguration
-     */
-    default SizeOfPolicyConfiguration byteSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(5000).maxDepthExceededBehavior(CONTINUE);
+    @PreDestroy
+    private void cleanUp() {
+        cache.clear();
+        OpenLegCacheManager.removeCache(cacheType());
     }
 
-    /**
-     * An alternative size of configuration to be used only with caches sized by element count.
-     * This uses a very high maxDepth to avoid warning messages as this heap size calculation is
-     * only done when hitting the cache stats admin API.
-     *
-     * Some caches are sized by element count instead of bytes on heap because their object graphs are
-     * large and calculating the heap size will effect its performance. These caches should be configured
-     * with this policy so that erroneous warning messages are not received when we load the cache stats
-     * ctrl or the cache stats UI.
-     * @return
-     */
-    public default SizeOfPolicyConfiguration elementSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(100000).maxDepthExceededBehavior(CONTINUE);
+    protected Map<Key, Value> initialEntries() {
+        return Map.of();
+    }
+
+    // This method is only needed to prevent type errors during compilation.
+    void clearCache(boolean warmCaches) {
+        cache.clear();
+        if (warmCaches) {
+            cache.putAll(initialEntries());
+        }
     }
 }

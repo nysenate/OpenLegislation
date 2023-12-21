@@ -1,29 +1,19 @@
 package gov.nysenate.openleg.auth.user;
 
 import gov.nysenate.openleg.auth.model.ApiUser;
+import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.common.dao.ImmutableParams;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.auth.model.OpenLegRole;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class SqlApiUserDao extends SqlBaseDao {
-
-    private static final Logger logger = LoggerFactory.getLogger(SqlApiUserDao.class);
-
     /**
      * Insert a new user into the database
      * @param user The new apiuser
@@ -114,15 +104,6 @@ public class SqlApiUserDao extends SqlBaseDao {
     }
 
     /**
-     * Removes an e-mail subscription for an api user
-     * @param subscription ApiUserSubscriptionType
-     */
-    private void removeSubscription(String apiKey, ApiUserSubscriptionType subscription) {
-        jdbcNamed.update(ApiUserQuery.DELETE_API_USER_SUBSCRIPTION.getSql(schema()),
-                getSubscriptionParams(apiKey, subscription));
-    }
-
-    /**
      * Removes all current subscriptions for a user and
      * adds the subscriptions in the set parameter
      * @param apiKey String
@@ -145,7 +126,7 @@ public class SqlApiUserDao extends SqlBaseDao {
     }
 
     /**
-     * Revokes all roles for a api user.
+     * Revokes all roles for an API user.
      */
     private void revokeRoles(String apiKey) {
         jdbcNamed.update(ApiUserQuery.DELETE_API_USER_ROLE.getSql(schema()), new MapSqlParameterSource("apiKey", apiKey));
@@ -153,7 +134,7 @@ public class SqlApiUserDao extends SqlBaseDao {
 
     /** --- Internal Methods --- */
 
-    protected MapSqlParameterSource getUserParams(ApiUser user) {
+    private static MapSqlParameterSource getUserParams(ApiUser user) {
         return new MapSqlParameterSource()
                 .addValue("apikey", user.getApiKey())
                 .addValue("authenticated", user.isAuthenticated())
@@ -164,42 +145,15 @@ public class SqlApiUserDao extends SqlBaseDao {
                 .addValue("registrationToken", user.getRegistrationToken());
     }
 
-    protected MapSqlParameterSource getRoleParams(String apiKey, OpenLegRole role) {
+    private static MapSqlParameterSource getRoleParams(String apiKey, OpenLegRole role) {
         return new MapSqlParameterSource()
                 .addValue("apiKey", apiKey)
                 .addValue("role", role.name());
     }
 
-    protected MapSqlParameterSource getSubscriptionParams(String apiKey, ApiUserSubscriptionType subscription) {
+    private static MapSqlParameterSource getSubscriptionParams(String apiKey, ApiUserSubscriptionType subscription) {
         return new MapSqlParameterSource()
                 .addValue("apiKey", apiKey)
                 .addValue("subscription_type", subscription.name());
-    }
-
-    private static final RowMapper<ApiUser> apiUserMapper = new ApiUserRowMapper();
-
-    private static final class ApiUserRowHandler implements RowCallbackHandler
-    {
-        private final Map<String, ApiUser> apiUserMap = new LinkedHashMap<>();
-
-        @Override
-        public void processRow(ResultSet rs) throws SQLException {
-            String apiKey = rs.getString("apikey");
-            if (!apiUserMap.containsKey(apiKey)) {
-                apiUserMap.put(apiKey, apiUserMapper.mapRow(rs, rs.getRow()));
-            }
-        }
-
-        public List<ApiUser> getUsers() {
-            return new ArrayList<>(apiUserMap.values());
-        }
-
-        public ApiUser getSingleUser() {
-            if (apiUserMap.size() > 1) {
-                throw new IncorrectResultSizeDataAccessException(1, apiUserMap.size());
-            }
-            return apiUserMap.values().stream().findAny()
-                    .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        }
     }
 }

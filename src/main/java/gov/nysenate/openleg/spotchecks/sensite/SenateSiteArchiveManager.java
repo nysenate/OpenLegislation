@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.spotchecks.sensite;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.spotchecks.sensite.bill.FsSenateSiteDao;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceEvent;
+import gov.nysenate.openleg.spotchecks.sensite.bill.FsSenateSiteDao;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.shiro.event.Subscribe;
@@ -31,12 +31,12 @@ public class SenateSiteArchiveManager {
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteArchiveManager.class);
 
     private EventBus eventBus;
-    private Environment environment;
+    private OpenLegEnvironment environment;
     private final List<SpotCheckRefType> senateSiteRefTypes;
     private final int monthsToKeep;
 
     @Autowired
-    public SenateSiteArchiveManager(EventBus eventBus, Environment environment,
+    public SenateSiteArchiveManager(EventBus eventBus, OpenLegEnvironment environment,
                                     @Value("${spotcheck.senatesite.archives.months.to.keep:6}") int monthsToKeep) {
         this.eventBus = eventBus;
         this.eventBus.register(this);

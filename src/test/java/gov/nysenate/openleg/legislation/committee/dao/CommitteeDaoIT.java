@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -130,7 +129,7 @@ public class CommitteeDaoIT extends BaseTests {
     @Test
     public void getAllSessionIdsTest() {
         List<CommitteeSessionId> sessionIds = committeeDao.getAllSessionIds().stream().filter(
-                s -> s.getSession().getYear() <= 2013).collect(Collectors.toList());
+                s -> s.getSession().year() <= 2013).toList();
         assertEquals(NUM_INITIAL_COMMITTEE_VERSIONS, sessionIds.size());
         for (CommitteeSessionId id : sessionIds) {
             for (Committee c : committeeDao.getCommitteeHistory(id))
@@ -175,7 +174,7 @@ public class CommitteeDaoIT extends BaseTests {
     public void getCommitteeHistoryTest() {
         // Committees from 2011 are initial data wih no history.
         List<CommitteeSessionId> ids = committeeDao.getAllSessionIds().stream()
-                .filter(id -> id.getSession().getYear() == 2011).collect(Collectors.toList());
+                .filter(id -> id.getSession().year() == 2011).toList();
         for (CommitteeSessionId id : ids)
             assertEquals(1, committeeDao.getCommitteeHistory(id).size());
     }

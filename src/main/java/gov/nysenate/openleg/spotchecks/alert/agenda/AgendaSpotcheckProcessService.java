@@ -8,24 +8,27 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AgendaSpotcheckProcessService extends SpotcheckMailProcessService {
+    private final AgendaAlertCheckMailService alertCheckMailService;
+    private final CommAgendaAlertCheckMailService commAgendaAlertCheckMailService;
+    private final AgendaAlertProcessor agendaAlertProcessor;
+    private final AgendaAlertDao agendaAlertDao;
 
     @Autowired
-    private AgendaAlertCheckMailService alertCheckMailService;
-
-    @Autowired
-    private CommAgendaAlertCheckMailService commAgendaAlertCheckMailService;
-
-    @Autowired
-    private AgendaAlertProcessor agendaAlertProcessor;
-
-    @Autowired
-    private AgendaAlertDao agendaAlertDao;
+    public AgendaSpotcheckProcessService(AgendaAlertCheckMailService alertCheckMailService,
+                                         CommAgendaAlertCheckMailService commAgendaAlertCheckMailService,
+                                         AgendaAlertProcessor agendaAlertProcessor,
+                                         AgendaAlertDao agendaAlertDao) {
+        this.alertCheckMailService = alertCheckMailService;
+        this.commAgendaAlertCheckMailService = commAgendaAlertCheckMailService;
+        this.agendaAlertProcessor = agendaAlertProcessor;
+        this.agendaAlertDao = agendaAlertDao;
+    }
 
     /** --- Implemented Methods --- */
 
     // TODO: Can combine these Patterns.
     @Override
-    protected int doCollate() throws Exception {
+    protected int doCollate() {
         return alertCheckMailService.checkMail() + commAgendaAlertCheckMailService.checkMail();
     }
 

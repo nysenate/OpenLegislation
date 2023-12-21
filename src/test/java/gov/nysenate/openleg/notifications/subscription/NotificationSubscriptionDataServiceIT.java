@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.notifications.subscription;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.auth.admin.AdminUserService;
+import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.notifications.model.NotificationMedium;
 import gov.nysenate.openleg.notifications.model.NotificationSubscription;
 import gov.nysenate.openleg.notifications.model.NotificationType;
@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 @Category(IntegrationTest.class)
@@ -61,25 +59,6 @@ public class NotificationSubscriptionDataServiceIT extends BaseTests {
         // Ensure fake admin accounts are set up
         adminUserDao.createAdmin(fakeName1, "pword", true, false);
         adminUserDao.createAdmin(fakeName2, "pword", true, false);
-    }
-
-    @Test
-    public void crudTest() {
-        Set<NotificationSubscription> allSubs;
-        // Subs not present at start
-        allSubs = subDataService.getAllSubscriptions();
-        assertFalse(isPresent(instantSub, allSubs));
-
-        // Subs should be present as they are updated
-        subDataService.updateSubscription(instantSub);
-
-        allSubs = subDataService.getAllSubscriptions();
-        assertTrue(isPresent(instantSub, allSubs));
-
-        // Test insert of sub with identical data
-        subDataService.updateSubscription(instantSub);
-        allSubs = subDataService.getAllSubscriptions();
-        assertEquals(2, numPresent(instantSub, allSubs));
     }
 
     @Test

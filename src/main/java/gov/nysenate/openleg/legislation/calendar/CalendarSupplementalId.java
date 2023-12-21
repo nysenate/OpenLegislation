@@ -3,15 +3,15 @@ package gov.nysenate.openleg.legislation.calendar;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-public class CalendarSupplementalId extends CalendarId implements Serializable{
-
+public class CalendarSupplementalId extends CalendarId implements Serializable {
+    @Serial
     private static final long serialVersionUID = 9080620853238190830L;
 
     /** The identifier for this floor calendar, typically a single character */
-    private Version version;
-
+    private final Version version;
 
     /** --- Constructors --- */
 
@@ -37,7 +37,6 @@ public class CalendarSupplementalId extends CalendarId implements Serializable{
         if (this == o) return true;
         if (!(o instanceof CalendarSupplementalId)) return false;
         if (!super.equals(o)) return false;
-
         return this.version == ((CalendarSupplementalId)o).version;
     }
 

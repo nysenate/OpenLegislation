@@ -3,37 +3,36 @@ package gov.nysenate.openleg.processors;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.agenda.Agenda;
+import gov.nysenate.openleg.legislation.agenda.AgendaId;
+import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.agenda.Agenda;
-import gov.nysenate.openleg.legislation.agenda.AgendaId;
-import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.bill.dao.service.ApprovalDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.dao.service.VetoDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.legislation.calendar.CalendarNotFoundEx;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
-import gov.nysenate.openleg.legislation.bill.dao.service.ApprovalDataService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.dao.service.VetoDataService;
 import gov.nysenate.openleg.updates.bill.BulkBillUpdateEvent;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import gov.nysenate.openleg.legislation.calendar.CalendarNotFoundEx;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
-import gov.nysenate.openleg.common.util.XmlHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The AbstractDataProcessor class is intended to serve as a common base for all the
@@ -64,7 +62,7 @@ public abstract class AbstractDataProcessor
     protected static final Pattern rulesSponsorPattern =
             Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
-    @Autowired protected Environment env;
+    @Autowired protected OpenLegEnvironment env;
 
     /* --- Data Services --- */
 
@@ -190,8 +188,8 @@ public abstract class AbstractDataProcessor
                 billDataService.saveBill(entry.getLeft(), entry.getRight(), false));
             logger.debug("Broadcasting bill updates...");
             List<Bill> bills =
-                billIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkBillUpdateEvent(bills, LocalDateTime.now()));
+                billIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
+            eventBus.post(new BulkBillUpdateEvent(bills));
             billIngestCache.clearCache();
         }
     }
@@ -289,8 +287,8 @@ public abstract class AbstractDataProcessor
             agendaIngestCache.getCurrentCache().forEach(
                 entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight(), false));
             List<Agenda> agendas =
-                agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkAgendaUpdateEvent(agendas, LocalDateTime.now()));
+                agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
+            eventBus.post(new BulkAgendaUpdateEvent(agendas));
             agendaIngestCache.clearCache();
         }
     }
@@ -332,8 +330,8 @@ public abstract class AbstractDataProcessor
             calendarIngestCache.getCurrentCache().forEach(
                 entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), false));
             List<Calendar> calendars =
-                calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
-            eventBus.post(new BulkCalendarUpdateEvent(calendars, LocalDateTime.now()));
+                calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).toList();
+            eventBus.post(new BulkCalendarUpdateEvent(calendars));
             calendarIngestCache.clearCache();
         }
     }

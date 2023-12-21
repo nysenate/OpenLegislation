@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.legislation.bill.view;
 
-import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.api.legislation.BasePdfView;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;

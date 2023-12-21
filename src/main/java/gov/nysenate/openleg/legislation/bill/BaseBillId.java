@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.bill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.legislation.SessionYear;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -12,9 +13,10 @@ import java.io.Serializable;
  */
 public class BaseBillId extends BillId implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = -7708296547127325102L;
 
-    public static String basePrintNumberRegex = "([ASLREJKBC])([0-9]{1,5})";
+    public static final String basePrintNumberRegex = "([ASLREJKBC])([0-9]{1,5})";
 
     public BaseBillId(String printNo, int session) {
         this(printNo, SessionYear.of(session));
@@ -25,8 +27,7 @@ public class BaseBillId extends BillId implements Serializable
      * of the supplied print no string.
      */
     public BaseBillId(String printNo, SessionYear session) {
-        super(printNo, session);
-        super.version = DEFAULT_VERSION;
+        super(printNo, session, DEFAULT_VERSION);
     }
 
     public static BaseBillId of(BillId billId) {

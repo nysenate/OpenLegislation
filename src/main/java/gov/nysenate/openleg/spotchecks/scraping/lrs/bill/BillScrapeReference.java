@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
 
@@ -102,7 +102,7 @@ public class BillScrapeReference {
     }
 
     public int getSessionYear() {
-        return baseBillId.getSession().getYear();
+        return baseBillId.getSession().year();
     }
 
     public String getMemo() {

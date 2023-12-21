@@ -2,22 +2,20 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import gov.nysenate.openleg.common.util.BillTextCheckUtils;
+import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
-import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatch;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
-import gov.nysenate.openleg.common.util.BillTextCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
@@ -27,14 +25,17 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.*;
  */
 @Service
 public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill, BillScrapeReference> {
+    private final BillScrapeVoteMismatchService voteMismatchService;
 
-    @Autowired private SpotCheckUtils spotCheckUtils;
-    @Autowired private BillScrapeVoteMismatchService voteMismatchService;
+    @Autowired
+    public BillScrapeCheckService(BillScrapeVoteMismatchService voteMismatchService) {
+        this.voteMismatchService = voteMismatchService;
+    }
 
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill, BillScrapeReference reference) {
         if (reference == null) {
-            throw new IllegalArgumentException("BillScrapeSpotcheckReference cannot be null when performing spot check");
+            throw new IllegalArgumentException("BillScrapeSpotcheckReference cannot be null when performing spotcheck");
         }
 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), bill.getBaseBillId());
@@ -125,7 +126,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
                 for (SessionMember sessionMember : vote.getMembersByVote(code)) {
-                    voteMultiList.put(code, sessionMember.getMember().getLastName());
+                    voteMultiList.put(code, sessionMember.getMember().getPerson().name().lastName());
                 }
             }
             BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);
@@ -140,7 +141,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
                 .map(BillAmendment::getVotesList)
                 .flatMap(Collection::stream)
                 .filter(v -> v.getVoteType() == BillVoteType.FLOOR)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void checkMemoText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){

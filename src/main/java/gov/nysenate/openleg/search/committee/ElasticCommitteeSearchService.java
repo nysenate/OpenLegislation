@@ -3,12 +3,11 @@ package gov.nysenate.openleg.search.committee;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -16,28 +15,22 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 @Service
-public class ElasticCommitteeSearchService implements CommitteeSearchService
-{
+public class ElasticCommitteeSearchService implements CommitteeSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchService.class);
 
-    @Autowired
-    ElasticCommitteeSearchDao committeeSearchDao;
+    private final ElasticCommitteeSearchDao committeeSearchDao;
+    private final CommitteeDataService committeeDataService;
 
-    @Autowired
-    CommitteeDataService committeeDataService;
-
-    @Autowired
-    EventBus eventBus;
-
-    @PostConstruct
-    private void init() {
+    public ElasticCommitteeSearchService(ElasticCommitteeSearchDao committeeSearchDao,
+                                         CommitteeDataService committeeDataService,
+                                         EventBus eventBus) {
+        this.committeeSearchDao = committeeSearchDao;
+        this.committeeDataService = committeeDataService;
         eventBus.register(this);
     }
 
@@ -83,7 +76,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     @Subscribe
     @Override
     public void handleCommitteeUpdateEvent(CommitteeUpdateEvent committeeUpdateEvent) {
-        updateIndex(committeeUpdateEvent.getCommittee().getSessionId());
+        updateIndex(committeeUpdateEvent.committee().getSessionId());
     }
 
     /**
@@ -149,7 +142,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     }
 
     QueryBuilder getSessionFilter(SessionYear sessionYear) {
-        return QueryBuilders.termQuery("sessionYear", sessionYear.getYear());
+        return QueryBuilders.termQuery("sessionYear", sessionYear.year());
     }
 
     private SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder postFilter,

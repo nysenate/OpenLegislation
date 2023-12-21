@@ -31,6 +31,6 @@ public class LawCtrlBaseIT extends ApiTest {
             testDao.updateLawFile(file);
             testService.processLawFiles(Collections.singletonList(file));
         }
-        elasticTestDao.refreshIndices();
+        elasticTestDao.refreshIndex();
     }
 }

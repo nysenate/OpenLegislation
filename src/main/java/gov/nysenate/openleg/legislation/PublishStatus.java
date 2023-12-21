@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation;
 
 import com.google.common.collect.ComparisonChain;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,8 +11,8 @@ import java.util.Objects;
  * An immutable representation of a published/unpublished date as well as some
  * extra metadata that can be set for more complex publishing needs.
  */
-public class PublishStatus implements Serializable, Comparable<PublishStatus>
-{
+public class PublishStatus implements Serializable, Comparable<PublishStatus> {
+    @Serial
     private static final long serialVersionUID = -1038985118047193901L;
 
     /** Set to true if item is published, false if unpublished. */

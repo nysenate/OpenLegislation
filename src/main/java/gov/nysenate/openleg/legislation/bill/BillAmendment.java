@@ -24,7 +24,7 @@ public class BillAmendment implements Serializable, Cloneable
     protected BaseBillId baseBillId;
 
     /** Amendment version (e.g ORIGINAL, A, B, C, etc). */
-    protected Version version = BillId.DEFAULT_VERSION;
+    protected final Version version;
 
     /** The "sameAs" bill in the other chamber that matches this version.
         There can be multiple same as bills in some cases, typically just 0 or 1 though. */
@@ -265,6 +265,7 @@ public class BillAmendment implements Serializable, Cloneable
         relatedLawsJson = json;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, List<String>> getRelatedLawsMap() {
         Map<String, List<String>> mapping = new HashMap<>();
         if (relatedLawsJson == null || relatedLawsJson.equals("")){

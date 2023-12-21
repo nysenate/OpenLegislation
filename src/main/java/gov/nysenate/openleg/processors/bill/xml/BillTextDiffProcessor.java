@@ -5,11 +5,12 @@ import gov.nysenate.openleg.legislation.bill.TextDiff;
 import gov.nysenate.openleg.legislation.bill.TextDiffType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.jsoup.select.NodeVisitor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BillTextDiffProcessor {
@@ -50,7 +51,7 @@ public class BillTextDiffProcessor {
                 .prettyPrint(false); // Preserve whitespace while cleaning.
 
         // Whitelist of allowed tags and attributes.
-        Whitelist whitelist = new Whitelist();
+        var whitelist = new Safelist();
         whitelist.addTags("pre", "b", "s", "u", "font", "p");
         whitelist.addAttributes("font", "size");
         whitelist.addAttributes("p", "class");
@@ -71,9 +72,9 @@ public class BillTextDiffProcessor {
      * head method is called whenever entering into a new node.
      * tail is called when leaving a node.
      */
-    private class BillTextNodeVisitor implements NodeVisitor {
+    private static class BillTextNodeVisitor implements NodeVisitor {
 
-        private List<TextDiff> diffs = new ArrayList<>();
+        private final List<TextDiff> diffs = new ArrayList<>();
 
         public List<TextDiff> getTextDiffs() {
             return diffs;
@@ -106,8 +107,7 @@ public class BillTextDiffProcessor {
                     diffs.add(new TextDiff(TextDiffType.UNCHANGED, ((TextNode) node).getWholeText()));
                 }
             }
-            else if (node instanceof Element) {
-                Element el = (Element) node;
+            else if (node instanceof Element el) {
                 if (el.tagName().equals("p") && el.className().equals("brk")) {
                     // <p class="brk"> tags indicate the end of a page.
                     diffs.add(new TextDiff(TextDiffType.PAGE_BREAK, ""));
@@ -116,15 +116,12 @@ public class BillTextDiffProcessor {
         }
 
         @Override
-        public void tail(Node node, int depth) {
-
-        }
+        public void tail(Node node, int depth) {}
 
         private String getParentTagName(Node node) {
             Node parent = node.parent();
             if (parent != null) {
-                if (parent instanceof Element) {
-                    Element parentEl = (Element) parent;
+                if (parent instanceof Element parentEl) {
                     return parentEl.tagName();
                 }
             }

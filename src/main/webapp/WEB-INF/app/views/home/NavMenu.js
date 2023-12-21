@@ -240,7 +240,7 @@ const navCategories = [
     children: (
       <React.Fragment>
         <NavChild name="Session Transcripts" icon={<TextAlignLeft />} to="/transcripts/session" />
-        <NavChild name="Public Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
+        <NavChild name="Hearing Transcripts" icon={<Article />} to="/transcripts/hearing" />
       </React.Fragment>
     )
   },

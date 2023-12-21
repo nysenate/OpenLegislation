@@ -18,13 +18,13 @@ export default function ApiUserInfo({ setHeaderText }) {
   React.useEffect(() => {
     setHeaderText("Modify Account Settings")
     getSubscriptions(key)
-      .then((res) => setSubscriptions(res))
-      .catch((err) => setErrorMsg("Invalid API key provided"))
+      .then((res) => setSubscriptions(res.result.items))
+      .catch(() => setErrorMsg("Invalid API key provided"))
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) {
-    return  null
+    return null
   }
 
   if (!loading && errorMsg) {

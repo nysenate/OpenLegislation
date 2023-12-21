@@ -2,14 +2,15 @@ package gov.nysenate.openleg.legislation.agenda;
 
 import gov.nysenate.openleg.legislation.bill.BillId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * An AgendaInfoCommitteeItem indicates a specific bill that will be brought up for consideration.
  */
-public class AgendaInfoCommitteeItem implements Serializable
-{
+public class AgendaInfoCommitteeItem implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8904159113309808493L;
 
     /** Reference to the bill id associated with the bill being considered */

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.agenda;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.Objects;
  * pertaining to a meeting, the actual meeting info must be derived via any preceding/subsequent
  * addenda and especially though the data contained within the 'notes' field.
  */
-public class AgendaInfoCommittee implements Serializable
-{
+public class AgendaInfoCommittee implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6788116636375650193L;
 
     /** Reference to the id of the committee this info is associated with. */
@@ -63,10 +64,6 @@ public class AgendaInfoCommittee implements Serializable
 
     public void addCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
-    }
-
-    public CommitteeAgendaAddendumId getId() {
-        return new CommitteeAgendaAddendumId(agendaId, committeeId, addendum);
     }
 
     /** --- Overrides --- */

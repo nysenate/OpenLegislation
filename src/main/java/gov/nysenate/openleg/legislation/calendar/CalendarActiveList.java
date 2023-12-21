@@ -9,31 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CalendarActiveList extends BaseLegislativeContent
-{
-    /** A sequence number that identifies this active list. */
+public class CalendarActiveList extends BaseLegislativeContent {
+    /** Identifies this active list. */
     private Integer sequenceNo;
-
-    /** Reference to the parent Calendar's id. */
     private CalendarId calendarId;
-
-    /** Any notes pertaining to this active list. */
     private String notes;
-
-    /** The calendar date associated with this supplemental. */
     private LocalDate calDate;
-
-    /** The date time this active list was released. */
     private LocalDateTime releaseDateTime;
-
-    /** Active list entries. */
-    private List<CalendarEntry> entries;
+    private final List<CalendarEntry> entries = new ArrayList<>();
 
     /** --- Constructors --- */
 
     public CalendarActiveList() {
         super();
-        this.setEntries(new ArrayList<>());
     }
 
     public CalendarActiveList(CalendarId calId, Integer sequenceNo, String notes, LocalDate calDate,
@@ -124,9 +112,5 @@ public class CalendarActiveList extends BaseLegislativeContent
 
     public List<CalendarEntry> getEntries() {
         return entries;
-    }
-
-    public void setEntries(List<CalendarEntry> entries) {
-        this.entries = entries;
     }
 }

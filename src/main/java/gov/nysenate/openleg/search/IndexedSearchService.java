@@ -2,8 +2,7 @@ package gov.nysenate.openleg.search;
 
 import java.util.Collection;
 
-public interface IndexedSearchService<T>
-{
+public interface IndexedSearchService<T> {
     /**
      * Update the search index with the given content, replacing an existing entry if it exists.
      */

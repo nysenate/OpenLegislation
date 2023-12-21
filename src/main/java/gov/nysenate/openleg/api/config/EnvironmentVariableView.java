@@ -1,30 +1,12 @@
 package gov.nysenate.openleg.api.config;
 
-public class EnvironmentVariableView extends SimpleEnvironmentVariableView {
+import gov.nysenate.openleg.api.ViewObject;
 
-    private String type;
-    private boolean mutable;
+public record EnvironmentVariableView(String name, Object value, String type, boolean mutable)
+        implements ViewObject {
 
     public EnvironmentVariableView(String name, Object value, Class<?> type, boolean mutable) {
-        super(name, value);
-        this.type = type != null ? type.getSimpleName() : null;
-        this.mutable = mutable;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public boolean isMutable() {
-        return mutable;
-    }
-
-    public String getType() {
-        return type;
+        this(name, value, type != null ? type.getSimpleName() : null, mutable);
     }
 
     @Override

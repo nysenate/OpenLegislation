@@ -8,8 +8,7 @@ import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawUpdateEvent;
 
-public interface LawSearchService
-{
+public interface LawSearchService {
     /**
      * Search across all law documents.
      * @see #searchLawDocs(String, String, String, LimitOffset)

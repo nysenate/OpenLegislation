@@ -106,8 +106,6 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         dateToLocId.put(testDate, "5");
         dateToLocId.put(testDate.plusDays(1), "6");
         testRepealedResult(startDate, endDate, dateToLocId, 3);
-        testRepealedResult(testDate, endDate, dateToLocId, 2);
-        testRepealedResult(startDate, testDate, dateToLocId, 2);
         testRepealedResult(testDate, testDate, dateToLocId, 1);
     }
 

@@ -3,8 +3,6 @@ package gov.nysenate.openleg.search.logs;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.logs.ApiLogEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -13,25 +11,30 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
-public class ApiLogStompService
-{
-    private static final Logger logger = LoggerFactory.getLogger(ApiLogStompService.class);
-
+public class ApiLogStompService {
     @Service
-    public static class AsyncApiLogStomper
-    {
-        @Autowired private SimpMessagingTemplate messagingTemplate;
+    static class AsyncApiLogStomper {
+        private final SimpMessagingTemplate messagingTemplate;
 
-        private String brokerName = "/event/apiLogs";
+        @Autowired
+        public AsyncApiLogStomper(SimpMessagingTemplate messagingTemplate) {
+            this.messagingTemplate = messagingTemplate;
+        }
 
         @Async
         public void broadcast(ApiLogEvent apiLogEvent) {
-            messagingTemplate.convertAndSend(brokerName, apiLogEvent);
+            messagingTemplate.convertAndSend("/event/apiLogs", apiLogEvent);
         }
     }
 
-    @Autowired private EventBus eventBus;
-    @Autowired private AsyncApiLogStomper asyncStomper;
+    private final EventBus eventBus;
+    private final AsyncApiLogStomper asyncStomper;
+
+    @Autowired
+    public ApiLogStompService(EventBus eventBus, AsyncApiLogStomper asyncStomper) {
+        this.eventBus = eventBus;
+        this.asyncStomper = asyncStomper;
+    }
 
     @PostConstruct
     private void init() {

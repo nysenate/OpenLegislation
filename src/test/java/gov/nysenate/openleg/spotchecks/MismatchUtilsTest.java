@@ -12,8 +12,11 @@ import org.junit.experimental.categories.Category;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.core.Is.is;
+import static gov.nysenate.openleg.spotchecks.model.MismatchState.CLOSED;
+import static gov.nysenate.openleg.spotchecks.model.MismatchState.OPEN;
+import static gov.nysenate.openleg.spotchecks.model.SpotCheckDataSource.LBDC;
+import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT;
+import static gov.nysenate.openleg.spotchecks.model.SpotCheckRefType.LBDC_DAYBREAK;
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
@@ -21,29 +24,30 @@ public class MismatchUtilsTest {
 
     private static final String printNo = "S100";
     private static final BaseBillId testBillId = new BaseBillId(printNo, 2017);
-    private DeNormSpotCheckMismatch openMismatch;
-    private DeNormSpotCheckMismatch closedMismatch;
+    private DeNormSpotCheckMismatch<?> openMismatch;
+    private DeNormSpotCheckMismatch<?> closedMismatch;
     private SpotCheckReport<BaseBillId> spotcheckReport;
     private SpotCheckReferenceId referenceId;
 
     @Before
     public void before() {
-        openMismatch = createMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT, MismatchState.OPEN);
-        closedMismatch = createMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT, MismatchState.CLOSED);
-        spotcheckReport = new SpotCheckReport<>(
-                new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now(), LocalDateTime.now()));
+        openMismatch = createMismatch(OPEN);
+        closedMismatch = createMismatch(CLOSED);
+        spotcheckReport = new SpotCheckReport<>(new SpotCheckReportId(LBDC_DAYBREAK,
+                LocalDateTime.now(), LocalDateTime.now()));
         spotcheckReport.setId(2);
-        referenceId = new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now());
+        referenceId = new SpotCheckReferenceId(LBDC_DAYBREAK, LocalDateTime.now());
     }
 
     /* --- Custom Asserts --- */
 
-    private void assertEmpty(Collection<DeNormSpotCheckMismatch> collection) {
+    private void assertEmpty(Collection<DeNormSpotCheckMismatch<?>> collection) {
         assertTrue(collection.isEmpty());
     }
 
-    private void assertIgnoreStatus(DeNormSpotCheckMismatch mismatch, SpotCheckMismatchIgnore ignoreStatus) {
-        assertThat(mismatch.getIgnoreStatus(), is(ignoreStatus));
+    private void assertIgnoreStatus(DeNormSpotCheckMismatch<?> mismatch,
+                                    SpotCheckMismatchIgnore ignoreStatus) {
+        assertEquals(ignoreStatus, mismatch.getIgnoreStatus());
     }
 
     /* --- calculateIgnoreStatus() tests --- */
@@ -102,14 +106,15 @@ public class MismatchUtilsTest {
 
     @Test
     public void givenCurrentMismatchNotInCheckedKeys_returnNoResolved() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
         assertEmpty(MismatchUtils.determineClosedMismatches(current, spotcheckReport));
     }
 
     @Test
     public void givenCurrentMismatchNotInCheckedTypes_returnNoResolved() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
-        spotcheckReport.setReportId(new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_AGENDA, LocalDateTime.now(), LocalDateTime.now()));
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
+        spotcheckReport.setReportId(new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_AGENDA,
+                LocalDateTime.now(), LocalDateTime.now()));
         assertFalse(spotcheckReport.getReferenceType().checkedMismatchTypes().contains(openMismatch.getType()));
         spotcheckReport.addObservation(new SpotCheckObservation<>(referenceId, testBillId));
         assertEmpty(MismatchUtils.determineClosedMismatches(current, spotcheckReport));
@@ -117,7 +122,7 @@ public class MismatchUtilsTest {
 
     @Test
     public void givenMismatchInReportAndCurrent_returnNoResolved() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
         SpotCheckObservation<BaseBillId> obs = new SpotCheckObservation<>(referenceId, testBillId);
         SpotCheckMismatch mm = new SpotCheckMismatch(openMismatch.getType(), "", "");
         obs.addMismatch(mm);
@@ -127,47 +132,46 @@ public class MismatchUtilsTest {
 
     @Test
     public void givenResolved_returnNoResolved() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(closedMismatch);
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(closedMismatch);
         spotcheckReport.setObservationMap(new HashMap<>());
         assertEmpty(MismatchUtils.determineClosedMismatches(current, spotcheckReport));
     }
 
     @Test
     public void givenMismatchOnlyInCurrent_returnResolved() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
         spotcheckReport.addObservation(new SpotCheckObservation<>(referenceId, testBillId));
-        DeNormSpotCheckMismatch resolved = MismatchUtils.determineClosedMismatches(current, spotcheckReport).get(0);
-        assertThat(resolved.getState(), is(MismatchState.CLOSED));
+        DeNormSpotCheckMismatch<?> resolved = MismatchUtils
+                .determineClosedMismatches(current, spotcheckReport).get(0);
+        assertEquals(CLOSED, resolved.getState());
     }
 
     @Test
     public void givenResolvedMismatch_updateFields() {
-        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
+        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
         LocalDateTime origReportDateTime = openMismatch.getReportDateTime();
         LocalDateTime origObservedDateTime = openMismatch.getObservedDateTime();
         spotcheckReport = aFutureSpotcheckReport(spotcheckReport);
         spotcheckReport.addObservation(new SpotCheckObservation<>(referenceId, testBillId));
 
-        List<DeNormSpotCheckMismatch> closedMismatches = MismatchUtils.determineClosedMismatches(current, spotcheckReport);
-        assertTrue("at least 1 closed", closedMismatches.size() > 0);
+        List<DeNormSpotCheckMismatch<?>> closedMismatches = MismatchUtils
+                .determineClosedMismatches(current, spotcheckReport);
+        assertFalse(closedMismatches.isEmpty());
 
-        DeNormSpotCheckMismatch resolved = closedMismatches.get(0);
-
-        assertThat(resolved.getReportId(), is(spotcheckReport.getId()));
-        assertThat(resolved.getReferenceId().getReferenceType(), is(spotcheckReport.getReferenceType()));
-        assertThat(resolved.getReferenceId().getRefActiveDateTime(), is(spotcheckReport.getReferenceDateTime()));
-        assertThat(resolved.getState(), is(MismatchState.CLOSED));
-        assertThat(resolved.getReportDateTime(), is(greaterThan(origReportDateTime)));
-        assertThat(resolved.getObservedDateTime(), is(greaterThan(origObservedDateTime)));
+        DeNormSpotCheckMismatch<?> resolved = closedMismatches.get(0);
+        assertEquals(spotcheckReport.getId(), resolved.getReportId());
+        assertEquals(CLOSED, resolved.getState());
+        isGreaterThan(resolved.getReportDateTime(), origReportDateTime);
+        isGreaterThan(resolved.getObservedDateTime(), origObservedDateTime);
+        var refId = resolved.getReferenceId();
+        assertEquals(spotcheckReport.getReferenceType(), refId.getReferenceType());
+        assertEquals(spotcheckReport.getReferenceDateTime(), refId.getRefActiveDateTime());
     }
 
     private <T> SpotCheckReport<T> aFutureSpotcheckReport(SpotCheckReport<T> spotcheckReport) {
-        return new SpotCheckReport<>(
-                new SpotCheckReportId(
-                        SpotCheckRefType.LBDC_SCRAPED_BILL,
-                        spotcheckReport.getReferenceDateTime().plusHours(1),
-                        spotcheckReport.getReportDateTime().plusHours(1)
-                )
+        return new SpotCheckReport<>(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL,
+                spotcheckReport.getReferenceDateTime().plusHours(1),
+                spotcheckReport.getReportDateTime().plusHours(1))
         );
     }
 
@@ -176,28 +180,28 @@ public class MismatchUtilsTest {
     @Test
     public void newMismatchGetsNewFirstSeenDateTime() {
         openMismatch.setObservedDateTime(LocalDateTime.now());
-        DeNormSpotCheckMismatch newMismatch = openMismatch;
+        DeNormSpotCheckMismatch<?> newMismatch = openMismatch;
         MismatchUtils.updateFirstSeenDateTime(newMismatch, Optional.empty());
-        assertThat(newMismatch.getFirstSeenDateTime(), is(newMismatch.getObservedDateTime()));
+        assertEquals(newMismatch.getObservedDateTime(), newMismatch.getFirstSeenDateTime());
     }
 
     @Test
     public void reoccurringMismatchCopiesFirstSeenDateTime() {
         openMismatch.setObservedDateTime(LocalDateTime.now());
-        DeNormSpotCheckMismatch reoccurringMismatch = createMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT, MismatchState.OPEN);
+        DeNormSpotCheckMismatch<?> reoccurringMismatch = createMismatch(OPEN);
         reoccurringMismatch.setObservedDateTime(LocalDateTime.now().plusHours(1));
         MismatchUtils.updateFirstSeenDateTime(reoccurringMismatch, Optional.of(openMismatch));
-        assertThat(reoccurringMismatch.getFirstSeenDateTime(), is(openMismatch.getFirstSeenDateTime()));
+        assertEquals(openMismatch.getFirstSeenDateTime(), reoccurringMismatch.getFirstSeenDateTime());
     }
 
     @Test
     public void closedMismatchCopiesFirstSeenDateTime() {
         openMismatch.setObservedDateTime(LocalDateTime.now());
-        DeNormSpotCheckMismatch closedMismatch = createMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT, MismatchState.CLOSED);
+        DeNormSpotCheckMismatch<?> closedMismatch = createMismatch(CLOSED);
         closedMismatch.setFirstSeenDateTime(null);
-        closedMismatch.setState(MismatchState.CLOSED);
+        closedMismatch.setState(CLOSED);
         MismatchUtils.updateFirstSeenDateTime(closedMismatch, Optional.of(openMismatch));
-        assertThat(closedMismatch.getFirstSeenDateTime(), is(openMismatch.getFirstSeenDateTime()));
+        assertEquals(openMismatch.getFirstSeenDateTime(), closedMismatch.getFirstSeenDateTime());
     }
 
     @Test
@@ -207,18 +211,23 @@ public class MismatchUtilsTest {
         closedMismatch.setObservedDateTime(dt);
         openMismatch.setObservedDateTime(dt.plusHours(1));
         MismatchUtils.updateFirstSeenDateTime(openMismatch, Optional.of(closedMismatch));
-        assertThat(openMismatch.getFirstSeenDateTime(), is(greaterThan(closedMismatch.getFirstSeenDateTime())));
-        assertThat(openMismatch.getFirstSeenDateTime(), is(openMismatch.getObservedDateTime()));
+        isGreaterThan(openMismatch.getFirstSeenDateTime(), closedMismatch.getFirstSeenDateTime());
+        assertEquals(openMismatch.getObservedDateTime(), openMismatch.getFirstSeenDateTime());
     }
 
-    private DeNormSpotCheckMismatch createMismatch(SpotCheckMismatchType type, MismatchState state) {
-        DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(testBillId, type, SpotCheckDataSource.LBDC);
+    private static DeNormSpotCheckMismatch<?> createMismatch(MismatchState state) {
+        var mismatch = new DeNormSpotCheckMismatch<>(testBillId, BILL_ACTIVE_AMENDMENT, LBDC);
         mismatch.setReportId(1);
         mismatch.setState(state);
-        mismatch.setReferenceId(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
+        mismatch.setReferenceId(new SpotCheckReferenceId(LBDC_DAYBREAK,
+                LocalDateTime.now()));
         mismatch.setReportDateTime(LocalDateTime.now());
         mismatch.setObservedDateTime(LocalDateTime.now());
         mismatch.setFirstSeenDateTime(LocalDateTime.now());
         return mismatch;
+    }
+
+    private static <T> void isGreaterThan(Comparable<T> one, T two) {
+        assertTrue(one.compareTo(two) > 0);
     }
 }

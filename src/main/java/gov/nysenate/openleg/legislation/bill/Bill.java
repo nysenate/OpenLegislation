@@ -1,14 +1,15 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.PublishStatus;
+import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -24,6 +25,7 @@ import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
  */
 public class Bill extends BaseLegislativeContent implements Serializable, Comparable<Bill>, Cloneable
 {
+    @Serial
     private static final long serialVersionUID = 2925424993477789289L;
 
     /** The base bill id which should be used to uniquely identify this instance. */
@@ -39,7 +41,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillStatus status;
 
     /** Holds the contents of the LDBlurb field */
-    protected String ldblurb ="";
+    protected String ldblurb = "";
 
     /** A set of statuses that are considered milestones. */
     protected List<BillStatus> milestones = Collections.synchronizedList(new LinkedList<>());

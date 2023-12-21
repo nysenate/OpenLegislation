@@ -1,121 +1,69 @@
 package gov.nysenate.openleg.legislation.committee.dao;
 
 import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.*;
+import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
+import org.ehcache.config.EvictionAdvisor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-public class CachedCommitteeDataService implements CommitteeDataService, CachingService<CommitteeSessionId> {
-
+public class CachedCommitteeDataService
+        extends CachingService<CommitteeSessionId, CachedCommitteeDataService.CommitteeList>
+        implements CommitteeDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
+    private final CommitteeDao committeeDao;
 
-    @Autowired private CacheManager cacheManager;
-    @Autowired private CommitteeDao committeeDao;
-    @Autowired private EventBus eventBus;
-
-    @Value("${committee.cache.heap.size}") private long committeeCacheSizeMb;
-
-    private Cache committeeCache;
-
-    @PostConstruct
-    private void init() {
-        setupCaches();
-        eventBus.register(this);
+    @Autowired
+    public CachedCommitteeDataService(CommitteeDao committeeDao) {
+        this.committeeDao = committeeDao;
     }
 
-    @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.COMMITTEE.name());
+    /**
+     * This is a strange class, only needed for accurate type-checking of cache Values.
+     * Otherwise, the generic part of any List would be subject to type erasure.
+     */
+    static class CommitteeList extends ArrayList<Committee> {
+        CommitteeList(Collection<Committee> list) {
+            super(list);
+        }
     }
 
     /** --- Cache Management --- */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public List<Ehcache> getCaches() {
-        return Collections.singletonList(committeeCache);
+    protected CacheType cacheType() {
+        return CacheType.COMMITTEE;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void setupCaches() {
-        committeeCache = new Cache(new CacheConfiguration().name(ContentCache.COMMITTEE.name())
-                .eternal(true)
-                .maxBytesLocalHeap(committeeCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(byteSizeOfPolicy()));
-        cacheManager.addCache(committeeCache);
-        committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
+    protected EvictionAdvisor<CommitteeSessionId, CommitteeList> evictionAdvisor() {
+        return (key, value) -> key.getSession().equals(SessionYear.current()) &&
+                value.stream().anyMatch(Committee::isCurrent);
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void evictContent(CommitteeSessionId committeeSessionId) {
-        committeeCache.remove(committeeSessionId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.COMMITTEE)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<CommitteeSessionId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.COMMITTEE)) {
-            evictContent(evictIdEvent.getContentId());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void warmCaches() {
-        evictCaches();
-        logger.info("Warming up committee cache.");
-        getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
-        getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);
-        logger.info("Done warming up committee cache.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.COMMITTEE)) {
-            warmCaches();
-        }
+    public Map<CommitteeSessionId, CommitteeList> initialEntries() {
+        return committeeDao.getAllSessionIds().stream()
+                .filter(id -> id.getSession().equals(SessionYear.current()))
+                .collect(Collectors.toMap(id -> id, id ->
+                        new CommitteeList(committeeDao.getCommitteeHistory(id))));
     }
 
     /** --- Committee Data Services --- */
@@ -126,9 +74,8 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
      */
     @Override
     public Committee getCommittee(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx {
-        if (committeeSessionId == null) {
+        if (committeeSessionId == null)
             throw new IllegalArgumentException("committeeSessionId cannot be null!");
-        }
         try {
             return getCommitteeHistory(committeeSessionId).get(0);
         } catch (IndexOutOfBoundsException ex) {
@@ -139,9 +86,8 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /** {@inheritDoc} */
     @Override
     public Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx {
-        if (committeeVersionId == null) {
+        if (committeeVersionId == null)
             throw new IllegalArgumentException("committeeVersionId cannot be null!");
-        }
         LocalDateTime refDate = committeeVersionId.getReferenceDate();
         for (Committee committee : getCommitteeHistory(committeeVersionId)) {
             if ( committee.getCreated().equals(refDate) ||
@@ -169,9 +115,8 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /** {@inheritDoc} */
     @Override
     public List<Committee> getCommitteeList(Chamber chamber, SessionYear sessionYear, LimitOffset limitOffset) {
-        if (chamber == null) {
+        if (chamber == null)
             throw new IllegalArgumentException("Chamber cannot be null!");
-        }
 
         List<Committee> committeeList = new ArrayList<>();
         getCommitteeIds().stream()
@@ -193,25 +138,20 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId,
-                                               LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx {
-        if (committeeSessionId ==null) {
+                                               LimitOffset limitOffset, SortOrder order)
+            throws CommitteeNotFoundEx {
+
+        if (committeeSessionId == null)
             throw new IllegalArgumentException("CommitteeSessionId cannot be null!");
-        }
-
-        List<Committee> committeeHistory;
-
-        Element element = committeeCache.get(committeeSessionId);
-        if (element != null) {
+        List<Committee> committeeHistory = cache.get(committeeSessionId);
+        if (committeeHistory != null)
             logger.debug("Committee cache hit for {}", committeeSessionId);
-            committeeHistory = (List<Committee>) element.getObjectValue();
-        }
         else {
             try {
                 committeeHistory = committeeDao.getCommitteeHistory(committeeSessionId);
-                committeeCache.put(new Element(committeeSessionId, committeeHistory));
+                cache.put(committeeSessionId, new CommitteeList(committeeHistory));
                 logger.debug("Added committee history {} to cache", committeeSessionId);
             }
             catch (EmptyResultDataAccessException ex){
@@ -220,12 +160,10 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         }
 
         // The dao provides the result already in DESC order by created date
-        if (order != null && order.equals(SortOrder.ASC)) {
+        if (order != null && order.equals(SortOrder.ASC))
             committeeHistory = Lists.reverse(committeeHistory);
-        }
-        if (limitOffset != null && !limitOffset.equals(LimitOffset.ALL)) {
+        if (limitOffset != null && !limitOffset.equals(LimitOffset.ALL))
             committeeHistory = LimitOffset.limitList(committeeHistory, limitOffset);
-        }
         return committeeHistory;
     }
 
@@ -243,17 +181,12 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /** {@inheritDoc} */
     @Override
     public void saveCommittee(Committee committee, LegDataFragment legDataFragment) {
-        if (committee == null) {
+        if (committee == null)
             throw new IllegalArgumentException("Committee cannot be null.");
-        }
-        // Update the database.
         committeeDao.updateCommittee(committee, legDataFragment);
-
-        // Update the cache.
         List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
-        committeeCache.put(new Element(committee.getSessionId(), committeeHistory));
-
-        eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
+        cache.put(committee.getSessionId(), new CommitteeList(committeeHistory));
+        eventBus.post(new CommitteeUpdateEvent(committee));
     }
 
 }

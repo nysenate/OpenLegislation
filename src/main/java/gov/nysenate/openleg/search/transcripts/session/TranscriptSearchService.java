@@ -1,10 +1,9 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
-import gov.nysenate.openleg.updates.transcripts.session.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 
 public interface TranscriptSearchService
@@ -44,11 +43,4 @@ public interface TranscriptSearchService
      * @param transcriptUpdateEvent
      */
     void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent);
-
-    /**
-     * Handles a batch transcript update event by indexing the supplied transcripts.
-     * @param bulkTranscriptUpdateEvent
-     */
-    void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent);
-
 }

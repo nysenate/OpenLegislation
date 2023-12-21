@@ -23,14 +23,13 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -39,6 +38,7 @@ import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,19 +53,12 @@ import java.util.function.Function;
 /**
  * Base class for Elasticsearch layer classes to inherit common functionality from.
  */
-public abstract class ElasticBaseDao
-{
+public abstract class ElasticBaseDao {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
-
     private static final int defaultMaxResultWindow = 10000;
-
     /** The ideal upper limit for the size of a bulk request */
     private static final long desiredBulkRequestSize = 5242880L;
-
     private static final String refreshIntervalSetting = "refresh_interval";
-
-    protected static final String defaultType = "_doc";
-
     private static final String COUNT_API = "/_cat/count/";
 
     @Autowired private RestHighLevelClient searchClient;
@@ -78,16 +71,14 @@ public abstract class ElasticBaseDao
     /* --- Public methods --- */
 
     public void createIndices() {
-        getIndices().stream()
-                .filter(index -> !indicesExist(index))
-                .forEach(this::createIndex);
+        if (!indexExists(getIndex())) {
+            createIndex(getIndex());
+        }
     }
 
     public void purgeIndices() {
-        getIndices().forEach(index -> {
-            deleteIndex(index);
-            createIndex(index);
-        });
+        deleteIndex(getIndex());
+        createIndex(getIndex());
     }
 
     /* --- Abstract methods --- */
@@ -95,7 +86,7 @@ public abstract class ElasticBaseDao
     /**
      * Returns a list containing the names of all indices used by the inheriting Dao
      */
-    protected abstract List<String> getIndices();
+    protected abstract SearchIndex getIndex();
 
     /* --- Common Elastic Search methods --- */
 
@@ -113,7 +104,6 @@ public abstract class ElasticBaseDao
         return search(indexName, query, postFilter,
                 null, null, sort, limitOffset, false, hitMapper);
     }
-
 
     /**
      * Performs a search with support for various functions.
@@ -238,8 +228,7 @@ public abstract class ElasticBaseDao
     }
 
     protected DeleteRequest getDeleteRequest(String indexName, String id) {
-        return new DeleteRequest(indexName)
-                .id(id);
+        return new DeleteRequest(indexName).id(id);
     }
 
     protected void deleteEntry(String indexName, String id) {
@@ -341,13 +330,12 @@ public abstract class ElasticBaseDao
     /**
      * Ensures that any changes to indices are actually show, which is usually done automatically once per second.
      */
-    public void refreshIndices() {
+    public void refreshIndex() {
         try {
-            String[] indices = getIndices().toArray(new String[0]);
-            searchClient.indices().refresh(new RefreshRequest(indices), RequestOptions.DEFAULT);
+            searchClient.indices().refresh(new RefreshRequest(getIndex().getName()), RequestOptions.DEFAULT);
         }
         catch (IOException ex) {
-            throw new ElasticsearchException("Failed to refresh these indices: " + getIndices());
+            throw new ElasticsearchException("Failed to refresh these indices: " + getIndex());
         }
     }
 
@@ -370,8 +358,8 @@ public abstract class ElasticBaseDao
 
     /* --- Internal Methods --- */
 
-    private boolean indicesExist(String... indices) {
-        GetIndexRequest getIndexRequest = new GetIndexRequest(indices);
+    private boolean indexExists(SearchIndex index) {
+        GetIndexRequest getIndexRequest = new GetIndexRequest(index.getName());
         try {
             return searchClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         }
@@ -380,16 +368,15 @@ public abstract class ElasticBaseDao
         }
     }
 
-    private void createIndex(String indexName) {
+    private void createIndex(SearchIndex index) {
         try {
-            CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName)
+            var createIndexRequest = new CreateIndexRequest(index.getName())
                     .settings(getIndexSettings());
 
             Map<String, Object> customMappingProps = getCustomMappingProperties();
             if (customMappingProps != null && !customMappingProps.isEmpty()) {
                 createIndexRequest.mapping(ImmutableMap.of("properties", customMappingProps));
             }
-
             searchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         }
         catch (IOException ex){
@@ -397,10 +384,10 @@ public abstract class ElasticBaseDao
         }
     }
 
-    private void deleteIndex(String index) {
+    private void deleteIndex(SearchIndex index) {
         try {
             logger.info("Deleting search index {}", index);
-            searchClient.indices().delete(new DeleteIndexRequest(index), RequestOptions.DEFAULT);
+            searchClient.indices().delete(new DeleteIndexRequest(index.getName()), RequestOptions.DEFAULT);
         }
         catch (IndexNotFoundException ex) {
             logger.info("Cannot delete index {} because it doesn't exist.", index);
@@ -455,8 +442,7 @@ public abstract class ElasticBaseDao
         // Add the sort by fields
         sort.forEach(searchSourceBuilder::sort);
         SearchRequest searchRequest = Requests.searchRequest(indexName)
-                .source(searchSourceBuilder)
-                .searchType(SearchType.QUERY_THEN_FETCH);
+                .source(searchSourceBuilder).searchType(SearchType.QUERY_THEN_FETCH);
         logger.debug("{}", searchRequest);
         return searchRequest;
     }
@@ -570,14 +556,14 @@ public abstract class ElasticBaseDao
             return Collections.singletonList(bulkRequest);
         }
 
-        Queue<DocWriteRequest> requestQueue = new ArrayDeque<>(bulkRequest.requests());
+        Queue<DocWriteRequest<?>> requestQueue = new ArrayDeque<>(bulkRequest.requests());
         List<BulkRequest> bulkRequests = new ArrayList<>();
 
         while (!requestQueue.isEmpty()) {
             BulkRequest openBulk = new BulkRequest();
             // pack in as many requests from the queue as will fit in the desired size.
             while (!requestQueue.isEmpty() && openBulk.estimatedSizeInBytes() < desiredBulkRequestSize) {
-                DocWriteRequest nextDoc = requestQueue.peek();
+                DocWriteRequest<?> nextDoc = requestQueue.peek();
                 // Break early if the next request is an index that will put the current bulk over the desired size.
                 // Still allow it if the current bulk is empty.
                 if (nextDoc instanceof IndexRequest) {

@@ -5,8 +5,8 @@ import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.auth.model.ApiKeyLoginToken;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +33,7 @@ public class ReactAppCtrl {
     private static final Logger logger = LoggerFactory.getLogger(ReactAppCtrl.class);
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     @Value("${ga.tracking.id}")
     private String gaTrackingId;

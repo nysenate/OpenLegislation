@@ -9,7 +9,7 @@ import java.util.TreeMap;
 /**
  * A class that converts between Roman numerals, word for numbers, and integers.
  */
-public class NumberConversionUtils {
+public final class NumberConversionUtils {
     private static final BiMap<Integer, String> mapping;
     static {
         TreeMap<Integer, String> temp = new TreeMap<>((t0, t1) -> t1-t0);

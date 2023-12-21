@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.search.law;
 
 import gov.nysenate.openleg.api.legislation.law.view.LawDocView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -31,7 +31,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchDao.class);
 
-    protected static String lawIndexName = SearchIndex.LAW.getIndexName();
+    protected static String lawIndexName = SearchIndex.LAW.getName();
 
     protected static List<HighlightBuilder.Field> highlightFields =
         Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(5),
@@ -82,8 +82,8 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Collections.singletonList(lawIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.LAW;
     }
 
     /**

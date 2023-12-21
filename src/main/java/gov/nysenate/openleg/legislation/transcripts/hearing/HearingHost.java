@@ -4,17 +4,12 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * Contains data about what group is hosting a public hearing.
+ * Contains data about what group is hosting a hearing.
  */
-// TODO: Convert to record in Java 16.
-public class HearingHost {
+public record HearingHost(Chamber chamber, HearingHostType type, String name) {
     private static final String IRRELEVANT_TEXT = "^(\\s?(ON|FOR|THE|AND|,))+|((,|THE|AND|;)\\s?)+$";
-    private final Chamber chamber;
-    private final HearingHostType type;
-    private final String name;
 
     public HearingHost(Chamber chamber, HearingHostType type, String name) {
         this.chamber = chamber;
@@ -45,46 +40,12 @@ public class HearingHost {
     /**
      * We want HearingHosts that refer to the same committee, task force, etc. to be equal.
      * But, different hearings will format the names slightly differently.
+     *
      * @param name to remove unnecessary data from.
      * @return the standard form of the name;
      */
     private static String standardizeName(String name) {
         return name.toUpperCase().replaceAll("\\s+", " ").replaceAll(", AND| &", " AND")
                 .replaceAll(IRRELEVANT_TEXT, "").trim();
-    }
-
-    /** --- Basic Getters/Setters --- */
-
-    public Chamber getChamber() {
-        return chamber;
-    }
-
-    public HearingHostType getType() {
-        return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        HearingHost that = (HearingHost) o;
-        return chamber == that.chamber && type == that.type && name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(chamber, type, name);
-    }
-
-    @Override
-    public String toString() {
-        return "HearingHost{chamber=" + chamber + ", type=" + type +
-                ", name='" + name + '\'' + '}';
     }
 }

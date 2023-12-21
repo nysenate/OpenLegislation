@@ -1,19 +1,20 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
+import gov.nysenate.openleg.api.legislation.agenda.WeekOfAgendaInfoMap;
+import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * Service interface for retrieving and saving Agenda data.
  */
-public interface AgendaDataService
-{
+public interface AgendaDataService {
     /**
      * Retrieves an Agenda via the agenda id.
      *
@@ -39,6 +40,12 @@ public interface AgendaDataService
      * @return List<AgendaId>
      */
     List<AgendaId> getAgendaIds(int year, SortOrder idOrder);
+
+    /**
+     * Get data from all committee meetings that took place between "from" and "to".
+     * See {@link WeekOfAgendaInfoMap} for details on the data structure.
+     */
+    WeekOfAgendaInfoMap getWeekOfMap(LocalDateTime from, LocalDateTime to);
 
     /**
      * Saves the Agenda into the persistence layer. If a new Agenda reference is

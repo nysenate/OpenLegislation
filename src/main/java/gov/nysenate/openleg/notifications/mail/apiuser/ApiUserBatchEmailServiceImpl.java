@@ -1,17 +1,18 @@
 package gov.nysenate.openleg.notifications.mail.apiuser;
 
+import gov.nysenate.openleg.auth.admin.AdminUser;
 import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.auth.admin.AdminUser;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
+import gov.nysenate.openleg.common.util.MailUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.mail.MailException;
 import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
-import gov.nysenate.openleg.common.util.MailUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,23 +23,25 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.*;
-
-import org.apache.commons.validator.routines.EmailValidator;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
-    private MimeSendMailService mimeSender;
-    private final Environment env;
+    private final MimeSendMailService mimeSender;
+    private final OpenLegEnvironment env;
     private final ApiUserService apiUserService;
     private final AdminUserService adminUserService;
-    private EmailValidator validator = EmailValidator.getInstance();
+    private final EmailValidator validator = EmailValidator.getInstance();
 
     @Autowired
-    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, Environment env, ApiUserService apiUserService,
+    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env,
+                                        ApiUserService apiUserService,
                                         AdminUserService adminUserService) {
-        mimeSender = new MimeSendMailService(mailUtils, env);
+        this.mimeSender = new MimeSendMailService(mailUtils, env);
         this.apiUserService = apiUserService;
         this.env = env;
         this.adminUserService = adminUserService;
@@ -189,6 +192,6 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * @return
      */
     private String stripHtmlTags(String text) {
-        return Jsoup.clean(text, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+        return Jsoup.clean(text, "", Safelist.none(), new Document.OutputSettings().prettyPrint(false));
     }
 }

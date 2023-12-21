@@ -1,14 +1,10 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
-import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.legislation.bill.BillAmendment;
-import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.*;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +86,7 @@ public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
     }
 
     @Test(expected = ParseError.class)
-    public void textExceptions() throws Exception   {
+    public void textExceptions()   {
         String xmlPath = "processor/bill/sameas/2017-02-01-09.31.43.383879_SAMEAS_S03526A-invalid-xml.XML";
         processXmlFile(xmlPath);
     }

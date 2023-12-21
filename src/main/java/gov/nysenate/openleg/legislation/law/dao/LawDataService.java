@@ -80,7 +80,7 @@ public interface LawDataService
      * @param dateRange Range<LocalDateTime>
      * @return {@link Set<LawDocId>}
      */
-    Set<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange);
+    List<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange);
 
     /**
      * Persists the LawTree into the backing store with LawFile used as a reference to the source data.

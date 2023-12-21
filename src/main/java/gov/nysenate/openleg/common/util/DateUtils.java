@@ -2,17 +2,15 @@ package gov.nysenate.openleg.common.util;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
-import org.postgresql.util.PGInterval;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.regex.Pattern;
 
-public abstract class DateUtils {
-    /** --- Date Formats --- */
+public final class DateUtils {
+    private DateUtils() {}
 
     public static final DateTimeFormatter LRS_LAW_FILE_DATE = DateTimeFormatter.ofPattern("yyyyMMdd"),
             LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy"),
@@ -25,12 +23,9 @@ public abstract class DateUtils {
 
     /** --- Reference Dates --- */
 
-    public static final LocalDate LONG_AGO = LocalDate.of(1970, 1, 1),
-            THE_FUTURE = LocalDate.of(2999, 12, 31);
-    public static final Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
-    public static final Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
-
-    /** --- Static Methods --- */
+    public static final LocalDateTime LONG_AGO = LocalDate.of(1970, 1, 1).atStartOfDay(),
+            THE_FUTURE = LocalDate.of(2999, 12, 31).atTime(LocalTime.MAX);
+    public static final Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO, THE_FUTURE);
 
     /**
      * Retrieve the year of the given date.
@@ -40,25 +35,11 @@ public abstract class DateUtils {
     }
 
     /**
-     * Shorthand method to return a LocalDateTime from 'millis since longAgo'.
-     */
-    public static LocalDateTime getLocalDateTimeFromMillis(long millis) {
-        return LocalDateTime.from(Instant.ofEpochMilli(millis));
-    }
-
-    /**
      * A session year refers to that start of a 2 year legislative session period.
      * This method ensures that any given year will resolve to the correct session start year.
      */
     public static int resolveSession(int year) {
         return (year % 2 == 0) ? year - 1 : year;
-    }
-
-    /**
-     * Returns a LocalDateTime that represents the time just before the start of the next day.
-     */
-    public static LocalDateTime atEndOfDay(LocalDate date) {
-        return date.atTime(23, 59, 59, 999999999);
     }
 
     /**
@@ -78,27 +59,11 @@ public abstract class DateUtils {
     }
 
     /**
-     * Extract the Date (with time) from the LRS formatted date/time string.
-     * @throws java.time.format.DateTimeParseException if unable to parse the requested result.
-     */
-    public static LocalDateTime getLrsWebsiteDateTime(String lbdcDateTime) {
-        return LocalDateTime.from(LRS_WEBSITE_DATETIME_FORMAT.parse(lbdcDateTime));
-    }
-
-    /**
      * Convert a Date to a LocalDate at the system's default time zone. Returns null on null input.
      */
     public static LocalDate getLocalDate(java.util.Date date) {
         if (date == null) return null;
         return getLocalDateTime(date).toLocalDate();
-    }
-
-    /**
-     * Convert a Date to a LocalTime at the system's default time zone.  Returns null on null input.
-     */
-    public static LocalTime getLocalTime(Date date) {
-        if (date == null) return null;
-        return getLocalDateTime(date).toLocalTime();
     }
 
     /**
@@ -130,100 +95,6 @@ public abstract class DateUtils {
         return Time.valueOf(localTime);
     }
 
-    public static PGInterval toInterval(Period period, Duration duration) {
-        if (duration == null || period == null) return null;
-        return new PGInterval(period.getYears(), period.getMonths(), period.getDays(),
-                (int) duration.toHours(), (int) duration.toMinutes() % 60,
-                (double) (duration.toMillis() % (1000 * 60)) / 1000);
-    }
-
-    public static Period getPeriod(PGInterval interval) {
-        if (interval == null) return null;
-        return Period.of(interval.getYears(), interval.getMonths(), interval.getDays());
-    }
-
-    public static Duration getDuration(PGInterval interval) {
-        if (interval == null) return null;
-        return Duration.ofMillis(
-                (long) (interval.getSeconds() * 1000) + interval.getMinutes() * 60000L + interval.getHours() * 3600000L);
-    }
-
-    /** --- Date Range methods --- */
-
-    /**
-     * Converts a LocalDateTime range to a closed LocalDate range
-     * The resulting LocalDate range includes all Dates that contain times that occurred within the given range
-     *
-     * @param dateTimeRange
-     * @return
-     */
-    public static Range<LocalDate> toDateRange(Range<LocalDateTime> dateTimeRange) {
-        return Range.closed(
-                startOfDateTimeRange(dateTimeRange).toLocalDate(),
-                endOfDateTimeRange(dateTimeRange).toLocalDate()
-        );
-    }
-
-    /**
-     * Converts a LocalDate range to a closed LocalDateTime range
-     * The LocalDateTimeRange includes all times that occur within the included LocalDates
-     *
-     * @param dateRange
-     * @return
-     */
-    public static Range<LocalDateTime> toDateTimeRange(Range<LocalDate> dateRange) {
-        return Range.closed(
-                startOfDateRange(dateRange).atStartOfDay(),
-                endOfDateRange(dateRange).plusDays(1).atStartOfDay()
-        );
-    }
-
-    /**
-     * Given the LocalDate range, extract the lower bound LocalDate. If the lower bound is not set,
-     * a really early date will be returned. If the bound is open, a single day will be added to the
-     * LocalDate. If its closed, the date will remain as is.
-     *
-     * @param localDateRange Range<LocalDate>
-     * @return LocalDate - Lower bound in the date range
-     */
-    public static LocalDate startOfDateRange(Range<LocalDate> localDateRange) {
-        if (localDateRange != null) {
-            LocalDate lower;
-            if (localDateRange.hasLowerBound()) {
-                lower = (localDateRange.lowerBoundType().equals(BoundType.CLOSED))
-                        ? localDateRange.lowerEndpoint() : localDateRange.lowerEndpoint().plusDays(1);
-            }
-            else {
-                lower = LONG_AGO;
-            }
-            return lower;
-        }
-        throw new IllegalArgumentException("Supplied localDateRange is null.");
-    }
-
-    /**
-     * Given the LocalDateTime range, extract the upper bound LocalDateTime. If the upper bound is not set, a
-     * date far in the future will be returned. If the bound is open, a single day will be subtracted
-     * from the LocalDateTime. If its closed, the date will remain as is.
-     *
-     * @param localDateRange Range<LocalDate>
-     * @return LocalDate - Upper bound in the date range
-     */
-    public static LocalDate endOfDateRange(Range<LocalDate> localDateRange) {
-        if (localDateRange != null) {
-            LocalDate upper;
-            if (localDateRange.hasUpperBound()) {
-                upper = (localDateRange.upperBoundType().equals(BoundType.CLOSED))
-                        ? localDateRange.upperEndpoint() : localDateRange.upperEndpoint().minusDays(1);
-            }
-            else {
-                upper = THE_FUTURE;
-            }
-            return upper;
-        }
-        throw new IllegalArgumentException("Supplied localDateRange is null.");
-    }
-
     /**
      * Given the LocalDateTime range, extract the lower bound LocalDateTime. If the lower bound is not set,
      * a really early date will be returned. If the bound is open, a single microsecond will be added to the
@@ -240,7 +111,7 @@ public abstract class DateUtils {
                         ? dateTimeRange.lowerEndpoint() : dateTimeRange.lowerEndpoint().plusNanos(1000);
             }
             else {
-                lower = LONG_AGO.atStartOfDay();
+                lower = LONG_AGO;
             }
             return lower;
         }
@@ -263,7 +134,7 @@ public abstract class DateUtils {
                         ? dateTimeRange.upperEndpoint() : dateTimeRange.upperEndpoint().minusNanos(1000);
             }
             else {
-                upper = atEndOfDay(THE_FUTURE);
+                upper = THE_FUTURE;
             }
             return upper;
         }

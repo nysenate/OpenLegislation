@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.spotchecks.alert.agenda;
 
 import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckNotificationService;
 import gov.nysenate.openleg.spotchecks.alert.agenda.dao.AgendaAlertDao;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,14 +13,14 @@ import java.util.List;
 
 @Service
 public class AgendaAlertProcessor {
-
     private static final Logger logger = LoggerFactory.getLogger(AgendaAlertProcessor.class);
+    private final AgendaAlertDao agendaAlertDao;
+    private final SpotCheckNotificationService notificationService;
 
-    @Autowired
-    private AgendaAlertDao agendaAlertDao;
-
-    @Autowired
-    SpotCheckNotificationService notificationService;
+    public AgendaAlertProcessor(AgendaAlertDao agendaAlertDao, SpotCheckNotificationService notificationService) {
+        this.agendaAlertDao = agendaAlertDao;
+        this.notificationService = notificationService;
+    }
 
     public int processAgendaAlerts() throws ParseError, IOException {
         int processedCount = 0;
@@ -41,5 +40,4 @@ public class AgendaAlertProcessor {
         }
         return processedCount;
     }
-
 }
