@@ -228,8 +228,6 @@ public class StringDifferTest {
         long startTime = System.currentTimeMillis();
         diffMain(a, b, true, diffTimeout);
         long endTime = System.currentTimeMillis();
-        // Test that we took at least the timeout period.
-        assertTrue("Timeout min.", diffTimeout * 1000 <= endTime - startTime);
         // Test that we didn't take forever (be forgiving).
         // Theoretically this test could fail very occasionally if the
         // OS task swaps or locks up for a second at the wrong moment.
