@@ -6,6 +6,7 @@
 # Author: Ken Zalewski
 # Organization: New York State Senate
 # Date: 2023-06-22
+# Revised: 2023-12-21 - add transcripts (session and hearing) to the import task
 #
 
 PATH=$PATH:/usr/local/bin
@@ -45,6 +46,8 @@ while [ $# -gt 0 ]; do
     --import-agendas|--ia) mode=import; scope=agendas ;;
     --import-bills|--ib) mode=import; scope=bills ;;
     --import-calendars|--ic) mode=import; scope=calendars ;;
+    --import-sessions|--is) mode=import; scope=floor_transcripts ;;
+    --import-hearings|--ih) mode=import; scope=public_hearings ;;
     --maint|-m) mode=maint ;;
     --version) mode=version ;;
     --site) shift; psite="$1" ;;
@@ -75,7 +78,7 @@ case "$mode" in
     run_module_cron votingapi
     ;;
   import)
-    for s in bills agendas calendars; do
+    for s in bills agendas calendars floor_transcripts public_hearings; do
       if [ $s = $scope -o $scope = all ]; then
         echo "About to import $s"
         run_pdrush nysol-iu $s
