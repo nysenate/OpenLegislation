@@ -13,6 +13,6 @@ public record HearingUpdateTokenView(HearingIdView hearingId, LocalDateTime date
 
     @Override
     public String getViewType() {
-        return "public_hearing-update-token";
+        return "hearing-update-token";
     }
 }

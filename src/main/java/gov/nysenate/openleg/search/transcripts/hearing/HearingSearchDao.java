@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * DAO interface for searching public hearings.
+ * DAO interface for searching hearings.
  */
 public interface HearingSearchDao {
     /**
-     * Performs a free-form search across all public hearings using the query string syntax and a filter.
+     * Performs a free-form search across all hearings using the query string syntax and a filter.
      *
      * @param query String - Query Builder
      * @param filter FilterBuilder - Filter result set
@@ -25,19 +25,19 @@ public interface HearingSearchDao {
      */
     SearchResults<HearingId> searchHearings(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
     /**
-     * Updates the public hearing search index with the supplied public hearing.
+     * Updates the hearing search index with the supplied hearing.
      * @param hearing
      */
     void updateHearingIndex(Hearing hearing);
 
     /**
-     * Updates the public hearing search index with the supplied public hearings.
+     * Updates the hearing search index with the supplied hearings.
      * @param hearings
      */
     void updateHearingIndex(Collection<Hearing> hearings);
 
     /**
-     * Removes the public hearing from the search index with the given id.
+     * Removes the hearing from the search index with the given id.
      * @param hearingId
      */
     void deleteHearingFromIndex(HearingId hearingId);

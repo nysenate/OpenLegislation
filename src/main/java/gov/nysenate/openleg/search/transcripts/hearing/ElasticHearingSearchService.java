@@ -102,7 +102,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
     @Override
     public void updateIndex(Hearing hearing) {
         if (env.isElasticIndexing() && hearing != null) {
-            logger.info("Indexing public hearing {} into elastic search.", hearing.getTitle());
+            logger.info("Indexing hearing {} into elastic search.", hearing.getTitle());
             hearingSearchDao.updateHearingIndex(hearing);
         }
     }
@@ -112,7 +112,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
     public void updateIndex(Collection<Hearing> hearings) {
         if (env.isElasticIndexing() && !hearings.isEmpty()) {
             List<Hearing> indexableHearings = hearings.stream().filter(Objects::nonNull).toList();
-            logger.info("Indexing {} public hearings into elastic search.", indexableHearings.size());
+            logger.info("Indexing {} hearings into elastic search.", indexableHearings.size());
             hearingSearchDao.updateHearingIndex(indexableHearings);
         }
     }
@@ -139,7 +139,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
             }
             updateIndex(hearings);
         }
-        logger.info("Finished reindexing public hearings.");
+        logger.info("Finished reindexing hearings.");
     }
 
     /** {@inheritDoc} */
@@ -147,7 +147,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
     @Subscribe
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.HEARING)) {
-            logger.info("Handling public hearing re-index event.");
+            logger.info("Handling hearing re-index event.");
             rebuildIndex();
         }
     }

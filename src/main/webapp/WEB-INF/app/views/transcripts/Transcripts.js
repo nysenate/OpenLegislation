@@ -232,8 +232,8 @@ function capitalizeSessionType(type) {
 }
 
 /**
- * Removes excess new lines in highlighted text for session and public hearing transcripts.
- * Public hearing's have "\r\n\r\n" for each new line.
+ * Removes excess new lines in highlighted text for session and hearing transcripts.
+ * Hearing transcripts have "\r\n\r\n" for each new line.
  * Session transcripts have "\n\n" for each new line.
  * @param highlights
  * @returns {*}

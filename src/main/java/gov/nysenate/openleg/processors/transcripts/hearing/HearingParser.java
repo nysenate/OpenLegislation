@@ -33,7 +33,7 @@ final class HearingParser {
     static Hearing getHearingFromText(String filename, String fullText) {
         List<List<String>> pages = HearingTextUtils.getPages(fullText);
         if (pages.size() < 2)
-            throw new ParseError("Public hearing in file " + filename + " is too short.");
+            throw new ParseError("Hearing in file " + filename + " is too short.");
         boolean isWrongFormat = HearingTextUtils.isWrongFormat(pages);
         List<String> dataList = getDataList(pages.get(0), isWrongFormat);
         // Retrieves address, date, and time data from text.

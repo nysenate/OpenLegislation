@@ -19,7 +19,7 @@ public interface HearingDataService
 
     /**
      * Used to maintain backward compatibility after hearing ID changes.
-     * @param filename of a public hearing.
+     * @param filename of a hearing.
      * @return the relevant hearing.
      */
     Hearing getHearing(String filename) throws HearingNotFoundEx;

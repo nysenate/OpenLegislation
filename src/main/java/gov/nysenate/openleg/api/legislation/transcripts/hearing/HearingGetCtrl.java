@@ -134,7 +134,7 @@ public class HearingGetCtrl extends BaseCtrl {
     @ExceptionHandler(HearingNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handlePubHearingNotFoundEx(HearingNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.PUBLIC_HEARING_NOT_FOUND, new HearingIdView(ex.getId(), ex.getFilename()));
+        return new ViewObjectErrorResponse(ErrorCode.HEARING_NOT_FOUND, new HearingIdView(ex.getId(), ex.getFilename()));
     }
 
     private static ViewObject getHearingViewObject(Hearing hearing, boolean summary, boolean full) {

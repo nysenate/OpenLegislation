@@ -6,7 +6,7 @@ import static gov.nysenate.openleg.common.dao.SqlTable.HEARING;
 
 public enum SqlHearingQuery implements BasicSqlQuery {
     RESET_ID (
-        "ALTER SEQUENCE ${schema}.public_hearing_id_seq RESTART"
+        "ALTER SEQUENCE ${schema}.hearing_id_seq RESTART"
     ),
     SELECT_HEARING_IDS (
         "SELECT id FROM ${schema}." + HEARING

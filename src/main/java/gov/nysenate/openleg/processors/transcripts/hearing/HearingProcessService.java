@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface HearingProcessService extends ProcessService {
     /**
-     * Looks for Public Hearing Files in the incoming directory, moves them
+     * Looks for Hearing Files in the incoming directory, moves them
      * into an archive directory and saves them to the backing store as pending processing.
      * @return
      */
     int collateHearingFiles();
 
     /**
-     * Reads the content of a Public Hearing File and generates a Hearing object.
-     * The Hearing object is saved into the backing store and the Public Hearing File
+     * Reads the content of a Hearing File and generates a Hearing object.
+     * The Hearing object is saved into the backing store and the HearingFile
      * is updated to signify it has been processed.
      * @param hearingFiles The HearingFile to process.
      * @see Hearing
@@ -31,7 +31,7 @@ public interface HearingProcessService extends ProcessService {
     int processHearingFiles();
 
     /**
-     * Toggle the pending processing status of a Public Hearing File.
+     * Toggle the pending processing status of a Hearing File.
      * @param hearingId
      * @param pendingProcessing
      */

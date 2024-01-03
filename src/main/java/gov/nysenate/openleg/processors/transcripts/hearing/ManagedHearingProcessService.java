@@ -45,7 +45,7 @@ public class ManagedHearingProcessService implements HearingProcessService {
     /** {@inheritDoc} */
     @Override
     public String getCollateType() {
-        return "public hearing file";
+        return "hearing file";
     }
 
     /** {@inheritDoc} */
@@ -66,7 +66,7 @@ public class ManagedHearingProcessService implements HearingProcessService {
             while (!hearingFiles.isEmpty());
         }
         catch (IOException ex) {
-            logger.error("Error retrieving public hearing files during collation.", ex);
+            logger.error("Error retrieving hearing files during collation.", ex);
         }
         logger.debug("Collated {} hearing files.", numCollated);
         return numCollated;

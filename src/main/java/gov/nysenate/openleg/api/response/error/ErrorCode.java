@@ -35,7 +35,7 @@ public enum ErrorCode {
     DUPLICATE_TRANSCRIPT(142, "There are two transcripts at this dateTime. Please specify."),
     MEMBER_NOT_FOUND(151, "The member was not found"),
     NOTIFICATION_NOT_FOUND(161, "The requested notification was not found"),
-    PUBLIC_HEARING_NOT_FOUND(171, "The requested public hearing was not found"),
+    HEARING_NOT_FOUND(171, "The requested hearing was not found"),
 
     /** --- Admin --- */
 

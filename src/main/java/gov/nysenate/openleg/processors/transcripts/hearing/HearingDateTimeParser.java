@@ -27,7 +27,7 @@ final class HearingDateTimeParser {
             this.date = LocalDate.parse(dateTimeAr[0], DATE_FORMATTER);
         }
         catch (DateTimeParseException ex) {
-            throw new ParseError("No date found in public hearing!");
+            throw new ParseError("No date found in hearing!");
         }
         String[] timeAr = (dateTimeAr.length > 1 ? dateTimeAr[1] : "").split("(-|to|–)+");
         this.startTime = formatAmPm(timeAr[0]);

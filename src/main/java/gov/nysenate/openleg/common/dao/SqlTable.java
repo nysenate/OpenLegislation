@@ -121,7 +121,7 @@ public enum SqlTable {
 
     HEARING                      ("hearing"),
     HEARING_HOST                 ("hearing_host"),
-    HEARING_HOST_PUBLIC_HEARINGS ("hearing_host_public_hearings"),
+    HEARING_HOST_HEARING_ID_PAIRS("hearing_host_hearing_id_pairs"),
     HEARING_FILE                 ("hearing_file");
 
     private final String tableName;
