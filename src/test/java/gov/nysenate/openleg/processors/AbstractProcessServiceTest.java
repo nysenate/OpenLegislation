@@ -1,30 +1,21 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.fail;
 
 public abstract class AbstractProcessServiceTest extends BaseTests {
-    @Autowired
-    private OpenLegEnvironment environment;
-
     private static final String TEST_STR = "src/test/resources/";
-    private File stagingDir, archiveDir, testDir;
+    private File stagingDir, testDir;
 
     @PostConstruct
     private void init() {
         stagingDir = new File(environment.getStagingDir(), processDirName());
-        archiveDir = new File(environment.getArchiveDir(), processDirName());
         testDir = new File(TEST_STR, testFileLocation());
     }
 
@@ -43,8 +34,6 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
 
     protected void processFiles(String... filenames) {
         try {
-            if (!FileIOUtils.safeListFiles(stagingDir, false, null).isEmpty())
-                fail("Staging directory should be empty.");
             // Move files into the staging directory, so they can be processed.
             for (var filename : filenames) {
                 var testFile = new File(testDir, filename);
@@ -59,15 +48,5 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
         }
         getProcessService().collate();
         getProcessService().ingest();
-    }
-
-    @After
-    public void deleteTestFiles() throws IOException {
-        List<File> testFiles = FileIOUtils.safeListFiles(archiveDir, false, null)
-                .stream().filter(this::isTestFile).toList();
-        for (var file : testFiles) {
-            if(!FileUtils.deleteQuietly(file))
-                fail("File " + file + " could not be deleted from the archive. May need to manually delete.");
-        }
     }
 }

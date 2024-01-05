@@ -13,12 +13,13 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * This allows for loading test.app.properties for unit tests.
  */
 @Configuration
+@PropertySource("classpath:/app.properties")
 @PropertySource("classpath:/test.app.properties")
 @Profile({"test"})
 public class TestConfig {
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
-        PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+        var pspc = new PropertySourcesPlaceholderConfigurer();
         pspc.setIgnoreUnresolvablePlaceholders(true);
         return pspc;
     }
