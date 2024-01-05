@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
+import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
@@ -20,7 +20,7 @@ import static gov.nysenate.openleg.legislation.committee.Chamber.SENATE;
 import static gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostType.COMMITTEE;
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
+@Category(SillyTest.class)
 public class HearingProcessServiceIT extends AbstractProcessServiceTest {
     @Autowired
     private HearingProcessService processService;
