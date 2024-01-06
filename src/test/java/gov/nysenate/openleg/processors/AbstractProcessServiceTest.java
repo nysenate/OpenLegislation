@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -12,6 +14,9 @@ import static org.junit.Assert.fail;
 public abstract class AbstractProcessServiceTest extends BaseTests {
     private static final String TEST_STR = "src/test/resources/";
     private File stagingDir, testDir;
+
+    @Autowired
+    private OpenLegEnvironment environment;
 
     @PostConstruct
     private void init() {
