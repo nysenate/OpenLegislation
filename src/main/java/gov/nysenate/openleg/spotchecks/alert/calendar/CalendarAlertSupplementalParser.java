@@ -30,9 +30,12 @@ import java.util.regex.Pattern;
 
 @Service
 public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
+    private final MemberService memberService;
 
     @Autowired
-    private MemberService memberService;
+    public CalendarAlertSupplementalParser(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarAlertSupplementalParser.class);
 

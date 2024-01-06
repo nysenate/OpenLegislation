@@ -6,11 +6,11 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class ElasticBillSearchServiceTests extends BaseTests
 {
@@ -37,8 +36,8 @@ public class ElasticBillSearchServiceTests extends BaseTests
 
     @Test
     public void testSearch() throws Exception {
-        billSearchService.searchBills("explore", null, LimitOffset.TEN).getResults()
-            .forEach(r -> logger.info("{}", r.getResult()));
+        billSearchService.searchBills("explore", null, LimitOffset.TEN).resultList()
+            .forEach(r -> logger.info("{}", r.result()));
     }
 
     @Test
@@ -49,7 +48,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
             logger.info("Retrieving bills...");
             List<Bill> bills = billDataService.getBillIds(SessionYear.current(), limitOffset).stream()
                     .map(billDataService::getBill)
-                    .collect(Collectors.toList());
+                    .toList();
             billCount = bills.size();
             if (billCount > 0) {
                 logger.info(String.format("Indexing bills %d - %d",
@@ -72,12 +71,13 @@ public class ElasticBillSearchServiceTests extends BaseTests
         // Run several times to allow times to converge on lower limit.
         for (int run = 1; run <= 4; run++) {
             Stopwatch sw = Stopwatch.createStarted();
-            for (SessionYear s = SessionYear.of(2009); s.compareTo(SessionYear.current()) <= 0; s = s.next()) {
+            for (SessionYear s = SessionYear.of(2009); s.compareTo(SessionYear.current()) <= 0;
+                 s = s.nextSessionYear()) {
                 logger.info("Getting bills for session {}", s);
                 int sessionTotal = Integer.MAX_VALUE;
                 for (LimitOffset limoff = LimitOffset.HUNDRED; limoff.getOffsetStart() < sessionTotal; limoff = limoff.next()) {
                     SearchResults<BaseBillId> results = billSearchService.searchBills(s, "publishedDateTime:asc", limoff);
-                    sessionTotal = results.getTotalResults();
+                    sessionTotal = results.totalResults();
                 }
             }
             logger.info("Run {}: Iterated through all sessions in {}.", run, sw.stop());

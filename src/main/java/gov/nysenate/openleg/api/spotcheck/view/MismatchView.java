@@ -5,8 +5,8 @@ import gov.nysenate.openleg.spotchecks.model.DeNormSpotCheckMismatch;
 
 public class MismatchView<ContentKey> extends MismatchSummaryView<ContentKey> implements ViewObject {
 
-    private String referenceData;
-    private String observedData;
+    private final String referenceData;
+    private final String observedData;
 
     public MismatchView(DeNormSpotCheckMismatch<ContentKey> mismatch) {
         super(mismatch);

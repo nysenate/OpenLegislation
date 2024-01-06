@@ -1,6 +1,5 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import * as queryString from "query-string";
 
 
 export function loginWithApiKey(apiKey) {

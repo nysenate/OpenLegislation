@@ -4,13 +4,11 @@ import gov.nysenate.openleg.legislation.bill.ApprovalId;
 import gov.nysenate.openleg.legislation.bill.ApprovalMessage;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.legislation.bill.exception.ApprovalNotFoundException;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.legislation.bill.exception.ApprovalNotFoundException;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -90,18 +88,12 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
             switch (node.getNodeName()) {
-                case "billhse":
-                    billhse = node.getTextContent();
-                    break;
-                case "billno":
-                    billno = Integer.parseInt(node.getTextContent());
-                    break;
-                case "#cdata-section":
+                case "billhse" -> billhse = node.getTextContent();
+                case "billno" -> billno = Integer.parseInt(node.getTextContent());
+                case "#cdata-section" -> {
                     cdata = node.getTextContent();
                     cdata = parsedMemoHTML(cdata);
-                    break;
-                default:
-                    break;
+                }
             }
         }
         BillId billId = new BillId(billhse + billno, year);

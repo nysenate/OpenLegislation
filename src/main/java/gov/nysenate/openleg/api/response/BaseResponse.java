@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.response;
 
-public abstract class BaseResponse
-{
+public abstract class BaseResponse {
     protected boolean success = false;
     protected String message = "";
     protected String responseType = "default";

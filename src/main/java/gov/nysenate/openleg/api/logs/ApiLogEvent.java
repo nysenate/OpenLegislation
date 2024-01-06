@@ -9,10 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
-public class ApiLogEvent
-{
-    private LocalDateTime logDateTime;
-    private ApiResponse apiResponse;
+public class ApiLogEvent {
+    private final LocalDateTime logDateTime;
+    private final ApiResponse apiResponse;
 
     /** --- Constructors --- */
 

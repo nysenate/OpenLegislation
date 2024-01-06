@@ -1,32 +1,26 @@
 package gov.nysenate.openleg.common.dao;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.UpdateType;
 import org.apache.commons.text.StringSubstitutor;
-import org.postgresql.util.PGInterval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,10 +29,7 @@ import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
  */
-public abstract class SqlBaseDao
-{
-    private static final Logger logger = LoggerFactory.getLogger(SqlBaseDao.class);
-
+public abstract class SqlBaseDao {
     /** JdbcTemplate reference for use by sub classes to execute SQL queries */
     @Autowired protected JdbcTemplate jdbc;
 
@@ -46,10 +37,7 @@ public abstract class SqlBaseDao
     @Autowired protected NamedParameterJdbcTemplate jdbcNamed;
 
     /** Reference to the environment in which the data is stored */
-    @Autowired protected Environment environment;
-
-    @PostConstruct
-    private void init() {}
+    @Autowired protected OpenLegEnvironment environment;
 
     /** --- Common Param Methods --- */
 
@@ -214,29 +202,6 @@ public abstract class SqlBaseDao
     /** --- Date Methods -- */
 
     /**
-     * Given a sobi fragment id, parse out the date/time. Returns null if the fragment id has a different pattern
-     * than usual..
-     *
-     * @param fragmentId String
-     * @return LocalDateTime
-     */
-    public static LocalDateTime getLocalDateTimeFromLegDataFragmentId(String fragmentId) {
-        if (fragmentId != null && !fragmentId.isEmpty()) {
-            List<String> parts = Splitter.on(".").splitToList(fragmentId);
-            if (parts.size() == 4) {
-                try {
-                    return LocalDateTime.parse(parts.get(1).substring(1) + parts.get(2).substring(1),
-                            DateTimeFormatter.ofPattern("yyMMddHHmmss"));
-                }
-                catch (DateTimeParseException ex) {
-                    logger.warn("Failed to parse date time from leg data fragment {}", fragmentId, ex);
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Read the 'column' date value from the result set and cast it to a LocalDateTime.
      * Return null if the column value is null.
      */
@@ -261,30 +226,6 @@ public abstract class SqlBaseDao
     public static LocalTime getLocalTimeFromRs(ResultSet rs, String column) throws SQLException {
         if (rs.getTime(column) == null) return null;
         return rs.getTime(column).toLocalTime();
-    }
-
-    /**
-     * Read the 'column' interval value from the result set and cast it to a Period.
-     * Return null if the column value is null.
-     */
-    public static Period getPeriodFromRs(ResultSet rs, String column) throws SQLException {
-        PGInterval interval = (PGInterval) rs.getObject(column);
-        return interval != null ? Period.of(interval.getYears(), interval.getMonths(), interval.getDays()) : null;
-    }
-
-    /**
-     * Read the 'column' interval value from the result set and cast it to a Duration.
-     * Values beyond a day are ignored due to variable length of months/years
-     * Return null if the column value is null.
-     */
-    public static Duration getDurationFromRs(ResultSet rs, String column) throws SQLException {
-        PGInterval interval = (PGInterval) rs.getObject(column);
-        return interval != null
-                ? Duration.ofMillis((long) (interval.getSeconds() * 1000) +
-                        interval.getMinutes() * 1000 * 60 +
-                        interval.getHours() * 1000 * 60 * 60 +
-                        interval.getDays() * 1000 * 60 * 60 * 24)
-                : null;
     }
 
     /**

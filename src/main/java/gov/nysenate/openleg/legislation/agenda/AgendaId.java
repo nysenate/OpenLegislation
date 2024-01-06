@@ -2,14 +2,15 @@ package gov.nysenate.openleg.legislation.agenda;
 
 import com.google.common.collect.ComparisonChain;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * AgendaId is a simple wrapper used to uniquely identify an Agenda instance.
  */
-public class AgendaId implements Serializable, Comparable<AgendaId>
-{
+public class AgendaId implements Serializable, Comparable<AgendaId> {
+    @Serial
     private static final long serialVersionUID = -8234649498537551140L;
 
     /** The agenda's calendar number. Starts at 1 at the beginning of each calendar year. */

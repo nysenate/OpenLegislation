@@ -1,125 +1,46 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.agenda.WeekOfAgendaInfoMap;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
-import gov.nysenate.openleg.legislation.CachingService;
-import gov.nysenate.openleg.legislation.ContentCache;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.CacheConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-public class CachedAgendaDataService implements AgendaDataService, CachingService<AgendaId>
-{
+public class CachedAgendaDataService extends CachingService<AgendaId, Agenda> implements AgendaDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedAgendaDataService.class);
 
-    @Autowired private CacheManager cacheManager;
-    @Autowired private AgendaDao agendaDao;
-    @Autowired private EventBus eventBus;
+    private final AgendaDao agendaDao;
 
-    @Value("${agenda.cache.element.size}") private int agendaCacheElementSize;
-
-    private EhCacheCache agendaCache;
-
-    @PostConstruct
-    private void init() {
-        eventBus.register(this);
-        setupCaches();
-    }
-
-    @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.AGENDA.name());
-    }
-
-    /** --- CachingService implementation --- */
-
-    @Override
-    public List<Ehcache> getCaches() {
-        return Arrays.asList(agendaCache.getNativeCache());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.AGENDA.name())
-            .eternal(true)
-            .maxEntriesLocalHeap(agendaCacheElementSize)
-            .sizeOfPolicy(elementSizeOfPolicy()));
-        cacheManager.addCache(cache);
-        this.agendaCache = new EhCacheCache(cache);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.AGENDA)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<AgendaId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.AGENDA)) {
-            evictContent(evictIdEvent.getContentId());
-        }
+    @Autowired
+    public CachedAgendaDataService(AgendaDao agendaDao) {
+        this.agendaDao = agendaDao;
     }
 
     @Override
-    public void evictContent(AgendaId agendaId) {
-        agendaCache.evict(agendaId);
+    protected CacheType cacheType() {
+        return CacheType.AGENDA;
     }
 
-    /**
-     * Pre-load the agenda cache by first clearing its current contents and then requesting every agenda
-     * in the past 4 years.
-     */
-    public void warmCaches() {
-        evictCaches();
-        logger.info("Warming up agenda cache.");
-        int year = LocalDate.now().getYear();
-        for (int i = 3; i >= 0; i--) {
-            logger.info("Fetching agendas for year {}", (year - i));
-            getAgendaIds(year - i, SortOrder.ASC).forEach(a -> getAgenda(a));
-        }
-        logger.info("Done warming up agenda cache.");
-    }
-
-    /** {@inheritDoc} */
     @Override
-    @Subscribe
-    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.AGENDA)) {
-            warmCaches();
-        }
+    public Map<AgendaId, Agenda> initialEntries() {
+        return getAgendaIds(LocalDate.now().getYear(), SortOrder.DESC).stream()
+                .limit(20).collect(Collectors.toMap(id -> id, agendaDao::getAgenda));
     }
 
     /** {@inheritDoc} */
@@ -129,11 +50,10 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
             throw new IllegalArgumentException("AgendaId cannot be null.");
         }
         try {
-            Agenda agenda = (agendaCache.get(agendaId) != null) ? (Agenda) agendaCache.get(agendaId).get() : null;
+            Agenda agenda = cache.get(agendaId);
             if (agenda == null) {
-                logger.debug("Fetching agenda {}", agendaId);
                 agenda = agendaDao.getAgenda(agendaId);
-                agendaCache.put(agendaId, agenda);
+                cache.put(agendaId, agenda);
             }
             return agenda;
         }
@@ -160,15 +80,21 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 
     /** {@inheritDoc} */
     @Override
+    public WeekOfAgendaInfoMap getWeekOfMap(LocalDateTime from, LocalDateTime to) {
+        return agendaDao.getWeekOfMap(from, to);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void saveAgenda(Agenda agenda, LegDataFragment legDataFragment, boolean postUpdateEvent) {
         if (agenda == null) {
             throw new IllegalArgumentException("Agenda cannot be null when saving.");
         }
         logger.debug("Persisting agenda {}", agenda.getId());
         agendaDao.updateAgenda(agenda, legDataFragment);
-        agendaCache.put(agenda.getId(), agenda);
+        cache.put(agenda.getId(), agenda);
         if (postUpdateEvent) {
-            eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));
+            eventBus.post(new AgendaUpdateEvent(agenda));
         }
     }
 
@@ -176,6 +102,6 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     @Override
     public void deleteAgenda(AgendaId agendaId) {
         agendaDao.deleteAgenda(agendaId);
-        agendaCache.evict(agendaId);
+        cache.remove(agendaId);
     }
 }

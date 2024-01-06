@@ -8,8 +8,8 @@ public class CalendarIdView implements ViewObject {
     protected int year;
     protected int calendarNumber;
 
-    //Default constructor for deserialization.
-    protected CalendarIdView(){}
+    // Default constructor for deserialization.
+    protected CalendarIdView() {}
 
     public CalendarIdView(CalendarId calendarId) {
         this.year = calendarId.getYear();

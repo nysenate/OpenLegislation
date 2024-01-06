@@ -1,15 +1,11 @@
 package gov.nysenate.openleg.spotchecks.model;
 
-import gov.nysenate.openleg.common.util.StringDiffer;
-
 import java.util.*;
 
 /**
  * Encapsulates basic information about a mismatch between the reference and target content.
  */
-public class SpotCheckMismatch
-{
-
+public class SpotCheckMismatch {
     /** An integer id that uniquely identifies this mismatch */
     protected int mismatchId;
 
@@ -49,23 +45,6 @@ public class SpotCheckMismatch
         this.referenceData = referenceData == null ? "" : referenceData;
         this.observedData = observedData == null ? "" : observedData;
         this.notes = notes;
-    }
-
-    /** --- Methods --- */
-
-    /**
-     * Computes the difference between the reference and target data.
-     *
-     * @param simple boolean - Set to true to make the results of the diff less granular.
-     * @return LinkedList<StringDiffer.Diff>
-     */
-    public LinkedList<StringDiffer.Diff> getDiff(boolean simple) {
-        StringDiffer stringDiffer = new StringDiffer();
-        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(referenceData, observedData);
-        if (simple) {
-            stringDiffer.diff_cleanupSemantic(diffs);
-        }
-        return diffs;
     }
 
     /** --- Functional Getters / Setters --- */

@@ -1,21 +1,20 @@
 package gov.nysenate.openleg.api.legislation.law;
 
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.law.view.LawDocInfoView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
-import gov.nysenate.openleg.api.legislation.law.view.LawDocInfoView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.law.LawDocId;
+import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.search.law.LawSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -60,10 +59,10 @@ public class LawSearchCtrl extends BaseCtrl
 
     private BaseResponse getLawDocSearchResults(LimitOffset limOff, SearchResults<LawDocId> results) {
         return ListViewResponse.of(
-            results.getResults().stream()
+            results.resultList().stream()
                 .map(r -> new SearchResultView(
-                    new LawDocInfoView(lawData.getLawDocInfo(r.getResult().getDocumentId(), r.getResult().getPublishedDate())),
-                        r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+                    new LawDocInfoView(lawData.getLawDocInfo(r.result().getDocumentId(), r.result().getPublishedDate())),
+                        r.rank(), r.highlights()))
+                .toList(), results.totalResults(), limOff);
     }
 }

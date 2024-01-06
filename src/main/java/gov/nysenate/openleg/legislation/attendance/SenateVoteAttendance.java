@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.legislation.attendance;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
-import gov.nysenate.openleg.legislation.bill.BillVoteType;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

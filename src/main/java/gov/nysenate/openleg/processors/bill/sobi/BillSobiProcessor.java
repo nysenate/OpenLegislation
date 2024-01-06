@@ -35,36 +35,23 @@ import java.util.regex.Pattern;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractBillProcessor
-{
+public class BillSobiProcessor extends AbstractBillProcessor {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
-    /** --- Patterns --- */
-
-    /** The expected format for the first line of the vote memo [V] block data. */
-    public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote {4}Bill: (.{18}) Date: (.{10}).*");
-
-    /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
-    protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
-
-    /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
-    protected static final Pattern sameAsPattern =
-        Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
-
     /** The expected format for Bill Info [1] block data. */
-    public static final Pattern billInfoPattern =
-        Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8})(.*)");
-
-    /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
-    protected static final Pattern rulesSponsorPattern =
-        Pattern.compile("RULES COM \\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+    private static final Pattern billInfoPattern =
+        Pattern.compile("(.{20})(\\d{5}[ A-Z])(.{33})([ A-Z]\\d{5}[ `\\-A-Z\\d])(.{8})(.*)");
 
     /** Used to tokenize chunks of veto/approval messages by newlines that follow an end or delete line */
-    protected static final String vetoApprovalSplitter =
+    private static final String vetoApprovalSplitter =
         "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
 
-    @Autowired
     private ProcessConfig processConfig;
+
+    @Autowired
+    public BillSobiProcessor(ProcessConfig processConfig) {
+        this.processConfig = processConfig;
+    }
 
     /** --- Constructors --- */
 
@@ -94,29 +81,27 @@ public class BillSobiProcessor extends AbstractBillProcessor
             Bill baseBill = getOrCreateBaseBill(billId, legDataFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
-            BillAmendment activeAmendment = baseBill.getActiveAmendment();
             logger.debug("Updating {} - {} | Line {}-{}", billId, block.getType(),
                                                           block.getStartLineNo(), block.getEndLineNo());
             try {
                 switch (block.getType()) {
-                    case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
-                    case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
-                    case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, legDataFragment, null); break;
-                    case SAME_AS:  applySameAs(data, specifiedAmendment, legDataFragment, unit); break;
-                    case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
-                    case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
-                    case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
-                    case PROGRAM_INFO:  applyProgramInfo(data, baseBill, date); break;
-                    case ACT_CLAUSE:  applyActClause(data, specifiedAmendment); break;
-                    case LAW: applyLaw(data, baseBill, specifiedAmendment, specifiedVersion, date); break;
-                    case SUMMARY:  applySummary(data, baseBill, date); break;
-                    case SPONSOR_MEMO:
-                    case RESOLUTION_TEXT:
-                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), legDataFragment); break;
-                    case VETO_APPROVE_MEMO:  applyVetoApprovalMessage(data, baseBill, date); break;
-                    case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
-                    default: {
+                    case BILL_INFO -> applyBillInfo(data, baseBill, specifiedAmendment, date, unit);
+                    case LAW_SECTION -> applyLawSection(data, baseBill, specifiedAmendment, date);
+                    case TITLE -> applyTitle(data, baseBill, date);
+                    case BILL_EVENT -> parseActions(data, baseBill, specifiedAmendment, legDataFragment, null);
+                    case SAME_AS -> applySameAs(data, specifiedAmendment, legDataFragment, unit);
+                    case SPONSOR -> applySponsor(data, baseBill, specifiedAmendment, date);
+                    case CO_SPONSOR -> applyCosponsors(data, baseBill);
+                    case MULTI_SPONSOR -> applyMultisponsors(data, baseBill);
+                    case PROGRAM_INFO -> applyProgramInfo(data, baseBill, date);
+                    case ACT_CLAUSE -> applyActClause(data, specifiedAmendment);
+                    case LAW -> applyLaw(data, baseBill, specifiedAmendment, specifiedVersion, date);
+                    case SUMMARY -> applySummary(data, baseBill, date);
+                    case SPONSOR_MEMO, RESOLUTION_TEXT, TEXT ->
+                            applyText(data, specifiedAmendment, date, block.getType(), legDataFragment);
+                    case VETO_APPROVE_MEMO -> applyVetoApprovalMessage(data, baseBill, date);
+                    case VOTE_MEMO -> applyVoteMemo(data, specifiedAmendment, date);
+                    default -> {
                         throw new ParseError("Invalid Line Code " + block.getType());
                     }
                 }
@@ -165,7 +150,7 @@ public class BillSobiProcessor extends AbstractBillProcessor
             // Set the publish status of the base amendment only if it has not been set or is currently un-published.
             if (specifiedAmendment.isBaseVersion()) {
                 Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(version);
-                if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+                if (pubStatus.isEmpty() || !pubStatus.get().isPublished()) {
                     baseBill.updatePublishStatus(version, new PublishStatus(true, date, false, data));
                 }
             }
@@ -486,8 +471,7 @@ public class BillSobiProcessor extends AbstractBillProcessor
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
+                eventBus.post(new BillFieldUpdateEvent(billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
             }
         }
     }

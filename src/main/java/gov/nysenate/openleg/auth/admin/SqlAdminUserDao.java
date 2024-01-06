@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-class SqlAdminUserDao extends SqlBaseDao
-{
+class SqlAdminUserDao extends SqlBaseDao {
     public static final Logger logger = LoggerFactory.getLogger(SqlAdminUserDao.class);
 
     /**
@@ -69,7 +68,7 @@ class SqlAdminUserDao extends SqlBaseDao
                 .addValue("master", admin.isMaster());
     }
 
-    private static RowMapper<AdminUser> adminUserRowMapper = (rs,row) ->
+    private static final RowMapper<AdminUser> adminUserRowMapper = (rs, row) ->
             new AdminUser(rs.getString("username"), rs.getString("password"),
                     rs.getBoolean("active"), rs.getBoolean("master"));
 }

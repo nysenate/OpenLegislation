@@ -47,7 +47,7 @@ We currently offer the following types of data:
    - Committee Agendas
    - Senate Calendars
    - NYS Laws
-   - Senate Floor and Public Hearing Transcripts
+   - Senate Floor and Hearing Transcripts
    - Committees
    - Members
 

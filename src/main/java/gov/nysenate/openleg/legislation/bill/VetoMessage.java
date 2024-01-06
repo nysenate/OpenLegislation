@@ -3,11 +3,13 @@ package gov.nysenate.openleg.legislation.bill;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
-public class VetoMessage extends BaseLegislativeContent implements Serializable, Comparable<VetoMessage>
-{
+public class VetoMessage extends BaseLegislativeContent implements Serializable, Comparable<VetoMessage> {
+    @Serial
     private static final long serialVersionUID = 8761376058922061047L;
 
     /** The id of the vetoed bill */
@@ -54,6 +56,24 @@ public class VetoMessage extends BaseLegislativeContent implements Serializable,
             .compare(this.year, o.year)
             .compare(this.vetoNumber, o.vetoNumber)
             .result();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        VetoMessage that = (VetoMessage) o;
+        return vetoNumber == that.vetoNumber && chapter == that.chapter &&
+                billPage == that.billPage && lineStart == that.lineStart &&
+                lineEnd == that.lineEnd && Objects.equals(billId, that.billId) &&
+                Objects.equals(memoText, that.memoText) && type == that.type &&
+                Objects.equals(signer, that.signer) && Objects.equals(signedDate, that.signedDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), billId, vetoNumber, memoText, type, chapter, billPage, lineStart, lineEnd, signer, signedDate);
     }
 
     /* --- Functional Getters/Setters --- */

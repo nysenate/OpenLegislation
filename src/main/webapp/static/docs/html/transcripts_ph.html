@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Public Hearing Transcripts API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Hearing Transcripts API &mdash; Open Legislation 2.0-alpha documentation</title>
   
 
   
@@ -99,10 +99,10 @@
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Public Hearing Transcripts API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#get-a-single-public-hearing">Get a single Public Hearing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get-a-public-hearing-pdf">Get a public hearing pdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Hearing Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-single-hearing">Get a single Hearing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-hearing-pdf">Get a hearing pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-hearings">Get a list of hearings</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
@@ -156,7 +156,7 @@
     
       <li><a href="reference.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li><strong>Public Hearing Transcripts API</strong></li>
+      <li><strong>Hearing Transcripts API</strong></li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -175,73 +175,73 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="public-hearing-transcripts-api">
-<h1><strong>Public Hearing Transcripts API</strong><a class="headerlink" href="#public-hearing-transcripts-api" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="hearing-transcripts-api">
+<h1><strong>Hearing Transcripts API</strong><a class="headerlink" href="#hearing-transcripts-api" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Most Assembly public hearings are not available at this time.</p>
+<p>Most Assembly hearings are not available at this time.</p>
 </div>
-<div class="section" id="get-a-single-public-hearing">
-<h2>Get a single Public Hearing<a class="headerlink" href="#get-a-single-public-hearing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-a-single-hearing">
+<h2>Get a single Hearing<a class="headerlink" href="#get-a-single-hearing" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve public hearing by id or filename</p>
+<p>Retrieve hearing by id or filename</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span>
 <span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request public hearing 5</p>
+<p>Request hearing 5</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">5</span>
 </pre></div>
 </div>
-<p>Request public hearing “10-29-13 NYsenate_Flanagan_Education_FINAL.txt”</p>
+<p>Request hearing “10-29-13 NYsenate_Flanagan_Education_FINAL.txt”</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYsenate_Flanagan_Education_FINAL</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
-<p>Full Public Hearing Response</p>
+<p>Full Hearing Response</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a public hearing was found.</span>
-  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for public hearing 10-29..&quot;</span><span class="p">,</span>  <span class="c1">// Response description</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a hearing was found.</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for hearing 10-29..&quot;</span><span class="p">,</span>  <span class="c1">// Response description</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing&quot;</span><span class="p">,</span>                     <span class="c1">// Response data type</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mf">179</span>
-    <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;10-29-13 NYsenate_Flanagan..&quot;</span><span class="p">,</span>  <span class="c1">// Filename of public hearing transcript</span>
-    <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;PUBLIC HEARING THE REGENTS RE..&quot;</span><span class="p">,</span>  <span class="c1">// Title of public hearing</span>
-    <span class="s2">&quot;date&quot;</span> <span class="o">:</span> <span class="s2">&quot;2013-10-29&quot;</span><span class="p">,</span>                        <span class="c1">// Date of public hearing</span>
-    <span class="s2">&quot;address&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senate Hearing Room\n250 Br..&quot;</span><span class="p">,</span>  <span class="c1">// Address of public hearing</span>
+    <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;10-29-13 NYsenate_Flanagan..&quot;</span><span class="p">,</span>  <span class="c1">// Filename of hearing transcript</span>
+    <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;HEARING THE REGENTS RE..&quot;</span><span class="p">,</span>  <span class="c1">// Title of hearing</span>
+    <span class="s2">&quot;date&quot;</span> <span class="o">:</span> <span class="s2">&quot;2013-10-29&quot;</span><span class="p">,</span>                        <span class="c1">// Date of hearing</span>
+    <span class="s2">&quot;address&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senate Hearing Room\n250 Br..&quot;</span><span class="p">,</span>  <span class="c1">// Address of hearing</span>
     <span class="s2">&quot;committees&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>                            <span class="c1">// List of committees/task forces/other groups holding the hearing</span>
       <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDUCATION&quot;</span><span class="p">,</span>                       <span class="c1">// Name of committee/task force/other group</span>
       <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="s2">&quot;COMMITTEE&quot;</span>                        <span class="c1">// Type of group, committee/task force/legislative commission/etc</span>
       <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span>                        <span class="c1">// Chamber of committee</span>
     <span class="p">}</span> <span class="p">],</span>
-    <span class="s2">&quot;startTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;10:00&quot;</span><span class="p">,</span>                        <span class="c1">// Time the public hearing started</span>
-    <span class="s2">&quot;endTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;14:00&quot;</span><span class="p">,</span>                          <span class="c1">// Time the public hearing ended</span>
-    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;\n\n\n       1     BEFORE THE NE..&quot;</span> <span class="c1">// The text of the public hearing</span>
+    <span class="s2">&quot;startTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;10:00&quot;</span><span class="p">,</span>                        <span class="c1">// Time the hearing started</span>
+    <span class="s2">&quot;endTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;14:00&quot;</span><span class="p">,</span>                          <span class="c1">// Time the hearing ended</span>
+    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;\n\n\n       1     BEFORE THE NE..&quot;</span> <span class="c1">// The text of the hearing</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="get-a-public-hearing-pdf">
-<h2>Get a public hearing pdf<a class="headerlink" href="#get-a-public-hearing-pdf" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-a-hearing-pdf">
+<h2>Get a hearing pdf<a class="headerlink" href="#get-a-hearing-pdf" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Retrieve public hearing pdf by id or filename</p>
+<p>Retrieve hearing pdf by id or filename</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 <span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request public hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt</p>
+<p>Request hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">09</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYSsenate_DeFrancisco_Buffalo_FINAL</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 </div>
 <hr class="docutils" />
-<div class="section" id="get-a-list-of-public-hearings">
-<h2>Get a list of public hearings<a class="headerlink" href="#get-a-list-of-public-hearings" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-a-list-of-hearings">
+<h2>Get a list of hearings<a class="headerlink" href="#get-a-list-of-hearings" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>List public hearings within a year</p>
+<p>List hearings within a year</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
@@ -269,7 +269,7 @@
 </tr>
 <tr class="row-even"><td><p>full</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true to see the full public hearing responses.</p></td>
+<td><p>Set to true to see the full hearing responses.</p></td>
 </tr>
 <tr class="row-odd"><td><p>sort</p></td>
 <td><p>string</p></td>
@@ -278,15 +278,15 @@
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>List 50 public hearings from 2014</p>
+<p>List 50 hearings from 2014</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50
 </pre></div>
 </div>
-<p>List 50 complete public hearings starting from 51</p>
+<p>List 50 complete hearings starting from 51</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
 </pre></div>
 </div>
-<p>List 10 complete public hearings sorted by increasing date</p>
+<p>List 10 complete hearings sorted by increasing date</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
 </pre></div>
 </div>
@@ -295,12 +295,12 @@
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// True if request was fine.</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing-id list&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mf">451</span><span class="p">,</span>                                  <span class="c1">// Total public hearings in the listing</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mf">451</span><span class="p">,</span>                                  <span class="c1">// Total hearings in the listing</span>
   <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                              <span class="c1">// Offset value</span>
   <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mf">0</span><span class="p">,</span>                                <span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
   <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mf">10</span><span class="p">,</span>                                   <span class="c1">// Max number of results to show</span>
   <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span> <span class="p">...</span> <span class="p">}],</span>                           <span class="c1">// Array of public hearing responses</span>
+    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span> <span class="p">...</span> <span class="p">}],</span>                           <span class="c1">// Array of hearing responses</span>
     <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">10</span>
   <span class="p">}</span>
 <span class="p">}</span>

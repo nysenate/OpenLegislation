@@ -23,8 +23,8 @@ public class Pipeline<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
-    private LinkedList<PipelineTask> tasks;
-    private Executor executor;
+    private final LinkedList<PipelineTask> tasks;
+    private final Executor executor;
     private CompletableFuture<ImmutableList<T>> result = null;
 
     Pipeline(Collection<PipelineTask> tasks, Executor executor) {

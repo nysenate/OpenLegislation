@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 /**
  * View for the ApiResponse
  */
-public class ApiLogItemView implements ViewObject
-{
+public class ApiLogItemView implements ViewObject {
     private String requestId;
     private LocalDateTime requestTime;
     private String url;

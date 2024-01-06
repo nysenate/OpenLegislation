@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation.calendar;
 
 import com.google.common.collect.ComparisonChain;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -9,8 +10,8 @@ import java.util.regex.Pattern;
 /**
  * CalendarId is a simple wrapper used to uniquely identify a Calendar instance.
  */
-public class CalendarId implements Serializable, Comparable<CalendarId>
-{
+public class CalendarId implements Serializable, Comparable<CalendarId> {
+    @Serial
     private static final long serialVersionUID = -3781478188305754813L;
 
     /** The calendar id which is scoped to a single year. */
@@ -43,8 +44,7 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof CalendarId)) return false;
-        final CalendarId other = (CalendarId) obj;
+        if (!(obj instanceof final CalendarId other)) return false;
         return Objects.equals(this.calNo, other.calNo) &&
                Objects.equals(this.year, other.year);
     }

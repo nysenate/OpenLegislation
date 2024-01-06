@@ -3,15 +3,15 @@ package gov.nysenate.openleg.legislation.agenda.dao;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.api.legislation.agenda.WeekOfAgendaInfoMap;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.agenda.*;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.common.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +21,26 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.legislation.agenda.dao.SqlAgendaQuery.SELECT_AGENDA_INFO_COMMITTEE_BY_DATE_RANGE;
+import static gov.nysenate.openleg.legislation.agenda.dao.SqlAgendaQuery.SELECT_WEEK_OF_AGENDA_INFO_ADDENDUM;
 
 @Repository
-public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
-{
+public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlAgendaDao.class);
 
-    @Autowired private MemberService memberService;
-    @Autowired private SqlAgendaVoteAddendumDao voteAddendumDao;
+    private final SqlAgendaVoteAddendumDao voteAddendumDao;
+
+    @Autowired
+    public SqlAgendaDao(SqlAgendaVoteAddendumDao voteAddendumDao) {
+        this.voteAddendumDao = voteAddendumDao;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -60,6 +66,27 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         // Set the vote addenda
         agenda.setAgendaVoteAddenda(voteAddendumDao.getAgendaVoteAddenda(agendaIdParams));
         return agenda;
+    }
+
+    @Override
+    public WeekOfAgendaInfoMap getWeekOfMap(LocalDateTime from, LocalDateTime to) {
+        var params = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("from", toDate(from))
+                .addValue("to", toDate(to)));
+        List<AgendaInfoCommittee> infoCommittees = jdbcNamed.query(
+                SELECT_AGENDA_INFO_COMMITTEE_BY_DATE_RANGE.getSql(schema()),
+                params, agendaInfoCommRowMapper);
+        var infoMap = new WeekOfAgendaInfoMap();
+        infoCommittees.forEach(committee -> {
+            var mapParams = new MapSqlParameterSource("addendumId", committee.getAddendum().toString());
+            addAgendaIdParams(committee.getAgendaId(), mapParams);
+            ImmutableParams agendaInfoParams = ImmutableParams.from(mapParams);
+            LocalDate weekOf = jdbcNamed.queryForObject(
+                    SELECT_WEEK_OF_AGENDA_INFO_ADDENDUM.getSql(schema()),
+                    agendaInfoParams, weekOfRowMapper);
+            infoMap.addCommittee(weekOf, committee);
+        });
+        return infoMap;
     }
 
     /** {@inheritDoc} */
@@ -101,7 +128,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      */
     private Map<String, AgendaInfoAddendum> getAgendaInfoAddenda(ImmutableParams agendaParams) {
         List<AgendaInfoAddendum> infoAddenda =
-            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_ADDENDA.getSql(schema()), agendaParams, agendaInfoRowMapper);
+            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_ADDENDA.getSql(schema()),
+                    agendaParams, agendaInfoRowMapper);
         // Create a new map where the addenda are grouped by their id.
         Map<String, AgendaInfoAddendum> infoAddendaMap =
             new TreeMap<>(Maps.uniqueIndex(infoAddenda, AgendaInfoAddendum::getId));
@@ -154,7 +182,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
                 jdbcNamed.update(SqlAgendaQuery.DELETE_AGENDA_INFO_ADDENDUM.getSql(schema()), addendumParams);
             });
         // Update/insert any modified or new addenda
-        Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet()).stream()
+        Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet())
             .forEach(id -> insertAgendaInfoAddendum(currentAddenda.get(id), legDataFragment));
     }
 
@@ -185,10 +213,10 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
 
     /** --- Row Mapper Instances --- */
 
-    static RowMapper<AgendaId> agendaIdRowMapper = (rs, rowNum) ->
+    private static final RowMapper<AgendaId> agendaIdRowMapper = (rs, rowNum) ->
         new AgendaId(rs.getInt("agenda_no"), rs.getInt("year"));
 
-    static RowMapper<Agenda> agendaRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<Agenda> agendaRowMapper = (rs, rowNum) -> {
         Agenda agenda = new Agenda();
         agenda.setId(agendaIdRowMapper.mapRow(rs, rowNum));
         agenda.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
@@ -196,7 +224,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return agenda;
     };
 
-    static RowMapper<AgendaInfoAddendum> agendaInfoRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<AgendaInfoAddendum> agendaInfoRowMapper = (rs, rowNum) -> {
         AgendaInfoAddendum addendum = new AgendaInfoAddendum();
         addendum.setAgendaId(agendaIdRowMapper.mapRow(rs, rowNum));
         addendum.setId(rs.getString("addendum_id"));
@@ -206,12 +234,12 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return addendum;
     };
 
-    static RowMapper<AgendaInfoCommittee> agendaInfoCommRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<AgendaInfoCommittee> agendaInfoCommRowMapper = (rs, rowNum) -> {
         AgendaInfoCommittee infoComm = new AgendaInfoCommittee();
-        infoComm.setAgendaId(
-            new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
+        infoComm.setAgendaId(new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
         infoComm.setCommitteeId(
-                new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
+                new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")),
+                        rs.getString("committee_name")));
         infoComm.setAddendum(Version.of(rs.getString("addendum_id")));
         infoComm.setChair(rs.getString("chair"));
         infoComm.setLocation(rs.getString("location"));
@@ -220,7 +248,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return infoComm;
     };
 
-    static RowMapper<AgendaInfoCommitteeItem> agendaInfoCommItemRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<AgendaInfoCommitteeItem> agendaInfoCommItemRowMapper = (rs, rowNum) -> {
         AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem();
         item.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                                   rs.getString("bill_amend_version")));
@@ -228,32 +256,17 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return item;
     };
 
-    static RowMapper<AgendaVoteAddendum> agendaVoteRowMapper = (rs, rowNum) -> {
-        AgendaVoteAddendum addendum = new AgendaVoteAddendum();
-        addendum.setAgendaId(new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
-        addendum.setId(rs.getString("addendum_id"));
-        setModPubDatesFromResultSet(addendum, rs);
-        return addendum;
-    };
-
-    static RowMapper<AgendaVoteCommittee> agendaVoteCommRowMapper = (rs, rowNum) -> {
-        AgendaVoteCommittee voteComm = new AgendaVoteCommittee();
-        voteComm.setCommitteeId(
-            new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
-        voteComm.setMeetingDateTime(getLocalDateTimeFromRs(rs, "meeting_date_time"));
-        voteComm.setChair(rs.getString("chair"));
-        return voteComm;
-    };
+    private static final RowMapper<LocalDate> weekOfRowMapper = (rs, rowNum) -> getLocalDateFromRs(rs, "week_of");
 
     /** --- Param Source Methods --- */
 
-    static MapSqlParameterSource getAgendaIdParams(AgendaId agendaId) {
+    private static MapSqlParameterSource getAgendaIdParams(AgendaId agendaId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(agendaId, params);
         return params;
     }
 
-    static MapSqlParameterSource getAgendaParams(Agenda agenda, LegDataFragment fragment) {
+    private static MapSqlParameterSource getAgendaParams(Agenda agenda, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(agenda.getId(), params);
         addModPubDateParams(agenda.getModifiedDateTime(), agenda.getPublishedDateTime(), params);
@@ -261,7 +274,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return params;
     }
 
-    static MapSqlParameterSource getAgendaInfoAddendumParams(AgendaInfoAddendum addendum, LegDataFragment fragment) {
+    private static MapSqlParameterSource getAgendaInfoAddendumParams(AgendaInfoAddendum addendum, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(addendum.getAgendaId(), params);
         params.addValue("addendumId", addendum.getId());
@@ -271,7 +284,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return params;
     }
 
-    static MapSqlParameterSource getAgendaInfoCommParams(AgendaInfoAddendum addendum, AgendaInfoCommittee infoComm,
+    private static MapSqlParameterSource getAgendaInfoCommParams(AgendaInfoAddendum addendum, AgendaInfoCommittee infoComm,
                                                          LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(addendum.getAgendaId(), params);
@@ -290,10 +303,10 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * Add AgendaInfoCommitteeItem parameters to the parameter map for the parent AgendaInfoCommittee. The insert
      * query will reference several columns that are already mapped via {@link #getAgendaInfoCommParams}.
      */
-    static void addAgendaInfoCommItemParams(AgendaInfoCommitteeItem item, MapSqlParameterSource infoCommParams) {
+    private static void addAgendaInfoCommItemParams(AgendaInfoCommitteeItem item, MapSqlParameterSource infoCommParams) {
         BillId billId = item.getBillId();
         infoCommParams.addValue("printNo", billId.getBasePrintNo());
-        infoCommParams.addValue("session", billId.getSession().getYear());
+        infoCommParams.addValue("session", billId.getSession().year());
         infoCommParams.addValue("amendVersion", billId.getVersion().toString());
         infoCommParams.addValue("message", item.getMessage());
     }
@@ -301,7 +314,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /**
      * Adds columns that identify an agenda id.
      */
-    static void addAgendaIdParams(AgendaId agendaId, MapSqlParameterSource params) {
+    private static void addAgendaIdParams(AgendaId agendaId, MapSqlParameterSource params) {
         params.addValue("agendaNo", agendaId.getNumber());
         params.addValue("year", agendaId.getYear());
     }

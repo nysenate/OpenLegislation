@@ -55,7 +55,7 @@ public class SobiFile extends BaseSourceFile {
     @Override
     public LocalDateTime getPublishedDateTime() throws InvalidLegDataFileNameEx {
         String fileName = getFileName();
-        if ("xml".equals(fileName.substring(fileName.length() - 3).toLowerCase())) {
+        if ("xml".equalsIgnoreCase(fileName.substring(fileName.length() - 3))) {
             fileName = fileName.substring(0, 23);
         }
         try {

@@ -2,11 +2,11 @@ package gov.nysenate.openleg.spotchecks.scraping.lrs.bill;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.common.dao.*;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -44,7 +44,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
             Pattern.compile("^(\\d{4})-([A-Z]\\d+[A-Z]?)-(\\d{8}T\\d{6})\\.html$");
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     private File scrapedBillIncomingDir;
     private File scrapedBillArchiveDir;
@@ -70,7 +70,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     private File createScrapeFile(File stagingDir, BaseBillId baseBillId) {
         String file = StringSubstitutor.replace(FILE_TEMPLATE, ImmutableMap.<String, String>builder()
-                .put("sessionYear", Integer.toString(baseBillId.getSession().getYear()))
+                .put("sessionYear", Integer.toString(baseBillId.getSession().year()))
                 .put("printNo", baseBillId.getPrintNo())
                 .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))
                 .build());
@@ -90,7 +90,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
                 .filter(f -> scrapeFilePattern.matcher(f.getName()).matches())
                 .filter(f -> !registeredFilenames.contains(f.getName()))
                 .map(f -> new BillScrapeFile(f.getName(), FilenameUtils.getFullPath(f.getPath())))
-                .collect(Collectors.toList());
+                .toList();
 
         newFiles.forEach(this::updateScrapedBill);
 
@@ -100,8 +100,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public List<BillScrapeFile> getIncomingScrapedBills() {
         String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
-        List<BillScrapeFile> scrapeFiles = jdbcNamed.query(sql, billScrapeFileMapper);
-        return scrapeFiles;
+        return jdbcNamed.query(sql, billScrapeFileMapper);
     }
 
     @Override
@@ -146,17 +145,17 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public int stageArchivedScrapeFiles(SessionYear sessionYear) {
         String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql(schema());
-        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.getYear());
+        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.year());
         return jdbcNamed.update(sql, params);
     }
 
     @Override
     public BaseBillId getScrapeQueueHead() throws EmptyResultDataAccessException {
         PaginatedList<BillScrapeQueueEntry> scrapeQueue = getScrapeQueue(LimitOffset.ONE, SortOrder.DESC);
-        if (scrapeQueue.getResults().isEmpty()) {
+        if (scrapeQueue.results().isEmpty()) {
             throw new EmptyResultDataAccessException("no bills in scrape queue", 1);
         }
-        return scrapeQueue.getResults().get(0).getBaseBillId();
+        return scrapeQueue.results().get(0).getBaseBillId();
     }
 
     @Override
@@ -200,7 +199,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     public MapSqlParameterSource getQueueParams(BaseBillId id, int priority) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", id.getPrintNo());
-        params.addValue("sessionYear", id.getSession().getYear());
+        params.addValue("sessionYear", id.getSession().year());
         params.addValue("priority", priority);
         return params;
     }

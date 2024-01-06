@@ -4,18 +4,18 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.common.dao.LimitOffset;
+import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.*;
 import gov.nysenate.openleg.processors.bill.sobi.SobiLineType;
 import gov.nysenate.openleg.processors.bill.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processors.config.ProcessConfig;
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
 import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
-import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,31 +35,32 @@ import java.util.regex.Pattern;
 @Service
 public class ManagedLegDataProcessService implements LegDataProcessService {
     private static final Logger logger = LoggerFactory.getLogger(ManagedLegDataProcessService.class);
-
     private static final Pattern patchTagPattern = Pattern.compile("^\\s*</?PATCH>\\s*$");
 
-    @Autowired private List<SourceFileFsDao> sourceFileFsDaos;
+    private final List<SourceFileFsDao> sourceFileFsDaos;
+    private final SourceFileRefDao sourceFileRefDao;
+    private final LegDataFragmentDao legDataFragmentDao;
+    private final EventBus eventBus;
+    private final OpenLegEnvironment env;
+    private final ProcessConfig processConfig;
+    private final List<LegDataProcessor> legDataProcessors;
 
     @Autowired
-    private SourceFileRefDao sourceFileRefDao;
-    @Autowired
-    private LegDataFragmentDao legDataFragmentDao;
-    @Autowired
-    private EventBus eventBus;
-    @Autowired
-    private Environment env;
-    @Autowired
-    private ProcessConfig processConfig;
+    public ManagedLegDataProcessService(List<SourceFileFsDao> sourceFileFsDaos,
+                                        SourceFileRefDao sourceFileRefDao,
+                                        LegDataFragmentDao legDataFragmentDao, EventBus eventBus,
+                                        OpenLegEnvironment env, ProcessConfig processConfig,
+                                        List<LegDataProcessor> legDataProcessors) {
+        this.sourceFileFsDaos = sourceFileFsDaos;
+        this.sourceFileRefDao = sourceFileRefDao;
+        this.legDataFragmentDao = legDataFragmentDao;
+        this.eventBus = eventBus;
+        this.env = env;
+        this.processConfig = processConfig;
+        this.legDataProcessors = legDataProcessors;
+    }
 
-    private boolean legDataProcessEnabled = true;
-    /**
-     * Map of source file types to daos.
-     */
     private ImmutableMap<SourceType, SourceFileFsDao> sourceFileDaoMap;
-
-    /** --- Processor Dependencies --- */
-
-    @Autowired private List<LegDataProcessor> legDataProcessors;
 
     /**
      * Register processors to handle a specific LegDataFragment via this mapping.
@@ -69,9 +70,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
     @PostConstruct
     protected void init() {
         eventBus.register(this);
-
         processorMap = Maps.uniqueIndex(legDataProcessors, LegDataProcessor::getSupportedType);
-
         sourceFileDaoMap = Maps.uniqueIndex(sourceFileFsDaos, SourceFileFsDao::getSourceType);
     }
 
@@ -125,7 +124,6 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -151,8 +149,8 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
             fragment.startProcessing();
             legDataFragmentDao.updateLegDataFragment(fragment);
             // Hand off processing to specific implementations based on fragment type.
-            if (processorMap.containsKey(fragment.getType())) {
-                LegDataProcessor currentProcessor = processorMap.get(fragment.getType());
+            LegDataProcessor currentProcessor = processorMap.get(fragment.getType());
+            if (currentProcessor != null) {
                 currentProcessor.process(fragment);
                 currentProcessor.checkIngestCache();
             } else {
@@ -220,7 +218,6 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
     private List<SourceFile> getIncomingSourceFiles() throws IOException {
         List<SourceFile> incomingSourceFiles = new ArrayList<>();
         final int batchSize = env.getLegDataBatchSize();
-        legDataProcessEnabled = env.getLegDataProcessEnabled();
         for (SourceFileFsDao<?> sourceFsDao : sourceFileFsDaos) {
             LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
             incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
@@ -242,7 +239,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
                 LocalDateTime.now(), DataProcessAction.COLLATE);
 
         List<LegDataFragment> fragments = createFragments(sourceFile); //When Switching to XML Only we can get rid of the list and save some memory
-        logger.info("Created {} fragments", fragments.size());
+        logger.info("Created {} fragment{}", fragments.size(), fragments.size() == 1 ? "" : "s");
 
         // Record the source file in the backing store.
         sourceFileRefDao.updateSourceFile(sourceFile);
@@ -352,11 +349,10 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
      * @param line         String - The starting line of the document
      * @param iterator     Iterator<String> - Current iterator from the sobi file's text body
      * @return String - The resulting XML string.
-     * @throws java.io.IOException
      */
-    private String extractXmlText(LegDataFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
+    private String extractXmlText(LegDataFragmentType fragmentType, String line, Iterator<String> iterator) {
         String endPattern = fragmentType.getEndPattern();
-        StringBuffer xmlBuffer = new StringBuffer(
+        var xmlBuffer = new StringBuilder(
                 "<?xml version='1.0' encoding='UTF-8'?>&newl;" + line + "&newl;"
         );
         while (iterator.hasNext()) {

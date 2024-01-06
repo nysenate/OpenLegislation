@@ -4,8 +4,7 @@ import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 
-public class CommAgendaIdView implements ViewObject
-{
+public class CommAgendaIdView implements ViewObject {
     private AgendaIdView agendaId;
     private CommitteeIdView committeeId;
 

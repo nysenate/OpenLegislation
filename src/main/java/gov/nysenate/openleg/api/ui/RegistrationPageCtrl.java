@@ -1,21 +1,19 @@
 package gov.nysenate.openleg.api.ui;
 
-import gov.nysenate.openleg.auth.model.ApiUser;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.auth.NewUserView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
-import gov.nysenate.openleg.api.auth.NewUserView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
-import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.exception.UsernameExistsException;
+import gov.nysenate.openleg.auth.model.ApiUser;
+import gov.nysenate.openleg.auth.user.ApiUserService;
+import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +21,12 @@ import java.util.Set;
 @RestController
 @RequestMapping("/register")
 public class RegistrationPageCtrl extends BaseCtrl {
+    private final ApiUserService apiUserService;
+
     @Autowired
-    protected ApiUserService apiUserService;
+    public RegistrationPageCtrl(ApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(RegistrationPageCtrl.class);
 
@@ -46,10 +48,10 @@ public class RegistrationPageCtrl extends BaseCtrl {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public BaseResponse signup(WebRequest webRequest, @RequestBody NewUserView body) {
-        String email = body.getEmail();
-        String name = body.getName();
-        Set<String> subscriptions = body.getSubscriptions();
+    public BaseResponse signup(@RequestBody NewUserView body) {
+        String email = body.email();
+        String name = body.name();
+        Set<String> subscriptions = body.subscriptions();
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         for (String sub : subscriptions) {
             subs.add(getEnumParameter("Subscriptions", sub, ApiUserSubscriptionType.class));

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -13,56 +14,30 @@ import java.util.Set;
  * This class will model an API User.
  */
 public class ApiUser implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4297265625690273957L;
 
     /**
      * Each ApiUser will have their own unique key
      */
     private String apiKey;
-
-    /**
-     * The user's email address
-     */
     private String email;
-
-    /**
-     * The user's name
-     */
     private String name;
-
-    /**
-     * If the user belongs to a certain organization then that will be stored here
-     */
     private String organizationName;
 
     /**
-     * Whether or not the user has confirmed their email address.
+     * Whether the user has confirmed their email address.
      */
     private boolean authenticated;
 
-    /**
-     * Number of Api Requests made by the user
-     */
     private long numApiRequests;
 
     /**
      * The user's unique registration token
      */
     private String registrationToken;
-
-    /**
-     * Whether or not this user is active
-     */
     private boolean active;
-
-    /**
-     * A list of additional roles granted to this api user
-     */
     private final Set<OpenLegRole> grantedRoles = new HashSet<>();
-
-    /**
-     * A list of subscription types this api user is enrolled in
-     */
     private Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
 
     /**
@@ -71,7 +46,7 @@ public class ApiUser implements Serializable {
 
     public ApiUser(String email) {
         this.apiKey = "";
-        this.numApiRequests = 0l;
+        this.numApiRequests = 0L;
         this.authenticated = false;
         this.email = email;
         generateKey();

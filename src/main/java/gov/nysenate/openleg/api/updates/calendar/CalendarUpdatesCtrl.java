@@ -1,30 +1,27 @@
 package gov.nysenate.openleg.api.updates.calendar;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
-import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import gov.nysenate.openleg.common.util.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -32,11 +29,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class CalendarUpdatesCtrl extends BaseCtrl {
+    private final CalendarUpdatesDao calendarUpdatesDao;
 
-    private static final Logger logger = LoggerFactory.getLogger(CalendarUpdatesCtrl.class);
-
-    @Autowired protected CalendarUpdatesDao calendarUpdatesDao;
-    @Autowired protected CalendarDataService calendarDataService;
+    @Autowired
+    public CalendarUpdatesCtrl(CalendarUpdatesDao calendarUpdatesDao, CalendarDataService calendarDataService) {
+        this.calendarUpdatesDao = calendarUpdatesDao;
+    }
 
     /**
      * Updated Calendars API
@@ -86,20 +84,20 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             PaginatedList<UpdateToken<CalendarId>> updateTokens =
                 calendarUpdatesDao.getUpdates(updateType, updateRange, dateOrder, limitOffset);
             response = DateRangeListViewResponse.of(
-                updateTokens.getResults().stream()
+                updateTokens.results().stream()
                     .map(token -> new UpdateTokenView(token, new CalendarIdView(token.getId())))
-                    .collect(Collectors.toList()),
-                updateRange, updateTokens.getTotal(), updateTokens.getLimOff()
+                    .toList(),
+                updateRange, updateTokens.total(), updateTokens.limOff()
             );
         }
         else {
             PaginatedList<UpdateDigest<CalendarId>> updateDigests =
                 calendarUpdatesDao.getDetailedUpdates(updateType, updateRange, dateOrder, limitOffset);
             response = DateRangeListViewResponse.of(
-                updateDigests.getResults().stream()
+                updateDigests.results().stream()
                         .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
-                        .collect(Collectors.toList()),
-                updateRange, updateDigests.getTotal(), updateDigests.getLimOff()
+                        .toList(),
+                updateRange, updateDigests.total(), updateDigests.limOff()
             );
         }
         return response;
@@ -120,19 +118,19 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
      * Request parameters:  order - The sort order of the update response (orderd by published date) (default DESC)
      *                      limit, offset - Paginate
      */
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo,
-                DateUtils.LONG_AGO.atStartOfDay().toString(), LocalDateTime.now().toString(), webRequest);
+                DateUtils.LONG_AGO.toString(), LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, @PathVariable String from,
                                               WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo, from, LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendarDuring(@PathVariable int year, @PathVariable int calendarNo,
                                                     @PathVariable String from, @PathVariable String to,
                                                     WebRequest webRequest) {
@@ -146,10 +144,10 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             calendarUpdatesDao.getDetailedUpdatesForCalendar(updateType, new CalendarId(calendarNo, year),
                 updateRange, dateOrder, limitOffset);
         return DateRangeListViewResponse.of(
-            updateDigests.getResults().stream()
+            updateDigests.results().stream()
                 .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
-                    .collect(Collectors.toList()),
-            updateDigests.getTotal(), LimitOffset.ALL
+                    .toList(),
+            updateDigests.total(), LimitOffset.ALL
         );
     }
 }

@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  getBillApi,
-} from "app/apis/billGetApi";
+import { getBillApi, } from "app/apis/billGetApi";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import { Link } from "react-router-dom";
 

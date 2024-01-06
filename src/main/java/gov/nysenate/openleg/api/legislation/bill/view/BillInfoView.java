@@ -10,13 +10,10 @@ import gov.nysenate.openleg.legislation.bill.BillStatusType;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Just the essentials for displaying a Bill in a search result for example.
  */
-public class BillInfoView extends SimpleBillInfoView implements ViewObject
-{
+public class BillInfoView extends SimpleBillInfoView implements ViewObject {
     protected String summary;
     protected boolean signed;
     protected boolean adopted;
@@ -48,8 +45,8 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
             billType = new BillTypeView(billInfo.getBillId().getBillType());
             programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
             status = new BillStatusView(billInfo.getStatus());
-            milestones = ListView.of(billInfo.getMilestones().stream().map(BillStatusView::new).collect(toList()));
-            actions = ListView.of(billInfo.getActions().stream().map(BillActionView::new).collect(toList()));
+            milestones = ListView.of(billInfo.getMilestones().stream().map(BillStatusView::new).toList());
+            actions = ListView.of(billInfo.getActions().stream().map(BillActionView::new).toList());
             publishStatusMap = billInfo.getAmendPublishStatusMap().entrySet().stream()
                     .map((pubStatEntry) -> new PublishStatusView(pubStatEntry.getKey().toString(), pubStatEntry.getValue()))
                     .collect(Collectors.collectingAndThen(

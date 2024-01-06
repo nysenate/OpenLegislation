@@ -5,8 +5,7 @@ package gov.nysenate.openleg.common.dao;
  * The schemas for these tables must be determined via the DAO/Query layer that
  * utilizes these tables.
  */
-public enum SqlTable
-{
+public enum SqlTable {
     ACTIVE_LIST_REFERENCE        ("active_list_reference"),
     ACTIVE_LIST_REFERENCE_ENTRY  ("active_list_reference_entry"),
 
@@ -35,6 +34,7 @@ public enum SqlTable
     API_USER_SUBSCRIPTION        ("apiuser_subscription"),
 
     BILL                         ("bill"),
+
     BILL_AMENDMENT               ("bill_amendment"),
     BILL_AMENDMENT_ACTION        ("bill_amendment_action"),
     BILL_AMENDMENT_COSPONSOR     ("bill_amendment_cosponsor"),
@@ -44,6 +44,7 @@ public enum SqlTable
     BILL_AMENDMENT_VOTE_INFO     ("bill_amendment_vote_info"),
     BILL_AMENDMENT_VOTE_ROLL     ("bill_amendment_vote_roll"),
     BILL_AMENDMENT_TEXT_DIFF     ("bill_amendment_text_diff"),
+
     BILL_APPROVAL                ("bill_approval"),
     BILL_COMMITTEE               ("bill_committee"),
     BILL_MULTI_SPONSOR           ("bill_multi_sponsor"),
@@ -97,7 +98,6 @@ public enum SqlTable
     LAW_INFO                     ("law_info"),
     LAW_DOCUMENT                 ("law_document"),
     LAW_TREE                     ("law_tree"),
-
     LAW_CHANGE_LOG               ("law_change_log"),
 
     NOTIFICATION                 ("notification"),
@@ -119,20 +119,15 @@ public enum SqlTable
     TRANSCRIPT                   ("transcript"),
     TRANSCRIPT_FILE              ("transcript_file"),
 
-    PUBLIC_HEARING               ("public_hearing"),
-    PUBLIC_HEARING_ATTENDANCE    ("public_hearing_attendance"),
+    HEARING                      ("hearing"),
     HEARING_HOST                 ("hearing_host"),
-    HEARING_HOST_PUBLIC_HEARINGS ("hearing_host_public_hearings"),
-    PUBLIC_HEARING_FILE          ("public_hearing_file");
+    HEARING_HOST_HEARING_ID_PAIRS("hearing_host_hearing_id_pairs"),
+    HEARING_FILE                 ("hearing_file");
 
-    String tableName;
+    private final String tableName;
 
     SqlTable(String tableName) {
         this.tableName = tableName;
-    }
-
-    public String table(String schema) {
-        return schema + "." + tableName;
     }
 
     @Override

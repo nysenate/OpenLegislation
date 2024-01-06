@@ -3,16 +3,15 @@ package gov.nysenate.openleg.search.law;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawInfo;
-import gov.nysenate.openleg.search.*;
+import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawUpdateEvent;
@@ -26,26 +25,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument>
-{
+public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchService.class);
 
-    @Autowired private EventBus eventBus;
-    @Autowired private Environment env;
-    @Autowired private ElasticLawSearchDao lawSearchDao;
-    @Autowired private LawDataDao lawDataDao;
-    @Autowired private LawDataService lawDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticLawSearchDao lawSearchDao;
+    private final LawDataDao lawDataDao;
+    private final LawDataService lawDataService;
 
-    @PostConstruct
-    private void init() {
+    @Autowired
+    public ElasticLawSearchService(OpenLegEnvironment env, ElasticLawSearchDao lawSearchDao,
+                                   LawDataDao lawDataDao, LawDataService lawDataService,
+                                   EventBus eventBus) {
+        this.env = env;
+        this.lawSearchDao = lawSearchDao;
+        this.lawDataDao = lawDataDao;
+        this.lawDataService = lawDataService;
         eventBus.register(this);
     }
 
@@ -82,8 +83,8 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawUpdate(LawUpdateEvent lawUpdateEvent) {
-        if (lawUpdateEvent != null && lawUpdateEvent.getLawDoc() != null) {
-            updateIndex(lawUpdateEvent.getLawDoc());
+        if (lawUpdateEvent != null && lawUpdateEvent.lawDoc() != null) {
+            updateIndex(lawUpdateEvent.lawDoc());
         }
     }
 
@@ -91,8 +92,8 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleBulkLawUpdate(BulkLawUpdateEvent bulkLawUpdateEvent) {
-        if (bulkLawUpdateEvent != null && !bulkLawUpdateEvent.getLawDocuments().isEmpty()) {
-            updateIndex(bulkLawUpdateEvent.getLawDocuments());
+        if (bulkLawUpdateEvent != null && !bulkLawUpdateEvent.lawDocuments().isEmpty()) {
+            updateIndex(bulkLawUpdateEvent.lawDocuments());
         }
     }
 
@@ -100,7 +101,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawTreeUpdate(LawTreeUpdateEvent lawTreeUpdateEvent) {
-        String lawChapterId = lawTreeUpdateEvent.getLawChapterId();
+        String lawChapterId = lawTreeUpdateEvent.lawChapterId();
         clearLawChapter(lawChapterId);
         indexLawChapter(lawChapterId);
     }
@@ -119,7 +120,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         if (env.isElasticIndexing()) {
             List<LawDocument> indexableDocs = content.stream()
                     .filter(this::isLawDocIndexable)
-                    .collect(Collectors.toList());
+                    .toList();
             lawSearchDao.updateLawIndex(indexableDocs);
         }
     }

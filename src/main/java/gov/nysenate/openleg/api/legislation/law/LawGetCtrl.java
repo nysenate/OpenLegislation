@@ -22,7 +22,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -51,7 +50,7 @@ public class LawGetCtrl extends BaseCtrl {
         LimitOffset limOff = getLimitOffset(webRequest, 1000);
         List<LawInfo> lawInfoList = lawDataService.getLawInfos();
         ListViewResponse<LawInfoView> response = ListViewResponse.of(
-                LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).collect(toList()), limOff),
+                LimitOffset.limitList(lawInfoList.stream().map(LawInfoView::new).toList(), limOff),
                 lawInfoList.size(), limOff);
         response.setMessage("Listing of consolidated and unconsolidated NYS Laws");
         return response;
@@ -142,7 +141,7 @@ public class LawGetCtrl extends BaseCtrl {
                 .orElse(LocalDate.now());
         Range<LocalDate> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
                 "fromDateTime", "toDateTime");
-        Set<RepealedLawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
+        List<RepealedLawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
         return repealedLawDocs.stream()
                 .map(RepealedLawDocIdView::new)
                 .collect(collectingAndThen(toList(), ListViewResponse::of));

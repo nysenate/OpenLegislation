@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.EHC;
 import static org.junit.Assert.*;
@@ -57,6 +56,6 @@ public class LawSearchCtrlIT extends LawCtrlBaseIT {
     private static List<String> convertResponse(BaseResponse response) {
         ListView<?> asListView = ((ListViewResponse<?>) response).getResult();
         return asListView.getItems().stream().map(item -> ((SearchResultView) item)).
-                map(srv -> ((LawDocInfoView) srv.getResult())).map(LawDocInfoView::getLawId).collect(Collectors.toList());
+                map(srv -> ((LawDocInfoView) srv.getResult())).map(LawDocInfoView::getLawId).toList();
     }
 }

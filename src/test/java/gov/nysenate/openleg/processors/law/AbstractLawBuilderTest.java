@@ -238,8 +238,8 @@ public class AbstractLawBuilderTest {
         lawId = "CCO";
         init(lawId, "-CH77");
         LawTree tree = builder.getProcessedLawTree();
-        assertEquals(lawId, tree.getLawVersionId().getLawId());
-        assertEquals(LocalDate.now(), tree.getLawVersionId().getPublishedDate());
+        assertEquals(lawId, tree.getLawVersionId().lawId());
+        assertEquals(LocalDate.now(), tree.getLawVersionId().publishedDate());
         assertEquals(builder.lawInfo.toString(), tree.getLawInfo().toString());
         assertEquals(1, tree.getPublishedDates().size());
         assertEquals(LocalDate.now(), tree.getPublishedDates().get(0));

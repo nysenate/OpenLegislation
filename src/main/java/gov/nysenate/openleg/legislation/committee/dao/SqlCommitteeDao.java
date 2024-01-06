@@ -47,10 +47,11 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     @Override
     public Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException {
         Committee committee;
-        for (SessionYear year = SessionYear.current(); year.getYear() >= 2009; year = year.prev()) {
+        for (SessionYear year = SessionYear.current(); year.year() >= 2009;
+             year = year.previousSessionYear()) {
             try {
                 committee = getCommittee(new CommitteeVersionId(
-                        committeeId, year, DateUtils.THE_FUTURE.atStartOfDay()));
+                        committeeId, year, DateUtils.THE_FUTURE));
                 return committee;
             }
             catch (EmptyResultDataAccessException ignored){}
@@ -361,7 +362,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     private MapSqlParameterSource getCommitteeSessionIdParams(CommitteeSessionId csid) {
         MapSqlParameterSource params = getCommitteeIdParams(csid);
-        params.addValue("sessionYear", csid.getSession().getYear());
+        params.addValue("sessionYear", csid.getSession().year());
         return params;
     }
 

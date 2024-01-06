@@ -4,16 +4,16 @@ import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarEntryView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarSupView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarEntry;
 import gov.nysenate.openleg.legislation.calendar.CalendarType;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckUtils;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +31,21 @@ import java.util.stream.IntStream;
 public class SenateSiteCalendarCheckService
         implements SpotCheckService<CalendarEntryListId, Calendar, SenateSiteCalendar> {
 
-    @Autowired private SpotCheckUtils spotCheckUtils;
-    @Autowired private BillDataService billDataService;
+    private final SpotCheckUtils spotCheckUtils;
+    private final CalendarViewFactory calendarViewFactory;
+
+    @Autowired
+    public SenateSiteCalendarCheckService(SpotCheckUtils spotCheckUtils, CalendarViewFactory calendarViewFactory) {
+        this.spotCheckUtils = spotCheckUtils;
+        this.calendarViewFactory = calendarViewFactory;
+    }
 
     @Override
     public SpotCheckObservation<CalendarEntryListId> check(Calendar content, SenateSiteCalendar reference) {
         SpotCheckObservation<CalendarEntryListId> observation =
                 new SpotCheckObservation<>(reference.getReferenceId(), reference.getCalendarEntryListId());
         checkCalendarId(content, reference, observation);
-        CalendarView newContent = getCalView(content);
+        CalendarView newContent = calendarViewFactory.getCalendarView(content);
         if (reference.getCalendarType() == CalendarType.ACTIVE_LIST) {
             checkActiveList(newContent, reference, observation);
         } else if (reference.getCalendarType() == CalendarType.SUPPLEMENTAL_CALENDAR) {
@@ -63,7 +69,7 @@ public class SenateSiteCalendarCheckService
         List<CalendarEntryView> calendarEntryViews = content.getActiveLists().getItems()
                 .get(reference.getSequenceNo())
                 .getEntries()
-                .getItems().asList();
+                .getItems();
         List<CalendarEntryView> refCalEntryViews = getCalEntryViews(reference);
         spotCheckUtils.checkCollection(calendarEntryViews, refCalEntryViews,
                 observation, SpotCheckMismatchType.ACTIVE_LIST_ENTRY, this::calEntryViewDiffString, "\n");
@@ -108,12 +114,8 @@ public class SenateSiteCalendarCheckService
         List<BillId> bill = reference.getBill();
         return IntStream.range(0, billCalNumbers.size())
                 .mapToObj(i -> new CalendarEntry(billCalNumbers.get(i), bill.get(i)))
-                .map(entry -> new CalendarEntryView(entry, billDataService))
+                .map(calendarViewFactory::getCalEntryView)
                 .collect(Collectors.toList());
-    }
-
-    private CalendarView getCalView(Calendar calendar) {
-        return new CalendarView(calendar, billDataService);
     }
 
     private String calEntryViewDiffString(CalendarEntryView entry) {

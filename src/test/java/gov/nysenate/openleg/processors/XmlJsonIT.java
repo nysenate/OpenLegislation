@@ -3,11 +3,12 @@ package gov.nysenate.openleg.processors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@UnitTest
+@Category(UnitTest.class)
 public class XmlJsonIT {
 
     private final File testFileDir = FileIOUtils.getResourceFile("sourcefile/");

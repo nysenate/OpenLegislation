@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/ping")
-public class PingCtrl
-{
+public class PingCtrl {
     @RequestMapping("")
     public String ping() {
         return "OK";

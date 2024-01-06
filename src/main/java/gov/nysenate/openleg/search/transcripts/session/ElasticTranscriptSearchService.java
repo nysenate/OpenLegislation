@@ -2,15 +2,13 @@ package gov.nysenate.openleg.search.transcripts.session;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
-import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
-import gov.nysenate.openleg.updates.transcripts.session.BulkTranscriptUpdateEvent;
+import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -22,23 +20,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticTranscriptSearchService implements TranscriptSearchService, IndexedSearchService<Transcript> {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchService.class);
 
-    @Autowired protected Environment env;
-    @Autowired protected EventBus eventBus;
-    @Autowired protected ElasticTranscriptSearchDao transcriptSearchDao;
-    @Autowired protected TranscriptDataService transcriptDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticTranscriptSearchDao transcriptSearchDao;
+    private final TranscriptDataService transcriptDataService;
 
-    @PostConstruct
-    protected void init() {
+    @Autowired
+    public ElasticTranscriptSearchService(OpenLegEnvironment env,
+                                          ElasticTranscriptSearchDao transcriptSearchDao,
+                                          TranscriptDataService transcriptDataService,
+                                          EventBus eventBus) {
+        this.env = env;
+        this.transcriptSearchDao = transcriptSearchDao;
+        this.transcriptDataService = transcriptDataService;
         eventBus.register(this);
     }
 
@@ -93,17 +93,8 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     @Subscribe
     public void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent) {
-        if (transcriptUpdateEvent.getTranscript() != null) {
-            updateIndex(transcriptUpdateEvent.getTranscript());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent) {
-        if (bulkTranscriptUpdateEvent.getTranscripts() != null) {
-            updateIndex(bulkTranscriptUpdateEvent.getTranscripts());
+        if (transcriptUpdateEvent.transcript() != null) {
+            updateIndex(transcriptUpdateEvent.transcript());
         }
     }
 
@@ -120,7 +111,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void updateIndex(Collection<Transcript> transcripts) {
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
-            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid transcripts into elasticsearch.", indexableTranscripts.size());
             transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
         }

@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 @Service
 public class CommAgendaAlertCheckMailService extends SimpleCheckMailService {
     private static final Pattern commAgendaSubjectPattern =
-            Pattern.compile("^Senate\\s+-\\s+([A-z,\\s]+)\\s+-\\s+Committee\\s+Agenda\\s+" +
-                    "(?:-\\s+Addendum\\s+([A-z])\\s+-\\s+)?for\\s+week\\s+of\\s+" + datePattern +
-                    "\\s+-\\s+Posted\\s+(\\d{2}/\\d{2}/\\d{4}\\s+\\d{2}:\\d{2}\\s+(?:AM|PM))\\s*$");
+            Pattern.compile("^Senate - ([A-z, ]+) - Committee Agenda " +
+                    "(?:- Addendum ([A-z]) - )?for week of " + datePattern +
+                    " - Posted (\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2} (AM|PM))$");
 
     @Override
     protected Pattern getPattern() {

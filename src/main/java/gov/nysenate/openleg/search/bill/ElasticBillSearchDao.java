@@ -1,15 +1,14 @@
 package gov.nysenate.openleg.search.bill;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.api.legislation.bill.BillGetCtrl;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.common.settings.Settings;
@@ -32,27 +31,21 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao
-{
+public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
 
-    private static final String billIndexName = SearchIndex.BILL.getIndexName();
-
+    private static final String billIndexName = SearchIndex.BILL.getName();
     private static final int billMaxResultWindow = 500000;
-
     /** Period for running the reindex janitor in ms */
     private static final long reindexJanitorInterval = 300000;
-
     /** Lock that controls access to lastReindexRequest variable */
     private static final Object indexRefreshLock = new Object();
-
     /** Date that is set while reindexing is occurring, used to ensure that index refreshing isn't disabled indefinitely */
     private static volatile LocalDateTime lastReindexRequest = LocalDateTime.MIN;
-
-    /** The amount of time allowed after the last reindex request before index refreshing is reenabled */
+    /** The amount of time allowed after the last reindex request before index refreshing is re-enabled */
     private static final Duration lastReindexTimeoutDuration = Duration.ofMinutes(15);
 
-    protected static final List<HighlightBuilder.Field> highlightedFields =
+    private static final List<HighlightBuilder.Field> highlightedFields =
         Arrays.asList(new HighlightBuilder.Field("basePrintNo").numOfFragments(0),
                       new HighlightBuilder.Field("printNo").numOfFragments(0),
                       new HighlightBuilder.Field("title").numOfFragments(0));
@@ -63,7 +56,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
                                                  List<SortBuilder<?>> sort, LimitOffset limOff) {
         return search(billIndexName, query, postFilter,
                 highlightedFields, rescorer, sort, limOff,
-                false, this::getBaseBillIdFromHit);
+                false, ElasticBillSearchDao::getBaseBillIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -146,8 +139,8 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
      * {@inheritDoc}
      */
     @Override
-    protected List<String> getIndices() {
-        return Lists.newArrayList(billIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.BILL;
     }
 
     /**
@@ -169,20 +162,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
      */
     @Override
     protected Settings.Builder getIndexSettings() {
-        Settings.Builder indexSettings = super.getIndexSettings();
-        indexSettings.put("index.number_of_shards", 6);
-        return indexSettings;
+        return super.getIndexSettings().put("index.number_of_shards", 6);
     }
 
-    private BaseBillId getBaseBillIdFromHit(SearchHit hit) {
-
-        String[] IDparts = hit.getId().split("-");
-
-        return new BaseBillId(IDparts[1], Integer.parseInt(IDparts[0]));
+    private static BaseBillId getBaseBillIdFromHit(SearchHit hit) {
+        String[] idParts = hit.getId().split("-");
+        return new BaseBillId(idParts[1], Integer.parseInt(idParts[0]));
     }
 
-    private String toElasticId(BaseBillId baseBillId) {
-        return baseBillId.getSession() + "-" +
-                baseBillId.getBasePrintNo();
+    private static String toElasticId(BaseBillId baseBillId) {
+        return baseBillId.getSession() + "-" + baseBillId.getBasePrintNo();
     }
 }

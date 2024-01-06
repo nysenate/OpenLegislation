@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.spotchecks.daybreak;
 
-import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckMailProcessService;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakDao;
 import gov.nysenate.openleg.spotchecks.daybreak.process.DaybreakProcessService;
@@ -12,21 +10,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DaybreakSpotcheckProcessService extends SpotcheckMailProcessService {
+    private final DaybreakCheckMailService checkMailService;
+    private final DaybreakDao daybreakDao;
+    private final DaybreakProcessService daybreakProcessService;
 
     @Autowired
-    DaybreakCheckMailService checkMailService;
-
-    @Autowired
-    DaybreakDao daybreakDao;
-
-    @Autowired
-    DaybreakProcessService daybreakProcessService;
-
-    @Autowired
-    Environment env;
-
-    @Autowired
-    EventBus eventBus;
+    public DaybreakSpotcheckProcessService(DaybreakCheckMailService checkMailService,
+                                           DaybreakDao daybreakDao,
+                                           DaybreakProcessService daybreakProcessService) {
+        this.checkMailService = checkMailService;
+        this.daybreakDao = daybreakDao;
+        this.daybreakProcessService = daybreakProcessService;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -37,7 +32,7 @@ public class DaybreakSpotcheckProcessService extends SpotcheckMailProcessService
     }
 
     @Override
-    protected int doIngest() throws Exception {
+    protected int doIngest() {
         return daybreakProcessService.processPendingFragments();
     }
 

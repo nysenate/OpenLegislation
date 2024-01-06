@@ -65,12 +65,11 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
         "DELETE FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "WHERE year = :year AND week_of = :weekOf AND addendum_id = :addendumId" +
         "   AND chamber = :chamber::chamber AND committee_name = :committeeName"
-    ),
-    ;
+    );
 
-    private String sql;
+    private final String sql;
 
-    private SqlAgendaAlertQuery(String sql) {
+    SqlAgendaAlertQuery(String sql) {
         this.sql = sql;
     }
 

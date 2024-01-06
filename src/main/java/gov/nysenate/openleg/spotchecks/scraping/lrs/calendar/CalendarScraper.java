@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.spotchecks.scraping.lrs.calendar;
 
-import gov.nysenate.openleg.spotchecks.scraping.LRSScraper;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.spotchecks.scraping.LRSScraper;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 @Repository
 public class CalendarScraper extends LRSScraper {
-    private static final Logger logger = LogManager.getLogger(LRSScraper.class);
+    private static final Logger logger = LoggerFactory.getLogger(LRSScraper.class);
     protected static final String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
     private File outfile = null;
 

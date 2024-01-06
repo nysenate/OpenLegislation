@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.common.util;
 
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,15 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
-
     private static final Logger logger = LoggerFactory.getLogger(MailUtils.class);
 
-    private final String storeProtocol, smtpUser, smtpPass;
+    private final String smtpUser, smtpPass;
     private final Properties mailProperties;
-    private final Environment environment;
+    private final OpenLegEnvironment environment;
     private Store store;
     private Folder sourceFolder, archiveFolder, partialFolder;
 
+    @Autowired
     public MailUtils(@Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
                      @Value("${mail.smtp.auth:false}") boolean auth,
@@ -35,14 +36,13 @@ public class MailUtils {
                      @Value("${mail.debug:false}") boolean debug,
                      @Value("${mail.smtp.starttls.enable:false}") boolean stlsEnable,
                      @Value("${mail.smtp.ssl.enable:true}") boolean sslEnable,
-                     @Value("${mail.smtp.ssl.protocols:TLSv1.2}") String sslProtocol,
+                     @Value("${mail.smtp.ssl.protocols:TLSv1.3}") String sslProtocol,
                      @Value("${mail.store.protocol:imaps}") String storeProtocol,
-                     @Value("${mail.imaps.ssl.protocols:SSLv3}") String imapsSSLProtocol,
+                     @Value("${mail.imaps.ssl.protocols:TLSv1.3}") String imapsSSLProtocol,
                      @Value("${mail.smtp.connectiontimeout:5000}") String connTimeout,
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
-                     Environment environment) {
-        this.storeProtocol = storeProtocol;
+                     OpenLegEnvironment environment) {
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
         this.mailProperties = new Properties();
@@ -79,7 +79,7 @@ public class MailUtils {
         }
         // Connection to the store has been lost, re-establish it.
         try {
-            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            store = getStore();
             this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
             this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
             this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
@@ -117,7 +117,7 @@ public class MailUtils {
      * then deletes the emails from the source folder.
      */
     public void moveMessages(List<Message> messages, boolean toArchive) throws MessagingException {
-        if (sourceFolder == null || Thread.currentThread().isInterrupted())
+        if (sourceFolder == null)
             return;
         try {
             sourceFolder.copyMessages(messages.toArray(new Message[0]), toArchive ? archiveFolder : partialFolder);
@@ -133,13 +133,11 @@ public class MailUtils {
 
     /**
      * Gets an authenticated smtp mail session
-     *
      * @return Session
      */
     public Session getSmtpSession() {
         var auth = new Authenticator() {
             private final PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
-
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return pa;
@@ -149,23 +147,17 @@ public class MailUtils {
     }
 
     /**
-     * Establishes a connection to a mail server and returns the resulting connection object
+     * Establishes a connection to a mail server and returns the resulting connection object.
      * The store must be closed on its own.
      *
-     * @param host     the mail host
-     * @param user     the username of the mail account
-     * @param password the password for the username
      * @return Store
      * @throws MessagingException if a connection cannot be established
      */
-    private Store getStore(String host, String user, String password)
+    private Store getStore()
             throws MessagingException {
-        // A connection shouldn't be attempted if the program is being shutdown.
-        if (Thread.currentThread().isInterrupted())
-            return null;
-        Store store = Session.getInstance(mailProperties).getStore(storeProtocol);
+        Store store = Session.getInstance(mailProperties).getStore();
         try {
-            store.connect(host, user, password);
+            store.connect(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
         } catch (MessagingException ex) {
             store.close();
             throw ex;

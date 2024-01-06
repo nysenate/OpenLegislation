@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.member.FullMember;
-import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
-import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.member.FullMember;
+import gov.nysenate.openleg.legislation.member.SessionMember;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public interface MemberDao
      * @param sessionMemberId
      * @return Member
      */
-    SessionMember getMemberBySessionId(int sessionMemberId);
+    SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx;
 
     /**
      * Retrieves map of session year -> Member for a given member id.
@@ -57,12 +57,18 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Member
      */
-    SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
+    SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear,
+                                       Chamber chamber) throws MemberNotFoundEx;
 
     /**
      * Retrieve members from all years and both chambers.
      * @return
      */
-    List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
+    List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff);
 
+    /**
+     * Using session member data, creates al full members.
+     * @return
+     */
+    List<FullMember> getAllFullMembers();
 }

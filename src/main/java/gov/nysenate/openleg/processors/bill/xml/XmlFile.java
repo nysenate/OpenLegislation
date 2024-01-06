@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.processors.bill.BaseSourceFile;
-import gov.nysenate.openleg.processors.bill.SourceType;
 import gov.nysenate.openleg.processors.bill.InvalidLegDataFileNameEx;
+import gov.nysenate.openleg.processors.bill.SourceType;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class XmlFile extends BaseSourceFile {
     private static final String xmlPattern = "yyyy'-'MM'-'dd'T'HH'.'mm'.'ss'.'SSSSSS";
 
     private static final Pattern fileNamePattern = Pattern.compile(
-            "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML", Pattern.CASE_INSENSITIVE);
+            "(?<date>[\\d-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML", Pattern.CASE_INSENSITIVE);
 
     /**
      * --- Constructors ---

@@ -9,40 +9,35 @@ public enum LegDataFragmentType
 {
     // Original SOBI types
 
-    BILL            (false, "[0-9]{4}[A-Z][0-9]{5}[ A-Z].+", ""),
-    AGENDA          (true, "<senagenda .+", "</senagenda.+"),
-    AGENDA_VOTE     (true, "<senagendavote .+", "</senagendavote.+"),
-    CALENDAR        (true, "<sencalendar .+", "</sencalendar.+"),
-    CALENDAR_ACTIVE (true, "<sencalendaractive .+", "</sencalendaractive.+"),
-    COMMITTEE       (true, "<sencommmem .+", "</sencommmem.+"),
-    ANNOTATION      (true, "<senannotated .+", "</senannotated.+"),
+    // BILL is the only non-XML enum here.
+    BILL            ("[0-9]{4}[A-Z][0-9]{5}[ A-Z].+", ""),
+    AGENDA          ("<senagenda .+", "</senagenda.+"),
+    AGENDA_VOTE     ("<senagendavote .+", "</senagendavote.+"),
+    CALENDAR        ("<sencalendar .+", "</sencalendar.+"),
+    CALENDAR_ACTIVE ("<sencalendaractive .+", "</sencalendaractive.+"),
+    COMMITTEE       ("<sencommmem .+", "</sencommmem.+"),
+    ANNOTATION      ("<senannotated .+", "</senannotated.+"),
 
     // Newer SOBI types
 
-    ANACT           (true, "<anact.+", "</anact.+"),                              // An act to
-    APPRMEMO        (true, "<approval_memorandum .+", "</approval_memorandum.+"), // Approval memo
-    BILLSTAT        (true, "<billstatus .+", "</billstatus.+"),                   // Bill status
-    BILLTEXT        (true, "<billtext_html .+", "</billtext_html.+"),             // Bill text
-    LDBLURB         (true, "<sponsor_blurb .+", "</sponsor_blurb.+"),             // Blurb
-    LDSPON          (true, "<sponsor_data .+", "</sponsor_data.+"),               // Sponsor
-    LDSUMM          (true, "<digestsummary .+", "</digestsummary.+"),             // Summary
-    SAMEAS          (true, "<sameas .+", "</sameas>.+"),                          // Same as
-    SENMEMO         (true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
-    VETOMSG         (true, "<veto_message .+", "</veto_message.+"),               // Veto memo
-    SENFLVOTE       (true, "<senfloorvote .+","</senfloorvote>.+");
+    ANACT           ("<anact.+", "</anact.+"),                              // An act to
+    APPRMEMO        ("<approval_memorandum .+", "</approval_memorandum.+"), // Approval memo
+    BILLSTAT        ("<billstatus .+", "</billstatus.+"),                   // Bill status
+    BILLTEXT        ("<billtext_html .+", "</billtext_html.+"),             // Bill text
+    LDBLURB         ("<sponsor_blurb .+", "</sponsor_blurb.+"),             // Blurb
+    LDSPON          ("<sponsor_data .+", "</sponsor_data.+"),               // Sponsor
+    LDSUMM          ("<digestsummary .+", "</digestsummary.+"),             // Summary
+    SAMEAS          ("<sameas .+", "</sameas>.+"),                          // Same as
+    SENMEMO         ("<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
+    VETOMSG         ("<veto_message .+", "</veto_message.+"),               // Veto memo
+    SENFLVOTE       ("<senfloorvote .+","</senfloorvote>.+");
 
-    boolean isXml;
-    String startPattern;
-    String endPattern;
+    private final String startPattern;
+    private final String endPattern;
 
-    LegDataFragmentType(boolean isXml, String startPattern, String endPattern) {
-        this.isXml = isXml;
+    LegDataFragmentType(String startPattern, String endPattern) {
         this.startPattern = startPattern;
         this.endPattern = endPattern;
-    }
-
-    public boolean isXml() {
-        return isXml;
     }
 
     public String getStartPattern() {

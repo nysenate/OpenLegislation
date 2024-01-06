@@ -10,8 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * Provides a base wrapping layer for scripts that logs all uncaught exceptions
  * and provides utility functions for processing options and help messages.
  */
-abstract public class BaseScript
-{
+abstract public class BaseScript {
     private static final Logger logger = LoggerFactory.getLogger(BaseScript.class);
 
     /** Used as the script name when printing help. */

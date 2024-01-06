@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.spotchecks.alert.calendar.dao;
 
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarAlertFile;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarAlertFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertFileQuery.*;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
+import static gov.nysenate.openleg.spotchecks.alert.calendar.dao.SqlCalendarAlertFileQuery.*;
 
 @Repository
 public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
@@ -35,7 +34,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
             Pattern.compile("^(floor_cal|active_list)_alert-\\d{4}-\\d+(-\\d+)?[A-Z]?-\\d{8}T\\d{6}.html$");
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
 
     private File incomingCalendarAlertDir;
     private File archiveCalendarAlertDir;
@@ -55,7 +54,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
     public List<CalendarAlertFile> getIncomingCalendarAlerts() throws IOException {
         List<File> files = FileIOUtils.safeListFiles(incomingCalendarAlertDir, null, false).stream()
                 .filter(file -> calendarAlertFilePattern.matcher(file.getName()).matches())
-                .collect(Collectors.toList());
+                .toList();
 
         List<CalendarAlertFile> calendarAlertFiles = new ArrayList<>();
         for (File file : files) {
@@ -84,7 +83,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
      * @param calendarAlertFile
      */
     public void updateCalendarAlertFile(CalendarAlertFile calendarAlertFile) {
-        MapSqlParameterSource params = getCalanderAlertFileParams(calendarAlertFile);
+        MapSqlParameterSource params = getCalendarAlertFileParams(calendarAlertFile);
         if (jdbcNamed.update(UPDATE_CALENDAR_ALERT_FILE.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_CALENDAR_ALERT_FILE.getSql(schema()), params);
         }
@@ -113,13 +112,12 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
     }
 
     protected class CalendarAlertFileRowMapper implements RowMapper<CalendarAlertFile> {
-
         @Override
         public CalendarAlertFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String filename = rs.getString("file_name");
             boolean archived = rs.getBoolean("archived");
 
-            File file = archived ? getFileInArchivedDir(filename) : getFileInIncomingDir(filename);
+            var file = new File(archived ? archiveCalendarAlertDir : incomingCalendarAlertDir, filename);
             CalendarAlertFile calendarAlertFile = null;
             try {
                 calendarAlertFile = new CalendarAlertFile(file);
@@ -135,15 +133,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
         }
     }
 
-    private File getFileInArchivedDir(String filename) {
-        return new File(archiveCalendarAlertDir, filename);
-    }
-
-    private File getFileInIncomingDir(String filename) {
-        return new File(incomingCalendarAlertDir, filename);
-    }
-
-    private MapSqlParameterSource getCalanderAlertFileParams(CalendarAlertFile file) {
+    private static MapSqlParameterSource getCalendarAlertFileParams(CalendarAlertFile file) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fileName", file.getFile().getName());
         params.addValue("processedDateTime", toDate(file.getProcessedDateTime()));

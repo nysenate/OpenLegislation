@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * The type of group hosting a PublicHearing.
+ * The type of group hosting a Hearing.
  */
 public enum HearingHostType {
     COMMITTEE, LEGISLATIVE_COMMISSION, TASK_FORCE, MAJORITY_COALITION, WHOLE_CHAMBER;

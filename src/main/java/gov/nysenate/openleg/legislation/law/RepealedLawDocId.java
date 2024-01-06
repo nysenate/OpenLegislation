@@ -3,18 +3,14 @@ package gov.nysenate.openleg.legislation.law;
 import java.time.LocalDate;
 
 public class RepealedLawDocId extends LawDocId {
-    private LocalDate repealedDate;
+    private final LocalDate repealedDate;
 
-    public RepealedLawDocId(LawDocId other, LocalDate repealedDate) {
-        super(other);
+    public RepealedLawDocId(String docId, LocalDate publishedDate, LocalDate repealedDate) {
+        super(docId, publishedDate);
         this.repealedDate = repealedDate;
     }
 
     public LocalDate getRepealedDate() {
         return repealedDate;
-    }
-
-    public void setRepealedDate(LocalDate repealedDate) {
-        this.repealedDate = repealedDate;
     }
 }

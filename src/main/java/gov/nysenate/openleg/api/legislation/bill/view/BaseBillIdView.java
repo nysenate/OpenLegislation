@@ -20,7 +20,7 @@ public class BaseBillIdView implements ViewObject
         if (billId != null) {
             this.basePrintNo = billId.getBasePrintNo();
             this.session = Optional.ofNullable(billId.getSession())
-                    .map(SessionYear::getYear).orElse(0);
+                    .map(SessionYear::year).orElse(0);
             this.basePrintNoStr = BaseBillId.of(billId).toString();
         }
     }

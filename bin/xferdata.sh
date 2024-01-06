@@ -76,11 +76,11 @@ remote_only=0
 scp_opt=
 
 # There are five types of files that can be transferred:
-#   XML, SOBI, NYSLAW, session transcripts, and public hearing transcripts
+#   XML, SOBI, NYSLAW, session transcripts, and hearing transcripts
 # XML, NYSLAW, and the now-deprecated SOBI files are transferred by this
 # script from LBDC to the OpenLegislation transfer server (which is typically
 # the same server on which this script is running).
-# Transcripts (both public hearing and session) are transferred to the
+# Transcripts (both hearing and session) are transferred to the
 # OL transfer server by STS staff, after receiving them from the Senate
 # stenographer.
 # Remove SOBI files from the list, as they are no longer sent by LBDC.

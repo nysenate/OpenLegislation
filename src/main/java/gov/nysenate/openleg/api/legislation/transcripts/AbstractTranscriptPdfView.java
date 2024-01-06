@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts;
 
-import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.api.legislation.BasePdfView;
 
 import java.awt.*;
 import java.io.IOException;
@@ -15,7 +15,6 @@ public abstract class AbstractTranscriptPdfView extends BasePdfView {
 
     protected int indent;
 
-    // TODO can be turned into a full constructor with sealed classes.
     protected void writeTranscriptPages(List<List<String>> pages) throws IOException {
         this.indent = getIndent(pages.get(1));
         writePages(TOP, 0, pages);

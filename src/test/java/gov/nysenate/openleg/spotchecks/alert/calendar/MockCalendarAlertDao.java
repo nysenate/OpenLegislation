@@ -2,9 +2,9 @@ package gov.nysenate.openleg.spotchecks.alert.calendar;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.spotchecks.alert.calendar.dao.CalendarAlertDao;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
+import gov.nysenate.openleg.spotchecks.alert.calendar.dao.CalendarAlertDao;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDateTime;
@@ -33,14 +33,10 @@ public class MockCalendarAlertDao implements CalendarAlertDao {
     }
 
     @Override
-    public void updateChecked(CalendarId id, boolean checked) {
-
-    }
+    public void updateChecked(CalendarId id, boolean checked) {}
 
     @Override
-    public void markProdAsChecked(CalendarId id) {
-
-    }
+    public void markProdAsChecked(CalendarId id) {}
 
     @Override
     public List<Calendar> getUnCheckedCalendarAlerts() {

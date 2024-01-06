@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  useLocation,
-  useHistory
+  useHistory,
+  useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
 import { DateTime } from "luxon";

@@ -4,8 +4,8 @@
 
 General installation instructions for Ubuntu.
 
-### Java 15
-1. Download the Linux/x64 build of Java 15.0.2 from https://jdk.java.net/archive/.
+### Java 17
+1. Download the Linux/x64 build of 17 from https://jdk.java.net/17/.
 2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
@@ -42,10 +42,6 @@ e.g. `chmod -R +rx ~/tomcat8`
 
 `sudo apt-get install postgresql postgresql-contrib maven nodejs`
 
-### Bower and Grunt
-
-`sudo npm install -g bower grunt`
-
 ## Source Code Setup
 
 ### Clone Repository
@@ -67,7 +63,7 @@ Clone the Open Legislation codebase to your computer.
     * Automatically download
         * Sources
         * Documentation
-5. Be sure to use Java 15 on this project
+5. Be sure to use Java 17 on this project
 
 ## Database Setup
 
@@ -104,18 +100,15 @@ Navigate to `src/main/resources` and copy the following files:
 * `log4j2.xml.example` -> `log4j2.xml`
 * `flyway.conf.example` -> `flyway.conf`
 
-Also navigate to `src/main/webapp` and copy the following files:
-* `grunt.properties.example.json` -> `grunt.properties.json`
-
 ### `app.properties` Configuration
 
 These are properties that need to be modified for a typical installation.  This guide ignores many properties but may need to be set to fit your needs.
 
 #### API authentication
 
-Set `api.auth.enable = false` if you do not want to deal with api authentication.
+Set `api.auth.enable = false` if you do not want to deal with API authentication.
    
-Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce api authentication on matched hosts/ips.
+Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce API authentication on matched hosts/ips.
 
 #### Admin Settings
 
@@ -125,7 +118,7 @@ Set `default.admin.user` to your email address and `default.admin.password` to y
 
 These are references to your base data directory, staging directory, and your archive directory.
 
-Create these directories where you wish and ensure they are correctly referenced in `env.base`, `env.staging`, and `env.archive` respectively.
+Create these directories where you wish and ensure they are correctly referenced in `env.staging`, and `env.archive` respectively.
 
 #### Elasticsearch Search Configuration
 
@@ -151,9 +144,9 @@ If true, the app will scrape qa data from LBDC every data process cycle.
 
 #### Mail Configuration
 
-The `checkmail` properties are only useful if you are interested running spotcheck data qa reports.
+The `checkmail` properties are only useful if you are interested running spotcheck data QA reports.
 
-Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for api key registration.
+Point the `mail.smtp` properties at an smtp server to enable email sending.  This is required for API key registration.
 
 #### Domain Configuration
 
@@ -168,10 +161,6 @@ If you picked a name for the database that was not 'openleg', replace 'openleg' 
 Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
-
-### `grunt.properties.config` Configuration
-
-Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
 
 ### Test Configuration
 

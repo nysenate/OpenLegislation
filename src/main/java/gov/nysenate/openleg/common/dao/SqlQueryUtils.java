@@ -7,13 +7,13 @@ import org.apache.commons.text.StringSubstitutor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Common utility methods to be used by enums/classes that store sql queries.
  */
-public abstract class SqlQueryUtils
-{
+public final class SqlQueryUtils {
+    private SqlQueryUtils() {}
+
     /**
      * Replaces the ${schema} placeholder in the given sql String with the given schema name.
      * This is mainly used for queries where the schema name can be user defined, e.g. the environment schema.
@@ -81,7 +81,7 @@ public abstract class SqlQueryUtils
      * @param limitOffset LimitOffset
      * @return String
      */
-    protected static String getLimitOffsetClause(LimitOffset limitOffset) {
+    private static String getLimitOffsetClause(LimitOffset limitOffset) {
         String clause = "";
         if (limitOffset != null) {
             if (limitOffset.hasLimit()) {
@@ -101,14 +101,12 @@ public abstract class SqlQueryUtils
      * @param orderBy OrderBy
      * @return String
      */
-    protected static String getOrderByClause(OrderBy orderBy) {
+    static String getOrderByClause(OrderBy orderBy) {
         String clause = "";
         if (orderBy != null) {
             ImmutableMap<String, SortOrder> sortColumns = orderBy.getSortColumns();
-            List<String> orderClauses = sortColumns.keySet().stream()
-                .filter(column -> !sortColumns.get(column).equals(SortOrder.NONE))
-                .map(column -> column + " " + sortColumns.get(column).name())
-                .collect(Collectors.toList());
+            List<String> orderClauses = sortColumns.entrySet().stream().filter(entry -> entry.getValue() != SortOrder.NONE)
+                    .map(entry -> entry.getKey() + " " + entry.getValue().name()).toList();
             if (!orderClauses.isEmpty()) {
                 clause += " ORDER BY " + StringUtils.join(orderClauses, ", ");
             }

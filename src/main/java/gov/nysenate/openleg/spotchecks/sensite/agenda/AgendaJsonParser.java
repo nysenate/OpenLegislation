@@ -6,9 +6,9 @@ import gov.nysenate.openleg.api.legislation.agenda.view.AgendaItemView;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteJsonParser;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Created by PKS on 4/28/16.
@@ -28,7 +27,7 @@ public class AgendaJsonParser extends SenateSiteJsonParser {
     public List<SenateSiteAgenda> parseAgendas(SenateSiteDump agendaDump) throws ParseError {
         return agendaDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractAgendasFromFragment(fragment).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<SenateSiteAgenda> extractAgendasFromFragment(SenateSiteDumpFragment fragment) throws ParseError{
@@ -52,7 +51,7 @@ public class AgendaJsonParser extends SenateSiteJsonParser {
     }
 
     private SenateSiteAgenda extractSenSiteAgenda(JsonNode agendaNode, SenateSiteDumpFragment fragment) throws IOException {
-        SenateSiteAgenda agenda = new SenateSiteAgenda(fragment.getDumpId().getDumpTime());
+        SenateSiteAgenda agenda = new SenateSiteAgenda(fragment.getDumpId().dumpTime());
         int week = getIntValue(agendaNode,"field_ol_week");
         int year = getIntValue(agendaNode,"field_ol_year");
         agenda.setAgendaId(new AgendaId(week, year));

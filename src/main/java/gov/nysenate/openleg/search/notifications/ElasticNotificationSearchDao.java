@@ -2,35 +2,28 @@ package gov.nysenate.openleg.search.notifications;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
-import gov.nysenate.openleg.search.ClearIndexEvent;
-import gov.nysenate.openleg.search.RebuildIndexEvent;
-import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.search.IndexedSearchService;
+import gov.nysenate.openleg.search.*;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class ElasticNotificationSearchDao extends ElasticBaseDao implements NotificationSearchDao, IndexedSearchService<RegisteredNotification> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
-
-    private static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
+    private static final String notificationIndex = SearchIndex.NOTIFICATION.getName();
     private static final String idId = "id_counter";
     private static final QueryBuilder idIdQuery = QueryBuilders.termQuery("_id", idId);
 
@@ -69,8 +62,8 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Collections.singletonList(notificationIndex);
+    protected SearchIndex getIndex() {
+        return SearchIndex.NOTIFICATION;
     }
 
     /** {@inheritDoc} */

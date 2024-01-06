@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processors.log;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -13,12 +13,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class SimpleDataProcessLogService implements DataProcessLogService
 {
-    @Autowired private Environment env;
+    @Autowired private OpenLegEnvironment env;
     @Autowired private DataProcessLogDao processLogDao;
 
     /** {@inheritDoc} */
@@ -46,8 +44,8 @@ public class SimpleDataProcessLogService implements DataProcessLogService
     public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
                                                          boolean showActivityOnly) {
         PaginatedList<DataProcessRun> runs = processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
-        List<DataProcessRunInfo> runInfos = runs.getResults().stream().map(this::getRunInfoFromRun).collect(toList());
-        return new PaginatedList<>(runs.getTotal(), runs.getLimOff(), runInfos);
+        List<DataProcessRunInfo> runInfos = runs.results().stream().map(this::getRunInfoFromRun).toList();
+        return new PaginatedList<>(runs.total(), runs.limOff(), runInfos);
     }
 
     /** {@inheritDoc} */

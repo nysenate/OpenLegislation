@@ -1,128 +1,47 @@
 package gov.nysenate.openleg.legislation.calendar.dao;
 
 import com.google.common.collect.Range;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.calendar.*;
-import gov.nysenate.openleg.legislation.CacheEvictIdEvent;
-import gov.nysenate.openleg.legislation.ContentCache;
-import gov.nysenate.openleg.legislation.CacheEvictEvent;
-import gov.nysenate.openleg.legislation.CacheWarmEvent;
-import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.CachingService;
+import gov.nysenate.openleg.legislation.calendar.*;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class CachedCalendarDataService implements CalendarDataService, CachingService<CalendarId>
-{
+public class CachedCalendarDataService extends CachingService<CalendarId, Calendar> implements CalendarDataService {
     private static final Logger logger = LoggerFactory.getLogger(CachedCalendarDataService.class);
+    private final CalendarDao calendarDao;
 
-    @Autowired private CacheManager cacheManager;
-    @Autowired private CalendarDao calendarDao;
-    @Autowired private EventBus eventBus;
-
-    @Value("${calendar.cache.heap.size}") private long calendarCacheSizeMb;
-
-    private Cache calendarCache;
-
-    @PostConstruct
-    private void init() {
-        setupCaches();
-        eventBus.register(this);
-    }
-
-    @PreDestroy
-    private void cleanUp() {
-        evictCaches();
-        cacheManager.removeCache(ContentCache.CALENDAR.name());
+    @Autowired
+    public CachedCalendarDataService(CalendarDao calendarDao) {
+        this.calendarDao = calendarDao;
     }
 
     /** --- CachingService implementation --- */
 
-    /** {@inheritDoc} */
     @Override
-    public List<Ehcache> getCaches() {
-        return Arrays.asList(calendarCache);
+    protected CacheType cacheType() {
+        return CacheType.CALENDAR;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void setupCaches() {
-        calendarCache = new Cache(new CacheConfiguration().name(ContentCache.CALENDAR.name())
-                .eternal(true)
-                .maxBytesLocalHeap(calendarCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(byteSizeOfPolicy()));
-        cacheManager.addCache(calendarCache);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void evictCaches() {
-        logger.info("clearing calendar cache");
-        calendarCache.removeAll();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void evictContent(CalendarId calendarId) {
-        calendarCache.remove(calendarId);
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.CALENDAR)) {
-            evictCaches();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleCacheEvictIdEvent(CacheEvictIdEvent<CalendarId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.CALENDAR)) {
-            evictContent(evictIdEvent.getContentId());
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void warmCaches() {
-        evictCaches();
-        getCalendars(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL);
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.CALENDAR)) {
-            warmCaches();
-        }
+    public Map<CalendarId, Calendar> initialEntries() {
+        return calendarDao.getCalendarIds(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL)
+                .stream().collect(Collectors.toMap(id -> id, calendarDao::getCalendar));
     }
 
     /** --- CalendarDataService implementation --- */
@@ -130,18 +49,17 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     /** {@inheritDoc} */
     @Override
     public Calendar getCalendar(CalendarId calendarId) throws CalendarNotFoundEx {
-        if (calendarId == null) {
+        if (calendarId == null)
             throw new IllegalArgumentException("CalendarId cannot be null.");
-        }
 
-        Element element = calendarCache.get(calendarId);
-        if (element != null) {
+        Calendar cal = cache.get(calendarId);
+        if (cal != null) {
             logger.debug("Calendar Cache HIT !! {}", calendarId);
-            return (Calendar) element.getObjectValue();
+            return cal;
         }
         try {
             Calendar calendar = calendarDao.getCalendar(calendarId);
-            calendarCache.put(new Element(calendarId, calendar));
+            cache.put(calendarId, calendar);
             return calendar;
         }
         catch (DataAccessException ex) {
@@ -153,26 +71,22 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     /** {@inheritDoc} */
     @Override
     public CalendarActiveList getActiveList(CalendarActiveListId activeListId) throws CalendarNotFoundEx {
-        if (activeListId == null) {
+        if (activeListId == null)
             throw new IllegalArgumentException("active list id cannot be null");
-        }
         CalendarActiveList activeList = getCalendar(activeListId).getActiveList(activeListId.getSequenceNo());
-        if (activeList != null) {
+        if (activeList != null)
             return activeList;
-        }
         throw new CalendarNotFoundEx(activeListId);
     }
 
     /** {@inheritDoc} */
     @Override
     public CalendarSupplemental getCalendarSupplemental(CalendarSupplementalId supplementalId) throws CalendarNotFoundEx {
-        if (supplementalId == null) {
+        if (supplementalId == null)
             throw new IllegalArgumentException("active list id cannot be null");
-        }
         CalendarSupplemental calSup = getCalendar(supplementalId).getSupplemental(supplementalId.getVersion());
-        if (calSup != null ) {
+        if (calSup != null)
             return calSup;
-        }
         throw new CalendarNotFoundEx(supplementalId);
     }
 
@@ -234,24 +148,21 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     @Override
     public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getCalendarIds(year, sortOrder, limitOffset).stream()
-                .map(this::getCalendar)
-                .collect(Collectors.toList());
+                .map(this::getCalendar).toList();
     }
 
     /** {@inheritDoc} */
     @Override
     public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getActiveListIds(year, sortOrder, limitOffset).stream()
-                .map(this::getActiveList)
-                .collect(Collectors.toList());
+                .map(this::getActiveList).toList();
     }
 
     /** {@inheritDoc} */
     @Override
     public List<CalendarSupplemental> getCalendarSupplementals(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getCalendarSupplementalIds(year, sortOrder, limitOffset).stream()
-                .map(this::getCalendarSupplemental)
-                .collect(Collectors.toList());
+                .map(this::getCalendarSupplemental).toList();
     }
 
     /** {@inheritDoc} */
@@ -259,7 +170,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     public void saveCalendar(Calendar calendar, LegDataFragment legDataFragment, boolean postUpdateEvent) {
         logger.debug("Persisting {}", calendar);
         calendarDao.updateCalendar(calendar, legDataFragment);
-        calendarCache.put(new Element(calendar.getId(), calendar));
+        cache.put(calendar.getId(), calendar);
         if (postUpdateEvent) {
             eventBus.post(new CalendarUpdateEvent(calendar));
         }

@@ -8,10 +8,10 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
+import gov.nysenate.openleg.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.UnexpectedSearchException;
-import gov.nysenate.openleg.search.ElasticSearchServiceUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -27,14 +27,16 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ElasticNotificationService implements NotificationService {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationService.class);
+    private final NotificationSearchDao notificationDao;
 
-    @Autowired protected NotificationSearchDao notificationDao;
+    @Autowired
+    public ElasticNotificationService(NotificationSearchDao notificationDao) {
+        this.notificationDao = notificationDao;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -57,7 +59,7 @@ public class ElasticNotificationService implements NotificationService {
         if (!types.equals(EnumSet.allOf(NotificationType.class))) {
             // Convert to lowercase strings for term query.
             List<String> typeValues = types.stream()
-                    .map(Enum::name).map(String::toLowerCase).collect(Collectors.toList());
+                    .map(Enum::name).map(String::toLowerCase).toList();
             filterQuery.must(QueryBuilders.termsQuery("notificationType", typeValues));
         }
 

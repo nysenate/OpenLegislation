@@ -1,10 +1,3 @@
-# --- Api Auth ----------------------------------------------------------------
-
-# A secret key that is used for validating api requests sent via the UI.
-# Set this to something random.
-
-api.secret =
-
 # Whether or not API authentication should be enabled
 api.auth.enable = true
 
@@ -31,11 +24,6 @@ admin.email.regex = ^[A-z0-9._%+-]+@nysenate.gov$
 ga.tracking.id =
 
 # --- Data Directory Configuration --------------------------------------------
-
-# The directory path that serves as the root of the data environment.
-# Omit any trailing slashes. (Default: /data/openleg)
-
-env.base = /data/openleg
 
 # The directory path where new files can be staged for processing.
 # Omit any trailing slashes. (Default: /data/openleg/staging)
@@ -108,43 +96,12 @@ elastic.search.cluster.name = openleg
 elastic.search.connection_retries = 30
 
 # --- Eh Cache Configuration --------------------------------------------------
+# Refer to app.properties.example for recommended values.
 
-# -- Element based cache config --
-
-# Bill Cache Element Size (Recommended: 21000. Uses about 300MB heap space)
-bill.cache.element.size = 21000
-
-# Bill Info Cache Element Size (Recommended: 40000. Uses about 100MB heap space)
-bill-info.cache.element.size = 40000
-
-# Law Cache Element Size (Recommended: 150. Uses about 30MB heap space)
-law.cache.element.size = 150
-
-# Agenda Cache Element Size (Recommended: 100. Uses about 25MB heap space)
-agenda.cache.element.size = 100
-
-# -- Heap based cache config --
-
-# Calendar Cache Size (in MB) (Recommended: 10)
-calendar.cache.heap.size = 10
-
-# Committee Cache Size (in MB) (Recommended: 2)
-committee.cache.heap.size = 2
-
-# Notification Cache Size (in MB) (Recommended: 2)
-notification.cache.heap.size = 2
-
-# API User Cache Size (in MB) (Recommended: 2)
-api_user.cache.heap.size = 2
-
-# Full Member Cache Size (in MB) (Recommended: 5)
-full_member.cache.heap.size = 5
-
-# Shortname Cache Size (in MB) (Recommended: 5)
-shortname.cache.heap.size = 5
-
-# Member Cache Size (in MB) (Recommended: 5)
-member.cache.heap.size = 5
+# Uses about 300 MB.
+bill.cache.size = 21000
+# Uses about 100 MB.
+bill_info.cache.size = 40000
 
 # --- Postgres Database Configuration -----------------------------------------
 
@@ -235,7 +192,7 @@ checkmail.host = imap.gmail.com
 checkmail.user = nysenatedev
 checkmail.pass =
 mail.store.protocol = imaps
-mail.imaps.ssl.protocols = TLSv1.2
+mail.imaps.ssl.protocols = TLSv1.3
 
 # Mail directory paths where daybreak emails are stored
 checkmail.receiving = OpenLegislationTest/LRSAutomated
@@ -248,7 +205,7 @@ mail.smtp.port =
 mail.smtp.auth = true
 mail.smtp.starttls.enable = false
 mail.smtp.ssl.enable = true
-mail.smtp.ssl.protocols = TLSv1.2
+mail.smtp.ssl.protocols = TLSv1.3
 mail.smtp.user =
 mail.smtp.from = openleg-test-no-reply@nysenate.gov
 mail.smtp.password =

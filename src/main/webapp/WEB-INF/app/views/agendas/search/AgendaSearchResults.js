@@ -1,7 +1,6 @@
 import React from 'react'
 import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
-import LoadingIndicator from "app/shared/LoadingIndicator";
 import { SummaryItemSmall } from "app/views/agendas/AgendaView";
 
 export default function AgendaSearchResults({ response, pageParams, onPageChange }) {

@@ -2,13 +2,15 @@ package gov.nysenate.openleg.legislation.committee;
 
 import gov.nysenate.openleg.legislation.SessionYear;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Identifies a committee for a single session of congress
  */
-public class CommitteeSessionId extends CommitteeId implements Serializable
-{
+public class CommitteeSessionId extends CommitteeId implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8934281581752246522L;
 
     /** The session year that this committee is active for */
@@ -43,14 +45,10 @@ public class CommitteeSessionId extends CommitteeId implements Serializable
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CommitteeSessionId)) return false;
+        if (!(o instanceof CommitteeSessionId that)) return false;
         if (!super.equals(o)) return false;
 
-        CommitteeSessionId that = (CommitteeSessionId) o;
-
-        if (session != null ? !session.equals(that.session) : that.session != null) return false;
-
-        return true;
+        return Objects.equals(session, that.session);
     }
 
     @Override

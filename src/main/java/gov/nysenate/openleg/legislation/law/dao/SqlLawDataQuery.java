@@ -63,19 +63,11 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "     ON t.doc_id = d1.document_id AND t.doc_published_date = d1.published_date\n" +
         "WHERE t.law_id = :lawId AND t.published_date = max_date.pub_date"
     ),
-
     SELECT_REPEALED_LAWS(
-        "SELECT t.law_id, t.doc_id AS document_id, t.published_date, t.repealed_date\n" +
-        "FROM ${schema}." + SqlTable.LAW_TREE + " t\n" +
-        "JOIN (\n" +
-        "  SELECT law_id, doc_id, MAX(published_date) AS max_published_date\n" +
-        "  FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
-        "  GROUP BY law_id, doc_id\n" +
-        ") tm\n" +
-        "ON tm.doc_id = t.doc_id\n" +
-        "  AND tm.max_published_date = t.published_date\n" +
-        "WHERE t.repealed_date IS NOT NULL" +
-        " AND t.repealed_date BETWEEN :startDateTime AND :endDateTime"
+        "SELECT doc_id AS document_id, published_date, repealed_date\n" +
+        "FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
+        "WHERE repealed_date IS NOT NULL" +
+        "  AND repealed_date BETWEEN :startDateTime AND :endDateTime"
     ),
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +
@@ -108,10 +100,9 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     INSERT_LAW_INFO(
         "INSERT INTO ${schema}." + SqlTable.LAW_INFO + " (law_id, chapter_id, law_Type, name)\n" +
         "VALUES (:lawId, :chapterId, :lawType, :name)\n"
-    )
-    ;
+    );
 
-    private String sql;
+    private final String sql;
 
     SqlLawDataQuery(String sql) {
         this.sql = sql;

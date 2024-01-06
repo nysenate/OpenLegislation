@@ -46,8 +46,7 @@ import java.util.function.Function;
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.notifications.model.NotificationType.REQUEST_EXCEPTION;
 
-public abstract class BaseCtrl
-{
+public abstract class BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(BaseCtrl.class);
 
     public static final String BASE_API_PATH = "/api/3";
@@ -71,7 +70,7 @@ public abstract class BaseCtrl
      * @param defaultSortOrder SortOrder
      * @return SortOrder
      */
-    protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
+    protected static SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         String sortOrderParam = Optional.ofNullable(webRequest.getParameter("order"))
                 .orElse(webRequest.getParameter("sortOrder"));
         return getSortOrder(sortOrderParam, defaultSortOrder);
@@ -84,7 +83,7 @@ public abstract class BaseCtrl
      * @param sortOrder A string representing the sort order
      * @param defaultSortOrder Default sort order
      */
-    protected SortOrder getSortOrder(String sortOrder, SortOrder defaultSortOrder) {
+    protected static SortOrder getSortOrder(String sortOrder, SortOrder defaultSortOrder) {
         if (sortOrder != null) {
             try {
                 return SortOrder.valueOf(sortOrder.toUpperCase());
@@ -150,7 +149,7 @@ public abstract class BaseCtrl
      * @return LocalDate
      * @throws InvalidRequestParamEx if the date could not be parsed.
      */
-    protected LocalDate parseISODate(String dateString, String parameter) {
+    protected static LocalDate parseISODate(String dateString, String parameter) {
         try {
             return LocalDate.from(DateTimeFormatter.ISO_DATE.parse(dateString));
         }
@@ -169,7 +168,7 @@ public abstract class BaseCtrl
      * @return LocalDateTime
      * @throws InvalidRequestParamEx if the datetime could not be parsed.
      */
-    protected LocalDateTime parseISODateTime(String dateTimeString, String parameterName) {
+    protected static LocalDateTime parseISODateTime(String dateTimeString, String parameterName) {
         try {
             try {
                 return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
@@ -192,7 +191,7 @@ public abstract class BaseCtrl
      * @param defaultValue The default LocalDateTime
      * @return LocalDateTime
      */
-    protected LocalDateTime parseISODateTime(String dateTimeString, LocalDateTime defaultValue) {
+    protected static LocalDateTime parseISODateTime(String dateTimeString, LocalDateTime defaultValue) {
         try {
             return parseISODateTime(dateTimeString, "don't matter");
         } catch (InvalidRequestParamEx ex) {
@@ -207,27 +206,13 @@ public abstract class BaseCtrl
      * @param paramName String
      * @return {@link SessionYear}
      */
-    protected SessionYear getSessionYearParam(int year, String paramName) {
+    protected static SessionYear getSessionYearParam(int year, String paramName) {
         try {
             return SessionYear.of(year);
         } catch (IllegalArgumentException ex) {
             throw new InvalidRequestParamEx(
                     Integer.toString(year), paramName, "int", "Must be a positive integer.");
         }
-    }
-
-    /**
-     * Validate and return a session year from the given webrequest.
-     *
-     * @param request WebRequest
-     * @param paramName String
-     * @return {@link SessionYear}
-     */
-    protected SessionYear getSessionYearParam(WebRequest request, String paramName) {
-        return getSessionYearParam(
-                getIntegerParam(request, paramName),
-                paramName
-        );
     }
 
     /**
@@ -238,7 +223,7 @@ public abstract class BaseCtrl
      * @return BaseBillId
      * @throws InvalidRequestParamEx if the print no is malformed
      */
-    protected BaseBillId getBaseBillId(String printNo, int session, String printNoParamName)
+    protected static BaseBillId getBaseBillId(String printNo, int session, String printNoParamName)
             throws InvalidRequestParamEx {
         try {
             return new BaseBillId(printNo, session);
@@ -255,7 +240,7 @@ public abstract class BaseCtrl
      * @return BillId
      * @throws InvalidRequestParamEx if the print no is malformed
      */
-    protected BillId getBillId(String printNo, int session, String printNoParamName) throws InvalidRequestParamEx {
+    protected static BillId getBillId(String printNo, int session, String printNoParamName) throws InvalidRequestParamEx {
         try {
             return new BillId(printNo, session);
         } catch (IllegalArgumentException ex) {
@@ -268,7 +253,7 @@ public abstract class BaseCtrl
      * @param version String - version input string
      * @return Optional<Version>
      */
-    protected Optional<Version> parseVersion(String version) {
+    protected static Optional<Version> parseVersion(String version) {
         try {
             return Optional.of(Version.of(version));
         } catch (IllegalArgumentException ex) {
@@ -283,7 +268,7 @@ public abstract class BaseCtrl
      * @return Version
      * @throws InvalidRequestParamEx if the version input string cannot be parsed into a version
      */
-    protected Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
+    protected static Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
         Optional<Version> optVersion = parseVersion(version);
         if (optVersion.isEmpty()) {
             throw new InvalidRequestParamEx(version, versionParamName, "String",
@@ -295,7 +280,7 @@ public abstract class BaseCtrl
     /**
      * Get a set of bill text formats supplied in the request params or a default if none exist.
      */
-    protected LinkedHashSet<BillTextFormat> getFullTextFormats(WebRequest request) {
+    protected static LinkedHashSet<BillTextFormat> getFullTextFormats(WebRequest request) {
         final String formatParamName = "fullTextFormat";
         String[] fullTextFormats = request.getParameterValues(formatParamName);
         LinkedHashSet<BillTextFormat> formatSet = new LinkedHashSet<>();
@@ -320,7 +305,7 @@ public abstract class BaseCtrl
      * @param <T> T
      * @return Range<T>
      */
-    protected <T extends Comparable<?>> Range<T> getRange(T lower, T upper, String fromName, String upperName,
+    protected static <T extends Comparable<?>> Range<T> getRange(T lower, T upper, String fromName, String upperName,
                                                                     BoundType lowerType, BoundType upperType) {
         try {
             return Range.range(lower, lowerType, upper, upperType);
@@ -332,44 +317,20 @@ public abstract class BaseCtrl
         }
     }
 
-    protected <T extends Comparable<?>> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
+    protected static <T extends Comparable<?>> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.OPEN);
     }
 
-    protected <T extends Comparable<?>> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
+    protected static <T extends Comparable<?>> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.CLOSED);
     }
 
-    protected <T extends Comparable<?>> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
+    protected static <T extends Comparable<?>> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.OPEN);
     }
 
-    protected <T extends Comparable<?>> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
+    protected static <T extends Comparable<?>> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
         return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.CLOSED);
-    }
-
-    /**
-     * Extracts and parses an integer param from the given web request, throws an exception if it doesn't parse
-     */
-    protected int getIntegerParam(WebRequest request, String paramName) {
-        String intString = request.getParameter(paramName);
-        try {
-            return Integer.parseInt(intString);
-        } catch (NullPointerException | NumberFormatException ex) {
-            throw new InvalidRequestParamEx(intString, paramName, "integer", "integer");
-        }
-    }
-
-    /**
-     * An overload of getIntegerParam that returns a default int value if there is a parsing error
-     * @see #getIntegerParam
-     */
-    protected int getIntegerParam(WebRequest request, String paramName, int defaultVal) {
-        try {
-            return getIntegerParam(request, paramName);
-        } catch (InvalidRequestParamEx ex) {
-            return defaultVal;
-        }
     }
 
     /**
@@ -379,7 +340,7 @@ public abstract class BaseCtrl
      * @param defaultVal boolean
      * @return boolean
      */
-    protected boolean getBooleanParam(WebRequest request, String param, boolean defaultVal) {
+    protected static boolean getBooleanParam(WebRequest request, String param, boolean defaultVal) {
         return request.getParameter(param) != null ? BooleanUtils.toBoolean(request.getParameter(param)) : defaultVal;
     }
 
@@ -389,12 +350,12 @@ public abstract class BaseCtrl
      * @param request WebRequest
      * @return UpdateType
      */
-    protected UpdateType getUpdateTypeFromParam(WebRequest request) {
+    protected static UpdateType getUpdateTypeFromParam(WebRequest request) {
         String type = request.getParameter("type");
         return "published".equalsIgnoreCase(type) ? UpdateType.PUBLISHED_DATE : UpdateType.PROCESSED_DATE;
     }
 
-    private <T extends Enum<T>> InvalidRequestParamEx getEnumParamEx(Class<T> enumType, Function<T, String> valueFunction,
+    private static <T extends Enum<T>> InvalidRequestParamEx getEnumParamEx(Class<T> enumType, Function<T, String> valueFunction,
                                                         String paramName, String paramValue) {
         throw new InvalidRequestParamEx(paramValue, paramName, "string",
                 Arrays.stream(enumType.getEnumConstants())
@@ -406,7 +367,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum instance whose name matches the parameter
      * @throws InvalidRequestParamEx if no such enum was found
      */
-    protected <T extends Enum<T>> T getEnumParameter(String paramName, String paramValue, Class<T> enumType)
+    protected static <T extends Enum<T>> T getEnumParameter(String paramName, String paramValue, Class<T> enumType)
             throws InvalidRequestParamEx {
         T result = getEnumParameter(paramValue, enumType, null);
         if (result != null) {
@@ -418,7 +379,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum instance whose name matches the parameter
      * returns a default value if no such enum was found
      */
-    protected <T extends Enum<T>> T getEnumParameter(String paramValue, Class<T> enumType, T defaultValue) {
+    protected static <T extends Enum<T>> T getEnumParameter(String paramValue, Class<T> enumType, T defaultValue) {
         try {
             return T.valueOf(enumType, StringUtils.upperCase(paramValue));
         } catch (IllegalArgumentException | NullPointerException ex) {
@@ -431,7 +392,7 @@ public abstract class BaseCtrl
      * @throws InvalidRequestParamEx if the mapFunction returns null that lists possible values using the
      *                                  given valueFunction
      */
-    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
+    protected static <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
                                                             Function<T, String> valueFunction,
                                                             String paramName, String paramValue) {
         T result = getEnumParameterByValue(mapFunction, paramValue, null);
@@ -444,7 +405,7 @@ public abstract class BaseCtrl
      * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
      * returns a default value if the map function returns null
      */
-    protected <T extends Enum<T>> T getEnumParameterByValue(Function<String, T> mapFunction,
+    protected static <T extends Enum<T>> T getEnumParameterByValue(Function<String, T> mapFunction,
                                                             String paramValue, T defaultValue) {
         T result = mapFunction.apply(paramValue);
         return result != null ? result : defaultValue;
@@ -456,27 +417,13 @@ public abstract class BaseCtrl
      * @param paramNamesAndTypes Map<String, String> - A map of parameter names to their type
      * @throws MissingServletRequestParameterException if a parameter is not present in the web request
      */
-    protected void requireParameters(WebRequest request, Map<String, String> paramNamesAndTypes)
+    protected static void requireParameters(WebRequest request, Map<String, String> paramNamesAndTypes)
             throws MissingServletRequestParameterException {
         for (String paramName : paramNamesAndTypes.keySet()) {
             if (request.getParameter(paramName) == null) {
                 throw new MissingServletRequestParameterException(paramName, paramNamesAndTypes.get(paramName));
             }
         }
-    }
-
-    /**
-     * A convenient overload of requireParameters that constructs the paramNamesAndTypes map from an array
-     *  in the format [name1, type1, name2, type2, ... ]
-     *  @see #requireParameters
-     */
-    protected void requireParameters(WebRequest request, String... paramNamesAndTypes)
-            throws MissingServletRequestParameterException {
-        Map<String, String> paramMap = new HashMap<>();
-        for (int i = 0; i < paramNamesAndTypes.length / 2; i++) {
-            paramMap.put(paramNamesAndTypes[2 * i], paramNamesAndTypes[2 * i + 1]);
-        }
-        requireParameters(request, paramMap);
     }
 
     /** --- Generic Exception Handlers --- */

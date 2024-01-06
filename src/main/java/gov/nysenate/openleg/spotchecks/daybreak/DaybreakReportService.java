@@ -3,16 +3,16 @@ package gov.nysenate.openleg.spotchecks.daybreak;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakDao;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillInfo;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
+import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
+import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakDao;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +34,18 @@ import static java.util.stream.Collectors.toSet;
  * and save reports for bill data.
  */
 @Service("daybreakReport")
-public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
-{
+public class DaybreakReportService implements SpotCheckReportService<BaseBillId> {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakReportService.class);
+    private final DaybreakCheckService daybreakCheckService;
+    private final DaybreakDao daybreakDao;
+    private final BillDataService billDataService;
 
     @Autowired
-    private DaybreakCheckService daybreakCheckService;
-
-    @Autowired
-    private DaybreakDao daybreakDao;
-
-    @Autowired
-    private BillDataService billDataService;
+    public DaybreakReportService(DaybreakCheckService daybreakCheckService, DaybreakDao daybreakDao, BillDataService billDataService) {
+        this.daybreakCheckService = daybreakCheckService;
+        this.daybreakDao = daybreakDao;
+        this.billDataService = billDataService;
+    }
 
     /** --- Implemented Methods --- */
 
@@ -86,11 +86,11 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
                 .collect(toSet());
 
         // Check for differences between the set of daybreak and openleg base bill ids.
-        Sets.symmetricDifference(daybreakBillIds, openlegBillIds).stream()
+        Sets.symmetricDifference(daybreakBillIds, openlegBillIds)
                 .forEach(id -> {
                     // id exists in daybreak or openleg sets, never both.
                     SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, id);
-                    SpotCheckMismatch mismatch = null;
+                    SpotCheckMismatch mismatch;
                     if (openlegBillIds.contains(id)) {
                         // openleg has the bill but daybreak does not, add reference missing mismatch if bill is published.
                         BillInfo bill = billDataService.getBillInfo(id);

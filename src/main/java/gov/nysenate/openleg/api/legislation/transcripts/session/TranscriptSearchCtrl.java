@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -26,10 +25,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class TranscriptSearchCtrl extends BaseCtrl
-{
-    @Autowired private TranscriptDataService transcriptData;
-    @Autowired private TranscriptSearchService transcriptSearch;
+public class TranscriptSearchCtrl extends BaseCtrl {
+    private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
+    private final TranscriptDataService transcriptData;
+    private final TranscriptSearchService transcriptSearch;
+
+    @Autowired
+    public TranscriptSearchCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
+        this.transcriptData = transcriptData;
+        this.transcriptSearch = transcriptSearch;
+    }
 
     /**
      * Transcript Search API
@@ -44,12 +49,12 @@ public class TranscriptSearchCtrl extends BaseCtrl
      *                      offset - Start results from offset
      */
     @RequestMapping(value = "/search")
-    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+    public BaseResponse globalSearch(@RequestParam String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff);
         return getSearchResponse(summary, full, limOff, results);
     }
@@ -63,21 +68,21 @@ public class TranscriptSearchCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year:\\d{4}}/search")
     public BaseResponse yearSearch(@PathVariable int year,
-                                   @RequestParam(required = true) String term,
+                                   @RequestParam String term,
                                    @RequestParam(defaultValue = "") String sort,
                                    @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
                                    WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff);
         return getSearchResponse(summary, full, limOff, results);
     }
 
     private BaseResponse getSearchResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
-        return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
-                        : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
-                        : new TranscriptIdView(r.getResult()), r.getRank(), r.getHighlights()))
-                .collect(toList()), results.getTotalResults(), limOff);
+        return ListViewResponse.of(results.resultList().stream().map(r -> new SearchResultView(
+                (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
+                        : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
+                        : new TranscriptIdView(r.result()), r.rank(), r.highlights()))
+                .toList(), results.totalResults(), limOff);
     }
 }

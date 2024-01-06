@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Import;
 @Import({PropertyConfig.class, DatabaseConfig.class, ApplicationConfig.class})
 @ComponentScan(
     value= "gov.nysenate.openleg",
-    // Exclude the WebApplicationConfig since it can only be constructed within a ServletContext
+    // Exclude the WebApplicationConfig since it can only be constructed within a ServletContext.
     excludeFilters = {@ComponentScan.Filter(value = WebApplicationConfig.class, type = FilterType.ASSIGNABLE_TYPE)}
 )
 public class ConsoleApplicationConfig
 {
-    /** --- Any console specific bean definitions go here --- */
+    // Any console specific bean definitions go here.
 }

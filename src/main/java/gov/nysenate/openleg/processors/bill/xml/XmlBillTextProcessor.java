@@ -1,16 +1,14 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.common.util.XmlHelper;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
-import gov.nysenate.openleg.common.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -100,8 +97,8 @@ public class XmlBillTextProcessor extends AbstractLegDataProcessor {
             }
 
             updatedBills.forEach(billId ->
-                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                            BaseBillId.of(billId), BillUpdateField.FULLTEXT)));
+                    eventBus.post(new BillFieldUpdateEvent(BaseBillId.of(billId),
+                            BillUpdateField.FULLTEXT)));
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML bill text parsing error", e);
             throw new ParseError("Error While Parsing Bill Text XML", e);

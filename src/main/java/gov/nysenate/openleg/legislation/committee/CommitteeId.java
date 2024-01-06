@@ -3,11 +3,12 @@ package gov.nysenate.openleg.legislation.committee;
 import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class CommitteeId implements Serializable, Comparable<CommitteeId>
-{
+public class CommitteeId implements Serializable, Comparable<CommitteeId> {
+    @Serial
     private static final long serialVersionUID = -4463517719215556844L;
 
     /** The chamber this committee belongs to. */

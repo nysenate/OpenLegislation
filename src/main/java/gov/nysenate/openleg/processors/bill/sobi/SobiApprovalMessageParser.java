@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.bill.sobi;
 
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.ApprovalId;
 import gov.nysenate.openleg.legislation.bill.ApprovalMessage;
 import gov.nysenate.openleg.legislation.bill.BillTextType;
 import gov.nysenate.openleg.processors.ParseError;
@@ -18,13 +17,11 @@ public class SobiApprovalMessageParser extends BillTextParser {
             Pattern.compile("00000\\.SO DOC APPR(\\d+)\\s+APPROVAL\\s+(\\d{4})");
     private static final Pattern approvalTitlePattern =
             Pattern.compile("\\d{5}\\s+APPROVAL MEMORANDUM\\s+-\\s+No\\.\\s+\\d+\\s+Chapter\\s+(\\d+)");
-    private static final Pattern approvalBillIdPattern =
-            Pattern.compile("(?i)\\d{5}\\s+MEMORANDUM filed with (Senate|Assembly) Bill Number (\\d+)\\-?([A-Z])?, entitled:");
     private static final Pattern approvalSignerPattern =
             Pattern.compile("\\d{5}\\s+(?:(?:The|This) bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** An approval message object that is constructed while parsing the memo*/
-    private ApprovalMessage approvalMessage;
+    private final ApprovalMessage approvalMessage;
 
     /** --- Constructors --- */
 
@@ -46,14 +43,6 @@ public class SobiApprovalMessageParser extends BillTextParser {
         }
         verifyApprovalMessage();
         return approvalMessage;
-    }
-
-    public ApprovalId getApprovalId() {
-        if (approvalMessage != null) {
-            return approvalMessage.getApprovalId();
-        } else {
-            return null;
-        }
     }
 
     /** --- Overrides --- */

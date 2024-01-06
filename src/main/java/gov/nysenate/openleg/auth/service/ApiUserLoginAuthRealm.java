@@ -3,8 +3,8 @@ package gov.nysenate.openleg.auth.service;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.auth.model.ApiKeyLoginToken;
-import gov.nysenate.openleg.auth.user.ApiUserAuthEvictEvent;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
+import gov.nysenate.openleg.auth.user.ApiUserAuthEvictEvent;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -24,32 +24,28 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
-public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
-{
+public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
     private static final Logger logger = LoggerFactory.getLogger(ApiUserLoginAuthRealm.class);
-
-    private static final class ApiCredentialsMatcher implements CredentialsMatcher
-    {
-        /** The credentials will always match if the auth token and info have the same principal.*/
-        @Override
-        public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-            if (token != null && info != null && token.getPrincipal() != null && info.getPrincipals() != null) {
-                return StringUtils.equals(token.getPrincipal().toString(),
-                        info.getPrincipals().getPrimaryPrincipal().toString());
-            }
+    private static final CredentialsMatcher apiCredentialsMatcher = (token, info) -> {
+        try {
+            return StringUtils.equals(token.getPrincipal().toString(),
+                    info.getPrincipals().getPrimaryPrincipal().toString());
+        }
+        catch (NullPointerException e) {
             return false;
         }
+    };
+
+    private final ApiUserService apiUserService;
+    private final EventBus eventBus;
+
+    @Autowired
+    public ApiUserLoginAuthRealm(ApiUserService apiUserService, EventBus eventBus) {
+        this.apiUserService = apiUserService;
+        this.eventBus = eventBus;
     }
-
-    private static final CredentialsMatcher apiCredentialsMatcher = new ApiCredentialsMatcher();
-
-    @Autowired private ApiUserService apiUserService;
-
-    @Autowired private EventBus eventBus;
 
     @Override
     public void onInit() {
@@ -59,38 +55,26 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
 
     /**
      * Check to see if the API Key exists. If it does return the AuthenticationInfo.
-     *
      * @param token The given authentication information
-     * @return Either valid AuthenticationInfo for the given token or null if the account is not valid
-     * @throws AuthenticationException
+     * @return AuthenticationInfo for the given token, or null if the account is not valid
+     * @throws UnsupportedTokenException
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        if (token != null && token instanceof ApiKeyLoginToken) {
-            ApiKeyLoginToken apiToken = (ApiKeyLoginToken) token;
-            logger.debug("Attempting login with API Realm from {} with key {}", apiToken.getHost(), apiToken.getApiKey());
-            return queryForAuthenticationInfo(apiToken);
+        if (token instanceof ApiKeyLoginToken apiToken) {
+            logger.debug("Attempting login with API Realm from {} with key {}",
+                    apiToken.getHost(), apiToken.getApiKey());
+            if (apiUserService.validateKey(apiToken.getApiKey())) {
+                return new SimpleAuthenticationInfo(apiToken.getApiKey(), apiToken.getApiKey(),
+                        this.getName());
+            }
+            return null;
         }
         throw new UnsupportedTokenException("OpenLeg 2.0 only supports UsernamePasswordToken");
     }
 
-    /**                                                                                            A
-     * If the API Key is valid, return an AuthenticationInfo with the principal as the API key and the
-     * credentials set to null. If the key is not valid, null will be returned.
-     *
-     * @param info The given UsernamePasswordToke
-     * @return A new SimpleAuthenticationInfo object
-     */
-    protected AuthenticationInfo queryForAuthenticationInfo(ApiKeyLoginToken info) {
-        if (apiUserService.validateKey(info.getApiKey())) {
-            return new SimpleAuthenticationInfo(info.getApiKey(), info.getApiKey(), this.getName());
-        }
-        return null;
-    }
-
     /**
      * This method assigns the API User role.
-     *
      * @param principals The identifying attributes of the currently active user
      * @return A SimpleAuthorizationInfo object containing the roles and permissions of the user.
      */
@@ -116,17 +100,12 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
 
     @Subscribe
     public void handleApiUserAuthEvictEvent(ApiUserAuthEvictEvent e) {
-        this.clearAuthForKey(e.getApiKey());
-    }
-
-    protected void clearAuthForKey(String apiKey) {
         Cache<Object, AuthorizationInfo> authCache = getAuthorizationCache();
         List<Object> keyList = authCache.keys().stream()
-                .filter(principals -> StringUtils.equals(Objects.toString(principals), apiKey))
-                .collect(Collectors.toList());
+                .filter(principals -> StringUtils.equals(principals.toString(), e.apiKey()))
+                .toList();
         keyList.forEach(authCache::remove);
     }
-
     @Override
     public Class getAuthenticationTokenClass() {
         return ApiKeyLoginToken.class;

@@ -2,27 +2,24 @@ package gov.nysenate.openleg.api.legislation.calendar.view;
 
 import gov.nysenate.openleg.api.legislation.bill.view.SimpleBillInfoView;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.calendar.CalendarSupplementalEntry;
+import gov.nysenate.openleg.legislation.bill.BillInfo;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
+import gov.nysenate.openleg.legislation.calendar.CalendarSupplementalEntry;
 
 import java.util.Comparator;
 
 public class CalendarSupEntryView extends CalendarEntryView {
-
     protected String sectionType;
-
     protected SimpleBillInfoView subBillInfo;
-
     protected boolean billHigh;
 
-    public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillDataService billDataService) {
-        super(supEntry, billDataService);
+    public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillInfo info) {
+        super(supEntry, info);
 
         if (supEntry != null) {
             this.sectionType = supEntry.getSectionType().toString();
             this.subBillInfo = supEntry.getSubBillId() != null
-                    ? new SimpleBillInfoView(billDataService.getBillInfo(BillId.getBaseId(supEntry.getSubBillId())))
-                    : null;
+                    ? new SimpleBillInfoView(info) : null;
             this.billHigh = supEntry.getBillHigh();
         }
     }
@@ -45,9 +42,6 @@ public class CalendarSupEntryView extends CalendarEntryView {
     public boolean isBillHigh() {
         return billHigh;
     }
-
-    public static Comparator<CalendarSupEntryView> supEntryViewComparator =
-            Comparator.comparingInt(CalendarSupEntryView::getBillCalNo);
 
     @Override
     public String getViewType() {

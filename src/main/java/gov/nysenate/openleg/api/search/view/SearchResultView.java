@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
-
 public class SearchResultView implements ViewObject
 {
     protected ViewObject result;
@@ -30,7 +28,7 @@ public class SearchResultView implements ViewObject
                highlights.put(k,
                    Arrays.stream(v.getFragments())
                        .map(Text::toString)
-                       .collect(toList()))
+                       .toList())
             );
         }
     }

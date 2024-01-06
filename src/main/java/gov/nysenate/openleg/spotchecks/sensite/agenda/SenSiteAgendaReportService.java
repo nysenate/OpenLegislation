@@ -5,12 +5,12 @@ import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaVoteCommittee;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
-import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.spotchecks.sensite.BaseSenateSiteReportService;
+import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,8 +45,8 @@ public class SenSiteAgendaReportService extends BaseSenateSiteReportService<Comm
 
     @Override
     protected void checkDump(SenateSiteDump dump, SpotCheckReport<CommitteeAgendaAddendumId> report) {
-        logger.info("Loading agendas for year {} ...", dump.getDumpId().getYear());
-        Map<AgendaId, Agenda> openlegAgendas = getOpenlegAgendas(dump.getDumpId().getYear());
+        logger.info("Loading agendas for year {} ...", dump.getDumpId().year());
+        Map<AgendaId, Agenda> openlegAgendas = getOpenlegAgendas(dump.getDumpId().year());
 
         logger.info("Extracting agenda references ...");
         List<SenateSiteAgenda> senateSiteAgendas = agendaJsonParser.parseAgendas(dump);

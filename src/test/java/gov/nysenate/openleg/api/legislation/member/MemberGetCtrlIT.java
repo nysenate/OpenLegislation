@@ -13,10 +13,7 @@ import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
-import gov.nysenate.openleg.legislation.member.FullMember;
-import gov.nysenate.openleg.legislation.member.Member;
-import gov.nysenate.openleg.legislation.member.Person;
-import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.search.SearchException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -47,9 +43,9 @@ public class MemberGetCtrlIT extends ApiTest {
                 sm instanceof SessionMemberView && ((SessionMemberView) sm).isAlternate()).count();
         assertEquals(0, numAlternates);
 
-        listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);;
+        listResponse = (ListViewResponse<?>) testCtrl.getMembersByYear(2013, "shortName:asc", true, testRequest);
         FullMemberView testFmv = (FullMemberView) listResponse.getResult().getItems().stream().filter(fm ->
-                fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).collect(Collectors.toList()).get(0);
+                fm instanceof FullMemberView && ((FullMemberView) fm).getMemberId() == 591).toList().get(0);
         assertEquals(2, testFmv.getSessionShortNameMap().get(2013).size());
     }
 
@@ -59,13 +55,15 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
-        Person testP = new Person(199, "Ruth Hassell-Thompson",
-                "hassellt@senate.state.ny.us", "Senator", "380_ruth_hassell-thompson.jpg");
-        Member testM = new Member(testP, 380, Chamber.SENATE, false);
-        SessionMember nonAlt2011 = new SessionMember(74, testM, name + "N", new
+        PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", "",
+                "Hassell-Thompson", "");
+        Person testPerson = new Person(199, pName, "hassellt@senate.state.ny.us",
+                "380_ruth_hassell-thompson.jpg");
+        Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);
+        SessionMember nonAlt2011 = new SessionMember(74, testMember, name + "N", new
                 SessionYear(2011), 36, false);
 
-        BaseResponse resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2011, false, testRequest);
+        BaseResponse resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2011, false);
         SessionMember actualSm = ((SessionMemberView)(((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
         assertEquals(nonAlt2011, actualSm);
 
@@ -98,7 +96,7 @@ public class MemberGetCtrlIT extends ApiTest {
 
         FullMemberView testFmv = new FullMemberView(new FullMember(Arrays.asList(alt2009, nonAlt2009,
                 alt2011, nonAlt2011, alt2013, nonAlt2013, only2015)));
-        resp = testCtrl.getMembersByYearAndId(testM.getMemberId(), 2015, true, testRequest);
+        resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2015, true);
         FullMemberView actualFmv = (FullMemberView)(((ViewObjectResponse<?>) resp).getResult());
         assertTrue(isFullMemberViewEqual(testFmv, actualFmv));
     }

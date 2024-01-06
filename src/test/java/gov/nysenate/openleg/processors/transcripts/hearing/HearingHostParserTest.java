@@ -56,7 +56,7 @@ public class HearingHostParserTest {
     }
 
     /**
-     * Test that we can parse multiple committees information from public hearing files sent
+     * Test that we can parse multiple committees information from hearing files sent
      * to us by the Senate.
      */
     @Test
@@ -78,7 +78,7 @@ public class HearingHostParserTest {
     }
 
     /**
-     * Test that we can parse multiple committees information from public hearing files sent
+     * Test that we can parse multiple committees information from hearing files sent
      * to us by the Assembly.
      */
     @Test

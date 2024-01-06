@@ -3,32 +3,14 @@ package gov.nysenate.openleg.api.search.view;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.search.SearchIndex;
 
-public class SearchIndexInfoView implements ViewObject {
-
-    private String name;
-    private String indexName;
-    private boolean primaryStore;
+public record SearchIndexInfoView(String name, String indexName, boolean primaryStore) implements ViewObject {
 
     public SearchIndexInfoView(SearchIndex searchIndex) {
-        this.name = searchIndex.name();
-        this.indexName = searchIndex.getIndexName();
-        this.primaryStore = searchIndex.isPrimaryStore();
+        this(searchIndex.name(), searchIndex.getName(), searchIndex.isPrimaryStore());
     }
 
     @Override
     public String getViewType() {
         return "search-index-info";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getIndexName() {
-        return indexName;
-    }
-
-    public boolean isPrimaryStore() {
-        return primaryStore;
     }
 }

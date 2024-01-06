@@ -12,21 +12,21 @@ import { DateTime } from "luxon";
 /**
  * Top-level method for displaying a single session or hearing transcript.
  */
-export default function TranscriptDisplay({ id, isHearing, setHeaderText }) {
+export default function TranscriptDisplay({ params, isHearing, setHeaderText }) {
   const [ loading, setLoading ] = React.useState(true)
   const [ transcript, setTranscript ] = React.useState([])
 
   React.useEffect(() => {
     setLoading(true)
-    getTranscript(isHearing, id)
+    getTranscript(isHearing, params)
       .then((res) => {
         setTranscript(res.result)
         setHeaderText(isHearing
-          ? `Public Hearing Transcript: ${formatDateTime(res.result.date, DateTime.DATE_FULL)}`
+          ? `Hearing Transcript: ${formatDateTime(res.result.date, DateTime.DATE_FULL)}`
           : `Session Transcript: ${formatDateTime(res.result.dateTime, DateTime.DATE_FULL)}`)
       })
       .finally(() => setLoading(false))
-  }, [ isHearing, id ]);
+  }, [ isHearing, params ]);
 
   if (loading)
     return <LoadingIndicator />

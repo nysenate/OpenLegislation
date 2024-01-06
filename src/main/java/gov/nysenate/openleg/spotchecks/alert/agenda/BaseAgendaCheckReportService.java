@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.spotchecks.alert.agenda;
 
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.spotchecks.alert.agenda.dao.AgendaAlertDao;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaInfoAddendum;
 import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.spotchecks.alert.agenda.dao.AgendaAlertDao;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
     AgendaAlertDao agendaAlertDao;
 
     @Autowired
-    Environment environment;
+    OpenLegEnvironment environment;
 
     /* --- Implemented Methods --- */
 
@@ -52,7 +52,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
         List<AgendaAlertInfoCommittee> allReferences = getReferences(start, end);
         List<AgendaAlertInfoCommittee> references = allReferences.stream()
                 .filter(this::outsideGracePeriod)
-                .collect(Collectors.toList());
+                .toList();
 
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx( "All unchecked agenda references (" +

@@ -41,7 +41,6 @@ public abstract class ElasticSearchServiceUtils {
             "imgName",
             "notificationType",
             "filename",
-            "location",
             "sessionType"
     );
 

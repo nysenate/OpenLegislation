@@ -11,5 +11,4 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {TestConfig.class, ConsoleApplicationConfig.class})
 @ActiveProfiles("test")
 @Transactional
-public abstract class BaseTests
-{}
+public abstract class BaseTests {}

@@ -2,18 +2,17 @@ package gov.nysenate.openleg.search.agenda;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
-import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
-import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.legislation.agenda.dao.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.legislation.agenda.dao.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.search.*;
+import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
+import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -23,25 +22,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
-public class ElasticAgendaSearchService implements AgendaSearchService, IndexedSearchService<Agenda>
-{
+public class ElasticAgendaSearchService implements AgendaSearchService, IndexedSearchService<Agenda> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchService.class);
 
-    @Autowired private Environment env;
-    @Autowired private EventBus eventBus;
-    @Autowired private ElasticAgendaSearchDao agendaSearchDao;
-    @Autowired private AgendaDataService agendaDataService;
+    private final OpenLegEnvironment env;
+    private final ElasticAgendaSearchDao agendaSearchDao;
+    private final AgendaDataService agendaDataService;
 
-    @PostConstruct
-    protected void init() {
+    @Autowired
+    public ElasticAgendaSearchService(OpenLegEnvironment env,
+                                      ElasticAgendaSearchDao agendaSearchDao,
+                                      AgendaDataService agendaDataService, EventBus eventBus) {
+        this.env = env;
+        this.agendaSearchDao = agendaSearchDao;
+        this.agendaDataService = agendaDataService;
         eventBus.register(this);
     }
 
@@ -102,7 +101,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         clearIndex();
         for (int year = 2009; year <= LocalDate.now().getYear(); year++) {
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
-            List<Agenda> agendas = agendaIds.stream().map(aid -> agendaDataService.getAgenda(aid)).collect(toList());
+            List<Agenda> agendas = agendaIds.stream().map(agendaDataService::getAgenda).toList();
             logger.info("Reindexing {} agendas from {}", agendas.size(), year);
             agendaSearchDao.updateAgendaIndex(agendas);
         }
@@ -131,8 +130,8 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Subscribe
     @Override
     public synchronized void handleAgendaUpdateEvent(AgendaUpdateEvent agendaUpdateEvent) {
-        if (agendaUpdateEvent != null && agendaUpdateEvent.getAgenda() != null) {
-            updateIndex(agendaUpdateEvent.getAgenda());
+        if (agendaUpdateEvent != null && agendaUpdateEvent.agenda() != null) {
+            updateIndex(agendaUpdateEvent.agenda());
         }
     }
 
@@ -140,8 +139,8 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Subscribe
     @Override
     public synchronized void handleBulkAgendaUpdateEvent(BulkAgendaUpdateEvent bulkAgendaUpdateEvent) {
-        if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.getAgendas().isEmpty()) {
-            updateIndex(bulkAgendaUpdateEvent.getAgendas());
+        if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.agendas().isEmpty()) {
+            updateIndex(bulkAgendaUpdateEvent.agendas());
         }
     }
 

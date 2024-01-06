@@ -16,7 +16,7 @@ public class SimpleCalendarView extends CalendarIdView {
     protected MapView<String, SimpleCalendarSupView> supplementalCalendars;
     protected MapView<Integer, SimpleActiveListView> activeLists;
 
-    private LocalDate calDate;
+    private final LocalDate calDate;
 
     public SimpleCalendarView(Calendar calendar) {
         super(calendar.getId());

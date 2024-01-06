@@ -1,37 +1,33 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
+import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Repository
-public class ElasticTranscriptSearchDao extends ElasticBaseDao implements TranscriptSearchDao
-{
-    private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchDao.class);
-
-    protected static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getIndexName();
-
-    protected static final List<HighlightBuilder.Field> highlightedFields =
+public class ElasticTranscriptSearchDao extends ElasticBaseDao implements TranscriptSearchDao {
+    private static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getName();
+    private static final List<HighlightBuilder.Field> highlightedFields =
             Collections.singletonList(new HighlightBuilder.Field("text").numOfFragments(3));
+    private static final String idSeparator = "|**|";
 
     /** {@inheritDoc} */
     @Override
@@ -45,7 +41,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public void updateTranscriptIndex(Transcript transcript) {
-        updateTranscriptIndex(Collections.singletonList(transcript));
+        updateTranscriptIndex(List.of(transcript));
     }
 
     /** {@inheritDoc} */
@@ -54,7 +50,8 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
         BulkRequest bulkRequest = new BulkRequest();
         transcripts.stream()
                 .map(TranscriptView::new)
-                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getDateTime(), t))
+                .map(t -> getJsonIndexRequest(transcriptIndexName,
+                        t.getDateTime() + idSeparator + t.getSessionType(), t))
                 .forEach(bulkRequest::add);
         safeBulkRequestExecute(bulkRequest);
     }
@@ -63,14 +60,14 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     public void deleteTranscriptFromIndex(TranscriptId transcriptId) {
         if (transcriptId != null) {
-            deleteEntry(transcriptIndexName, transcriptId.getDateTime().toString());
+            deleteEntry(transcriptIndexName, transcriptId.dateTime().toString());
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    protected List<String> getIndices() {
-        return Lists.newArrayList(transcriptIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.TRANSCRIPT;
     }
 
     @Override
@@ -83,6 +80,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     }
 
     private TranscriptId getTranscriptIdFromHit(SearchHit hit) {
-        return new TranscriptId(hit.getId());
+        String[] data = hit.getId().split(Pattern.quote(idSeparator));
+        return new TranscriptId(LocalDateTime.parse(data[0]), data[1]);
     }
 }

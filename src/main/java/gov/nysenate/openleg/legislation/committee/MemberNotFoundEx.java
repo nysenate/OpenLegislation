@@ -2,15 +2,17 @@ package gov.nysenate.openleg.legislation.committee;
 
 import gov.nysenate.openleg.legislation.SessionYear;
 
-public class MemberNotFoundEx extends RuntimeException
-{
+import java.io.Serial;
+
+public class MemberNotFoundEx extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 1963594118700545358L;
 
-    protected String lbdcName;
-    protected int memberId;
-    protected int sessionMemberId;
-    protected SessionYear session;
-    protected Chamber chamber;
+    private String lbdcName;
+    private int memberId;
+    private int sessionMemberId;
+    private SessionYear session;
+    private Chamber chamber;
 
     public MemberNotFoundEx() {
         super();

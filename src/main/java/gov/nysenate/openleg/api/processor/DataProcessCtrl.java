@@ -1,24 +1,23 @@
 package gov.nysenate.openleg.api.processor;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunDetailView;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunInfoView;
+import gov.nysenate.openleg.api.processor.view.DataProcessRunView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunDetailView;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunInfoView;
-import gov.nysenate.openleg.api.processor.view.DataProcessRunView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.processors.log.DataProcessRun;
-import gov.nysenate.openleg.processors.log.DataProcessRunInfo;
 import gov.nysenate.openleg.processors.DataProcessor;
 import gov.nysenate.openleg.processors.log.DataProcessLogService;
+import gov.nysenate.openleg.processors.log.DataProcessRun;
+import gov.nysenate.openleg.processors.log.DataProcessRunInfo;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -34,17 +33,19 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
-public class DataProcessCtrl extends BaseCtrl
-{
+public class DataProcessCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessCtrl.class);
+    private final DataProcessLogService processLogs;
+    private final DataProcessor dataProcessor;
 
-    @Autowired private Environment env;
-    @Autowired private DataProcessLogService processLogs;
-    @Autowired private DataProcessor dataProcessor;
+    @Autowired
+    public DataProcessCtrl(DataProcessLogService processLogs, DataProcessor dataProcessor) {
+        this.processLogs = processLogs;
+        this.dataProcessor = dataProcessor;
+    }
 
     /**
      * Data Process API
@@ -65,7 +66,7 @@ public class DataProcessCtrl extends BaseCtrl
             }
             return new ErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED);
         } catch (Exception ex) {
-            logger.error("DataProcess exception: \n{}", ex);
+            logger.error("DataProcess exception: \n{}", ex.getMessage());
             return new ViewObjectErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED, ExceptionUtils.getStackTrace(ex));
         }
     }
@@ -125,12 +126,12 @@ public class DataProcessCtrl extends BaseCtrl
         boolean detail = getBooleanParam(request, "detail", false);
 
         PaginatedList<DataProcessRunInfo> runs = processLogs.getRunInfos(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
-        return ListViewResponse.of(runs.getResults().stream()
+        return ListViewResponse.of(runs.results().stream()
             .map(runInfo -> (detail)
                     ? new DataProcessRunDetailView(runInfo, processLogs.getUnits(runInfo.getRun().getProcessId(), LimitOffset.FIFTY))
                     : new DataProcessRunInfoView(runInfo))
-            .collect(toList()),
-            runs.getTotal(), runs.getLimOff());
+            .toList(),
+            runs.total(), runs.limOff());
     }
 
     /**
@@ -145,7 +146,7 @@ public class DataProcessCtrl extends BaseCtrl
      * Expected Output: DataProcessRunDetailView
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping("/runs/id/{id:[0-9]+}")
+    @RequestMapping("/runs/id/{id:\\d+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
         Optional<DataProcessRunInfo> runInfo = processLogs.getRunInfo(id);

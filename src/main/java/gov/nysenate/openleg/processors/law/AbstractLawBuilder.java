@@ -78,7 +78,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
      * @return the proper LawBuilder.
      */
     public static LawBuilder makeLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        String lawID = lawVersionId.getLawId();
+        String lawID = lawVersionId.lawId();
         if (lawID.equals(CONS_STR))
             return new ConstitutionLawBuilder(lawVersionId, previousTree);
         if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
@@ -200,7 +200,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
         LawTreeNode priorRootNode = this.rootNode;
         this.rootNode = null;
         Set<String> processed = new HashSet<>();
-        logger.info("Rebuilding tree for {} with master document.", this.lawVersionId.getLawId());
+        logger.info("Rebuilding tree for {} with master document.", this.lawVersionId.lawId());
 
         // Clear out any existing parents when rebuilding trees.
         clearParents();
@@ -215,7 +215,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
             block.setLawId(resolvedDocId.substring(0, 3));
             block.setLocationId(resolvedDocId.substring(3));
 
-            LocalDate publishedDate = this.lawVersionId.getPublishedDate();
+            LocalDate publishedDate = this.lawVersionId.publishedDate();
             boolean isNewDoc = true;
             // Use published date from existing law doc if present
             if (lawDocMap.containsKey(resolvedDocId)) {

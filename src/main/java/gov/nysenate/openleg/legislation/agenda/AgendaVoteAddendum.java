@@ -4,6 +4,7 @@ import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -13,8 +14,8 @@ import java.util.Objects;
 /**
  * Votes during committee meetings are sent via these agenda vote addenda.
  */
-public class AgendaVoteAddendum extends BaseLegislativeContent implements Serializable
-{
+public class AgendaVoteAddendum extends BaseLegislativeContent implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4592278008570984247L;
 
     /** Reference to the parent agenda. */

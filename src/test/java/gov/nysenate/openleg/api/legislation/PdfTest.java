@@ -2,14 +2,14 @@ package gov.nysenate.openleg.api.legislation;
 
 import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.api.legislation.law.LawPdfCtrl;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.PublicHearingGetCtrl;
+import gov.nysenate.openleg.api.legislation.transcripts.hearing.HearingGetCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.TranscriptGetCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.law.LawInfo;
 import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
-import gov.nysenate.openleg.legislation.transcripts.hearing.dao.PublicHearingDao;
+import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDao;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @SillyTest
 public class PdfTest extends ApiTest {
@@ -33,9 +32,9 @@ public class PdfTest extends ApiTest {
     private TranscriptDao transcriptDao;
 
     @Autowired
-    private PublicHearingGetCtrl publicHearingGetCtrl;
+    private HearingGetCtrl hearingGetCtrl;
     @Autowired
-    private PublicHearingDao publicHearingDao;
+    private HearingDao hearingDao;
 
     // TODO: bill tests
     @Test
@@ -43,7 +42,7 @@ public class PdfTest extends ApiTest {
         Set<String> badDocIds = new HashSet<>();
         Set<Integer> badCodePoints = new HashSet<>();
         int docIdCount = 0;
-        var lawIds = lawDataDao.getLawInfos().stream().map(LawInfo::getLawId).collect(Collectors.toList());
+        var lawIds = lawDataDao.getLawInfos().stream().map(LawInfo::getLawId).toList();
         for (var lawId : lawIds) {
             var lawTree = lawDataDao.getLawTree(lawId, LocalDate.now());
             for (var docNode : lawTree.getRootNode().getAllNodes()) {
@@ -67,7 +66,7 @@ public class PdfTest extends ApiTest {
         int limit = 500;
         var ids = transcriptDao.getTranscriptIds(SortOrder.ASC, LimitOffset.ALL);
         for (int i = 0; i < ids.size(); i++) {
-            transcriptGetCtrl.getTranscriptPdf(ids.get(i).getDateTime().toString());
+            transcriptGetCtrl.getTranscriptPdf(ids.get(i).dateTime().toString());
             if (i%limit == 0)
                 System.out.println(limit + " done!");
         }
@@ -75,9 +74,9 @@ public class PdfTest extends ApiTest {
 
     @Test
     public void fullHearingTest() throws IOException {
-        var ids = publicHearingDao.getPublicHearingIds(SortOrder.ASC, LimitOffset.ALL);
+        var ids = hearingDao.getHearingIds(SortOrder.ASC, LimitOffset.ALL);
         for (var id : ids)
-            publicHearingGetCtrl.getHearingPdf(id.getId().toString());
+            hearingGetCtrl.getHearingPdf(String.valueOf(id.id()));
     }
 
     static Set<Integer> alphaNum = new HashSet<>(), punctuation = new HashSet<>(), accentChars = new HashSet<>();

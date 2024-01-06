@@ -16,7 +16,7 @@ import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
  * prefixing with the parent doc's id. This class can be used to patch the document
  * ids with ids that reflect the proper document structure.
  */
-public class LawDocIdFixer {
+public final class LawDocIdFixer {
     private static final Logger logger = LoggerFactory.getLogger(LawDocIdFixer.class);
 
     private LawDocIdFixer() {}

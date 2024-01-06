@@ -2,10 +2,11 @@ package gov.nysenate.openleg.legislation.law;
 
 import com.google.common.collect.ComparisonChain;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-public class LawInfo implements Serializable, Comparable<LawInfo>
-{
+public class LawInfo implements Serializable, Comparable<LawInfo> {
+    @Serial
     private static final long serialVersionUID = -7614328485103748745L;
 
     /** The three letter law id. */

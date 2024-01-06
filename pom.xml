@@ -4,7 +4,7 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.8.10</version>
+  <version>3.9</version>
 
   <!-- NY Senate Maven Repository -->
 
@@ -22,13 +22,18 @@
       <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>15</source>
-          <target>15</target>
+          <source>17</source>
+          <target>17</target>
           <!-- avoid possible encoding issues -->
           <encoding>utf-8</encoding>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
       </plugin>
       <!-- Surefire Plugin -->
       <plugin>
@@ -62,7 +67,7 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <version>1.6.0</version>
+        <version>3.0.0</version>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -84,7 +89,7 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>6.0.1</version>
+        <version>8.5.2</version>
         <configuration>
           <configFiles>
             <configFile>src/main/resources/flyway.conf</configFile>
@@ -105,32 +110,33 @@
 
   <properties>
     <c3p0.version>0.9.5.5</c3p0.version>
-    <commons-cli.version>1.4</commons-cli.version>
+    <commons-cli.version>1.5.0</commons-cli.version>
+    <commons-csv.version>1.9.0</commons-csv.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <commons-lang.version>3.9</commons-lang.version>
-    <commons-text.version>1.8</commons-text.version>
-    <commons-validator.version>1.6</commons-validator.version>
-    <eh-cache.version>2.10.6</eh-cache.version>
-    <elasticsearch.version>7.3.2</elasticsearch.version>
-    <flying-saucer.version>9.1.18</flying-saucer.version>
-    <guava.version>31.0-jre</guava.version>
-    <guava.jackson.version>2.9.10</guava.jackson.version>
-    <httpclient.version>4.5.13</httpclient.version>
-    <jackson.version>2.13.2</jackson.version>
-    <jackson-databind.version>2.13.2.2</jackson-databind.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
+    <commons-text.version>1.9</commons-text.version>
+    <commons-validator.version>1.7</commons-validator.version>
+    <ehcache.version>3.9.9</ehcache.version>
+    <elasticsearch.version>7.17.1</elasticsearch.version>
+    <flying-saucer.version>9.1.22</flying-saucer.version>
+    <gson.version>2.9.0</gson.version>
+    <guava.version>31.1-jre</guava.version>
+    <http-client.version>4.5.13</http-client.version>
+    <jackson.version>2.13.3</jackson.version>
+    <javax-cache.version>1.1.1</javax-cache.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
-    <log4j.version>2.17.1</log4j.version>
+    <log4j.version>2.18.0</log4j.version>
     <mail.version>1.6.2</mail.version>
-    <mockito.version>1.10.19</mockito.version>
-    <pdfbox.version>2.0.24</pdfbox.version>
+    <mockito.version>4.6.1</mockito.version>
+    <pdfbox.version>2.0.26</pdfbox.version>
     <postgres-jdbc.version>42.3.3</postgres-jdbc.version>
-    <shiro.version>1.8.0</shiro.version>
-    <slf4j.version>1.7.28</slf4j.version>
-    <spring.version>5.3.18</spring.version>
-    <tomcat.servlet.version>8.5.46</tomcat.servlet.version>
+    <shiro.version>1.9.0</shiro.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <spring.version>5.3.19</spring.version>
+    <tomcat.servlet.version>9.0.84</tomcat.servlet.version>
     <woodstox.version>4.4.1</woodstox.version>
     <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
     <javax.activation.version>1.1.1</javax.activation.version>
@@ -141,7 +147,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
-      <version>1.5</version>
+      <version>${commons-csv.version}</version>
     </dependency>
 
     <!-- Spring -->
@@ -274,7 +280,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-guava</artifactId>
-      <version>${guava.jackson.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <!-- Elastic Search -->
@@ -296,7 +302,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -317,11 +323,6 @@
       <version>${woodstox.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${javax.xml.bind.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
@@ -355,7 +356,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
+      <version>${http-client.version}</version>
     </dependency>
 
     <dependency>
@@ -393,12 +394,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <version>1.3</version>
-    </dependency>
-
-    <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>javax.mail-api</artifactId>
       <version>${mail.version}</version>
@@ -427,9 +422,15 @@
     <!-- Caching -->
 
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
+      <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>${eh-cache.version}</version>
+      <version>${ehcache.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+      <version>${javax-cache.version}</version>
     </dependency>
 
     <!-- PDF -->
@@ -493,12 +494,12 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.3.1</version>
+      <version>${gson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>

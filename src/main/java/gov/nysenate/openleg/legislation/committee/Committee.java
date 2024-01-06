@@ -3,14 +3,19 @@ package gov.nysenate.openleg.legislation.committee;
 import com.google.common.collect.TreeMultiset;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class Committee extends BaseLegislativeContent implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 867918085158335059L;
 
     /** The name of the committee */

@@ -15,8 +15,7 @@ import java.beans.PropertyVetoException;
 
 @EnableTransactionManagement
 @Configuration
-public class DatabaseConfig
-{
+public class DatabaseConfig {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
 
     /** PostgreSQL Database Configuration */

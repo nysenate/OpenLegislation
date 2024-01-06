@@ -70,7 +70,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         try {
             reportSet = daybreakDao.getIncomingReports();
         }
-        catch (IOException ex){
+        catch (IOException ex) {
             logger.error("Could not retrieve incoming daybreak files");
             return 0;
         }

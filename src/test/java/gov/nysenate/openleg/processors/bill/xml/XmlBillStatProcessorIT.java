@@ -5,10 +5,10 @@ import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillStatus;
 import gov.nysenate.openleg.legislation.bill.BillStatusType;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -142,7 +141,7 @@ public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
      * @param exTitle   Expected Title
      */
     public void assertTest(Bill baseBill, String exVersion, String exSponsor, String exLawSec, String exTitle,
-                           ArrayList<String> expectedBillActions) {
+                           List<String> expectedBillActions) {
         String actualVersion = baseBill.getActiveVersion().toString();
         assertEquals("Version Comparison: ", exVersion, actualVersion);
         String actualSponsor = baseBill.getSponsor().getMember().getLbdcShortName();
@@ -152,7 +151,7 @@ public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
         String actualTitle = baseBill.getTitle();
         assertEquals("Title Comparison: ", exTitle, actualTitle);
         assertNotNull("Actions shouldn't be null", baseBill.getActions());
-        List<String> actionStrings = baseBill.getActions().stream().map(String::valueOf).collect(Collectors.toList());
+        List<String> actionStrings = baseBill.getActions().stream().map(String::valueOf).toList();
         assertEquals("Actions should match expected", expectedBillActions, actionStrings);
     }
 }

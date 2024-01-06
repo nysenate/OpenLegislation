@@ -1,20 +1,17 @@
 package gov.nysenate.openleg.processors.agenda;
 
+import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.agenda.*;
 import gov.nysenate.openleg.legislation.bill.*;
-import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.AbstractLegDataProcessor;
-import gov.nysenate.openleg.processors.log.DataProcessUnit;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
-import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -112,10 +109,6 @@ public class XmlSenAgenVoteProcessor extends AbstractLegDataProcessor
                         String withAmd = xmlHelper.getString("withamd/text()", xmlBill);
                         boolean withAmdBoolean = (withAmd != null && withAmd.equalsIgnoreCase("Y"));
 
-                        // The AgendaVoteBill will contain the vote as well as additional vote metadata specific
-                        // to committee votes.
-                        AgendaVoteBill voteBill = new AgendaVoteBill(voteAction, referCommitteeId, withAmdBoolean);
-
                         // Create the committee bill vote.
                         BillVote vote = new BillVote(billId, meetDateTime.toLocalDate(), BillVoteType.COMMITTEE, 1, committeeId);
                         vote.setModifiedDateTime(modifiedDate);
@@ -131,7 +124,9 @@ public class XmlSenAgenVoteProcessor extends AbstractLegDataProcessor
                             BillVoteCode voteCode = BillVoteCode.getValue(voteCodeStr);
                             vote.addMemberVote(voteCode, voterMember);
                         }
-                        voteBill.setBillVote(vote);
+                        // The AgendaVoteBill will contain the vote as well as additional vote metadata specific
+                        // to committee votes.
+                        AgendaVoteBill voteBill = new AgendaVoteBill(voteAction, referCommitteeId, withAmdBoolean, vote);
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.

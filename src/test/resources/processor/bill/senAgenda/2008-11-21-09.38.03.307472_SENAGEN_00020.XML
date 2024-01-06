@@ -1,0 +1,36 @@
+<senagenda no="20" sessyr="2007" year="2008" action="replace" >
+<addendum id="">
+<weekof>2008-06-13</weekof>
+<pubdate>2008-06-21</pubdate>
+<pubtime>T10.35.54Z</pubtime>
+<committees>
+<committee>
+<name><![CDATA[Rules]]></name>
+<chair><![CDATA[John J. Flanagan]]></chair>
+<location><![CDATA[332 CAP]]></location>
+<meetday>Tuesday</meetday>
+<meetdate>2008-06-14</meetdate>
+<meettime>T00.00.00Z</meettime>
+<notes><![CDATA[
+This meeting will be called off the floor.||ALL BILLS REPORT DIRECT TO THIRD READING
+]]></notes>
+<bills>
+<bill no="S01706A">
+<sponsor><![CDATA[Golden]]></sponsor>
+<message><![CDATA[]]></message>
+<title><![CDATA[
+An act to amend the social services law, in relation to investigation of illegally operating child day care services
+]]></title>
+</bill>
+<bill no="S01983A">
+<sponsor><![CDATA[Young]]></sponsor>
+<message><![CDATA[]]></message>
+<title><![CDATA[
+An act to amend the social services law, in relation to additional options for local social services districts to implement effective welfare-to-work programs; and to repeal section 341 of such law relating thereto
+]]></title>
+</bill>
+</bills>
+</committee>
+</committees>
+</addendum>
+</senagenda>

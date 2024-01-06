@@ -1,23 +1,21 @@
 package gov.nysenate.openleg.api.updates.agenda;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
-import gov.nysenate.openleg.api.legislation.agenda.view.AgendaIdView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.updates.agenda.AgendaUpdatesDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.common.util.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.nysenate.openleg.updates.agenda.AgendaUpdatesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +27,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -37,11 +34,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/agendas", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class AgendaUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(AgendaUpdatesCtrl.class);
+public class AgendaUpdatesCtrl extends BaseCtrl {
+    private final AgendaUpdatesDao agendaUpdatesDao;
 
-    @Autowired protected AgendaUpdatesDao agendaUpdatesDao;
+    @Autowired
+    public AgendaUpdatesCtrl(AgendaUpdatesDao agendaUpdatesDao) {
+        this.agendaUpdatesDao = agendaUpdatesDao;
+    }
 
     /**
      * Updated Agendas API
@@ -96,20 +95,20 @@ public class AgendaUpdatesCtrl extends BaseCtrl
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, WebRequest request) {
-        return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), DateUtils.LONG_AGO.atStartOfDay(),
+        return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), DateUtils.LONG_AGO,
             LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String from,
                                           WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         return getUpdatesForAgendaDuring(new AgendaId(agendaNo, year), fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{agendaNo}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String from,
                                                 @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
@@ -130,16 +129,16 @@ public class AgendaUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<AgendaId>> updateTokens =
                 agendaUpdatesDao.getUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
+            return DateRangeListViewResponse.of(updateTokens.results().stream()
                 .map(token -> new UpdateTokenView(token, new AgendaIdView(token.getId())))
-                .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
+                .toList(), updateRange, updateTokens.total(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<AgendaId>> updateDigests =
                 agendaUpdatesDao.getDetailedUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.results().stream()
                 .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.total(), limOff);
         }
     }
 
@@ -151,8 +150,8 @@ public class AgendaUpdatesCtrl extends BaseCtrl
 
         PaginatedList<UpdateDigest<AgendaId>> digests = agendaUpdatesDao.getDetailedUpdatesForAgenda(
             agendaId, updateRange, updateType, sortOrder, limOff);
-        return DateRangeListViewResponse.of(digests.getResults().stream()
+        return DateRangeListViewResponse.of(digests.results().stream()
             .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-            .collect(toList()), updateRange, digests.getTotal(), limOff);
+                .toList(), updateRange, digests.total(), limOff);
     }
 }

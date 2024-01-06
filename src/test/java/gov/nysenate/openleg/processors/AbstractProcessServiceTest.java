@@ -1,26 +1,34 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.fail;
 
 public abstract class AbstractProcessServiceTest extends BaseTests {
-    private static final String STAGING_STR = "/data/openleg/staging/",
-            TEST_STR = "src/test/resources/",
-            ARCHIVE_STR = "/data/openleg/archive/";
-    private final File archiveDir = new File(ARCHIVE_STR, getName());
+    private static final String TEST_STR = "src/test/resources/";
+    private File stagingDir, testDir;
+
+    @Autowired
+    private OpenLegEnvironment environment;
+
+    @PostConstruct
+    private void init() {
+        stagingDir = new File(environment.getStagingDir(), processDirName());
+        testDir = new File(TEST_STR, testFileLocation());
+    }
 
     protected abstract ProcessService getProcessService();
 
-    protected abstract String getName();
+    protected abstract String processDirName();
+
+    protected abstract String testFileLocation();
 
     /**
      * Since testing could be interrupted, we need a surefire way to clean out test files.
@@ -30,11 +38,7 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
     protected abstract boolean isTestFile(File file);
 
     protected void processFiles(String... filenames) {
-        File stagingDir = new File(STAGING_STR, getName());
         try {
-            if (!FileIOUtils.safeListFiles(stagingDir, false, null).isEmpty())
-                fail("Staging directory should be empty.");
-            File testDir = new File(TEST_STR, getName());
             // Move files into the staging directory, so they can be processed.
             for (var filename : filenames) {
                 var testFile = new File(testDir, filename);
@@ -49,15 +53,5 @@ public abstract class AbstractProcessServiceTest extends BaseTests {
         }
         getProcessService().collate();
         getProcessService().ingest();
-    }
-
-    @After
-    public void deleteTestFiles() throws IOException {
-        List<File> testFiles = FileIOUtils.safeListFiles(archiveDir, false, null)
-                .stream().filter(this::isTestFile).collect(Collectors.toList());
-        for (var file : testFiles) {
-            if(!FileUtils.deleteQuietly(file))
-                fail("File " + file + " could not be deleted from the archive. May need to manually delete.");
-        }
     }
 }

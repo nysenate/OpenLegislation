@@ -5,15 +5,13 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TranscriptDao
-{
+public interface TranscriptDao {
     /**
      * Retrieves all TranscriptId's for a year.
      *

@@ -2,25 +2,20 @@ package gov.nysenate.openleg.spotchecks.alert.agenda.dao;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
-import gov.nysenate.openleg.spotchecks.daybreak.bill.SqlFsDaybreakDao;
-import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.legislation.bill.Version;
-import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.committee.Chamber;
-import gov.nysenate.openleg.legislation.committee.CommitteeId;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
-import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
-import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaAlertInfoCommittee;
-import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommitteeItem;
+import gov.nysenate.openleg.legislation.bill.BillId;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.spotchecks.alert.agenda.AgendaMeetingWeekId;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
+import gov.nysenate.openleg.spotchecks.model.SpotCheckReferenceId;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -42,31 +37,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.spotchecks.alert.agenda.dao.SqlAgendaAlertQuery.*;
 
 @Repository
 public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
-
-    private static final Logger logger = LoggerFactory.getLogger(SqlFsDaybreakDao.class);
-
     private static final Pattern agendaFilePattern =
-            Pattern.compile("^agenda_alert-\\d{8}-[A-z\\._]+-[A-z]+-?\\d{8}T\\d{6}.html$");
+            Pattern.compile("^agenda_alert-\\d{8}-[A-z._]+-[A-z]+-?\\d{8}T\\d{6}.html$");
 
-//  This pattern parses both full and individual agenda alert filenames, but currently we can't reliably process full alerts
+    // This pattern parses both full and individual agenda alert filenames, but currently we can't reliably process full alerts
     private static final Pattern agendaFullFilePattern =
-            Pattern.compile("^agenda_alert-\\d{8}-[A-z\\._-]*\\d{8}T\\d{6}.html$");
-
-    @Autowired private Environment environment;
+            Pattern.compile("^agenda_alert-\\d{8}-[A-z._-]*\\d{8}T\\d{6}.html$");
 
     private File incomingAgendaAlertDir;
     private File archiveAgendaAlertDir;
 
     @PostConstruct
     public void init() {
-        incomingAgendaAlertDir = new File(environment.getStagingDir(), "alerts");
-        archiveAgendaAlertDir = new File(environment.getArchiveDir(), "alerts");
+        this.incomingAgendaAlertDir = new File(environment.getStagingDir(), "alerts");
+        this.archiveAgendaAlertDir = new File(environment.getArchiveDir(), "alerts");
     }
 
     /** {@inheritDoc} */
@@ -74,7 +63,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     public List<File> getIncomingAgendaAlerts() throws IOException {
         List<File> agendaAlerts = FileIOUtils.safeListFiles(incomingAgendaAlertDir, null, false).stream()
                 .filter(file -> agendaFullFilePattern.matcher(file.getName()).matches())
-                .collect(Collectors.toList());
+                .toList();
         List<File> singleAgendaAlerts = new ArrayList<>();
         for (File alert : agendaAlerts) {
             if (agendaFilePattern.matcher(alert.getName()).matches()) {
@@ -198,7 +187,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
                 .flatMap(multiMap -> multiMap.keySet().stream().map(multiMap::get))
                 .filter(aaicList -> !aaicList.isEmpty())
                 .map(aaicList -> aaicList.stream().reduce(null, AgendaAlertInfoCommittee::merge))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /** --- Row Mappers --- */
@@ -231,7 +220,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     };
 
     private static class AgendaAlertInfoCommRowHandler implements RowCallbackHandler {
-        private Map<Integer, AgendaAlertInfoCommittee> committeeMeetingRefMap = new HashMap<>();
+        private final Map<Integer, AgendaAlertInfoCommittee> committeeMeetingRefMap = new HashMap<>();
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
@@ -253,33 +242,30 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** --- Parameter Mappers --- */
 
-    private MapSqlParameterSource getAgendaMeetingWeekIdParams(AgendaMeetingWeekId meetingWeekId) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-        .addValue("year", meetingWeekId.getYear())
-        .addValue("weekOf", DateUtils.toDate(meetingWeekId.getWeekOf()))
-        .addValue("addendumId", meetingWeekId.getAddendum().toString())
-        .addValue("chamber", meetingWeekId.getCommitteeId().getChamber().asSqlEnum())
-        .addValue("committeeName", meetingWeekId.getCommitteeId().getName());
-        return params;
+    private static MapSqlParameterSource getAgendaMeetingWeekIdParams(AgendaMeetingWeekId meetingWeekId) {
+        return new MapSqlParameterSource()
+                .addValue("year", meetingWeekId.year())
+                .addValue("weekOf", DateUtils.toDate(meetingWeekId.weekOf()))
+                .addValue("addendumId", meetingWeekId.addendum().toString())
+                .addValue("chamber", meetingWeekId.committeeId().getChamber().asSqlEnum())
+                .addValue("committeeName", meetingWeekId.committeeId().getName());
     }
 
-    private MapSqlParameterSource getAgendaAlertInfoCommParams(AgendaAlertInfoCommittee aaic) {
-        MapSqlParameterSource params = getAgendaMeetingWeekIdParams(aaic.getAgendaMeetingWeekId());
-        params.addValue("referenceDateTime", DateUtils.toDate(aaic.getReferenceId().getRefActiveDateTime()));
-        params.addValue("chair", aaic.getChair());
-        params.addValue("location", aaic.getLocation());
-        params.addValue("meetingDateTime", DateUtils.toDate(aaic.getMeetingDateTime()));
-        params.addValue("notes", aaic.getNotes());
-        return params;
+    private static MapSqlParameterSource getAgendaAlertInfoCommParams(AgendaAlertInfoCommittee aaic) {
+        return getAgendaMeetingWeekIdParams(aaic.getAgendaMeetingWeekId())
+                .addValue("referenceDateTime", DateUtils.toDate(aaic.getReferenceId().getRefActiveDateTime()))
+                .addValue("chair", aaic.getChair())
+                .addValue("location", aaic.getLocation())
+                .addValue("meetingDateTime", DateUtils.toDate(aaic.getMeetingDateTime()))
+                .addValue("notes", aaic.getNotes());
     }
 
-    private MapSqlParameterSource getAgendaInfoCommItemParams(AgendaInfoCommitteeItem aici, int aaicId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("alertInfoCommitteeId", aaicId);
-        params.addValue("billPrintNo", aici.getBillId().getBasePrintNo());
-        params.addValue("billSessionYear", aici.getBillId().getSession().getYear());
-        params.addValue("billAmendVersion", aici.getBillId().getVersion().toString());
-        params.addValue("message", aici.getMessage());
-        return params;
+    private static MapSqlParameterSource getAgendaInfoCommItemParams(AgendaInfoCommitteeItem aici, int aaicId) {
+        return new MapSqlParameterSource()
+                .addValue("alertInfoCommitteeId", aaicId)
+                .addValue("billPrintNo", aici.getBillId().getBasePrintNo())
+                .addValue("billSessionYear", aici.getBillId().getSession().year())
+                .addValue("billAmendVersion", aici.getBillId().getVersion().toString())
+                .addValue("message", aici.getMessage());
     }
 }

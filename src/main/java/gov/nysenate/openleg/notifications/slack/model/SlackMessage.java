@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.notifications.slack.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class SlackMessage {
 
@@ -48,7 +47,7 @@ public class SlackMessage {
         this.mentions = other.mentions != null ? new ArrayList<>(other.mentions) : null;
         this.attach = other.attach != null ? other.attach.stream()
                 .map(SlackAttachment::new)
-                .collect(Collectors.toList())
+                .toList()
             : null;
     }
 

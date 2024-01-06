@@ -1,14 +1,15 @@
 import React from "react";
 import {
-  emailInUse,
   getEmail,
   updateEmail
 } from "app/apis/subscriptionApi";
+import ErrorMessage from "../../shared/ErrorMessage";
 
 
 export default function Email({ apiKey }) {
   const [ email, setEmail ] = React.useState("");
   const [ message, setMessage ] = React.useState("")
+  const [ errorMsg, setErrorMsg ] = React.useState("")
 
   React.useEffect(() => {
     getEmail(apiKey)
@@ -17,16 +18,11 @@ export default function Email({ apiKey }) {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    emailInUse(email)
-      .then((res) => {
-        if (res[0]) {
-          setMessage("Email is already in use.")
-        } else {
-          updateEmail(apiKey, email)
-            .then(() => setMessage("Email updated!"))
-            .catch(() => setMessage("Error updating email."))
-        }
-      })
+    setMessage("")
+    setErrorMsg("")
+    updateEmail(apiKey, email)
+      .then(() => setMessage("Email updated!"))
+      .catch((error) => setErrorMsg(error.message))
   }
 
   return (
@@ -38,7 +34,7 @@ export default function Email({ apiKey }) {
                onChange={(e) => setEmail(e.target.value)}
                className="input block w-72" />
         <button className="btn btn--primary my-3 w-55" type="submit">Update email</button>
-        <div>{message}</div>
+        <div>{errorMsg ? <ErrorMessage>{errorMsg}</ErrorMessage> : message}</div>
       </div>
     </form>
   )

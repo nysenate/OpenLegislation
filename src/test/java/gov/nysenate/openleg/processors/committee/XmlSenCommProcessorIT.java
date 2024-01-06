@@ -5,6 +5,8 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.legislation.member.Member;
+import gov.nysenate.openleg.legislation.member.Person;
+import gov.nysenate.openleg.legislation.member.PersonName;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.ParseError;
@@ -49,10 +51,10 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         expected.setLocation("Room 412 LOB");
         expected.setSession(SessionYear.of(2017));
 
-        Member member = new Member();
-        member.setIncumbent(true);
-        member.setPersonId(1237);
-        member.setMemberId(1415);
+        PersonName name = new PersonName("RITCHIE", "", "", "", "", "");
+        Person person = new Person(1237, name, "", "");
+        Member member = new Member(person, 1415, SENATE, true);
+
 
         SessionMember sessionMember = new SessionMember();
         sessionMember.setMember(member);

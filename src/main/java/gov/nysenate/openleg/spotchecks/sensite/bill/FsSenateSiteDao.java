@@ -2,13 +2,13 @@ package gov.nysenate.openleg.spotchecks.sensite.bill;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.common.util.FileIOUtils;
+import gov.nysenate.openleg.common.util.SenateSiteDumpFragParser;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDump;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.spotchecks.sensite.SenateSiteDumpId;
-import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.common.util.SenateSiteDumpFragParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.text.StringSubstitutor;
@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.util.DateUtils.BASIC_ISO_DATE_TIME;
 import static gov.nysenate.openleg.common.util.DateUtils.BASIC_ISO_DATE_TIME_REGEX;
@@ -31,9 +30,10 @@ import static gov.nysenate.openleg.common.util.DateUtils.BASIC_ISO_DATE_TIME_REG
 public class FsSenateSiteDao implements SenateSiteDao {
 
     private static final Logger logger = LoggerFactory.getLogger(FsSenateSiteDao.class);
+    private static final Object lock = new Object();
 
     @Autowired
-    private Environment environment;
+    private OpenLegEnvironment environment;
     @Autowired
     private SenateSiteDumpFragParser parser;
     @Autowired
@@ -54,17 +54,15 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     @Override
     public Collection<SenateSiteDump> getPendingDumps(SpotCheckRefType refType) throws IOException {
-        Collection<File> fragmentFiles =
-                FileUtils.listFiles(getIncomingDumpDir(refType), new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
-        List<SenateSiteDumpFragment> fragments = new LinkedList<>();
-        for (File file : fragmentFiles) {
-            fragments.add(getFragmentFromFile(file));
+        List<SenateSiteDumpFragment> fragments = new ArrayList<>();
+        synchronized (lock) {
+            Collection<File> fragmentFiles = FileUtils.listFiles(getIncomingDumpDir(refType),
+                    new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
+            for (File file : fragmentFiles) {
+                fragments.add(getFragmentFromFile(file));
+            }
         }
         return groupFragmentsIntoDumps(fragments);
-    }
-
-    public Collection<File> getDumpFilesFromDir(SpotCheckRefType refType, File directory) {
-         return FileUtils.listFiles(directory, new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
     }
 
     private Collection<SenateSiteDump> groupFragmentsIntoDumps(Collection<SenateSiteDumpFragment> fragments) {
@@ -82,12 +80,13 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     @Override
     public void saveDumpFragment(SenateSiteDumpFragment fragment, String fragmentData) throws IOException {
-        File fragmentFile = new File(getIncomingDumpDir(fragment.getDumpId().getRefType()), getDumpFragFilename(fragment));
-        logger.info("saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
+        File fragmentFile = new File(getIncomingDumpDir(fragment.getDumpId().refType()), getDumpFragFilename(fragment));
+        logger.info("Saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
         try {  // Delete existing dump if possible
-            FileUtils.forceDelete(fragmentFile);
-        } catch (FileNotFoundException ignored) {
-        }
+            synchronized (lock) {
+                FileUtils.forceDelete(fragmentFile);
+            }
+        } catch (FileNotFoundException ignored) {}
 
         // Write pretty printed json to a temporary file, then rename it to the desired name
         File tempFile = FileIOUtils.getTempFile(fragmentFile);
@@ -99,16 +98,15 @@ public class FsSenateSiteDao implements SenateSiteDao {
     @Override
     public void archiveDump(SenateSiteDump dump) throws IOException {
         List<File> fragFiles = dump.getDumpFragments().stream()
-                .map(SenateSiteDumpFragment::getFragmentFile)
-                .collect(Collectors.toList());
+                .map(SenateSiteDumpFragment::getFragmentFile).toList();
         List<File> archivedFiles = new ArrayList<>();
 
         try {
             for (File fragFile : fragFiles) {
-                File archivedFile = archiveFile(fragFile, getArchiveBillDir(dump.getDumpId().getRefType()));
+                File archivedFile = archiveFile(fragFile, getArchiveBillDir(dump.getDumpId().refType()));
                 archivedFiles.add(archivedFile);
             }
-        } catch (IOException|NullPointerException ex) {
+        } catch (IOException | NullPointerException ex) {
             // Unable to archive the entire dump. Delete any archived files to leave the filesystem in a valid state.
             for (File archivedFile : archivedFiles) {
                 FileUtils.deleteQuietly(archivedFile);
@@ -170,24 +168,16 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     /**
      * @param fragment SenateSiteDumpFragment
-     * @return String - the prefix that is used for all dump fragments of the designated dump
-     */
-    private static String getDumpFragFilenamePrefix(SenateSiteDumpFragment fragment) {
-        return StringSubstitutor.replace(dumpFragFilenamePrefix(fragment.getDumpId().getRefType()), getDumpIdSubMap(fragment.getDumpId()));
-    }
-
-    /**
-     * @param fragment SenateSiteDumpFragment
      * @return String - the filename that is used for the designated dump fragment
      */
     private static String getDumpFragFilename(SenateSiteDumpFragment fragment) {
-        return StringSubstitutor.replace(dumpFragFilename(fragment.getDumpId().getRefType()), getDumpFragSubMap(fragment));
+        return StringSubstitutor.replace(dumpFragFilename(fragment.getDumpId().refType()), getDumpFragSubMap(fragment));
     }
 
     private static ImmutableMap<String, String> getDumpIdSubMap(SenateSiteDumpId dumpId) {
         return ImmutableMap.of(
-                "year", Integer.toString(dumpId.getYear()),
-                "refDateTime", dumpId.getDumpTime().format(BASIC_ISO_DATE_TIME));
+                "year", Integer.toString(dumpId.year()),
+                "refDateTime", dumpId.dumpTime().format(BASIC_ISO_DATE_TIME));
     }
 
     private static ImmutableMap<String, String> getDumpFragSubMap(SenateSiteDumpFragment fragment) {
@@ -232,7 +222,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
         String reTemplate = "^" + dumpFragFilename(refType);
         String regex = StringSubstitutor.replace(reTemplate, ImmutableMap.of(
                 "year", "(\\d{4})",
-                "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
+                "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX + ")",
                 "seqNo", "(\\d+)"));
         return Pattern.compile(regex);
     }

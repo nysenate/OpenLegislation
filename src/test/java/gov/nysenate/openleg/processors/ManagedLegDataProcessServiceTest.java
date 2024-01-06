@@ -1,16 +1,16 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
-import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
-import gov.nysenate.openleg.processors.bill.SourceFile;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
+import gov.nysenate.openleg.processors.bill.SourceFile;
 import gov.nysenate.openleg.processors.bill.sobi.SobiFile;
 import gov.nysenate.openleg.processors.bill.xml.XmlFile;
+import gov.nysenate.openleg.processors.sourcefile.SourceFileRefDao;
+import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class ManagedLegDataProcessServiceTest extends BaseTests {
     @Autowired
     ManagedLegDataProcessService managedSobiProcessService;
     @Autowired
-    Environment environment;
+    OpenLegEnvironment environment;
     @Autowired
     SourceFileRefDao sourceFileRefDao;
 

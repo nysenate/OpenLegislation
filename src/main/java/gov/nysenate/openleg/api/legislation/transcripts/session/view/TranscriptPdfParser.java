@@ -23,7 +23,7 @@ public class TranscriptPdfParser {
 
     public TranscriptPdfParser(String transcriptText) {
         var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
-                .filter(tl -> (!tl.isBlank() || tl.getText().matches(" {10,}")) && !tl.isStenographer())
+                .filter(tl -> (!tl.isBlank() || tl.text().matches(" {10,}")) && !tl.isStenographer())
                 .collect(Collectors.toCollection(ArrayList::new));
         // Second line may be a page number after a line of whitespace, so the 3rd line is used.
         this.hasLineNumbers = lineArrayList.size() >= 3 && lineArrayList.get(2).hasLineNumber();
@@ -47,7 +47,7 @@ public class TranscriptPdfParser {
         for (int i = 0; i < lines.size() - 1; i++) {
             TranscriptLine currLine = lines.get(i), nextLine = lines.get(i + 1);
             if (needsCorrecting(nextLine)) {
-                currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText());
+                currLine = new TranscriptLine(currLine.text() + " " + nextLine.text());
                 i++;
             }
             if (currLine.isPageNumber() && !currPage.isEmpty())
@@ -65,12 +65,12 @@ public class TranscriptPdfParser {
      */
     private boolean needsCorrecting(TranscriptLine nextLine) {
         if (!hasLineNumbers)
-            return !nextLine.getText().startsWith(" ");
+            return !nextLine.text().startsWith(" ");
         if (nextLine.isBlank() || nextLine.isPageNumber())
             return false;
         if (!nextLine.hasLineNumber())
             return true;
-        return nextLine.getText().matches("\\d+") && Integer.parseInt(nextLine.getText()) != currPage.size() + 1;
+        return nextLine.text().matches("\\d+") && Integer.parseInt(nextLine.text()) != currPage.size() + 1;
     }
 
     /**
@@ -79,12 +79,12 @@ public class TranscriptPdfParser {
     private void addLine(TranscriptLine currLine) {
         // The first line added is always a page number.
         if (currPage.isEmpty())
-            currPage.add(currLine.getText().trim());
+            currPage.add(currLine.text().trim());
         else
-            currPage.add(currLine.getText());
+            currPage.add(currLine.text());
         // Sometimes, manual spacing needs to be added.
         if (pages.isEmpty() && !hasLineNumbers) {
-            Matcher m = BLANK_LINE_PATTERN.matcher(currLine.getText());
+            Matcher m = BLANK_LINE_PATTERN.matcher(currLine.text());
             if (m.find())
                 currPage.addAll(Collections.nCopies(BLANK_LINES.get(m.group(1)), ""));
         }

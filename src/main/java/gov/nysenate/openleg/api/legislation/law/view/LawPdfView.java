@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.legislation.law.view;
 
-import gov.nysenate.openleg.api.BasePdfView;
+import gov.nysenate.openleg.api.legislation.BasePdfView;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 

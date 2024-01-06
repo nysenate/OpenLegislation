@@ -5,7 +5,6 @@ import gov.nysenate.openleg.legislation.law.LawTreeNode;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class LawDocWithRefsView extends LawDocView
 {
@@ -19,8 +18,8 @@ public class LawDocWithRefsView extends LawDocView
         if (lawTreeNode.isPresent()) {
             this.parents = lawTreeNode.get()
                     .getAllParents().stream()
-                    .map(n -> new LawDocInfoView(n.getLawDocInfo())).collect(Collectors.toList());
-            this.parentLocationIds = this.parents.stream().map(LawDocInfoView::getLocationId).collect(Collectors.toList());
+                    .map(n -> new LawDocInfoView(n.getLawDocInfo())).toList();
+            this.parentLocationIds = this.parents.stream().map(LawDocInfoView::getLocationId).toList();
             this.prevSibling = (lawTreeNode.get().getPrevSibling().isPresent())
                     ? new LawDocInfoView(lawTreeNode.get().getPrevSibling().get().getLawDocInfo()) : null;
             this.nextSibling = (lawTreeNode.get().getNextSibling().isPresent())

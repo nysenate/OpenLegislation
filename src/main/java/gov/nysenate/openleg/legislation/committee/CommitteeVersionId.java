@@ -2,12 +2,14 @@ package gov.nysenate.openleg.legislation.committee;
 
 import gov.nysenate.openleg.legislation.SessionYear;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class CommitteeVersionId extends CommitteeSessionId implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 2679527346305021089L;
 
     /** Refers to the date this committee was referenced. */
@@ -41,11 +43,8 @@ public class CommitteeVersionId extends CommitteeSessionId implements Serializab
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CommitteeVersionId)) return false;
+        if (!(o instanceof CommitteeVersionId versionId)) return false;
         if (!super.equals(o)) return false;
-
-        CommitteeVersionId versionId = (CommitteeVersionId) o;
-
         return (Objects.equals(referenceDate, versionId.referenceDate));
     }
 

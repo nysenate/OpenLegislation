@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.api.legislation.bill.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaIdView;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
 import gov.nysenate.openleg.api.ViewObject;
+import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaIdView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
@@ -14,7 +14,6 @@ import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * A complete representation of a bill including its amendments.
@@ -55,11 +54,10 @@ public class BillView extends BillInfoView implements ViewObject
                 .flatMap(a -> a.getVotesList().stream())
                 .sorted()
                 .map(BillVoteView::new)
-                .collect(Collectors.toList()));
+                    .toList());
 
             this.vetoMessages = ListView.of(bill.getVetoMessages().values().stream()
-                .map(VetoMessageView::new)
-                .collect(Collectors.toList()));
+                .map(VetoMessageView::new).toList());
 
             this.approvalMessage = bill.getApprovalMessage() != null ?
                 new ApprovalMessageView(bill.getApprovalMessage()) : null;
@@ -67,29 +65,23 @@ public class BillView extends BillInfoView implements ViewObject
             this.activeVersion = bill.getActiveVersion().toString();
 
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
-                .map(MemberView::new)
-                .collect(Collectors.toList()));
+                .map(MemberView::new).toList());
 
             this.pastCommittees = ListView.of(bill.getPastCommittees().stream()
-                .map(CommitteeVersionIdView::new)
-                .collect(Collectors.toList()));
+                .map(CommitteeVersionIdView::new).toList());
 
             this.actions = ListView.of(bill.getActions().stream()
-                .map(BillActionView::new)
-                .collect(Collectors.toList()));
+                .map(BillActionView::new).toList());
 
             this.previousVersions = ListView.of(bill.getAllPreviousVersions().stream()
                 .map(BillIdView::new)
-                .sorted((a,b) -> Integer.compareUnsigned(b.getSession(), a.getSession()))
-                .collect(Collectors.toList()));
+                .sorted((a,b) -> Integer.compareUnsigned(b.getSession(), a.getSession())).toList());
 
             this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
-                .map(CommAgendaIdView::new)
-                .collect(Collectors.toList()));
+                .map(CommAgendaIdView::new).toList());
 
             this.calendars = ListView.of(bill.getCalendars().stream()
-                .map(CalendarIdView::new)
-                .collect(Collectors.toList()));
+                .map(CalendarIdView::new).toList());
         }
     }
 

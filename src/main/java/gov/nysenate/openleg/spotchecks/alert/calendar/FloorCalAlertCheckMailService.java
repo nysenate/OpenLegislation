@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Service
 public class FloorCalAlertCheckMailService extends SimpleCheckMailService {
     private static final Pattern floorCalAlertSubjectPattern =
-            Pattern.compile("^Senate Cal No\\.\\s+(?<calNo>\\d+[A-z]?)\\s+for\\s+[A-z]+day\\s+" + datePattern + "$");
+            Pattern.compile("^Senate Cal No\\. (?<calNo>\\d+[A-z]?) for [A-z]+day " + datePattern + "$");
 
     @Override
     protected Pattern getPattern() {

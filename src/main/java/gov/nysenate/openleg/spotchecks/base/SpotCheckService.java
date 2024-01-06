@@ -8,9 +8,10 @@ import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
  * as LRS (LBDC). The interface is kept generic to allow for multiple types of data
  * quality check implementations to use the same pattern.
  *
- * @param <ContentKey>  - The class that can uniquely identify an instance of ContentType (e.g AgendaId)
+ * @param <ContentKey>  - The class that can uniquely identify an instance of ContentType (e.g. AgendaId)
  * @param <ContentType> - The class to perform data verification on (e.g. Bill, Agenda, etc).
  */
+@FunctionalInterface
 public interface SpotCheckService<ContentKey, ContentType, ReferenceType> {
     /**
      * Perform a check on 'content' against the supplied reference data 'reference'. A SpotCheckObservation

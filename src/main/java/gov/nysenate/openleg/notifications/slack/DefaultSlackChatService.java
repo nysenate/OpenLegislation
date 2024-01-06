@@ -13,8 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 @Service
 public class DefaultSlackChatService implements SlackChatService {
@@ -94,7 +93,7 @@ public class DefaultSlackChatService implements SlackChatService {
                     channelMap.get(channel).stream()
                             .map(SlackAddress::getUsername)
                             .filter(StringUtils::isNotBlank)
-                            .collect(Collectors.toList()));
+                            .toList());
 
             this.sendMessage(message);
         }

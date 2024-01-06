@@ -2,18 +2,24 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * Data service layer for retrieval and persistence of transcripts.
  */
-public interface TranscriptDataService
-{
+public interface TranscriptDataService {
+    /**
+     * Attempts to fetch a transcript based only on it's dateTime.
+     * @throws DuplicateTranscriptEx if multiple transcripts have the same dateTime.
+     */
+    Transcript getTranscriptByDateTime(LocalDateTime localDateTime) throws TranscriptNotFoundEx, DuplicateTranscriptEx;
+
     /**
      * Fetch a transcript given an id.
      *

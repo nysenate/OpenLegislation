@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommFlatView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.common.settings.Settings;
@@ -28,7 +28,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchDao.class);
 
-    protected static final String agendaIndexName = SearchIndex.AGENDA.getIndexName();
+    protected static final String agendaIndexName = SearchIndex.AGENDA.getName();
 
     /** {@inheritDoc} */
     @Override
@@ -67,8 +67,8 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     }
 
     @Override
-    protected List<String> getIndices() {
-        return Collections.singletonList(agendaIndexName);
+    protected SearchIndex getIndex() {
+        return SearchIndex.AGENDA;
     }
 
     /**

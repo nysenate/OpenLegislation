@@ -22,8 +22,8 @@ public enum NotificationType {
     OPENLEG_SPOTCHECK(NotificationCategory.INFO, NotificationUrgency.WARNING),
     NEW_API_KEY(NotificationCategory.INFO, NotificationUrgency.INFO);
 
-    private NotificationCategory category;
-    private NotificationUrgency urgency;
+    private final NotificationCategory category;
+    private final NotificationUrgency urgency;
 
     NotificationType(NotificationCategory category, NotificationUrgency urgency) {
         this.category = category;

@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ListMultimap;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.attendance.SenateVoteAttendance;
@@ -8,8 +10,8 @@ import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,9 +26,8 @@ import java.util.stream.Collectors;
  */
 public class BillVote extends BaseLegislativeContent implements Serializable, Comparable<BillVote>
 {
+    @Serial
     private static final long serialVersionUID = -5265803060674818213L;
-
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
     /** Reference to the specific bill this vote was taken on. */
     private BillId billId;
@@ -40,7 +41,6 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
     private CommitteeId committeeId;
 
     /** Sets of members grouped based upon how they voted. */
-    @SuppressWarnings("serial")
     private ListMultimap<BillVoteCode, SessionMember> memberVotes = ArrayListMultimap.create();
 
     /** An identifier to uniquely identify votes that came in on the same day.
@@ -165,18 +165,6 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
     }
 
     /** --- Basic Getters/Setters --- */
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public static SimpleDateFormat getDateFormat() {
-        return dateFormat;
-    }
-
-    public static void setDateFormat(SimpleDateFormat dateFormat) {
-        BillVote.dateFormat = dateFormat;
-    }
 
     public BillVoteType getVoteType() {
         return voteType;

@@ -2,11 +2,13 @@ package gov.nysenate.openleg.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
+
 /**
  * An interface that designates that its implementer is a view object
  * */
-public interface ViewObject
-{
+@FunctionalInterface
+public interface ViewObject extends Serializable {
     /**
      * Returns a string indicating the type of the content that the view object encapsulates
      * @return String

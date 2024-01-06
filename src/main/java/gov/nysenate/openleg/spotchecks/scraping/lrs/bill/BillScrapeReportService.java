@@ -4,9 +4,9 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
-import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
+import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -28,15 +28,24 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.REFERE
  */
 @Service
 public class BillScrapeReportService implements SpotCheckReportService<BaseBillId> {
-
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeReportService.class);
-
     private static final int maxBillsPerReport = 5000;
 
-    @Autowired private SqlFsBillScrapeReferenceDao dao;
-    @Autowired private BillDataService billDataService;
-    @Autowired private BillScrapeCheckService billScrapeCheckService;
-    @Autowired private BillScrapeReferenceFactory billScrapeReferenceFactory;
+    private final SqlFsBillScrapeReferenceDao dao;
+    private final BillDataService billDataService;
+    private final BillScrapeCheckService billScrapeCheckService;
+    private final BillScrapeReferenceFactory billScrapeReferenceFactory;
+
+    @Autowired
+    public BillScrapeReportService(SqlFsBillScrapeReferenceDao dao,
+                                   BillDataService billDataService,
+                                   BillScrapeCheckService billScrapeCheckService,
+                                   BillScrapeReferenceFactory billScrapeReferenceFactory) {
+        this.dao = dao;
+        this.billDataService = billDataService;
+        this.billScrapeCheckService = billScrapeCheckService;
+        this.billScrapeReferenceFactory = billScrapeReferenceFactory;
+    }
 
     /**
      * {@inheritDoc}
@@ -52,10 +61,10 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, IOException {
         PaginatedList<BillScrapeFile> pendingScrapeFiles = dao.getPendingScrapeBills(new LimitOffset(maxBillsPerReport));
-        if (pendingScrapeFiles.getTotal() > maxBillsPerReport) {
-            logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.getTotal());
+        if (pendingScrapeFiles.total() > maxBillsPerReport) {
+            logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.total());
         }
-        List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.getResults());
+        List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.results());
 
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx();
@@ -65,12 +74,9 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
         report.setNotes(createNotes(references));
 
         // Get observations for each reference
-        references.stream()
-                .map(this::generateObservation)
-                .forEach(report::addObservation);
-
+        references.stream().map(this::generateObservation).forEach(report::addObservation);
         // Set each reference as checked
-        for (BillScrapeFile file : pendingScrapeFiles.getResults()) {
+        for (BillScrapeFile file : pendingScrapeFiles.results()) {
             file.setPendingProcessing(false);
             dao.updateScrapedBill(file);
         }
@@ -98,7 +104,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
         return report;
     }
 
-    // Set checked billids as notes
+    // Set checked BillIds as notes
     private String createNotes(List<BillScrapeReference> references) {
         return references.stream()
                 .map(btr -> btr.getBaseBillId().toString())

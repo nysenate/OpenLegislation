@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ApiUserService
-{
+public interface ApiUserService {
     /**
      * Get an API User from a given email address
      * @param email The email address of the user being search for.

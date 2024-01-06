@@ -9,9 +9,14 @@ public class SenateSiteDumpFragment {
     /** The file that contains the dump fragment */
     private File fragmentFile;
 
-    public SenateSiteDumpFragment(SenateSiteDumpId dumpId, int sequenceNo) {
+    public SenateSiteDumpFragment(SenateSiteDumpId dumpId, int sequenceNo, File fragmentFile) {
         this.dumpId = dumpId;
         this.sequenceNo = sequenceNo;
+        this.fragmentFile = fragmentFile;
+    }
+
+    public SenateSiteDumpFragment(SenateSiteDumpId dumpId, int sequenceNo) {
+        this(dumpId, sequenceNo, null);
     }
 
     /** --- Getters --- */

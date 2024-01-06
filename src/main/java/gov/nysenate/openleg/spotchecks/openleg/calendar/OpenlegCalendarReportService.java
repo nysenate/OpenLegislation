@@ -1,22 +1,19 @@
 package gov.nysenate.openleg.spotchecks.openleg.calendar;
 
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.api.legislation.calendar.view.ActiveListView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarEntryList;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarSupView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.spotchecks.alert.calendar.CalendarEntryListId;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,21 +29,19 @@ import java.util.Set;
  */
 @Service("openlegCalendarReport")
 public class OpenlegCalendarReportService implements SpotCheckReportService<CalendarEntryListId> {
-    private static final Logger logger = LoggerFactory.getLogger(OpenlegCalendarReportService.class);
-
     private final OpenlegCalendarDao openlegCalendarDao;
     private final CalendarDataService calendarDataService;
-    private final BillDataService billDataService;
+    private final CalendarViewFactory calendarViewFactory;
     private final OpenlegCalendarCheckService checkService;
 
     @Autowired
     public OpenlegCalendarReportService(OpenlegCalendarDao openlegCalendarDao,
                                         CalendarDataService calendarDataService,
-                                        BillDataService billDataService,
+                                        CalendarViewFactory calendarViewFactory,
                                         OpenlegCalendarCheckService checkService) {
         this.openlegCalendarDao = openlegCalendarDao;
         this.calendarDataService = calendarDataService;
-        this.billDataService = billDataService;
+        this.calendarViewFactory = calendarViewFactory;
         this.checkService = checkService;
     }
 
@@ -78,12 +73,12 @@ public class OpenlegCalendarReportService implements SpotCheckReportService<Cale
 
         // Populate contentEntryLists with ActiveListViews
         calendarDataService.getActiveLists(year, SortOrder.NONE, LimitOffset.ALL).stream()
-                .map(al -> new ActiveListView(al, billDataService))
+                .map(calendarViewFactory::getActiveListView)
                 .forEach(alv -> contentEntryLists.put(alv.getCalendarEntryListId(), alv));
 
         // Populate contentEntryLists with floor / supplemental calendars
         calendarDataService.getCalendarSupplementals(year, SortOrder.NONE, LimitOffset.ALL).stream()
-                .map(sup -> new CalendarSupView(sup, billDataService))
+                .map(calendarViewFactory::getCalendarSupView)
                 .forEach(sup -> contentEntryLists.put(sup.getCalendarEntryListId(), sup));
 
 

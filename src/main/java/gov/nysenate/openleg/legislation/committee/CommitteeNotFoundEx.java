@@ -17,7 +17,7 @@ public class CommitteeNotFoundEx extends RuntimeException {
     public CommitteeNotFoundEx(CommitteeSessionId committeeId, Throwable cause) {
         super(
                 String.format("Could not find instance of committee %s for session year %d", committeeId,
-                        committeeId.getSession().getYear()),
+                        committeeId.getSession().year()),
                 cause
         );
         this.committeeId = committeeId;

@@ -1,7 +1,7 @@
 import React from 'react'
 import {
-  DialogOverlay,
-  DialogContent
+  DialogContent,
+  DialogOverlay
 } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 

@@ -7,6 +7,7 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeMember;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.Person;
+import gov.nysenate.openleg.legislation.member.PersonName;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
 import java.util.Arrays;
@@ -14,32 +15,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gov.nysenate.openleg.legislation.committee.Chamber.ASSEMBLY;
+import static gov.nysenate.openleg.legislation.committee.Chamber.SENATE;
 import static gov.nysenate.openleg.legislation.committee.CommitteeMemberTitle.MEMBER;
 
-public class TestData {
+public final class TestData {
 
     private TestData() {}
 
     public static final Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
-            .put(188, new Person(188, "John L. Sampson",
-                    "sampson@senate.state.ny.us", "Senator", "369_john_l._sampson.jpg"))
-            .put(263, new Person(263, "Thomas P. Morahan",
-                    "district38@nysenate.gov", "Senator", "no_image.jpg"))
-            .put(190, new Person(190, "James L. Seward",
-                    "seward@senate.state.ny.us", "Senator", "371_james_l._seward.jpg"))
-            .put(191, new Person(191, "Neil D. Breslin",
-                    "breslin@senate.state.ny.us", "Senator", "372_neil_d._breslin.jpg"))
-            .put(942, new Person(942, "Billy Jones",
-                    "", "Assembly Member", "no_image.jpg"))
-            .put(944, new Person(944,	"Robert C. Carroll",
-                    "CarrollR@nyassembly.gov", "Assembly Member", "no_image.jpg"))
-            .put(950, new Person(950, "Inez E. Dickens",
-                    "", "Assembly Member", "no_image.jpg"))
-            .put(204, new Person(204,	"Adriano Espaillat",
-                    "espailla@nysenate.gov",	"Senator", "385_adriano_espaillat.jpg"))
-            .put(499, new Person(499, "Edward Hennessey",
-                    null, null, "no_image.jpg"))
+            .put(188, getPerson(188, "John L. Sampson", SENATE, "sampson@senate.state.ny.us",
+                    "369_john_l._sampson.jpg"))
+            .put(263, getPerson(263, "Thomas P. Morahan", SENATE, "district38@nysenate.gov",
+                    "no_image.jpg"))
+            .put(190, getPerson(190, "James L. Seward", SENATE, "seward@senate.state.ny.us",
+                    "371_james_l._seward.jpg"))
+            .put(191, getPerson(191, "Neil D. Breslin", SENATE, "breslin@senate.state.ny.us",
+                    "372_neil_d._breslin.jpg"))
+            .put(942, getPerson(942, "Billy Jones", ASSEMBLY, "",
+                    "no_image.jpg"))
+            .put(944, getPerson(944, "Robert C. Carroll", ASSEMBLY, "CarrollR@nyassembly.gov",
+                    "no_image.jpg"))
+            .put(950, getPerson(950, "Inez E. Dickens", ASSEMBLY,
+                    "", "no_image.jpg"))
+            .put(204, getPerson(204, "Adriano Espaillat", SENATE,
+                    "espailla@nysenate.gov", "385_adriano_espaillat.jpg"))
+            .put(499, getPerson(499, "Edward Hennessey", ASSEMBLY,
+                    null, "no_image.jpg"))
             .build();
+
+    private static Person getPerson(int id, String fullName, Chamber chamber, String email, String imgName) {
+        String[] nameParts = fullName.split(" ");
+        boolean hasMiddleName = nameParts.length == 3;
+        var name = new PersonName(fullName, chamber, nameParts[0],
+                hasMiddleName ? nameParts[1] : "", nameParts[hasMiddleName ? 2 : 1], "");
+        return new Person(id, name, email, imgName);
+    }
 
     // TODO: test members should never be incumbents, for future-proofing, because no one is an incumbent forever.
     public static final Map<Integer, Member> MEMBER_DATA = new ImmutableMap.Builder<Integer, Member>()

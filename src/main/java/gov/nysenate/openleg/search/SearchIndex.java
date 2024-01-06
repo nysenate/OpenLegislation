@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.search;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Enumeration of all the search indices.
  */
-public enum SearchIndex
-{
+public enum SearchIndex {
     BILL("bills"),
     AGENDA("agendas"),
     CALENDAR("calendars"),
@@ -17,8 +20,8 @@ public enum SearchIndex
     API_LOG("apilog", true)
     ;
 
-    String indexName;
-    boolean primaryStore = false;
+    private final String indexName;
+    private boolean primaryStore = false;
 
     SearchIndex(String indexName) {
         this.indexName = indexName;
@@ -29,7 +32,10 @@ public enum SearchIndex
         this.primaryStore = primaryStore;
     }
 
-    public String getIndexName() {
+    public static final Set<SearchIndex> nonPrimaryIndices = Arrays.stream(values())
+            .filter(index -> !index.isPrimaryStore()).collect(Collectors.toSet());
+
+    public String getName() {
         return indexName;
     }
 

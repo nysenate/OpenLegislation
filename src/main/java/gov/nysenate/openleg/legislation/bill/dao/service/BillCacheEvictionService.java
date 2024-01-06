@@ -9,8 +9,6 @@ import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +19,14 @@ import javax.annotation.PostConstruct;
  */
 @Service
 public class BillCacheEvictionService {
-    Logger logger = LoggerFactory.getLogger(BillCacheEvictionService.class);
+    private final EventBus eventBus;
+    private final CachedBillDataService billDataService;
 
-    @Autowired private EventBus eventBus;
-    @Autowired private CachedBillDataService billDataService;
+    @Autowired
+    public BillCacheEvictionService(EventBus eventBus, CachedBillDataService billDataService) {
+        this.eventBus = eventBus;
+        this.billDataService = billDataService;
+    }
 
     @PostConstruct
     public void init() {
@@ -33,29 +35,29 @@ public class BillCacheEvictionService {
 
     @Subscribe
     public void handleCalendarUpdate(CalendarUpdateEvent calendarUpdateEvent) {
-        evictCalendarBills(calendarUpdateEvent.getCalendar());
+        evictCalendarBills(calendarUpdateEvent.calendar());
     }
 
     @Subscribe
     public void handleBulkCalendarUpdate(BulkCalendarUpdateEvent bulkCalendarUpdateEvent) {
-        bulkCalendarUpdateEvent.getCalendars().forEach(this::evictCalendarBills);
+        bulkCalendarUpdateEvent.calendars().forEach(this::evictCalendarBills);
     }
 
     @Subscribe
     public void handleAgendaUpdate(AgendaUpdateEvent agendaUpdateEvent) {
-        evictAgendaBills(agendaUpdateEvent.getAgenda());
+        evictAgendaBills(agendaUpdateEvent.agenda());
     }
 
     @Subscribe
     public void handleBulkAgendaUpdate(BulkAgendaUpdateEvent bulkAgendaUpdateEvent) {
-        bulkAgendaUpdateEvent.getAgendas().forEach(this::evictAgendaBills);
+        bulkAgendaUpdateEvent.agendas().forEach(this::evictAgendaBills);
     }
 
     private void evictCalendarBills(Calendar calendar) {
         calendar.getSupplementalMap().values().stream()
                 .flatMap(calSup -> calSup.getAllEntries().stream())
                 .map(calSupEntry -> BillId.getBaseId(calSupEntry.getBillId()))
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
     }
 
     private void evictAgendaBills(Agenda agenda) {
@@ -63,11 +65,11 @@ public class BillCacheEvictionService {
                 .flatMap(addendum -> addendum.getCommitteeInfoMap().values().stream())
                 .flatMap(commInfo -> commInfo.getItems().stream())
                 .map(infCommItem -> BillId.getBaseId(infCommItem.getBillId()))
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
         agenda.getAgendaVoteAddenda().values().stream()
                 .flatMap(voteAdd -> voteAdd.getCommitteeVoteMap().values().stream())
                 .flatMap(voteComm -> voteComm.getVotedBills().keySet().stream())
                 .map(BillId::getBaseId)
-                .forEach(billDataService::evictContent);
+                .forEach(billDataService::evictBill);
     }
 }

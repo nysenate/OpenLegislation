@@ -3,7 +3,10 @@ package gov.nysenate.openleg.spotchecks.daybreak.bill;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.spotchecks.daybreak.*;
+import gov.nysenate.openleg.spotchecks.daybreak.DaybreakFile;
+import gov.nysenate.openleg.spotchecks.daybreak.DaybreakFragment;
+import gov.nysenate.openleg.spotchecks.daybreak.DaybreakReportSet;
+import gov.nysenate.openleg.spotchecks.daybreak.PageFileEntry;
 import org.springframework.dao.DataAccessException;
 
 import java.io.IOException;
@@ -19,32 +22,6 @@ public interface DaybreakDao
     /** --- Retrieval Methods --- */
 
     /**
-     * Retrieves an archived Daybreak File object with the given filename, from the given report
-     *
-     * @param reportDate - The date of the report that contains the desired daybreak file
-     * @param fileName - the name of the daybreak file
-     * @return DaybreakFile
-     */
-    DaybreakFile getDaybreakFile(LocalDate reportDate, String fileName) throws DataAccessException;
-
-    /**
-     * Retrieves an archived Daybreak File object of the given file type, from the given report
-     *
-     * @param reportDate - The date of the report that contains the desired daybreak file
-     * @param fileType - the desired daybreak file type
-     * @return DaybreakFile
-     */
-    DaybreakFile getDaybreakFile(LocalDate reportDate, DaybreakDocType fileType) throws DataAccessException;
-
-    /**
-     * Retrieves a set of archived daybreak files from the given report date
-     *
-     * @param reportDate - The date of the report that contains the desired daybreak files
-     * @return Map<DaybreakFileType, DaybreakFile>
-     */
-    DaybreakReport<DaybreakFile> getDaybreakReport(LocalDate reportDate) throws DataAccessException;
-
-    /**
      * Gets all DaybreakFiles from the incoming directory
      *
      * @throws java.io.IOException
@@ -53,33 +30,11 @@ public interface DaybreakDao
     DaybreakReportSet<DaybreakFile> getIncomingReports() throws IOException;
 
     /**
-     * Retrieves a DaybreakFragment for the given BillId from the report on the given date
-     *
-     * @param daybreakBillId - The id for the desired fragment
-     * @return DaybreakFragment
-     */
-    DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId) throws DataAccessException;
-
-    /**
-     * Retrieves al DaybreakFragments for the report on the given date
-     * @param reportDate - The date of the report that contains the desired daybreak fragments
-     * @return List<DaybreakFragment>
-     */
-    List<DaybreakFragment> getDaybreakFragments(LocalDate reportDate) throws DataAccessException;
-
-    /**
      * Retrieves all DaybreakFragments that have not yet been processed
      *
      * @return List<DaybreakFragment>
      */
     List<DaybreakFragment> getPendingDaybreakFragments();
-
-    /**
-     * Retrieves all pagefile entries that would correspond do a single daybreak fragment
-     * @param daybreakBillId
-     * @return List<PageFileEntry>
-     */
-    Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId) throws DataAccessException;
 
     /**
      * Retrieves all pagefile entries for a single report
@@ -94,23 +49,6 @@ public interface DaybreakDao
      * @return
      */
     DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId) throws DataAccessException;
-
-    /**
-     * Gets the daybreak bill from the most recent report
-     * @param baseBillId
-     * @return
-     * @throws DataAccessException
-     */
-    DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException;
-
-    /**
-     * Gets the current daybreak bill for the specified bill id from within the given date range
-     * @param baseBillId
-     * @param dateRange
-     * @return
-     * @throws DataAccessException
-     */
-    DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId, Range<LocalDate> dateRange) throws DataAccessException;
 
     /**
      * Gets the current daybreak bill from before the reference date for the specified base bill

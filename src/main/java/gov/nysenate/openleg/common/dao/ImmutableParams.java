@@ -11,9 +11,8 @@ import java.util.Map;
  * added or modified after it's created. For example a param source that needs to be passed
  * to several methods containing some base params should not allow modifications.
  */
-public class ImmutableParams extends AbstractSqlParameterSource
-{
-    protected MapSqlParameterSource paramSource = new MapSqlParameterSource();
+public final class ImmutableParams extends AbstractSqlParameterSource {
+    MapSqlParameterSource paramSource = new MapSqlParameterSource();
 
     /** --- Constructors --- */
 

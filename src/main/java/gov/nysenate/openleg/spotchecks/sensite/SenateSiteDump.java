@@ -12,7 +12,7 @@ public class SenateSiteDump implements Comparable<SenateSiteDump> {
     private final SenateSiteDumpId dumpId;
 
     /** The fragments that make up this dump, categorized by their sequence number */
-    private TreeMap<Integer, SenateSiteDumpFragment> fragmentMap = new TreeMap<>();
+    private final TreeMap<Integer, SenateSiteDumpFragment> fragmentMap = new TreeMap<>();
 
     public SenateSiteDump(SenateSiteDumpId dumpId) {
         this.dumpId = dumpId;
@@ -28,7 +28,7 @@ public class SenateSiteDump implements Comparable<SenateSiteDump> {
      * @return boolean - true iff this dump contains a complete set of fragments
      */
     public boolean isComplete() {
-        return IntStream.rangeClosed(1, dumpId.getFragmentCount())
+        return IntStream.rangeClosed(1, dumpId.fragmentCount())
                 .allMatch(fragmentMap::containsKey);
     }
 

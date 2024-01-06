@@ -1,6 +1,5 @@
 import React from "react"
 import Input from "app/shared/Input";
-import { loginAdmin } from "app/apis/authApi";
 import { useHistory } from "react-router-dom";
 import useAuth from "app/shared/useAuth";
 import { Warning } from "phosphor-react";

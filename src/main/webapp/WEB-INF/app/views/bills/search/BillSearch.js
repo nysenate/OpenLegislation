@@ -1,16 +1,14 @@
 import React from 'react';
 import billSearch from "app/apis/billSearch";
 import {
-  useLocation,
-  useHistory
+  useHistory,
+  useLocation
 } from "react-router-dom";
 import * as queryString from "query-string";
 import BillSearchResults from "app/views/bills/search/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/search/BillSearchForm";
-import {
-  initialRefineState,
-} from "app/views/bills/search/billSearchUtils";
+import { initialRefineState, } from "app/views/bills/search/billSearchUtils";
 import QuickSearchTips from "app/views/bills/search/QuickSearchTips";
 import AdvancedSearchTips from "app/views/bills/search/AdvancedSearchTips";
 import ErrorMessage from "app/shared/ErrorMessage";

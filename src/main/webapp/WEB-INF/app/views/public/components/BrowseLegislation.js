@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  useHistory
-} from "react-router-dom";
-import { loginWithApiKey } from "app/apis/authApi";
+import { useHistory } from "react-router-dom";
 import useAuth from "../../../shared/useAuth";
 import { Warning } from "phosphor-react";
 

@@ -2,14 +2,14 @@ package gov.nysenate.openleg.api.spotcheck;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
+import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
-import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.spotcheck.view.*;
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.OrderBy;
 import gov.nysenate.openleg.common.dao.PaginatedList;
@@ -18,12 +18,10 @@ import gov.nysenate.openleg.spotchecks.MismatchOrderBy;
 import gov.nysenate.openleg.spotchecks.SpotCheckReportDao;
 import gov.nysenate.openleg.spotchecks.base.SpotcheckRunService;
 import gov.nysenate.openleg.spotchecks.mismatch.CharacterOption;
-import gov.nysenate.openleg.spotchecks.mismatch.WhitespaceOption;
 import gov.nysenate.openleg.spotchecks.mismatch.MismatchHtmlDiff;
+import gov.nysenate.openleg.spotchecks.mismatch.WhitespaceOption;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -38,8 +36,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", produces = APPLICATION_JSON_VALUE)
 public class SpotCheckCtrl extends BaseCtrl {
-    private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
-
     private final SpotcheckRunService spotcheckRunService;
     private final SpotCheckReportDao spotCheckReportDao;
 
@@ -95,12 +91,12 @@ public class SpotCheckCtrl extends BaseCtrl {
                 .withOrderBy(order)
                 .withMismatchTypes(type);
 
-        PaginatedList<DeNormSpotCheckMismatch> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
-        List<MismatchSummaryView> mismatchSummaryViews = new ArrayList<>();
-        for (DeNormSpotCheckMismatch mm : mismatches.getResults()) {
+        PaginatedList<DeNormSpotCheckMismatch<?>> mismatches = spotCheckReportDao.getMismatches(query, limitOffset);
+        List<MismatchSummaryView<?>> mismatchSummaryViews = new ArrayList<>();
+        for (DeNormSpotCheckMismatch mm : mismatches.results()) {
             mismatchSummaryViews.add(new MismatchSummaryView(mm));
         }
-        return ListViewResponse.of(mismatchSummaryViews, mismatches.getTotal(), mismatches.getLimOff());
+        return ListViewResponse.of(mismatchSummaryViews, mismatches.total(), mismatches.limOff());
     }
 
     /**
@@ -416,27 +412,27 @@ public class SpotCheckCtrl extends BaseCtrl {
      * --- Internal Methods ---
      */
 
-    private SpotCheckDataSource getDatasource(String datasource) {
+    private static SpotCheckDataSource getDatasource(String datasource) {
         return getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
     }
 
-    private SpotCheckContentType getContentType(String contentType) {
+    private static SpotCheckContentType getContentType(String contentType) {
         return getEnumParameter("contentType", contentType, SpotCheckContentType.class);
     }
 
-    private MismatchStatus getMismatchStatus(String mismatchStatus) {
+    private static MismatchStatus getMismatchStatus(String mismatchStatus) {
         return getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
     }
 
-    private LocalDate getReportDate(String reportDate) {
+    private static LocalDate getReportDate(String reportDate) {
         return reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
     }
 
-    private EnumSet<SpotCheckMismatchType> getMismatchTypes(@RequestParam(required = false) String mismatchType) {
+    private static EnumSet<SpotCheckMismatchType> getMismatchTypes(@RequestParam(required = false) String mismatchType) {
         return (mismatchType == null || mismatchType.equals("All")) ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
     }
 
-    private Set<SpotCheckMismatchIgnore> getIgnoredStatuses(@RequestParam(required = false) String[] ignoredStatuses) {
+    private static Set<SpotCheckMismatchIgnore> getIgnoredStatuses(@RequestParam(required = false) String[] ignoredStatuses) {
         return ignoredStatuses == null
                 ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
                 : Lists.newArrayList(ignoredStatuses).stream()
@@ -457,7 +453,7 @@ public class SpotCheckCtrl extends BaseCtrl {
      * @throws InvalidRequestParamEx if orderByString or sortString
      *                               are not valid values.
      */
-    private OrderBy getOrderBy(String orderByString, String sortString) {
+    private static OrderBy getOrderBy(String orderByString, String sortString) {
         MismatchOrderBy orderBy = orderByString == null
                 ? MismatchOrderBy.REFERENCE_DATE
                 : getEnumParameter("orderBy", orderByString, MismatchOrderBy.class);
@@ -474,7 +470,7 @@ public class SpotCheckCtrl extends BaseCtrl {
         return new OrderBy(orderBy.getColumnName(), sortOrder);
     }
 
-    private SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {
+    private static SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {
         SpotCheckRefType result = getEnumParameter(parameter, SpotCheckRefType.class, null);
         if (result == null) {
             result = getEnumParameterByValue(SpotCheckRefType.class, SpotCheckRefType::getByRefName,
@@ -483,10 +479,10 @@ public class SpotCheckCtrl extends BaseCtrl {
         return result;
     }
 
-    private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
+    private static Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
         return parameters == null
                 ? EnumSet.allOf(SpotCheckRefType.class)
-                : Arrays.asList(parameters).stream()
+                : Arrays.stream(parameters)
                 .map(param -> getSpotcheckRefType(param, paramName))
                 .collect(Collectors.toSet());
     }

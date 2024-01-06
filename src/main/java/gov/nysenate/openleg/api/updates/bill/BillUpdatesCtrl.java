@@ -1,33 +1,29 @@
 package gov.nysenate.openleg.api.updates.bill;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
+import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
 import gov.nysenate.openleg.api.legislation.bill.view.SimpleBillInfoView;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.DateRangeListViewResponse;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestModelView;
 import gov.nysenate.openleg.api.updates.view.UpdateDigestView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenModelView;
 import gov.nysenate.openleg.api.updates.view.UpdateTokenView;
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.InvalidRequestParamEx;
-import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.BillUpdateField;
+import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.common.util.DateUtils;
-import org.apache.shiro.SecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +38,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -50,12 +45,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class BillUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(BillUpdatesCtrl.class);
+public class BillUpdatesCtrl extends BaseCtrl {
+    private final BillUpdatesDao billUpdatesDao;
+    private final BillDataService billData;
 
-    @Autowired protected BillUpdatesDao billUpdatesDao;
-    @Autowired protected BillDataService billData;
+    @Autowired
+    public BillUpdatesCtrl(BillUpdatesDao billUpdatesDao, BillDataService billData) {
+        this.billUpdatesDao = billUpdatesDao;
+        this.billData = billData;
+    }
 
     /**
      * Updated Bills API
@@ -118,13 +116,13 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
-        return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO.atStartOfDay(),
+        return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO,
                 LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo,
                                           @PathVariable String from,
                                           WebRequest request) {
@@ -132,7 +130,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesForBillDuring(sessionYear, printNo, fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
                                                 @PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
@@ -157,7 +155,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
                 billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            List<UpdateTokenView> updates = updateTokens.getResults().stream()
+            List<UpdateTokenView> updates = updateTokens.results().stream()
                     .map(token -> {
                         if (fullBill) {
                             Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
@@ -170,19 +168,19 @@ public class BillUpdatesCtrl extends BaseCtrl
                         }
                         return new UpdateTokenView(token, new BaseBillIdView(token.getId()));
                     })
-                    .collect(toList());
-            return DateRangeListViewResponse.of(updates, updateRange, updateTokens.getTotal(), limOff);
+                    .toList();
+            return DateRangeListViewResponse.of(updates, updateRange, updateTokens.total(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
                 billUpdatesDao.getDetailedUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.results().stream()
                 .map(digest ->
                         (!summary) ? new UpdateDigestView(digest, new BaseBillIdView(digest.getId()))
                                    : new UpdateDigestModelView(digest, new BaseBillIdView(digest.getId()),
                                                                        new SimpleBillInfoView(billData.getBillInfo(digest.getId())))
                 )
-                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
+                .toList(), updateRange, updateDigests.total(), limOff);
         }
     }
 
@@ -195,9 +193,9 @@ public class BillUpdatesCtrl extends BaseCtrl
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
             getBaseBillId(printNo, sessionYear, "printNo"), updateRange, updateType, filterField, sortOrder, limOff);
-        return DateRangeListViewResponse.of(digests.getResults().stream()
+        return DateRangeListViewResponse.of(digests.results().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
-            .collect(toList()), updateRange, digests.getTotal(), limOff);
+            .toList(), updateRange, digests.total(), limOff);
     }
 
     private BillUpdateField getUpdateFieldFromParam(String filter) {

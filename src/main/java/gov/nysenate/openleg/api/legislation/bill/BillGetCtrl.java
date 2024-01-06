@@ -9,7 +9,8 @@ import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.util.StringDiffer;
+import gov.nysenate.openleg.common.util.stringDiffer.Diff;
+import gov.nysenate.openleg.common.util.stringDiffer.StringDiffer;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
@@ -19,8 +20,6 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +29,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -41,15 +39,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class BillGetCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
+public class BillGetCtrl extends BaseCtrl {
+    private final BillDataService billData;
+    private final BillSearchService billSearch;
 
-    @Autowired protected BillDataService billData;
-    @Autowired protected BillSearchService billSearch;
+    @Autowired
+    public BillGetCtrl(BillDataService billData, BillSearchService billSearch) {
+        this.billData = billData;
+        this.billSearch = billSearch;
+    }
 
-    protected enum BillViewLevel
-    {
+    private enum BillViewLevel {
         DEFAULT,                // Basic bill view (models the BillView class)
         INFO,                   // Bill info view
         NO_FULLTEXT,            // Basic bill view with full text stripped
@@ -85,7 +85,7 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: List of BillInfoView or BillView
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
                                  @RequestParam(defaultValue = "publishedDateTime:asc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
@@ -96,9 +96,9 @@ public class BillGetCtrl extends BaseCtrl
             billSearch.searchBills(getSessionYearParam(sessionYear, "sessionYear"), sort, limOff);
         // The bill data is retrieved from the data service so the data is always fresh.
         return ListViewResponse.of(
-            results.getResults().stream()
+            results.resultList().stream()
                 .map(r -> {
-                    BaseBillId baseBillId = r.getResult();
+                    BaseBillId baseBillId = r.result();
                     if (idsOnly) {
                         return new BaseBillIdView(baseBillId);
                     }
@@ -106,8 +106,7 @@ public class BillGetCtrl extends BaseCtrl
                         return new BillView(billData.getBill(baseBillId), getFullTextFormats(webRequest));
                     }
                     return new BillInfoView(billData.getBillInfo(baseBillId));
-                })
-                .collect(Collectors.toList()), results.getTotalResults(), limOff);
+                }).toList(), results.totalResults(), limOff);
     }
 
     /**
@@ -122,26 +121,19 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         BillViewLevel level = BillViewLevel.getValue(request.getParameter("view"));
         ViewObject viewObject;
         LinkedHashSet<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         switch (level) {
-            case INFO:
-                viewObject = new BillInfoView(billData.getBillInfo(baseBillId));
-                break;
-            case WITH_REFS:
-                viewObject = new DetailBillView(billData.getBill(baseBillId), billData, fullTextFormats);
-                break;
-            case NO_FULLTEXT:
-                viewObject = new BillView(getFullTextStrippedBill(baseBillId), new HashSet<>());
-                break;
-            case WITH_REFS_NO_FULLTEXT:
-                viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData, new HashSet<>());
-                break;
-            case ONLY_FULLTEXT: {
+            case INFO -> viewObject = new BillInfoView(billData.getBillInfo(baseBillId));
+            case WITH_REFS -> viewObject = new DetailBillView(billData.getBill(baseBillId), billData, fullTextFormats);
+            case NO_FULLTEXT -> viewObject = new BillView(getFullTextStrippedBill(baseBillId), new HashSet<>());
+            case WITH_REFS_NO_FULLTEXT ->
+                    viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData, new HashSet<>());
+            case ONLY_FULLTEXT -> {
                 Version amdVersion = Version.ORIGINAL;
                 if (request.getParameter("version") != null) {
                     amdVersion = parseVersion(request.getParameter("version"), "version");
@@ -153,9 +145,8 @@ public class BillGetCtrl extends BaseCtrl
                 String fullText = bill.getAmendment(amdVersion).getFullText(firstFormat);
                 viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(),
                         fullText, firstFormat);
-                break;
             }
-            default: viewObject = new BillView(billData.getBill(baseBillId), fullTextFormats);
+            default -> viewObject = new BillView(billData.getBill(baseBillId), fullTextFormats);
         }
         return new ViewObjectResponse<>(viewObject, "Data for bill " + baseBillId);
     }
@@ -180,7 +171,7 @@ public class BillGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}.pdf")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}.pdf")
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
@@ -196,32 +187,25 @@ public class BillGetCtrl extends BaseCtrl
      *
      * TODO: Handle case with default amendment. Or rather make it so that it's possible to diff any two bills.
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/diff/{version1}/{version2}")
-    public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo, @PathVariable String version1,
-                            @PathVariable String version2) {
-        StringDiffer stringDiffer = new StringDiffer();
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}/diff/{version1}/{version2}")
+    public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo,
+                                    @PathVariable String version1, @PathVariable String version2) {
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(baseBillId);
         BillAmendment amend1 = bill.getAmendment(parseVersion(version1, "version1"));
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
         String fullText1 = BillTextUtils.getPlainTextWithoutLineNumbers(amend1);
         String fullText2 = BillTextUtils.getPlainTextWithoutLineNumbers(amend2);
-        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);
-        stringDiffer.diff_cleanupEfficiency(diffs);
-        stringDiffer.diff_cleanupSemantic(diffs);
-        stringDiffer.diff_cleanupMerge(diffs);
-        String prettyHtml = stringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
-        return new ViewObjectResponse<>(
-            new BillDiffView(
-                new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),
-                    prettyHtml));
+        List<Diff> diffs = StringDiffer.getCleanedDiffs(fullText1, fullText2);
+        String prettyHtml = StringDiffer.prettyHtml(diffs).replace("&para;", " ");
+        return new ViewObjectResponse<>(new BillDiffView(new BaseBillIdView(baseBillId),
+                amend1.getVersion().toString(), amend2.getVersion().toString(), prettyHtml));
     }
 
     @RequestMapping(value = "/status-types")
     public BaseResponse getBillStatusTypes() {
         return ListViewResponse.of(Arrays.stream(BillStatusType.values())
-                .map(BillStatusTypeView::new)
-                .collect(Collectors.toList()));
+                .map(BillStatusTypeView::new).toList());
     }
 
 

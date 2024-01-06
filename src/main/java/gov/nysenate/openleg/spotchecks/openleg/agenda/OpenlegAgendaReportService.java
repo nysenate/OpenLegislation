@@ -1,19 +1,17 @@
 package gov.nysenate.openleg.spotchecks.openleg.agenda;
 
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.api.legislation.agenda.AgendaBillUtils;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommAddendumView;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaView;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
+import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
-import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
-import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
-import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,22 +27,19 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckRefType.OPENLEG_AGE
 
 @Service("openlegAgendaReport")
 public class OpenlegAgendaReportService implements SpotCheckReportService<CommitteeAgendaAddendumId> {
-
-    private static final Logger logger = LoggerFactory.getLogger(OpenlegAgendaReportService.class);
-
     private final OpenlegAgendaDao openlegAgendaDao;
     private final AgendaDataService agendaDataService;
-    private final BillDataService billDataService;
+    private final AgendaBillUtils agendaBillUtils;
     private final OpenlegAgendaCheckService checkService;
 
     @Autowired
     public OpenlegAgendaReportService(OpenlegAgendaDao openlegAgendaDao,
                                       AgendaDataService agendaDataService,
-                                      BillDataService billDataService,
+                                      AgendaBillUtils agendaBillUtils,
                                       OpenlegAgendaCheckService checkService) {
         this.openlegAgendaDao = openlegAgendaDao;
         this.agendaDataService = agendaDataService;
-        this.billDataService = billDataService;
+        this.agendaBillUtils = agendaBillUtils;
         this.checkService = checkService;
     }
 
@@ -64,8 +59,8 @@ public class OpenlegAgendaReportService implements SpotCheckReportService<Commit
         // Get Local agenda data
         List<AgendaView> contentAgendaViews =  agendaDataService.getAgendaIds(year, SortOrder.NONE).stream()
                 .map(agendaDataService::getAgenda)
-                .map(agenda -> new AgendaView(agenda, billDataService))
-                .collect(Collectors.toList());
+                .map(agenda -> new AgendaView(agenda, agendaBillUtils.getBillInfoMap(agenda, null)))
+                .toList();
         // Retrieve Openleg Ref Agenda data
         List<AgendaView> referenceAgendaViews = openlegAgendaDao.getAgendaViews(year);
 
@@ -95,7 +90,7 @@ public class OpenlegAgendaReportService implements SpotCheckReportService<Commit
     private Map<CommitteeAgendaAddendumId, AgendaCommAddendumView> getAddendumMap(Collection<AgendaView> agendaViews) {
         return agendaViews.stream()
                 .flatMap(agendaView -> agendaView.getCommitteeAgendas().getItems().stream())
-                .flatMap(agendaCommView -> agendaCommView.getAddenda().getItems().stream())
+                .flatMap(agendaCommView -> agendaCommView.addenda().getItems().stream())
                 .collect(Collectors.toMap(AgendaCommAddendumView::getCommitteeAgendaAddendumId, Function.identity()));
     }
 }
