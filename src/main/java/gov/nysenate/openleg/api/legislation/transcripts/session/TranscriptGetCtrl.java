@@ -106,7 +106,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
      *
      * Expected Output: TranscriptView
      */
-    @RequestMapping("/{dateTime}")
+    @RequestMapping("/{dateTime:.*}")
     public BaseResponse getTranscript(@PathVariable String dateTime) {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
