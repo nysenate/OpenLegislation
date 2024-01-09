@@ -27,7 +27,8 @@ public class BaseBillId extends BillId implements Serializable
      * of the supplied print no string.
      */
     public BaseBillId(String printNo, SessionYear session) {
-        super(printNo, session, DEFAULT_VERSION);
+        super(printNo, session);
+        this.version = DEFAULT_VERSION;
     }
 
     public static BaseBillId of(BillId billId) {
