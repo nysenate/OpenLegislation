@@ -22,7 +22,7 @@
       <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.12.1</version>
         <configuration>
           <source>17</source>
           <target>17</target>
@@ -33,13 +33,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.3.2</version>
+        <version>3.4.0</version>
       </plugin>
       <!-- Surefire Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.2.3</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <skipTests>false</skipTests>
@@ -50,7 +50,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.2.3</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <groups>gov.nysenate.openleg.config.annotation.IntegrationTest</groups>
@@ -110,25 +110,27 @@
 
   <properties>
     <c3p0.version>0.9.5.5</c3p0.version>
-    <commons-cli.version>1.5.0</commons-cli.version>
-    <commons-csv.version>1.9.0</commons-csv.version>
-    <commons-io.version>2.11.0</commons-io.version>
-    <commons-lang.version>3.12.0</commons-lang.version>
-    <commons-text.version>1.9</commons-text.version>
-    <commons-validator.version>1.7</commons-validator.version>
+    <commons-cli.version>1.6.0</commons-cli.version>
+    <commons-csv.version>1.10.0</commons-csv.version>
+    <commons-io.version>2.15.1</commons-io.version>
+    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <commons-text.version>1.11.0</commons-text.version>
+    <commons-validator.version>1.8.0</commons-validator.version>
     <ehcache.version>3.9.9</ehcache.version>
     <elasticsearch.version>7.17.1</elasticsearch.version>
     <flying-saucer.version>9.1.22</flying-saucer.version>
     <gson.version>2.9.0</gson.version>
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
-    <jackson.version>2.13.3</jackson.version>
+    <jackson.version>2.16.1</jackson.version>
+    <javax-activation.version>1.1.1</javax-activation.version>
     <javax-cache.version>1.1.1</javax-cache.version>
+    <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
     <jbcrypt.version>0.4</jbcrypt.version>
     <jsoup.version>1.14.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
-    <log4j.version>2.18.0</log4j.version>
+    <log4j.version>2.22.1</log4j.version>
     <mail.version>1.6.2</mail.version>
     <mockito.version>4.6.1</mockito.version>
     <pdfbox.version>2.0.26</pdfbox.version>
@@ -136,20 +138,11 @@
     <shiro.version>1.9.0</shiro.version>
     <slf4j.version>1.7.36</slf4j.version>
     <spring.version>5.3.19</spring.version>
-    <tomcat.servlet.version>9.0.84</tomcat.servlet.version>
+    <tomcat.version>9.0.84</tomcat.version>
     <woodstox.version>4.4.1</woodstox.version>
-    <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
-    <javax.activation.version>1.1.1</javax.activation.version>
   </properties>
 
   <dependencies>
-    <!--CSV-->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-csv</artifactId>
-      <version>${commons-csv.version}</version>
-    </dependency>
-
     <!-- Spring -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -207,21 +200,21 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat.servlet.version}</version>
+      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.servlet.version}</version>
+      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-websocket</artifactId>
-      <version>${tomcat.servlet.version}</version>
+      <version>${tomcat.version}</version>
     </dependency>
 
     <!-- JSTL -->
@@ -336,16 +329,10 @@
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
-      <version>${javax.activation.version}</version>
+      <version>${javax-activation.version}</version>
     </dependency>
 
-    <!-- Apache commons -->
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang.version}</version>
-    </dependency>
+    <!-- Apache Commons -->
 
     <dependency>
       <groupId>commons-cli</groupId>
@@ -354,9 +341,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${http-client.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
     </dependency>
 
     <dependency>
@@ -366,15 +353,27 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-validator</groupId>
-      <artifactId>commons-validator</artifactId>
-      <version>${commons-validator.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>${commons-text.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>${commons-validator.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${http-client.version}</version>
     </dependency>
 
     <!-- Unit Testing -->
