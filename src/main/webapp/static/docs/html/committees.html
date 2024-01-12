@@ -1,96 +1,50 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Senate Committee API &mdash; Open Legislation 2.0-alpha documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="_static/documentation_options.js?v=99c28e39"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="NYS Laws API" href="laws.html" />
     <link rel="prev" title="Senate Agenda API" href="agendas.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="reference.html" class="icon icon-home"> Open Legislation
           
-
-          
+          <a href="reference.html" class="icon icon-home">
+            Open Legislation
           </a>
-
-          
-            
-            
               <div class="version">
                 2.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
@@ -112,79 +66,38 @@
 <li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="reference.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li><strong>Senate Committee API</strong></li>
-    
-    
+      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>Senate Committee API</strong></li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/committees.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="senate-committee-api">
-<h1><strong>Senate Committee API</strong><a class="headerlink" href="#senate-committee-api" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="senate-committee-api">
+<h1><strong>Senate Committee API</strong><a class="headerlink" href="#senate-committee-api" title="Link to this heading">¶</a></h1>
 <p>In OpenLegislation, committee data is processed in a way that tracks the membership of each committee over time.
 Committees are stored as committee versions, each of which represent a time period where there were no changes in
 committee membership for a specific committee.  Committee versions contain a list of members in the committee,
 information on where and when the committee meets, and the dates when the committee version began and was reformed.</p>
-<div class="section" id="get-a-current-committee-version">
-<h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Permalink to this headline">¶</a></h2>
+<section id="get-a-current-committee-version">
+<h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Assembly committee data is currently not sent to us at this time. chamber must be ‘senate’.</p>
@@ -200,9 +113,9 @@ information on where and when the committee meets, and the dates when the commit
 </div>
 <p><strong>Sample Response</strong></p>
 <p>See <a class="reference internal" href="#committee-version-response">committee version response</a></p>
-</div>
-<div class="section" id="get-a-committee-version-at-specific-time">
-<h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="get-a-committee-version-at-specific-time">
+<h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Link to this heading">¶</a></h2>
 <p>This request will return a committee version (if one exists) corresponding to the given committee that was created
 before or on the given time and reformed after the given time.</p>
 <p><strong>Usage</strong></p>
@@ -216,59 +129,54 @@ before or on the given time and reformed after the given time.</p>
 </div>
 <p id="committee-version-response"><strong>Sample Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;committee&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>     <span class="c1">// The chamber of this committee (SENATE or ASSEMBLY)</span>
-    <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;Finance&quot;</span><span class="p">,</span>       <span class="c1">// The name of this committee</span>
-    <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>     <span class="c1">// The session year of this committee version</span>
-    <span class="s2">&quot;referenceDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-02-28T11:25:44&quot;</span><span class="p">,</span>  <span class="c1">// The date and time that this configuration</span>
-                                              <span class="c1">//  of committee members was reported</span>
-    <span class="s2">&quot;reformed&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-03-03T17:09:09&quot;</span><span class="p">,</span>       <span class="c1">// The date and time that this configuration</span>
-                                              <span class="c1">//  of committee members was replaced</span>
-                                              <span class="c1">// If null, then this is the current committee version</span>
-    <span class="s2">&quot;location&quot;</span> <span class="o">:</span> <span class="s2">&quot;Room 124 CAP&quot;</span><span class="p">,</span>  <span class="c1">// The location where this committee meets</span>
-    <span class="s2">&quot;meetDay&quot;</span> <span class="o">:</span> <span class="s2">&quot;TUESDAY&quot;</span><span class="p">,</span>        <span class="c1">// The day of the week that this committee meets</span>
-    <span class="s2">&quot;meetTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;11:00&quot;</span><span class="p">,</span>         <span class="c1">// The time of day that this committee meets</span>
-    <span class="s2">&quot;meetAltWeek&quot;</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>        <span class="c1">// True if this committee meets on alternate weeks</span>
-    <span class="s2">&quot;meetAltWeekText&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>       <span class="c1">// Describes the committee&#39;s alternate schedule if applicable</span>
-    <span class="s2">&quot;committeeMembers&quot;</span> <span class="o">:</span> <span class="p">{</span>        <span class="c1">// A listing of members in this committee</span>
-      <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-          <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mf">376</span><span class="p">,</span>                   <span class="c1">// An arbitrary unique id used to identify members</span>
-                                              <span class="c1">//  in our database</span>
-          <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;DEFRANCISCO&quot;</span><span class="p">,</span>        <span class="c1">// The committee member&#39;s lbdc shortname</span>
-          <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>               <span class="c1">// The session year this member was active in</span>
-          <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;John A. DeFrancisco&quot;</span><span class="p">,</span> <span class="c1">// The member&#39;s full name</span>
-          <span class="s2">&quot;districtCode&quot;</span> <span class="o">:</span> <span class="mf">50</span><span class="p">,</span>                <span class="c1">// A code designating the member&#39;s home district</span>
-          <span class="s2">&quot;sequenceNo&quot;</span> <span class="o">:</span> <span class="mf">1</span><span class="p">,</span>                   <span class="c1">// The member&#39;s position in the list of committee members</span>
-          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;CHAIR_PERSON&quot;</span>            <span class="c1">// The member&#39;s role in the committee</span>
-                                            <span class="c1">//  Valid roles include:</span>
-                                            <span class="c1">//  &quot;CHAIR_PERSON&quot;, &quot;VICE_CHAIR&quot;, and &quot;MEMBER&quot;</span>
-        <span class="p">},</span>
-        <span class="p">...</span>
-      <span class="p">],</span>
-      <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mf">24</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+<span class="w">  </span><span class="s2">&quot;success&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;message&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;responseType&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;committee&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;result&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;chamber&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SENATE&quot;</span><span class="p">,</span><span class="w">     </span><span class="c1">// The chamber of this committee (SENATE or ASSEMBLY)</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Finance&quot;</span><span class="p">,</span><span class="w">       </span><span class="c1">// The name of this committee</span>
+<span class="w">    </span><span class="s2">&quot;sessionYear&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2013</span><span class="p">,</span><span class="w">     </span><span class="c1">// The session year of this committee version</span>
+<span class="w">    </span><span class="s2">&quot;referenceDate&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2014-02-28T11:25:44&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// The date and time that this configuration</span>
+<span class="w">                                              </span><span class="c1">//  of committee members was reported</span>
+<span class="w">    </span><span class="s2">&quot;reformed&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2014-03-03T17:09:09&quot;</span><span class="p">,</span><span class="w">       </span><span class="c1">// The date and time that this configuration</span>
+<span class="w">                                              </span><span class="c1">//  of committee members was replaced</span>
+<span class="w">                                              </span><span class="c1">// If null, then this is the current committee version</span>
+<span class="w">    </span><span class="s2">&quot;location&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Room 124 CAP&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// The location where this committee meets</span>
+<span class="w">    </span><span class="s2">&quot;meetDay&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;TUESDAY&quot;</span><span class="p">,</span><span class="w">        </span><span class="c1">// The day of the week that this committee meets</span>
+<span class="w">    </span><span class="s2">&quot;meetTime&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;11:00&quot;</span><span class="p">,</span><span class="w">         </span><span class="c1">// The time of day that this committee meets</span>
+<span class="w">    </span><span class="s2">&quot;meetAltWeek&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">        </span><span class="c1">// True if this committee meets on alternate weeks</span>
+<span class="w">    </span><span class="s2">&quot;meetAltWeekText&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w">       </span><span class="c1">// Describes the committee&#39;s alternate schedule if applicable</span>
+<span class="w">    </span><span class="s2">&quot;committeeMembers&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">        </span><span class="c1">// A listing of members in this committee</span>
+<span class="w">      </span><span class="s2">&quot;items&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="s2">&quot;memberId&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">376</span><span class="p">,</span><span class="w">                   </span><span class="c1">// An arbitrary unique id used to identify members</span>
+<span class="w">                                              </span><span class="c1">//  in our database</span>
+<span class="w">          </span><span class="s2">&quot;shortName&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;DEFRANCISCO&quot;</span><span class="p">,</span><span class="w">        </span><span class="c1">// The committee member&#39;s lbdc shortname</span>
+<span class="w">          </span><span class="s2">&quot;sessionYear&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2013</span><span class="p">,</span><span class="w">               </span><span class="c1">// The session year this member was active in</span>
+<span class="w">          </span><span class="s2">&quot;fullName&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;John A. DeFrancisco&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// The member&#39;s full name</span>
+<span class="w">          </span><span class="s2">&quot;districtCode&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w">                </span><span class="c1">// A code designating the member&#39;s home district</span>
+<span class="w">          </span><span class="s2">&quot;sequenceNo&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w">                   </span><span class="c1">// The member&#39;s position in the list of committee members</span>
+<span class="w">          </span><span class="s2">&quot;title&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;CHAIR_PERSON&quot;</span><span class="w">            </span><span class="c1">// The member&#39;s role in the committee</span>
+<span class="w">                                            </span><span class="c1">//  Valid roles include:</span>
+<span class="w">                                            </span><span class="c1">//  &quot;CHAIR_PERSON&quot;, &quot;VICE_CHAIR&quot;, and &quot;MEMBER&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="s2">&quot;size&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">24</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="get-committee-history">
-<h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="get-committee-history">
+<h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="n">history</span>
 </pre></div>
 </div>
 <p id="comm-history-params"><strong>Optional Params</strong></p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 8%" />
-<col style="width: 82%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Values</p></th>
@@ -300,20 +208,15 @@ before or on the given time and reformed after the given time.</p>
 (Get the first version of the Aging committee from 2013)
 </pre></div>
 </div>
-</div>
-<div class="section" id="get-all-current-committees">
-<h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="get-all-current-committees">
+<h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 8%" />
-<col style="width: 82%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Values</p></th>
@@ -332,9 +235,9 @@ before or on the given time and reformed after the given time.</p>
 (Get full responses for all current senate committees for session 2013)
 </pre></div>
 </div>
-</div>
-<div class="section" id="search-for-committees">
-<h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="search-for-committees">
+<h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Link to this heading">¶</a></h2>
 <p>Read our <a class="reference internal" href="search_api.html"><span class="doc">search API docs</span></a> for info on how to construct search terms.
 The committee search index is comprised of full committee responses
 (i.e. the json response returned when requesting a single committee)
@@ -350,11 +253,6 @@ so query and sort strings will be based on that response structure.</p>
 </div>
 <p><strong>Required Params</strong></p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 13%" />
-<col style="width: 23%" />
-<col style="width: 64%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Values</p></th>
@@ -370,11 +268,6 @@ so query and sort strings will be based on that response structure.</p>
 </table>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 12%" />
-<col style="width: 17%" />
-<col style="width: 70%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Values</p></th>
@@ -393,55 +286,38 @@ so query and sort strings will be based on that response structure.</p>
 </tbody>
 </table>
 <p>Also takes all <a class="reference internal" href="#comm-history-params"><span class="std std-ref">committee history optional params</span></a> with the exception of order</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="laws.html" class="btn btn-neutral float-right" title="NYS Laws API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="agendas.html" class="btn btn-neutral float-left" title="Senate Agenda API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="laws.html" class="btn btn-neutral float-right" title="NYS Laws API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014, NY State Senate Technology Services.
-
-    </p>
+    <p>&#169; Copyright 2014, NY State Senate Technology Services.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
