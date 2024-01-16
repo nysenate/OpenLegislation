@@ -129,7 +129,7 @@ public class AgendaGetCtrl extends BaseCtrl {
     @RequestMapping(value = "/meetings/{from}/{to}")
     public BaseResponse getAgendaMeetings(@PathVariable String from, @PathVariable String to,
                                           WebRequest webRequest) {
-        LimitOffset limOff = getLimitOffset(webRequest, 0);
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         WeekOfAgendaInfoMap agendaInfoMap = agendaData.getWeekOfMap(fromDateTime, toDateTime);
