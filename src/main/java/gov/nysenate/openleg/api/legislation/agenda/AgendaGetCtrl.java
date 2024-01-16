@@ -23,10 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 
@@ -35,8 +32,10 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 public class AgendaGetCtrl extends BaseCtrl {
     private static final Comparator<AgendaMeetingDetailView> amdvComparator =
             Comparator.comparing((AgendaMeetingDetailView o) -> o.getMeeting().meetingDateTime())
-                    // We only need to sort on the meetingDateTime, while ensuring two committees
-                    // are never treated as equal aren't treated as equal.
+                    .thenComparing(AgendaMeetingDetailView::getAddendum)
+                    .thenComparing((AgendaMeetingDetailView o) -> o.getCommitteeId().getChamber())
+                    .thenComparing((AgendaMeetingDetailView o) -> o.getCommitteeId().getName())
+                    // Also compare on hashCode to make sure two unequal meetings are never treated as equal.
                     .thenComparingInt(Object::hashCode);
     private final AgendaDataService agendaData;
     private final AgendaBillUtils agendaBillUtils;
@@ -139,7 +138,8 @@ public class AgendaGetCtrl extends BaseCtrl {
                 sortedViewSet.add(new AgendaMeetingDetailView(comm, comm.getAddendum().toString(), date));
             }
         }
-        return DateRangeListViewResponse.of(sortedViewSet.stream().toList(),
+        List<AgendaMeetingDetailView> limitedListView = LimitOffset.limitList(new ArrayList<>(sortedViewSet), limOff);
+        return DateRangeListViewResponse.of(limitedListView,
                 getClosedRange(fromDateTime, toDateTime, "from", "to"),
                 sortedViewSet.size(), limOff);
     }
