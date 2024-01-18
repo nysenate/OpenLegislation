@@ -69,7 +69,7 @@ function ResultItem({ result }) {
   }
 
   let totalFloorBills = 0;
-  totalFloorBills = totalFloorBills + floorCalendar.totalEntries
+  totalFloorBills = totalFloorBills + (floorCalendar == null ? 0 : floorCalendar.totalEntries)
 
   if (supplementalCalendars.size > 0) {
     let array = Object.values(supplementalCalendars.items)
@@ -86,7 +86,7 @@ function ResultItem({ result }) {
           <span className="link">Senate Calendar {result.calendarNumber}</span>
         </Link>
         <div className="text text--small">
-          {formatDateTime(result.floorCalendar.calDate, DateTime.DATE_MED)}
+          {result.floorCalendar ? formatDateTime(result.floorCalendar.calDate, DateTime.DATE_MED) : ''}
         </div>
       </div>
       <div className="text text--small font-medium">

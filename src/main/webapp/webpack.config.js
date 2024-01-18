@@ -40,6 +40,8 @@ module.exports = {
       {
         context: ['/api', '/loginapikey', '/admin/login', '/register/signup', '/pdf', '/globals', '/sock', '/static', '/register/token'],
         target: 'http://localhost:8080',
+        secure: false,
+        changeOrigin: true,
       }
     ],
     historyApiFallback: {

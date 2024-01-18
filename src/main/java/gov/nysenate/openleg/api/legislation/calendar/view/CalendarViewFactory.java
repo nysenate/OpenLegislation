@@ -51,6 +51,10 @@ public class CalendarViewFactory {
         for (var supEntry : calendarSupplemental.getAllEntries()) {
             var baseId = BillId.getBaseId(supEntry.getBillId());
             infoMap.put(baseId, billDataService.getBillInfo(baseId));
+            if (supEntry.getSubBillId() != null) {
+                var subBillId = BillId.getBaseId(supEntry.getSubBillId());
+                infoMap.put(subBillId, billDataService.getBillInfo(subBillId));
+            }
         }
         return infoMap;
     }
