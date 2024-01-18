@@ -24,7 +24,10 @@ public class CalendarSupView extends SimpleCalendarSupView implements CalendarEn
         this.entriesBySection = MapView.of(
                 calendarSupplemental.getSectionEntries().asMap().values().stream()
                         .map(entryList -> entryList.stream()
-                                .map(entry -> new CalendarSupEntryView(entry, infoMap.get(BaseBillId.of(entry.getBillId()))))
+                                .map(entry -> new CalendarSupEntryView(
+                                        entry,
+                                        infoMap.get(BaseBillId.of(entry.getBillId())),
+                                        entry.getSubBillId() == null ? null : infoMap.get(BaseBillId.of(entry.getSubBillId()))))
                                 .sorted(supEntryViewComparator).toList())
                         .map(ListView::of)
                         .collect(Collectors.toMap(list -> list.getItems().get(0).getSectionType(), Function.identity()))
