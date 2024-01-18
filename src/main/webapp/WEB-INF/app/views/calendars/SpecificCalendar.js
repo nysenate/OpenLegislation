@@ -135,16 +135,18 @@ function createFloorSectionMap(response) {
 
   const sectionsMap = new Map()
   Object.keys(floorCalendars).forEach(suppId => {
-    const suppReleaseDateTime = floorCalendars[suppId].releaseDateTime
-    const entriesBySection = floorCalendars[suppId].entriesBySection.items
-    Object.keys(entriesBySection).forEach(sectionName => {
-      const section = entriesBySection[sectionName]
-      const floorSupp = new Supplemental(suppId, suppReleaseDateTime, section.items)
-      if (!sectionsMap.get(sectionName)) {
-        sectionsMap.set(sectionName, new Section(sectionName))
-      }
-      sectionsMap.get(sectionName).supplementals.set(floorSupp.suppId, floorSupp)
-    })
+    const suppReleaseDateTime = floorCalendars[suppId]?.releaseDateTime
+    const entriesBySection = floorCalendars[suppId]?.entriesBySection.items
+    if (entriesBySection) {
+      Object.keys(entriesBySection).forEach(sectionName => {
+        const section = entriesBySection[sectionName]
+        const floorSupp = new Supplemental(suppId, suppReleaseDateTime, section.items)
+        if (!sectionsMap.get(sectionName)) {
+          sectionsMap.set(sectionName, new Section(sectionName))
+        }
+        sectionsMap.get(sectionName).supplementals.set(floorSupp.suppId, floorSupp)
+      })
+    }
   })
   return sectionsMap
 }
