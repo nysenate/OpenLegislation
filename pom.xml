@@ -127,7 +127,7 @@
     <javax-cache.version>1.1.1</javax-cache.version>
     <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
     <jbcrypt.version>0.4</jbcrypt.version>
-    <jsoup.version>1.14.3</jsoup.version>
+    <jsoup.version>1.15.3</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
     <log4j.version>2.22.1</log4j.version>
