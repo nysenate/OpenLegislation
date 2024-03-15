@@ -115,6 +115,33 @@ public class BillScrapeReferenceHtmlParserTest {
         assertEquals(expectedVotes, actualVotes);
     }
 
+    /**
+     * Our vote parser was failing due to a new Videoconferencing icon.
+     * This test verifies that our parser is able to parse the vote as expected while ignoring that icon.
+     * The icon is represented as "&#8225;" in the test html file and is associated with Cooney's vote.
+     */
+    @Test
+    public void ignoresVideoconferenceIndicator() {
+        Document doc = loadDocument("billScrape/2023-S6169-20240109T175502.html");
+
+        Set<BillScrapeVote> expectedVotes = new HashSet<>();
+        SortedSetMultimap<BillVoteCode, String> vote = TreeMultimap.create();
+        vote.put(BillVoteCode.ABS, "Addabbo");
+        vote.put(BillVoteCode.EXC, "Ashby");
+        vote.put(BillVoteCode.ABD, "Bailey");
+        vote.put(BillVoteCode.NAY, "Borrello");
+        vote.put(BillVoteCode.AYE, "Chu");
+        vote.put(BillVoteCode.AYE, "Cleare");
+        vote.put(BillVoteCode.AYE, "Comrie");
+        vote.put(BillVoteCode.NAY, "Cooney");
+        LocalDate voteDate = LocalDate.of(2023, 6, 9);
+        expectedVotes.add(new BillScrapeVote(voteDate, vote));
+
+        Set<BillScrapeVote> actualVotes = parser.parseVotes(doc);
+
+        assertEquals(expectedVotes, actualVotes);
+    }
+
     private Document loadDocument(String file) {
         Document doc = null;
         try {
