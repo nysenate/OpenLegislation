@@ -7,16 +7,18 @@
 # Author: Ken Zalewski
 # Organization: New York State Senate
 # Date: 2014-05-14
-# Revised: 2014-12-01 - added config file for file destinations (local & remote)
-# Revised: 2014-12-02 - added options: --keep-empty, --no-remove, --no-symlink
-# Revised: 2014-12-03 - added options: --local-only, --remote-only
+# Revised: 2014-12-01 - add config file for file destinations (local & remote)
+# Revised: 2014-12-02 - add options: --keep-empty, --no-remove, --no-symlink
+# Revised: 2014-12-03 - add options: --local-only, --remote-only
 # Revised: 2015-11-09 - more robust config
-# Revised: 2015-11-15 - added handling for 4 file types: sobi, law, sess, hear
+# Revised: 2015-11-15 - add handling for 4 file types: sobi, law, sess, hear
 # Revised: 2016-06-24 - prevent copying hidden files
-# Revised: 2016-07-05 - removed SSH key file, since it's no longer used
-# Revised: 2017-08-10 - re-enabled multiple targets
-# Revised: 2017-10-18 - added transfer of XML files and control over file types
+# Revised: 2016-07-05 - remove SSH key file, since it's no longer used
+# Revised: 2017-08-10 - re-enable multiple targets
+# Revised: 2017-10-18 - add transfer of XML files and control over file types
 # Revised: 2022-10-24 - LAW files are now transferred from LBDC (same as XMLs)
+# Revised: 2024-04-23 - add --no-receive to skip transfer from LBDC
+#                     - remove --no-symlink; implement no_send and no_archive
 #
 
 prog=`basename $0`
@@ -25,7 +27,7 @@ sobi_file_glob="SOBI.*"
 nyslaw_file_glob="*.UPDATE DATABASE.LAW*"
 
 usage() {
-  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--skip-xml] [--skip-sobi] [--skip-law] [--skip-sess] [--skip-hear] [--no-remove] [--no-send] [--no-archive] [--no-symlink] [--local-only] [--remote-only] [--debug-scp]" >&2
+  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--skip-xml] [--skip-sobi] [--skip-law] [--skip-sess] [--skip-hear] [--no-receive] [--no-remove] [--no-send] [--no-archive] [--local-only] [--remote-only] [--debug-scp]" >&2
 }
 
 read_config() {
@@ -67,10 +69,10 @@ arc_data_dir=
 opt_inc_data_dir=
 opt_arc_data_dir=
 keep_empty=0
+no_receive=0
 no_remove=0
 no_send=0
 no_archive=0
-no_symlink=0
 local_only=0
 remote_only=0
 scp_opt=
@@ -99,10 +101,10 @@ while [ $# -gt 0 ]; do
     --skip-law) unset xfer_filetypes[law] ;;
     --skip-sess) unset xfer_filetypes[sess] ;;
     --skip-hear) unset xfer_filetypes[hear] ;;
+    --no-receive|--no-recv) no_receive=1 ;;
     --no-remove) no_remove=1 ;;
     --no-send) no_send=1 ;;
     --no-archive) no_archive=1 ;;
-    --no-symlink) no_symlink=1 ;;
     --local*) local_only=1 ;;
     --remote*) remote_only=1 ;;
     --debug-scp) scp_opt="-v" ;;
@@ -116,9 +118,6 @@ if [ ! -r "$cfg_file" ]; then
   exit 1
 elif [ $local_only -eq 1 -a $remote_only -eq 1 ]; then
   echo "$prog: Only one of --local-only and --remote-only can be specified" >&2
-  exit 1
-elif [ $no_symlink -ne 1 -a $no_archive -eq 1 ]; then
-  echo "$prog: --no-archive cannot be used unless --no-symlink is also specified" >&2
   exit 1
 elif [ ${#xfer_filetypes[*]} -eq 0 ]; then
   echo "$prog: At least one file type must be active" >&2
@@ -196,28 +195,33 @@ echo "Starting data transfer at `date`"
 # Some files, namely transcripts, are transferred by external users (typically
 # an STS staff member) into the incoming/ directory.
 
-for f in ${!ftp_dirs[@]}; do
-  if array_key_exists xfer_filetypes "$f"; then
-    if [ $no_remove -ne 1 ]; then
-      remove_text="and removing"
-      remove_opt="-E"
-    else
-      remove_text="but not deleting"
-      remove_opt=""
-    fi
+if [ $no_receive -ne 1 ]; then
+  for f in ${!ftp_dirs[@]}; do
+    if array_key_exists xfer_filetypes "$f"; then
+      if [ $no_remove -ne 1 ]; then
+        remove_text="and removing"
+        remove_opt="-E"
+      else
+        remove_text="but not deleting"
+        remove_opt=""
+      fi
 
-    echo "Retrieving $remove_text latest $f data from $ftp_host"
-    lftp "$ftp_prot://$ftp_host" <<END_SCRIPT
+      echo "Retrieving $remove_text latest $f data from $ftp_host"
+      lftp "$ftp_prot://$ftp_host" <<END_SCRIPT
 user "$ftp_user" "$ftp_pass"
 cache off
 lcd $inc_data_dir/${inc_dirs[$f]}
 cd ${ftp_dirs[$f]}
 mget $remove_opt *
 END_SCRIPT
-  else
-    echo "Skipping the retrieval of $f files from $ftp_host"
-  fi
-done
+    else
+      echo "Skipping the retrieval of $f files from $ftp_host"
+    fi
+  done
+else
+  echo "Skipping the retrieval of any files from $ftp_host"
+fi
+
 
 # Time to start deprecating the old SOBI file logic
 #if [ $keep_empty -ne 1 ]; then
@@ -243,29 +247,37 @@ for f in ${!xfer_filetypes[@]}; do
 done
 
 for f in ${!xfer_filetypes[@]}; do
-  echo "Copying ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${tgt_dirs[$f]}"
-  for tgt in $targets; do
-    if is_local "$tgt"; then
-      # The current target is a local destination
-      if [ $remote_only -ne 1 ]; then
-        echo "=> Copying $f files to local destination: $tgt/${tgt_dirs[$f]}"
-        echo "${file_lists[$f]}" | xargs -I{} cp -av "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+  if [ $no_send -ne 1 ]; then
+    echo "Copying ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${tgt_dirs[$f]}"
+    for tgt in $targets; do
+      if is_local "$tgt"; then
+        # The current target is a local destination
+        if [ $remote_only -ne 1 ]; then
+          echo "=> Copying $f files to local destination: $tgt/${tgt_dirs[$f]}"
+          echo "${file_lists[$f]}" | xargs -I{} cp -av "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+        else
+          echo "Skipping local destination: $tgt"
+        fi
       else
-        echo "Skipping local destination: $tgt"
+        # The current target is a remote destination
+        if [ $local_only -ne 1 ]; then
+          echo "=> Copying $f files to remote destination: $tgt/${tgt_dirs[$f]}"
+          echo "${file_lists[$f]}" | xargs -I{} scp $scp_opt "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+        else
+          echo "Skipping remote destination: $tgt"
+        fi
       fi
-    else
-      # The current target is a remote destination
-      if [ $local_only -ne 1 ]; then
-        echo "=> Copying $f files to remote destination: $tgt/${tgt_dirs[$f]}"
-        echo "${file_lists[$f]}" | xargs -I{} scp $scp_opt "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
-      else
-        echo "Skipping remote destination: $tgt"
-      fi
-    fi
-  done
+    done
+  else
+    echo "Skipping the copying/sending of ${file_counts[$f]} $f files"
+  fi
 
-  echo "Moving ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${arc_dirs[$f]}"
-  echo "${file_lists[$f]}" | xargs -I{} mv -v "${inc_dirs[$f]}/{}" "$arc_data_dir/${arc_dirs[$f]}"
+  if [ $no_archive -ne 1 ]; then
+    echo "Moving ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${arc_dirs[$f]}"
+    echo "${file_lists[$f]}" | xargs -I{} mv -v "${inc_dirs[$f]}/{}" "$arc_data_dir/${arc_dirs[$f]}"
+  else
+    echo "Skipping the archiving of ${file_counts[$f]} $f files; they will remain in ${inc_dirs[$f]}"
+  fi
 done
 
 echo "Finished data transfer at `date`"
