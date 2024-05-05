@@ -37,7 +37,7 @@ read_config() {
 }
 
 array_key_exists() {
-  # Create local reference to orignial array.
+  # Create local reference to original array.
   local -n a="$1"
   k="$2"
   if [ ${a[$k]+isset} ]; then
