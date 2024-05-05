@@ -83,7 +83,7 @@ user "$ftp_user" "$ftp_pass"
 cache off
 lcd $inc_data_dir/lbdc/aging
 cd $ftp_aging_dir
-mirror
+mirror -v
 END_SCRIPT
 
 echo "Finished data transfer at `date`"
