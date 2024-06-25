@@ -6,10 +6,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.transcripts.session.SessionType;
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -35,16 +32,15 @@ public class SqlTranscriptDaoIT extends BaseTests {
     // Generates Transcript test data.
     private static final int NUM_TRANSCRIPTS = 3;
     private static final String FILEPATH = "src/test/resources/transcriptFiles/";
-    private static final List<LocalDateTime> LDTS = new ArrayList<>();
     private static final List<Transcript> TRANSCRIPTS = new ArrayList<>();
     private static final Transcript UPDATE;
     private static final List<TranscriptFile> TRANSCRIPT_FILES = new ArrayList<>();
     private static TranscriptFile UPDATE_FILE;
     static {
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
-            LDTS.add(LocalDate.of(2020, Month.JULY, 30).atStartOfDay().plusHours(i));
-            Transcript curr = new Transcript(new TranscriptId(LDTS.get(i), new SessionType("REGULAR SESSION")),
-                     null, "t" + i + ".txt", "NYNY", "the text " + i);
+            LocalDateTime ldt = LocalDate.of(2020, Month.JULY, 30).atStartOfDay().plusHours(i);
+            Transcript curr = new Transcript(new TranscriptId(ldt, new SessionType("REGULAR SESSION")),
+                     DayType.SESSION, "t" + i + ".txt", "NYNY", "the text " + i);
             TRANSCRIPTS.add(curr);
             try {
                 TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
@@ -53,7 +49,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
             }
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        UPDATE = new Transcript(curr.getId(), null, "t0v1.txt",
+        UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
                 curr.getLocation(), curr.getText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
@@ -83,7 +79,9 @@ public class SqlTranscriptDaoIT extends BaseTests {
     public void getTranscriptTest() {
         fileDao.updateFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
-        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getId()));
+        var rez1 = TRANSCRIPTS.get(0);
+        var result = dao.getTranscript(TRANSCRIPTS.get(0).getId());
+        assertEquals(rez1, result);
     }
 
     @Test

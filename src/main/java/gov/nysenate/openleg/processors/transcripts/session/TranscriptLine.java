@@ -38,10 +38,7 @@ public record TranscriptLine(String text) {
      *         <code>false</code> otherwise.
      */
     public boolean isPageNumber() {
-        Optional<Integer> num = getNumber(text);
-        if (num.isEmpty())
-            return false;
-        return text.indexOf(num.get().toString()) > MAX_PAGE_NUM_INDEX;
+        return getNumber(text).filter(integer -> text.indexOf(integer.toString()) > MAX_PAGE_NUM_INDEX).isPresent();
     }
 
     public boolean isBlank() {

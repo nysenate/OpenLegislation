@@ -33,7 +33,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         var params = new MapSqlParameterSource("dateTime", DateUtils.toDate(transcriptId.dateTime()));
         SqlTranscriptQuery query = SELECT_TRANSCRIPT_BY_DATE_TIME;
         if (transcriptId.sessionType() != null) {
-            params.addValue("sessionType", transcriptId.sessionType());
+            params.addValue("sessionType", transcriptId.sessionType().toString());
             query = SELECT_TRANSCRIPT_BY_ID;
         }
         return jdbcNamed.queryForObject(query.getSql(schema()), params, transcriptRowMapper);
@@ -65,7 +65,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         return new MapSqlParameterSource().addValue("transcriptFilename", transcript.getFilename())
                 .addValue("sessionType", transcript.getSessionType())
                 .addValue("dateTime", toDate(transcript.getDateTime()))
-                .addValue("dayType", transcript.getDayType())
+                .addValue("dayType", transcript.getDayType().toString())
                 .addValue("location", transcript.getLocation())
                 .addValue("text", transcript.getText())
                 .addValue("modified_date_time", toDate(LocalDateTime.now()));

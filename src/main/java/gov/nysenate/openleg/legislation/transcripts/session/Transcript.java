@@ -56,7 +56,6 @@ public class Transcript extends BaseLegislativeContent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Transcript that = (Transcript) o;
         return Objects.equals(id, that.id) && dayType == that.dayType &&
                 Objects.equals(location, that.location) && Objects.equals(text, that.text) &&
