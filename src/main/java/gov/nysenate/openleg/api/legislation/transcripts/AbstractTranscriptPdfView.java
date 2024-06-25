@@ -9,9 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractTranscriptPdfView extends BasePdfView {
-    protected static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f;
-
     private static final Pattern LINE_NUM_PATTERN = Pattern.compile("^ {0,11}\\d{0,2}");
+    protected static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f;
 
     protected int indent;
 

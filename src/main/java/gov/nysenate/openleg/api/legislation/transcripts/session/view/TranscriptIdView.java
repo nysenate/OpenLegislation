@@ -9,7 +9,7 @@ public class TranscriptIdView implements ViewObject {
 
     public TranscriptIdView(TranscriptId transcriptId) {
         this.dateTime = transcriptId.dateTime().toString();
-        this.sessionType = transcriptId.sessionType();
+        this.sessionType = transcriptId.sessionType().toString();
     }
 
     public String getDateTime() {

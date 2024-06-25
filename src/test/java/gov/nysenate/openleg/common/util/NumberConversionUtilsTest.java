@@ -6,6 +6,7 @@ import org.junit.experimental.categories.Category;
 
 import static gov.nysenate.openleg.common.util.NumberConversionUtils.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
 public class NumberConversionUtilsTest {
@@ -20,6 +21,7 @@ public class NumberConversionUtilsTest {
         test("XCIX", "NINETY-NINE", 99);
         test("C", "ONE HUNDRED", 100);
         test("CLXIX", "ONE HUNDRED SIXTY-NINE", 169);
+        assertThrows(NullPointerException.class, () -> numeralToInt("A"));
     }
 
     private static void test(String numeral, String word, int num) {
