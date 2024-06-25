@@ -59,7 +59,7 @@ public class TranscriptPdfCtrl extends BaseCtrl {
         try {
             Transcript transcript = sessionType == null ?
                     transcriptData.getTranscriptByDateTime(ldt) :
-                    transcriptData.getTranscript(new TranscriptId(ldt, sessionType));
+                    transcriptData.getTranscript(TranscriptId.from(ldt, sessionType));
             return new TranscriptPdfView(transcript).writeData();
         }
         catch (DuplicateTranscriptEx | TranscriptNotFoundEx ex) {

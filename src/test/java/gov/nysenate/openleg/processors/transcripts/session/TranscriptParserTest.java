@@ -36,10 +36,10 @@ public class TranscriptParserTest {
 
     @Test
     public void testProcess() throws IOException {
-        TranscriptId testId = new TranscriptId(LocalDate.of(1992, 1, 1).atTime(10, 0),
+        TranscriptId testId = TranscriptId.from(LocalDate.of(1992, 1, 1).atTime(10, 0),
                 "REGULAR SESSION");
         String filename = "simple.txt";
-        Transcript expectedTranscript = new Transcript(testId, filename, "ALBANY, NEW YORK", FILE_TEXT);
+        Transcript expectedTranscript = new Transcript(testId, null, filename, "ALBANY, NEW YORK", FILE_TEXT);
         Transcript actualTranscript = processFilename(filename);
         assertEquals(expectedTranscript, actualTranscript);
     }

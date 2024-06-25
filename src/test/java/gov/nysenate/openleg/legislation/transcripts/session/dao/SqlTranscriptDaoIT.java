@@ -6,6 +6,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
+import gov.nysenate.openleg.legislation.transcripts.session.SessionType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -42,8 +43,8 @@ public class SqlTranscriptDaoIT extends BaseTests {
     static {
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
             LDTS.add(LocalDate.of(2020, Month.JULY, 30).atStartOfDay().plusHours(i));
-            Transcript curr = new Transcript(new TranscriptId(LDTS.get(i), "REGULAR SESSION"),
-                    "t" + i + ".txt", "NYNY", "the text " + i);
+            Transcript curr = new Transcript(new TranscriptId(LDTS.get(i), new SessionType("REGULAR SESSION")),
+                     null, "t" + i + ".txt", "NYNY", "the text " + i);
             TRANSCRIPTS.add(curr);
             try {
                 TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
@@ -52,7 +53,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
             }
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        UPDATE = new Transcript(curr.getId(), "t0v1.txt",
+        UPDATE = new Transcript(curr.getId(), null, "t0v1.txt",
                 curr.getLocation(), curr.getText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));

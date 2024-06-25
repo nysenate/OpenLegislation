@@ -81,6 +81,6 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
 
     private TranscriptId getTranscriptIdFromHit(SearchHit hit) {
         String[] data = hit.getId().split(Pattern.quote(idSeparator));
-        return new TranscriptId(LocalDateTime.parse(data[0]), data[1]);
+        return TranscriptId.from(LocalDateTime.parse(data[0]), data[1]);
     }
 }

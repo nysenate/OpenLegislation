@@ -5,8 +5,12 @@ import java.time.LocalDateTime;
 /**
  * Used to uniquely identify transcripts.
  */
-public record TranscriptId(LocalDateTime dateTime, String sessionType)
+public record TranscriptId(LocalDateTime dateTime, SessionType sessionType)
         implements Comparable<TranscriptId> {
+    public static TranscriptId from(LocalDateTime dateTime, String typeStr) {
+        return new TranscriptId(dateTime, new SessionType(typeStr));
+    }
+
     @Override
     public int compareTo(TranscriptId o) {
         int temp = dateTime.compareTo(o.dateTime);

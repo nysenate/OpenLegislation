@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.processors.ParseError;
 import org.apache.commons.io.Charsets;
 
@@ -25,6 +23,7 @@ final class TranscriptParser {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h[:][ ]mm a");
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
+
     private TranscriptParser() {}
 
     static Transcript parse(TranscriptFile transcriptFile) throws IOException {
@@ -47,13 +46,12 @@ final class TranscriptParser {
         try {
             String tempDate = data.get(0).replaceAll(" +", " ").replaceFirst("\\.$", "");
             String tempTime = data.get(1).replace(".", "").replace("Noon", "pm").toUpperCase();
-            String sessionType = data.get(2).replaceFirst("EXTRA ORDINARY", "EXTRAORDINARY")
-                    .replaceAll("\\s+", " ");
             LocalDate date = LocalDate.parse(tempDate, DATE_FORMATTER);
             LocalTime time = LocalTime.parse(tempTime, TIME_FORMATTER);
-            TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), sessionType);
             String transcriptText = Files.readString(transcriptFile.getFile().toPath(), CP_1252);
-            return new Transcript(transcriptId, transcriptFile.getFileName(), location, transcriptText);
+            DayType dayType = DayType.from(transcriptText);
+            TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), new SessionType(data.get(2)));
+            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), location, transcriptText);
         }
         catch (RuntimeException ex) {
             throw new ParseError("Problem parsing " + transcriptFile.getFileName(), ex);

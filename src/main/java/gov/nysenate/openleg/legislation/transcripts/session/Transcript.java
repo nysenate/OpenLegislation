@@ -10,13 +10,15 @@ import java.util.Objects;
  */
 public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
+    private final DayType dayType;
     private final String location, text, filename;
 
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId id, String filename, String location, String text) {
+    public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text) {
         super(id.dateTime().getYear());
         this.id = id;
+        this.dayType = dayType;
         this.location = location;
         this.text =  text;
         this.filename = filename;
@@ -31,7 +33,11 @@ public class Transcript extends BaseLegislativeContent {
     }
 
     public String getSessionType() {
-        return id.sessionType();
+        return id.sessionType().toString();
+    }
+
+    public DayType getDayType() {
+        return dayType;
     }
 
     public String getLocation() {
@@ -50,15 +56,15 @@ public class Transcript extends BaseLegislativeContent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Transcript that = (Transcript) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(location, that.location) &&
-                Objects.equals(text, that.text) &&
+        return Objects.equals(id, that.id) && dayType == that.dayType &&
+                Objects.equals(location, that.location) && Objects.equals(text, that.text) &&
                 Objects.equals(filename, that.filename);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, location, text, filename);
+        return Objects.hash(super.hashCode(), id, dayType, location, text, filename);
     }
 }

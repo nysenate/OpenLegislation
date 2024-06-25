@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
@@ -61,33 +62,34 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     /** --- Param Source Methods --- */
 
     private static MapSqlParameterSource getTranscriptParams(Transcript transcript) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("transcriptFilename", transcript.getFilename());
-        params.addValue("sessionType", transcript.getSessionType());
-        params.addValue("dateTime", toDate(transcript.getDateTime()));
-        params.addValue("location", transcript.getLocation());
-        params.addValue("text", transcript.getText());
-        return params.addValue("modified_date_time", toDate(LocalDateTime.now()));
+        return new MapSqlParameterSource().addValue("transcriptFilename", transcript.getFilename())
+                .addValue("sessionType", transcript.getSessionType())
+                .addValue("dateTime", toDate(transcript.getDateTime()))
+                .addValue("dayType", transcript.getDayType())
+                .addValue("location", transcript.getLocation())
+                .addValue("text", transcript.getText())
+                .addValue("modified_date_time", toDate(LocalDateTime.now()));
     }
 
     /** --- Row Mapper Instances --- */
 
     private static final RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
         LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
-        TranscriptId id = new TranscriptId(dateTime, rs.getString("session_type"));
-        Transcript transcript = new Transcript(id, rs.getString("transcript_filename"),
-                rs.getString("location"), rs.getString("text"));
+        TranscriptId id = TranscriptId.from(dateTime, rs.getString("session_type"));
+        Transcript transcript = new Transcript(id, DayType.valueOf(rs.getString("day_type")),
+                rs.getString("transcript_filename"), rs.getString("location"),
+                rs.getString("text"));
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return transcript;
     };
 
     private static final RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type"));
+        TranscriptId.from(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type"));
 
 
     private static final RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->
-            new TranscriptUpdateToken(new TranscriptId(getLocalDateTimeFromRs(rs, "date_time"),
+            new TranscriptUpdateToken(TranscriptId.from(getLocalDateTimeFromRs(rs, "date_time"),
                     rs.getString("session_type")),
                     getLocalDateTimeFromRs(rs, "modified_date_time"));
 }
