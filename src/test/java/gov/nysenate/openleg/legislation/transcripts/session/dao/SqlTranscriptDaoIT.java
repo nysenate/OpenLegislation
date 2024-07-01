@@ -79,9 +79,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
     public void getTranscriptTest() {
         fileDao.updateFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
-        var rez1 = TRANSCRIPTS.get(0);
-        var result = dao.getTranscript(TRANSCRIPTS.get(0).getId());
-        assertEquals(rez1, result);
+        assertEquals(TRANSCRIPTS.get(0), dao.getTranscript(TRANSCRIPTS.get(0).getId()));
     }
 
     @Test

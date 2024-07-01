@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-final class TranscriptParser {
+public final class TranscriptParser {
     private static final Charset CP_1252 = Charsets.toCharset("CP1252");
     // The maximum number of lines of relevant data.
     private static final int MAX_DATA_LENGTH = 4;
@@ -26,32 +26,32 @@ final class TranscriptParser {
 
     private TranscriptParser() {}
 
-    static Transcript parse(TranscriptFile transcriptFile) throws IOException {
+    public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
         var scanner = new Scanner(transcriptFile.getFile(), CP_1252);
         List<String> data = new ArrayList<>(MAX_DATA_LENGTH);
-        String location = null;
         while (scanner.hasNextLine() && data.size() < MAX_DATA_LENGTH) {
-            String line = new TranscriptLine(scanner.nextLine()).removeLineNumber().trim();
+            String line = scanner.nextLine().replaceAll("\\s+", " ")
+                    // Remove the line number, if it exists
+                    .replaceFirst("^ *\\d+ ", "").trim();
             // Skips lines before the location, and lines without data.
-            if (location != null && line.matches("(?i).*[a-z]+.*")) {
+            if (line.matches("(?i)ALBANY[ ,]*NEW YORK") ||
+                    (!data.isEmpty() && line.matches(".*[A-Za-z].*"))) {
                 data.add(line);
-            }
-            String temp = line.replaceAll("\\s+", " ");
-            // Relevant data appears after the location label.
-            if (temp.matches(("(?i)ALBANY[ ,]*NEW YORK"))) {
-                location = temp;
             }
         }
         scanner.close();
         try {
-            String tempDate = data.get(0).replaceAll(" +", " ").replaceFirst("\\.$", "");
-            String tempTime = data.get(1).replace(".", "").replace("Noon", "pm").toUpperCase();
+            String tempDate = data.get(1).replaceAll(" +", " ").replaceFirst("\\.$", "");
+            String tempTime = data.get(2).replace(".", "").replace("Noon", "pm").toUpperCase();
             LocalDate date = LocalDate.parse(tempDate, DATE_FORMATTER);
             LocalTime time = LocalTime.parse(tempTime, TIME_FORMATTER);
             String transcriptText = Files.readString(transcriptFile.getFile().toPath(), CP_1252);
             DayType dayType = DayType.from(transcriptText);
-            TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), new SessionType(data.get(2)));
-            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), location, transcriptText);
+            if (dayType == null) {
+                throw new IllegalArgumentException("Cannot parse dayType.");
+            }
+            TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), new SessionType(data.get(3)));
+            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
         }
         catch (RuntimeException ex) {
             throw new ParseError("Problem parsing " + transcriptFile.getFileName(), ex);

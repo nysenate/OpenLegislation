@@ -15,6 +15,10 @@ public class SessionType implements Comparable<SessionType> {
     private final String typeString;
 
     public SessionType(String sessionTypeStr) {
+        if (sessionTypeStr.contains("SECOND")) {
+            sessionTypeStr = sessionTypeStr.replaceFirst("SECOND ", "");
+            sessionTypeStr += " II";
+        }
         Matcher matcher = typePattern.matcher(sessionTypeStr.toUpperCase().replaceAll("\\s+", ""));
         if (!matcher.matches() || !validate(matcher)) {
             throw new IllegalArgumentException("Cannot parse session label: " + sessionTypeStr);
@@ -51,6 +55,7 @@ public class SessionType implements Comparable<SessionType> {
 
     @Override
     public int compareTo(@Nonnull SessionType o) {
+        // Regular sessions come first
         if (typeString.startsWith(regular) || o.typeString.startsWith(regular)) {
             return o.typeString.compareTo(this.typeString);
         }

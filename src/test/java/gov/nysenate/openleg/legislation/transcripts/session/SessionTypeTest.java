@@ -16,6 +16,7 @@ public class SessionTypeTest {
         assertEquals("Regular Session", new SessionType("REGULAR SESSION").toString());
         assertEquals("Extraordinary Session II", new SessionType("Extra Ordinary Session II").toString());
         assertEquals("Extraordinary Session", new SessionType("Extraordinary Session").toString());
+        assertEquals("Extraordinary Session II", new SessionType("SECOND EXTRAORDINARY SESSION").toString());
         assertThrows(IllegalArgumentException.class, () -> new SessionType("Regular Session I"));
         assertThrows(IllegalArgumentException.class, () -> new SessionType("Extraordinary Session A"));
         assertThrows(IllegalArgumentException.class, () -> new SessionType("Bad input"));

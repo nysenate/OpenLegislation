@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
+import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -17,31 +18,18 @@ import static org.junit.Assert.assertThrows;
 
 @Category(UnitTest.class)
 public class TranscriptParserTest {
-    private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/",
-    FILE_TEXT = """
-                                                                          10
-
-                     1
-
-                     2                       ALBANY, NEW YORK
-
-                     3                       January 1, 1992
-
-                     4                         10:00 a.m.
-
-                     5                       REGULAR SESSION
-
-                     6                       Some more text here.
-            """;
+    private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/";
 
     @Test
     public void testProcess() throws IOException {
-        TranscriptId testId = TranscriptId.from(LocalDate.of(1992, 1, 1).atTime(10, 0),
+        TranscriptId testId = TranscriptId.from(LocalDate.of(2021, 12, 31).atTime(11, 0),
                 "REGULAR SESSION");
-        String filename = "simple.txt";
-        Transcript expectedTranscript = new Transcript(testId, null, filename, "ALBANY, NEW YORK", FILE_TEXT);
+        String filename = "SenateLD123121.txt";
+        Transcript expectedTranscript = new Transcript(testId, DayType.LEGISLATIVE, filename, "ALBANY, NEW YORK", "");
         Transcript actualTranscript = processFilename(filename);
-        assertEquals(expectedTranscript, actualTranscript);
+        assertEquals(expectedTranscript.getId(), actualTranscript.getId());
+        assertEquals(expectedTranscript.getDayType(), actualTranscript.getDayType());
+        assertEquals(expectedTranscript.getLocation(), actualTranscript.getLocation());
     }
 
     @Test

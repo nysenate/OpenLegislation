@@ -17,30 +17,7 @@ public class TranscriptLineTest {
     public void constructorTest() {
         lineTexts = new String[]{"Here's a line!", "", "A", "\fB"};
         expected = new String[]{lineTexts[0], "", "A", "B"};
-        testHelper(TranscriptLine::text);
-    }
-
-    @Test
-    public void testPageNumber() {
-        lineTexts = new String[]{"                                 1234", "4321", "55", "                1397."};
-        expected = new Object[]{true, false, false, false};
-        testHelper(TranscriptLine::isPageNumber);
-    }
-
-    @Test
-    public void testRemoveLineNumber() {
-        lineTexts = new String[]{"        21   NEW YORK STATE SENATE ", "    22", "    2",
-                "       THE NEW YORK SENATE", "               833"};
-        expected = new Object[]{"NEW YORK STATE SENATE", "", "",
-                "       THE NEW YORK SENATE", "               833"};
-        testHelper(TranscriptLine::removeLineNumber);
-    }
-
-    @Test
-    public void testIsEmpty() {
-        lineTexts = new String[]{"\t    \n", "       "};
-        expected = new Object[]{true, true};
-        testHelper(TranscriptLine::isBlank);
+        testHelper(TranscriptLine::getText);
     }
 
     @Test

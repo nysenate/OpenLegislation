@@ -35,9 +35,7 @@ public class StenographerTest {
             getStenographer(LocalDate.of(1992, 1, 1).atStartOfDay());
             fail();
         }
-        catch (RuntimeException e) {
-            assertTrue(true);
-        }
+        catch (RuntimeException ignored) {}
     }
 
     private void dateTestHelper(LocalDateTime ldt, Stenographer expected) {

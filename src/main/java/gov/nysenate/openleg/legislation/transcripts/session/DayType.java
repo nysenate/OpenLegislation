@@ -8,12 +8,11 @@ public enum DayType {
     LEGISLATIVE, SESSION;
 
     public static DayType from(String transcriptText) {
-        List<List<String>> pages = new TranscriptPdfParser(transcriptText).getPages();
-        if (pages.size() > 3) {
+        int pageCount = new TranscriptPdfParser(transcriptText).getPages().size();
+        if (pageCount > 3) {
             return SESSION;
         }
-        if (pages.size() == 3 && pages.get(2).stream().dropWhile(line -> line.matches("[\\s\\d]+"))
-                .findFirst().orElse("").trim().startsWith("There being no further business")) {
+        if (pageCount == 3) {
             return LEGISLATIVE;
         }
         return null;
