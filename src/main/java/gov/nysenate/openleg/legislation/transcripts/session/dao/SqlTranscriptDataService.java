@@ -7,6 +7,8 @@ import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptE
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
+import gov.nysenate.openleg.notifications.model.Notification;
+import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -71,6 +73,11 @@ public class SqlTranscriptDataService implements TranscriptDataService {
         transcriptDao.updateTranscript(transcript);
         if (postUpdateEvent) {
             eventBus.post(new TranscriptUpdateEvent(transcript));
+        }
+        final String summary = "The transcript from %s lacks a dayType.".formatted(transcript.getFilename());
+        if (transcript.getDayType() == null) {
+            eventBus.post(new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
+                    summary, summary + "\nAll floor transcripts should be legislative or session transcripts."));
         }
     }
 }

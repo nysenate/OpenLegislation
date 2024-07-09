@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class StenographerTest {
     @Test
     public void dateTest() {
-        LocalDateTime curr = LocalDate.of(1993, 1, 1).atStartOfDay();
+        LocalDate curr = LocalDate.of(1993, 1, 1);
         dateTestHelper(curr, WILLIMAN);
         dateTestHelper(curr.plusYears(2), WILLIMAN);
         curr = curr.withYear(1999);
@@ -26,19 +26,19 @@ public class StenographerTest {
         curr = curr.withYear(2005);
         dateTestHelper(curr, CANDYCO1);
         dateTestHelper(curr.withYear(2010), CANDYCO1);
-        curr = LocalDate.of(2011, 5, 16).atStartOfDay();
+        curr = LocalDate.of(2011, 5, 16);
         dateTestHelper(curr, KIRKLAND);
         dateTestHelper(curr.withYear(2016), KIRKLAND);
         // New Stenographers may need to be added in the future.
-        dateTestHelper(LocalDateTime.now(), KIRKLAND);
+        dateTestHelper(LocalDateTime.now().toLocalDate(), KIRKLAND);
         try {
-            getStenographer(LocalDate.of(1992, 1, 1).atStartOfDay());
+            getStenographer(LocalDate.of(1992, 1, 1));
             fail();
         }
         catch (RuntimeException ignored) {}
     }
 
-    private void dateTestHelper(LocalDateTime ldt, Stenographer expected) {
-        assertEquals(expected.getName(), getStenographer(ldt));
+    private void dateTestHelper(LocalDate date, Stenographer expected) {
+        assertEquals(expected.getName(), getStenographer(date));
     }
 }

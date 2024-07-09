@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public final class TranscriptParser {
-    private static final Charset CP_1252 = Charsets.toCharset("CP1252");
+    private static final Charset CP_850 = Charset.forName("CP850"), CP_1252 = Charset.forName("CP1252");
     // The maximum number of lines of relevant data.
     private static final int MAX_DATA_LENGTH = 4;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h[:][ ]mm a");
@@ -27,7 +27,7 @@ public final class TranscriptParser {
     private TranscriptParser() {}
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
-        var scanner = new Scanner(transcriptFile.getFile(), CP_1252);
+        var scanner = new Scanner(transcriptFile.getFile(), CP_850);
         List<String> data = new ArrayList<>(MAX_DATA_LENGTH);
         while (scanner.hasNextLine() && data.size() < MAX_DATA_LENGTH) {
             String line = scanner.nextLine().replaceAll("\\s+", " ")
@@ -41,16 +41,14 @@ public final class TranscriptParser {
         }
         scanner.close();
         try {
-            String tempDate = data.get(1).replaceAll(" +", " ").replaceFirst("\\.$", "");
-            String tempTime = data.get(2).replace(".", "").replace("Noon", "pm").toUpperCase();
-            LocalDate date = LocalDate.parse(tempDate, DATE_FORMATTER);
-            LocalTime time = LocalTime.parse(tempTime, TIME_FORMATTER);
-            String transcriptText = Files.readString(transcriptFile.getFile().toPath(), CP_1252);
+            String dateStr = data.get(1).replaceAll(" +", " ").replaceFirst("\\.$", "");
+            String timeStr = data.get(2).replace(".", "").replace("Noon", "pm").toUpperCase();
+            LocalDate date = LocalDate.parse(dateStr, DATE_FORMATTER);
+            Charset encoding = date.isBefore(Stenographer.KIRKLAND.getStartDate()) ? CP_850 : CP_1252;
+            String transcriptText = Files.readString(transcriptFile.getFile().toPath(), encoding);
+            LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.parse(timeStr, TIME_FORMATTER));
             DayType dayType = DayType.from(transcriptText);
-            if (dayType == null) {
-                throw new IllegalArgumentException("Cannot parse dayType.");
-            }
-            TranscriptId transcriptId = new TranscriptId(LocalDateTime.of(date, time), new SessionType(data.get(3)));
+            TranscriptId transcriptId = new TranscriptId(dateTime, new SessionType(data.get(3)));
             return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
         }
         catch (RuntimeException ex) {

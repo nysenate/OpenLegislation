@@ -16,16 +16,16 @@ public enum Stenographer {
     WILLIMAN(1993, "Pauline Williman, Certified Shorthand Reporter");
 
     private static final ImmutableSortedSet<Stenographer> sortedByStartDate =
-            ImmutableSortedSet.copyOf((o1, o2) -> o2.start.compareTo(o1.start), List.of(values()));
-    private final LocalDateTime start;
+            ImmutableSortedSet.copyOf((o1, o2) -> o2.startDate.compareTo(o1.startDate), List.of(values()));
+    private final LocalDate startDate;
     private final String name;
 
     Stenographer(int year, String name) {
         this(LocalDate.of(year, 1, 1), name);
     }
 
-    Stenographer(LocalDate start, String name) {
-        this.start = start.atStartOfDay();
+    Stenographer(LocalDate startDate, String name) {
+        this.startDate = startDate;
         this.name = name;
     }
 
@@ -34,12 +34,16 @@ public enum Stenographer {
      * @param ldt DateTime of transcript.
      * @return their name.
      */
-    public static String getStenographer(LocalDateTime ldt) {
+    public static String getStenographer(LocalDate ldt) {
         for (Stenographer s : sortedByStartDate) {
-            if (s.start.isBefore(ldt) || s.start.equals(ldt))
+            if (s.startDate.isBefore(ldt) || s.startDate.equals(ldt))
                 return s.name;
         }
         throw new IllegalArgumentException("There should be a Stenographer for every DateTime.");
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
     public String getName() {
