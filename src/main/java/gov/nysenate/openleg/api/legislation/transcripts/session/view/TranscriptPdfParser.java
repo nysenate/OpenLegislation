@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class TranscriptPdfParser {
     private final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
+    private final List<String> badLines = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();
     private int currPageNum;
 
@@ -33,18 +34,25 @@ public class TranscriptPdfParser {
         return pages;
     }
 
+    public List<String> getBadLines() {
+        return badLines;
+    }
+
     protected boolean hasLineNumbers() {
         return hasLineNumbers;
     }
 
+    /**
+     * Simply retrieves a TranscriptLine at the given index,
+     * but returns "null" to represent going past the last line.
+     */
     private static TranscriptLine getLine(List<TranscriptLine> lines, int index) {
-        return index < lines.size() ? lines.get(index) : new TranscriptLine("");
+        return index < lines.size() ? lines.get(index) : null;
     }
 
     private boolean isNextPageNumber(TranscriptLine currLine, TranscriptLine nextLine) {
-        return Objects.equals(currLine.getStartingInt(), currPageNum + 1) &&
-                currLine.getCleanText().matches("\\d+") &&
-                (!hasLineNumbers || Objects.equals(nextLine.getStartingInt(), 1));
+        return currLine.getCleanText().matches(String.valueOf(currPageNum + 1)) && nextLine != null
+                && (!hasLineNumbers || Objects.equals(nextLine.getStartingInt(), 1));
     }
 
     /**
@@ -59,8 +67,9 @@ public class TranscriptPdfParser {
                 addCurrPage();
                 currPageNum = currLine.getStartingInt();
             }
-            else if (needsCorrecting(nextLine, getLine(lines, i + 2))) {
-                currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText());
+            else if (nextLine != null && needsCorrecting(nextLine, getLine(lines, i + 2))) {
+                badLines.add(nextLine.getText());
+                currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText().trim());
                 i++;
             }
             addLine(currLine);
