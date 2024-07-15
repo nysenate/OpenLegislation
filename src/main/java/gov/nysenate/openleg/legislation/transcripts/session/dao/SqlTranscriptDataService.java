@@ -70,14 +70,24 @@ public class SqlTranscriptDataService implements TranscriptDataService {
     /** {@inheritDoc} */
     @Override
     public void saveTranscript(Transcript transcript, boolean postUpdateEvent) {
-        transcriptDao.updateTranscript(transcript);
-        if (postUpdateEvent) {
-            eventBus.post(new TranscriptUpdateEvent(transcript));
-        }
+        try {
+            var currInfo = new TranscriptFilenameInfo(transcriptDao.getTranscript(transcript.getId()));
+            var newInfo = new TranscriptFilenameInfo(transcript);
+            if (newInfo.isLessAccurateThan(currInfo)) {
+                final String summary = "Skipped transcript file " + transcript.getFilename();
+                eventBus.post(new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
+                        summary, summary + "\nAn older version of this file has more accurate data."));
+                return;
+            }
+        } catch (EmptyResultDataAccessException ignored) {}
         final String summary = "The transcript from %s lacks a dayType.".formatted(transcript.getFilename());
         if (transcript.getDayType() == null) {
             eventBus.post(new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
                     summary, summary + "\nAll floor transcripts should be legislative or session transcripts."));
+        }
+        transcriptDao.updateTranscript(transcript);
+        if (postUpdateEvent) {
+            eventBus.post(new TranscriptUpdateEvent(transcript));
         }
     }
 }

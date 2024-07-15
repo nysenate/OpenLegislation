@@ -2,66 +2,91 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 
 import gov.nysenate.openleg.common.util.Pair;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
+import gov.nysenate.openleg.legislation.transcripts.session.SessionType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TranscriptFilenameInfo {
-    private static final Pattern date = Pattern.compile("\\d{6}"), dayType = Pattern.compile("SENATE(LD)?"),
-            corrected = Pattern.compile("CORRECTED"), fixed = Pattern.compile("FIXED$"),
-            versionPattern = Pattern.compile("V\\d+"), sessionType = Pattern.compile("E");
-    private String mismatches = "";
-    private Integer version = null, priority = null;
+    private static final int NUM_FIELDS = 6;
+    private static final Pattern datePattern = Pattern.compile("\\d{6}"), dayTypePattern = Pattern.compile("SENATE(LD)?"),
+            correctedPattern = Pattern.compile("CORRECTED"), fixedPattern = Pattern.compile("FIXED$"),
+            versionPattern = Pattern.compile("V\\d+"), sessionTypePattern = Pattern.compile("E");
+    private final Map<Class<?>, Pair<String>> mismatches = new HashMap<>();
+    // Used to determine which transcripts are preferred.
+    private final int[] priority = new int[NUM_FIELDS];
 
     public TranscriptFilenameInfo(Transcript transcript) {
-        Pair<String> data = parseTextWithPattern(transcript.getFilename().toUpperCase().replaceAll("\\.(TXT)?", ""), date);
-        LocalDate transcriptDate = transcript.getDateTime().toLocalDate();
+        this(transcript.getFilename(), transcript.getDateTime().toLocalDate(),
+                transcript.getDayType(), transcript.getSessionType());
+    }
+
+    public TranscriptFilenameInfo(String filename, LocalDate date, DayType dayType, @Nonnull String sessionType) {
+        final String cleanFilename = filename.toUpperCase().replaceAll("\\.(TXT)?", "");
+        Pair<String> data = parseTextWithPattern(cleanFilename, versionPattern);
+        if (data.v1() != null) {
+            priority[0] = Integer.parseInt(data.v1().replace("V", ""));
+        }
+        data = parseTextWithPattern(data.v2(), correctedPattern);
+        if (data.v1() != null) {
+            priority[1] = 1;
+        }
+        data = parseTextWithPattern(data.v2(), fixedPattern);
+        if (data.v1() != null) {
+            priority[2] = 1;
+        }
+        data = parseTextWithPattern(data.v2(), datePattern);
         String dateStr = String.format("%02d%02d%02d",
-                transcriptDate.getMonthValue(), transcriptDate.getDayOfMonth(), transcriptDate.getYear()%100);
+                date.getMonthValue(), date.getDayOfMonth(), date.getYear()%100);
         if (!dateStr.equals(data.v1())) {
-            addMismatch("date", dateStr, data.v1());
+            addMismatch(LocalDate.class, data.v1(), dateStr);
+            priority[3] = -1;
         }
-        data = parseTextWithPattern(data.v2(), dayType);
-        DayType filenameDayType;
-        if (data.v1() == null) {
-            filenameDayType = null;
-        }
-        else if (data.v1().endsWith("LD")) {
-            filenameDayType = DayType.LEGISLATIVE;
-        }
-        else {
-            filenameDayType = DayType.SESSION;
-        }
-        if (filenameDayType != null && filenameDayType != transcript.getDayType()) {
-            addMismatch("Day type", transcript.getDayType().toString(), filenameDayType.toString());
-        }
-        data = parseTextWithPattern(data.v2(), corrected);
+        data = parseTextWithPattern(data.v2(), dayTypePattern);
+        // Many filenames lack DayType information, which is fine.
         if (data.v1() != null) {
-            this.priority = 1 << 7;
+            DayType filenameDayType = data.v1().endsWith("LD") ? DayType.LEGISLATIVE : DayType.SESSION;
+            if (filenameDayType != dayType) {
+                addMismatch(DayType.class, filenameDayType.toString(), String.valueOf(dayType));
+                priority[4] = -1;
+            }
         }
-        data = parseTextWithPattern(data.v2(), fixed);
-        if (data.v1() != null) {
-            this.priority = 1 << 8;
-        }
-        data = parseTextWithPattern(data.v2(), versionPattern);
-        if (data.v1() != null) {
-            this.version = Integer.parseInt(data.v1().replace("V", ""));
-            this.priority = version;
-        }
-        data = parseTextWithPattern(data.v2(), sessionType);
-        if (data.v1() != null && !transcript.getSessionType().startsWith("E")) {
-            addMismatch("Session type", transcript.getSessionType(), "Extraordinary Session");
+        data = parseTextWithPattern(data.v2(), sessionTypePattern);
+        if (data.v1() != null && !sessionType.startsWith("E")) {
+            addMismatch(SessionType.class, "An Extraordinary Session", sessionType);
+            priority[5] = -1;
         }
     }
 
-    public String getMismatches() {
-        return mismatches;
+    public boolean isLessAccurateThan(@Nonnull TranscriptFilenameInfo oldInfo) {
+        for (int i = 0; i < NUM_FIELDS; i++) {
+            if (priority[i] != oldInfo.priority[i]) {
+                return priority[i] < oldInfo.priority[i];
+            }
+        }
+        return false;
     }
 
-    private void addMismatch(String type, String fromTranscript, String fromFilename) {
-        this.mismatches += "\n" + String.join("\t", type, fromTranscript, fromFilename);
+    public Optional<String> getMismatches() {
+        if (mismatches.isEmpty()) {
+            return Optional.empty();
+        }
+        var result = new StringBuilder();
+        result.append("\nType\t\tExpected\t\tActual\n");
+        for (var entry : mismatches.entrySet()) {
+            result.append("%s\t\t%s\t\t%s%n".formatted(entry.getKey().getSimpleName(), entry.getValue().v1(), entry.getValue().v2()));
+        }
+        return Optional.of(result.toString());
+    }
+
+    private void addMismatch(Class<?> type, String expected, String actual) {
+        mismatches.put(type, new Pair<>(expected, actual));
     }
 
     /**
