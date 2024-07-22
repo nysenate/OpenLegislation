@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.search.notifications;
 
-import com.google.common.collect.BoundType;
-import com.google.common.collect.Range;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
@@ -11,14 +11,6 @@ import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.search.UnexpectedSearchException;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.SearchParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +22,6 @@ import java.util.Set;
 
 @Service
 public class ElasticNotificationService implements NotificationService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationService.class);
     private final NotificationSearchDao notificationDao;
 
     @Autowired
@@ -51,43 +42,39 @@ public class ElasticNotificationService implements NotificationService {
     /** {@inheritDoc} */
     @Override
     public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types,
-                                                                     Range<LocalDateTime> dateTimeRange,
+                                                                     LocalDateTime from,
+                                                                     LocalDateTime to,
                                                                      SortOrder order,
                                                                      LimitOffset limitOffset) throws SearchException {
-        BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
+        var filterQuery = new BoolQuery.Builder();
 
         if (!types.equals(EnumSet.allOf(NotificationType.class))) {
             // Convert to lowercase strings for term query.
-            List<String> typeValues = types.stream()
-                    .map(Enum::name).map(String::toLowerCase).toList();
-            filterQuery.must(QueryBuilders.termsQuery("notificationType", typeValues));
+            List<FieldValue> typeValues = types.stream()
+                    .map(Enum::name).map(String::toLowerCase).map(FieldValue::of).toList();
+            filterQuery.filter(TermsQuery.of(b -> b.field("notificationType").terms(
+                    TermsQueryField.of(tqfb -> tqfb.value(typeValues))
+            ))._toQuery());
         }
 
-        if (dateTimeRange.hasUpperBound() || dateTimeRange.hasLowerBound()) {
-            RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery("occurred");
-            if (dateTimeRange.hasLowerBound()) {
-                rangeQuery.from(dateTimeRange.lowerEndpoint(),
-                        dateTimeRange.lowerBoundType() == BoundType.CLOSED);
+        if (from != null || to != null) {
+            var rangeQuery = new RangeQuery.Builder().field("occurred");
+            if (from != null) {
+                rangeQuery.from(from.toString());
             }
-            if (dateTimeRange.hasUpperBound()) {
-                rangeQuery.to(dateTimeRange.upperEndpoint(),
-                        dateTimeRange.upperBoundType() == BoundType.CLOSED);
+            if (to != null) {
+                rangeQuery.to(to.toString());
             }
-            filterQuery.must(rangeQuery);
+            filterQuery.filter(rangeQuery.build()._toQuery());
         }
 
         String sortString = (order != null && order != SortOrder.NONE)
-                ? "occurred:" + order
-                : "";
+                ? "occurred:" + order : "";
 
-        try {
-            SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(
-                    QueryBuilders.matchAllQuery(), filterQuery,
-                    ElasticSearchServiceUtils.extractSortBuilders(sortString), limitOffset);
-            return results.toPaginatedList();
-        } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(
+                filterQuery.build()._toQuery(), null,
+                ElasticSearchServiceUtils.extractSortBuilders(sortString), limitOffset);
+        return results.toPaginatedList();
     }
 
     /** {@inheritDoc} */
@@ -96,25 +83,13 @@ public class ElasticNotificationService implements NotificationService {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        try {
-            return notificationDao.searchNotifications(QueryBuilders.queryStringQuery(queryString), QueryBuilders.matchAllQuery(),
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
-        } catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return notificationDao.searchNotifications(QueryBuilders.queryString(b -> b.query(queryString)), null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 
     /** {@inheritDoc} */
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
-        try {
-            return notificationDao.registerNotification(notification);
-        } catch (ElasticsearchException ex) {
-            logger.error("Failed to register notification!", ex);
-            return new RegisteredNotification(notification, -1);
-        }
+        return notificationDao.registerNotification(notification);
     }
 }

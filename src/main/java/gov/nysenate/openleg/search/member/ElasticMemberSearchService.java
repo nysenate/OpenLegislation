@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.search.member;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.ExistsQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -9,10 +13,6 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,55 +39,33 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         this.rebuildIndex();
     }
 
-    /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(requireSessionYear(sessionYear)),
-                null, sort, limOff);
-    }
-
-    @Override
-    public SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(requireSessionYear(sessionYear))
-                        .filter(QueryBuilders.termQuery("chamber", chamber.toString().toLowerCase())),
-                null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .filter(requireSessionYear(sessionYear))
-                        .must(QueryBuilders.queryStringQuery(query)),
-                null, sort, limOff);
-    }
-
-    private SearchResults<Integer> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
+    public SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff)
             throws SearchException {
-        if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
-        try {
-            return memberSearchDao.searchMembers(query, postFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
+        Query chamberQuery = TermQuery.of(b -> b.field("chamber").value(chamber.toString().toLowerCase()))._toQuery();
+        return search(
+                QueryBuilders.bool(b -> b.must(sessionYearExistsQuery(sessionYear), chamberQuery)),
+                sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException {
+        Query esQuery = IndexedSearchService.getStringQuery(query);
+        return search(
+                QueryBuilders.bool(b -> b.must(sessionYearExistsQuery(sessionYear), esQuery)),
+                sort, limOff);
+    }
+
+    private SearchResults<Integer> search(Query query, String sort, LimitOffset limOff)
+            throws SearchException {
+        if (limOff == null) {
+            // TODO: some map or function to get a default for everything?
+            limOff = LimitOffset.TWENTY_FIVE;
         }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return memberSearchDao.searchMembers(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     /** {@inheritDoc} */
@@ -146,11 +124,11 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 
     /**
      * Generate a query that matches members that were active on the given session year.
-     *
      * @param sessionYear {@link SessionYear}
      * @return QueryBuilder
      */
-    private static QueryBuilder requireSessionYear(SessionYear sessionYear) {
-        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.year());
+    private static Query sessionYearExistsQuery(SessionYear sessionYear) {
+        return (sessionYear == null ? QueryBuilders.exists().build() :
+                ExistsQuery.of(eqb -> eqb.field("sessionShortNameMap." + sessionYear.year())))._toQuery();
     }
 }

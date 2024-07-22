@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.search.calendar;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -12,10 +13,6 @@ import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,7 +25,6 @@ import java.util.regex.Matcher;
 
 @Service
 public class ElasticCalendarSearchService implements CalendarSearchService {
-
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchService.class);
 
     private final ElasticCalendarSearchDao calendarSearchDao;
@@ -46,22 +42,17 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset) throws SearchException {
-        return searchCalendars(QueryBuilders.queryStringQuery(smartSearch(query)), null, sort, limitOffset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public SearchResults<CalendarId> searchForCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
             throws SearchException {
-        return searchCalendars(getCalendarYearQuery(year, smartSearch(query)), null, sort, limitOffset);
+        return searchCalendars(
+                IndexedSearchService.getBasicBoolQuery("year", year, smartSearch(query)),
+                sort, limitOffset);
     }
 
     /** {@inheritDoc} */
     @Subscribe
     @Override
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
-
         updateIndex(calendarUpdateEvent.calendar());
     }
 
@@ -107,14 +98,14 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             logger.info("Starting rebuild with session " + calYear);
             while (calYear <= LocalDate.now().getYear()) {
                 LimitOffset limOff = new LimitOffset(5);
-                List<Calendar> calendars = calendarDataService.getCalendars(calYear,SortOrder.NONE,limOff);
+                List<Calendar> calendars = calendarDataService.getCalendars(calYear, SortOrder.NONE, limOff);
                 while (!calendars.isEmpty()) {
                     updateIndex(calendars);
                     limOff = limOff.next();
-                    calendars = calendarDataService.getCalendars(calYear,SortOrder.NONE,limOff);
+                    calendars = calendarDataService.getCalendars(calYear, SortOrder.NONE, limOff);
                 }
                 calYear++;
-                logger.info("The session year is now " + calYear);
+                logger.info("The session year is now {}", calYear);
             }
         }
     }
@@ -137,45 +128,22 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         }
     }
 
-    /** --- Helper Methods --- */
-
-    /**
-     * Returns a query that can be used for all calendar types that matches calendars for the given year
-     * in addition to the criteria specified by the given query string
-     *
-     * @param year
-     * @param query
-     * @return
-     */
-    private QueryBuilder getCalendarYearQuery(Integer year, String query) {
-        return QueryBuilders.boolQuery()
-                .must(QueryBuilders.queryStringQuery(query))
-                .filter(QueryBuilders.termQuery("year", year));
-    }
-
     /**
      * Performs a search on the calendar index using the search dao, handling any exceptions that may arise
      *
      * @param query
-     * @param postFilter
      * @param sort
      * @param limitOffset
      * @return
      * @throws SearchException
      */
-    private SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
-                                             String sort, LimitOffset limitOffset) throws SearchException {
+    private SearchResults<CalendarId> searchCalendars(
+            Query query, String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        try {
-            return calendarSearchDao.searchCalendars(query, postFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
-        } catch (SearchParseException ex) {
-            throw new SearchException("There was a problem parsing the supplied query string.", ex);
-        } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return calendarSearchDao.searchCalendars(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 
     private static String smartSearch(String query) {

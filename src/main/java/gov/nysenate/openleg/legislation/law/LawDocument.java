@@ -12,6 +12,7 @@ public class LawDocument extends LawDocInfo
 
     public LawDocument(LawDocInfo info, String text) {
         super(info);
+        // TODO: probably can be fixed with better encoding
         this.text = text.replace("├Á", "§");
     }
 

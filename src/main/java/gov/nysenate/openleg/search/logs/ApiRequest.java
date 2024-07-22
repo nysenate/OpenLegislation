@@ -31,12 +31,11 @@ public class ApiRequest
     /** Reference to the ApiUser if applicable */
     private ApiUser apiUser;
 
+    // TODO: currently, the request ID is never generated
     /** A unique identifier used to specify each request made */
-    private String requestId;
+    private int requestId;
 
     /** --- Constructors --- */
-
-    public ApiRequest() {}
 
     public ApiRequest (HttpServletRequest request, LocalDateTime requestDateTime) {
         if (request != null) {
@@ -59,48 +58,24 @@ public class ApiRequest
         return requestTime;
     }
 
-    public void setRequestTime(LocalDateTime requestTime) {
-        this.requestTime = requestTime;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public InetAddress getIpAddress() {
         return ipAddress;
     }
 
-    public void setIpAddress(InetAddress ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
     public String getRequestMethod() {
         return requestMethod;
-    }
-
-    public void setRequestMethod(String requestMethod) {
-        this.requestMethod = requestMethod;
     }
 
     public String getUserAgent() {
         return userAgent;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
     public String getApiKey() {
         return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
     }
 
     public ApiUser getApiUser() {
@@ -111,11 +86,7 @@ public class ApiRequest
         this.apiUser = apiUser;
     }
 
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
     }
 }

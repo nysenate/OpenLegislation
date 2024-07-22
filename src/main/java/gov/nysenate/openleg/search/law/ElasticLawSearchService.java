@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.search.law;
 
-import com.google.common.collect.ImmutableList;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -15,11 +16,6 @@ import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawTreeUpdateEvent;
 import gov.nysenate.openleg.updates.law.LawUpdateEvent;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,29 +50,16 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<LawDocId> searchLawDocs(String query, String sort, LimitOffset limOff) throws SearchException {
-        return searchLawDocs(query, null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException {
-        QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(query);
+        Query esQuery = IndexedSearchService.getStringQuery(query);
         if (lawId != null) {
-            queryBuilder = QueryBuilders.boolQuery()
-                    .must(queryBuilder)
-                    .filter(QueryBuilders.termQuery("lawId", lawId.toLowerCase()));
+            final Query finalEsQuery = esQuery;
+            esQuery = QueryBuilders.bool(b -> b.must(finalEsQuery,
+                    QueryBuilders.term(tb ->tb.field("lawId").value(lawId.toLowerCase()))
+            ));
         }
-        try {
-            return lawSearchDao.searchLawDocs(queryBuilder, null, null,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-        }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return lawSearchDao.searchLawDocs(esQuery, null, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     /** {@inheritDoc} */
@@ -170,15 +153,14 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
      */
     private void clearLawChapter(String lawId) {
         logger.info("Clearing law chapter {} from index", lawId);
-        QueryBuilder query = QueryBuilders.termQuery("lawId", StringUtils.lowerCase(lawId));
-        SearchResults<LawDocId> chapterDocs =
-                lawSearchDao.searchLawDocs(query, null, null, ImmutableList.of(), LimitOffset.ALL);
-        lawSearchDao.deleteLawDocsFromIndex(chapterDocs.getRawResults());
+        try {
+            SearchResults<LawDocId> chapterDocs = searchLawDocs(null, lawId, null, LimitOffset.ALL);
+            lawSearchDao.deleteLawDocsFromIndex(chapterDocs.getRawResults());
+        } catch (SearchException ignored) {}
     }
 
     /**
      * Indexes all published documents in a law chapter.
-     *
      * Does not clear the chapter, so previously indexed documents may still be present.
      * @param lawId String - law chapter id
      */
@@ -190,7 +172,6 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
 
     /**
      * Determines if a law document can be indexed.
-     *
      * The document must be present in the current law tree.
      */
     private boolean isLawDocIndexable(LawDocument doc) {

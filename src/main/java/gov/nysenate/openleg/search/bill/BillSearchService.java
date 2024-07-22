@@ -15,14 +15,20 @@ public interface BillSearchService
      *
      * @see #searchBills(String, SessionYear, String, LimitOffset)
      */
-    SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchBills(query, null, sort, limOff);
+    }
 
     /**
      * Matches all bills for the given session year.
      *
      * @see #searchBills(String, SessionYear, String, LimitOffset)
      */
-    SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchBills(null, session, sort, limOff);
+    }
 
     /**
      * Performs search across bills in a given session year.

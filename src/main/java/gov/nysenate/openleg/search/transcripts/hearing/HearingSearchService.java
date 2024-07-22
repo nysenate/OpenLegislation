@@ -10,12 +10,18 @@ public interface HearingSearchService {
     /**
      * Performs a search of hearing id's by year. A null year returns all hearings.
      */
-    SearchResults<HearingId> searchHearings(Integer year, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<HearingId> searchHearings(Integer year, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchHearings(null, year, sort, limOff);
+    }
 
     /**
      * Performs a search across all hearings.
      */
-    SearchResults<HearingId> searchHearings(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<HearingId> searchHearings(String query, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchHearings(query, null, sort, limOff);
+    }
 
     /**
      * Performs a search across all hearings in a given year.
@@ -26,7 +32,7 @@ public interface HearingSearchService {
      * @return
      * @throws SearchException
      */
-    SearchResults<HearingId> searchHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<HearingId> searchHearings(String query, Integer year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Hanldes a hearing update event by indexing the supplied hearing.

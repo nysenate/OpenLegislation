@@ -1,51 +1,33 @@
 package gov.nysenate.openleg.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.SearchType;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.mapping.DateProperty;
+import co.elastic.clients.elasticsearch._types.mapping.KeywordProperty;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TextProperty;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import co.elastic.clients.elasticsearch.core.search.Rescore;
+import co.elastic.clients.elasticsearch.core.search.TrackHits;
+import co.elastic.clients.elasticsearch.indices.*;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.util.OutputUtils;
+import gov.nysenate.openleg.common.util.TypeUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescorerBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -53,15 +35,13 @@ import java.util.function.Function;
 /**
  * Base class for Elasticsearch layer classes to inherit common functionality from.
  */
-public abstract class ElasticBaseDao {
+public abstract class ElasticBaseDao<DocType> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
     private static final int defaultMaxResultWindow = 10000;
     /** The ideal upper limit for the size of a bulk request */
     private static final long desiredBulkRequestSize = 5242880L;
-    private static final String refreshIntervalSetting = "refresh_interval";
-    private static final String COUNT_API = "/_cat/count/";
 
-    @Autowired private RestHighLevelClient searchClient;
+    @Autowired private ElasticsearchClient searchClient;
 
     @PostConstruct
     private void init() {
@@ -71,14 +51,29 @@ public abstract class ElasticBaseDao {
     /* --- Public methods --- */
 
     public void createIndices() {
-        if (!indexExists(getIndex())) {
-            createIndex(getIndex());
+        boolean exists;
+        try {
+            exists = searchClient.indices().exists(
+                    ExistsRequest.of(b -> b.index(getIndex().getName())))
+                    .value();
+        }
+        catch (IOException ex) {
+            throw new GenericElasticsearchException("Index exists request failed.", ex);
+        }
+        if (!exists) {
+            createIndex();
         }
     }
 
     public void purgeIndices() {
-        deleteIndex(getIndex());
-        createIndex(getIndex());
+        try {
+            logger.info("Deleting search index {}", getIndex());
+            searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(getIndex().getName())));
+        }
+        catch (IOException ex){
+            throw new GenericElasticsearchException("Delete index request failed.", ex);
+        }
+        createIndex();
     }
 
     /* --- Abstract methods --- */
@@ -90,19 +85,23 @@ public abstract class ElasticBaseDao {
 
     /* --- Common Elastic Search methods --- */
 
+    protected long getDocCount() throws IOException {
+        return searchClient.count(b -> b.index(getIndex().getName())).count();
+    }
+
     /**
      * Performs a typical search that involves a query, filter, sort string, and a limit + offset
      *
-     * @see #search(String, QueryBuilder, QueryBuilder, List, RescorerBuilder, List, LimitOffset, boolean, Function)
+     * @see #search(String, Query, Query, List, LimitOffset, Function)
      * <p>
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
-    protected <T> SearchResults<T> search(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                          List<SortBuilder<?>> sort, LimitOffset limitOffset,
-                                          Function<SearchHit, T> hitMapper)
+    protected <T> SearchResults<T> search(String indexName, Query query, Query postFilter,
+                                          List<SortOptions> sort, LimitOffset limitOffset,
+                                          Function<DocType, T> docToReturnType)
             throws ElasticsearchException {
         return search(indexName, query, postFilter,
-                null, null, sort, limitOffset, false, hitMapper);
+                null, null, sort, limitOffset, false, docToReturnType);
     }
 
     /**
@@ -116,26 +115,18 @@ public abstract class ElasticBaseDao {
      * @param sort              - List of SortBuilders specifying the desired sorting
      * @param limitOffset       - Restrict the number of results returned as well as paginate.
      * @param fetchSource       - Will return the indexed source fields when set to true.
-     * @param hitMapper         - function for converting elastic results into the desired java objects.
      * @return SearchRequest
      */
-    protected <T> SearchResults<T> search(String indexName,
-                                          QueryBuilder query,
-                                          QueryBuilder postFilter,
-                                          List<HighlightBuilder.Field> highlightedFields,
-                                          RescorerBuilder<?> rescorer,
-                                          List<SortBuilder<?>> sort,
-                                          LimitOffset limitOffset,
-                                          boolean fetchSource,
-                                          Function<SearchHit, T> hitMapper
-    ) throws ElasticsearchException {
-        if (indexIsEmpty(indexName)) {
-            return SearchResults.empty();
-        }
+    protected <T> SearchResults<T> search(String indexName, Query query,
+                                          Query postFilter, Map<String, HighlightField> highlightedFields,
+                                          Rescore rescorer, List<SortOptions> sort,
+                                          LimitOffset limitOffset, boolean fetchSource,
+                                          Function<DocType, T> docToReturnType) {
+        // TODO: check searches on empty indices
         SearchRequest searchRequest = getSearchRequest(
                 indexName, query, postFilter, highlightedFields, rescorer, sort, limitOffset, fetchSource);
-        SearchResponse searchResponse = getSearchResponse(searchRequest);
-        return getSearchResults(searchResponse, limitOffset, hitMapper);
+        SearchResponse<DocType> searchResponse = getSearchResponse(searchRequest);
+        return getSearchResults(searchResponse, limitOffset, docToReturnType);
     }
 
     /**
@@ -143,101 +134,75 @@ public abstract class ElasticBaseDao {
      * returns an optional that is empty if a document does not exist for the given request parameters
      * @param index String - a search index
      * @param id String - the id of the desired document
-     * @param responseMapper Function<GetResponse, T> - a function that maps the response to the desired class
-     * @param <T> The type to be returned
-     * @return Optional<T></T>
      */
-    protected <T> Optional<T> getRequest(String index, String id, Function<GetResponse, T> responseMapper) {
-        GetRequest getRequest = new GetRequest(index, id);
+    protected Optional<DocType> getRequest(String index, String id) {
+        var getRequest = GetRequest.of(b -> b.index(index).id(id));
         try {
-            GetResponse getResponse = searchClient.get(getRequest, RequestOptions.DEFAULT);
-            if (getResponse.isExists()){
-                return Optional.of(responseMapper.apply(getResponse));
+            GetResponse<DocType> getResponse = searchClient.get(getRequest, getDocTypeClass());
+            if (getResponse.found()) {
+                return Optional.ofNullable(getResponse.source());
             }
         }
-        catch(IOException ex){
-            throw new ElasticsearchException("Get request failed.", ex);
+        catch (IOException ex){
+            throw new GenericElasticsearchException("Get request failed.", ex);
         }
         return Optional.empty();
     }
 
     /**
-     * Return a request to index the given object as a json document.
-     *
-     * @param indexName String
-     * @param id String - elasticsearch id for the object
-     * @param object - Object to be indexed.
-     * @return IndexRequest
+     * Return a request to index the given object.
+     * @param id String - elasticsearch ID for the document.
+     * @param doc - Document to be indexed.
      */
-    protected IndexRequest getJsonIndexRequest(String indexName, String id, Object object) {
-        return new IndexRequest(indexName)
-                .id(id)
-                .source(OutputUtils.toElasticsearchJson(object), XContentType.JSON);
+    protected IndexRequest<DocType> getIndexRequest(String indexName, String id, DocType doc) {
+        return IndexRequest.of(b -> b.index(indexName).id(id).document(doc));
+    }
+
+    protected IndexOperation<DocType> getIndexOperationRequest(String indexName, String id, DocType doc) {
+        return IndexOperation.of(b -> b.index(indexName).id(id).document(doc));
     }
 
     /**
-     * Index the given object as a json document;
-     *
-     * @param indexName String
-     * @param id String - elasticsearch id for the object.
-     * @param object - Object to be indexed
+     * Indexes the given document.
+     * @param id String - elasticsearch ID for the document.
+     * @param object - Document to be indexed
      */
-    protected IndexResponse indexJsonDoc(String indexName, String id, Object object) {
-        IndexRequest jsonIndexRequest = getJsonIndexRequest(indexName, id, object);
-        return executeIndexRequest(jsonIndexRequest);
-    }
-
-    /**
-     * Executes the given {@link IndexRequest}
-     *
-     * @param indexRequest {@link IndexRequest}
-     * @return {@link IndexResponse}
-     * @throws ElasticsearchException if something goes wrong
-     */
-    protected IndexResponse executeIndexRequest(IndexRequest indexRequest) throws ElasticsearchException {
+    protected IndexResponse indexDoc(String indexName, String id, DocType object) {
         try {
-            return searchClient.index(indexRequest, RequestOptions.DEFAULT);
+            return searchClient.index(getIndexRequest(indexName, id, object));
         } catch (IOException ex) {
-            throw new ElasticsearchException("Index request failed", ex);
+            throw new GenericElasticsearchException("Index request failed", ex);
         }
     }
 
     /**
      * Performs a bulk request execution while making sure that the bulk request is actually valid to
      * prevent exceptions.
-     *
      * Also split the bulk request into smaller bulks if it is too big.
      * @param bulkRequest BulkRequestBuilder
      */
     protected void safeBulkRequestExecute(BulkRequest bulkRequest) {
-        if (bulkRequest == null || bulkRequest.numberOfActions() == 0) {
+        if (bulkRequest == null || bulkRequest.operations().isEmpty()) {
             return;
         }
-
-        List<BulkRequest> bulkRequests = splitBulkRequest(bulkRequest);
-
-        for (BulkRequest subRequest : bulkRequests) {
-            try {
-                logger.debug("Making bulk request: {} bytes",
-                        StringUtils.leftPad(Long.toString(subRequest.estimatedSizeInBytes()), 9));
-                searchClient.bulk(subRequest, RequestOptions.DEFAULT);
-            } catch (IOException ex) {
-                throw new ElasticsearchException("Bulk request failed", ex);
-            }
+        try {
+            searchClient.bulk(bulkRequest);
+        } catch (IOException ex) {
+            throw new GenericElasticsearchException("Bulk request failed", ex);
         }
     }
 
-    protected DeleteRequest getDeleteRequest(String indexName, String id) {
-        return new DeleteRequest(indexName).id(id);
+    protected static DeleteRequest getDeleteRequest(String indexName, String id) {
+        return DeleteRequest.of(b -> b.index(indexName).id(id));
     }
 
     protected void deleteEntry(String indexName, String id) {
         DeleteRequest deleteRequest = getDeleteRequest(indexName, id);
         try {
-            searchClient.delete(deleteRequest, RequestOptions.DEFAULT);
+            searchClient.delete(deleteRequest);
         }
-        catch (IOException ex){
-            throw new ElasticsearchException("Delete request failed.", ex);
+        catch (IOException ex) {
+            throw new GenericElasticsearchException("Delete request failed.", ex);
         }
     }
 
@@ -250,28 +215,20 @@ public abstract class ElasticBaseDao {
 
     /**
      * Allows for enabling/disabling periodic refreshing for an index.
-     *
      * Disabling can reduce load during large operations.
      * It should always be re-enabled when done.
-     * @param indexName
-     * @param enabled
      */
     protected void setIndexRefresh(String indexName, boolean enabled) {
         logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", indexName);
-        Settings settings;
-        if (enabled) {
-            // Set to null to restore default setting
-            settings = Settings.builder().putNull(refreshIntervalSetting).build();
-        } else {
-            settings = Settings.builder().put(refreshIntervalSetting, -1).build();
-        }
-        UpdateSettingsRequest request = new UpdateSettingsRequest(settings, indexName);
+        var request = PutIndicesSettingsRequest.of(b -> b.settings(
+                IndexSettings.of(b1 -> b1.refreshInterval(enabled ? enable : disable))
+        ));
         // Try to set the setting up to 5 times if a failure occurs
         Throwable ex = null;
         for (int attempts = 0; attempts < 5; attempts++) {
             try {
-                AcknowledgedResponse response = searchClient.indices().putSettings(request, RequestOptions.DEFAULT);
-                if (response.isAcknowledged()) {
+                var response = searchClient.indices().putSettings(request);
+                if (response.acknowledged()) {
                     return;
                 }
             } catch (Exception e) {
@@ -285,7 +242,7 @@ public abstract class ElasticBaseDao {
                 break;
             }
         }
-        throw new ElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName, ex);
+        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName, ex);
     }
 
     /**
@@ -294,106 +251,78 @@ public abstract class ElasticBaseDao {
      * @param indexName String
      * @return boolean
      */
+    @SuppressWarnings("all")
     protected boolean isIndexRefreshDefault(String indexName) {
-        GetSettingsResponse currentIndexSettings = getCurrentIndexSettings(indexName);
-        String currentRefreshInterval = currentIndexSettings.getSetting(indexName, "index." + refreshIntervalSetting);
-        return currentRefreshInterval == null;
+        var request = GetIndicesSettingsRequest.of(b -> b.index(indexName).includeDefaults(true));
+        try {
+            IndexState data = searchClient.indices().getSettings(request).get(indexName);
+            return data.defaults().refreshInterval().equals(data.settings().refreshInterval());
+        } catch (IOException e) {
+            throw new GenericElasticsearchException("Failed to get elasticsearch settings");
+        }
     }
 
     /**
      * Generates default index settings.
-     *
+     * <p>
      * Can be overridden by implementations for custom settings.
+     *
      * @return Settings.Builder
      */
-    protected Settings.Builder getIndexSettings() {
-        Settings.Builder indexSettings = Settings.builder();
-        indexSettings.put("index.max_result_window", getMaxResultWindow());
+    protected IndexSettings.Builder getIndexSettings() {
         // Disable replicas since we do not run multiple nodes
-        indexSettings.put("index.number_of_replicas", 0);
-        // Use 1 shard per index by default.
-        indexSettings.put("index.number_of_shards", 1);
-        return indexSettings;
+        return new IndexSettings.Builder().maxResultWindow(getMaxResultWindow())
+                .numberOfReplicas("0").numberOfShards("1");
     }
 
     /**
      * Gets any custom mappings for the index.
-     *
+     * <p>
      * Must be overridden to include any mappings.
+     *
      * @return XContentBuilder
-     * @throws IOException if somebody screws up
      */
-    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
-        return new HashMap<>();
+    protected ImmutableMap<String, Property> getCustomMappingProperties() {
+        return ImmutableMap.of();
     }
 
     /**
      * Ensures that any changes to indices are actually show, which is usually done automatically once per second.
      */
-    public void refreshIndex() {
-        try {
-            searchClient.indices().refresh(new RefreshRequest(getIndex().getName()), RequestOptions.DEFAULT);
-        }
-        catch (IOException ex) {
-            throw new ElasticsearchException("Failed to refresh these indices: " + getIndex());
-        }
+    public void refreshIndex() throws IOException {
+        searchClient.indices().refresh(RefreshRequest.of(b -> b.index(getIndex().getName())));
     }
 
     /**
      * Custom mapping for a field that is primarily a keyword, but is also indexed as a text field for searching.
      */
-    protected static final ImmutableMap<String, Object> searchableKeywordMapping = ImmutableMap.of(
-            "type", "keyword",
-            "fields", ImmutableMap.of(
-                    "text", ImmutableMap.of(
-                            "type", "text"
-                    )
-            )
-    );
+    protected static final Property searchableKeywordMapping =
+            KeywordProperty.of(b -> b.fields("text",
+                    TextProperty.of(textB -> textB)._toProperty()
+            ))._toProperty();
 
-    protected static final ImmutableMap<String, Object> basicTimeMapping = ImmutableMap.of(
-            "type", "date",
-            "format", "hour_minute"
-    );
+    protected static final Property basicTimeMapping =
+            DateProperty.of(b -> b.format("hour_minute"))._toProperty();
+
+    private static final Time disable = Time.of(b -> b.time("-1s")),
+            enable = Time.of(b -> b.time("1s"));
 
     /* --- Internal Methods --- */
 
-    private boolean indexExists(SearchIndex index) {
-        GetIndexRequest getIndexRequest = new GetIndexRequest(index.getName());
-        try {
-            return searchClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
-        }
-        catch (IOException ex){
-            throw new ElasticsearchException("Exist request failed.", ex);
-        }
+    @SuppressWarnings("unchecked")
+    private Class<DocType> getDocTypeClass() {
+        return (Class<DocType>) TypeUtils.getGenericTypes(this)[0];
     }
 
-    private void createIndex(SearchIndex index) {
+    private void createIndex() {
         try {
-            var createIndexRequest = new CreateIndexRequest(index.getName())
-                    .settings(getIndexSettings());
-
-            Map<String, Object> customMappingProps = getCustomMappingProperties();
-            if (customMappingProps != null && !customMappingProps.isEmpty()) {
-                createIndexRequest.mapping(ImmutableMap.of("properties", customMappingProps));
-            }
-            searchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+            var createIndexRequest = CreateIndexRequest.of(b -> b.index(getIndex().getName())
+                    .settings(getIndexSettings().build())
+                    .mappings(pb -> pb.properties(getCustomMappingProperties())));
+            searchClient.indices().create(createIndexRequest);
         }
-        catch (IOException ex){
-            throw new ElasticsearchException("Create index request failed.", ex);
-        }
-    }
-
-    private void deleteIndex(SearchIndex index) {
-        try {
-            logger.info("Deleting search index {}", index);
-            searchClient.indices().delete(new DeleteIndexRequest(index.getName()), RequestOptions.DEFAULT);
-        }
-        catch (IndexNotFoundException ex) {
-            logger.info("Cannot delete index {} because it doesn't exist.", index);
-        }
-        catch (IOException ex){
-            throw new ElasticsearchException("Delete index request failed.", ex);
+        catch (IOException ex) {
+            throw new GenericElasticsearchException("Create index request failed.", ex);
         }
     }
 
@@ -405,44 +334,28 @@ public abstract class ElasticBaseDao {
      * @param postFilter - Optional FilterBuilder to filter out the results.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
      * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
-     * @param sort - List of SortBuilders specifying the desired sorting
+     * @param sorts - List of SortBuilders specifying the desired sorting
      * @param limitOffset - Restrict the number of results returned as well as paginate.
      * @param fetchSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
-    private SearchRequest getSearchRequest(String indexName,
-                                           QueryBuilder query,
-                                           QueryBuilder postFilter,
-                                           List<HighlightBuilder.Field> highlightedFields,
-                                           RescorerBuilder<?> rescorer,
-                                           List<SortBuilder<?>> sort,
-                                           LimitOffset limitOffset,
-                                           boolean fetchSource) throws ElasticsearchException {
-        limitOffset = adjustLimitOffset(limitOffset);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-                .query(query)
-                .from(limitOffset.getOffsetStart() - 1)
-                .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
-                .minScore(0.05f)
-                .trackTotalHits(true)
-                .fetchSource(new FetchSourceContext(fetchSource));
-
-        if (highlightedFields != null) {
-            HighlightBuilder hb = new HighlightBuilder();
-            highlightedFields.forEach(hb::field);
-            searchSourceBuilder.highlighter(hb);
-        }
-        if (rescorer != null) {
-            searchSourceBuilder.addRescorer(rescorer);
-        }
-        // Post filters take effect after the search is completed
-        if (postFilter != null) {
-            searchSourceBuilder.postFilter(postFilter);
-        }
-        // Add the sort by fields
-        sort.forEach(searchSourceBuilder::sort);
-        SearchRequest searchRequest = Requests.searchRequest(indexName)
-                .source(searchSourceBuilder).searchType(SearchType.QUERY_THEN_FETCH);
+    private SearchRequest getSearchRequest(String indexName, Query query,
+                                           Query postFilter, Map<String, HighlightField> highlightedFields,
+                                           Rescore rescorer, List<SortOptions> sorts,
+                                           LimitOffset limitOffset, boolean fetchSource)
+            throws ElasticsearchException {
+        final LimitOffset finalLimitOffset = adjustLimitOffset(limitOffset);
+        var searchRequest = SearchRequest.of(b -> b.query(query).from(finalLimitOffset.getOffsetStart() - 1)
+                .size(limitOffset.hasLimit() ? limitOffset.getLimit() : Integer.MAX_VALUE)
+                .minScore(0.05d).trackTotalHits(TrackHits.of(trackBuilder -> trackBuilder.enabled(true)))
+                .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
+                .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
+                .rescore(rescorer)
+                .postFilter(postFilter)
+                .sort(sorts)
+                .index(indexName)
+                .searchType(SearchType.QueryThenFetch)
+        );
         logger.debug("{}", searchRequest);
         return searchRequest;
     }
@@ -453,36 +366,34 @@ public abstract class ElasticBaseDao {
      * @param request SearchRequest
      * @return SearchResponse
      */
-    private SearchResponse getSearchResponse(SearchRequest request) throws ElasticsearchException {
+    private SearchResponse<DocType> getSearchResponse(SearchRequest request) throws ElasticsearchException {
         try {
-            return searchClient.search(request, RequestOptions.DEFAULT);
+            return searchClient.search(request, getDocTypeClass());
         } catch (IOException ex) {
-            throw new ElasticsearchException("IOException occurred during search request.", ex);
+            throw new GenericElasticsearchException("IOException occurred during search request.", ex);
         }
     }
 
     /**
      * Extracts search results from a search response
-     *
      * template <R> is the desired return type
      *
      * @param response a SearchResponse generated by a SearchRequest
      * @param limitOffset the LimitOffset used in the SearchRequest
-     * @param hitMapper a function that maps a SearchHit to the desired return type R
      * @return SearchResults<R>
      */
-    private <R> SearchResults<R> getSearchResults(SearchResponse response, LimitOffset limitOffset,
-                                                  Function<SearchHit, R> hitMapper) {
+    private <T> SearchResults<T> getSearchResults(SearchResponse<DocType> response, LimitOffset limitOffset, Function<DocType, T> docToReturnType) {
         limitOffset = adjustLimitOffset(limitOffset);
-        List<SearchResult<R>> resultList = new ArrayList<>();
-        for (SearchHit hit : response.getHits().getHits()) {
-            SearchResult<R> result = new SearchResult<>(
-                    hitMapper.apply(hit), // Result
-                    (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE, // Rank
-                    hit.getHighlightFields()); // Highlights
-            resultList.add(result);
+        List<SearchResult<T>> results = response.hits().hits().stream().map(hit -> {
+            double score = hit.score() != null && !Double.isNaN(hit.score()) ? hit.score() : 1;
+            T hitValue = docToReturnType.apply(hit.source());
+            return new SearchResult<>(
+                    hitValue, BigDecimal.valueOf(score), hit.highlight());
+        }).toList();
+        if (response.hits().total() == null) {
+            throw new GenericElasticsearchException("Problem checking total hits.");
         }
-        return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits().value), resultList, limitOffset);
+        return new SearchResults<>(Ints.checkedCast(response.hits().total().value()), results, limitOffset);
     }
 
     /**
@@ -501,84 +412,5 @@ public abstract class ElasticBaseDao {
         }
 
         return limitOffset;
-    }
-
-    /**
-     * Checks if an index is empty. If it is, it should not be searched, as trying causes errors.
-     * @param indexName to check
-     * @return if indexName is empty
-     */
-    private boolean indexIsEmpty(String indexName){
-        try {
-            InputStream responseStream = searchClient.getLowLevelClient()
-                    .performRequest(new Request("GET", COUNT_API + indexName + "?v"))
-                    .getEntity()
-                    .getContent();
-            byte[] isIndexEmpty = new byte[1];
-            // Read past the unnecessary data to get to the count of documents in the specified index.
-            // If the first byte of this number is the character 0, then the index must be empty.
-            // See https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-count.html for details.
-            if (responseStream.skip(48) != 48 || responseStream.read(isIndexEmpty) != 1) {
-                throw new IOException();
-            }
-            return isIndexEmpty[0] == '0';
-        }
-        catch (IOException io){
-            throw new ElasticsearchException("Error while executing search request.");
-        }
-    }
-
-    /**
-     * Get the current settings for the given index, including defaults.
-     *
-     * @param indexName String
-     * @return GetSettingsResponse
-     */
-    private GetSettingsResponse getCurrentIndexSettings(String indexName) {
-        GetSettingsRequest request = new GetSettingsRequest().indices(indexName);
-        try {
-            return searchClient.indices().getSettings(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new ElasticsearchException("Failed to get elasticsearch settings");
-        }
-    }
-
-    /**
-     * Attempts to break down a large bulk request into a list of smaller ones.
-     *
-     * The resulting requests may still be larger than the desired size if any discrete requests exceed that size.
-     * @param bulkRequest BulkRequest
-     * @return List<BulkRequest>
-     */
-    private List<BulkRequest> splitBulkRequest(BulkRequest bulkRequest) {
-        long totalSize = bulkRequest.estimatedSizeInBytes();
-        if (totalSize <= desiredBulkRequestSize) {
-            return Collections.singletonList(bulkRequest);
-        }
-
-        Queue<DocWriteRequest<?>> requestQueue = new ArrayDeque<>(bulkRequest.requests());
-        List<BulkRequest> bulkRequests = new ArrayList<>();
-
-        while (!requestQueue.isEmpty()) {
-            BulkRequest openBulk = new BulkRequest();
-            // pack in as many requests from the queue as will fit in the desired size.
-            while (!requestQueue.isEmpty() && openBulk.estimatedSizeInBytes() < desiredBulkRequestSize) {
-                DocWriteRequest<?> nextDoc = requestQueue.peek();
-                // Break early if the next request is an index that will put the current bulk over the desired size.
-                // Still allow it if the current bulk is empty.
-                if (nextDoc instanceof IndexRequest) {
-                    int length = ((IndexRequest) nextDoc).source().length();
-                    if (openBulk.numberOfActions() > 0 &&
-                            openBulk.estimatedSizeInBytes() + length > desiredBulkRequestSize) {
-                        break;
-                    }
-                }
-                openBulk.add(requestQueue.remove());
-            }
-            bulkRequests.add(openBulk);
-        }
-        logger.debug("Large elasticsearch bulk request ({}) will be broken into {} smaller bulk requests",
-                FileUtils.byteCountToDisplaySize(totalSize), bulkRequests.size());
-        return bulkRequests;
     }
 }

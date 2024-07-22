@@ -1,36 +1,32 @@
 package gov.nysenate.openleg.search.member;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface MemberSearchDao
-{
+public interface MemberSearchDao {
     /**
      * Performs a free-form search across all members using the query string syntax and a filter.
-     *
      * @param query String - Query Builder
-     * @param filter FilterBuilder - Filter result set
+     * @param postFilter FilterBuilder - Filter result set
      * @param sort String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<Integer> - memberIds from matched members
      */
-    SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
+    SearchResults<Integer> searchMembers(Query query, Query postFilter, List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Update the Member search index with the supplied Member.
-     * @param member
      */
     void updateMemberIndex(FullMember member);
 
     /**
      * Updates the Member search index with the supplied Members.
-     * @param members
      */
     void updateMemberIndex(Collection<FullMember> members);
 

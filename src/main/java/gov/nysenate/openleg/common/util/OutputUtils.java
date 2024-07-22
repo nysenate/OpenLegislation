@@ -54,7 +54,7 @@ public final class OutputUtils {
      * @param object Object
      * @return String - Json or empty string if failed.
      */
-    public static String toElasticsearchJson(Object object){
+    public static String toElasticsearchJson(Object object) {
         return mapToJson(object, elasticsearchJsonMapper);
     }
 

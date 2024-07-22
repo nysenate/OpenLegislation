@@ -1,60 +1,41 @@
 package gov.nysenate.openleg.search;
 
+import co.elastic.clients.elasticsearch._types.*;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ElasticSearchServiceUtils {
+public final class ElasticSearchServiceUtils {
+    private ElasticSearchServiceUtils() {}
 
     // Sorting scores and fields requires different method calls,
     // so the correct type must be identified.
     private static final String SCORE_NAME = "_score";
 
     private static final ImmutableSet<String> commonTextSortFields = ImmutableSet.of(
-            "printNo",
-            "basePrintNo",
-            "basePrintNoStr",
-            "version",
-            "activeVersion",
-            "chamber",
-            "location",
-            "name",
-            "docLevelId",
-            "docType",
-            "lawId",
-            "lawName",
-            "locationId",
-            "email",
-            "shortName",
-            "fullName",
-            "prefix",
-            "firstName",
-            "middleName",
-            "lastName",
-            "suffix",
-            "imgName",
-            "notificationType",
-            "filename",
-            "sessionType"
+            "printNo", "basePrintNo", "basePrintNoStr", "version", "activeVersion", "chamber",
+            "location", "name",
+            "docLevelId", "docType", "lawId", "lawName",
+            "locationId", "email",
+            "shortName", "fullName", "prefix", "firstName", "middleName", "lastName", "suffix",
+            "imgName", "notificationType", "filename", "sessionType"
     );
 
     /**
-     * Generates a list of elastic search sort parameters from a CSV string.  If no parameters are specified,
+     * Generates a list of elastic search sort parameters from a CSV string. If no parameters are specified,
      * a single score sort parameter is used.
      *
      * @param sort String
      * @return List<SortBuilder>
      */
-    public static List<SortBuilder<?>> extractSortBuilders(String sort) throws SearchException {
-        List<SortBuilder<?>> sortBuilders = new ArrayList<>();
+    public static List<SortOptions> extractSortBuilders(String sort) throws SearchException {
+        var sortBuilders = new ArrayList<SortOptions>();
         if (sort == null || sort.trim().isEmpty()) {
-            sortBuilders.add(SortBuilders.scoreSort());
+            sortBuilders.add(ScoreSort.of(b -> b)._toSortOptions());
         }
         else {
             try {
@@ -66,10 +47,14 @@ public abstract class ElasticSearchServiceUtils {
                     if (commonTextSortFields.contains(field)) {
                         field += ".keyword";
                     }
-                    SortBuilder<?> sb = SCORE_NAME.equals(field)
-                            ? SortBuilders.scoreSort() : SortBuilders.fieldSort(field);
-                    sb.order(org.elasticsearch.search.sort.SortOrder.valueOf(StringUtils.upperCase(order)));
-                    sortBuilders.add(sb);
+                    var sortOrder = SortOrder.valueOf(StringUtils.upperCase(order));
+                    if (SCORE_NAME.equals(field)) {
+                        sortBuilders.add(SortOptionsBuilders.score(b -> b.order(sortOrder)));
+                    }
+                    else {
+                        final String finalField = field;
+                        sortBuilders.add(SortOptionsBuilders.field(b -> b.field(finalField).order(sortOrder)));
+                    }
                 });
             } catch (IllegalArgumentException ex) {
                 throw new SearchException("Invalid sort string: '" + sort + "'\n" +

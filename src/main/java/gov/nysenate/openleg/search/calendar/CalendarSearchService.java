@@ -10,7 +10,6 @@ import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
 
 public interface CalendarSearchService extends IndexedSearchService<Calendar> {
-
     /**
      * Performs a generic search of all calendar types, returning a list of matching calendar ids.
      *
@@ -19,8 +18,10 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
      * @return SearchResults<CalendarId> A list of calendar ids that match the given search parameters
      * @throws SearchException When there is a search related error
      */
-    SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset)
-            throws SearchException;
+    default SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset)
+            throws SearchException {
+        return searchForCalendarsByYear(null, query, sort, limitOffset);
+    }
 
     /**
      * Performs a search of all calendar types that were published on a given year, returning a list of matching calendar ids.

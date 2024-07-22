@@ -7,30 +7,35 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 
 
-public interface MemberSearchService
-{
+public interface MemberSearchService {
     /**
      * Provides a listing of member ids for members in a session year.
      * @see #searchMembers(String, SessionYear, String, LimitOffset)
      */
-    SearchResults<Integer> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<Integer> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchMembers(null, sessionYear, sort, limOff);
+    }
 
     /**
      * Provides a listing of member ids for members of a chamber in a session year.
      * @see #searchMembers(String, SessionYear, String, LimitOffset)
      */
-    SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff)
+            throws SearchException;
 
 
     /**
      * Performs a search across all members.
      * @see #searchMembers(String, SessionYear, String, LimitOffset)
      */
-    SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchMembers(query, null, sort, limOff);
+    }
 
     /**
      * Performs a search across all members in a given session year.
-     *
      * @param query Search query.
      * @param sessionYear Filter by session year.
      * @param sort Sort by field(s)
@@ -38,5 +43,6 @@ public interface MemberSearchService
      * @return
      * @throws SearchException
      */
-    SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException;
 }

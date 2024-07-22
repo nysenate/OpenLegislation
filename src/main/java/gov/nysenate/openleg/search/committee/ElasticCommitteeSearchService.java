@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.search.committee;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -9,10 +12,6 @@ import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,13 +39,13 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     @Override
     public SearchResults<CommitteeVersionId> searchAllCommittees(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
-        return searchCommittees(QueryBuilders.queryStringQuery(query), null, sort, limitOffset);
+        return searchCommittees(IndexedSearchService.getStringQuery(query), false, sort, limitOffset);
     }
 
     @Override
     public SearchResults<CommitteeVersionId> searchAllCurrentCommittees(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
-        return searchCommittees(QueryBuilders.queryStringQuery(query), getCurrentFilter(), sort, limitOffset);
+        return searchCommittees(IndexedSearchService.getStringQuery(query), true, sort, limitOffset);
     }
 
     /**
@@ -55,7 +54,8 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     @Override
     public SearchResults<CommitteeVersionId> searchCommitteesForSession(SessionYear sessionYear, String query,
                                                                         String sort, LimitOffset limitOffset) throws SearchException {
-        return searchCommittees(QueryBuilders.queryStringQuery(query), getSessionFilter(sessionYear), sort, limitOffset);
+        return searchCommittees(IndexedSearchService.getBasicBoolQuery("sessionYear", sessionYear.year(), query),
+                false, sort, limitOffset);
     }
 
     /**
@@ -64,10 +64,8 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     @Override
     public SearchResults<CommitteeVersionId> searchCurrentCommitteesForSession(SessionYear sessionYear, String query,
                                                                                String sort, LimitOffset limitOffset) throws SearchException {
-        QueryBuilder currentSessionFilter = QueryBuilders.boolQuery()
-                .must(getSessionFilter(sessionYear))
-                .must(getCurrentFilter());
-        return searchCommittees(QueryBuilders.queryStringQuery(query), currentSessionFilter, sort, limitOffset);
+        return searchCommittees(IndexedSearchService.getBasicBoolQuery("sessionYear", sessionYear.year(), query),
+                true, sort, limitOffset);
     }
 
     /**
@@ -137,26 +135,21 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
 
     /** --- Internal Methods --- */
 
-    QueryBuilder getCurrentFilter() {
-        return QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("reformed"));
+    private static Query getCurrentFilter() {
+        return QueryBuilders.bool().mustNot(QueryBuilders.exists().field("reformed").build()._toQuery())
+                .build()._toQuery();
     }
 
-    QueryBuilder getSessionFilter(SessionYear sessionYear) {
-        return QueryBuilders.termQuery("sessionYear", sessionYear.year());
-    }
-
-    private SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder postFilter,
-                                                                     String sort, LimitOffset limitOffset) throws SearchException {
+    private SearchResults<CommitteeVersionId> searchCommittees(
+            Query query, boolean currentOnly, String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        try {
-            return committeeSearchDao.searchCommittees(query, postFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
-        } catch (SearchParseException ex) {
-            throw new SearchException("There was a problem parsing the supplied query string.", ex);
-        } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
+        if (currentOnly) {
+            final Query finalQuery = query;
+            query = BoolQuery.of(b -> b.must(finalQuery, getCurrentFilter()))._toQuery();
         }
+        return committeeSearchDao.searchCommittees(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 }

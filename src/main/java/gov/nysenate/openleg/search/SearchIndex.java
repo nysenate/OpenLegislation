@@ -17,8 +17,7 @@ public enum SearchIndex {
     LAW("laws"),
     MEMBER("members"),
     NOTIFICATION("notifications", true),
-    API_LOG("apilog", true)
-    ;
+    API_LOG("apilog", true);
 
     private final String indexName;
     private boolean primaryStore = false;
@@ -41,5 +40,10 @@ public enum SearchIndex {
 
     public boolean isPrimaryStore() {
         return primaryStore;
+    }
+
+    // TODO
+    public Class<?> storageClass() {
+        return null;
     }
 }

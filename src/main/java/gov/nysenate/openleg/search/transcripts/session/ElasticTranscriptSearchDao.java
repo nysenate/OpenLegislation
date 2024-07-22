@@ -1,41 +1,35 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Repository
-public class ElasticTranscriptSearchDao extends ElasticBaseDao implements TranscriptSearchDao {
+public class ElasticTranscriptSearchDao extends ElasticBaseDao<Transcript> implements TranscriptSearchDao {
     private static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getName();
-    private static final List<HighlightBuilder.Field> highlightedFields =
-            Collections.singletonList(new HighlightBuilder.Field("text").numOfFragments(3));
-    private static final String idSeparator = "|**|";
+    private static final Map<String, HighlightField> highlightedFields =
+            Map.of("text", HighlightField.of(b -> b.numberOfFragments(3)));
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
-                                                         List<SortBuilder<?>> sort, LimitOffset limOff) {
+    public SearchResults<TranscriptId> searchTranscripts(Query query, Query postFilter,
+                                                         List<SortOptions> sort, LimitOffset limOff) {
         return search(transcriptIndexName, query, postFilter,
                 highlightedFields, null, sort, limOff,
-                false, this::getTranscriptIdFromHit);
+                false, Transcript::getId);
     }
 
     /** {@inheritDoc} */
@@ -47,13 +41,11 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public void updateTranscriptIndex(Collection<Transcript> transcripts) {
-        BulkRequest bulkRequest = new BulkRequest();
+        var bulkBuilder = new BulkOperation.Builder();
         transcripts.stream()
-                .map(TranscriptView::new)
-                .map(t -> getJsonIndexRequest(transcriptIndexName,
-                        t.getDateTime() + idSeparator + t.getSessionType(), t))
-                .forEach(bulkRequest::add);
-        safeBulkRequestExecute(bulkRequest);
+                .map(transcript -> getIndexOperationRequest(transcriptIndexName, transcript.getId().toString(), transcript))
+                .forEach(bulkBuilder::index);
+        safeBulkRequestExecute(BulkRequest.of(b -> b.index(transcriptIndexName).operations(bulkBuilder.build())));
     }
 
     /** {@inheritDoc} */
@@ -71,16 +63,9 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     }
 
     @Override
-    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
-        HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("filename", searchableKeywordMapping);
-        props.put("location", searchableKeywordMapping);
-        props.put("sessionType", searchableKeywordMapping);
-        return props;
-    }
-
-    private TranscriptId getTranscriptIdFromHit(SearchHit hit) {
-        String[] data = hit.getId().split(Pattern.quote(idSeparator));
-        return TranscriptId.from(LocalDateTime.parse(data[0]), data[1]);
+    protected ImmutableMap<String, Property> getCustomMappingProperties() {
+        return ImmutableMap.of("filename", searchableKeywordMapping,
+                "location", searchableKeywordMapping,
+                "sessionType", searchableKeywordMapping);
     }
 }

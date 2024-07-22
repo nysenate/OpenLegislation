@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -10,11 +13,6 @@ import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,49 +42,25 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.matchAllQuery(), null, sort, limOff);
+    public SearchResults<TranscriptId> searchTranscripts(String query, Integer year, String sort, LimitOffset limOff)
+            throws SearchException {
+        return search(IndexedSearchService.getStringQuery(query), year, sort, limOff);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.matchAllQuery(), year, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), year, sort, limOff);
-    }
-
-    private SearchResults<TranscriptId> search(QueryBuilder query, Integer year,
+    private SearchResults<TranscriptId> search(Query query, Integer year,
                                                String sort, LimitOffset limOff) throws SearchException {
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
-        RangeQueryBuilder rangeFilter = null;
         if (year != null) {
-            rangeFilter = new RangeQueryBuilder("dateTime")
+            var rangeQuery = RangeQuery.of(b -> b.field("dateTime")
                     .from(LocalDate.of(year, 1, 1).toString())
-                    .to(LocalDate.of(year, 12, 31).toString());
+                    .to(LocalDate.of(year, 12, 31).toString()));
+            final Query finalQuery = query;
+            query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        try {
-            return transcriptSearchDao.searchTranscripts(query, rangeFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-        }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return transcriptSearchDao.searchTranscripts(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     /** {@inheritDoc} */

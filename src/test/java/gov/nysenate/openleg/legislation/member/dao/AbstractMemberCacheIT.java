@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
+import gov.nysenate.openleg.common.util.Tuple;
 import gov.nysenate.openleg.legislation.AbstractCacheTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
-import org.elasticsearch.core.Tuple;
 
 import java.util.List;
 

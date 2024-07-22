@@ -1,7 +1,15 @@
 package gov.nysenate.openleg.search.bill;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import co.elastic.clients.elasticsearch.core.search.Rescore;
+import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.api.legislation.bill.BillGetCtrl;
+import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -10,13 +18,6 @@ import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescorerBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,13 +26,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Repository
-public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao {
+public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements BillSearchDao {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
 
     private static final String billIndexName = SearchIndex.BILL.getName();
@@ -45,35 +43,37 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** The amount of time allowed after the last reindex request before index refreshing is re-enabled */
     private static final Duration lastReindexTimeoutDuration = Duration.ofMinutes(15);
 
-    private static final List<HighlightBuilder.Field> highlightedFields =
-        Arrays.asList(new HighlightBuilder.Field("basePrintNo").numOfFragments(0),
-                      new HighlightBuilder.Field("printNo").numOfFragments(0),
-                      new HighlightBuilder.Field("title").numOfFragments(0));
+    private static final Map<String, HighlightField> highlightedFields;
+    static {
+        var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
+        highlightedFields = Map.of("basePrintNo", highlightField, "printNo", highlightField,
+                "title", highlightField);
+    }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder<?> rescorer,
-                                                 List<SortBuilder<?>> sort, LimitOffset limOff) {
+    public SearchResults<BaseBillId> searchBills(Query query, Query postFilter, Rescore rescorer,
+                                                 List<SortOptions> sort, LimitOffset limOff) {
         return search(billIndexName, query, postFilter,
                 highlightedFields, rescorer, sort, limOff,
-                false, ElasticBillSearchDao::getBaseBillIdFromHit);
+                false, BaseBillIdView::toBaseBillId);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Bill bill) {
-            updateBillIndex(Collections.singletonList(bill));
+        updateBillIndex(Collections.singletonList(bill));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Collection<Bill> bills) {
-        BulkRequest bulkRequest = new BulkRequest();
+        var bulkBuilder = new BulkOperation.Builder();
         bills.stream()
                 .map(b -> new BillView(b, Sets.newHashSet(BillTextFormat.PLAIN)))
-                .map(bv -> getJsonIndexRequest(billIndexName, toElasticId(bv.toBaseBillId()), bv))
-                .forEach(bulkRequest::add);
-        safeBulkRequestExecute(bulkRequest);
+                .map(bv -> getIndexOperationRequest(billIndexName, bv.toBaseBillId().toString(), bv))
+                .forEach(bulkBuilder::index);
+        safeBulkRequestExecute(BulkRequest.of(b -> b.index(billIndexName).operations(bulkBuilder.build())));
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         logger.info("Deleting {} from index.", baseBillId);
         if (baseBillId != null) {
-            deleteEntry(billIndexName, toElasticId(baseBillId));
+            deleteEntry(billIndexName, baseBillId.toString());
         }
     }
 
@@ -105,7 +105,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     }
 
     /**
-     * Cleans up after reindexing by reenabling index refresh.
+     * Cleans up after reindexing by re-enabling index refresh.
      */
     public void reindexCleanup() {
         synchronized (indexRefreshLock) {
@@ -115,7 +115,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     }
 
     /**
-     * Method that ensures that index refresh does not remain disabled if it is not reenabled properly in case of errors.
+     * Method that ensures that index refresh does not remain disabled if it is not re-enabled properly in case of errors.
      */
     @Scheduled(fixedDelay = reindexJanitorInterval)
     public void reindexJanitor() {
@@ -161,16 +161,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
      * @return Settings.Builder
      */
     @Override
-    protected Settings.Builder getIndexSettings() {
-        return super.getIndexSettings().put("index.number_of_shards", 6);
-    }
-
-    private static BaseBillId getBaseBillIdFromHit(SearchHit hit) {
-        String[] idParts = hit.getId().split("-");
-        return new BaseBillId(idParts[1], Integer.parseInt(idParts[0]));
-    }
-
-    private static String toElasticId(BaseBillId baseBillId) {
-        return baseBillId.getSession() + "-" + baseBillId.getBasePrintNo();
+    protected IndexSettings.Builder getIndexSettings() {
+        return super.getIndexSettings().numberOfShards("6");
     }
 }

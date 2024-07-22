@@ -117,12 +117,12 @@
     <commons-text.version>1.11.0</commons-text.version>
     <commons-validator.version>1.8.0</commons-validator.version>
     <ehcache.version>3.9.9</ehcache.version>
-    <elasticsearch.version>7.17.1</elasticsearch.version>
+    <elasticsearch.version>8.14.3</elasticsearch.version>
     <flying-saucer.version>9.1.22</flying-saucer.version>
     <gson.version>2.9.0</gson.version>
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
-    <jackson.version>2.16.1</jackson.version>
+    <jackson.version>2.17.0</jackson.version>
     <javax-activation.version>1.1.1</javax-activation.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
@@ -279,8 +279,8 @@
     <!-- Elastic Search -->
 
     <dependency>
-      <groupId>org.elasticsearch.client</groupId>
-      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <groupId>co.elastic.clients</groupId>
+      <artifactId>elasticsearch-java</artifactId>
       <version>${elasticsearch.version}</version>
     </dependency>
 

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.search.bill;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -14,12 +15,6 @@ import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.bill.BillUpdateEvent;
 import gov.nysenate.openleg.updates.bill.BulkBillUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.search.SearchParseException;
-import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,54 +54,26 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException {
-        return searchBills(
-            QueryBuilders.boolQuery()
-                    .must(QueryBuilders.matchAllQuery())
-                    .filter(QueryBuilders.termQuery("session", session.year())),
-            null, null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
-        query = smartSearch(query);
-        QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(query);
-        return searchBills(queryBuilder, null, null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
-        query = smartSearch(query);
-        TermQueryBuilder sessionFilter = QueryBuilders.termQuery("session", session.year());
-        return searchBills(
-            QueryBuilders.boolQuery()
-                    .must(QueryBuilders.queryStringQuery(query))
-                    .filter(sessionFilter),
-                null, null, sort, limOff);
+    public SearchResults<BaseBillId> searchBills(String query, SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchBills(IndexedSearchService.getBasicBoolQuery("session", sessionYear, smartSearch(query)),
+                sort, limOff);
     }
 
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
+    private SearchResults<BaseBillId> searchBills(Query query,
                                                   String sort, LimitOffset limOff)
         throws SearchException {
-        if (limOff == null) limOff = LimitOffset.TEN;
-        try {
-            return billSearchDao.searchBills(query, postFilter, rescorer,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
+        if (limOff == null) {
+            limOff = LimitOffset.TEN;
         }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return billSearchDao.searchBills(query, null, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
-    private String smartSearch(String query) {
+    private static String smartSearch(String query) {
         if (query != null && !query.contains(":")) {
             Matcher matcher = BillId.BILL_ID_PATTERN.matcher(query.replaceAll("\\s", ""));
             if (matcher.find()) {
@@ -141,7 +108,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public void updateIndex(Bill bill) {
         if (bill != null) {
-            updateIndex(Collections.singleton(bill));
+            updateIndex(List.of(bill));
         }
     }
 
@@ -153,7 +120,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
         List<Bill> indexableBills = new ArrayList<>();
         List<Bill> nonIndexableBills = new ArrayList<>();
-        // Categorize bills based on whether or not they should be index.
+        // Categorize bills based on whether they should be indexed.
         for (Bill bill : bills) {
             if (isBillIndexable(bill)) {
                 indexableBills.add(bill);

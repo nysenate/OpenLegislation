@@ -43,6 +43,10 @@ public class LawDocId
         this.publishedDate = publishedDate;
     }
 
+    @Override
+    public String toString() {
+        return documentId + "-" + publishedDate;
+    }
 
     /* --- Overrides --- */
 

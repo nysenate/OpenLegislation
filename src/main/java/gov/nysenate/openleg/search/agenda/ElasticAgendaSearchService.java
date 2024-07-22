@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.search.agenda;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -13,16 +14,13 @@ import gov.nysenate.openleg.legislation.agenda.dao.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,28 +44,11 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException {
-        return searchCommitteeAgendas(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, Integer year,
+                                                                   String sort, LimitOffset limOff) throws SearchException {
         return searchCommitteeAgendas(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(QueryBuilders.termQuery("agenda.id.year", year)),
-                null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return searchCommitteeAgendas(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.queryStringQuery(query))
-                        .filter(QueryBuilders.termQuery("agenda.id.year", year)),
-                null, sort, limOff);
+                IndexedSearchService.getBasicBoolQuery("agenda.id.year", year, query),
+                sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -146,18 +127,12 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
 
     /** --- Internal Methods --- */
 
-    private SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                      String sort, LimitOffset limitOffset) throws SearchException {
+    private SearchResults<CommitteeAgendaId> searchCommitteeAgendas(
+            Query query, String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        try {
-            return agendaSearchDao.searchCommitteeAgendas(query, postFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
-        } catch (SearchParseException ex) {
-            throw new SearchException("There was a problem parsing the supplied query string.", ex);
-        } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return agendaSearchDao.searchCommitteeAgendas(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 }

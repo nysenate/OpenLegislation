@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.search.transcripts.hearing;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -10,11 +13,6 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.hearing.HearingUpdateEvent;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,43 +48,24 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<HearingId> searchHearings(Integer year, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.matchAllQuery(), year, sort, limOff);
+    public SearchResults<HearingId> searchHearings(String query, Integer year, String sort, LimitOffset limOff) throws SearchException {
+        return search(IndexedSearchService.getStringQuery(query), year, sort, limOff);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<HearingId> searchHearings(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<HearingId> searchHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), year, sort, limOff);
-    }
-
-    private SearchResults<HearingId> search(QueryBuilder query, Integer year, String sort, LimitOffset limOff)
+    private SearchResults<HearingId> search(Query query, Integer year, String sort, LimitOffset limOff)
             throws SearchException {
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
-        RangeQueryBuilder rangeFilter = null;
         if (year != null) {
-            rangeFilter = QueryBuilders.rangeQuery("date")
+            var rangeQuery = RangeQuery.of(b -> b.field("date")
                     .from(LocalDate.of(year, 1, 1).toString())
-                    .to(LocalDate.of(year, 12, 31).toString());
+                    .to(LocalDate.of(year, 12, 31).toString()));
+            final Query finalQuery = query;
+            query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        try {
-            return hearingSearchDao.searchHearings(query, rangeFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-        }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return hearingSearchDao.searchHearings(query, null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     /** {@inheritDoc} */

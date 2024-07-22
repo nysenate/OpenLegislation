@@ -1,56 +1,54 @@
 package gov.nysenate.openleg.search.transcripts.hearing;
 
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Repository
-public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSearchDao {
+public class ElasticHearingSearchDao extends ElasticBaseDao<Hearing> implements HearingSearchDao {
     private static final String hearingIndexName = SearchIndex.HEARING.getName();
-    private static final List<HighlightBuilder.Field> highlightedFields =
-            List.of(new HighlightBuilder.Field("text").numOfFragments(2),
-                          new HighlightBuilder.Field("hosts").numOfFragments(0),
-                          new HighlightBuilder.Field("title").numOfFragments(0));
+    private static final Map<String, HighlightField> highlightFields;
+    static {
+        var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
+        highlightFields = Map.of("hosts", highlightField, "title", highlightField,
+                "text", HighlightField.of(b -> b.numberOfFragments(2)));
+    }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<HearingId> searchHearings(QueryBuilder query, QueryBuilder postFilter,
-                                                   List<SortBuilder<?>> sort, LimitOffset limOff) {
-        return search(hearingIndexName, query, postFilter, highlightedFields, null,
-                sort, limOff, false, this::getHearingIdFromHit);
+    public SearchResults<HearingId> searchHearings(Query query, Query postFilter,
+                                                   List<SortOptions> sort, LimitOffset limOff) {
+        return search(hearingIndexName, query, postFilter, highlightFields, null,
+                sort, limOff, false, Hearing::getId);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateHearingIndex(Hearing hearing) {
-        updateHearingIndex(Collections.singletonList(hearing));
+        updateHearingIndex(List.of(hearing));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateHearingIndex(Collection<Hearing> hearings) {
-        BulkRequest bulkRequest = new BulkRequest();
+        var bulkBuilder = new BulkOperation.Builder();
         hearings.stream()
-                .map(HearingView::new)
-                .map(hearingView -> getJsonIndexRequest(hearingIndexName, String.valueOf(hearingView.getId()), hearingView))
-                .forEach(bulkRequest::add);
-        safeBulkRequestExecute(bulkRequest);
+                .map(hearing -> getIndexOperationRequest(hearingIndexName, String.valueOf(hearing.getId()), hearing))
+                .forEach(bulkBuilder::index);
+        safeBulkRequestExecute(BulkRequest.of(b -> b.index(hearingIndexName).operations(bulkBuilder.build())));
     }
 
     /** {@inheritDoc} */
@@ -68,14 +66,7 @@ public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSe
     }
 
     @Override
-    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
-        HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("startTime", basicTimeMapping);
-        props.put("endTime", basicTimeMapping);
-        return props;
-    }
-
-    private HearingId getHearingIdFromHit(SearchHit hit) {
-        return new HearingId(Integer.parseInt(hit.getId()));
+    protected ImmutableMap<String, Property> getCustomMappingProperties() {
+        return ImmutableMap.of("startTime", basicTimeMapping, "endTime", basicTimeMapping);
     }
 }

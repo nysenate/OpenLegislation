@@ -13,7 +13,9 @@ public interface LawSearchService {
      * Search across all law documents.
      * @see #searchLawDocs(String, String, String, LimitOffset)
      */
-    SearchResults<LawDocId> searchLawDocs(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<LawDocId> searchLawDocs(String query, String sort, LimitOffset limOff) throws SearchException {
+        return searchLawDocs(query, null, sort, limOff);
+    }
 
     /**
      * Search across all documents within a specific law volume.

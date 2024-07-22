@@ -155,12 +155,12 @@ public class NotificationCtrl extends BaseCtrl {
     /* --- Internal --- */
 
     private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) throws SearchException {
-        Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
         LimitOffset limOff = getLimitOffset(request, 25);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         boolean full = getBooleanParam(request, "full", false);
         PaginatedList<RegisteredNotification> results =
-                notificationService.getNotificationList(getNotificationTypes(request), dateRange, order, limOff);
+                notificationService.getNotificationList(getNotificationTypes(request), from, to, order, limOff);
+        Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
         return DateRangeListViewResponse.of(results.results().stream()
                 .map(full ? NotificationView::new : NotificationSummaryView::new)
                 .toList(), dateRange, results.total(), limOff);

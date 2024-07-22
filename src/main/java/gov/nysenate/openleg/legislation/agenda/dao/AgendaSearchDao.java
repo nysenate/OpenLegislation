@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.legislation.agenda.dao;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,15 +14,14 @@ import java.util.List;
 /**
  * DAO interface for searching agenda data.
  */
-public interface AgendaSearchDao
-{
+public interface AgendaSearchDao {
     /**
      * Performs a search on the top level agenda.
-     * @see #searchAgendas(QueryBuilder, QueryBuilder, List, LimitOffset)
+     * @see #searchAgendas(Query, Query, List, LimitOffset)
      * @returns SearchResults<AgendaId>
      */
-    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                 List<SortBuilder<?>> sort, LimitOffset limOff);
+    SearchResults<AgendaId> searchAgendas(Query query, Query postFilter,
+                                          List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Performs a search across all agendas broken down by committee.
@@ -33,8 +32,8 @@ public interface AgendaSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<AgendaCommitteeId>
      */
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
-                                                                   List<SortBuilder<?>> sort, LimitOffset limOff);
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(Query query, Query postFilter,
+                                                            List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Update the agenda index with the content of the supplied agenda.

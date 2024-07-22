@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -8,7 +12,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
-import gov.nysenate.openleg.common.util.AsciiArt;
 import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
@@ -21,10 +24,7 @@ import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -40,7 +40,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -85,35 +84,38 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
     @Value("${elastic.search.port:9200}") private int elasticSearchPort;
     @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
 
-    @Bean(destroyMethod = "close")
-    public RestHighLevelClient elasticSearchNode() throws InterruptedException {
+    @Bean()
+    public ElasticsearchClient elasticSearchNode() throws InterruptedException {
 
         int retryCount = 0;
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-                new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
+        var httpClient = RestClient.builder(new HttpHost(elasticSearchHost, elasticSearchPort, "http"))
+                .build();
+        ElasticsearchTransport transport = new RestClientTransport(httpClient, new JsonbJsonpMapper());
+        return new ElasticsearchClient(transport);
 
-        while (true) {
-            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
-            try {
-                // Test the connection with a ping.
-                if (!client.ping(RequestOptions.DEFAULT)) {
-                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
-                }
-                logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
-                return client;
-            } catch (IOException | ElasticsearchException ex) {
-                logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
-                logger.warn("{} retries remain.", esAllowedRetries - retryCount);
-                if (retryCount >= esAllowedRetries) {
-                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
-                }
-            }
-            retryCount++;
-            Thread.sleep(1000);
-        }
+        // TODO: testing
+//        while (true) {
+//            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
+//            try {
+//                // Test the connection with a ping.
+//                if (!client.ping(RequestOptions.DEFAULT)) {
+//                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
+//                }
+//                logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
+//                return client;
+//            } catch (IOException | ElasticsearchException ex) {
+//                logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
+//                logger.warn("{} retries remain.", esAllowedRetries - retryCount);
+//                if (retryCount >= esAllowedRetries) {
+//                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+//                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+//                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+//                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
+//                }
+//            }
+//            retryCount++;
+//            Thread.sleep(1000);
+//        }
     }
 
     /** --- Guava Event Bus Configuration --- */

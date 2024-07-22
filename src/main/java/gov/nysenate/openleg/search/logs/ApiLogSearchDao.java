@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.search.logs;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.api.logs.ApiLogItemView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface ApiLogSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<Integer>
      */
-    SearchResults<Integer> searchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
+    SearchResults<Integer> searchLogs(Query query, Query filter, List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Similar to #searchLogs, but instead of fetching just the request ids, this will
@@ -28,7 +28,7 @@ public interface ApiLogSearchDao
      *
      * @return SearchResults<ApiLogItemView>
      */
-    SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, QueryBuilder filter, List<SortBuilder<?>> sort, LimitOffset limOff);
+    SearchResults<ApiLogItemView> searchLogsAndFetchData(Query query, Query filter, List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Update the log index with the content of the supplied ApiResponse.

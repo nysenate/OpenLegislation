@@ -1,19 +1,19 @@
 package gov.nysenate.openleg.search.committee;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface CommitteeSearchDao {
 
-    SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
-                                                              List<SortBuilder<?>> sort, LimitOffset limitOffset);
+    SearchResults<CommitteeVersionId> searchCommittees(Query query, Query filter,
+                                                       List<SortOptions> sort, LimitOffset limitOffset);
 
     void updateCommitteeIndex(CommitteeSessionId committeeSessionId);
 

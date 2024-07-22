@@ -1,35 +1,34 @@
 package gov.nysenate.openleg.search.notifications;
 
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.notifications.model.Notification;
+import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface NotificationSearchDao {
-
     /**
      * Retrieves a notification based on its numeric id
      * @param notificationId long - notification numeric id
      * @return RegisteredNotification
      */
-    Optional<RegisteredNotification> getNotification(long notificationId) throws ElasticsearchException;
+    Optional<RegisteredNotification> getNotification(long notificationId);
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
      * @param query QueryBuilder
-     * @param filter FilterBuilder
+     * @param postFilter FilterBuilder
      * @param sort String
      * @param limitOffset LimitOffset
      * @return SearchResults<RegisteredNotification>
      */
-    SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
-                                                              List<SortBuilder<?>> sort, LimitOffset limitOffset);
+    SearchResults<RegisteredNotification> searchNotifications(Query query, Query postFilter,
+                                                              List<SortOptions> sort, LimitOffset limitOffset);
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

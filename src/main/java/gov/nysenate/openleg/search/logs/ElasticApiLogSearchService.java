@@ -6,9 +6,6 @@ import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import gov.nysenate.openleg.api.logs.ApiLogItemView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.search.*;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +34,8 @@ public class ElasticApiLogSearchService implements ApiLogSearchService {
 
     @Override
     public SearchResults<ApiLogItemView> searchApiLogs(String query, String sort, LimitOffset limOff) throws SearchException {
-        try {
-            return apiLogSearchDao.searchLogsAndFetchData(QueryBuilders.queryStringQuery(query), null,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-        }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new SearchException(ex.getMessage(), ex);
-        }
+        return apiLogSearchDao.searchLogsAndFetchData(IndexedSearchService.getStringQuery(query), null,
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     @Override

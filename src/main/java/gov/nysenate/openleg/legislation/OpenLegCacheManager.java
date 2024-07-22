@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.legislation;
 
+import gov.nysenate.openleg.common.util.TypeUtils;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -10,7 +11,6 @@ import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,8 +30,7 @@ public final class OpenLegCacheManager {
 
     @SuppressWarnings("unchecked")
     static <K, V> Cache<K, V> createCache(CachingService<K, V> service, int size) {
-        var classes = ((ParameterizedType) service.getClass().getGenericSuperclass())
-                .getActualTypeArguments();
+        var classes = TypeUtils.getGenericTypes(service);
         var keyClass = (Class<K>) classes[0];
         var valueClass = (Class<V>) classes[1];
         var type = service.cacheType();
