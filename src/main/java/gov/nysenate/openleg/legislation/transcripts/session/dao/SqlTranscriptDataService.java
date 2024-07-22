@@ -10,6 +10,8 @@ import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Service
 public class SqlTranscriptDataService implements TranscriptDataService {
+    private static final Logger logger = LoggerFactory.getLogger(SqlTranscriptDataService.class);
     private final EventBus eventBus;
     private final TranscriptDao transcriptDao;
 
@@ -75,8 +78,10 @@ public class SqlTranscriptDataService implements TranscriptDataService {
             var newInfo = new TranscriptFilenameInfo(transcript);
             if (newInfo.isLessAccurateThan(currInfo)) {
                 final String summary = "Skipped transcript file " + transcript.getFilename();
-                eventBus.post(new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
-                        summary, summary + "\nAn older version of this file has more accurate data."));
+                var notif = new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
+                        summary, summary + "\nAn older version of this file has more accurate data.");
+                logger.warn(notif.getMessage());
+                eventBus.post(notif);
                 return;
             }
         } catch (EmptyResultDataAccessException ignored) {}

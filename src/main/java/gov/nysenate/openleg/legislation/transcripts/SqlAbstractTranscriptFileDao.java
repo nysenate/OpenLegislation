@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.legislation.transcripts;
 
-import gov.nysenate.openleg.common.dao.BasicSqlQuery;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SqlBaseDao;
 import gov.nysenate.openleg.common.util.FileIOUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,8 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
-import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.SqlHearingFileQuery.*;
-import static gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptFileQuery.*;
+import static gov.nysenate.openleg.legislation.transcripts.hearing.SqlAbstractTranscriptFileQuery.*;
 
 public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscriptsFile>
         extends SqlBaseDao implements TranscriptFileDaoInterface<T> {
@@ -55,10 +54,8 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
     @Override
     public void updateFile(T file) {
         MapSqlParameterSource params = getTranscriptFileParams(file);
-        BasicSqlQuery updateQuery = isHearing() ? UPDATE_HEARING_FILE : UPDATE_TRANSCRIPT_FILE;
-        BasicSqlQuery insertQuery = isHearing() ? INSERT_HEARING_FILE : INSERT_TRANSCRIPT_FILE;
-        if (jdbcNamed.update(updateQuery.getSql(schema()), params) == 0) {
-            jdbcNamed.update(insertQuery.getSql(schema()), params);
+        if (jdbcNamed.update(UPDATE_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params) == 0) {
+            jdbcNamed.update(INSERT_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params);
         }
     }
 
@@ -70,6 +67,9 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
                     " must be in the incoming transcripts directory in order to be archived.");
         }
         File archiveFile = new File(archiveDir, file.getFileName());
+        if (!FileUtils.contentEquals(stagedFile, archiveFile)) {
+            clearArchiveSpot(archiveFile);
+        }
         FileIOUtils.moveFile(stagedFile, archiveFile);
         file.setFile(archiveFile);
         file.setArchived(true);
@@ -77,9 +77,7 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
 
     @Override
     public List<T> getPendingFiles() {
-        BasicSqlQuery getPendingQuery = isHearing() ?
-                GET_PENDING_HEARING_FILES : GET_PENDING_TRANSCRIPT_FILES;
-        var temp = jdbcNamed.query(getPendingQuery.getSql(schema()),
+        var temp = jdbcNamed.query(GET_PENDING_TRANSCRIPT_FILES.getSql(schema(), isHearing()),
                 new TranscriptFileRowMapper());
         Collections.sort(temp);
         return LimitOffset.limitList(temp, LimitOffset.FIFTY);
@@ -93,10 +91,22 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
                 .addValue("archived", transcriptFile.isArchived());
     }
 
+    private void clearArchiveSpot(File archiveFile) throws IOException {
+        if (archiveFile.exists()) {
+            File archiveFileDest = new File(archiveDir, archiveFile.getName() + "_old");
+            clearArchiveSpot(archiveFileDest);
+            logger.warn("{} already exists in the transcript archive. Saving under a new name...", archiveFile.getName());
+            FileIOUtils.moveFile(archiveFile, archiveFileDest);
+            var params = new MapSqlParameterSource("originalName", archiveFile.getName())
+                    .addValue("newName", archiveFileDest.getName());
+            jdbcNamed.update(RENAME_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params);
+        }
+    }
+
     private final class TranscriptFileRowMapper implements RowMapper<T> {
         @Override
         public T mapRow(ResultSet rs, int i) throws SQLException {
-            String fileName = rs.getString(isHearing() ? "filename" : "file_name");
+            String fileName = rs.getString("filename");
             boolean archived = rs.getBoolean("archived");
 
             File file = new File(archived ? archiveDir : incomingDir, fileName);
@@ -109,7 +119,7 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
                 transcriptFile.setPendingProcessing(rs.getBoolean("pending_processing"));
                 transcriptFile.setArchived(archived);
             } catch (FileNotFoundException ex) {
-                logger.error("Transcript file " + fileName + " was not found in the expected location.", ex);
+                logger.error("Transcript file {} was not found in the expected location.", fileName, ex);
             }
             return transcriptFile;
         }

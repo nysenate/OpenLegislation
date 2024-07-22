@@ -17,6 +17,6 @@ public record TranscriptId(LocalDateTime dateTime, SessionType sessionType)
         if (temp != 0) {
             return temp;
         }
-        return o.sessionType.compareTo(sessionType);
+        return sessionType.compareTo(o.sessionType);
     }
 }

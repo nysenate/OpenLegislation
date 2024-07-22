@@ -6,25 +6,29 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 
-public interface TranscriptSearchService
-{
+public interface TranscriptSearchService {
     /**
      * Provides a listing of all transcripts.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException {
+        return searchTranscripts(null, sort, limOff);
+    }
 
     /**
      * Provides a listing of transcripts which took place in a given year.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchTranscripts(null, year, sort, limOff);
+    }
 
     /**
      * Performs a search across all transcripts.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchTranscripts(query, null, sort, limOff);
+    }
 
     /**
      * Performs a search across all transcripts in a given year.
@@ -36,7 +40,8 @@ public interface TranscriptSearchService
      * @return
      * @throws SearchException
      */
-    SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(String query, Integer year, String sort, LimitOffset limOff)
+            throws SearchException;
 
     /**
      * Handles a transcript update event by indexing the supplied transcript.
