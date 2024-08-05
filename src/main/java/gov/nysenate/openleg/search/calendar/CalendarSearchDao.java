@@ -16,27 +16,16 @@ public interface CalendarSearchDao {
      * Performs a calendar search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
      * */
-    SearchResults<CalendarId> searchCalendars(Query query, Query postFilter,
+    SearchResults<CalendarId> searchCalendars(Query query,
                                               List<SortOptions> sort, LimitOffset limitOffset);
 
     /**
      * Updates or inserts a single calendar into the index
-     *
-     * @param calendar
      */
     void updateCalendarIndex(Calendar calendar);
 
     /**
      * Performs a bulk update/insert into the index for a collection of calendars
-     *
-     * @param calendars
      */
     void updateCalendarIndexBulk(Collection<Calendar> calendars);
-
-    /**
-     * Deletes a calendar in the index corresponding to the given calendar id
-     *
-     * @param calId
-     */
-    void deleteCalendarFromIndex(CalendarId calId);
 }

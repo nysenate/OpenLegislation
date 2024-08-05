@@ -20,38 +20,25 @@ import java.util.function.Function;
 
 @Repository
 public class ElasticApiLogSearchDao extends ElasticBaseDao<ApiLogItemView> implements ApiLogSearchDao {
-    private static final String logIndexName = SearchIndex.API_LOG.getName();
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchLogs(Query query, Query filter, List<SortOptions> sort, LimitOffset limOff) {
-        return search(logIndexName, query, filter, sort, limOff, ApiLogItemView::getRequestId);
-    }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<ApiLogItemView> searchLogsAndFetchData(Query query, Query filter, List<SortOptions> sort, LimitOffset limOff) {
-        return search(logIndexName,
-                query, filter, null, null, sort, limOff, true, Function.identity());
+        return search(
+                query, null, sort, limOff, true, Function.identity());
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateLogIndex(ApiResponse apiResponse) {
         var logItemView = new ApiLogItemView(apiResponse);
-        indexDoc(logIndexName, String.valueOf(logItemView.getRequestId()), logItemView);
+        indexDoc(String.valueOf(logItemView.getRequestId()), logItemView);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateLogIndex(Collection<ApiResponse> apiResponses) {
         apiResponses.forEach(this::updateLogIndex);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteLogFromIndex(Integer requestId) {
-        deleteEntry(logIndexName, Integer.toString(requestId));
     }
 
     /** {@inheritDoc} */

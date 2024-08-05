@@ -15,6 +15,7 @@ import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -29,6 +30,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     protected final ElasticMemberSearchDao memberSearchDao;
     protected final MemberService memberDataService;
 
+    @Autowired
     public ElasticMemberSearchService(OpenLegEnvironment env,
                                       ElasticMemberSearchDao memberSearchDao,
                                       MemberService memberDataService, EventBus eventBus) {
@@ -64,7 +66,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             // TODO: some map or function to get a default for everything?
             limOff = LimitOffset.TWENTY_FIVE;
         }
-        return memberSearchDao.searchMembers(query, null,
+        return memberSearchDao.searchMembers(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -128,7 +130,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
      * @return QueryBuilder
      */
     private static Query sessionYearExistsQuery(SessionYear sessionYear) {
-        return (sessionYear == null ? QueryBuilders.exists().build() :
+        return (sessionYear == null ? QueryBuilders.matchAll().build() :
                 ExistsQuery.of(eqb -> eqb.field("sessionShortNameMap." + sessionYear.year())))._toQuery();
     }
 }

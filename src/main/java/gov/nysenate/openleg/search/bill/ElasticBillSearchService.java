@@ -69,7 +69,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
-        return billSearchDao.searchBills(query, null, null,
+        return billSearchDao.searchBills(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 

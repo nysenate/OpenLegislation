@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
@@ -11,21 +12,24 @@ import gov.nysenate.openleg.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Repository
-public class ElasticNotificationSearchDao extends ElasticBaseDao<RegisteredNotification>
+public class ElasticNotificationSearchDao extends ElasticBaseDao<NotificationView>
         implements NotificationSearchDao, IndexedSearchService<RegisteredNotification> {
-    private static final String notificationIndex = SearchIndex.NOTIFICATION.getName();
-    private final SynchronizedLong nextId;
+    private SynchronizedLong nextId;
 
     @Autowired
-    public ElasticNotificationSearchDao(EventBus eventBus) throws IOException {
+    public ElasticNotificationSearchDao(EventBus eventBus) {
         eventBus.register(this);
+    }
+
+    @PostConstruct
+    private void init() throws IOException {
         this.nextId = new SynchronizedLong(getDocCount() + 1);
     }
 
@@ -33,22 +37,23 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<RegisteredNotif
 
     @Override
     public Optional<RegisteredNotification> getNotification(long notificationId) {
-        return getRequest(notificationIndex, Long.toString(notificationId));
+        Optional<NotificationView> view = getRequest(Long.toString(notificationId));
+        return view.map(ElasticNotificationSearchDao::viewToRegNotification);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<RegisteredNotification> searchNotifications(Query query, Query postFilter,
+    public SearchResults<RegisteredNotification> searchNotifications(Query query,
                                                                      List<SortOptions> sort, LimitOffset limitOffset) {
-        return search(notificationIndex, query, postFilter, null, null,
-                sort, limitOffset, true, Function.identity());
+        return search(query, null,
+                sort, limitOffset, true, ElasticNotificationSearchDao::viewToRegNotification);
     }
 
     /** {@inheritDoc} */
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
-        RegisteredNotification regNotification = new RegisteredNotification(notification, nextId.getAndIncrement());
-        indexDoc(notificationIndex, String.valueOf(regNotification.getId()), regNotification);
+        var regNotification = new RegisteredNotification(notification, nextId.getAndIncrement());
+        indexDoc(String.valueOf(regNotification.getId()), new NotificationView(regNotification));
         return regNotification;
     }
 
@@ -109,5 +114,10 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<RegisteredNotif
         public synchronized long getAndIncrement() {
             return num++;
         }
+    }
+
+    private static RegisteredNotification viewToRegNotification(NotificationView view) {
+        return new RegisteredNotification(view.getId(), view.getNotificationType(),
+                view.getOccurred(), view.getSummary(), view.getMessage());
     }
 }

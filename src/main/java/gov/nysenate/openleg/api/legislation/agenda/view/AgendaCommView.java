@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.agenda.view;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.agenda.AgendaBillInfo;
+import gov.nysenate.openleg.api.legislation.committee.view.CommitteeIdView;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.legislation.agenda.AgendaVoteCommittee;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public record AgendaCommView(CommitteeId committeeId, ListView<AgendaCommAddendumView> addenda) implements ViewObject {
+public record AgendaCommView(CommitteeIdView committeeId, ListView<AgendaCommAddendumView> addenda) implements ViewObject {
 
     public AgendaCommView(CommitteeId committeeId, Agenda agenda, Map<AgendaInfoCommittee, List<AgendaBillInfo>> infoCommMap) {
-        this(committeeId, ListView.of(getAddendaList(agenda, committeeId, infoCommMap)));
+        this(new CommitteeIdView(committeeId), ListView.of(getAddendaList(agenda, committeeId, infoCommMap)));
     }
 
     private static List<AgendaCommAddendumView> getAddendaList(Agenda agenda,

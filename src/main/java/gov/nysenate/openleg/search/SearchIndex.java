@@ -41,9 +41,4 @@ public enum SearchIndex {
     public boolean isPrimaryStore() {
         return primaryStore;
     }
-
-    // TODO
-    public Class<?> storageClass() {
-        return null;
-    }
 }

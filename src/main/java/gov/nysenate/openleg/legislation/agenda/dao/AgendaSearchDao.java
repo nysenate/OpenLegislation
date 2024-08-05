@@ -16,23 +16,14 @@ import java.util.List;
  */
 public interface AgendaSearchDao {
     /**
-     * Performs a search on the top level agenda.
-     * @see #searchAgendas(Query, Query, List, LimitOffset)
-     * @returns SearchResults<AgendaId>
-     */
-    SearchResults<AgendaId> searchAgendas(Query query, Query postFilter,
-                                          List<SortOptions> sort, LimitOffset limOff);
-
-    /**
      * Performs a search across all agendas broken down by committee.
      *
-     * @param query String - Query Builder
-     * @param postFilter FilterBuilder - Filter result set
-     * @param sort String - Sort String
+     * @param query  String - Query Builder
+     * @param sort   String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<AgendaCommitteeId>
      */
-    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(Query query, Query postFilter,
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(Query query,
                                                             List<SortOptions> sort, LimitOffset limOff);
 
     /**
@@ -40,19 +31,19 @@ public interface AgendaSearchDao {
      *
      * @param agenda Agenda
      */
-    public void updateAgendaIndex(Agenda agenda);
+    void updateAgendaIndex(Agenda agenda);
 
     /**
      * Update the agenda index with the contents of the supplied agendas.
      *
      * @param agendas Collection<Agenda>
      */
-    public void updateAgendaIndex(Collection<Agenda> agendas);
+    void updateAgendaIndex(Collection<Agenda> agendas);
 
     /**
      * Removes the agenda from the index with the given AgendaId.
      *
      * @param agendaId AgendaId
      */
-    public void deleteAgendaFromIndex(AgendaId agendaId);
+    void deleteAgendaFromIndex(AgendaId agendaId);
 }

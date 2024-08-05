@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 
 /**
- * An interface that designates that its implementer is a view object
- * */
+ * An interface that designates that its implementer is a view object, which can be serialized by an ObjectMapper.
+ */
 @FunctionalInterface
 public interface ViewObject extends Serializable {
     /**

@@ -72,7 +72,7 @@ public class ElasticNotificationService implements NotificationService {
                 ? "occurred:" + order : "";
 
         SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(
-                filterQuery.build()._toQuery(), null,
+                filterQuery.build()._toQuery(),
                 ElasticSearchServiceUtils.extractSortBuilders(sortString), limitOffset);
         return results.toPaginatedList();
     }
@@ -83,7 +83,7 @@ public class ElasticNotificationService implements NotificationService {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return notificationDao.searchNotifications(QueryBuilders.queryString(b -> b.query(queryString)), null,
+        return notificationDao.searchNotifications(QueryBuilders.queryString(b -> b.query(queryString)),
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 

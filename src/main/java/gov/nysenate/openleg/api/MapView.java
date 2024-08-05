@@ -6,16 +6,13 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MapView<KeyType, ViewType> implements ViewObject
-{
+public class MapView<KeyType, ViewType> implements ViewObject {
     protected ImmutableMap<KeyType, ViewType> items;
 
     public static <KeyType, ViewType extends ViewObject> MapView<KeyType, ViewType> of(Map<KeyType, ViewType> items) {
         return new MapView<>(items);
     }
-    public static <KeyType> MapView<KeyType, String> ofStringMap(Map<KeyType, String> items) {
-        return new MapView<>(items);
-    }
+
     public static <KeyType> MapView<KeyType, Integer> ofIntMap(Map<KeyType, Integer> items) {
         return new MapView<>(items);
     }
@@ -41,7 +38,7 @@ public class MapView<KeyType, ViewType> implements ViewObject
 
     @Override
     public String getViewType() {
-        if (items.size()==0) {
+        if (items.isEmpty()) {
             return "empty map";
         }
         String keyViewType = ViewObject.getViewTypeOf(items.keySet().iterator().next());

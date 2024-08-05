@@ -11,21 +11,22 @@ import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.mapping.TextProperty;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
-import co.elastic.clients.elasticsearch.core.search.Rescore;
 import co.elastic.clients.elasticsearch.core.search.TrackHits;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.TypeUtils;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,11 +36,9 @@ import java.util.function.Function;
 /**
  * Base class for Elasticsearch layer classes to inherit common functionality from.
  */
-public abstract class ElasticBaseDao<DocType> {
+public abstract class ElasticBaseDao<DocType extends ViewObject> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
     private static final int defaultMaxResultWindow = 10000;
-    /** The ideal upper limit for the size of a bulk request */
-    private static final long desiredBulkRequestSize = 5242880L;
 
     @Autowired private ElasticsearchClient searchClient;
 
@@ -51,17 +50,14 @@ public abstract class ElasticBaseDao<DocType> {
     /* --- Public methods --- */
 
     public void createIndices() {
-        boolean exists;
         try {
-            exists = searchClient.indices().exists(
-                    ExistsRequest.of(b -> b.index(getIndex().getName())))
-                    .value();
+            if (!searchClient.indices().exists(
+                    ExistsRequest.of(b -> b.index(getIndex().getName()))).value()) {
+                createIndex();
+            }
         }
         catch (IOException ex) {
             throw new GenericElasticsearchException("Index exists request failed.", ex);
-        }
-        if (!exists) {
-            createIndex();
         }
     }
 
@@ -70,17 +66,12 @@ public abstract class ElasticBaseDao<DocType> {
             logger.info("Deleting search index {}", getIndex());
             searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(getIndex().getName())));
         }
-        catch (IOException ex){
+        catch (IOException ex) {
             throw new GenericElasticsearchException("Delete index request failed.", ex);
         }
         createIndex();
     }
 
-    /* --- Abstract methods --- */
-
-    /**
-     * Returns a list containing the names of all indices used by the inheriting Dao
-     */
     protected abstract SearchIndex getIndex();
 
     /* --- Common Elastic Search methods --- */
@@ -92,84 +83,75 @@ public abstract class ElasticBaseDao<DocType> {
     /**
      * Performs a typical search that involves a query, filter, sort string, and a limit + offset
      *
-     * @see #search(String, Query, Query, List, LimitOffset, Function)
+     * @see #search(Query, List, LimitOffset, Function)
      * <p>
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
-    protected <T> SearchResults<T> search(String indexName, Query query, Query postFilter,
+    protected <T> SearchResults<T> search(Query query,
                                           List<SortOptions> sort, LimitOffset limitOffset,
                                           Function<DocType, T> docToReturnType)
             throws ElasticsearchException {
-        return search(indexName, query, postFilter,
-                null, null, sort, limitOffset, false, docToReturnType);
+        return search(query,
+                null, sort, limitOffset, false, docToReturnType);
     }
 
     /**
      * Performs a search with support for various functions.
      *
-     * @param indexName         - The name of the index to search.
      * @param query             - The QueryBuilder instance to perform the search with.
-     * @param postFilter        - Optional FilterBuilder to filter out the results.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
-     * @param rescorer          - Optional rescorer that can be used to fine tune the query ranking.
      * @param sort              - List of SortBuilders specifying the desired sorting
      * @param limitOffset       - Restrict the number of results returned as well as paginate.
      * @param fetchSource       - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
-    protected <T> SearchResults<T> search(String indexName, Query query,
-                                          Query postFilter, Map<String, HighlightField> highlightedFields,
-                                          Rescore rescorer, List<SortOptions> sort,
+    protected <T> SearchResults<T> search(Query query,
+                                          Map<String, HighlightField> highlightedFields,
+                                          List<SortOptions> sort,
                                           LimitOffset limitOffset, boolean fetchSource,
                                           Function<DocType, T> docToReturnType) {
         // TODO: check searches on empty indices
-        SearchRequest searchRequest = getSearchRequest(
-                indexName, query, postFilter, highlightedFields, rescorer, sort, limitOffset, fetchSource);
-        SearchResponse<DocType> searchResponse = getSearchResponse(searchRequest);
-        return getSearchResults(searchResponse, limitOffset, docToReturnType);
+        SearchRequest request = getSearchRequest(query, highlightedFields, sort, limitOffset, fetchSource);
+        try {
+            SearchResponse<DocType> response = searchClient.search(request, getDocTypeClass());
+            return getSearchResults(response, limitOffset, docToReturnType);
+        } catch (IOException ex) {
+            throw new GenericElasticsearchException("IOException occurred during search request.", ex);
+        }
     }
 
     /**
      * Performs a get request on the given index for the document designated by the given type and id
      * returns an optional that is empty if a document does not exist for the given request parameters
-     * @param index String - a search index
      * @param id String - the id of the desired document
      */
-    protected Optional<DocType> getRequest(String index, String id) {
-        var getRequest = GetRequest.of(b -> b.index(index).id(id));
+    protected Optional<DocType> getRequest(String id) {
+        var getRequest = GetRequest.of(b -> b.index(getIndex().getName()).id(id));
         try {
             GetResponse<DocType> getResponse = searchClient.get(getRequest, getDocTypeClass());
             if (getResponse.found()) {
                 return Optional.ofNullable(getResponse.source());
             }
         }
-        catch (IOException ex){
+        catch (IOException ex) {
             throw new GenericElasticsearchException("Get request failed.", ex);
         }
         return Optional.empty();
     }
 
-    /**
-     * Return a request to index the given object.
-     * @param id String - elasticsearch ID for the document.
-     * @param doc - Document to be indexed.
-     */
-    protected IndexRequest<DocType> getIndexRequest(String indexName, String id, DocType doc) {
-        return IndexRequest.of(b -> b.index(indexName).id(id).document(doc));
-    }
-
-    protected IndexOperation<DocType> getIndexOperationRequest(String indexName, String id, DocType doc) {
-        return IndexOperation.of(b -> b.index(indexName).id(id).document(doc));
+    protected IndexOperation<DocType> getIndexOperation(String id, DocType doc) {
+        return IndexOperation.of(b -> b.index(getIndex().getName()).id(id).document(doc));
     }
 
     /**
      * Indexes the given document.
-     * @param id String - elasticsearch ID for the document.
-     * @param object - Document to be indexed
+     *
+     * @param id  String - elasticsearch ID for the document.
+     * @param doc - Document to be indexed
      */
-    protected IndexResponse indexDoc(String indexName, String id, DocType object) {
+    protected void indexDoc(String id, DocType doc) {
         try {
-            return searchClient.index(getIndexRequest(indexName, id, object));
+            searchClient.index(IndexRequest.of(b -> b.index(getIndex().getName()).id(id).document(doc)));
         } catch (IOException ex) {
             throw new GenericElasticsearchException("Index request failed", ex);
         }
@@ -178,26 +160,18 @@ public abstract class ElasticBaseDao<DocType> {
     /**
      * Performs a bulk request execution while making sure that the bulk request is actually valid to
      * prevent exceptions.
-     * Also split the bulk request into smaller bulks if it is too big.
-     * @param bulkRequest BulkRequestBuilder
      */
-    protected void safeBulkRequestExecute(BulkRequest bulkRequest) {
-        if (bulkRequest == null || bulkRequest.operations().isEmpty()) {
-            return;
-        }
+    protected void safeBulkRequestExecute(@Nonnull BulkOperation.Builder operationsBuilder) {
         try {
-            searchClient.bulk(bulkRequest);
-        } catch (IOException ex) {
+            searchClient.bulk(BulkRequest.of(b -> b.index(getIndex().getName()).operations(operationsBuilder.build())));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
             throw new GenericElasticsearchException("Bulk request failed", ex);
         }
     }
 
-    protected static DeleteRequest getDeleteRequest(String indexName, String id) {
-        return DeleteRequest.of(b -> b.index(indexName).id(id));
-    }
-
-    protected void deleteEntry(String indexName, String id) {
-        DeleteRequest deleteRequest = getDeleteRequest(indexName, id);
+    protected void deleteEntry(String id) {
+        DeleteRequest deleteRequest = DeleteRequest.of(b -> b.index(getIndex().getName()).id(id));
         try {
             searchClient.delete(deleteRequest);
         }
@@ -218,9 +192,9 @@ public abstract class ElasticBaseDao<DocType> {
      * Disabling can reduce load during large operations.
      * It should always be re-enabled when done.
      */
-    protected void setIndexRefresh(String indexName, boolean enabled) {
-        logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", indexName);
-        var request = PutIndicesSettingsRequest.of(b -> b.settings(
+    protected void setIndexRefresh(boolean enabled) {
+        logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", getIndex().getName());
+        var request = PutIndicesSettingsRequest.of(b -> b.index(getIndex().getName()).settings(
                 IndexSettings.of(b1 -> b1.refreshInterval(enabled ? enable : disable))
         ));
         // Try to set the setting up to 5 times if a failure occurs
@@ -242,21 +216,22 @@ public abstract class ElasticBaseDao<DocType> {
                 break;
             }
         }
-        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName, ex);
+        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + getIndex().getName(), ex);
     }
 
     /**
-     * Returns true iff index refresh is the default value for the given index.
-     *
-     * @param indexName String
+     * Returns true iff index refresh is the default value for this index.
      * @return boolean
      */
     @SuppressWarnings("all")
-    protected boolean isIndexRefreshDefault(String indexName) {
-        var request = GetIndicesSettingsRequest.of(b -> b.index(indexName).includeDefaults(true));
+    public boolean isIndexRefreshDefault() {
+        var request = GetIndicesSettingsRequest.of(b -> b.index(getIndex().getName()).includeDefaults(true));
         try {
-            IndexState data = searchClient.indices().getSettings(request).get(indexName);
-            return data.defaults().refreshInterval().equals(data.settings().refreshInterval());
+            // TODO: are both null, not sure that they should be
+            IndexState data = searchClient.indices().getSettings(request).get(getIndex().getName());
+            var time1 = data.defaults().refreshInterval();
+            var time2 = data.settings().refreshInterval();
+            return Objects.equals(time1, time2);
         } catch (IOException e) {
             throw new GenericElasticsearchException("Failed to get elasticsearch settings");
         }
@@ -329,19 +304,16 @@ public abstract class ElasticBaseDao<DocType> {
     /**
      * Generates a SearchRequest with support for various functions.
      *
-     * @param indexName - The name of the index to search.
      * @param query - The QueryBuilder instance to perform the search with.
-     * @param postFilter - Optional FilterBuilder to filter out the results.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
-     * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
      * @param sorts - List of SortBuilders specifying the desired sorting
      * @param limitOffset - Restrict the number of results returned as well as paginate.
      * @param fetchSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
-    private SearchRequest getSearchRequest(String indexName, Query query,
-                                           Query postFilter, Map<String, HighlightField> highlightedFields,
-                                           Rescore rescorer, List<SortOptions> sorts,
+    private SearchRequest getSearchRequest(Query query,
+                                           Map<String, HighlightField> highlightedFields,
+                                           List<SortOptions> sorts,
                                            LimitOffset limitOffset, boolean fetchSource)
             throws ElasticsearchException {
         final LimitOffset finalLimitOffset = adjustLimitOffset(limitOffset);
@@ -350,28 +322,12 @@ public abstract class ElasticBaseDao<DocType> {
                 .minScore(0.05d).trackTotalHits(TrackHits.of(trackBuilder -> trackBuilder.enabled(true)))
                 .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
                 .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
-                .rescore(rescorer)
-                .postFilter(postFilter)
                 .sort(sorts)
-                .index(indexName)
+                .index(getIndex().getName())
                 .searchType(SearchType.QueryThenFetch)
         );
         logger.debug("{}", searchRequest);
         return searchRequest;
-    }
-
-    /**
-     * Execute a search query, returning a response.
-     * Handle IOExceptions by rethrowing as runtime exception.
-     * @param request SearchRequest
-     * @return SearchResponse
-     */
-    private SearchResponse<DocType> getSearchResponse(SearchRequest request) throws ElasticsearchException {
-        try {
-            return searchClient.search(request, getDocTypeClass());
-        } catch (IOException ex) {
-            throw new GenericElasticsearchException("IOException occurred during search request.", ex);
-        }
     }
 
     /**

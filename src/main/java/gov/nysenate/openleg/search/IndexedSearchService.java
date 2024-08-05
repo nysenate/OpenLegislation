@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.search;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.util.ArrayList;
@@ -16,11 +13,10 @@ public interface IndexedSearchService<T> {
         return TermQuery.of(b -> b.field(fieldName).value(year))._toQuery();
     }
 
-    static Query getYearTermQuery(String fieldName, SessionYear sessionYear) {
-        return getYearTermQuery(fieldName, sessionYear.year());
-    }
-
     static Query getStringQuery(String query) {
+        if (query == null) {
+            return QueryBuilders.matchAll().build()._toQuery();
+        }
         return QueryStringQuery.of(b -> b.query(query))._toQuery();
     }
 

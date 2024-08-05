@@ -4,8 +4,7 @@ import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
-public class MemberView implements ViewObject
-{
+public class MemberView implements ViewObject {
     protected int memberId;
     protected String chamber;
     protected boolean incumbent;

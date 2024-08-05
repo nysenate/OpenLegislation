@@ -58,7 +58,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
                     QueryBuilders.term(tb ->tb.field("lawId").value(lawId.toLowerCase()))
             ));
         }
-        return lawSearchDao.searchLawDocs(esQuery, null, null,
+        return lawSearchDao.searchLawDocs(esQuery,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 

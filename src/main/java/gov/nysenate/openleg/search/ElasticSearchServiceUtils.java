@@ -47,7 +47,7 @@ public final class ElasticSearchServiceUtils {
                     if (commonTextSortFields.contains(field)) {
                         field += ".keyword";
                     }
-                    var sortOrder = SortOrder.valueOf(StringUtils.upperCase(order));
+                    var sortOrder = SortOrder.valueOf(StringUtils.capitalize(order.toLowerCase()));
                     if (SCORE_NAME.equals(field)) {
                         sortBuilders.add(SortOptionsBuilders.score(b -> b.order(sortOrder)));
                     }

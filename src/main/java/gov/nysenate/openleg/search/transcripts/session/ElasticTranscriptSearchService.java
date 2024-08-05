@@ -42,13 +42,9 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(String query, Integer year, String sort, LimitOffset limOff)
+    public SearchResults<TranscriptId> searchTranscripts(String strQuery, Integer year, String sort, LimitOffset limOff)
             throws SearchException {
-        return search(IndexedSearchService.getStringQuery(query), year, sort, limOff);
-    }
-
-    private SearchResults<TranscriptId> search(Query query, Integer year,
-                                               String sort, LimitOffset limOff) throws SearchException {
+        Query query = IndexedSearchService.getStringQuery(strQuery);
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
@@ -59,7 +55,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
             final Query finalQuery = query;
             query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        return transcriptSearchDao.searchTranscripts(query, null,
+        return transcriptSearchDao.searchTranscripts(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 

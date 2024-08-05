@@ -1,18 +1,17 @@
 package gov.nysenate.openleg.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
+import gov.nysenate.openleg.common.util.AsciiArt;
 import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
+import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -22,6 +21,7 @@ import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.search.GenericElasticsearchException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -40,6 +40,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -79,43 +80,36 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     /** --- Elastic Search Configuration --- */
 
+    // TODO: is this needed?
     @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
     @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
     @Value("${elastic.search.port:9200}") private int elasticSearchPort;
-    @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
+    @Value("${elastic.search.connection_retries:5}") private int esAllowedRetries;
 
-    @Bean()
+    @Bean
     public ElasticsearchClient elasticSearchNode() throws InterruptedException {
 
-        int retryCount = 0;
-        var httpClient = RestClient.builder(new HttpHost(elasticSearchHost, elasticSearchPort, "http"))
+        var restClient = RestClient.builder(new HttpHost(elasticSearchHost, elasticSearchPort, "http"))
                 .build();
-        ElasticsearchTransport transport = new RestClientTransport(httpClient, new JsonbJsonpMapper());
-        return new ElasticsearchClient(transport);
+        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper(OutputUtils.elasticsearchJsonMapper));
+        var client = new ElasticsearchClient(transport);
 
-        // TODO: testing
-//        while (true) {
-//            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
-//            try {
-//                // Test the connection with a ping.
-//                if (!client.ping(RequestOptions.DEFAULT)) {
-//                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
-//                }
-//                logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
-//                return client;
-//            } catch (IOException | ElasticsearchException ex) {
-//                logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
-//                logger.warn("{} retries remain.", esAllowedRetries - retryCount);
-//                if (retryCount >= esAllowedRetries) {
-//                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-//                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-//                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-//                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
-//                }
-//            }
-//            retryCount++;
-//            Thread.sleep(1000);
-//        }
+        for (int triesLeft = esAllowedRetries; triesLeft > 0;) {
+            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
+            try {
+                if (client.ping().value()) {
+                    logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
+                    return client;
+                }
+            } catch (IOException | ElasticsearchException ignored) {}
+            logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
+            logger.warn("{} retries remain.", --triesLeft);
+            Thread.sleep(1000);
+        }
+        logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+                elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+        logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+        throw new GenericElasticsearchException("Elasticsearch connection retries exceeded");
     }
 
     /** --- Guava Event Bus Configuration --- */
@@ -167,13 +161,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.registerModule(new GuavaModule());
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
+        return OutputUtils.failOnUnknownMapper;
     }
 
     /** --- Processing Instances --- */

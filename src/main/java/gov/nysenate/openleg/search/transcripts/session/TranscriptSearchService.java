@@ -33,14 +33,14 @@ public interface TranscriptSearchService {
     /**
      * Performs a search across all transcripts in a given year.
      *
-     * @param query Search query.
+     * @param strQuery Search query.
      * @param year Filter by year.
      * @param sort Sort by field(s)
      * @param limOff Restrict the result set.
      * @return
      * @throws SearchException
      */
-    SearchResults<TranscriptId> searchTranscripts(String query, Integer year, String sort, LimitOffset limOff)
+    SearchResults<TranscriptId> searchTranscripts(String strQuery, Integer year, String sort, LimitOffset limOff)
             throws SearchException;
 
     /**

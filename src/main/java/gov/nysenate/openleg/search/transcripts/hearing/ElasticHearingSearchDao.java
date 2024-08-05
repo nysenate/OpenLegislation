@@ -3,10 +3,10 @@ package gov.nysenate.openleg.search.transcripts.hearing;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
@@ -18,8 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public class ElasticHearingSearchDao extends ElasticBaseDao<Hearing> implements HearingSearchDao {
-    private static final String hearingIndexName = SearchIndex.HEARING.getName();
+public class ElasticHearingSearchDao extends ElasticBaseDao<HearingView> implements HearingSearchDao {
     private static final Map<String, HighlightField> highlightFields;
     static {
         var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
@@ -29,10 +28,10 @@ public class ElasticHearingSearchDao extends ElasticBaseDao<Hearing> implements 
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<HearingId> searchHearings(Query query, Query postFilter,
+    public SearchResults<HearingId> searchHearings(Query query,
                                                    List<SortOptions> sort, LimitOffset limOff) {
-        return search(hearingIndexName, query, postFilter, highlightFields, null,
-                sort, limOff, false, Hearing::getId);
+        return search(query, highlightFields,
+                sort, limOff, false, hv -> new HearingId(hv.getId()));
     }
 
     /** {@inheritDoc} */
@@ -46,17 +45,9 @@ public class ElasticHearingSearchDao extends ElasticBaseDao<Hearing> implements 
     public void updateHearingIndex(Collection<Hearing> hearings) {
         var bulkBuilder = new BulkOperation.Builder();
         hearings.stream()
-                .map(hearing -> getIndexOperationRequest(hearingIndexName, String.valueOf(hearing.getId()), hearing))
+                .map(hearing -> getIndexOperation(String.valueOf(hearing.getId()), new HearingView(hearing)))
                 .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(BulkRequest.of(b -> b.index(hearingIndexName).operations(bulkBuilder.build())));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteHearingFromIndex(HearingId hearingId) {
-        if (hearingId != null) {
-            deleteEntry(hearingIndexName, String.valueOf(hearingId.id()));
-        }
+        safeBulkRequestExecute(bulkBuilder);
     }
 
     /** {@inheritDoc} */

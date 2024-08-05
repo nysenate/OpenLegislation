@@ -2,8 +2,8 @@ package gov.nysenate.openleg.search.member;
 
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.search.ElasticBaseDao;
@@ -15,13 +15,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public class ElasticMemberSearchDao extends ElasticBaseDao<FullMember> implements MemberSearchDao {
-    private static final String memberIndexName = SearchIndex.MEMBER.getName();
-
+public class ElasticMemberSearchDao extends ElasticBaseDao<FullMemberView> implements MemberSearchDao {
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchMembers(Query query, Query postFilter, List<SortOptions> sort, LimitOffset limOff) {
-        return search(memberIndexName, query, postFilter, sort, limOff, FullMember::getMemberId);
+    public SearchResults<Integer> searchMembers(Query query, List<SortOptions> sort, LimitOffset limOff) {
+        return search(query, sort, limOff, FullMemberView::getMemberId);
     }
 
     /** {@inheritDoc}
@@ -36,10 +34,10 @@ public class ElasticMemberSearchDao extends ElasticBaseDao<FullMember> implement
     @Override
     public void updateMemberIndex(Collection<FullMember> members) {
         var bulkBuilder = new BulkOperation.Builder();
-        members.stream()
-                .map(fmv -> getIndexOperationRequest(memberIndexName, String.valueOf(fmv.getMemberId()), fmv))
+        members.stream().map(FullMemberView::new)
+                .map(fmv -> getIndexOperation(String.valueOf(fmv.getMemberId()), fmv))
                 .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(BulkRequest.of(b -> b.index(memberIndexName).operations(bulkBuilder.build())));
+        safeBulkRequestExecute(bulkBuilder);
     }
 
     /** {@inheritDoc} */

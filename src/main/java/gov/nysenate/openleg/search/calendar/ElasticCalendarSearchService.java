@@ -142,7 +142,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return calendarSearchDao.searchCalendars(query, null,
+        return calendarSearchDao.searchCalendars(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 

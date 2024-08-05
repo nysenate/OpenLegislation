@@ -12,13 +12,12 @@ import java.util.List;
 public interface MemberSearchDao {
     /**
      * Performs a free-form search across all members using the query string syntax and a filter.
-     * @param query String - Query Builder
-     * @param postFilter FilterBuilder - Filter result set
-     * @param sort String - Sort String
+     * @param query  String - Query Builder
+     * @param sort   String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<Integer> - memberIds from matched members
      */
-    SearchResults<Integer> searchMembers(Query query, Query postFilter, List<SortOptions> sort, LimitOffset limOff);
+    SearchResults<Integer> searchMembers(Query query, List<SortOptions> sort, LimitOffset limOff);
 
     /**
      * Update the Member search index with the supplied Member.

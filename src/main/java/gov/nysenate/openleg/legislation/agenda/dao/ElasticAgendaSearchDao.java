@@ -2,7 +2,6 @@ package gov.nysenate.openleg.legislation.agenda.dao;
 
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommFlatView;
@@ -11,6 +10,7 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
@@ -21,20 +21,12 @@ import java.util.*;
 
 @Repository
 public class ElasticAgendaSearchDao extends ElasticBaseDao<AgendaCommFlatView> implements AgendaSearchDao {
-    protected static final String agendaIndexName = SearchIndex.AGENDA.getName();
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<AgendaId> searchAgendas(Query query, Query postFilter,
-                                                 List<SortOptions> sort, LimitOffset limOff) {
-        return search(agendaIndexName, query, postFilter, sort, limOff, ElasticAgendaSearchDao::getAgendaIdFromHit);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(Query query, Query postFilter,
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(Query query,
                                                                    List<SortOptions> sort, LimitOffset limOff) {
-        return search(agendaIndexName, query, postFilter, sort, limOff, ElasticAgendaSearchDao::getCommAgendaId);
+        return search(query, sort, limOff, ElasticAgendaSearchDao::getCommAgendaId);
     }
 
     /** {@inheritDoc} */
@@ -51,17 +43,17 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao<AgendaCommFlatView> i
             for (CommitteeId commId : agenda.getCommittees()) {
                 var commAgendaId = new CommitteeAgendaId(agenda.getId(), commId);
                 var view = new AgendaCommFlatView(agenda, commId, null);
-                bulkBuilder.index(getIndexOperationRequest(agendaIndexName, commAgendaId.toString(), view));
+                bulkBuilder.index(getIndexOperation(commAgendaId.toString(), view));
             }
         }
-        safeBulkRequestExecute(BulkRequest.of(b -> b.index(agendaIndexName).operations(bulkBuilder.build())));
+        safeBulkRequestExecute(bulkBuilder);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteAgendaFromIndex(AgendaId agendaId) {
         if (agendaId != null) {
-            deleteEntry(agendaIndexName, Long.toString(agendaId.getNumber()));
+            deleteEntry(Long.toString(agendaId.getNumber()));
         }
     }
 
@@ -72,7 +64,6 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao<AgendaCommFlatView> i
 
     /**
      * Allocate additional shards for agenda index.
-     *
      * @return Settings.Builder
      */
     @Override
@@ -88,6 +79,8 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao<AgendaCommFlatView> i
     }
 
     private static CommitteeAgendaId getCommAgendaId(AgendaCommFlatView hit) {
-        return new CommitteeAgendaId(getAgendaIdFromHit(hit), hit.committee().committeeId());
+        var comIdView = hit.committee().committeeId();
+        Chamber chamber = Chamber.getValue(comIdView.getChamber());
+        return new CommitteeAgendaId(getAgendaIdFromHit(hit), new CommitteeId(chamber, comIdView.getName()));
     }
 }

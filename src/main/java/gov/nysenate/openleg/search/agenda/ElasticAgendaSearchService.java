@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -132,7 +131,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return agendaSearchDao.searchCommitteeAgendas(query, null,
+        return agendaSearchDao.searchCommitteeAgendas(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 }

@@ -93,7 +93,7 @@ elastic.search.cluster.name = openleg
 # Allow a number of retries when the elasticsearch connection is established on startup.
 # Each retry will be attempted after a 1 second delay.
 
-elastic.search.connection_retries = 30
+elastic.search.connection_retries = 5
 
 # --- Eh Cache Configuration --------------------------------------------------
 # Refer to app.properties.example for recommended values.

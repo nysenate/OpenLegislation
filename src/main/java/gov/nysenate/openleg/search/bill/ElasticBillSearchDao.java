@@ -2,10 +2,8 @@ package gov.nysenate.openleg.search.bill;
 
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
-import co.elastic.clients.elasticsearch.core.search.Rescore;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.api.legislation.bill.BillGetCtrl;
@@ -31,8 +29,6 @@ import java.util.*;
 @Repository
 public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements BillSearchDao {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
-
-    private static final String billIndexName = SearchIndex.BILL.getName();
     private static final int billMaxResultWindow = 500000;
     /** Period for running the reindex janitor in ms */
     private static final long reindexJanitorInterval = 300000;
@@ -52,17 +48,11 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(Query query, Query postFilter, Rescore rescorer,
+    public SearchResults<BaseBillId> searchBills(Query query,
                                                  List<SortOptions> sort, LimitOffset limOff) {
-        return search(billIndexName, query, postFilter,
-                highlightedFields, rescorer, sort, limOff,
+        return search(query,
+                highlightedFields, sort, limOff,
                 false, BaseBillIdView::toBaseBillId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateBillIndex(Bill bill) {
-        updateBillIndex(Collections.singletonList(bill));
     }
 
     /** {@inheritDoc} */
@@ -71,9 +61,9 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
         var bulkBuilder = new BulkOperation.Builder();
         bills.stream()
                 .map(b -> new BillView(b, Sets.newHashSet(BillTextFormat.PLAIN)))
-                .map(bv -> getIndexOperationRequest(billIndexName, bv.toBaseBillId().toString(), bv))
+                .map(bv -> getIndexOperation(bv.toBaseBillId().toString(), bv))
                 .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(BulkRequest.of(b -> b.index(billIndexName).operations(bulkBuilder.build())));
+        safeBulkRequestExecute(bulkBuilder);
     }
 
     /** {@inheritDoc} */
@@ -81,7 +71,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         logger.info("Deleting {} from index.", baseBillId);
         if (baseBillId != null) {
-            deleteEntry(billIndexName, baseBillId.toString());
+            deleteEntry(baseBillId.toString());
         }
     }
 
@@ -91,7 +81,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
     public void reindexSetup() {
         synchronized (indexRefreshLock) {
             lastReindexRequest = LocalDateTime.now();
-            setIndexRefresh(billIndexName, false);
+            setIndexRefresh(false);
         }
     }
 
@@ -110,7 +100,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
     public void reindexCleanup() {
         synchronized (indexRefreshLock) {
             lastReindexRequest = LocalDateTime.MIN;
-            setIndexRefresh(billIndexName, true);
+            setIndexRefresh(true);
         }
     }
 
@@ -119,15 +109,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
      */
     @Scheduled(fixedDelay = reindexJanitorInterval)
     public void reindexJanitor() {
-        if (isIndexRefreshDefault(billIndexName)) {
+        if (isIndexRefreshDefault()) {
             return;
         }
         synchronized (indexRefreshLock) {
             Duration timeSinceLastReindexRequest = Duration.between(lastReindexRequest, LocalDateTime.now());
             if (timeSinceLastReindexRequest.compareTo(lastReindexTimeoutDuration) > 0) {
                 logger.warn(
-                        "Index refresh has been disabled for past the timeout duration for index {}.  Reenabling...",
-                        billIndexName);
+                        "Index refresh has been disabled for past the timeout duration for index {}.  Re-enabling...",
+                        getIndex().getName());
                 reindexCleanup();
             } else {
                 logger.info("Index refresh is disabled, but will remain so due to recent reindex requests.");

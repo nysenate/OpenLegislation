@@ -5,7 +5,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.notifications.model.Notification;
-import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 
 import java.util.List;
@@ -21,13 +20,12 @@ public interface NotificationSearchDao {
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
-     * @param query QueryBuilder
-     * @param postFilter FilterBuilder
-     * @param sort String
+     * @param query       QueryBuilder
+     * @param sort        String
      * @param limitOffset LimitOffset
      * @return SearchResults<RegisteredNotification>
      */
-    SearchResults<RegisteredNotification> searchNotifications(Query query, Query postFilter,
+    SearchResults<RegisteredNotification> searchNotifications(Query query,
                                                               List<SortOptions> sort, LimitOffset limitOffset);
 
     /**

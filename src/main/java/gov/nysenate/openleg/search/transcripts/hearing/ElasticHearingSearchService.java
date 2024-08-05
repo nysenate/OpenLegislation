@@ -64,7 +64,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
             final Query finalQuery = query;
             query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        return hearingSearchDao.searchHearings(query, null,
+        return hearingSearchDao.searchHearings(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.search.calendar;
 
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import com.google.common.collect.ImmutableList;
@@ -30,17 +29,13 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarView> imple
         this.calendarViewFactory = calendarViewFactory;
     }
 
-    /* --- Index Names --- */
-
-    protected static final String calIndexName = SearchIndex.CALENDAR.getName();
-
     /* --- Implementations --- */
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarId> searchCalendars(Query query, Query postFilter,
+    public SearchResults<CalendarId> searchCalendars(Query query,
                                                      List<SortOptions> sort, LimitOffset limitOffset) {
-        return search(calIndexName, query, postFilter, sort, limitOffset, CalendarIdView::toCalendarId);
+        return search(query, sort, limitOffset, CalendarIdView::toCalendarId);
     }
 
     /**{@inheritDoc}*/
@@ -56,15 +51,9 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarView> imple
     public void updateCalendarIndexBulk(Collection<Calendar> calendars) {
         var bulkBuilder = new BulkOperation.Builder();
         calendars.stream().map(calendarViewFactory::getCalendarView)
-                .map(calView -> getIndexOperationRequest(calIndexName, calView.toCalendarId().toString(), calView))
+                .map(calView -> getIndexOperation(calView.toCalendarId().toString(), calView))
                 .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(BulkRequest.of(b -> b.index(calIndexName).operations(bulkBuilder.build())));
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    public void deleteCalendarFromIndex(CalendarId calId) {
-        deleteEntry(calIndexName, calId.toString());
+        safeBulkRequestExecute(bulkBuilder);
     }
 
     /**

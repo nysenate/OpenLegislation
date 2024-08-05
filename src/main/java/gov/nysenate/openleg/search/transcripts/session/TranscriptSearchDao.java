@@ -16,13 +16,12 @@ import java.util.List;
 public interface TranscriptSearchDao {
     /**
      * Performs a free-form search across all transcripts using the query string syntax and a filter.
-     * @param query String - Query Builder
-     * @param postFilter FilterBuilder - Filter result set
-     * @param sort String - Sort String
+     * @param query  String - Query Builder
+     * @param sort   String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    SearchResults<TranscriptId> searchTranscripts(Query query, Query postFilter,
+    SearchResults<TranscriptId> searchTranscripts(Query query,
                                                   List<SortOptions> sort, LimitOffset limOff);
 
     /**
@@ -34,9 +33,4 @@ public interface TranscriptSearchDao {
      * Updates the transcript search index with the supplied transcripts.
      */
     void updateTranscriptIndex(Collection<Transcript> transcripts);
-
-    /**
-     * Removes the transcript from the search index with the given id.
-     */
-    void deleteTranscriptFromIndex(TranscriptId transcriptId);
 }

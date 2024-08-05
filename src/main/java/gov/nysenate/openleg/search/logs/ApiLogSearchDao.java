@@ -9,22 +9,9 @@ import gov.nysenate.openleg.search.SearchResults;
 import java.util.Collection;
 import java.util.List;
 
-public interface ApiLogSearchDao
-{
+public interface ApiLogSearchDao {
     /**
-     * Performs a free-form search on the log data. Returns the response ids.
-     *
-     * @param query String - Query Builder
-     * @param filter FilterBuilder - Filter result set
-     * @param sort String - Sort String
-     * @param limOff LimitOffset - Limit the result set
-     * @return SearchResults<Integer>
-     */
-    SearchResults<Integer> searchLogs(Query query, Query filter, List<SortOptions> sort, LimitOffset limOff);
-
-    /**
-     * Similar to #searchLogs, but instead of fetching just the request ids, this will
-     * return the full stored ApiLogItemViews.
+     * Return the full stored ApiLogItemViews.
      *
      * @return SearchResults<ApiLogItemView>
      */
@@ -43,11 +30,4 @@ public interface ApiLogSearchDao
      * @param apiResponses Collection<ApiResponse>
      */
     void updateLogIndex(Collection<ApiResponse> apiResponses);
-
-    /**
-     * Removes the bill from the search index with the given id.
-     *
-     * @param requestId Integer
-     */
-    void deleteLogFromIndex(Integer requestId);
 }
