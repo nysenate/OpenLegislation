@@ -7,13 +7,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CommitteeVersionId extends CommitteeSessionId implements Serializable
-{
+public class CommitteeVersionId extends CommitteeSessionId implements Serializable {
     @Serial
     private static final long serialVersionUID = 2679527346305021089L;
 
     /** Refers to the date this committee was referenced. */
-    private LocalDateTime referenceDate;
+    private final LocalDateTime referenceDate;
 
     /** --- Constructors --- */
 

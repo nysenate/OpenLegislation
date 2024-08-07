@@ -3,8 +3,7 @@ package gov.nysenate.openleg.legislation.law;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class LawDocId
-{
+public class LawDocId {
     /** A unique document identifier specified by LBDC.
      *  For example 'EDNA1' indicates article 1 of education law while 'EDN100' indicates section 100. */
     protected String documentId;

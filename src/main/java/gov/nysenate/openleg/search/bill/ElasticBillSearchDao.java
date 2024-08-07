@@ -1,21 +1,14 @@
 package gov.nysenate.openleg.search.bill;
 
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.api.legislation.bill.BillGetCtrl;
-import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
-import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.SearchResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
-public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements BillSearchDao {
+public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, Bill> {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
     private static final int billMaxResultWindow = 500000;
     /** Period for running the reindex janitor in ms */
@@ -38,42 +31,6 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
     private static volatile LocalDateTime lastReindexRequest = LocalDateTime.MIN;
     /** The amount of time allowed after the last reindex request before index refreshing is re-enabled */
     private static final Duration lastReindexTimeoutDuration = Duration.ofMinutes(15);
-
-    private static final Map<String, HighlightField> highlightedFields;
-    static {
-        var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
-        highlightedFields = Map.of("basePrintNo", highlightField, "printNo", highlightField,
-                "title", highlightField);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<BaseBillId> searchBills(Query query,
-                                                 List<SortOptions> sort, LimitOffset limOff) {
-        return search(query,
-                highlightedFields, sort, limOff,
-                false, BaseBillIdView::toBaseBillId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateBillIndex(Collection<Bill> bills) {
-        var bulkBuilder = new BulkOperation.Builder();
-        bills.stream()
-                .map(b -> new BillView(b, Sets.newHashSet(BillTextFormat.PLAIN)))
-                .map(bv -> getIndexOperation(bv.toBaseBillId().toString(), bv))
-                .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(bulkBuilder);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteBillFromIndex(BaseBillId baseBillId) {
-        logger.info("Deleting {} from index.", baseBillId);
-        if (baseBillId != null) {
-            deleteEntry(baseBillId.toString());
-        }
-    }
 
     /**
      * Sets up for reindexing by disabling index refresh.
@@ -131,6 +88,29 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BillView> implements Bi
     @Override
     protected SearchIndex getIndex() {
         return SearchIndex.BILL;
+    }
+
+    @Override
+    protected BaseBillId getId(Bill data) {
+        return data.getBaseBillId();
+    }
+
+    @Override
+    protected BillView getDoc(Bill data) {
+        return new BillView(data, Set.of(BillTextFormat.PLAIN));
+    }
+
+    @Override
+    protected BaseBillId toId(String idStr) {
+        var parts = idStr.split("-");
+        return new BaseBillId(parts[0], Integer.parseInt(parts[1]));
+    }
+
+    @Override
+    protected Map<String, HighlightField> highlightedFields() {
+        var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
+        return Map.of("basePrintNo", highlightField, "printNo", highlightField,
+                "title", highlightField);
     }
 
     /**

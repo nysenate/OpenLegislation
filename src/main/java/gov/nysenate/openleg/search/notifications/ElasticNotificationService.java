@@ -2,30 +2,27 @@ package gov.nysenate.openleg.search.notifications;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
-import gov.nysenate.openleg.search.ElasticSearchServiceUtils;
-import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.SearchResults;
+import gov.nysenate.openleg.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
-public class ElasticNotificationService implements NotificationService {
-    private final NotificationSearchDao notificationDao;
+public class ElasticNotificationService implements NotificationService, IndexedSearchService<RegisteredNotification> {
+    private final ElasticNotificationSearchDao notificationDao;
 
     @Autowired
-    public ElasticNotificationService(NotificationSearchDao notificationDao) {
+    public ElasticNotificationService(ElasticNotificationSearchDao notificationDao) {
         this.notificationDao = notificationDao;
     }
 
@@ -41,7 +38,7 @@ public class ElasticNotificationService implements NotificationService {
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types,
+    public PaginatedList<NotificationView> getNotificationList(Set<NotificationType> types,
                                                                      LocalDateTime from,
                                                                      LocalDateTime to,
                                                                      SortOrder order,
@@ -71,7 +68,7 @@ public class ElasticNotificationService implements NotificationService {
         String sortString = (order != null && order != SortOrder.NONE)
                 ? "occurred:" + order : "";
 
-        SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(
+        SearchResults<NotificationView> results = notificationDao.searchForDocs(
                 filterQuery.build()._toQuery(),
                 ElasticSearchServiceUtils.extractSortBuilders(sortString), limitOffset);
         return results.toPaginatedList();
@@ -79,11 +76,11 @@ public class ElasticNotificationService implements NotificationService {
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException {
+    public SearchResults<NotificationView> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return notificationDao.searchNotifications(QueryBuilders.queryString(b -> b.query(queryString)),
+        return notificationDao.searchForDocs(QueryBuilders.queryString(b -> b.query(queryString)),
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 
@@ -91,5 +88,46 @@ public class ElasticNotificationService implements NotificationService {
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
         return notificationDao.registerNotification(notification);
+    }
+
+    @Override
+    public void updateIndex(RegisteredNotification content) {
+        notificationDao.registerNotification(content);
+    }
+
+    @Override
+    public void updateIndex(Collection<RegisteredNotification> content) {
+        notificationDao.updateIndex(content);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearIndex() {
+        notificationDao.purgeIndices();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void rebuildIndex() {
+        notificationDao.purgeIndices();
+        notificationDao.createIndices();
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleRebuildEvent(RebuildIndexEvent event) {
+        if (event.affects(SearchIndex.NOTIFICATION)) {
+            rebuildIndex();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.NOTIFICATION)) {
+            notificationDao.purgeIndices();
+        }
     }
 }

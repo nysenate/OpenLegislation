@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.law.view.LawDocView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.law.LawDocId;
@@ -58,7 +59,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
                     QueryBuilders.term(tb ->tb.field("lawId").value(lawId.toLowerCase()))
             ));
         }
-        return lawSearchDao.searchLawDocs(esQuery,
+        return lawSearchDao.searchForIds(esQuery,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -84,9 +85,13 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawTreeUpdate(LawTreeUpdateEvent lawTreeUpdateEvent) {
-        String lawChapterId = lawTreeUpdateEvent.lawChapterId();
-        clearLawChapter(lawChapterId);
-        indexLawChapter(lawChapterId);
+        String lawId = lawTreeUpdateEvent.lawChapterId();
+        logger.info("Clearing law chapter {} from index", lawId);
+        try {
+            SearchResults<LawDocId> chapterDocs = searchLawDocs(null, lawId, null, LimitOffset.ALL);
+            lawSearchDao.deleteLawDocsFromIndex(chapterDocs.getRawResults());
+        } catch (SearchException ignored) {}
+        indexLawChapter(lawId);
     }
 
     /* --- IndexedSearchService implementation --- */
@@ -104,7 +109,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
             List<LawDocument> indexableDocs = content.stream()
                     .filter(this::isLawDocIndexable)
                     .toList();
-            lawSearchDao.updateLawIndex(indexableDocs);
+            lawSearchDao.updateIndex(indexableDocs);
         }
     }
 
@@ -146,18 +151,6 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     }
 
     /* --- Internal Methods --- */
-
-    /**
-     * Deletes all documents for the given law chapter from the law index.
-     * @param lawId String - law chapter id
-     */
-    private void clearLawChapter(String lawId) {
-        logger.info("Clearing law chapter {} from index", lawId);
-        try {
-            SearchResults<LawDocId> chapterDocs = searchLawDocs(null, lawId, null, LimitOffset.ALL);
-            lawSearchDao.deleteLawDocsFromIndex(chapterDocs.getRawResults());
-        } catch (SearchException ignored) {}
-    }
 
     /**
      * Indexes all published documents in a law chapter.

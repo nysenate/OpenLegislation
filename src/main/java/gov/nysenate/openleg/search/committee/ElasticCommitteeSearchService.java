@@ -82,7 +82,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
      */
     @Override
     public void updateIndex(CommitteeSessionId content) {
-        committeeSearchDao.updateCommitteeIndex(content);
+        committeeSearchDao.updateIndex(committeeDataService.getCommitteeHistory(content));
     }
 
     /**
@@ -90,7 +90,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
      */
     @Override
     public void updateIndex(Collection<CommitteeSessionId> content) {
-        committeeSearchDao.updateCommitteeIndexBulk(content);
+        committeeSearchDao.updateIndex(content.stream().flatMap(id -> committeeDataService.getCommitteeHistory(id).stream()).toList());
     }
 
     /**
@@ -109,7 +109,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     public void rebuildIndex() {
         logger.info("Reindexing committees...");
         clearIndex();
-        committeeSearchDao.updateCommitteeIndexBulk(committeeDataService.getAllCommitteeSessionIds());
+        updateIndex(committeeDataService.getAllCommitteeSessionIds());
         logger.info("Committee reindex complete.");
     }
 
@@ -149,7 +149,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
             final Query finalQuery = query;
             query = BoolQuery.of(b -> b.must(finalQuery, getCurrentFilter()))._toQuery();
         }
-        return committeeSearchDao.searchCommittees(query, null,
+        return committeeSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 }

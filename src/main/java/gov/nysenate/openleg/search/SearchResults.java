@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @param <ResultType> The type of the result (should typically be an identifier such as BillId, AgendaId, etc).
  * @param totalResults The total number of results available.
- * @param resultList      A list of the selected results.
+ * @param resultList   A list of the selected results.
  * @param limitOffset  The limit offset value used to generate the results listing.
  */
 public record SearchResults<ResultType>(int totalResults,

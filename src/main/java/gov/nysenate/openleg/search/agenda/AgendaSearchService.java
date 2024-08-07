@@ -17,14 +17,6 @@ public interface AgendaSearchService {
     }
 
     /**
-     * Retrieve all committee agendas for a given year, with sorting.
-     */
-    default SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff)
-            throws SearchException {
-        return searchCommitteeAgendas(null, year, sort, limOff);
-    }
-
-    /**
      * Search for committee agendas during a given year.
      *
      * @param query String - Lucene Query string

@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
@@ -28,12 +29,12 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
 
     private final OpenLegEnvironment env;
     private final EventBus eventBus;
-    private final ElasticHearingSearchDao hearingSearchDao;
+    private final SearchDao<HearingId, HearingView, Hearing> hearingSearchDao;
     private final HearingDataService hearingDataService;
 
     @Autowired
     public ElasticHearingSearchService(OpenLegEnvironment env, EventBus eventBus,
-                                       ElasticHearingSearchDao hearingSearchDao,
+                                       SearchDao<HearingId, HearingView, Hearing> hearingSearchDao,
                                        HearingDataService hearingDataService) {
         this.env = env;
         this.eventBus = eventBus;
@@ -64,7 +65,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
             final Query finalQuery = query;
             query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        return hearingSearchDao.searchHearings(query,
+        return hearingSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -82,7 +83,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
     public void updateIndex(Hearing hearing) {
         if (env.isElasticIndexing() && hearing != null) {
             logger.info("Indexing hearing {} into elastic search.", hearing.getTitle());
-            hearingSearchDao.updateHearingIndex(hearing);
+            hearingSearchDao.updateIndex(hearing);
         }
     }
 
@@ -92,7 +93,7 @@ public class ElasticHearingSearchService implements HearingSearchService, Indexe
         if (env.isElasticIndexing() && !hearings.isEmpty()) {
             List<Hearing> indexableHearings = hearings.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} hearings into elastic search.", indexableHearings.size());
-            hearingSearchDao.updateHearingIndex(indexableHearings);
+            hearingSearchDao.updateIndex(indexableHearings);
         }
     }
 

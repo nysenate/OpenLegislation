@@ -1,58 +1,52 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
-import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.mapping.KeywordProperty;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch._types.mapping.TextProperty;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.legislation.transcripts.session.SessionType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.SearchResults;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
-public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptView> implements TranscriptSearchDao {
-    private static final Map<String, HighlightField> highlightedFields =
-            Map.of("text", HighlightField.of(b -> b.numberOfFragments(3)));
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<TranscriptId> searchTranscripts(Query query,
-                                                         List<SortOptions> sort, LimitOffset limOff) {
-        return search(query,
-                highlightedFields, sort, limOff,
-                false, tv -> new TranscriptId(LocalDateTime.parse(tv.getDateTime()), new SessionType(tv.getSessionType())));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateTranscriptIndex(Transcript transcript) {
-        updateTranscriptIndex(List.of(transcript));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateTranscriptIndex(Collection<Transcript> transcripts) {
-        var bulkBuilder = new BulkOperation.Builder();
-        transcripts.stream()
-                .map(transcript -> getIndexOperation(transcript.getId().toString(), new TranscriptView(transcript)))
-                .forEach(bulkBuilder::index);
-        safeBulkRequestExecute(bulkBuilder);
-    }
+public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptId, TranscriptView, Transcript> {
+    private static final Property searchableKeywordMapping =
+            KeywordProperty.of(b -> b.fields("text",
+                    TextProperty.of(textB -> textB)._toProperty()
+            ))._toProperty();
 
     /** {@inheritDoc} */
     @Override
     protected SearchIndex getIndex() {
         return SearchIndex.TRANSCRIPT;
+    }
+
+    @Override
+    protected TranscriptId getId(Transcript data) {
+        return data.getId();
+    }
+
+    @Override
+    protected TranscriptView getDoc(Transcript data) {
+        return new TranscriptView(data);
+    }
+
+    @Override
+    protected Map<String, HighlightField> highlightedFields() {
+        return Map.of("text", HighlightField.of(b -> b.numberOfFragments(3)));
+    }
+
+    @Override
+    protected TranscriptId toId(String idStr) {
+        String[] parts = idStr.replaceAll("[()]", "").split(", ");
+        return TranscriptId.from(LocalDateTime.parse(parts[0]), parts[1]);
     }
 
     @Override

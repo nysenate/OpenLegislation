@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.search.notifications;
 
+import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
@@ -26,13 +27,13 @@ public interface NotificationService {
      *  notification types.  Results are order by date according to the given sort order and paginated according to
      *  the given limit / offset.
      */
-    PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, LocalDateTime from, LocalDateTime to,
-                                                              SortOrder order, LimitOffset limitOffset) throws SearchException;
+    PaginatedList<NotificationView> getNotificationList(Set<NotificationType> types, LocalDateTime from, LocalDateTime to,
+                                                        SortOrder order, LimitOffset limitOffset) throws SearchException;
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
      */
-    SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
+    SearchResults<NotificationView> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

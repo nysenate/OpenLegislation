@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -27,12 +28,12 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
 
     protected final OpenLegEnvironment env;
-    protected final ElasticMemberSearchDao memberSearchDao;
+    protected final SearchDao<Integer, FullMemberView, FullMember> memberSearchDao;
     protected final MemberService memberDataService;
 
     @Autowired
     public ElasticMemberSearchService(OpenLegEnvironment env,
-                                      ElasticMemberSearchDao memberSearchDao,
+                                      SearchDao<Integer, FullMemberView, FullMember> memberSearchDao,
                                       MemberService memberDataService, EventBus eventBus) {
         this.env = env;
         this.memberSearchDao = memberSearchDao;
@@ -66,7 +67,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             // TODO: some map or function to get a default for everything?
             limOff = LimitOffset.TWENTY_FIVE;
         }
-        return memberSearchDao.searchMembers(query,
+        return memberSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -75,7 +76,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     public void updateIndex(FullMember member) {
         if (env.isElasticIndexing() && member != null) {
             logger.info("Indexing member {} into elastic search.", member.getPerson().name().lastName());
-            memberSearchDao.updateMemberIndex(member);
+            memberSearchDao.updateIndex(member);
         }
     }
 
@@ -85,7 +86,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
         if (env.isElasticIndexing() && !members.isEmpty()) {
             List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid members into elastic search.", indexableMembers.size());
-            memberSearchDao.updateMemberIndex(indexableMembers);
+            memberSearchDao.updateIndex(indexableMembers);
         }
     }
 

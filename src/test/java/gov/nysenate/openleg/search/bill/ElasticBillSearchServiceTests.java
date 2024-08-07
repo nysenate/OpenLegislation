@@ -53,7 +53,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
             if (billCount > 0) {
                 logger.info(String.format("Indexing bills %d - %d",
                         limitOffset.getOffsetStart(), limitOffset.getOffsetStart() + billCount - 1));
-                billSearchDao.updateBillIndex(bills);
+                billSearchDao.updateIndex(bills);
             }
             limitOffset = limitOffset.next();
         }

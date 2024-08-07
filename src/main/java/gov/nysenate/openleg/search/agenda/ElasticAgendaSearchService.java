@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.search.agenda;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -45,9 +44,13 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, Integer year,
                                                                    String sort, LimitOffset limOff) throws SearchException {
-        return searchCommitteeAgendas(
+        if (limOff == null) {
+            limOff = LimitOffset.ALL;
+        }
+        return agendaSearchDao.searchForIds(
                 IndexedSearchService.getBasicBoolQuery("agenda.id.year", year, query),
-                sort, limOff);
+                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff
+        );
     }
 
     /** {@inheritDoc} */
@@ -55,7 +58,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     public void updateIndex(Agenda agenda) {
         if (env.isElasticIndexing()) {
             logger.info("Indexing agenda {} into elastic search.", agenda.getId());
-            agendaSearchDao.updateAgendaIndex(agenda);
+            agendaSearchDao.indexAgendas(List.of(agenda));
         }
     }
 
@@ -64,7 +67,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     public void updateIndex(Collection<Agenda> agendas) {
         if (env.isElasticIndexing()) {
             logger.info("Indexing {} agendas into elastic search.", agendas.size());
-            agendaSearchDao.updateAgendaIndex(agendas);
+            agendaSearchDao.indexAgendas(agendas);
         }
     }
 
@@ -83,7 +86,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
             List<Agenda> agendas = agendaIds.stream().map(agendaDataService::getAgenda).toList();
             logger.info("Reindexing {} agendas from {}", agendas.size(), year);
-            agendaSearchDao.updateAgendaIndex(agendas);
+            agendaSearchDao.indexAgendas(agendas);
         }
     }
 
@@ -122,16 +125,5 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.agendas().isEmpty()) {
             updateIndex(bulkAgendaUpdateEvent.agendas());
         }
-    }
-
-    /** --- Internal Methods --- */
-
-    private SearchResults<CommitteeAgendaId> searchCommitteeAgendas(
-            Query query, String sort, LimitOffset limitOffset) throws SearchException {
-        if (limitOffset == null) {
-            limitOffset = LimitOffset.ALL;
-        }
-        return agendaSearchDao.searchCommitteeAgendas(query,
-                ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 }

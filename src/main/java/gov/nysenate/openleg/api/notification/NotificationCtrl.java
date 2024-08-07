@@ -16,7 +16,6 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.notifications.model.NotificationType;
-import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.notifications.NotificationNotFoundException;
@@ -142,11 +141,10 @@ public class NotificationCtrl extends BaseCtrl {
         if (StringUtils.isBlank(term)) {
             term = "*";
         }
-        SearchResults<RegisteredNotification> results = notificationService.notificationSearch(term, sort, limitOffset);
+        SearchResults<NotificationView> results = notificationService.notificationSearch(term, sort, limitOffset);
         return ListViewResponse.of(results.resultList().stream()
                 .map(r -> new SearchResultView(
-                        full ? new NotificationView(r.result())
-                                : new NotificationSummaryView(r.result()),
+                        full ? r.result() : getSummary(r.result()),
                         r.rank()))
                 .toList(), results.totalResults(), limitOffset);
     }
@@ -158,12 +156,11 @@ public class NotificationCtrl extends BaseCtrl {
         LimitOffset limOff = getLimitOffset(request, 25);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         boolean full = getBooleanParam(request, "full", false);
-        PaginatedList<RegisteredNotification> results =
+        PaginatedList<NotificationView> results =
                 notificationService.getNotificationList(getNotificationTypes(request), from, to, order, limOff);
         Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
-        return DateRangeListViewResponse.of(results.results().stream()
-                .map(full ? NotificationView::new : NotificationSummaryView::new)
-                .toList(), dateRange, results.total(), limOff);
+        return DateRangeListViewResponse.of(results.results().stream().map(r -> full ? r : getSummary(r)).toList(),
+                dateRange, results.total(), limOff);
     }
 
     private static Set<NotificationType> getNotificationTypes(WebRequest request) {
@@ -177,5 +174,9 @@ public class NotificationCtrl extends BaseCtrl {
             typeSet.add(getEnumParameter("type", type, NotificationType.class));
         }
         return typeSet;
+    }
+
+    private static NotificationSummaryView getSummary(NotificationView view) {
+        return view;
     }
 }

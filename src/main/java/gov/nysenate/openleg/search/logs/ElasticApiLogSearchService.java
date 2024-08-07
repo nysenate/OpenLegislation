@@ -22,30 +22,31 @@ import java.util.concurrent.BlockingQueue;
 public class ElasticApiLogSearchService implements ApiLogSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticApiLogSearchService.class);
 
-    private final ElasticApiLogSearchDao apiLogSearchDao;
+    private final SearchDao<Integer, ApiLogItemView, ApiResponse> apiLogSearchDao;
 
     private final BlockingQueue<ApiResponse> indexQueue = new ArrayBlockingQueue<>(50000);
 
     @Autowired
-    public ElasticApiLogSearchService(ElasticApiLogSearchDao apiLogSearchDao, EventBus eventBus) {
+    public ElasticApiLogSearchService(SearchDao<Integer, ApiLogItemView, ApiResponse> apiLogSearchDao,
+                                      EventBus eventBus) {
         this.apiLogSearchDao = apiLogSearchDao;
         eventBus.register(this);
     }
 
     @Override
     public SearchResults<ApiLogItemView> searchApiLogs(String query, String sort, LimitOffset limOff) throws SearchException {
-        return apiLogSearchDao.searchLogsAndFetchData(IndexedSearchService.getStringQuery(query), null,
+        return apiLogSearchDao.searchForDocs(IndexedSearchService.getStringQuery(query),
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
     @Override
     public void updateIndex(ApiResponse apiResponse) {
-        apiLogSearchDao.updateLogIndex(apiResponse);
+        apiLogSearchDao.updateIndex(apiResponse);
     }
 
     @Override
     public void updateIndex(Collection<ApiResponse> apiResponses) {
-        apiLogSearchDao.updateLogIndex(apiResponses);
+        apiLogSearchDao.updateIndex(apiResponses);
     }
 
     @Override

@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
@@ -26,12 +27,12 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchService.class);
 
     private final OpenLegEnvironment env;
-    private final ElasticTranscriptSearchDao transcriptSearchDao;
+    private final SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao;
     private final TranscriptDataService transcriptDataService;
 
     @Autowired
     public ElasticTranscriptSearchService(OpenLegEnvironment env,
-                                          ElasticTranscriptSearchDao transcriptSearchDao,
+                                          SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao,
                                           TranscriptDataService transcriptDataService,
                                           EventBus eventBus) {
         this.env = env;
@@ -55,7 +56,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
             final Query finalQuery = query;
             query = BoolQuery.of(b -> b.must(finalQuery, rangeQuery._toQuery()))._toQuery();
         }
-        return transcriptSearchDao.searchTranscripts(query,
+        return transcriptSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -73,7 +74,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     public void updateIndex(Transcript transcript) {
         if (env.isElasticIndexing() && transcript != null) {
             logger.info("Indexing transcript {} into elastic search.", transcript.getDateTime().toString());
-            transcriptSearchDao.updateTranscriptIndex(transcript);
+            transcriptSearchDao.updateIndex(transcript);
         }
     }
 
@@ -83,7 +84,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
             List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).toList();
             logger.info("Indexing {} valid transcripts into elasticsearch.", indexableTranscripts.size());
-            transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
+            transcriptSearchDao.updateIndex(indexableTranscripts);
         }
     }
 

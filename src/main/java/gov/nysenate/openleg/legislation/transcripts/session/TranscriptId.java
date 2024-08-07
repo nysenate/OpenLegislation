@@ -12,6 +12,11 @@ public record TranscriptId(LocalDateTime dateTime, SessionType sessionType)
     }
 
     @Override
+    public String toString() {
+        return "(%s, %s)".formatted(dateTime, sessionType);
+    }
+
+    @Override
     public int compareTo(TranscriptId o) {
         int temp = dateTime.compareTo(o.dateTime);
         if (temp != 0) {

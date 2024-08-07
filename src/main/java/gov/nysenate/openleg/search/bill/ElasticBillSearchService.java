@@ -69,7 +69,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
-        return billSearchDao.searchBills(query,
+        return billSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
     }
 
@@ -129,12 +129,12 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             }
         }
         logger.info("Indexing {} valid bill(s) into elastic search.", indexableBills.size());
-        billSearchDao.updateBillIndex(indexableBills);
+        billSearchDao.updateIndex(indexableBills);
 
         // Ensure any bills that currently don't meet the criteria are not in the index.
         nonIndexableBills.stream()
                 .map(Bill::getBaseBillId)
-                .forEach(billSearchDao::deleteBillFromIndex);
+                .forEach(billSearchDao::deleteFromIndex);
     }
 
     /** {@inheritDoc} */

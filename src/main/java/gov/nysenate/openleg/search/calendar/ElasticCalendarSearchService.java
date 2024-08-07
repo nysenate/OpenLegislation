@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
@@ -27,11 +28,11 @@ import java.util.regex.Matcher;
 public class ElasticCalendarSearchService implements CalendarSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchService.class);
 
-    private final ElasticCalendarSearchDao calendarSearchDao;
+    private final SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao;
     private final CalendarDataService calendarDataService;
     private final OpenLegEnvironment env;
 
-    public ElasticCalendarSearchService(ElasticCalendarSearchDao calendarSearchDao,
+    public ElasticCalendarSearchService(SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao,
                                         CalendarDataService calendarDataService,
                                         OpenLegEnvironment env, EventBus eventBus) {
         this.calendarSearchDao = calendarSearchDao;
@@ -68,7 +69,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     public void updateIndex(Calendar content) {
         if (env.isElasticIndexing()) {
             logger.info("Indexing calendar {} into elastic search", content.getId());
-            calendarSearchDao.updateCalendarIndex(content);
+            calendarSearchDao.updateIndex(content);
         }
     }
 
@@ -77,7 +78,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     public void updateIndex(Collection<Calendar> content) {
         if (env.isElasticIndexing()) {
             logger.info("Indexing {} calendars into elastic search", content.size());
-            calendarSearchDao.updateCalendarIndexBulk(content);
+            calendarSearchDao.updateIndex(content);
         }
     }
 
@@ -130,19 +131,13 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     /**
      * Performs a search on the calendar index using the search dao, handling any exceptions that may arise
-     *
-     * @param query
-     * @param sort
-     * @param limitOffset
-     * @return
-     * @throws SearchException
      */
     private SearchResults<CalendarId> searchCalendars(
             Query query, String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return calendarSearchDao.searchCalendars(query,
+        return calendarSearchDao.searchForIds(query,
                 ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
     }
 
