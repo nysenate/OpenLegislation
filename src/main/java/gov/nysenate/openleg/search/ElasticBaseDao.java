@@ -8,6 +8,7 @@ import co.elastic.clients.elasticsearch._types.Time;
 import co.elastic.clients.elasticsearch._types.mapping.DateProperty;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
@@ -79,8 +80,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         createIndex();
     }
 
-    protected abstract SearchIndex getIndex();
-
     protected abstract IdType getId(ContentType data);
 
     protected abstract DocType getDoc(ContentType data);
@@ -90,13 +89,13 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     }
 
     @Override
-    public SearchResults<IdType> searchForIds(Query query, List<SortOptions> sort, LimitOffset limOff) {
-        return search(query, sort, limOff, highlightedFields(), false, hit -> toId(hit.id()));
+    public SearchResults<IdType> searchForIds(QueryVariant queryStr, String sortStr, LimitOffset limOff) throws SearchException {
+        return search(queryStr, sortStr, limOff, highlightedFields(), false, hit -> toId(hit.id()));
     }
 
     @Override
-    public SearchResults<DocType> searchForDocs(Query query, List<SortOptions> sort, LimitOffset limOff) {
-        return search(query, sort, limOff, highlightedFields(), true, Hit::source);
+    public SearchResults<DocType> searchForDocs(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException {
+        return search(query, sortStr, limOff, highlightedFields(), true, Hit::source);
     }
 
     @Override
@@ -142,13 +141,16 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         return searchClient.count(b -> b.index(getIndex().getName())).count();
     }
 
-    protected <T> SearchResults<T> search(Query query, List<SortOptions> sort, LimitOffset limitOffset,
+    protected <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
                                           Map<String, HighlightField> highlightedFields, boolean fetchSource,
-                                          Function<Hit<DocType>, T> hitMapper) {
+                                          Function<Hit<DocType>, T> hitMapper) throws SearchException {
+        if (limitOffset == null) {
+            limitOffset = getIndex().getDefaultLimitOffset();
+        }
         if (highlightedFields == null) {
             highlightedFields = Map.of();
         }
-        SearchRequest request = getSearchRequest(query, highlightedFields, sort, limitOffset, fetchSource);
+        SearchRequest request = getSearchRequest(query._toQuery(), highlightedFields, sortStr, limitOffset, fetchSource);
         try {
             SearchResponse<DocType> response = searchClient.search(request, getDocTypeClass());
             return getSearchResults(response, limitOffset, hitMapper);
@@ -334,16 +336,17 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      *
      * @param query - The QueryBuilder instance to perform the search with.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
-     * @param sorts - List of SortBuilders specifying the desired sorting
+     * @param sortStr - String to convert to sorted fields.
      * @param limitOffset - Restrict the number of results returned as well as paginate.
      * @param fetchSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
     private SearchRequest getSearchRequest(Query query,
                                            Map<String, HighlightField> highlightedFields,
-                                           List<SortOptions> sorts,
+                                           String sortStr,
                                            LimitOffset limitOffset, boolean fetchSource)
-            throws ElasticsearchException {
+            throws ElasticsearchException, SearchException {
+        List<SortOptions> sorts = ElasticSearchServiceUtils.extractSortBuilders(sortStr);
         final LimitOffset finalLimitOffset = adjustLimitOffset(limitOffset);
         var searchRequest = SearchRequest.of(b -> b.query(query).from(finalLimitOffset.getOffsetStart() - 1)
                 .size(limitOffset.hasLimit() ? limitOffset.getLimit() : Integer.MAX_VALUE)

@@ -26,7 +26,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao<CommitteeAgendaId, Ag
     }
 
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.AGENDA;
     }
 

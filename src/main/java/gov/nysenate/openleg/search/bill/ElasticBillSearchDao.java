@@ -86,7 +86,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
      * {@inheritDoc}
      */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.BILL;
     }
 

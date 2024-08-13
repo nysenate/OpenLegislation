@@ -33,14 +33,14 @@ public interface BillSearchService
     /**
      * Performs search across bills in a given session year.
      *
-     * @param query String - General search term
+     * @param queryStr String - General search term
      * @param session SessionYear - Filter by session year
      * @param sort String - Sort by field(s)
      * @param limOff LimitOffset - Restrict the result set.
      * @return SearchResults<BaseBillId>
      * @throws SearchException
      */
-    SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff)
+    SearchResults<BaseBillId> searchBills(String queryStr, SessionYear session, String sort, LimitOffset limOff)
         throws SearchException;
 
     /**

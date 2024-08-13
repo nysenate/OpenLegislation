@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.search;
 
 import co.elastic.clients.elasticsearch._types.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class ElasticSearchServiceUtils {
     private ElasticSearchServiceUtils() {}
@@ -62,5 +62,13 @@ public final class ElasticSearchServiceUtils {
             }
         }
         return sortBuilders;
+    }
+
+    // TODO: make use of something similar to SearchParseException
+    public static QueryVariant getStringQuery(String query) {
+        if (query == null) {
+            return null;
+        }
+        return QueryStringQuery.of(b -> b.query(query));
     }
 }

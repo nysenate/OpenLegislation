@@ -24,7 +24,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptId, Tra
 
     /** {@inheritDoc} */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.TRANSCRIPT;
     }
 

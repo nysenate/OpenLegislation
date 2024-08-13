@@ -71,6 +71,7 @@ dpkg -i elasticsearch-"${new_version}"-amd64.deb >&1
 check_exit_code
 systemctl daemon-reload
 systemctl start elasticsearch.service
+rm elasticsearch-"${new_version}"-amd64.deb
 
 read -rp "Restart OpenLegislation and wait for index creation to finish. Press enter to continue."
 

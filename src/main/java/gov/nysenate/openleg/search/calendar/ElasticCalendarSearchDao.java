@@ -23,7 +23,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarId, Calenda
      * {@inheritDoc}
      */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.CALENDAR;
     }
 

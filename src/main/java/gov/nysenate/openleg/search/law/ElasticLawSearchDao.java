@@ -26,7 +26,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
 
     /** {@inheritDoc} */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.LAW;
     }
 

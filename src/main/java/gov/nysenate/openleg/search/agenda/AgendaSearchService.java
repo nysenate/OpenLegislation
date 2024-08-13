@@ -11,21 +11,21 @@ public interface AgendaSearchService {
     /**
      * Performs a search across all committee agendas.
      */
-    default SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff)
+    default SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String queryStr, String sort, LimitOffset limOff)
             throws SearchException {
-        return searchCommitteeAgendas(query, null, sort, limOff);
+        return searchCommitteeAgendas(queryStr, null, sort, limOff);
     }
 
     /**
      * Search for committee agendas during a given year.
      *
-     * @param query String - Lucene Query string
+     * @param queryStr String - Lucene Query string
      * @param year int - Filter retrieved committee agendas by year
      * @param sort String - Lucene sort string
      * @param limOff LimitOffset - Limit the result set.
      * @return SearchResults<CommitteeAgendaId>
      */
-    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, Integer year, String sort, LimitOffset limOff)
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String queryStr, Integer year, String sort, LimitOffset limOff)
         throws SearchException;
 
     /**

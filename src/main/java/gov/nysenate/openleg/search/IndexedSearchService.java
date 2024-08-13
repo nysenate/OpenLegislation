@@ -1,76 +1,77 @@
 package gov.nysenate.openleg.search;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
-import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 
-public interface IndexedSearchService<T> {
-    // TODO: make use of something similar to SearchParseException
-    static Query getYearTermQuery(String fieldName, int year) {
-        return TermQuery.of(b -> b.field(fieldName).value(year))._toQuery();
+public abstract class IndexedSearchService<T> {
+    private static final Logger logger = LoggerFactory.getLogger(IndexedSearchService.class);
+    private final SearchDao<?, ?, T> searchDao;
+    private final OpenLegEnvironment env;
+
+    protected IndexedSearchService(SearchDao<?, ?, T> searchDao, OpenLegEnvironment env) {
+        this.searchDao = searchDao;
+        this.env = env;
     }
 
-    static Query getStringQuery(String query) {
-        if (query == null) {
-            return QueryBuilders.matchAll().build()._toQuery();
+    protected static QueryVariant getYearQuery(String yearFieldName, Integer year) {
+        if (year == null) {
+            return null;
         }
-        return QueryStringQuery.of(b -> b.query(query))._toQuery();
+        return TermQuery.of(b -> b.field(yearFieldName).value(year));
     }
 
-    static List<Query> getBasicQueries(String yearFieldName, Integer year, String query) {
-        var queries = new ArrayList<Query>();
-        if (year != null) {
-            queries.add(getYearTermQuery(yearFieldName, year));
+    protected static QueryVariant getYearRangeQuery(String yearFieldName, Integer year) {
+        if (year == null) {
+            return null;
         }
-        if (query != null) {
-            queries.add(getStringQuery(query));
-        }
-        return queries;
-    }
-
-    static Query getBasicBoolQuery(String yearFieldName, Integer year, String query) {
-        return BoolQuery.of(b -> b.must(getBasicQueries(yearFieldName, year, query)))._toQuery();
-    }
-
-    static Query getBasicBoolQuery(String yearFieldName, SessionYear sessionYear, String query) {
-        return BoolQuery.of(b -> b.must(
-                getBasicQueries(yearFieldName, sessionYear == null ? null : sessionYear.year(), query)
-        ))._toQuery();
+        return RangeQuery.of(b -> b.field(yearFieldName)
+                .from(LocalDate.of(year, 1, 1).toString())
+                .to(LocalDate.of(year, 12, 31).toString()));
     }
 
     /**
      * Update the search index with the given content, replacing an existing entry if it exists.
      */
-    void updateIndex(T content);
+    public void updateIndex(T content) {
+        if (env.isElasticIndexing()) {
+            logger.info("Adding 1 document into {} index", searchDao.getIndex());
+            searchDao.updateIndex(content);
+        }
+    }
 
     /**
      * Update the search index with the given collection of items, replacing each existing one with
      * the one in the collection.
      */
-    void updateIndex(Collection<T> content);
+    public void updateIndex(Collection<T> content) {
+        if (content.size() == 1) {
+            updateIndex(content.iterator().next());
+        }
+        if (env.isElasticIndexing() && !content.isEmpty()) {
+            logger.info("Adding {} documents into {} index", content.size(), searchDao.getIndex());
+            searchDao.updateIndex(content);
+        }
+    }
+
+    public SearchIndex getIndex() {
+        return searchDao.getIndex();
+    }
 
     /**
-     * Clears all entries from the search index(ices) that are managed by the implementation.
+     * Clears all entries from the search index that is managed by the implementation.
      */
-    void clearIndex();
+    public void clearIndex() {
+        searchDao.purgeIndices();
+        searchDao.createIndices();
+    }
 
     /**
-     * Clears and fully constructs the search index(ices) using data from the canonical backing store.
+     * Clears and fully constructs the search index using data from the canonical backing store.
      */
-    void rebuildIndex();
-
-    /**
-     * Handle a rebuild search index event by checking to see if event affects any of the indices managed
-     * by the implementation and recreating them in full from the backing store.
-     */
-    void handleRebuildEvent(RebuildIndexEvent event);
-
-    /**
-     * Handle a clear search index event by checking to see if event affects any of the indices managed
-     * by the implementation and clearing them from the backing store.
-     */
-    void handleClearEvent(ClearIndexEvent event);
+    public abstract void rebuildIndex();
 }

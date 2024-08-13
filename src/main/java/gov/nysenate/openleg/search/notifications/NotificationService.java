@@ -33,7 +33,7 @@ public interface NotificationService {
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
      */
-    SearchResults<NotificationView> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
+    SearchResults<NotificationView> notificationSearch(String queryStr, String sort, LimitOffset limitOffset) throws SearchException;
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.search.law;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.api.legislation.law.view.LawDocView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.law.LawDocId;
@@ -24,23 +22,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 @Service
-public class ElasticLawSearchService implements LawSearchService, IndexedSearchService<LawDocument> {
+public class ElasticLawSearchService extends IndexedSearchService<LawDocument> implements LawSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchService.class);
 
-    private final OpenLegEnvironment env;
     private final ElasticLawSearchDao lawSearchDao;
     private final LawDataDao lawDataDao;
     private final LawDataService lawDataService;
 
     @Autowired
-    public ElasticLawSearchService(OpenLegEnvironment env, ElasticLawSearchDao lawSearchDao,
-                                   LawDataDao lawDataDao, LawDataService lawDataService,
-                                   EventBus eventBus) {
-        this.env = env;
+    public ElasticLawSearchService(ElasticLawSearchDao lawSearchDao, OpenLegEnvironment env,
+                                   EventBus eventBus, LawDataDao lawDataDao,
+                                   LawDataService lawDataService) {
+        super(lawSearchDao, env);
         this.lawSearchDao = lawSearchDao;
         this.lawDataDao = lawDataDao;
         this.lawDataService = lawDataService;
@@ -51,16 +46,9 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException {
-        Query esQuery = IndexedSearchService.getStringQuery(query);
-        if (lawId != null) {
-            final Query finalEsQuery = esQuery;
-            esQuery = QueryBuilders.bool(b -> b.must(finalEsQuery,
-                    QueryBuilders.term(tb ->tb.field("lawId").value(lawId.toLowerCase()))
-            ));
-        }
-        return lawSearchDao.searchForIds(esQuery,
-                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
+    public SearchResults<LawDocId> searchLawDocs(String queryStr, String lawId, String sort, LimitOffset limOff) throws SearchException {
+        var lawIdQuery = lawId == null ? null : MatchQuery.of(b -> b.field("lawId").query(lawId));
+        return lawSearchDao.searchForIds(lawIdQuery, queryStr, sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -94,30 +82,12 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         indexLawChapter(lawId);
     }
 
-    /* --- IndexedSearchService implementation --- */
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateIndex(LawDocument content) {
-        updateIndex(Collections.singletonList(content));
-    }
-
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Collection<LawDocument> content) {
-        if (env.isElasticIndexing()) {
-            List<LawDocument> indexableDocs = content.stream()
-                    .filter(this::isLawDocIndexable)
-                    .toList();
-            lawSearchDao.updateIndex(indexableDocs);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearIndex() {
-        lawSearchDao.purgeIndices();
-        lawSearchDao.createIndices();
+        super.updateIndex(content.stream()
+                .filter(this::isLawDocIndexable)
+                .toList());
     }
 
     /** {@inheritDoc} */
@@ -131,26 +101,6 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
                 .forEach(this::indexLawChapter);
         logger.info("Completed law search re-index");
     }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleRebuildEvent(RebuildIndexEvent event) {
-        if (event.affects(SearchIndex.LAW)) {
-            rebuildIndex();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Subscribe
-    @Override
-    public void handleClearEvent(ClearIndexEvent event) {
-        if (event.affects(SearchIndex.LAW)) {
-            clearIndex();
-        }
-    }
-
-    /* --- Internal Methods --- */
 
     /**
      * Indexes all published documents in a law chapter.

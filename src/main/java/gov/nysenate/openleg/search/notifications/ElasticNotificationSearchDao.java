@@ -39,7 +39,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
 
     /** {@inheritDoc} */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.NOTIFICATION;
     }
 

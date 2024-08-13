@@ -16,7 +16,7 @@ import java.util.*;
 public class ElasticHearingSearchDao extends ElasticBaseDao<HearingId, HearingView, Hearing> {
     /** {@inheritDoc} */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex getIndex() {
         return SearchIndex.HEARING;
     }
 

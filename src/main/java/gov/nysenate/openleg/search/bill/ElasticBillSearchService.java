@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.search.bill;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -29,12 +28,11 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 @Service
-public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill> {
+public class ElasticBillSearchService extends IndexedSearchService<Bill> implements BillSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
     private static final int billReindexThreadCount = 4;
     private static final int billReindexBatchSize = 100;
 
-    private final OpenLegEnvironment env;
     private final ElasticBillSearchDao billSearchDao;
     private final BillDataService billDataService;
     private final AsyncUtils asyncUtils;
@@ -43,7 +41,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public ElasticBillSearchService(OpenLegEnvironment env, EventBus eventBus,
                                     ElasticBillSearchDao billSearchDao,
                                     BillDataService billDataService, AsyncUtils asyncUtils) {
-        this.env = env;
+        super(billSearchDao, env);
         this.billSearchDao = billSearchDao;
         this.billDataService = billDataService;
         this.asyncUtils = asyncUtils;
@@ -54,34 +52,11 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(String query, SessionYear sessionYear, String sort, LimitOffset limOff)
+    public SearchResults<BaseBillId> searchBills(String queryStr, SessionYear sessionYear, String sort, LimitOffset limOff)
             throws SearchException {
-        return searchBills(IndexedSearchService.getBasicBoolQuery("session", sessionYear, smartSearch(query)),
-                sort, limOff);
-    }
-
-    /**
-     * Delegates to the underlying bill search dao.
-     */
-    private SearchResults<BaseBillId> searchBills(Query query,
-                                                  String sort, LimitOffset limOff)
-        throws SearchException {
-        if (limOff == null) {
-            limOff = LimitOffset.TEN;
-        }
-        return billSearchDao.searchForIds(query,
-                ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-    }
-
-    private static String smartSearch(String query) {
-        if (query != null && !query.contains(":")) {
-            Matcher matcher = BillId.BILL_ID_PATTERN.matcher(query.replaceAll("\\s", ""));
-            if (matcher.find()) {
-                query = String.format("(printNo:%s OR basePrintNo:%s) AND session:%s",
-                        matcher.group("printNo"), matcher.group("printNo"), matcher.group("year"));
-            }
-        }
-        return query;
+        Integer year = sessionYear == null ? null : sessionYear.year();
+        return billSearchDao.searchForIds(getYearQuery("session", year),
+                smartSearch(queryStr), sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -102,46 +77,19 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /* --- IndexedSearchService implementation --- */
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateIndex(Bill bill) {
-        if (bill != null) {
-            updateIndex(List.of(bill));
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Collection<Bill> bills) {
-        if (!env.isElasticIndexing() || bills.isEmpty()) {
-            return;
-        }
         List<Bill> indexableBills = new ArrayList<>();
-        List<Bill> nonIndexableBills = new ArrayList<>();
         // Categorize bills based on whether they should be indexed.
         for (Bill bill : bills) {
             if (isBillIndexable(bill)) {
                 indexableBills.add(bill);
             } else {
-                nonIndexableBills.add(bill);
+                billSearchDao.deleteFromIndex(bill.getBaseBillId());
             }
         }
-        logger.info("Indexing {} valid bill(s) into elastic search.", indexableBills.size());
-        billSearchDao.updateIndex(indexableBills);
-
-        // Ensure any bills that currently don't meet the criteria are not in the index.
-        nonIndexableBills.stream()
-                .map(Bill::getBaseBillId)
-                .forEach(billSearchDao::deleteFromIndex);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearIndex() {
-        billSearchDao.purgeIndices();
-        billSearchDao.createIndices();
+        super.updateIndex(indexableBills);
     }
 
     /** {@inheritDoc} */
@@ -179,26 +127,18 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleRebuildEvent(RebuildIndexEvent event) {
-        if (event.affects(SearchIndex.BILL)) {
-            logger.info("Handling bill re-index event!");
-            rebuildIndex();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleClearEvent(ClearIndexEvent event) {
-        if (event.affects(SearchIndex.BILL)) {
-            clearIndex();
-        }
-    }
-
     /* --- Internal --- */
+
+    private static String smartSearch(String query) {
+        if (query != null && !query.contains(":")) {
+            Matcher matcher = BillId.BILL_ID_PATTERN.matcher(query.replaceAll("\\s", ""));
+            if (matcher.find()) {
+                query = String.format("(printNo:%s OR basePrintNo:%s) AND session:%s",
+                        matcher.group("printNo"), matcher.group("printNo"), matcher.group("year"));
+            }
+        }
+        return query;
+    }
 
     /**
      * Returns true if the given bill meets the criteria for being indexed in the search layer.
@@ -206,7 +146,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
      * @param bill Bill
      * @return boolean
      */
-    private boolean isBillIndexable(Bill bill) {
+    private static boolean isBillIndexable(Bill bill) {
         return bill != null && bill.isBaseVersionPublished();
     }
 

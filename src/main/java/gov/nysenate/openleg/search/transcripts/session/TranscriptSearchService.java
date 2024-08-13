@@ -25,27 +25,24 @@ public interface TranscriptSearchService {
     /**
      * Performs a search across all transcripts.
      */
-    default SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff)
+    default SearchResults<TranscriptId> searchTranscripts(String queryStr, String sort, LimitOffset limOff)
             throws SearchException {
-        return searchTranscripts(query, null, sort, limOff);
+        return searchTranscripts(queryStr, null, sort, limOff);
     }
 
     /**
      * Performs a search across all transcripts in a given year.
      *
-     * @param strQuery Search query.
+     * @param queryStr Search query.
      * @param year Filter by year.
      * @param sort Sort by field(s)
      * @param limOff Restrict the result set.
-     * @return
-     * @throws SearchException
      */
-    SearchResults<TranscriptId> searchTranscripts(String strQuery, Integer year, String sort, LimitOffset limOff)
+    SearchResults<TranscriptId> searchTranscripts(String queryStr, Integer year, String sort, LimitOffset limOff)
             throws SearchException;
 
     /**
      * Handles a transcript update event by indexing the supplied transcript.
-     * @param transcriptUpdateEvent
      */
     void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent);
 }

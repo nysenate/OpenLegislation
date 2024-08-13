@@ -29,9 +29,9 @@ public interface MemberSearchService {
      * Performs a search across all members.
      * @see #searchMembers(String, SessionYear, String, LimitOffset)
      */
-    default SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff)
+    default SearchResults<Integer> searchMembers(String queryStr, String sort, LimitOffset limOff)
             throws SearchException {
-        return searchMembers(query, null, sort, limOff);
+        return searchMembers(queryStr, null, sort, limOff);
     }
 
     /**
@@ -40,8 +40,6 @@ public interface MemberSearchService {
      * @param sessionYear Filter by session year.
      * @param sort Sort by field(s)
      * @param limOff Restrict the result set.
-     * @return
-     * @throws SearchException
      */
     SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff)
             throws SearchException;

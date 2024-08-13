@@ -53,10 +53,8 @@ public class CommitteeSearchCtrl extends BaseCtrl {
                                             @RequestParam(defaultValue = "false") boolean full,
                                             WebRequest webRequest) throws SearchException, CommitteeNotFoundEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
-        SearchResults<CommitteeVersionId> searchResults = current
-                ? committeeSearchService.searchAllCurrentCommittees(term, sort, limitOffset)
-                : committeeSearchService.searchAllCommittees(term, sort, limitOffset);
-        return getCommitteeSearchResponse(searchResults, full);
+        return getCommitteeSearchResponse(
+                committeeSearchService.searchAllCommittees(current, term, sort, limitOffset), full);
     }
 
     /**
@@ -74,10 +72,8 @@ public class CommitteeSearchCtrl extends BaseCtrl {
                                                    WebRequest webRequest) throws SearchException, CommitteeNotFoundEx {
         SessionYear sessionYear = SessionYear.of(year);
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
-        SearchResults<CommitteeVersionId> searchResults = current
-                ? committeeSearchService.searchCurrentCommitteesForSession(sessionYear, term, sort, limitOffset)
-                : committeeSearchService.searchCommitteesForSession(sessionYear, term, sort, limitOffset);
-        return getCommitteeSearchResponse(searchResults, full);
+        return getCommitteeSearchResponse(
+                committeeSearchService.searchCommittees(sessionYear, current, term, sort, limitOffset), full);
     }
 
     /**

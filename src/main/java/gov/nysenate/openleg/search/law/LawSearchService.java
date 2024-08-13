@@ -10,24 +10,15 @@ import gov.nysenate.openleg.updates.law.LawUpdateEvent;
 
 public interface LawSearchService {
     /**
-     * Search across all law documents.
-     * @see #searchLawDocs(String, String, String, LimitOffset)
-     */
-    default SearchResults<LawDocId> searchLawDocs(String query, String sort, LimitOffset limOff) throws SearchException {
-        return searchLawDocs(query, null, sort, limOff);
-    }
-
-    /**
      * Search across all documents within a specific law volume.
      *
-     * @param query String - Lucene query string
+     * @param queryStr String - Lucene query string
      * @param lawId String - The law id to search within. (set to null to search all laws).
      * @param sort String - Optional sort
      * @param limOff LimitOffset - Pagination
      * @return SearchResults<LawDocId>
-     * @throws SearchException
      */
-    SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<LawDocId> searchLawDocs(String queryStr, String lawId, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Handle a law update by indexing the supplied law.

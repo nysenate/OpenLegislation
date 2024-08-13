@@ -76,7 +76,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao {
     @Override
     public Range<Integer> getActiveYearRange() {
         if (getCalendarCount() == 0) {
-            throw new EmptyResultDataAccessException("Cannot retrieve active year range as there are no stored calendars", 1);
+            return Range.closedOpen(0, 0);
         }
         return jdbc.queryForObject(SqlCalendarQuery.SELECT_CALENDAR_YEAR_RANGE.getSql(schema()),
                 (rs, row) -> Range.closed(rs.getInt("min"), rs.getInt("max")));
