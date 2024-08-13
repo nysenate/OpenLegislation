@@ -12,13 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,18 +90,8 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
 
     /** {@inheritDoc} */
     @Override
-    public Optional<Range<Integer>> getCalendarYearRange() {
-        try {
-            return Optional.of(calendarDao.getActiveYearRange());
-        } catch (EmptyResultDataAccessException ex) {
-            return Optional.empty();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getCalendarCount() {
-        return calendarDao.getCalendarCount();
+    public Range<Integer> getCalendarYearRange() {
+        return calendarDao.getActiveYearRange();
     }
 
     /** {@inheritDoc} */
@@ -113,7 +101,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
             return calendarDao.getCalendarCount(year);
         }
         catch (DataAccessException ex) {
-            logger.warn("Error retrieving calendar id count for " + year + ":\n" + ex.getMessage());
+            logger.warn("Error retrieving calendar id count for {}:\n{}", year, ex.getMessage());
             return 0;
         }
     }
@@ -125,7 +113,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
             return calendarDao.getActiveListCount(year);
         }
         catch (DataAccessException ex) {
-            logger.warn("Error retrieving active list id count for " + year + ":\n" + ex.getMessage());
+            logger.warn("Error retrieving active list id count for {}:\n{}", year, ex.getMessage());
             return 0;
         }
     }
@@ -137,7 +125,7 @@ public class CachedCalendarDataService extends CachingService<CalendarId, Calend
             return calendarDao.getCalendarSupplementalCount(year);
         }
         catch (DataAccessException ex) {
-            logger.warn("Error retrieving floor calendar id count for " + year + ":\n" + ex.getMessage());
+            logger.warn("Error retrieving floor calendar id count for {}:\n{}", year, ex.getMessage());
             return 0;
         }
     }
