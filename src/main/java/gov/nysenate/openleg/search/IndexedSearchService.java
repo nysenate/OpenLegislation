@@ -39,7 +39,9 @@ public abstract class IndexedSearchService<T> {
      */
     public void updateIndex(T content) {
         if (env.isElasticIndexing()) {
-            logger.info("Adding 1 document into {} index", searchDao.getIndex());
+            if (searchDao.getIndex() != SearchIndex.API_LOG) {
+                logger.info("Adding 1 document into {} index", searchDao.getIndex());
+            }
             searchDao.updateIndex(content);
         }
     }
@@ -53,7 +55,9 @@ public abstract class IndexedSearchService<T> {
             updateIndex(content.iterator().next());
         }
         if (env.isElasticIndexing() && !content.isEmpty()) {
-            logger.info("Adding {} documents into {} index", content.size(), searchDao.getIndex());
+            if (searchDao.getIndex() != SearchIndex.API_LOG) {
+                logger.info("Adding {} documents into {} index", content.size(), searchDao.getIndex());
+            }
             searchDao.updateIndex(content);
         }
     }
@@ -66,8 +70,8 @@ public abstract class IndexedSearchService<T> {
      * Clears all entries from the search index that is managed by the implementation.
      */
     public void clearIndex() {
-        searchDao.purgeIndices();
-        searchDao.createIndices();
+        searchDao.purgeIndex();
+        searchDao.ensureIndexExists();
     }
 
     /**

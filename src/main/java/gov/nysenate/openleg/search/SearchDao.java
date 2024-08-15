@@ -8,12 +8,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Manages an index that maps an IdType to a ViewType, and indexes ContentType documents.
+ */
 public interface SearchDao<IdType, ViewType, ContentType> {
     SearchIndex getIndex();
 
-    void createIndices();
+    void ensureIndexExists();
 
-    void purgeIndices();
+    void purgeIndex();
 
     SearchResults<IdType> searchForIds(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException;
 

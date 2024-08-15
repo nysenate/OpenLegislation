@@ -32,7 +32,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
 
     @Override
     protected LawDocId getId(LawDocument data) {
-        return data;
+        return new LawDocId(data);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
 
     @Override
     protected LawDocId toId(String idStr) {
-        String[] parts = idStr.split("-");
+        String[] parts = idStr.split(":");
         return new LawDocId(parts[0], LocalDate.parse(parts[1]));
     }
 

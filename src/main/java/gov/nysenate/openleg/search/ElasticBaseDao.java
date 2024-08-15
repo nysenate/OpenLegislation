@@ -50,17 +50,20 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @PostConstruct
     private void init() {
-        createIndices();
+        ensureIndexExists();
     }
 
     /* --- Public methods --- */
 
     @Override
-    public void createIndices() {
+    public void ensureIndexExists() {
         try {
             if (!searchClient.indices().exists(
                     ExistsRequest.of(b -> b.index(getIndex().getName()))).value()) {
-                createIndex();
+                var createIndexRequest = CreateIndexRequest.of(b -> b.index(getIndex().getName())
+                        .settings(getIndexSettings().build())
+                        .mappings(pb -> pb.properties(getCustomMappingProperties())));
+                searchClient.indices().create(createIndexRequest);
             }
         }
         catch (IOException ex) {
@@ -69,7 +72,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     }
 
     @Override
-    public void purgeIndices() {
+    public void purgeIndex() {
         try {
             logger.info("Deleting search index {}", getIndex());
             searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(getIndex().getName())));
@@ -141,15 +144,13 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         return searchClient.count(b -> b.index(getIndex().getName())).count();
     }
 
-    protected <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
+    private <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
                                           Map<String, HighlightField> highlightedFields, boolean fetchSource,
                                           Function<Hit<DocType>, T> hitMapper) throws SearchException {
-        if (limitOffset == null) {
-            limitOffset = getIndex().getDefaultLimitOffset();
-        }
         if (highlightedFields == null) {
             highlightedFields = Map.of();
         }
+        limitOffset = adjustLimitOffset(limitOffset);
         SearchRequest request = getSearchRequest(query._toQuery(), highlightedFields, sortStr, limitOffset, fetchSource);
         try {
             SearchResponse<DocType> response = searchClient.search(request, getDocTypeClass());
@@ -282,13 +283,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         return ImmutableMap.of();
     }
 
-    /**
-     * Ensures that any changes to indices are actually show, which is usually done automatically once per second.
-     */
-    public void refreshIndex() throws IOException {
-        searchClient.indices().refresh(RefreshRequest.of(b -> b.index(getIndex().getName())));
-    }
-
     /* --- Internal Methods --- */
 
     @SuppressWarnings("unchecked")
@@ -296,7 +290,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         return (Class<DocType>) TypeUtils.getGenericTypes(this)[1];
     }
 
-    private void createIndex() {
+    public void createIndex() {
         try {
             var createIndexRequest = CreateIndexRequest.of(b -> b.index(getIndex().getName())
                     .settings(getIndexSettings().build())
@@ -318,7 +312,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      */
     private <T> SearchResults<T> getSearchResults(SearchResponse<DocType> response, LimitOffset limitOffset,
                                                   Function<Hit<DocType>, T> hitMapper) {
-        limitOffset = adjustLimitOffset(limitOffset);
         List<SearchResult<T>> results = response.hits().hits().stream().map(hit -> {
             double score = hit.score() != null && !Double.isNaN(hit.score()) ? hit.score() : 1;
             T hitValue = hitMapper.apply(hit);
@@ -347,9 +340,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                                            LimitOffset limitOffset, boolean fetchSource)
             throws ElasticsearchException, SearchException {
         List<SortOptions> sorts = ElasticSearchServiceUtils.extractSortBuilders(sortStr);
-        final LimitOffset finalLimitOffset = adjustLimitOffset(limitOffset);
-        var searchRequest = SearchRequest.of(b -> b.query(query).from(finalLimitOffset.getOffsetStart() - 1)
-                .size(limitOffset.hasLimit() ? limitOffset.getLimit() : Integer.MAX_VALUE)
+        var searchRequest = SearchRequest.of(b -> b.query(query).from(limitOffset.getOffsetStart() - 1)
+                .size(limitOffset.getLimit())
                 .minScore(0.05d).trackTotalHits(TrackHits.of(trackBuilder -> trackBuilder.enabled(true)))
                 .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
                 .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
@@ -365,15 +357,17 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      * Validate and adjust limit offset so that it conforms to the index max result window.
      */
     private LimitOffset adjustLimitOffset(LimitOffset limitOffset) {
-        final int maxResultWindow = getMaxResultWindow();
-
-        if (!limitOffset.hasLimit() || limitOffset.getLimit() > maxResultWindow) {
-            limitOffset = new LimitOffset(maxResultWindow, limitOffset.getOffsetStart());
+        if (limitOffset == null) {
+            limitOffset = getIndex().getDefaultLimitOffset();
         }
 
-        if (limitOffset.getOffsetEnd() > maxResultWindow) {
+        if (!limitOffset.hasLimit() || limitOffset.getLimit() > getMaxResultWindow()) {
+            limitOffset = new LimitOffset(getMaxResultWindow(), limitOffset.getOffsetStart());
+        }
+
+        if (limitOffset.getOffsetEnd() > getMaxResultWindow()) {
             throw new InvalidSearchParamException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
-                    " extends past allowed result window of " + maxResultWindow);
+                    " extends past allowed result window of " + getMaxResultWindow());
         }
 
         return limitOffset;

@@ -19,8 +19,6 @@ public class LawCtrlBaseIT extends ApiTest {
     private ManagedLawProcessService testService;
     @Autowired
     private LawFileDao testDao;
-    @Autowired
-    private ElasticLawSearchDao elasticTestDao;
 
     protected static final String TEST_FILE_PREFIX = "src/test/resources/lawFiles/";
     protected static final String[] TEST_LAW_IDS = {ABC.name(), EHC.name(), ETP.name(), CMA.name(), CMS.name()},
@@ -32,11 +30,6 @@ public class LawCtrlBaseIT extends ApiTest {
             LawFile file = new LawFile(new File(TEST_FILE_PREFIX + filename));
             testDao.updateLawFile(file);
             testService.processLawFiles(Collections.singletonList(file));
-        }
-        try {
-            elasticTestDao.refreshIndex();
-        } catch (IOException e) {
-            fail("Failed to refresh test data");
         }
     }
 }

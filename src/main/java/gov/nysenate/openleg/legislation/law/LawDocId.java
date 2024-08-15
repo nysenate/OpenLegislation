@@ -44,7 +44,7 @@ public class LawDocId {
 
     @Override
     public String toString() {
-        return documentId + "-" + publishedDate;
+        return documentId + ":" + publishedDate;
     }
 
     /* --- Overrides --- */

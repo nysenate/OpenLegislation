@@ -20,7 +20,7 @@ import java.util.*;
 
 @Service
 public class ElasticHearingSearchService extends IndexedSearchService<Hearing> implements HearingSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(HearingSearchService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticHearingSearchService.class);
 
     private final SearchDao<HearingId, HearingView, Hearing> hearingSearchDao;
     private final HearingDataService hearingDataService;
