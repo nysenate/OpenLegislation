@@ -19,22 +19,6 @@ import java.util.List;
 public record SearchResults<ResultType>(int totalResults,
                                         List<SearchResult<ResultType>> resultList,
                                         LimitOffset limitOffset) {
-    private static final SearchResults<Object> EMPTY = new SearchResults<>(0, ImmutableList.of(), LimitOffset.ALL);
-
-    /**
-     * Returns a {@link SearchResults} object with no results.
-     * @return {@link SearchResults}
-     */
-    // Can safely cast to generic type since EMPTY will never contain any elements.
-    @SuppressWarnings("unchecked")
-    public static <T> SearchResults<T> empty() {
-        return (SearchResults<T>) EMPTY;
-    }
-
-    /**
-     * --- Overrides ---
-     */
-
     @Override
     public String toString() {
         return "SearchResults{" + "resultCount=" + totalResults + ", results=" + resultList + ", limitOffset=" + limitOffset + '}';

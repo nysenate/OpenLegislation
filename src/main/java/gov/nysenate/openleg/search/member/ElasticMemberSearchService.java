@@ -9,17 +9,11 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ElasticMemberSearchService extends IndexedSearchService<FullMember> implements MemberSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
-
     protected final SearchDao<Integer, FullMemberView, FullMember> memberSearchDao;
     protected final MemberService memberDataService;
 
@@ -30,6 +24,7 @@ public class ElasticMemberSearchService extends IndexedSearchService<FullMember>
         this.memberSearchDao = memberSearchDao;
         this.memberDataService = memberDataService;
         // Members are normally updated by direct SQL.
+        clearIndex();
         rebuildIndex();
     }
 
@@ -68,9 +63,6 @@ public class ElasticMemberSearchService extends IndexedSearchService<FullMember>
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
-        List<FullMember> members = memberDataService.getAllFullMembers();
-        logger.info("Indexing {} members", members.size());
-        updateIndex(members);
+        updateIndex(memberDataService.getAllFullMembers());
     }
 }

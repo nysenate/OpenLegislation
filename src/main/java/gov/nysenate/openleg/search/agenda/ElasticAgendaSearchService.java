@@ -52,11 +52,9 @@ public class ElasticAgendaSearchService extends IndexedSearchService<Tuple<Agend
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
         for (int year = 2009; year <= LocalDate.now().getYear(); year++) {
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
             List<Agenda> agendas = agendaIds.stream().map(agendaDataService::getAgenda).toList();
-            logger.info("Reindexing {} agendas from {}", agendas.size(), year);
             agendaSearchDao.indexAgendas(agendas);
         }
     }

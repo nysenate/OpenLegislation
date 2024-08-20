@@ -11,17 +11,11 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.hearing.HearingUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
 @Service
 public class ElasticHearingSearchService extends IndexedSearchService<Hearing> implements HearingSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticHearingSearchService.class);
-
     private final SearchDao<HearingId, HearingView, Hearing> hearingSearchDao;
     private final HearingDataService hearingDataService;
 
@@ -53,18 +47,9 @@ public class ElasticHearingSearchService extends IndexedSearchService<Hearing> i
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
-        final int bulkSize = 500;
-        Queue<HearingId> hearingIdQueue =
-                new ArrayDeque<>(hearingDataService.getHearingIds(SortOrder.DESC, LimitOffset.ALL));
-        while(!hearingIdQueue.isEmpty()) {
-            List<Hearing> hearings = new ArrayList<>(bulkSize);
-            for (int i = 0; i < bulkSize && !hearingIdQueue.isEmpty(); i++) {
-                HearingId hid = hearingIdQueue.remove();
-                hearings.add(hearingDataService.getHearing(hid));
-            }
-            updateIndex(hearings);
-        }
-        logger.info("Finished reindexing hearings.");
+        updateIndex(
+                hearingDataService.getHearingIds(SortOrder.DESC, LimitOffset.ALL).stream()
+                        .map(hearingDataService::getHearing).toList()
+        );
     }
 }

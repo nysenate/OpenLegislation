@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public class ElasticMemberSearchDao extends ElasticBaseDao<Integer, FullMemberView, FullMember> {
     /** {@inheritDoc} */
     @Override
-    public SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.MEMBER;
     }
 

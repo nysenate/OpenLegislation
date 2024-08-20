@@ -12,6 +12,8 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.search.IndexedSearchService;
 import gov.nysenate.openleg.search.SearchIndex;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/index")
 public class SearchIndexCtrl extends BaseCtrl {
+    private static final Logger logger = LoggerFactory.getLogger(SearchIndexCtrl.class);
     public final ImmutableMap<SearchIndex, IndexedSearchService<?>> indexToSearchServiceMap;
 
     @Autowired
@@ -32,6 +35,14 @@ public class SearchIndexCtrl extends BaseCtrl {
                 Collectors.toMap(IndexedSearchService::getIndex, Function.identity())
         );
         this.indexToSearchServiceMap = ImmutableMap.copyOf(tempMap);
+    }
+
+    @RequiresPermissions("admin:searchIndexEdit")
+    @GetMapping(value = "")
+    public ListViewResponse<SearchIndexInfoView> getIndices() {
+        List<SearchIndexInfoView> names = Arrays.stream(SearchIndex.values())
+                .map(SearchIndexInfoView::new).toList();
+        return ListViewResponse.of(names, names.size(), LimitOffset.ALL);
     }
 
     /**
@@ -62,12 +73,11 @@ public class SearchIndexCtrl extends BaseCtrl {
                 if (searchService == null) {
                     continue;
                 }
+                searchService.clearIndex();
                 if (rebuild) {
                     searchService.rebuildIndex();
                 }
-                else {
-                    searchService.clearIndex();
-                }
+                logger.info("Cleared {}{} index", rebuild ? "and rebuilt " : "", index.getName());
             }
             return new SimpleResponse(true, "Search index " + (rebuild ? "rebuild" : "clear")
                     + " request completed", "index-clear");
@@ -78,16 +88,6 @@ public class SearchIndexCtrl extends BaseCtrl {
             return response;
         }
     }
-
-    @RequiresPermissions("admin:searchIndexEdit")
-    @GetMapping(value = "")
-    public ListViewResponse<SearchIndexInfoView> getIndices() {
-        List<SearchIndexInfoView> names = Arrays.stream(SearchIndex.values())
-                .map(SearchIndexInfoView::new).toList();
-        return ListViewResponse.of(names, names.size(), LimitOffset.ALL);
-    }
-
-    /** --- Internal --- */
 
     private static Set<SearchIndex> getTargetIndices(String indexType) throws IllegalArgumentException {
         if (indexType.equalsIgnoreCase("all")) {

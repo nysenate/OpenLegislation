@@ -39,8 +39,8 @@ public abstract class IndexedSearchService<T> {
      */
     public void updateIndex(T content) {
         if (env.isElasticIndexing()) {
-            if (searchDao.getIndex() != SearchIndex.API_LOG) {
-                logger.info("Adding 1 document into {} index", searchDao.getIndex());
+            if (searchDao.indexType() != SearchIndex.API_LOG) {
+                logger.info("Adding a document into {} index", searchDao.indexType());
             }
             searchDao.updateIndex(content);
         }
@@ -55,15 +55,15 @@ public abstract class IndexedSearchService<T> {
             updateIndex(content.iterator().next());
         }
         if (env.isElasticIndexing() && !content.isEmpty()) {
-            if (searchDao.getIndex() != SearchIndex.API_LOG) {
-                logger.info("Adding {} documents into {} index", content.size(), searchDao.getIndex());
+            if (searchDao.indexType() != SearchIndex.API_LOG) {
+                logger.info("Adding {} documents into {} index", content.size(), searchDao.indexType());
             }
             searchDao.updateIndex(content);
         }
     }
 
     public SearchIndex getIndex() {
-        return searchDao.getIndex();
+        return searchDao.indexType();
     }
 
     /**

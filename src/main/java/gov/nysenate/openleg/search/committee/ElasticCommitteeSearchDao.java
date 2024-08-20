@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Repository
 public class ElasticCommitteeSearchDao extends ElasticBaseDao<CommitteeVersionId, CommitteeView, Committee> {
     @Override
-    public SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.COMMITTEE;
     }
 

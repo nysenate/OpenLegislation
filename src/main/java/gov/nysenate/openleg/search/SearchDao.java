@@ -12,7 +12,9 @@ import java.util.Objects;
  * Manages an index that maps an IdType to a ViewType, and indexes ContentType documents.
  */
 public interface SearchDao<IdType, ViewType, ContentType> {
-    SearchIndex getIndex();
+    SearchIndex indexType();
+
+    String indexName();
 
     void ensureIndexExists();
 

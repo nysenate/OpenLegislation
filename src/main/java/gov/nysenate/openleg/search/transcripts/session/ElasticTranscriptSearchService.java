@@ -54,7 +54,6 @@ public class ElasticTranscriptSearchService extends IndexedSearchService<Transcr
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
         final int bulkSize = 500;
         Queue<TranscriptId> transcriptIdQueue =
                 new ArrayDeque<>(transcriptDataService.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL));
@@ -66,6 +65,5 @@ public class ElasticTranscriptSearchService extends IndexedSearchService<Transcr
             }
             updateIndex(transcripts);
         }
-        logger.info("Finished reindexing transcripts.");
     }
 }

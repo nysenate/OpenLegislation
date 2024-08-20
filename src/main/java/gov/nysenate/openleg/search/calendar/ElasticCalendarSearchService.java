@@ -58,7 +58,6 @@ public class ElasticCalendarSearchService extends IndexedSearchService<Calendar>
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
         Range<Integer> calendarYearRange = calendarDataService.getCalendarYearRange()
                 .canonical(DiscreteDomain.integers());
         for (int year = calendarYearRange.lowerEndpoint(); year < calendarYearRange.upperEndpoint(); year++) {

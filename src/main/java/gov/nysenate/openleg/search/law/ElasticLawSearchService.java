@@ -93,13 +93,10 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        logger.info("Handling law search re-indexing");
-        clearIndex();
         lawDataDao.getLawInfos().stream()
                 .map(LawInfo::getLawId)
                 .sorted()
                 .forEach(this::indexLawChapter);
-        logger.info("Completed law search re-index");
     }
 
     /**

@@ -74,7 +74,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
             if (timeSinceLastReindexRequest.compareTo(lastReindexTimeoutDuration) > 0) {
                 logger.warn(
                         "Index refresh has been disabled for past the timeout duration for index {}.  Re-enabling...",
-                        getIndex().getName());
+                        indexName());
                 reindexCleanup();
             } else {
                 logger.info("Index refresh is disabled, but will remain so due to recent reindex requests.");
@@ -86,7 +86,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
      * {@inheritDoc}
      */
     @Override
-    public SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.BILL;
     }
 

@@ -19,14 +19,14 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
     public void deleteLawDocsFromIndex(Collection<LawDocId> lawDocIds) {
         safeBulkRequestExecute(
                 lawDocIds.stream()
-                        .map(docId -> DeleteOperation.of(b -> b.index(getIndex().getName()).id(docId.toString())))
+                        .map(docId -> DeleteOperation.of(b -> b.index(indexName()).id(docId.toString())))
                         .map(delOp -> BulkOperation.of(b -> b.delete(delOp))).toList()
         );
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.LAW;
     }
 

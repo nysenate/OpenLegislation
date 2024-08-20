@@ -24,7 +24,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao<Integer, ApiLogItemVi
 
     /** {@inheritDoc} */
     @Override
-    public SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.API_LOG;
     }
 

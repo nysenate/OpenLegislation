@@ -12,16 +12,12 @@ import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ElasticCommitteeSearchService extends IndexedSearchService<Committee> implements CommitteeSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchService.class);
-
     private final ElasticCommitteeSearchDao committeeSearchDao;
     private final CommitteeDataService committeeDataService;
 
@@ -69,11 +65,8 @@ public class ElasticCommitteeSearchService extends IndexedSearchService<Committe
      */
     @Override
     public void rebuildIndex() {
-        logger.info("Reindexing committees...");
-        clearIndex();
         updateIndex(committeeDataService.getAllCommitteeSessionIds()
                 .stream().flatMap(sessionId -> sessionIdToCommittees(sessionId).stream()).toList());
-        logger.info("Committee reindex complete.");
     }
 
     private List<Committee> sessionIdToCommittees(CommitteeSessionId sessionId) {

@@ -95,10 +95,9 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
         Optional<Range<SessionYear>> sessions = billDataService.activeSessionRange();
         if (sessions.isEmpty()) {
-            logger.info("Can't rebuild the bill search index because there are no bills. Cleared it instead!");
+            logger.warn("Can't rebuild the bill search index because there are no bills.");
             return;
         }
         try {
@@ -120,7 +119,6 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
                 futures[workerNo] = asyncUtils.run(new BillReindexWorker(billIdQueue, interrupted));
             }
             CompletableFuture.allOf(futures).join();
-            logger.info("Finished bill reindex.");
         } finally {
             // Restore normal index settings.
             billSearchDao.reindexCleanup();

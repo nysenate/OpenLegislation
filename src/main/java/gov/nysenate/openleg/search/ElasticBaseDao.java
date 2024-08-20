@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.elasticsearch._types.SearchType;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.*;
 import co.elastic.clients.elasticsearch._types.mapping.DateProperty;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -25,9 +22,11 @@ import gov.nysenate.openleg.common.util.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -47,10 +46,19 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @Autowired
     private ElasticsearchClient searchClient;
+    @Autowired
+    private Environment env;
 
     @PostConstruct
     private void init() {
         ensureIndexExists();
+    }
+
+    @PreDestroy
+    private void destroy() {
+        if (isTest()) {
+            purgeIndex();
+        }
     }
 
     /* --- Public methods --- */
@@ -59,10 +67,11 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     public void ensureIndexExists() {
         try {
             if (!searchClient.indices().exists(
-                    ExistsRequest.of(b -> b.index(getIndex().getName()))).value()) {
-                var createIndexRequest = CreateIndexRequest.of(b -> b.index(getIndex().getName())
+                    ExistsRequest.of(b -> b.index(indexName()))).value()) {
+                var createIndexRequest = CreateIndexRequest.of(b -> b.index(indexName())
                         .settings(getIndexSettings().build())
                         .mappings(pb -> pb.properties(getCustomMappingProperties())));
+                logger.info("Creating search index {}", indexName());
                 searchClient.indices().create(createIndexRequest);
             }
         }
@@ -74,13 +83,17 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     @Override
     public void purgeIndex() {
         try {
-            logger.info("Deleting search index {}", getIndex());
-            searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(getIndex().getName())));
+            logger.info("Deleting search index {}", indexName());
+            searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(indexName())));
         }
         catch (IOException ex) {
             throw new GenericElasticsearchException("Delete index request failed.", ex);
         }
-        createIndex();
+    }
+
+    @Override
+    public String indexName() {
+        return indexType().getName() + (isTest() ? "_test" : "");
     }
 
     protected abstract IdType getId(ContentType data);
@@ -105,8 +118,9 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     public void updateIndex(ContentType data) {
         try {
             searchClient.index(
-                    IndexRequest.of(b -> b.index(getIndex().getName())
-                            .id(getId(data).toString()).document(getDoc(data)))
+                    IndexRequest.of(b -> b.index(indexName())
+                            .id(getId(data).toString()).document(getDoc(data))
+                            .refresh(isTest() ? Refresh.True : Refresh.False))
             );
         } catch (IOException ex) {
             throw new GenericElasticsearchException("Index request failed.", ex);
@@ -117,7 +131,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     public void updateIndex(Collection<ContentType> data) {
         safeBulkRequestExecute(
                 data.stream().map(content ->
-                                IndexOperation.of(b -> b.index(getIndex().getName())
+                                IndexOperation.of(b -> b.index(indexName())
                                         .id(getId(content).toString()).document(getDoc(content))))
                         .map(indexOp -> new BulkOperation.Builder().index(indexOp).build()).toList()
         );
@@ -125,7 +139,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @Override
     public void deleteFromIndex(IdType id) {
-        DeleteRequest deleteRequest = DeleteRequest.of(b -> b.index(getIndex().getName()).id(id.toString()));
+        DeleteRequest deleteRequest = DeleteRequest.of(b -> b.index(indexName()).id(id.toString()));
         try {
             searchClient.delete(deleteRequest);
         }
@@ -141,7 +155,12 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     /* --- Common Elastic Search methods --- */
 
     protected long getDocCount() throws IOException {
-        return searchClient.count(b -> b.index(getIndex().getName())).count();
+        return searchClient.count(b -> b.index(indexName())).count();
+    }
+
+    @Nonnull
+    private Boolean isTest() {
+        return "test".equals(env.getActiveProfiles()[0]);
     }
 
     private <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
@@ -174,7 +193,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      * @param id String - the id of the desired document
      */
     protected Optional<DocType> getRequest(IdType id) {
-        var getRequest = GetRequest.of(b -> b.index(getIndex().getName()).id(id.toString()));
+        var getRequest = GetRequest.of(b -> b.index(indexName()).id(id.toString()));
         try {
             GetResponse<DocType> getResponse = searchClient.get(getRequest, getDocTypeClass());
             if (getResponse.found()) {
@@ -196,7 +215,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             return;
         }
         try {
-            searchClient.bulk(BulkRequest.of(b -> b.index(getIndex().getName()).operations(operations)));
+            searchClient.bulk(BulkRequest.of(b -> b.index(indexName()).operations(operations)
+                    .refresh(isTest() ? Refresh.True : Refresh.False)));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new GenericElasticsearchException("Bulk request failed", ex);
@@ -215,8 +235,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      * It should always be re-enabled when done.
      */
     protected void setIndexRefresh(boolean enabled) {
-        logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", getIndex().getName());
-        var request = PutIndicesSettingsRequest.of(b -> b.index(getIndex().getName()).settings(
+        logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", indexName());
+        var request = PutIndicesSettingsRequest.of(b -> b.index(indexName()).settings(
                 IndexSettings.of(b1 -> b1.refreshInterval(enabled ? enable : disable))
         ));
         // Try to set the setting up to 5 times if a failure occurs
@@ -238,7 +258,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                 break;
             }
         }
-        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + getIndex().getName(), ex);
+        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName(), ex);
     }
 
     /**
@@ -247,10 +267,10 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      */
     @SuppressWarnings("all")
     public boolean isIndexRefreshDefault() {
-        var request = GetIndicesSettingsRequest.of(b -> b.index(getIndex().getName()).includeDefaults(true));
+        var request = GetIndicesSettingsRequest.of(b -> b.index(indexName()).includeDefaults(true));
         try {
             // TODO: are both null, not sure that they should be
-            IndexState data = searchClient.indices().getSettings(request).get(getIndex().getName());
+            IndexState data = searchClient.indices().getSettings(request).get(indexName());
             var time1 = data.defaults().refreshInterval();
             var time2 = data.settings().refreshInterval();
             return Objects.equals(time1, time2);
@@ -288,18 +308,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     @SuppressWarnings("unchecked")
     private Class<DocType> getDocTypeClass() {
         return (Class<DocType>) TypeUtils.getGenericTypes(this)[1];
-    }
-
-    public void createIndex() {
-        try {
-            var createIndexRequest = CreateIndexRequest.of(b -> b.index(getIndex().getName())
-                    .settings(getIndexSettings().build())
-                    .mappings(pb -> pb.properties(getCustomMappingProperties())));
-            searchClient.indices().create(createIndexRequest);
-        }
-        catch (IOException ex) {
-            throw new GenericElasticsearchException("Create index request failed.", ex);
-        }
     }
 
     /**
@@ -346,7 +354,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                 .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
                 .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
                 .sort(sorts)
-                .index(getIndex().getName())
+                .index(indexName())
                 .searchType(SearchType.QueryThenFetch)
         );
         logger.debug("{}", searchRequest);
@@ -358,13 +366,11 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      */
     private LimitOffset adjustLimitOffset(LimitOffset limitOffset) {
         if (limitOffset == null) {
-            limitOffset = getIndex().getDefaultLimitOffset();
+            limitOffset = indexType().getDefaultLimitOffset();
         }
-
         if (!limitOffset.hasLimit() || limitOffset.getLimit() > getMaxResultWindow()) {
             limitOffset = new LimitOffset(getMaxResultWindow(), limitOffset.getOffsetStart());
         }
-
         if (limitOffset.getOffsetEnd() > getMaxResultWindow()) {
             throw new InvalidSearchParamException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
                     " extends past allowed result window of " + getMaxResultWindow());
