@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public final class TranscriptParser {
-    private static final Charset CP_850 = Charset.forName("CP850"), CP_1252 = Charset.forName("CP1252");
+    private static final Charset CP_850 = Charset.forName("CP850"),
+            CP_1252 = Charset.forName("CP1252");
     // The maximum number of lines of relevant data.
     private static final int MAX_DATA_LENGTH = 4;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h[:][ ]mm a");
