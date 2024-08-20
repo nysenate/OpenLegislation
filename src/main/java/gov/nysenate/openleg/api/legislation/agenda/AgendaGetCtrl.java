@@ -140,7 +140,7 @@ public class AgendaGetCtrl extends BaseCtrl {
             }
         }
         return DateRangeListViewResponse.of(sortedViewSet.stream().toList(),
-                getClosedRange(fromDateTime, toDateTime, "from", "to"),
+                getClosedOpenRange(fromDateTime, toDateTime, "from", "to"),
                 sortedViewSet.size(), limOff);
     }
 

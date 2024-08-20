@@ -236,7 +236,7 @@ public class LawUpdatesCtrl extends BaseCtrl
     private BaseLawUpdatesParams getBaseParams(LocalDateTime from, LocalDateTime to, WebRequest request) {
         BaseLawUpdatesParams params = new BaseLawUpdatesParams();
         params.limOff = getLimitOffset(request, 50);
-        params.updateRange = getOpenRange(from, to, "from", "to");
+        params.updateRange = getClosedOpenRange(from, to, "from", "to");
         params.sortOrder = getSortOrder(request, SortOrder.ASC);
         params.updateType = getUpdateTypeFromParam(request);
         params.detail = getBooleanParam(request, "detail", false);

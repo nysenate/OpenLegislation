@@ -85,10 +85,10 @@ public final class SqlQueryUtils {
         String clause = "";
         if (limitOffset != null) {
             if (limitOffset.hasLimit()) {
-                clause = String.format(" LIMIT %d", limitOffset.getLimit());
+                clause = String.format(" LIMIT %d", limitOffset.limit());
             }
             if (limitOffset.hasOffset()) {
-                clause += String.format(" OFFSET %d", limitOffset.getOffsetStart() - 1);
+                clause += String.format(" OFFSET %d", limitOffset.offsetStart() - 1);
             }
         }
         return clause;

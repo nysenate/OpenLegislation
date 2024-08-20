@@ -85,7 +85,7 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
 
         // Go through all bills of the session in paginated increments.
         for (LimitOffset limoff = new LimitOffset(billRetrievalLimit);
-             limoff.getOffsetStart() <= totalRefBills;
+             limoff.offsetStart() <= totalRefBills;
              limoff = limoff.next()) {
 
             // Get bills from ref. API
@@ -94,7 +94,7 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
             totalRefBills = paginatedBillViews.total();
 
             logger.info("Checking bills {} - {} of {}",
-                    limoff.getOffsetStart(), limoff.getOffsetEnd(), totalRefBills);
+                    limoff.offsetStart(), limoff.getOffsetEnd(), totalRefBills);
 
             // Check each bill in the result.
             for (BillView refBill : paginatedBillViews.results()) {

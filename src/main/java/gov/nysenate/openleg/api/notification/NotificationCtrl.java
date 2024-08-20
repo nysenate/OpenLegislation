@@ -158,7 +158,7 @@ public class NotificationCtrl extends BaseCtrl {
         boolean full = getBooleanParam(request, "full", false);
         PaginatedList<NotificationView> results =
                 notificationService.getNotificationList(getNotificationTypes(request), from, to, order, limOff);
-        Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
+        Range<LocalDateTime> dateRange = getClosedOpenRange(from, to, "from", "to");
         return DateRangeListViewResponse.of(results.results().stream().map(r -> full ? r : getSummary(r)).toList(),
                 dateRange, results.total(), limOff);
     }

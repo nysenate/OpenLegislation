@@ -52,7 +52,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
             billCount = bills.size();
             if (billCount > 0) {
                 logger.info(String.format("Indexing bills %d - %d",
-                        limitOffset.getOffsetStart(), limitOffset.getOffsetStart() + billCount - 1));
+                        limitOffset.offsetStart(), limitOffset.offsetStart() + billCount - 1));
                 billSearchDao.updateIndex(bills);
             }
             limitOffset = limitOffset.next();
@@ -75,7 +75,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
                  s = s.nextSessionYear()) {
                 logger.info("Getting bills for session {}", s);
                 int sessionTotal = Integer.MAX_VALUE;
-                for (LimitOffset limoff = LimitOffset.HUNDRED; limoff.getOffsetStart() < sessionTotal; limoff = limoff.next()) {
+                for (LimitOffset limoff = LimitOffset.HUNDRED; limoff.offsetStart() < sessionTotal; limoff = limoff.next()) {
                     SearchResults<BaseBillId> results = billSearchService.searchBills(s, "publishedDateTime:asc", limoff);
                     sessionTotal = results.totalResults();
                 }

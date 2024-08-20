@@ -348,8 +348,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                                            LimitOffset limitOffset, boolean fetchSource)
             throws ElasticsearchException, SearchException {
         List<SortOptions> sorts = ElasticSearchServiceUtils.extractSortBuilders(sortStr);
-        var searchRequest = SearchRequest.of(b -> b.query(query).from(limitOffset.getOffsetStart() - 1)
-                .size(limitOffset.getLimit())
+        var searchRequest = SearchRequest.of(b -> b.query(query).from(limitOffset.offsetStart() - 1)
+                .size(limitOffset.limit())
                 .minScore(0.05d).trackTotalHits(TrackHits.of(trackBuilder -> trackBuilder.enabled(true)))
                 .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
                 .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
@@ -368,8 +368,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         if (limitOffset == null) {
             limitOffset = indexType().getDefaultLimitOffset();
         }
-        if (!limitOffset.hasLimit() || limitOffset.getLimit() > getMaxResultWindow()) {
-            limitOffset = new LimitOffset(getMaxResultWindow(), limitOffset.getOffsetStart());
+        if (!limitOffset.hasLimit() || limitOffset.limit() > getMaxResultWindow()) {
+            limitOffset = new LimitOffset(getMaxResultWindow(), limitOffset.offsetStart());
         }
         if (limitOffset.getOffsetEnd() > getMaxResultWindow()) {
             throw new InvalidSearchParamException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
