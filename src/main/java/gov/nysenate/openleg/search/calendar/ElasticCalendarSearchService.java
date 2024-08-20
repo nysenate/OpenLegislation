@@ -37,8 +37,8 @@ public class ElasticCalendarSearchService extends IndexedSearchService<Calendar>
     public SearchResults<CalendarId> searchForCalendarsByYear(Integer year, String queryStr, String sort, LimitOffset limitOffset)
             throws SearchException {
         return calendarSearchDao.searchForIds(
-                getYearQuery("year", year),
-                smartSearch(queryStr), sort, limitOffset);
+                smartSearch(queryStr), sort, limitOffset, getYearQuery("year", year)
+        );
     }
 
     /** {@inheritDoc} */

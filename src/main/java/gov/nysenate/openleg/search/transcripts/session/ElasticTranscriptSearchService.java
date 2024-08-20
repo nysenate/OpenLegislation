@@ -1,27 +1,27 @@
 package gov.nysenate.openleg.search.transcripts.session;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class ElasticTranscriptSearchService extends IndexedSearchService<Transcript> implements TranscriptSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticTranscriptSearchService.class);
-
+public class ElasticTranscriptSearchService extends IndexedSearchService<Transcript>
+        implements TranscriptSearchService {
     private final SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao;
     private final TranscriptDataService transcriptDataService;
 
@@ -37,9 +37,13 @@ public class ElasticTranscriptSearchService extends IndexedSearchService<Transcr
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(String queryStr, Integer year, String sort, LimitOffset limOff)
-            throws SearchException {
-        return transcriptSearchDao.searchForIds(getYearRangeQuery("dateTime", year), queryStr, sort, limOff);
+    public SearchResults<TranscriptId> searchTranscripts(String queryStr, Integer year, String sort, LimitOffset limOff,
+                                                         boolean sessionOnly) throws SearchException {
+        QueryVariant dayTypeQuery = null;
+        if (sessionOnly) {
+            dayTypeQuery = MatchQuery.of(b -> b.field("dayType").query(DayType.SESSION.toString()));
+        }
+        return transcriptSearchDao.searchForIds(queryStr, sort, limOff, getYearRangeQuery("dateTime", year), dayTypeQuery);
     }
 
     /** {@inheritDoc} */

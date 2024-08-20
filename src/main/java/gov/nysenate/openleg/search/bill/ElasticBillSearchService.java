@@ -55,8 +55,7 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
     public SearchResults<BaseBillId> searchBills(String queryStr, SessionYear sessionYear, String sort, LimitOffset limOff)
             throws SearchException {
         Integer year = sessionYear == null ? null : sessionYear.year();
-        return billSearchDao.searchForIds(getYearQuery("session", year),
-                smartSearch(queryStr), sort, limOff);
+        return billSearchDao.searchForIds(smartSearch(queryStr), sort, limOff, getYearQuery("session", year));
     }
 
     /** {@inheritDoc} */

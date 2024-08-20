@@ -77,7 +77,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
         TranscriptId id = TranscriptId.from(dateTime, rs.getString("session_type"));
         String dayTypeStr = rs.getString("day_type");
-        Transcript transcript = new Transcript(id, dayTypeStr == null ? null : DayType.valueOf(dayTypeStr),
+        Transcript transcript = new Transcript(id, DayType.valueOf(dayTypeStr),
                 rs.getString("transcript_filename"), rs.getString("location"),
                 rs.getString("text"));
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));

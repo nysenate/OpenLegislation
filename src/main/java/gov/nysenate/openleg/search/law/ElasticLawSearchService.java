@@ -48,7 +48,7 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
     @Override
     public SearchResults<LawDocId> searchLawDocs(String queryStr, String lawId, String sort, LimitOffset limOff) throws SearchException {
         var lawIdQuery = lawId == null ? null : MatchQuery.of(b -> b.field("lawId").query(lawId));
-        return lawSearchDao.searchForIds(lawIdQuery, queryStr, sort, limOff);
+        return lawSearchDao.searchForIds(queryStr, sort, limOff, lawIdQuery);
     }
 
     /** {@inheritDoc} */

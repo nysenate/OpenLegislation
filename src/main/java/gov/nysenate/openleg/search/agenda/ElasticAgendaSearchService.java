@@ -45,8 +45,7 @@ public class ElasticAgendaSearchService extends IndexedSearchService<Tuple<Agend
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String queryStr, Integer year,
                                                                    String sort, LimitOffset limOff) throws SearchException {
-        return agendaSearchDao.searchForIds(getYearQuery("agenda.id.year", year),
-                queryStr, sort, limOff);
+        return agendaSearchDao.searchForIds(queryStr, sort, limOff, getYearQuery("agenda.id.year", year));
     }
 
     /** {@inheritDoc} */

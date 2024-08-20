@@ -51,37 +51,34 @@ public class TranscriptGetCtrl extends BaseCtrl {
     /**
      * Transcript Listing API
      * ----------------------
-     *
      * Retrieve all transcripts: (GET) /api/3/transcripts/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
      *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
-     *
      * Expected Output: List of TranscriptView or TranscriptIdView.
      */
     @RequestMapping(value = "")
     public BaseResponse getAllTranscripts(@RequestParam(defaultValue = "dateTime:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
+                                          @RequestParam(defaultValue = "true") boolean sessionOnly,
                                           WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
-        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff, sessionOnly);
         return getTranscriptResponse(summary, full, limOff, results);
     }
 
     /**
      * Transcript Listing API
      * ----------------------
-     *
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
      *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
-     *
      * Expected Output: List of TranscriptIdView or TranscriptView
      */
     @RequestMapping("/{year:\\d{4}}")
@@ -89,9 +86,10 @@ public class TranscriptGetCtrl extends BaseCtrl {
                                              @RequestParam(defaultValue = "dateTime:desc") String sort,
                                              @RequestParam(defaultValue = "false") boolean summary,
                                              @RequestParam(defaultValue = "false") boolean full,
+                                             @RequestParam(defaultValue = "true") boolean sessionOnly,
                                              WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
-        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff, sessionOnly);
         return getTranscriptResponse(summary, full, limOff, results);
     }
 
@@ -99,11 +97,8 @@ public class TranscriptGetCtrl extends BaseCtrl {
     /**
      * Single Transcript Retrieval API
      * -------------------------------
-     *
      * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{dateTime}
-     *
      * <p>Request Parameters: None.</p>
-     *
      * Expected Output: TranscriptView
      */
     @RequestMapping("/{dateTime:.*}")
@@ -117,11 +112,8 @@ public class TranscriptGetCtrl extends BaseCtrl {
     /**
      * Single Transcript Retrieval API
      * -------------------------------
-     *
      * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{dateTime}/{sessionType}
-     *
      * <p>Request Parameters: None.</p>
-     *
      * Expected Output: TranscriptView
      */
     @RequestMapping("/{dateTime}/{sessionType}")
@@ -134,11 +126,8 @@ public class TranscriptGetCtrl extends BaseCtrl {
     /**
      * Single Transcript PDF retrieval API
      * -----------------------------------
-     *
      * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}.pdf
-     *
      * Request Parameters: None.
-     *
      * Expected Output: PDF response.
      */
 

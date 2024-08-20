@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation.transcripts.session;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -18,6 +19,9 @@ public class Transcript extends BaseLegislativeContent {
     public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text) {
         super(id.dateTime().getYear());
         this.id = id;
+        if (dayType == null) {
+            throw new IllegalArgumentException("dayType cannot be null");
+        }
         this.dayType = dayType;
         this.location = location;
         this.text =  text;
@@ -36,6 +40,7 @@ public class Transcript extends BaseLegislativeContent {
         return id.sessionType().toString();
     }
 
+    @Nonnull
     public DayType getDayType() {
         return dayType;
     }

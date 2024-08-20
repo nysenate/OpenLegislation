@@ -32,7 +32,7 @@ public class ElasticHearingSearchService extends IndexedSearchService<Hearing> i
     /** {@inheritDoc} */
     @Override
     public SearchResults<HearingId> searchHearings(String queryStr, Integer year, String sort, LimitOffset limOff) throws SearchException {
-        return hearingSearchDao.searchForIds(getYearRangeQuery("date", year), queryStr, sort, limOff);
+        return hearingSearchDao.searchForIds(queryStr, sort, limOff, getYearRangeQuery("date", year));
     }
 
     /** {@inheritDoc} */

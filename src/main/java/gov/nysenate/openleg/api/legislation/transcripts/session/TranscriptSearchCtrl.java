@@ -39,7 +39,6 @@ public class TranscriptSearchCtrl extends BaseCtrl {
     /**
      * Transcript Search API
      * ---------------------
-     *
      * Search all transcripts:  (GET) /api/3/transcripts/search
      * Request Parameters:  term - The lucene query string.
      *                      sort - The lucene sort string (blank by default)
@@ -53,16 +52,16 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
+                                     @RequestParam(defaultValue = "true") boolean sessionOnly,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
-        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff, sessionOnly);
         return getSearchResponse(summary, full, limOff, results);
     }
 
     /**
      * Transcript Search by Year
      * -------------------------
-     *
      *  Search all transcripts in a given year: (GET) /api/3/transcripts/{year}/search
      *  @see #globalSearch see globalSearch for request params.
      */
@@ -72,9 +71,10 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                    @RequestParam(defaultValue = "") String sort,
                                    @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
+                                   @RequestParam(defaultValue = "true") boolean sessionOnly,
                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
-        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff, sessionOnly);
         return getSearchResponse(summary, full, limOff, results);
     }
 

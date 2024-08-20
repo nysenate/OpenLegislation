@@ -23,6 +23,7 @@ import {
 import { capitalizePhrase } from "app/lib/textUtils";
 import TranscriptDisplay from "app/views/transcripts/TranscriptDisplay";
 import ErrorMessage from "app/shared/ErrorMessage";
+import { Checkbox } from "app/shared/Checkbox";
 
 
 const hearingSort = "_score:desc,date:desc"
@@ -75,6 +76,7 @@ function TranscriptListing({ isHearing, setHeaderText }) {
   let params = queryString.parse(location.search)
   const [ dirtyTerm, setDirtyTerm ] = React.useState(params.term ?? "")
   params = { year: params.year ?? "", page: params.page ?? "1", term: params.term ?? "" }
+  const [ sessionOnly, setSessionOnly ] = React.useState(true)
   const history = useHistory()
 
   const [ loading, setLoading ] = React.useState(true)
@@ -88,11 +90,12 @@ function TranscriptListing({ isHearing, setHeaderText }) {
   React.useEffect(() => {
     setLoading(true)
     setErrorMsg("")
-    transcriptApi(isHearing, params.year, params.page, params.term || "*", isHearing ? hearingSort : sessionSort)
+    transcriptApi(isHearing, params.year, params.page, params.term || "*",
+      isHearing ? hearingSort : sessionSort, sessionOnly)
       .then((data) => setData(data))
       .catch((error) => setErrorMsg(error.message))
       .finally(() => setLoading(false))
-  }, [ isHearing, params.year, params.page, params.term ]);
+  }, [ isHearing, params.year, params.page, params.term, sessionOnly ]);
 
   const onPageChange = pageInfo => {
     params.page = pageInfo.selectedPage
@@ -143,6 +146,10 @@ function TranscriptListing({ isHearing, setHeaderText }) {
         <Select label="Year" value={params.year} options={yearSortOptions(isHearing ? 2011 : 1993,
           true, false)}
                 onChange={onYearChange} name="year" />
+        <div hidden={isHearing}>
+          <Checkbox label="Session Only" value={sessionOnly} onChange={e => setSessionOnly(e.target.checked)}
+                    name="Session Only"/>
+        </div>
       </div>
       {errorMsg &&
         <ErrorMessage>{errorMsg}</ErrorMessage>

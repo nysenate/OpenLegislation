@@ -33,10 +33,6 @@ public class TranscriptFilenameInfoTest {
         var legInName = new TranscriptFilenameInfo("SenateLD042022.txt", LocalDate.of(2022, 4, 20),
                 DayType.SESSION, "");
         assertTrue(legInName.getMismatches().isPresent());
-        var id = new TranscriptId(LocalDate.of(1993, 3, 17).atStartOfDay(), new SessionType("Regular Session"));
-        var nullDayType = new Transcript(id, null, "SenateLD031793.v1", null, null);
-        var nullDayTypeInfo = new TranscriptFilenameInfo(nullDayType);
-        assertTrue(nullDayTypeInfo.getMismatches().isPresent());
     }
 
     private static void createAndTest(String filename1, String filename2, LocalDate date, DayType dayType, String sessionType,

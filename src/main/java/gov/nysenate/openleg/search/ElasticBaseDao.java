@@ -105,8 +105,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     }
 
     @Override
-    public SearchResults<IdType> searchForIds(QueryVariant queryStr, String sortStr, LimitOffset limOff) throws SearchException {
-        return search(queryStr, sortStr, limOff, highlightedFields(), false, hit -> toId(hit.id()));
+    public SearchResults<IdType> searchForIds(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException {
+        return search(query, sortStr, limOff, highlightedFields(), false, hit -> toId(hit.id()));
     }
 
     @Override
