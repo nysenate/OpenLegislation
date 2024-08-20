@@ -72,7 +72,7 @@ public class HearingUpdatesCtrl extends BaseCtrl {
 
     private BaseResponse getNewHearingsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
-        Range<LocalDateTime> dateRange = getOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> dateRange = getClosedOpenRange(from, to, "from", "to");
         PaginatedList<HearingUpdateToken> updates = hearingDao.hearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.results().stream()
                 .map(r -> new HearingUpdateTokenView(r, hearingDao.getFilename(r.hearingId())))
