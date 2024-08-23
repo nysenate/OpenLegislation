@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.legislation.transcripts.session.dao;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.legislation.transcripts.session.DayType;
-import gov.nysenate.openleg.legislation.transcripts.session.SessionType;
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -33,6 +30,14 @@ public class TranscriptFilenameInfoTest {
         var legInName = new TranscriptFilenameInfo("SenateLD042022.txt", LocalDate.of(2022, 4, 20),
                 DayType.SESSION, "");
         assertTrue(legInName.getMismatches().isPresent());
+    }
+
+    @Test
+    public void fromTranscriptTest() {
+        var id = new TranscriptId(LocalDate.of(1, 1, 1).atStartOfDay(), new SessionType("Regular Session"));
+        var transcript = new Transcript(id, DayType.SESSION, "010101.txt", "Mars", "");
+        assertTrue(new TranscriptFilenameInfo(transcript).getMismatches().isEmpty());
+
     }
 
     private static void createAndTest(String filename1, String filename2, LocalDate date, DayType dayType, String sessionType,

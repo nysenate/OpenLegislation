@@ -151,10 +151,7 @@ public class DataProcessor {
         logger.info("Begin {} data", isCollate ? "collating" : "ingesting");
         Map<String, Integer> processedCounts = new LinkedHashMap<>();
         for (ProcessService processor : processServices) {
-            if (Thread.currentThread().isInterrupted())
-                break;
             String type = isCollate ? processor.getCollateType() : processor.getIngestType();
-            logger.info("{} " + type, isCollate ? "Collating" : "Ingesting");
             int count = isCollate ? processor.collate() : processor.ingest();
             if (count > 0)
                 processedCounts.put(type, count);
@@ -182,8 +179,7 @@ public class DataProcessor {
             eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex, currentRun.getProcessId()));
             logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
         }
-        if (!Thread.currentThread().isInterrupted())
-            processLogService.finishRun(currentRun);
+        processLogService.finishRun(currentRun);
         logger.info("Exiting data processor.");
     }
 }

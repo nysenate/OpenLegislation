@@ -2,8 +2,6 @@ package gov.nysenate.openleg.processors.transcripts.session;
 
 import org.springframework.lang.NonNull;
 
-import java.util.Optional;
-
 /**
  * Set of methods that function on individual transcript lines to help with parsing logic.
  */

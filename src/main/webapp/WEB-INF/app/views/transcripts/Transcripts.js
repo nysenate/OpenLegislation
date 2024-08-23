@@ -147,8 +147,8 @@ function TranscriptListing({ isHearing, setHeaderText }) {
           true, false)}
                 onChange={onYearChange} name="year" />
         <div hidden={isHearing}>
-          <Checkbox label="Session Only" value={sessionOnly} onChange={e => setSessionOnly(e.target.checked)}
-                    name="Session Only"/>
+          <Checkbox label="Session Days Only" value={sessionOnly} onChange={e => setSessionOnly(e.target.checked)}
+                    name="Session Days Only"/>
         </div>
       </div>
       {errorMsg &&

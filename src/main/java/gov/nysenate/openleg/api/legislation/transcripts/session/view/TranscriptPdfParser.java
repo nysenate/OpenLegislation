@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 public class TranscriptPdfParser {
     private final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
-    private final List<String> badLines = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();
     private int currPageNum;
 
@@ -32,10 +31,6 @@ public class TranscriptPdfParser {
 
     public List<List<String>> getPages() {
         return pages;
-    }
-
-    public List<String> getBadLines() {
-        return badLines;
     }
 
     protected boolean hasLineNumbers() {
@@ -68,7 +63,6 @@ public class TranscriptPdfParser {
                 currPageNum = currLine.getStartingInt();
             }
             else if (nextLine != null && needsCorrecting(nextLine, getLine(lines, i + 2))) {
-                badLines.add(nextLine.getText());
                 currLine = new TranscriptLine(currLine.getText() + " " + nextLine.getText().trim());
                 i++;
             }

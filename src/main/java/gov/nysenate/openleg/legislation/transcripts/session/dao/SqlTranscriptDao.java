@@ -65,7 +65,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         return new MapSqlParameterSource().addValue("transcriptFilename", transcript.getFilename())
                 .addValue("sessionType", transcript.getSessionType())
                 .addValue("dateTime", toDate(transcript.getDateTime()))
-                .addValue("dayType", transcript.getDayType() == null ? null : transcript.getDayType().toString())
+                .addValue("dayType", transcript.getDayType().toString())
                 .addValue("location", transcript.getLocation())
                 .addValue("text", transcript.getText())
                 .addValue("modified_date_time", toDate(LocalDateTime.now()));
