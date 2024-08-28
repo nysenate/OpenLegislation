@@ -15,9 +15,13 @@ public interface SearchDao<IdType, ViewType, ContentType> {
 
     String indexName();
 
-    void ensureIndexExists();
+    /**
+     * Creates the relevant index.
+     * @return true if the index was created, false if it already existed.
+     */
+    boolean createIndex();
 
-    void purgeIndex();
+    void deleteIndex();
 
     SearchResults<IdType> searchForIds(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException;
 

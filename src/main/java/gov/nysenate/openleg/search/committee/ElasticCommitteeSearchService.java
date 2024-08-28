@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Committee;
 import gov.nysenate.openleg.legislation.committee.CommitteeSessionId;
@@ -22,9 +21,8 @@ public class ElasticCommitteeSearchService extends IndexedSearchService<Committe
     private final CommitteeDataService committeeDataService;
 
     public ElasticCommitteeSearchService(ElasticCommitteeSearchDao committeeSearchDao,
-                                         CommitteeDataService committeeDataService, OpenLegEnvironment env,
-                                         EventBus eventBus) {
-        super(committeeSearchDao, env);
+                                         CommitteeDataService committeeDataService, EventBus eventBus) {
+        super(committeeSearchDao);
         this.committeeSearchDao = committeeSearchDao;
         this.committeeDataService = committeeDataService;
         eventBus.register(this);

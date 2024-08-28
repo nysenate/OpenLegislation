@@ -3,7 +3,6 @@ package gov.nysenate.openleg.search.member;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
@@ -19,13 +18,13 @@ public class ElasticMemberSearchService extends IndexedSearchService<FullMember>
 
     @Autowired
     public ElasticMemberSearchService(SearchDao<Integer, FullMemberView, FullMember> memberSearchDao,
-                                      OpenLegEnvironment env, MemberService memberDataService) {
-        super(memberSearchDao, env);
+                                      MemberService memberDataService) {
+        super(memberSearchDao);
         this.memberSearchDao = memberSearchDao;
         this.memberDataService = memberDataService;
-        // Members are normally updated by direct SQL.
-        clearIndex();
-        rebuildIndex();
+        // Members are normally updated by direct SQL, so force an index rebuild every time.
+        // The index will be recreated by the superclass.
+        memberSearchDao.deleteIndex();
     }
 
     @Override

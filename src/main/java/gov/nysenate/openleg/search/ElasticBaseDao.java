@@ -19,14 +19,12 @@ import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.TypeUtils;
+import gov.nysenate.openleg.config.EnvironmentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -45,35 +43,25 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             enable = Time.of(b -> b.time("1s"));
 
     @Autowired
-    private ElasticsearchClient searchClient;
+    private EnvironmentUtils envUtils;
     @Autowired
-    private Environment env;
-
-    @PostConstruct
-    private void init() {
-        ensureIndexExists();
-    }
-
-    @PreDestroy
-    private void destroy() {
-        if (isTest()) {
-            purgeIndex();
-        }
-    }
+    private ElasticsearchClient searchClient;
 
     /* --- Public methods --- */
 
     @Override
-    public void ensureIndexExists() {
+    public boolean createIndex() {
         try {
-            if (!searchClient.indices().exists(
-                    ExistsRequest.of(b -> b.index(indexName()))).value()) {
+            boolean indexMissing = !searchClient.indices().exists(
+                    ExistsRequest.of(b -> b.index(indexName()))).value();
+            if (indexMissing) {
                 var createIndexRequest = CreateIndexRequest.of(b -> b.index(indexName())
                         .settings(getIndexSettings().build())
                         .mappings(pb -> pb.properties(getCustomMappingProperties())));
                 logger.info("Creating search index {}", indexName());
                 searchClient.indices().create(createIndexRequest);
             }
+            return indexMissing;
         }
         catch (IOException ex) {
             throw new GenericElasticsearchException("Index exists request failed.", ex);
@@ -81,7 +69,10 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     }
 
     @Override
-    public void purgeIndex() {
+    public void deleteIndex() {
+        if (indexType().isPrimaryStore()) {
+            throw new UnsupportedOperationException("Cannot delete a primary index.");
+        }
         try {
             logger.info("Deleting search index {}", indexName());
             searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(indexName())));
@@ -93,7 +84,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @Override
     public String indexName() {
-        return indexType().getName() + (isTest() ? "_test" : "");
+        return indexType().getName() + (envUtils.isTest() ? "_test" : "");
     }
 
     protected abstract IdType getId(ContentType data);
@@ -120,7 +111,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             searchClient.index(
                     IndexRequest.of(b -> b.index(indexName())
                             .id(getId(data).toString()).document(getDoc(data))
-                            .refresh(isTest() ? Refresh.True : Refresh.False))
+                            .refresh(envUtils.isTest() ? Refresh.True : Refresh.False))
             );
         } catch (IOException ex) {
             throw new GenericElasticsearchException("Index request failed.", ex);
@@ -156,11 +147,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     protected long getDocCount() throws IOException {
         return searchClient.count(b -> b.index(indexName())).count();
-    }
-
-    @Nonnull
-    private Boolean isTest() {
-        return "test".equals(env.getActiveProfiles()[0]);
     }
 
     private <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
@@ -216,7 +202,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         }
         try {
             searchClient.bulk(BulkRequest.of(b -> b.index(indexName()).operations(operations)
-                    .refresh(isTest() ? Refresh.True : Refresh.False)));
+                    .refresh(envUtils.isTest() ? Refresh.True : Refresh.False)));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new GenericElasticsearchException("Bulk request failed", ex);

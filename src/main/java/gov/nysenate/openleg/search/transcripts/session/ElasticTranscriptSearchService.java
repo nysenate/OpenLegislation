@@ -27,9 +27,8 @@ public class ElasticTranscriptSearchService extends IndexedSearchService<Transcr
 
     @Autowired
     public ElasticTranscriptSearchService(SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao,
-                                          OpenLegEnvironment env, EventBus eventBus,
-                                          TranscriptDataService transcriptDataService) {
-        super(transcriptSearchDao, env);
+                                          TranscriptDataService transcriptDataService, EventBus eventBus) {
+        super(transcriptSearchDao);
         this.transcriptSearchDao = transcriptSearchDao;
         this.transcriptDataService = transcriptDataService;
         eventBus.register(this);

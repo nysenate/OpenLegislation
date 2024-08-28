@@ -5,7 +5,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.AsyncUtils;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
@@ -38,10 +37,9 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
     private final AsyncUtils asyncUtils;
 
     @Autowired
-    public ElasticBillSearchService(OpenLegEnvironment env, EventBus eventBus,
-                                    ElasticBillSearchDao billSearchDao,
-                                    BillDataService billDataService, AsyncUtils asyncUtils) {
-        super(billSearchDao, env);
+    public ElasticBillSearchService(ElasticBillSearchDao billSearchDao, BillDataService billDataService,
+                                    AsyncUtils asyncUtils, EventBus eventBus) {
+        super(billSearchDao);
         this.billSearchDao = billSearchDao;
         this.billDataService = billDataService;
         this.asyncUtils = asyncUtils;

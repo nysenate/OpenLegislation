@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.util.Tuple;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
@@ -15,8 +14,6 @@ import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +23,13 @@ import java.util.List;
 @Service
 public class ElasticAgendaSearchService extends IndexedSearchService<Tuple<Agenda, CommitteeId>>
         implements AgendaSearchService {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchService.class);
-
     private final ElasticAgendaSearchDao agendaSearchDao;
     private final AgendaDataService agendaDataService;
 
     @Autowired
-    public ElasticAgendaSearchService(OpenLegEnvironment env, EventBus eventBus,
-                                      ElasticAgendaSearchDao agendaSearchDao,
-                                      AgendaDataService agendaDataService) {
-        super(agendaSearchDao, env);
+    public ElasticAgendaSearchService(ElasticAgendaSearchDao agendaSearchDao,
+                                      AgendaDataService agendaDataService, EventBus eventBus) {
+        super(agendaSearchDao);
         this.agendaSearchDao = agendaSearchDao;
         this.agendaDataService = agendaDataService;
         eventBus.register(this);

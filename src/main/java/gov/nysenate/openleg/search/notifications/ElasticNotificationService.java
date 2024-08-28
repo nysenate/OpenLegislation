@@ -6,7 +6,6 @@ import gov.nysenate.openleg.api.notification.view.NotificationView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
@@ -23,8 +22,8 @@ public class ElasticNotificationService extends IndexedSearchService<RegisteredN
     private final ElasticNotificationSearchDao notificationDao;
 
     @Autowired
-    public ElasticNotificationService(ElasticNotificationSearchDao notificationDao, OpenLegEnvironment env) {
-        super(notificationDao, env);
+    public ElasticNotificationService(ElasticNotificationSearchDao notificationDao) {
+        super(notificationDao);
         this.notificationDao = notificationDao;
     }
 
@@ -89,7 +88,5 @@ public class ElasticNotificationService extends IndexedSearchService<RegisteredN
 
     /** {@inheritDoc} */
     @Override
-    public void rebuildIndex() {
-        throw new IllegalStateException("Cannot rebuild notification search index.");
-    }
+    public void rebuildIndex() {}
 }

@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
@@ -21,9 +20,8 @@ public class ElasticHearingSearchService extends IndexedSearchService<Hearing> i
 
     @Autowired
     public ElasticHearingSearchService(SearchDao<HearingId, HearingView, Hearing> hearingSearchDao,
-                                       OpenLegEnvironment env, EventBus eventBus,
-                                       HearingDataService hearingDataService) {
-        super(hearingSearchDao, env);
+                                       HearingDataService hearingDataService, EventBus eventBus) {
+        super(hearingSearchDao);
         this.hearingSearchDao = hearingSearchDao;
         this.hearingDataService = hearingDataService;
         eventBus.register(this);

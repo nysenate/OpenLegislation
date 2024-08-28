@@ -57,16 +57,6 @@ public class SearchIndexCtrl extends BaseCtrl {
     @RequiresPermissions("admin:searchIndexEdit")
     @PutMapping(value = "/{indexType}")
     public BaseResponse rebuildIndex(@PathVariable String indexType) {
-        return clearIndex(indexType, true);
-    }
-
-    @RequiresPermissions("admin:searchIndexEdit")
-    @DeleteMapping(value = "/{indexType}")
-    public BaseResponse clearIndex(@PathVariable String indexType) {
-        return clearIndex(indexType, false);
-    }
-
-    private BaseResponse clearIndex(String indexType, boolean rebuild) {
         try {
             for (SearchIndex index : getTargetIndices(indexType)) {
                 var searchService = indexToSearchServiceMap.get(index);
@@ -74,13 +64,10 @@ public class SearchIndexCtrl extends BaseCtrl {
                     continue;
                 }
                 searchService.clearIndex();
-                if (rebuild) {
-                    searchService.rebuildIndex();
-                }
-                logger.info("Cleared {}{} index", rebuild ? "and rebuilt " : "", index.getName());
+                searchService.rebuildIndex();
+                logger.info("Cleared {}{} index", "and rebuilt ", index.getName());
             }
-            return new SimpleResponse(true, "Search index " + (rebuild ? "rebuild" : "clear")
-                    + " request completed", "index-clear");
+            return new SimpleResponse(true, "Search index rebuild request completed", "index-clear");
         }
         catch (IllegalArgumentException ex) {
             var response = new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);

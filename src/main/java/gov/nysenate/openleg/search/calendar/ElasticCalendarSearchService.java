@@ -7,7 +7,6 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
@@ -24,9 +23,8 @@ public class ElasticCalendarSearchService extends IndexedSearchService<Calendar>
     private final CalendarDataService calendarDataService;
 
     public ElasticCalendarSearchService(SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao,
-                                        CalendarDataService calendarDataService,
-                                        OpenLegEnvironment env, EventBus eventBus) {
-        super(calendarSearchDao, env);
+                                        CalendarDataService calendarDataService, EventBus eventBus) {
+        super(calendarSearchDao);
         this.calendarSearchDao = calendarSearchDao;
         this.calendarDataService = calendarDataService;
         eventBus.register(this);

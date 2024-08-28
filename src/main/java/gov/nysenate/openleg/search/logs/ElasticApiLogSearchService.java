@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import gov.nysenate.openleg.api.logs.ApiLogItemView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,8 @@ public class ElasticApiLogSearchService extends IndexedSearchService<ApiResponse
 
     @Autowired
     public ElasticApiLogSearchService(SearchDao<Integer, ApiLogItemView, ApiResponse> apiLogSearchDao,
-                                      OpenLegEnvironment env, EventBus eventBus) {
-        super(apiLogSearchDao, env);
+                                      EventBus eventBus) {
+        super(apiLogSearchDao);
         this.apiLogSearchDao = apiLogSearchDao;
         eventBus.register(this);
     }
@@ -40,9 +39,7 @@ public class ElasticApiLogSearchService extends IndexedSearchService<ApiResponse
     }
 
     @Override
-    public void rebuildIndex() {
-        throw new IllegalStateException("Cannot rebuild log search index.");
-    }
+    public void rebuildIndex() {}
 
     /**
      * The log event is handled here by putting the response in a queue to be indexed.

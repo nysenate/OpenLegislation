@@ -1,21 +1,48 @@
 package gov.nysenate.openleg.search;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import gov.nysenate.openleg.config.EnvironmentUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.util.Collection;
 
+/**
+ * Provides access to search functionality, with some common implementations.
+ */
 public abstract class IndexedSearchService<T> {
     private static final Logger logger = LoggerFactory.getLogger(IndexedSearchService.class);
-    private final SearchDao<?, ?, T> searchDao;
-    private final OpenLegEnvironment env;
 
-    protected IndexedSearchService(SearchDao<?, ?, T> searchDao, OpenLegEnvironment env) {
+    private final SearchDao<?, ?, T> searchDao;
+    @Autowired
+    private EnvironmentUtils envUtils;
+    @Autowired
+    private OpenLegEnvironment env;
+
+    protected IndexedSearchService(SearchDao<?, ?, T> searchDao) {
         this.searchDao = searchDao;
-        this.env = env;
+    }
+
+    /**
+     * Ensures indices are filled with data, since even non-search operations uses the data.
+     */
+    @PostConstruct
+    private void init() {
+        if (searchDao.createIndex() && !envUtils.isTest()) {
+            rebuildIndex();
+        }
+    }
+
+    @PreDestroy
+    private void destroy() {
+        if (envUtils.isTest()) {
+            searchDao.deleteIndex();
+        }
     }
 
     protected static QueryVariant getYearQuery(String yearFieldName, Integer year) {
@@ -48,7 +75,7 @@ public abstract class IndexedSearchService<T> {
 
     /**
      * Update the search index with the given collection of items, replacing each existing one with
-     * the one in the collection.
+     * the one in the collection if needed.
      */
     public void updateIndex(Collection<T> content) {
         if (content.size() == 1) {
@@ -70,8 +97,8 @@ public abstract class IndexedSearchService<T> {
      * Clears all entries from the search index that is managed by the implementation.
      */
     public void clearIndex() {
-        searchDao.purgeIndex();
-        searchDao.ensureIndexExists();
+        searchDao.deleteIndex();
+        searchDao.createIndex();
     }
 
     /**

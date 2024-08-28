@@ -28,16 +28,13 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
     private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchService.class);
 
     private final ElasticLawSearchDao lawSearchDao;
-    private final LawDataDao lawDataDao;
     private final LawDataService lawDataService;
 
     @Autowired
-    public ElasticLawSearchService(ElasticLawSearchDao lawSearchDao, OpenLegEnvironment env,
-                                   EventBus eventBus, LawDataDao lawDataDao,
-                                   LawDataService lawDataService) {
-        super(lawSearchDao, env);
+    public ElasticLawSearchService(ElasticLawSearchDao lawSearchDao, LawDataService lawDataService,
+                                   EventBus eventBus) {
+        super(lawSearchDao);
         this.lawSearchDao = lawSearchDao;
-        this.lawDataDao = lawDataDao;
         this.lawDataService = lawDataService;
         eventBus.register(this);
     }
@@ -93,7 +90,7 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        lawDataDao.getLawInfos().stream()
+        lawDataService.getLawInfos().stream()
                 .map(LawInfo::getLawId)
                 .sorted()
                 .forEach(this::indexLawChapter);
