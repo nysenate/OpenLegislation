@@ -21,7 +21,7 @@ import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.search.GenericElasticsearchException;
+import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -107,7 +107,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
         logger.error("Elasticsearch at host: {}:{} needs to be running prior to deployment!",
                 elasticSearchHost, elasticSearchPort);
         logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-        throw new GenericElasticsearchException("Elasticsearch connection retries exceeded");
+        throw new ElasticsearchProcessException("Elasticsearch connection retries exceeded");
     }
 
     /** --- Guava Event Bus Configuration --- */

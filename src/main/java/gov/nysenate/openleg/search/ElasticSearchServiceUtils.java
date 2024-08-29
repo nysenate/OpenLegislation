@@ -64,7 +64,6 @@ public final class ElasticSearchServiceUtils {
         return sortBuilders;
     }
 
-    // TODO: make use of something similar to SearchParseException
     public static QueryVariant getStringQuery(String query) {
         if (query == null) {
             return null;

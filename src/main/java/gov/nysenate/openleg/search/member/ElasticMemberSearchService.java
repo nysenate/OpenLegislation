@@ -22,9 +22,6 @@ public class ElasticMemberSearchService extends IndexedSearchService<FullMember>
         super(memberSearchDao);
         this.memberSearchDao = memberSearchDao;
         this.memberDataService = memberDataService;
-        // Members are normally updated by direct SQL, so force an index rebuild every time.
-        memberSearchDao.deleteIndex();
-        memberSearchDao.createIndex();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api;
 
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
@@ -13,9 +14,9 @@ import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.notifications.model.Notification;
+import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.UnexpectedSearchException;
 import gov.nysenate.openleg.updates.UpdateType;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -391,14 +392,6 @@ public abstract class BaseCtrl {
         // Do not send any data back with the response, because that may produce another media type exception.
     }
 
-    @ExceptionHandler(UnexpectedSearchException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ViewObjectErrorResponse unexpectedSearchExceptionHandler(UnexpectedSearchException ex) {
-        logger.error("Caught unexpected search exception!", ex);
-//        pushExceptionNotification(ex);
-        return searchExceptionHandler(ex);
-    }
-
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
@@ -418,6 +411,13 @@ public abstract class BaseCtrl {
     public ErrorResponse handleUnauthenticatedException(AuthorizationException ex) {
         logger.debug("Authorization Exception! {}", ex.getMessage());
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({ElasticsearchException.class, ElasticsearchProcessException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleElasticsearchException(Exception ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(ClientAbortException.class)

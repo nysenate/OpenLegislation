@@ -75,7 +75,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             }
         }
         catch (IOException ex) {
-            throw new GenericElasticsearchException("Index exists request failed.", ex);
+            throw new ElasticsearchProcessException("Index exists request failed.", ex);
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             }
         }
         catch (IOException | ElasticsearchException ex) {
-            throw new GenericElasticsearchException("Delete index request failed.", ex);
+            throw new ElasticsearchProcessException("Delete index request failed.", ex);
         }
     }
 
@@ -127,7 +127,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                             .refresh(envUtils.isTest() ? Refresh.True : Refresh.False))
             );
         } catch (IOException ex) {
-            throw new GenericElasticsearchException("Index request failed.", ex);
+            throw new ElasticsearchProcessException("Index request failed.", ex);
         }
     }
 
@@ -148,7 +148,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             searchClient.delete(deleteRequest);
         }
         catch (IOException ex) {
-            throw new GenericElasticsearchException("Delete request failed.", ex);
+            throw new ElasticsearchProcessException("Delete request failed.", ex);
         }
     }
 
@@ -187,7 +187,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                 }
                 throw ex1;
             } catch (IOException ex2) {
-                throw new GenericElasticsearchException("IOException occurred during search request.", ex2);
+                throw new ElasticsearchProcessException("IOException occurred during search request.", ex2);
             }
         }
     }
@@ -206,7 +206,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             }
         }
         catch (IOException ex) {
-            throw new GenericElasticsearchException("Get request failed.", ex);
+            throw new ElasticsearchProcessException("Get request failed.", ex);
         }
         return Optional.empty();
     }
@@ -224,7 +224,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                     .refresh(envUtils.isTest() ? Refresh.True : Refresh.False)));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            throw new GenericElasticsearchException("Bulk request failed", ex);
+            throw new ElasticsearchProcessException("Bulk request failed", ex);
         }
     }
     /**
@@ -263,7 +263,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                 break;
             }
         }
-        throw new GenericElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName(), ex);
+        throw new ElasticsearchProcessException("Failed to set refresh setting to " + enabled + " for index " + indexName(), ex);
     }
 
     /**
@@ -279,7 +279,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             var time2 = data.settings().refreshInterval();
             return Objects.equals(time1, time2);
         } catch (IOException e) {
-            throw new GenericElasticsearchException("Failed to get elasticsearch settings");
+            throw new ElasticsearchProcessException("Failed to get elasticsearch settings");
         }
     }
 
@@ -336,7 +336,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
                     hitValue, BigDecimal.valueOf(score), hit.highlight());
         }).toList();
         if (response.hits().total() == null) {
-            throw new GenericElasticsearchException("Problem checking total hits.");
+            throw new ElasticsearchProcessException("Problem checking total hits.");
         }
         return new SearchResults<>(Ints.checkedCast(response.hits().total().value()), results, limitOffset);
     }
