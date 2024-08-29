@@ -78,10 +78,8 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
         }
     }
 
-    /** --- Elastic Search Configuration --- */
+    /** --- Elasticsearch Configuration --- */
 
-    // TODO: is this needed?
-    @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
     @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
     @Value("${elastic.search.port:9200}") private int elasticSearchPort;
     @Value("${elastic.search.connection_retries:5}") private int esAllowedRetries;
@@ -95,19 +93,19 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
         var client = new ElasticsearchClient(transport);
 
         for (int triesLeft = esAllowedRetries; triesLeft > 0;) {
-            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
+            logger.info("Connecting to Elasticsearch...");
             try {
                 if (client.ping().value()) {
-                    logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
+                    logger.info("Successfully connected to Elasticsearch!");
                     return client;
                 }
             } catch (IOException | ElasticsearchException ignored) {}
-            logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
+            logger.warn("Could not connect to Elasticsearch.");
             logger.warn("{} retries remain.", --triesLeft);
             Thread.sleep(1000);
         }
-        logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+        logger.error("Elasticsearch at host: {}:{} needs to be running prior to deployment!",
+                elasticSearchHost, elasticSearchPort);
         logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
         throw new GenericElasticsearchException("Elasticsearch connection retries exceeded");
     }
@@ -128,7 +126,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     @Bean(name = "taskScheduler", destroyMethod = "shutdown")
     public ThreadPoolTaskScheduler getTaskScheduler() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        var scheduler = new ThreadPoolTaskScheduler();
         scheduler.setThreadFactory(new OpenlegThreadFactory("scheduler"));
         scheduler.setPoolSize(8);
         scheduler.initialize();
@@ -144,7 +142,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
     @Nonnull
     @Bean(name = "openlegAsync", destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        var executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
         executor.setCorePoolSize(8);
         executor.setWaitForTasksToCompleteOnShutdown(false);
@@ -186,7 +184,6 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     /**
      * Handle event bus exceptions by posting a notification.
-     *
      * Note that even though notifications are posted through the event bus,
      * all exceptions are caught within the notification event handling code, preventing an infinite loop.
      * @see NotificationDispatcher#handleNotificationEvent(Notification)
@@ -195,7 +192,8 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
      * @param context SubscriberExceptionContext
      */
     private void handleEventBusException(Throwable exception, SubscriberExceptionContext context) {
-        logger.error("Event Bus Exception thrown during event handling within " + context.getSubscriberMethod(), exception);
+        logger.error("Event Bus Exception thrown during event handling within {}",
+                context.getSubscriberMethod(), exception);
 
         LocalDateTime occurred = LocalDateTime.now();
         String summary = "Event Bus Exception within " + context.getSubscriberMethod() +
