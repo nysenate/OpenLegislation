@@ -173,12 +173,29 @@ public class BillScrapeReferenceHtmlParser {
 
     private SortedSetMultimap<BillVoteCode, String> parseVote(Element voteTable) {
         SortedSetMultimap<BillVoteCode, String> votes = TreeMultimap.create();
+        Pattern pattern = createVoteCodePattern();
+
         Elements entries = voteTable.select("td");
         for (int i = 0; i < entries.size(); i = i + 2) {
-            votes.put(BillVoteCode.getValue(elementText(entries.get(i))),
-                    elementText(entries.get(i + 1)));
+            String voteCodeText = entries.get(i).text().trim();
+            Matcher matcher = pattern.matcher(voteCodeText);
+            if (matcher.matches()) {
+                BillVoteCode voteCode = BillVoteCode.getValue(matcher.group(1));
+                String member = elementText(entries.get(i + 1));
+                votes.put(voteCode, member);
+            }
         }
         return votes;
+    }
+
+    /*
+     * Create a pattern which finds BillVoteCode's in scraped html files.
+     * An AYEWR vote code has never occurred for a floor vote. "Ayewr" is my best guess on how it would appear in a
+     * scraped html file.
+     */
+    private Pattern createVoteCodePattern() {
+        String voteRegex = ".*(Aye|Nay|Abs|Exc|Abd|Ayewr).*";
+        return Pattern.compile(voteRegex, Pattern.CASE_INSENSITIVE);
     }
 
     // Trims and strips &nbsp; from element text and returns it.

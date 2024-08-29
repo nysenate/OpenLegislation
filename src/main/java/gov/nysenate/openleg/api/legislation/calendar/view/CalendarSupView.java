@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.legislation.calendar.view;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillInfo;
 import gov.nysenate.openleg.legislation.calendar.CalendarSupplemental;
@@ -23,7 +24,10 @@ public class CalendarSupView extends SimpleCalendarSupView implements CalendarEn
         this.entriesBySection = MapView.of(
                 calendarSupplemental.getSectionEntries().asMap().values().stream()
                         .map(entryList -> entryList.stream()
-                                .map(entry -> new CalendarSupEntryView(entry, infoMap.get(entry.getBillId())))
+                                .map(entry -> new CalendarSupEntryView(
+                                        entry,
+                                        infoMap.get(BaseBillId.of(entry.getBillId())),
+                                        entry.getSubBillId() == null ? null : infoMap.get(BaseBillId.of(entry.getSubBillId()))))
                                 .sorted(supEntryViewComparator).toList())
                         .map(ListView::of)
                         .collect(Collectors.toMap(list -> list.getItems().get(0).getSectionType(), Function.identity()))

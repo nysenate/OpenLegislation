@@ -13,13 +13,13 @@ public class CalendarSupEntryView extends CalendarEntryView {
     protected SimpleBillInfoView subBillInfo;
     protected boolean billHigh;
 
-    public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillInfo info) {
+    public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillInfo info, BillInfo subBillInfo) {
         super(supEntry, info);
 
         if (supEntry != null) {
             this.sectionType = supEntry.getSectionType().toString();
             this.subBillInfo = supEntry.getSubBillId() != null
-                    ? new SimpleBillInfoView(info) : null;
+                    ? new SimpleBillInfoView(subBillInfo) : null;
             this.billHigh = supEntry.getBillHigh();
         }
     }
