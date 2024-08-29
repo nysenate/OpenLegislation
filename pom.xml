@@ -117,7 +117,7 @@
     <commons-text.version>1.11.0</commons-text.version>
     <commons-validator.version>1.8.0</commons-validator.version>
     <ehcache.version>3.9.9</ehcache.version>
-    <elasticsearch.version>8.15.0</elasticsearch.version>
+    <elasticsearch.version>8.14.3</elasticsearch.version>
     <flying-saucer.version>9.1.22</flying-saucer.version>
     <gson.version>2.9.0</gson.version>
     <guava.version>31.1-jre</guava.version>
