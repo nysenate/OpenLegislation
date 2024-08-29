@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.Optional;
 
 @Repository
@@ -22,7 +21,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
     }
 
     @PostConstruct
-    private void init() throws IOException {
+    private void init() {
         this.nextId = new SynchronizedLong(getDocCount() + 1);
     }
 

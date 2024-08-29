@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -28,20 +27,11 @@ public abstract class IndexedSearchService<T> {
         this.searchDao = searchDao;
     }
 
-    /**
-     * Ensures indices are filled with data, since even non-search operations uses the data.
-     */
     @PostConstruct
     private void init() {
-        if (searchDao.createIndex() && !envUtils.isTest()) {
+        // Ensures indices are filled with data, since even non-search operations uses the data.
+        if (searchDao.getDocCount() == 0 && !envUtils.isTest()) {
             rebuildIndex();
-        }
-    }
-
-    @PreDestroy
-    private void destroy() {
-        if (envUtils.isTest()) {
-            searchDao.deleteIndex();
         }
     }
 

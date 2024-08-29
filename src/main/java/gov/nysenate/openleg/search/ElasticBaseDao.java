@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -47,21 +49,30 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     @Autowired
     private ElasticsearchClient searchClient;
 
+    @PostConstruct
+    private void init() {
+        createIndex();
+    }
+
+    @PreDestroy
+    private void destroy() {
+        if (envUtils.isTest()) {
+            deleteIndex();
+        }
+    }
+
     /* --- Public methods --- */
 
     @Override
-    public boolean createIndex() {
+    public void createIndex() {
         try {
-            boolean indexMissing = !searchClient.indices().exists(
-                    ExistsRequest.of(b -> b.index(indexName()))).value();
-            if (indexMissing) {
+            if (!indexExists()) {
                 var createIndexRequest = CreateIndexRequest.of(b -> b.index(indexName())
                         .settings(getIndexSettings().build())
                         .mappings(pb -> pb.properties(getCustomMappingProperties())));
                 logger.info("Creating search index {}", indexName());
                 searchClient.indices().create(createIndexRequest);
             }
-            return indexMissing;
         }
         catch (IOException ex) {
             throw new GenericElasticsearchException("Index exists request failed.", ex);
@@ -74,10 +85,12 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
             throw new UnsupportedOperationException("Cannot delete a primary index.");
         }
         try {
-            logger.info("Deleting search index {}", indexName());
-            searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(indexName())));
+            if (indexExists()) {
+                logger.info("Deleting search index {}", indexName());
+                searchClient.indices().delete(DeleteIndexRequest.of(b -> b.index(indexName())));
+            }
         }
-        catch (IOException ex) {
+        catch (IOException | ElasticsearchException ex) {
             throw new GenericElasticsearchException("Delete index request failed.", ex);
         }
     }
@@ -139,15 +152,21 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         }
     }
 
+    @Override
+    public long getDocCount() {
+        try {
+            return searchClient.count(b -> b.index(indexName())).count();
+        } catch (IOException ex) {
+            logger.error("Could not fetch count.");
+            return 0;
+        }
+    }
+
     protected IdType toId(String idStr) {
         throw new UnsupportedOperationException("No implementation to convert Strings to IDs.");
     }
 
     /* --- Common Elastic Search methods --- */
-
-    protected long getDocCount() throws IOException {
-        return searchClient.count(b -> b.index(indexName())).count();
-    }
 
     private <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
                                           Map<String, HighlightField> highlightedFields, boolean fetchSource,
@@ -255,7 +274,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     public boolean isIndexRefreshDefault() {
         var request = GetIndicesSettingsRequest.of(b -> b.index(indexName()).includeDefaults(true));
         try {
-            // TODO: are both null, not sure that they should be
             IndexState data = searchClient.indices().getSettings(request).get(indexName());
             var time1 = data.defaults().refreshInterval();
             var time2 = data.settings().refreshInterval();
@@ -287,6 +305,11 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      */
     protected ImmutableMap<String, Property> getCustomMappingProperties() {
         return ImmutableMap.of();
+    }
+
+    private boolean indexExists() throws IOException {
+        return searchClient.indices().exists(
+                ExistsRequest.of(b -> b.index(indexName()))).value();
     }
 
     /* --- Internal Methods --- */
