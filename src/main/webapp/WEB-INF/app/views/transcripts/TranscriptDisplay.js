@@ -7,6 +7,7 @@ import {
 import { getTranscript } from "app/apis/transcriptApi";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import { DateTime } from "luxon";
+import { FilePdf } from "phosphor-react";
 
 
 /**
@@ -30,12 +31,29 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
 
   if (loading)
     return <LoadingIndicator />
+  let pdfUrl;
+  if (isHearing) {
+    pdfUrl = `/pdf/hearings/${transcript.id}`
+  }
+  else {
+    pdfUrl = `/pdf/transcripts/${transcript.dateTime}/${transcript.sessionType}`
+  }
 
   return (
     <section className="p-3">
-      <Link to={`/transcripts/${isHearing ? "hearing" : "session"}`} className="link">
-        Back to search
-      </Link>
+      <div className="flex w-1/2">
+        <div className="flex-grow mr-8">
+          <Link to={`/transcripts/${isHearing ? "hearing" : "session"}`} className="link">
+            Back to search
+          </Link>
+        </div>
+        <div className="mr-8">
+          <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
+          <Link to={`${pdfUrl}`} target="_blank" className="link">
+            View as PDF
+          </Link>
+        </div>
+      </div>
       {isHearing ? <HearingHeading hearing={transcript} /> : <SessionHeading session={transcript} />}
       <div className="my-3">
         <pre className="text text--small">{transcript.text}</pre>

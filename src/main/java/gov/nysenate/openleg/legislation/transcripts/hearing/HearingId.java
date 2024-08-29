@@ -11,4 +11,9 @@ public record HearingId(int id) implements Serializable, Comparable<HearingId> {
     public int compareTo(HearingId o) {
         return Integer.compare(id, o.id);
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(id);
+    }
 }
