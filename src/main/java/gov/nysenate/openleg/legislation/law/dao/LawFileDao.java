@@ -13,12 +13,10 @@ public interface LawFileDao
      * Returns LawFile instances for the source files in the incoming laws directory.
      * These are basically law files that have not yet been processed.
      *
-     * @param sortByDate SortOrder - Order by the published date or the filename if there is a tie.
-     * @param limitOffset LimitOffset - Limit the result set.
      * @return List<LawFile>
      * @throws IOException - If there was a problem with handling the files.
      */
-    List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException;
+    List<LawFile> getIncomingLawFiles() throws IOException;
 
     /**
      * Retrieves a list of LawFiles that are awaiting processing.

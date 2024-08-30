@@ -64,7 +64,7 @@ public class FsSobiDao implements SourceFileFsDao<SobiFile> {
     @Override
     public List<SobiFile> getIncomingSourceFiles(SortOrder sortByFileName,
                                                  LimitOffset limitOffset) throws IOException {
-        List<File> files = new ArrayList<>(getSortedFiles(incomingSobiDir, false, null));
+        List<File> files = new ArrayList<>(getSortedFiles(incomingSobiDir));
         if (sortByFileName == SortOrder.DESC) {
             Collections.reverse(files);
         }

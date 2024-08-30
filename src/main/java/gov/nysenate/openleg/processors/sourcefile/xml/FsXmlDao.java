@@ -58,7 +58,7 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
     @Override
     public List<XmlFile> getIncomingSourceFiles(SortOrder sortByFileName,
                                                LimitOffset limitOffset) throws IOException {
-        List<File> files = new ArrayList<>(getSortedFiles(incomingSourceDir, false, null));
+        List<File> files = new ArrayList<>(getSortedFiles(incomingSourceDir));
         if (sortByFileName == SortOrder.DESC) {
             Collections.reverse(files);
         }

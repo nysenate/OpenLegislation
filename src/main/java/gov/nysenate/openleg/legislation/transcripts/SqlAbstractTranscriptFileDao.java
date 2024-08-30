@@ -42,7 +42,7 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
 
     @Override
     public List<T> getIncomingFiles() throws IOException {
-        Collection<File> files = FileIOUtils.safeListFiles(incomingDir, false, null);
+        Collection<File> files = FileIOUtils.safeListFiles(incomingDir);
         List<T> transcriptFiles = new ArrayList<>();
         for (File file : files)
             transcriptFiles.add(getFile(file));

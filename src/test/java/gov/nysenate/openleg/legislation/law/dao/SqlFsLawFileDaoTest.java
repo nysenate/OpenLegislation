@@ -21,7 +21,7 @@ public class SqlFsLawFileDaoTest extends BaseTests
 
     @Test
     public void testGetIncomingLawFiles() throws Exception {
-        for (LawFile lawFile : lawDao.getIncomingLawFiles(SortOrder.ASC, LimitOffset.ALL)) {
+        for (LawFile lawFile : lawDao.getIncomingLawFiles()) {
             logger.info("{}", lawFile);
             lawFile.setPendingProcessing(true);
             lawDao.archiveAndUpdateLawFile(lawFile);
