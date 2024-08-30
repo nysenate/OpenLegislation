@@ -293,6 +293,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     protected IndexSettings.Builder getIndexSettings() {
         // Disable replicas since we do not run multiple nodes
         return new IndexSettings.Builder().maxResultWindow(getMaxResultWindow())
+                .highlight(b -> b.maxAnalyzedOffset(2000000))
                 .numberOfReplicas("0").numberOfShards("1");
     }
 

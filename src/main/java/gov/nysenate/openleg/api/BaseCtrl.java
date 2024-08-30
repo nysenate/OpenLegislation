@@ -110,13 +110,6 @@ public abstract class BaseCtrl {
         return new LimitOffset(limit, offset);
     }
 
-    private static int parseLimit(String limitParam, int defaultLimit) {
-        if ("all".equalsIgnoreCase(limitParam)) {
-            return 0;
-        }
-        return NumberUtils.toInt(limitParam, defaultLimit);
-    }
-
     /**
      * Attempts to parse a date request parameter
      * Throws an InvalidRequestParameterException if the parsing went wrong
@@ -350,6 +343,13 @@ public abstract class BaseCtrl {
         throw getEnumParamEx(enumType, valueFunction, paramName, paramValue);
     }
 
+    private static int parseLimit(String limitParam, int defaultLimit) {
+        if ("all".equalsIgnoreCase(limitParam)) {
+            return 0;
+        }
+        return NumberUtils.toInt(limitParam, defaultLimit);
+    }
+
     /** --- Generic Exception Handlers --- */
 
     @ExceptionHandler(Exception.class)
@@ -406,18 +406,18 @@ public abstract class BaseCtrl {
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 
-    @ExceptionHandler(AuthorizationException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthenticatedException(AuthorizationException ex) {
-        logger.debug("Authorization Exception! {}", ex.getMessage());
-        return new ErrorResponse(ErrorCode.UNAUTHORIZED);
-    }
-
     @ExceptionHandler({ElasticsearchException.class, ElasticsearchProcessException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorResponse handleElasticsearchException(Exception ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthenticatedException(AuthorizationException ex) {
+        logger.debug("Authorization Exception! {}", ex.getMessage());
+        return new ErrorResponse(ErrorCode.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ClientAbortException.class)
@@ -430,7 +430,9 @@ public abstract class BaseCtrl {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
-        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,  new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf", "", Objects.toString(ex)));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
+                new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf",
+                        "", Objects.toString(ex)));
     }
 
     private void pushExceptionNotification(Exception ex) {
@@ -439,7 +441,6 @@ public abstract class BaseCtrl {
         String message = "The following exception was thrown while handling a request at " + occurred + ":\n\n"
                 + ExceptionUtils.getStackTrace(ex);
         Notification notification = new Notification(REQUEST_EXCEPTION, occurred, summary, message);
-
         eventBus.post(notification);
     }
 }
