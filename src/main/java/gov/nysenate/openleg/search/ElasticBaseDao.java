@@ -20,6 +20,7 @@ import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.TypeUtils;
 import gov.nysenate.openleg.config.EnvironmentUtils;
+import org.elasticsearch.client.ResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,11 +223,18 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         try {
             searchClient.bulk(BulkRequest.of(b -> b.index(indexName()).operations(operations)
                     .refresh(envUtils.isTest() ? Refresh.True : Refresh.False)));
+        } catch (ResponseException ex) {
+            if (operations.size() == 1) {
+                throw new ElasticsearchProcessException("Singular request failed", ex);
+            }
+            logger.warn("Bulk query too large! Splitting up...");
+            operations.forEach(op -> safeBulkRequestExecute(List.of(op)));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new ElasticsearchProcessException("Bulk request failed", ex);
         }
     }
+
     /**
      * @return the max result window for the index, this can be overridden.
      */
