@@ -49,9 +49,9 @@ public class RegistrationPageCtrl extends BaseCtrl {
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public BaseResponse signup(@RequestBody NewUserView body) {
-        String email = body.email();
-        String name = body.name();
-        Set<String> subscriptions = body.subscriptions();
+        String email = body.getEmail();
+        String name = body.getName();
+        Set<String> subscriptions = body.getSubscriptions();
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         for (String sub : subscriptions) {
             subs.add(getEnumParameter("Subscriptions", sub, ApiUserSubscriptionType.class));
