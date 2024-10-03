@@ -1,15 +1,9 @@
 package gov.nysenate.openleg.config;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
-import gov.nysenate.openleg.common.util.AsciiArt;
 import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
@@ -21,10 +15,7 @@ import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -40,7 +31,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -76,38 +66,6 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
             } else
                 logger.trace("JDBC driver {} as it does not belong to this webapp's ClassLoader", driver);
         }
-    }
-
-    /** --- Elasticsearch Configuration --- */
-
-    @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
-    @Value("${elastic.search.port:9200}") private int elasticSearchPort;
-    @Value("${elastic.search.connection_retries:5}") private int esAllowedRetries;
-
-    @Bean
-    public ElasticsearchClient elasticSearchNode() throws InterruptedException {
-
-        var restClient = RestClient.builder(new HttpHost(elasticSearchHost, elasticSearchPort, "http"))
-                .build();
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper(OutputUtils.elasticsearchJsonMapper));
-        var client = new ElasticsearchClient(transport);
-
-        for (int triesLeft = esAllowedRetries; triesLeft > 0;) {
-            logger.info("Connecting to Elasticsearch...");
-            try {
-                if (client.ping().value()) {
-                    logger.info("Successfully connected to Elasticsearch!");
-                    return client;
-                }
-            } catch (IOException | ElasticsearchException ignored) {}
-            logger.warn("Could not connect to Elasticsearch.");
-            logger.warn("{} retries remain.", --triesLeft);
-            Thread.sleep(1000);
-        }
-        logger.error("Elasticsearch at host: {}:{} needs to be running prior to deployment!",
-                elasticSearchHost, elasticSearchPort);
-        logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-        throw new ElasticsearchProcessException("Elasticsearch connection retries exceeded");
     }
 
     /** --- Guava Event Bus Configuration --- */
