@@ -21,11 +21,11 @@ import java.util.concurrent.BlockingQueue;
 public class ElasticApiLogSearchService extends IndexedSearchService<ApiResponse> implements ApiLogSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticApiLogSearchService.class);
 
-    private final SearchDao<Integer, ApiLogItemView, ApiResponse> apiLogSearchDao;
+    private final SearchDao<?, ApiLogItemView, ApiResponse> apiLogSearchDao;
     private final BlockingQueue<ApiResponse> indexQueue = new ArrayBlockingQueue<>(50000);
 
     @Autowired
-    public ElasticApiLogSearchService(SearchDao<Integer, ApiLogItemView, ApiResponse> apiLogSearchDao,
+    public ElasticApiLogSearchService(SearchDao<?, ApiLogItemView, ApiResponse> apiLogSearchDao,
                                       EventBus eventBus) {
         super(apiLogSearchDao);
         this.apiLogSearchDao = apiLogSearchDao;

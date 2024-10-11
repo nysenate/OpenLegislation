@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, NotificationView, RegisteredNotification> {
-    private SynchronizedLong nextId;
+    private AtomicLong nextId;
 
     @Autowired
     public ElasticNotificationSearchDao(EventBus eventBus) {
@@ -22,7 +23,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
 
     @PostConstruct
     private void init() {
-        this.nextId = new SynchronizedLong(getDocCount() + 1);
+        this.nextId = new AtomicLong(getDocCount() + 1);
     }
 
     public Optional<RegisteredNotification> getNotification(long notificationId) {
@@ -50,21 +51,6 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
     @Override
     protected NotificationView getDoc(RegisteredNotification data) {
         return new NotificationView(data);
-    }
-
-    /**
-     * A class to ensure two Notification IDs never conflict.
-     */
-    private static class SynchronizedLong {
-        private long num;
-
-        public SynchronizedLong(long num) {
-            this.num = num;
-        }
-
-        public synchronized long getAndIncrement() {
-            return num++;
-        }
     }
 
     private static RegisteredNotification viewToRegNotification(NotificationView view) {

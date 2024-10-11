@@ -10,10 +10,21 @@ import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Repository
-public class ElasticApiLogSearchDao extends ElasticBaseDao<Integer, ApiLogItemView, ApiResponse> {
+public class ElasticApiLogSearchDao extends ElasticBaseDao<Long, ApiLogItemView, ApiResponse> {
+    private AtomicLong nextId;
+
+    @PostConstruct
+    private void init() {
+        this.nextId = new AtomicLong(getDocCount() + 1);
+    }
+
     @Override
-    protected Integer getId(ApiResponse data) {
+    protected Long getId(ApiResponse data) {
+        data.getBaseRequest().setRequestId(nextId.getAndIncrement());
         return data.getBaseRequest().getRequestId();
     }
 

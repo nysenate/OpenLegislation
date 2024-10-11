@@ -8,8 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
-public class ApiRequest
-{
+public class ApiRequest {
     /** The time at which an ApiRequest is made */
     private LocalDateTime requestTime;
 
@@ -31,9 +30,8 @@ public class ApiRequest
     /** Reference to the ApiUser if applicable */
     private ApiUser apiUser;
 
-    // TODO: currently, the request ID is never generated
     /** A unique identifier used to specify each request made */
-    private int requestId;
+    private long requestId;
 
     /** --- Constructors --- */
 
@@ -86,7 +84,11 @@ public class ApiRequest
         this.apiUser = apiUser;
     }
 
-    public int getRequestId() {
+    public long getRequestId() {
         return requestId;
+    }
+
+    public void setRequestId(long id) {
+        this.requestId = id;
     }
 }

@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SenateVoteAttendanceView {
-
     private ListView<MemberView> remote;
+
+    public SenateVoteAttendanceView() {}
 
     public SenateVoteAttendanceView(SenateVoteAttendance attendance) {
         List<MemberView> remoteMembers = attendance.getRemoteMembers().stream()

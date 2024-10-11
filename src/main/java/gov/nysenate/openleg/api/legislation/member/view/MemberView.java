@@ -11,7 +11,11 @@ public class MemberView implements ViewObject {
     protected String fullName;
     protected String shortName;
     protected String imgName;
-    private SessionMember relatedSessionMember;
+    // TODO: bad separation of concerns to have this here
+    protected int sessionMemberId;
+    protected int sessionYear;
+    protected int districtCode;
+    protected boolean alternate;
 
     public MemberView(){}
 
@@ -25,7 +29,10 @@ public class MemberView implements ViewObject {
             this.shortName = sessionMember.getLbdcShortName();
             // This is actually associated with a person, not a member.
             this.imgName = member.getPerson().imgName();
-            this.relatedSessionMember = sessionMember;
+            this.sessionMemberId = sessionMember.getSessionMemberId();
+            this.sessionYear = sessionMember.getSessionYear().year();
+            this.districtCode = sessionMember.getDistrictCode();
+            this.alternate = sessionMember.isAlternate();
         }
     }
 
@@ -54,19 +61,19 @@ public class MemberView implements ViewObject {
     }
 
     public int getSessionMemberId() {
-        return relatedSessionMember.getSessionMemberId();
+        return sessionMemberId;
     }
 
     public int getSessionYear() {
-        return relatedSessionMember.getSessionYear().year();
+        return sessionYear;
     }
 
     public int getDistrictCode() {
-        return relatedSessionMember.getDistrictCode();
+        return districtCode;
     }
 
-    public boolean getAlternate() {
-        return relatedSessionMember.isAlternate();
+    public boolean isAlternate() {
+        return alternate;
     }
 
     @Override
