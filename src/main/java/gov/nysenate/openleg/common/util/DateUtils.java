@@ -20,6 +20,7 @@ public final class DateUtils {
             PUBLIC_WEBSITE_DUMP_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
             BASIC_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
     public static final Pattern BASIC_ISO_DATE_TIME_REGEX = Pattern.compile("\\d{8}T\\d{6}");
+    public static final int LEG_DATA_START_YEAR = 2009;
 
     /** --- Reference Dates --- */
 

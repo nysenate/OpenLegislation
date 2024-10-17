@@ -41,5 +41,5 @@ public interface SearchDao<IdType, ViewType, ContentType> {
 
     void updateIndex(Collection<ContentType> data);
 
-    void deleteFromIndex(IdType id);
+    void deleteFromIndex(String id);
 }

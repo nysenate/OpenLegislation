@@ -2,7 +2,6 @@ package gov.nysenate.openleg.legislation.bill.dao;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -200,39 +199,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public int getBillCount() throws DataAccessException {
-        return jdbc.queryForObject(SqlBillQuery.SELECT_COUNT_ALL_BILLS.getSql(schema()), (rs, row) -> rs.getInt("total"));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getBillCount(SessionYear sessionYear) throws DataAccessException {
-        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.year()));
-        return jdbcNamed.queryForObject(SqlBillQuery.SELECT_COUNT_ALL_BILLS_IN_SESSION.getSql(schema()), params,
-                (rs, row) -> rs.getInt("total"));
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getAlternateBillPdfUrl(BillId billId) {
         SqlParameterSource params = getBillIdParams(billId);
         return jdbcNamed.queryForObject(SqlBillQuery.SELECT_ALTERNATE_PDF_URL.getSql(schema()), params,
                 (rs, row) -> rs.getString("url_path"));
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public Range<SessionYear> activeSessionRange() {
-        if (getBillCount() == 0) {
-            throw new EmptyResultDataAccessException("No active session range since there are " +
-                    "no bills in the database!", 1);
-        }
-        return jdbc.queryForObject(SqlBillQuery.ACTIVE_SESSION_YEARS.getSql(schema()), (rs, row) ->
-                Range.closed(SessionYear.of(rs.getInt("min")), SessionYear.of(rs.getInt("max")))
-        );
-    }
-
-    /** --- Methods --- */
 
     /**
      * Get the base bill instance for the base bill id in the params.

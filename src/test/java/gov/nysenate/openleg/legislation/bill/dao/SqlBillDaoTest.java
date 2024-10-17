@@ -44,11 +44,6 @@ public class SqlBillDaoTest extends BaseTests
     }
 
     @Test
-    public void testCountAllBills() throws Exception {
-        logger.info("{}", billDao.getBillCount(SessionYear.current()));
-    }
-
-    @Test
     public void testFastBill() throws Exception {
         Bill bill = billDao.getBill(new BillId("S5922", 2013));
 

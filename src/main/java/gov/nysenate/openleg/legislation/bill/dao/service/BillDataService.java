@@ -67,15 +67,6 @@ public interface BillDataService
     List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
 
     /**
-     * Get the total number of bills for the given session year. This count includes
-     * all bills, including those that have been unpublished.
-     *
-     * @param sessionYear SessionYear
-     * @return int
-     */
-    int getBillCount(SessionYear sessionYear);
-
-    /**
      * Saves the Bill in the persistence layer. If a new Bill reference is
      * being saved, the appropriate data will be inserted. Otherwise, existing
      * data will be updated with the changed values.
@@ -86,14 +77,6 @@ public interface BillDataService
      *                                  to the event bus indicating to subscribers that the bill may have changed.
      */
     void saveBill(Bill bill, LegDataFragment fragment, boolean postUpdateEvent);
-
-    /**
-     * Returns a closed Range containing the session years for which bill data exists.
-     * If there are no bills in the database, an empty Optional will be returned instead.
-     *
-     * @return Optional<Range<SessionYear>>
-     */
-    Optional<Range<SessionYear>> activeSessionRange();
 
     /**
      * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of

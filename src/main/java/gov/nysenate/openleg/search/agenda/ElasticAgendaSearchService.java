@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.Tuple;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
@@ -45,7 +46,7 @@ public class ElasticAgendaSearchService extends IndexedSearchService<Tuple<Agend
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        for (int year = 2009; year <= LocalDate.now().getYear(); year++) {
+        for (int year = DateUtils.LEG_DATA_START_YEAR; year <= LocalDate.now().getYear(); year++) {
             List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
             List<Agenda> agendas = agendaIds.stream().map(agendaDataService::getAgenda).toList();
             agendaSearchDao.indexAgendas(agendas);

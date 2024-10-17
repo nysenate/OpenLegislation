@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.search.bill;
 
-import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.AsyncUtils;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 public class ElasticBillSearchService extends IndexedSearchService<Bill> implements BillSearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
     private static final int billReindexThreadCount = 4;
-    private static final int billReindexBatchSize = 100;
+    private static final int billReindexBatchSize = 400;
 
     private final ElasticBillSearchDao billSearchDao;
     private final BillDataService billDataService;
@@ -83,7 +84,7 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
             if (isBillIndexable(bill)) {
                 indexableBills.add(bill);
             } else {
-                billSearchDao.deleteFromIndex(bill.getBaseBillId());
+                billSearchDao.deleteFromIndex(billSearchDao.getId(bill));
             }
         }
         super.updateIndex(indexableBills);
@@ -92,26 +93,22 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        Optional<Range<SessionYear>> sessions = billDataService.activeSessionRange();
-        if (sessions.isEmpty()) {
-            logger.warn("Can't rebuild the bill search index because there are no bills.");
-            return;
-        }
         try {
             // Prep elasticsearch for heavy indexing.
             billSearchDao.reindexSetup();
-
             // Load all bill ids into a queue
-            final LinkedBlockingQueue<BaseBillId> billIdQueue = new LinkedBlockingQueue<>();
-            for (SessionYear session = sessions.get().lowerEndpoint();
-                 session.compareTo(sessions.get().upperEndpoint()) < 1;
-                 session = session.nextSessionYear()) {
-                billIdQueue.addAll(billDataService.getBillIds(session, LimitOffset.ALL));
+            final var billIdQueue = new LinkedBlockingQueue<BaseBillId>();
+            for (int year = DateUtils.LEG_DATA_START_YEAR; year <= LocalDate.now().getYear(); year += 2) {
+                billIdQueue.addAll(billDataService.getBillIds(new SessionYear(year), LimitOffset.ALL));
+            }
+            if (billIdQueue.isEmpty()) {
+                logger.warn("Can't rebuild the bill search index because there are no bills.");
+                return;
             }
 
             // Initialize and run several BillReindexWorkers to index bills from the queue
-            CompletableFuture<?>[] futures = new CompletableFuture[billReindexThreadCount];
-            AtomicBoolean interrupted = new AtomicBoolean(false);
+            var futures = new CompletableFuture[billReindexThreadCount];
+            var interrupted = new AtomicBoolean(false);
             for (int workerNo = 0; workerNo < billReindexThreadCount; workerNo++) {
                 futures[workerNo] = asyncUtils.run(new BillReindexWorker(billIdQueue, interrupted));
             }

@@ -161,32 +161,12 @@ public class CachedBillDataService extends CachingService<BaseBillId, Bill> impl
 
     /** {@inheritDoc} */
     @Override
-    public synchronized int getBillCount(SessionYear sessionYear) {
-        if (sessionYear == null) {
-            throw new IllegalArgumentException("SessionYear cannot be null");
-        }
-        return billDao.getBillCount(sessionYear);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public synchronized void saveBill(Bill bill, LegDataFragment fragment, boolean postUpdateEvent) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);
         if (postUpdateEvent) {
             eventBus.post(new BillUpdateEvent(bill));
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Optional<Range<SessionYear>> activeSessionRange() {
-        try {
-            return Optional.of(billDao.activeSessionRange());
-        }
-        catch (DataAccessException ex) {
-            return Optional.empty();
         }
     }
 
