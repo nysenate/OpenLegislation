@@ -31,8 +31,8 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao<CommitteeAgendaId, Ag
     }
 
     @Override
-    protected CommitteeAgendaId getId(Tuple<Agenda, CommitteeId> data) {
-        return new CommitteeAgendaId(data.v1().getId(), data.v2());
+    protected String getId(Tuple<Agenda, CommitteeId> data) {
+        return new CommitteeAgendaId(data.v1().getId(), data.v2()).toString();
     }
 
     @Override

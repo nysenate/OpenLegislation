@@ -23,9 +23,9 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao<Long, ApiLogItemView,
     }
 
     @Override
-    protected Long getId(ApiResponse data) {
+    protected String getId(ApiResponse data) {
         data.getBaseRequest().setRequestId(nextId.getAndIncrement());
-        return data.getBaseRequest().getRequestId();
+        return String.valueOf(data.getBaseRequest().getRequestId());
     }
 
     @Override

@@ -28,8 +28,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarId, Calenda
     }
 
     @Override
-    protected CalendarId getId(Calendar data) {
-        return data.getId();
+    protected String getId(Calendar data) {
+        return data.getId().toString();
     }
 
     @Override

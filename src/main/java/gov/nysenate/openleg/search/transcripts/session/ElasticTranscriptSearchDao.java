@@ -29,8 +29,8 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptId, Tra
     }
 
     @Override
-    protected TranscriptId getId(Transcript data) {
-        return data.getId();
+    protected String getId(Transcript data) {
+        return data.getId().toString();
     }
 
     @Override

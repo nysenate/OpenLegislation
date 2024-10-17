@@ -91,8 +91,8 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
     }
 
     @Override
-    protected BaseBillId getId(Bill data) {
-        return data.getBaseBillId();
+    protected String getId(Bill data) {
+        return data.getBaseBillId().toString();
     }
 
     @Override
@@ -132,6 +132,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
      */
     @Override
     protected IndexSettings.Builder getIndexSettings() {
-        return super.getIndexSettings().numberOfShards("6");
+        return super.getIndexSettings().numberOfShards("6")
+                .mapping(b1 -> b1.totalFields(b2 -> b2.limit(2000L)));
     }
 }

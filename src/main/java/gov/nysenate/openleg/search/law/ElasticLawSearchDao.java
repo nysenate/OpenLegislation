@@ -31,8 +31,8 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
     }
 
     @Override
-    protected LawDocId getId(LawDocument data) {
-        return new LawDocId(data);
+    protected String getId(LawDocument data) {
+        return new LawDocId(data).toString();
     }
 
     @Override

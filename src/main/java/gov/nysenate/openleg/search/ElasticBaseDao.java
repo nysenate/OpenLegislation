@@ -101,7 +101,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         return indexType().getName() + (envUtils.isTest() ? "_test" : "");
     }
 
-    protected abstract IdType getId(ContentType data);
+    protected abstract String getId(ContentType data);
 
     protected abstract DocType getDoc(ContentType data);
 
@@ -124,7 +124,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         try {
             searchClient.index(
                     IndexRequest.of(b -> b.index(indexName())
-                            .id(getId(data).toString()).document(getDoc(data))
+                            .id(getId(data)).document(getDoc(data))
                             .refresh(envUtils.isTest() ? Refresh.True : Refresh.False))
             );
         } catch (IOException ex) {
@@ -137,15 +137,16 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         safeBulkRequestExecute(
                 data.stream().map(content ->
                                 IndexOperation.of(b -> b.index(indexName())
-                                        .id(getId(content).toString()).document(getDoc(content))))
+                                        .id(getId(content)).document(getDoc(content))))
                         .map(indexOp -> new BulkOperation.Builder().index(indexOp).build()).toList()
         );
     }
 
     @Override
-    public void deleteFromIndex(IdType id) {
-        DeleteRequest deleteRequest = DeleteRequest.of(b -> b.index(indexName()).id(id.toString()));
+    public void deleteFromIndex(String id) {
+        DeleteRequest deleteRequest = DeleteRequest.of(b -> b.index(indexName()).id(id));
         try {
+            logger.info("Deleting {} from {}", id, indexName());
             searchClient.delete(deleteRequest);
         }
         catch (IOException ex) {
@@ -198,8 +199,8 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      * returns an optional that is empty if a document does not exist for the given request parameters
      * @param id String - the id of the desired document
      */
-    protected Optional<DocType> getRequest(IdType id) {
-        var getRequest = GetRequest.of(b -> b.index(indexName()).id(id.toString()));
+    protected Optional<DocType> getRequest(String id) {
+        var getRequest = GetRequest.of(b -> b.index(indexName()).id(id));
         try {
             GetResponse<DocType> getResponse = searchClient.get(getRequest, getDocTypeClass());
             if (getResponse.found()) {

@@ -19,8 +19,8 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao<CommitteeVersionId
     }
 
     @Override
-    protected CommitteeVersionId getId(Committee data) {
-        return data.getVersionId();
+    protected String getId(Committee data) {
+        return data.getVersionId().toString();
     }
 
     @Override

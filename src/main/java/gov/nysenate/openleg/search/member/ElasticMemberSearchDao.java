@@ -15,8 +15,8 @@ public class ElasticMemberSearchDao extends ElasticBaseDao<Integer, FullMemberVi
     }
 
     @Override
-    protected Integer getId(FullMember data) {
-        return data.getMemberId();
+    protected String getId(FullMember data) {
+        return String.valueOf(data.getMemberId());
     }
 
     @Override

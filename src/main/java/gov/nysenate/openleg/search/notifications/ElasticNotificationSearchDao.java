@@ -27,7 +27,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
     }
 
     public Optional<RegisteredNotification> getNotification(long notificationId) {
-        Optional<NotificationView> view = getRequest(notificationId);
+        Optional<NotificationView> view = getRequest(String.valueOf(notificationId));
         return view.map(ElasticNotificationSearchDao::viewToRegNotification);
     }
 
@@ -44,8 +44,8 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
     }
 
     @Override
-    protected Long getId(RegisteredNotification data) {
-        return data.getId();
+    protected String getId(RegisteredNotification data) {
+        return String.valueOf(data.getId());
     }
 
     @Override

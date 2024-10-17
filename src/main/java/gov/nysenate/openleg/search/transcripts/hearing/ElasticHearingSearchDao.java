@@ -21,8 +21,8 @@ public class ElasticHearingSearchDao extends ElasticBaseDao<HearingId, HearingVi
     }
 
     @Override
-    protected HearingId getId(Hearing data) {
-        return data.getId();
+    protected String getId(Hearing data) {
+        return data.getId().toString();
     }
 
     @Override
