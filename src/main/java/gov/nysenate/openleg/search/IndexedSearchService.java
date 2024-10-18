@@ -77,7 +77,7 @@ public abstract class IndexedSearchService<T> {
         if (content.size() == 1) {
             updateIndex(content.iterator().next());
         }
-        if (env.isElasticIndexing() && !content.isEmpty()) {
+        else if (env.isElasticIndexing() && !content.isEmpty()) {
             if (searchDao.indexType() != SearchIndex.API_LOG) {
                 logger.info("Adding {} documents into {} index", content.size(), searchDao.indexType());
             }

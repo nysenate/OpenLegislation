@@ -133,6 +133,6 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
     @Override
     protected IndexSettings.Builder getIndexSettings() {
         return super.getIndexSettings().numberOfShards("6")
-                .mapping(b1 -> b1.totalFields(b2 -> b2.limit(2000L)));
+                .mapping(b1 -> b1.totalFields(b2 -> b2.limit(1500L)));
     }
 }

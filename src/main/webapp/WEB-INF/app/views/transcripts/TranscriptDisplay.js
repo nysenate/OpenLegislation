@@ -77,9 +77,10 @@ function HearingHeading({ hearing }) {
       <div>
         <h3 className="h5 my-3">{hearing.title}</h3>
         <div className="my-3">
-          <span className="h5">Date: </span>
-          {formatDateTime(hearing.date, DateTime.DATE_FULL)},
-          &nbsp;{formatDateTime(hearing.startTime, DateTime.TIME_SIMPLE)}
+          <span className="h5">Date & Time: </span>
+          {formatDateTime(hearing.date, DateTime.DATE_FULL)}
+          {hearing.startTime ? ", " + formatDateTime(hearing.startTime, DateTime.TIME_SIMPLE) : ""}
+          {hearing.endTime ? " - " + formatDateTime(hearing.endTime, DateTime.TIME_SIMPLE) : ""}
         </div>
         <div className="my-3 flex">
           <span className="h5 mr-1">Address:</span> <span className="whitespace-pre-wrap">{hearing.address} </span>
