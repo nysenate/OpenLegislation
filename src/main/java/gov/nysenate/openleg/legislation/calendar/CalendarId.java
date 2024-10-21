@@ -5,7 +5,6 @@ import com.google.common.collect.ComparisonChain;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * CalendarId is a simple wrapper used to uniquely identify a Calendar instance.
@@ -20,8 +19,6 @@ public class CalendarId implements Serializable, Comparable<CalendarId> {
     /** The year in which this calendar belongs to.
      *  Does not have to be the session year. */
     protected int year;
-
-    public static final Pattern calendarIdPattern = Pattern.compile("(\\d{4})#(\\d+)");
 
     /** --- Constructors --- */
 

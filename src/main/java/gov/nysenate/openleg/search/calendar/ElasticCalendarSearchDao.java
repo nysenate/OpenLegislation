@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.search.calendar;
 
+import co.elastic.clients.elasticsearch._types.mapping.FlattenedProperty;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
@@ -51,5 +54,13 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarId, Calenda
     @Override
     protected IndexSettings.Builder getIndexSettings() {
         return super.getIndexSettings().numberOfShards("2");
+    }
+
+    @Override
+    protected ImmutableMap<String, Property> getCustomMappingProperties() {
+        return ImmutableMap.of(
+                "supplementalCalendars", FlattenedProperty.of(b -> b)._toProperty(),
+                "activeLists", FlattenedProperty.of(b -> b)._toProperty()
+        );
     }
 }

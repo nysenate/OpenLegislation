@@ -16,9 +16,11 @@ import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ElasticCalendarSearchService extends IndexedSearchService<Calendar> implements CalendarSearchService {
+    private static final Pattern calendarIdPattern = Pattern.compile("(\\d{4})#(\\d+)");
     private final SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao;
     private final CalendarDataService calendarDataService;
 
@@ -65,7 +67,7 @@ public class ElasticCalendarSearchService extends IndexedSearchService<Calendar>
 
     private static String smartSearch(String queryStr) {
         if (queryStr != null && !queryStr.contains(":")) {
-            Matcher matcher = CalendarId.calendarIdPattern.matcher(queryStr.replace("\\s+", ""));
+            Matcher matcher = calendarIdPattern.matcher(queryStr.replace("\\s+", ""));
             if (matcher.matches()) {
                 queryStr = String.format("year:%s AND calendarNumber:%s", matcher.group(1), matcher.group(2));
             }
