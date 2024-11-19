@@ -20,7 +20,7 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
         if (transcript == null)
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
         var pages = new TranscriptPdfParser(transcript.getText()).getPages();
-        this.stenographer = Stenographer.getStenographer(transcript.getDateTime());
+        this.stenographer = Stenographer.getStenographer(transcript.getDateTime().toLocalDate());
         this.stenographerCenter = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
         writeTranscriptPages(pages);
     }

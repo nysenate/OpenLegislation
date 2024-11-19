@@ -6,41 +6,44 @@ import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 
-public interface TranscriptSearchService
-{
+public interface TranscriptSearchService {
     /**
      * Provides a listing of all transcripts.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff,
+                                                          boolean sessionOnly) throws SearchException {
+        return searchTranscripts(null, sort, limOff, sessionOnly);
+    }
 
     /**
      * Provides a listing of transcripts which took place in a given year.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff,
+                                                          boolean sessionOnly) throws SearchException {
+        return searchTranscripts(null, year, sort, limOff, sessionOnly);
+    }
 
     /**
      * Performs a search across all transcripts.
-     * @see #searchTranscripts(String, int, String, LimitOffset)
      */
-    SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<TranscriptId> searchTranscripts(String queryStr, String sort, LimitOffset limOff,
+                                                          boolean sessionOnly) throws SearchException {
+        return searchTranscripts(queryStr, null, sort, limOff, sessionOnly);
+    }
 
     /**
      * Performs a search across all transcripts in a given year.
      *
-     * @param query Search query.
+     * @param queryStr Search query.
      * @param year Filter by year.
      * @param sort Sort by field(s)
      * @param limOff Restrict the result set.
-     * @return
-     * @throws SearchException
      */
-    SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<TranscriptId> searchTranscripts(String queryStr, Integer year, String sort, LimitOffset limOff,
+                                                  boolean sessionOnly) throws SearchException;
 
     /**
      * Handles a transcript update event by indexing the supplied transcript.
-     * @param transcriptUpdateEvent
      */
     void handleTranscriptUpdate(TranscriptUpdateEvent transcriptUpdateEvent);
 }

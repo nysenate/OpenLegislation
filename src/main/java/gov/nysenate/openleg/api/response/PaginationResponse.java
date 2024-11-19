@@ -17,7 +17,7 @@ public abstract class PaginationResponse extends BaseResponse
     }
 
     public PaginationResponse(int total, LimitOffset limitOffset) {
-        this(total, limitOffset.getOffsetStart(), Math.min(limitOffset.getOffsetEnd(), total), limitOffset.getLimit());
+        this(total, limitOffset.offsetStart(), Math.min(limitOffset.getOffsetEnd(), total), limitOffset.limit());
     }
 
     public int getTotal() {

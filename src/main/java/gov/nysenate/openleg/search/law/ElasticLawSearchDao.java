@@ -1,89 +1,57 @@
 package gov.nysenate.openleg.search.law;
 
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.bulk.DeleteOperation;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import gov.nysenate.openleg.api.legislation.law.view.LawDocView;
-import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.search.SearchResults;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescorerBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-/** {@inheritDoc} */
 @Repository
-public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
-{
-    private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchDao.class);
-
-    protected static String lawIndexName = SearchIndex.LAW.getName();
-
-    protected static List<HighlightBuilder.Field> highlightFields =
-        Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(5),
-                      new HighlightBuilder.Field("title").numOfFragments(0));
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
-                                                 RescorerBuilder<?> rescorer, List<SortBuilder<?>> sort, LimitOffset limOff) {
-        return search(lawIndexName, query, postFilter,
-                highlightFields, rescorer,
-                sort, limOff,
-                true, this::getLawDocIdFromHit);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateLawIndex(LawDocument lawDoc) {
-        if (lawDoc != null) {
-            updateLawIndex(Collections.singletonList(lawDoc));
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateLawIndex(Collection<LawDocument> lawDocs) {
-        if (lawDocs != null && !lawDocs.isEmpty()) {
-            BulkRequest bulkRequest = new BulkRequest();
-            for (LawDocument doc : lawDocs) {
-                String searchId = createSearchId(doc);
-                LawDocView lawDocView = new LawDocView(doc);
-                IndexRequest indexRequest = getJsonIndexRequest(lawIndexName, searchId, lawDocView);
-                bulkRequest.add(indexRequest);
-            }
-            safeBulkRequestExecute(bulkRequest);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
+public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, LawDocument> {
     public void deleteLawDocsFromIndex(Collection<LawDocId> lawDocIds) {
-        BulkRequest bulkRequest = new BulkRequest();
-        lawDocIds.stream()
-                .map(docId -> getDeleteRequest(lawIndexName, createSearchId(docId)))
-                .forEach(bulkRequest::add);
-        safeBulkRequestExecute(bulkRequest);
+        safeBulkRequestExecute(
+                lawDocIds.stream()
+                        .map(docId -> DeleteOperation.of(b -> b.index(indexName()).id(docId.toString())))
+                        .map(delOp -> BulkOperation.of(b -> b.delete(delOp))).toList()
+        );
     }
 
     /** {@inheritDoc} */
     @Override
-    protected SearchIndex getIndex() {
+    public SearchIndex indexType() {
         return SearchIndex.LAW;
+    }
+
+    @Override
+    protected String getId(LawDocument data) {
+        return new LawDocId(data).toString();
+    }
+
+    @Override
+    protected LawDocView getDoc(LawDocument data) {
+        return new LawDocView(data);
+    }
+
+    @Override
+    protected LawDocId toId(String idStr) {
+        String[] parts = idStr.split(":");
+        return new LawDocId(parts[0], LocalDate.parse(parts[1]));
+    }
+
+    @Override
+    protected Map<String, HighlightField> highlightedFields() {
+        return Map.of(
+                "text", HighlightField.of(b -> b.numberOfFragments(5)),
+                "title", HighlightField.of(b -> b.numberOfFragments(0))
+        );
     }
 
     /**
@@ -92,21 +60,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
      * @return Settings.Builder
      */
     @Override
-    protected Settings.Builder getIndexSettings() {
-        Settings.Builder indexSettings = super.getIndexSettings();
-        indexSettings.put("index.number_of_shards", 2);
-        return indexSettings;
+    protected IndexSettings.Builder getIndexSettings() {
+        return super.getIndexSettings().numberOfShards("2");
     }
-
-    /* --- Internal --- */
-
-    private LawDocId getLawDocIdFromHit(SearchHit hit) {
-        String docId = hit.getId();
-        return new LawDocId(docId, LocalDate.parse((String) hit.getSourceAsMap().get("activeDate")));
-    }
-
-    private String createSearchId(LawDocId lawDocId) {
-        return lawDocId.getDocumentId();
-    }
-
 }

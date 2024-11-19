@@ -62,9 +62,6 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     SELECT_CALENDAR_SUPS(
         SELECT_CALENDAR_SUPS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
     ),
-    SELECT_CALENDAR_SUP(
-        SELECT_CALENDAR_SUPS.sql + " AND sup_version = :supVersion"
-    ),
     SELECT_CALENDAR_SUP_ID(
         "SELECT id FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
         "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion"

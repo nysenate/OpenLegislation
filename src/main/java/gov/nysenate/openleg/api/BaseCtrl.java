@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api;
 
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
@@ -13,9 +14,9 @@ import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.notifications.model.Notification;
+import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
-import gov.nysenate.openleg.search.UnexpectedSearchException;
 import gov.nysenate.openleg.updates.UpdateType;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -73,20 +74,9 @@ public abstract class BaseCtrl {
     protected static SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         String sortOrderParam = Optional.ofNullable(webRequest.getParameter("order"))
                 .orElse(webRequest.getParameter("sortOrder"));
-        return getSortOrder(sortOrderParam, defaultSortOrder);
-    }
-
-    /**
-     * Returns a sort order extracted from a given string.
-     * Returns the default sort order if sortOrder is null.
-     *
-     * @param sortOrder A string representing the sort order
-     * @param defaultSortOrder Default sort order
-     */
-    protected static SortOrder getSortOrder(String sortOrder, SortOrder defaultSortOrder) {
-        if (sortOrder != null) {
+        if (sortOrderParam != null) {
             try {
-                return SortOrder.valueOf(sortOrder.toUpperCase());
+                return SortOrder.valueOf(sortOrderParam.toUpperCase());
             } catch (IllegalArgumentException ignored) {}
         }
         return defaultSortOrder;
@@ -101,11 +91,11 @@ public abstract class BaseCtrl {
      *                     and is disallowed for everyone except the senate site.
      * @return LimitOffset
      */
-    protected LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
+    protected static LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
         String limitParam = webRequest.getParameter("limit");
         String offsetParam = webRequest.getParameter("offset");
         int limit = parseLimit(limitParam, defaultLimit);
-        int offset = parseOffset(offsetParam, 0);
+        int offset = NumberUtils.toInt(offsetParam, 0);
 
         if (limit > MAX_LIMIT || limit < MIN_LIMIT) {
             // No one can specify a limit greater than 1,000 or less than 0.
@@ -118,26 +108,6 @@ public abstract class BaseCtrl {
             }
         }
         return new LimitOffset(limit, offset);
-    }
-
-    private int parseLimit(String limitParam, int defaultLimit) {
-        int limit = defaultLimit;
-        if (limitParam != null) {
-            if (limitParam.equalsIgnoreCase("all")) {
-                limit = 0;
-            } else {
-                limit = NumberUtils.toInt(limitParam, defaultLimit);
-            }
-        }
-        return limit;
-    }
-
-    private int parseOffset(String offsetParam, int defaultOffset) {
-        int offset = defaultOffset;
-        if (offsetParam != null) {
-            offset = NumberUtils.toInt(offsetParam, defaultOffset);
-        }
-        return offset;
     }
 
     /**
@@ -294,43 +264,14 @@ public abstract class BaseCtrl {
         return formatSet;
     }
 
-    /**
-     * Constructs a Range from the given parameters.  Throws an exception if the parameter values are invalid
-     * @param lower T
-     * @param upper T
-     * @param fromName String
-     * @param upperName String
-     * @param lowerType BoundType
-     * @param upperType BoundType
-     * @param <T> T
-     * @return Range<T>
-     */
-    protected static <T extends Comparable<?>> Range<T> getRange(T lower, T upper, String fromName, String upperName,
-                                                                    BoundType lowerType, BoundType upperType) {
+    protected static <T extends Comparable<?>> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String toName) {
         try {
-            return Range.range(lower, lowerType, upper, upperType);
+            return Range.range(lower, BoundType.CLOSED, upper, BoundType.OPEN);
         } catch (IllegalArgumentException ex) {
-            String rangeString = (lowerType == BoundType.OPEN ? "(" : "[") + lower + " - " +
-                    upper + (upperType == BoundType.OPEN ? ")" : "]");
-            throw new InvalidRequestParamEx(rangeString, fromName + ", " + upperName, "range",
-                                            "Range start must not exceed range end");
+            String rangeString = "[" + lower + " - " + upper + ")";
+            throw new InvalidRequestParamEx(rangeString, fromName + ", " + toName, "range",
+                    "Range start must not exceed range end");
         }
-    }
-
-    protected static <T extends Comparable<?>> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
-        return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.OPEN);
-    }
-
-    protected static <T extends Comparable<?>> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
-        return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.CLOSED);
-    }
-
-    protected static <T extends Comparable<?>> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
-        return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.OPEN);
-    }
-
-    protected static <T extends Comparable<?>> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
-        return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.CLOSED);
     }
 
     /**
@@ -395,35 +336,18 @@ public abstract class BaseCtrl {
     protected static <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
                                                             Function<T, String> valueFunction,
                                                             String paramName, String paramValue) {
-        T result = getEnumParameterByValue(mapFunction, paramValue, null);
+        T result = mapFunction.apply(paramValue);
         if (result != null) {
             return result;
         }
         throw getEnumParamEx(enumType, valueFunction, paramName, paramValue);
     }
-    /**
-     * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
-     * returns a default value if the map function returns null
-     */
-    protected static <T extends Enum<T>> T getEnumParameterByValue(Function<String, T> mapFunction,
-                                                            String paramValue, T defaultValue) {
-        T result = mapFunction.apply(paramValue);
-        return result != null ? result : defaultValue;
-    }
 
-    /**
-     * Checks that the given parameter names are present in the provided web request
-     * @param request WebRequest
-     * @param paramNamesAndTypes Map<String, String> - A map of parameter names to their type
-     * @throws MissingServletRequestParameterException if a parameter is not present in the web request
-     */
-    protected static void requireParameters(WebRequest request, Map<String, String> paramNamesAndTypes)
-            throws MissingServletRequestParameterException {
-        for (String paramName : paramNamesAndTypes.keySet()) {
-            if (request.getParameter(paramName) == null) {
-                throw new MissingServletRequestParameterException(paramName, paramNamesAndTypes.get(paramName));
-            }
+    private static int parseLimit(String limitParam, int defaultLimit) {
+        if ("all".equalsIgnoreCase(limitParam)) {
+            return 0;
         }
+        return NumberUtils.toInt(limitParam, defaultLimit);
     }
 
     /** --- Generic Exception Handlers --- */
@@ -468,14 +392,6 @@ public abstract class BaseCtrl {
         // Do not send any data back with the response, because that may produce another media type exception.
     }
 
-    @ExceptionHandler(UnexpectedSearchException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ViewObjectErrorResponse unexpectedSearchExceptionHandler(UnexpectedSearchException ex) {
-        logger.error("Caught unexpected search exception!", ex);
-//        pushExceptionNotification(ex);
-        return searchExceptionHandler(ex);
-    }
-
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
@@ -487,6 +403,13 @@ public abstract class BaseCtrl {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse invalidSearchParamExceptionHandler(InvalidSearchParamException ex) {
         logger.debug("Invalid Search Param Exception: ", ex);
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler({ElasticsearchException.class, ElasticsearchProcessException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleElasticsearchException(Exception ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 
@@ -507,7 +430,9 @@ public abstract class BaseCtrl {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
-        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,  new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf", "", Objects.toString(ex)));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
+                new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf",
+                        "", Objects.toString(ex)));
     }
 
     private void pushExceptionNotification(Exception ex) {
@@ -516,7 +441,6 @@ public abstract class BaseCtrl {
         String message = "The following exception was thrown while handling a request at " + occurred + ":\n\n"
                 + ExceptionUtils.getStackTrace(ex);
         Notification notification = new Notification(REQUEST_EXCEPTION, occurred, summary, message);
-
         eventBus.post(notification);
     }
 }

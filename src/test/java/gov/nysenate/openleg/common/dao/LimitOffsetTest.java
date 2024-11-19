@@ -11,10 +11,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
-public class LimitOffsetTest
-{
+public class LimitOffsetTest {
     @Test
-    public void testHasLimit() throws Exception {
+    public void testHasLimit() {
         LimitOffset lo = new LimitOffset(0, 0);
         assertFalse(lo.hasLimit());
 
@@ -29,7 +28,7 @@ public class LimitOffsetTest
     }
 
     @Test
-    public void testHasOffset() throws Exception {
+    public void testHasOffset() {
         LimitOffset lo = new LimitOffset(0, 0);
         assertFalse(lo.hasOffset());
 
@@ -47,35 +46,21 @@ public class LimitOffsetTest
     }
 
     @Test
-    public void testGetOffsetEnd() throws Exception {
-
-    }
-
-    @Test
-    public void testLimitList() throws Exception {
+    public void testLimitList() {
         List<Integer> list = ImmutableList.of(1,2,3,4,5,6,7,8,9,10);
         assertEquals(list.subList(0,list.size()), LimitOffset.limitList(list, LimitOffset.ALL));
         assertEquals(list.subList(0,2), LimitOffset.limitList(list, new LimitOffset(2)));
         assertEquals(list.subList(0,2), LimitOffset.limitList(list, new LimitOffset(2, 1)));
         assertEquals(list.subList(2,7), LimitOffset.limitList(list, new LimitOffset(5, 3)));
         assertEquals(list.subList(2,10), LimitOffset.limitList(list, new LimitOffset(50, 3)));
+        assertEquals(list, LimitOffset.limitList(list, null));
     }
 
     @Test
-    public void testNext() throws Exception {
+    public void testNext() {
         assertEquals(new LimitOffset(20, 21), new LimitOffset(20).next());
         assertEquals(new LimitOffset(0, Integer.MAX_VALUE), new LimitOffset(0, 10).next());
         assertEquals(new LimitOffset(0, Integer.MAX_VALUE), LimitOffset.ALL.next());
-
-    }
-
-    @Test
-    public void testGetSize() throws Exception {
-
-    }
-
-    @Test
-    public void testGetOffsetStart() throws Exception {
 
     }
 }

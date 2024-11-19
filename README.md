@@ -12,9 +12,9 @@ Updates to legislative data are distributed by the Legislative Bill drafting Com
 * Java 17
 * Spring 5 Framework
 * PostgreSQL
-* Elasticsearch 7
+* Elasticsearch 8
 * React
-* Tomcat 8.5
+* Tomcat 9
 
 ![Bill page demo](https://raw.githubusercontent.com/nysenate/OpenLegislation/dev/src/main/webapp/static/img/bill-page.png)
 

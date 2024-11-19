@@ -2,8 +2,7 @@ package gov.nysenate.openleg.legislation.law;
 
 import gov.nysenate.openleg.processors.law.LawBlock;
 
-public class LawDocument extends LawDocInfo
-{
+public class LawDocument extends LawDocInfo {
     protected String text;
 
     /** --- Constructors --- */
@@ -12,6 +11,7 @@ public class LawDocument extends LawDocInfo
 
     public LawDocument(LawDocInfo info, String text) {
         super(info);
+        // TODO: probably can be fixed with better encoding
         this.text = text.replace("├Á", "§");
     }
 
@@ -24,12 +24,6 @@ public class LawDocument extends LawDocInfo
     public LawDocument(LawBlock lawBlock) {
         super(lawBlock);
         this.setText(lawBlock.getText().toString());
-    }
-
-    /** --- Overrides --- */
-
-    public String toDocString() {
-        return super.toString() + "\n" + getText();
     }
 
     /** --- Basic Getters/Setters --- */

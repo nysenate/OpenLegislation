@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processors.config;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.sobi.SobiBlock;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ProcessConfig {
 
     /** The time when we first started receiving sobi files */
-    private static final LocalDateTime sobisStart = Year.of(2009).atDay(1).atStartOfDay();
+    private static final LocalDateTime sobisStart = Year.of(DateUtils.LEG_DATA_START_YEAR).atDay(1).atStartOfDay();
 
     /** A time just before we first started receiving xml data dumps */
     private static final LocalDateTime xmlDumpStart = LocalDateTime.parse("2017-08-30T12:02:00");

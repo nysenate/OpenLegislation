@@ -139,7 +139,7 @@ public class LawGetCtrl extends BaseCtrl {
         LocalDate parsedEndDate = Optional.ofNullable(toDateTime)
                 .map(date -> parseISODate(date, "toDateTime"))
                 .orElse(LocalDate.now());
-        Range<LocalDate> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
+        Range<LocalDate> dateRange = getClosedOpenRange(parsedStartDate, parsedEndDate,
                 "fromDateTime", "toDateTime");
         List<RepealedLawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
         return repealedLawDocs.stream()

@@ -45,7 +45,7 @@ public class ManagedLawProcessService implements LawProcessService
     public int collateLawFiles() {
         int numCollated = 0;
         try {
-            List<LawFile> lawFiles = lawFileDao.getIncomingLawFiles(SortOrder.ASC, LimitOffset.ALL);
+            List<LawFile> lawFiles = lawFileDao.getIncomingLawFiles();
             for (LawFile lf : lawFiles) {
                 lf.setPendingProcessing(true);
                 lawFileDao.archiveAndUpdateLawFile(lf);
@@ -68,6 +68,7 @@ public class ManagedLawProcessService implements LawProcessService
     /** {@inheritDoc} */
     @Override
     public void processLawFiles(List<LawFile> lawFiles) {
+        lawFiles = lawFiles.stream().sorted().toList();
         for (LawFile lawFile : lawFiles) {
             if (!env.isProcessingEnabled()) break;
             // Process the law file

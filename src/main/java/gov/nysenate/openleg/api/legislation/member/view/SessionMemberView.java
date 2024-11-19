@@ -6,8 +6,7 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
-public class SessionMemberView implements ViewObject
-{
+public class SessionMemberView implements ViewObject {
     protected int sessionMemberId;
     private Member member;
     protected String shortName;
@@ -15,7 +14,7 @@ public class SessionMemberView implements ViewObject
     protected Integer districtCode;
     protected boolean alternate;
 
-    protected SessionMemberView(){}
+    protected SessionMemberView() {}
 
     public SessionMemberView(SessionMember sessionMember) {
         if (sessionMember != null) {

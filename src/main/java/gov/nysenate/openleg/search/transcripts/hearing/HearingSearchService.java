@@ -10,27 +10,30 @@ public interface HearingSearchService {
     /**
      * Performs a search of hearing id's by year. A null year returns all hearings.
      */
-    SearchResults<HearingId> searchHearings(Integer year, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<HearingId> searchHearings(Integer year, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchHearings(null, year, sort, limOff);
+    }
 
     /**
      * Performs a search across all hearings.
      */
-    SearchResults<HearingId> searchHearings(String query, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<HearingId> searchHearings(String queryStr, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchHearings(queryStr, null, sort, limOff);
+    }
 
     /**
      * Performs a search across all hearings in a given year.
-     * @param query Search query.
+     * @param queryStr Search query.
      * @param year Filter by year.
      * @param sort Sort by field(s).
      * @param limOff Restrict the result set.
-     * @return
-     * @throws SearchException
      */
-    SearchResults<HearingId> searchHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException;
+    SearchResults<HearingId> searchHearings(String queryStr, Integer year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
-     * Hanldes a hearing update event by indexing the supplied hearing.
-     * @param hearingUpdateEvent
+     * Handles a hearing update event by indexing the supplied hearing.
      */
     void handleHearingUpdate(HearingUpdateEvent hearingUpdateEvent);
 }

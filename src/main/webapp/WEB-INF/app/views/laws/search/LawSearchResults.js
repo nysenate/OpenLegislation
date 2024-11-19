@@ -2,7 +2,6 @@ import React from 'react'
 import Pagination from "app/shared/Pagination";
 import { Link } from "react-router-dom";
 import HighlightedText from "app/shared/HighlightedText";
-import lawSearchApi from "app/apis/lawSearchApi";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 
 export default function LawSearchResults({ response, pageParams, onPageChange, isLoading }) {

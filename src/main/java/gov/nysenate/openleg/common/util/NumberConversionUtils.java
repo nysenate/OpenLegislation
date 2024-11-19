@@ -47,10 +47,10 @@ public final class NumberConversionUtils {
     public static int numeralToInt(String numeral) {
         if (numeral.isEmpty())
             return 0;
-        int numeralLength = (numeral.length() != 1 && mapping.inverse().containsKey(numeral.
-                substring(0, 2))) ? 2 : 1;
-        return mapping.inverse().get(numeral.substring(0, numeralLength)) + numeralToInt(numeral.
-                substring(numeralLength));
+        int numeralLength = (numeral.length() != 1 &&
+                mapping.inverse().containsKey(numeral.substring(0, 2))) ? 2 : 1;
+        return mapping.inverse().get(numeral.substring(0, numeralLength)) +
+                numeralToInt(numeral.substring(numeralLength));
     }
 
     /**

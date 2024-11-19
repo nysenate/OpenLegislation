@@ -140,7 +140,7 @@ public class AgendaGetCtrl extends BaseCtrl {
         }
         List<AgendaMeetingDetailView> limitedListView = LimitOffset.limitList(new ArrayList<>(sortedViewSet), limOff);
         return DateRangeListViewResponse.of(limitedListView,
-                getClosedRange(fromDateTime, toDateTime, "from", "to"),
+                getClosedOpenRange(fromDateTime, toDateTime, "from", "to"),
                 sortedViewSet.size(), limOff);
     }
 

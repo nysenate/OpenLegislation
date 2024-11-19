@@ -7,31 +7,25 @@ import gov.nysenate.openleg.legislation.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 
-public interface AgendaSearchService
-{
+public interface AgendaSearchService {
     /**
      * Performs a search across all committee agendas.
-     * @see #searchCommitteeAgendas(String, int, String, LimitOffset)
      */
-    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException;
-
-    /**
-     * Retrieve all committee agendas for a given year, with sorting.
-     * @see #searchCommitteeAgendas(String, int, String, LimitOffset)
-     */
-    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException;
+    default SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String queryStr, String sort, LimitOffset limOff)
+            throws SearchException {
+        return searchCommitteeAgendas(queryStr, null, sort, limOff);
+    }
 
     /**
      * Search for committee agendas during a given year.
      *
-     * @param query String - Lucene Query string
+     * @param queryStr String - Lucene Query string
      * @param year int - Filter retrieved committee agendas by year
      * @param sort String - Lucene sort string
      * @param limOff LimitOffset - Limit the result set.
      * @return SearchResults<CommitteeAgendaId>
-     * @throws SearchException
      */
-    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, int year, String sort, LimitOffset limOff)
+    SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String queryStr, Integer year, String sort, LimitOffset limOff)
         throws SearchException;
 
     /**

@@ -8,9 +8,10 @@ Get a single Transcript
 
 **Usage**
 
-Retrieve transcript by dateTime
+Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime
 ::
     (GET) /api/3/transcripts/{dateTime}
+    (GET) /api/3/transcripts/{dateTime}/{sessionType}
 
 **Examples**
 
@@ -36,14 +37,37 @@ Full Transcript Response
         }
     }
 
+Request the extraordinary session 3 transcript on 2010-12-31T10:00
+::
+    /api/3/transcripts/2010-12-31T10:00/EXTRAORDINARY SESSION III
+
+**Response**
+
+Full Transcript Response
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "Data for transcript 2010-12-31T10:00",
+      "responseType" : "transcript",
+      "result" : {
+        "dateTime" : "2010-12-31T10:00",
+        "sessionType" : "EXTRAORDINARY SESSION III",
+        "location" : "ALBANY, NEW YORK",
+        "text" : "..."
+      }
+    }
+
 Get a transcript pdf
 --------------------
 
 **Usage**
 
-Retrieve transcript pdf by dateTime
+Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime
 ::
     (GET) /api/3/transcripts/{dateTime}.pdf
+    (GET) /api/3/transcripts/{dateTime}/{sessionType}.pdf
 
 **Examples**
 

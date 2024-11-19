@@ -11,8 +11,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
@@ -38,14 +36,8 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     /** {@inheritDoc} */
     @Override
-    public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException {
-        List<File> files = new ArrayList<>(safeListFiles(this.incomingLawDir, false, null));
-        List<LawFile> lawFiles = files.stream().map(LawFile::new).toList();
-
-        // Use the comparator defined in LawFile to do the sorting
-        sortLaws(sortByDate, lawFiles);
-        lawFiles = LimitOffset.limitList(lawFiles, limitOffset);
-        return lawFiles;
+    public List<LawFile> getIncomingLawFiles() throws IOException {
+        return safeListFiles(this.incomingLawDir).stream().map(LawFile::new).toList();
     }
 
     @Override
@@ -82,19 +74,6 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     }
 
     /** --- Internal Methods --- */
-
-    /**
-     * Use the comparator defined in LawFile to do the sorting, using the reverse comparator
-     * if indicated by the sortByDate param.
-     */
-    private void sortLaws(SortOrder sortByDate, List<LawFile> lawFiles) {
-        if (sortByDate.equals(SortOrder.ASC)) {
-            Collections.sort(new ArrayList<>(lawFiles));
-        }
-        else {
-            lawFiles.sort(Collections.reverseOrder());
-        }
-    }
 
     /**
      * Get file handle from the incoming law directory.

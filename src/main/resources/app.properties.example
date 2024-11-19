@@ -85,15 +85,10 @@ elastic.search.host = localhost
 
 elastic.search.port = 9200
 
-# If the elastic search cluster has a name, it must be specified here.
-# (Default: elasticsearch)
-
-elastic.search.cluster.name = openleg
-
 # Allow a number of retries when the elasticsearch connection is established on startup.
 # Each retry will be attempted after a 1 second delay.
 
-elastic.search.connection_retries = 30
+elastic.search.connection_retries = 5
 
 # --- Eh Cache Configuration --------------------------------------------------
 # Refer to app.properties.example for recommended values.

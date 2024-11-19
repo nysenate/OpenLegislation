@@ -34,10 +34,8 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile> {
     /**
      * Construct the law file using a valid file handler to a source law file. If the file does not have the
      * expected file name format, either an IllegalArgumentException or DateTimeParseException will be thrown.
-     *
      * Example file formats:  DATABASE.LAWA   (initial dump A)
      *                        20141012.UPDATE (update for 10/12/2014)
-     *
      * The published date will be derived from the file name.
      * @param file File
      */
@@ -76,9 +74,10 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile> {
     @Override
     public int compareTo(LawFile o) {
         return ComparisonChain.start()
-            .compare(this.getPublishedDate(), o.getPublishedDate())
-            .compare(this.getFileName(), o.getFileName())
-            .result();
+                .compareTrueFirst(isInitialDump, o.isInitialDump)
+                .compare(publishedDate, o.publishedDate)
+                .compare(file.getName(), o.file.getName())
+                .result();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class JsonOpenlegDaoUtils {
                 throw new OpenlegJsonRetrievalEx("Error parsing json for " + url + " : 'result'->'items' is not an array");
             }
             //
-            List<T> viewList = new ArrayList<>(limitOffset.getLimit());
+            List<T> viewList = new ArrayList<>(limitOffset.limit());
             for (Iterator<JsonNode> it = items.elements(); it.hasNext(); ) {
                 JsonNode itemNode = it.next();
                 T viewObj = objectMapper.treeToValue(itemNode, viewClass);
@@ -110,8 +110,8 @@ public class JsonOpenlegDaoUtils {
      */
     private UriComponentsBuilder buildUrlWithLimOff(String uriString, LimitOffset limitOffset) throws MalformedURLException {
         return buildUrl(uriString)
-                .queryParam("limit", limitOffset.getLimit())
-                .queryParam("offset", limitOffset.getOffsetStart());
+                .queryParam("limit", limitOffset.limit())
+                .queryParam("offset", limitOffset.offsetStart());
     }
 
     /**

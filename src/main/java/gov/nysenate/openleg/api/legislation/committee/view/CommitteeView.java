@@ -5,7 +5,7 @@ import gov.nysenate.openleg.legislation.committee.Committee;
 
 import java.time.format.DateTimeFormatter;
 
-public class CommitteeView extends CommitteeVersionIdView{
+public class CommitteeView extends CommitteeVersionIdView {
     /** Time format to match our Elasticsearch mappings.*/
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 

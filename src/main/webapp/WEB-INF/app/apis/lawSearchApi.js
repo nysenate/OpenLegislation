@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 import * as queryString from "query-string";
 
 
-export default async function lawSearchApi(term, pageParams, sort = "_score:desc,session:desc") {
+export default async function lawSearchApi(term, pageParams) {
   const response = await fetch(`/api/3/laws/search?` + queryString.stringify({
     term: term,
     limit: pageParams.limit,

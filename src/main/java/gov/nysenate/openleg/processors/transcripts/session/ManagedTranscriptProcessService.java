@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 @Service
 public class ManagedTranscriptProcessService implements TranscriptProcessService {
@@ -51,7 +48,6 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int collateTranscriptFiles() {
-        logger.debug("Collating transcript files...");
         int numCollated = 0;
         try {
             List<TranscriptFile> transcriptFiles;
@@ -76,12 +72,11 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
-        SortedMap<TranscriptFile, Transcript> processed = new TreeMap<>();
         int processCount = 0;
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
-                processed.put(file, TranscriptParser.parse(file));
+                transcriptDataService.saveTranscript(TranscriptParser.parse(file), true);
                 file.markAsProcessed();
                 transcriptFileDao.updateFile(file);
                 processCount++;
@@ -91,8 +86,6 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
             }
         }
         logger.debug("Saving {} processed transcripts", processCount);
-        for (var transcript : processed.values())
-            transcriptDataService.saveTranscript(transcript, true);
         return processCount;
     }
 

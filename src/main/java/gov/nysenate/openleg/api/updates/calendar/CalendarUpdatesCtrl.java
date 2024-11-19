@@ -75,7 +75,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                                          WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        Range<LocalDateTime> updateRange = getOpenClosedRange(fromDateTime, toDateTime, "from", "to");
+        Range<LocalDateTime> updateRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         UpdateType updateType = getUpdateTypeFromParam(webRequest);
@@ -136,7 +136,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                                                     WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        Range<LocalDateTime> updateRange = getOpenClosedRange(fromDateTime, toDateTime, "from", "to");
+        Range<LocalDateTime> updateRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(webRequest);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);

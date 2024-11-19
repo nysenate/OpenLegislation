@@ -1,156 +1,64 @@
 package gov.nysenate.openleg.search.member;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.*;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
 @Service
-public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<FullMember> {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
-
-    protected final OpenLegEnvironment env;
-    protected final ElasticMemberSearchDao memberSearchDao;
+public class ElasticMemberSearchService extends IndexedSearchService<FullMember> implements MemberSearchService {
+    protected final SearchDao<Integer, FullMemberView, FullMember> memberSearchDao;
     protected final MemberService memberDataService;
 
-    public ElasticMemberSearchService(OpenLegEnvironment env,
-                                      ElasticMemberSearchDao memberSearchDao,
-                                      MemberService memberDataService, EventBus eventBus) {
-        this.env = env;
+    @Autowired
+    public ElasticMemberSearchService(SearchDao<Integer, FullMemberView, FullMember> memberSearchDao,
+                                      MemberService memberDataService) {
+        super(memberSearchDao);
         this.memberSearchDao = memberSearchDao;
         this.memberDataService = memberDataService;
-        eventBus.register(this);
-        this.rebuildIndex();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(requireSessionYear(sessionYear)),
-                null, sort, limOff);
     }
 
     @Override
-    public SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(requireSessionYear(sessionYear))
-                        .filter(QueryBuilders.termQuery("chamber", chamber.toString().toLowerCase())),
-                null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(
-                QueryBuilders.boolQuery()
-                        .filter(requireSessionYear(sessionYear))
-                        .must(QueryBuilders.queryStringQuery(query)),
-                null, sort, limOff);
-    }
-
-    private SearchResults<Integer> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
+    public SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff)
             throws SearchException {
-        if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
-        try {
-            return memberSearchDao.searchMembers(query, postFilter,
-                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
-        }
-        catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string", ex);
-        }
-        catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex.getMessage(), ex);
-        }
+        return search(null, chamber, sessionYear, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateIndex(FullMember member) {
-        if (env.isElasticIndexing() && member != null) {
-            logger.info("Indexing member {} into elastic search.", member.getPerson().name().lastName());
-            memberSearchDao.updateMemberIndex(member);
-        }
+    public SearchResults<Integer> searchMembers(String queryStr, SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException {
+        return search(queryStr, null, sessionYear, sort, limOff);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateIndex(Collection<FullMember> members) {
-        if (env.isElasticIndexing() && !members.isEmpty()) {
-            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).toList();
-            logger.info("Indexing {} valid members into elastic search.", indexableMembers.size());
-            memberSearchDao.updateMemberIndex(indexableMembers);
+    private SearchResults<Integer> search(String queryStr, Chamber chamber, SessionYear sessionYear, String sort, LimitOffset limOff)
+            throws SearchException {
+        var queryBuilder = new BoolQuery.Builder();
+        if (queryStr != null) {
+            queryBuilder.must(ElasticSearchServiceUtils.getStringQuery(queryStr)._toQuery());
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearIndex() {
-        memberSearchDao.purgeIndices();
-        memberSearchDao.createIndices();
+        if (chamber != null) {
+            queryBuilder.must(
+                    MatchQuery.of(b -> b.field("chamber").query(chamber.toString()))._toQuery()
+            );
+        }
+        if (sessionYear != null) {
+            queryBuilder.must(
+                    ExistsQuery.of(eqb -> eqb.field("sessionShortNameMap." + sessionYear.year()))._toQuery()
+            );
+        }
+        return memberSearchDao.searchForIds(queryBuilder.build(), sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        clearIndex();
-        List<FullMember> members = memberDataService.getAllFullMembers();
-        logger.info("Indexing {} members", members.size());
-        updateIndex(members);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleRebuildEvent(RebuildIndexEvent event) {
-        if (event.affects(SearchIndex.MEMBER)) {
-            logger.info("Handling member re-index event");
-            rebuildIndex();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Subscribe
-    public void handleClearEvent(ClearIndexEvent event) {
-        if (event.affects(SearchIndex.MEMBER)) {
-            clearIndex();
-        }
-    }
-
-    /**
-     * Generate a query that matches members that were active on the given session year.
-     *
-     * @param sessionYear {@link SessionYear}
-     * @return QueryBuilder
-     */
-    private static QueryBuilder requireSessionYear(SessionYear sessionYear) {
-        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.year());
+        updateIndex(memberDataService.getAllFullMembers());
     }
 }

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.api.ui;
 
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -7,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ping")
 public class PingCtrl {
     @RequestMapping("")
-    public String ping() {
-        return "OK";
+    public BaseResponse ping() {
+        return new SimpleResponse(true, "OK", "ping");
     }
 }

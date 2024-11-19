@@ -2,6 +2,7 @@ package gov.nysenate.openleg.legislation.transcripts.session;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -10,13 +11,18 @@ import java.util.Objects;
  */
 public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
+    private final DayType dayType;
     private final String location, text, filename;
 
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId id, String filename, String location, String text) {
+    public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text) {
         super(id.dateTime().getYear());
         this.id = id;
+        if (dayType == null) {
+            throw new IllegalArgumentException("dayType cannot be null");
+        }
+        this.dayType = dayType;
         this.location = location;
         this.text =  text;
         this.filename = filename;
@@ -31,7 +37,12 @@ public class Transcript extends BaseLegislativeContent {
     }
 
     public String getSessionType() {
-        return id.sessionType();
+        return id.sessionType().toString();
+    }
+
+    @Nonnull
+    public DayType getDayType() {
+        return dayType;
     }
 
     public String getLocation() {
@@ -51,14 +62,13 @@ public class Transcript extends BaseLegislativeContent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transcript that = (Transcript) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(location, that.location) &&
-                Objects.equals(text, that.text) &&
+        return Objects.equals(id, that.id) && dayType == that.dayType &&
+                Objects.equals(location, that.location) && Objects.equals(text, that.text) &&
                 Objects.equals(filename, that.filename);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, location, text, filename);
+        return Objects.hash(super.hashCode(), id, dayType, location, text, filename);
     }
 }

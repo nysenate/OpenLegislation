@@ -15,13 +15,13 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     ),
     UPDATE_TRANSCRIPT (
         "UPDATE ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "SET session_type = :sessionType, transcript_filename = :transcriptFilename, location = :location, text = :text,  modified_date_time = :modified_date_time\n" +
+        "SET day_type = :dayType, location = :location, text = :text, modified_date_time = :modified_date_time, transcript_filename = :transcriptFilename\n" +
         "WHERE date_time = :dateTime AND session_type = :sessionType"
     ),
     INSERT_TRANSCRIPT (
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "(transcript_filename, session_type, date_time, location, text)\n" +
-        "VALUES (:transcriptFilename, :sessionType, :dateTime, :location, :text)"
+        "(date_time, session_type, day_type, location, text, transcript_filename)\n" +
+        "VALUES (:dateTime, :sessionType, :dayType, :location, :text, :transcriptFilename)"
     ),
     SELECT_TRANSCRIPTS_UPDATED_DURING (
         "SELECT date_time, session_type, modified_date_time, COUNT(*) OVER() as total_updated " +

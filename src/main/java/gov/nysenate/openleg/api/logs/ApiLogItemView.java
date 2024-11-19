@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * View for the ApiResponse
  */
 public class ApiLogItemView implements ViewObject {
-    private String requestId;
+    private long requestId;
     private LocalDateTime requestTime;
     private String url;
     private String ipAddress;
@@ -58,7 +58,7 @@ public class ApiLogItemView implements ViewObject {
 
     /** --- Basic Getters --- */
 
-    public String getRequestId() {
+    public long getRequestId() {
         return requestId;
     }
 

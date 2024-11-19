@@ -34,12 +34,8 @@ import static gov.nysenate.openleg.common.dao.SortOrder.DESC;
 import static gov.nysenate.openleg.legislation.committee.dao.SqlCommitteeQuery.*;
 
 @Repository
-public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
-{
+public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     public static final Logger logger = LoggerFactory.getLogger(SqlCommitteeDao.class);
-
-    @Autowired
-    public SqlCommitteeDao() {}
 
     /**
      * {@inheritDoc}
@@ -47,7 +43,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     @Override
     public Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException {
         Committee committee;
-        for (SessionYear year = SessionYear.current(); year.year() >= 2009;
+        for (SessionYear year = SessionYear.current(); year.year() >= DateUtils.LEG_DATA_START_YEAR;
              year = year.previousSessionYear()) {
             try {
                 committee = getCommittee(new CommitteeVersionId(

@@ -1,15 +1,11 @@
 package gov.nysenate.openleg.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
-import gov.nysenate.openleg.common.util.AsciiArt;
 import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
+import gov.nysenate.openleg.common.util.OutputUtils;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
@@ -20,11 +16,6 @@ import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.HttpHost;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -40,7 +31,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -78,44 +68,6 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
         }
     }
 
-    /** --- Elastic Search Configuration --- */
-
-    @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
-    @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
-    @Value("${elastic.search.port:9200}") private int elasticSearchPort;
-    @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
-
-    @Bean(destroyMethod = "close")
-    public RestHighLevelClient elasticSearchNode() throws InterruptedException {
-
-        int retryCount = 0;
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-                new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
-
-        while (true) {
-            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
-            try {
-                // Test the connection with a ping.
-                if (!client.ping(RequestOptions.DEFAULT)) {
-                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
-                }
-                logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
-                return client;
-            } catch (IOException | ElasticsearchException ex) {
-                logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
-                logger.warn("{} retries remain.", esAllowedRetries - retryCount);
-                if (retryCount >= esAllowedRetries) {
-                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
-                }
-            }
-            retryCount++;
-            Thread.sleep(1000);
-        }
-    }
-
     /** --- Guava Event Bus Configuration --- */
 
     @Bean
@@ -132,7 +84,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     @Bean(name = "taskScheduler", destroyMethod = "shutdown")
     public ThreadPoolTaskScheduler getTaskScheduler() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        var scheduler = new ThreadPoolTaskScheduler();
         scheduler.setThreadFactory(new OpenlegThreadFactory("scheduler"));
         scheduler.setPoolSize(8);
         scheduler.initialize();
@@ -148,7 +100,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
     @Nonnull
     @Bean(name = "openlegAsync", destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        var executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
         executor.setCorePoolSize(8);
         executor.setWaitForTasksToCompleteOnShutdown(false);
@@ -165,13 +117,7 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.registerModule(new GuavaModule());
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
+        return OutputUtils.failOnUnknownMapper;
     }
 
     /** --- Processing Instances --- */
@@ -196,7 +142,6 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     /**
      * Handle event bus exceptions by posting a notification.
-     *
      * Note that even though notifications are posted through the event bus,
      * all exceptions are caught within the notification event handling code, preventing an infinite loop.
      * @see NotificationDispatcher#handleNotificationEvent(Notification)
@@ -205,7 +150,8 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
      * @param context SubscriberExceptionContext
      */
     private void handleEventBusException(Throwable exception, SubscriberExceptionContext context) {
-        logger.error("Event Bus Exception thrown during event handling within " + context.getSubscriberMethod(), exception);
+        logger.error("Event Bus Exception thrown during event handling within {}",
+                context.getSubscriberMethod(), exception);
 
         LocalDateTime occurred = LocalDateTime.now();
         String summary = "Event Bus Exception within " + context.getSubscriberMethod() +

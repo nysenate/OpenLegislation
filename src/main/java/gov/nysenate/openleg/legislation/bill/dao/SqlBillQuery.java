@@ -15,12 +15,6 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SELECT bill_print_no, bill_session_year FROM ${schema}." + SqlTable.BILL + "\n" +
         "WHERE bill_session_year = :sessionYear"
     ),
-    SELECT_COUNT_ALL_BILLS(
-        "SELECT count(*) AS total FROM ${schema}." + SqlTable.BILL
-    ),
-    SELECT_COUNT_ALL_BILLS_IN_SESSION(
-        SELECT_COUNT_ALL_BILLS.sql + " WHERE bill_session_year = :sessionYear"
-    ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
         "SET title = :title, summary = :summary, active_version = :activeVersion, sub_bill_print_no = :subPrintNo,\n" +
@@ -39,10 +33,6 @@ public enum SqlBillQuery implements BasicSqlQuery
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
         "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, :blurb," +
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentId, :reprintOf)"
-    ),
-    ACTIVE_SESSION_YEARS(
-        "SELECT min(bill_session_year) as min, max(bill_session_year) as max\n" +
-        "FROM ${schema}." + SqlTable.BILL
     ),
 
     /** --- Bill Sponsor --- */

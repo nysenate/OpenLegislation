@@ -6,15 +6,14 @@ General installation instructions for Ubuntu.
 
 ### Java 17
 1. Download the Linux/x64 build of 17 from https://jdk.java.net/17/.
-2. Navigate to the where the downloaded file is located, and run `sudo tar -xvf ~/Downloads/<<filename>>`.
+2. `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
 
 ### Git
 1. `sudo apt-get install git`
-2. Configuration
-    1. `git config --global user.name "<<Name>>"`
-    2. `git config --global user.email <<Email>>`
+2. `git config --global user.name "<<Name>>"`
+3. `git config --global user.email <<Email>>`
 
 ### IntelliJ
 
@@ -26,17 +25,15 @@ General installation instructions for Ubuntu.
 
 1. Download the latest version of Tomcat from https://tomcat.apache.org/download-90.cgi
     * You want the Core tar.gz distribution.
-2. `mkdir ~/tomcat8`
-3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+2. `mkdir ~/tomcat9`
+3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat9`
 4. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
 Make sure the contents of the tomcat directory are readable an executable for all users.
-e.g. `chmod -R +rx ~/tomcat8`
+e.g. `chmod -R +rx ~/tomcat9`
 
 ### Elasticsearch
 
-1. `wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.5.1-amd64.deb`
-2. `sudo dpkg -i elasticsearch-7.5.1-amd64.deb`
-3. `sudo systemctl enable elasticsearch.service`
+`sudo /bin/bash bin/elasticsearch.sh --install`
 
 ### Postgresql, Maven, Nodejs
 
@@ -86,19 +83,14 @@ In psql, create a user with the same name as you linux user.
 2. Create a database for Open Legislation: `CREATE DATABSE openleg;`
 3. Exit psql with `\q`
 
-## Elasticsearch setup
-
-Add or modify the field `cluster.name` in `/etc/elasticsearch/elasticsearch.yml` to be unique to your openleg instance e.g.
-```
-cluster.name: sam-openleg
-```
-
 ## Property Files
+`cd 'src/main/resources'`
 
-Navigate to `src/main/resources` and copy the following files:
-* `app.properties.example` -> `app.properties`
-* `log4j2.xml.example` -> `log4j2.xml`
-* `flyway.conf.example` -> `flyway.conf`
+`cp app.properties.example app.properties`
+
+`cp log4j2.xml.example log4j2.xml`
+
+`cp flyway.conf.example flyway.conf`
 
 ### `app.properties` Configuration
 
@@ -120,12 +112,6 @@ These are references to your base data directory, staging directory, and your ar
 
 Create these directories where you wish and ensure they are correctly referenced in `env.staging`, and `env.archive` respectively.
 
-#### Elasticsearch Search Configuration
-
-Set `elastic.search.cluster.name` to match the cluster name you set in Elasticsearch Setup.
-
-Ensure that elasticsearch is running prior to Open Legislation startup.
-
 #### Postgres Database Configuration
 
 Set these properties according to the values you set in the Database Setup section.
@@ -138,7 +124,7 @@ Set `scheduler.process.enabled` = `false`
 
 #### Spotcheck Configuration
 
-If you are not interested in the data qa portion of the app, you may want to start with `bill.scrape.queue.enabled = false`.
+If you are not interested in the data QA portion of the app, you may want to start with `bill.scrape.queue.enabled = false`.
 
 If true, the app will scrape qa data from LBDC every data process cycle.
 
@@ -164,9 +150,7 @@ Set `flyway.password` to the database user password.
 
 ### Test Configuration
 
-Copy the following files from `src/main/resources` to `src/test/resources`:
-* `app.properties` -> `test.app.properties`
-* `log4j2.xml` -> `test.log4j2.xml`
+`cp src/main/resources/log4j2.xml src/test/resources/test.log4j2.xml`
  
 Set `admin.email.regex` in `app.properties` to match your user email address and fit any other admin users you would want to add.
 
@@ -207,5 +191,8 @@ Now we can process the xml data we downloaded in our local Open Legislation envi
 `curl -XPOST -v -u '<<default.admin.user>>:<<default.admin.password>>' localhost:8080/api/3/admin/process/run`
 
 **NOTE**
-* If your system has 4 GB of RAM or less, lower the cache limits in app.properties
-* Using a SSD can help the performance of this process significantly
+* If Elasticsearch is eating up memory:
+1. `cd to /etc/elasticsearch/jvm.options.d/`
+2. Add a file ending in .options : each line will be a command line argument to ES. So e.g. -Xmx4g sets the maximum memory ES uses to 4 GB.
+3. `sudo systemctl restart elasticsearch.service`
+See more info [here]( https://www.elastic.co/guide/en/elasticsearch/reference/master/advanced-configuration.html#set-jvm-options).

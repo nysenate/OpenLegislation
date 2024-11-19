@@ -43,16 +43,6 @@ export default function Indices({ setHeaderText }) {
 function IndexCard({ index, isRebuilding, setIsRebuilding }) {
   const [ isLoading, setIsLoading ] = React.useState(false)
 
-  const clearIndex = index => {
-    setIsRebuilding(true)
-    setIsLoading(true)
-    doClearIndex(index)
-      .finally(() => {
-        setIsLoading(false)
-        setIsRebuilding(false)
-      })
-  }
-
   const warmIndex = index => {
     setIsRebuilding(true)
     setIsLoading(true)
@@ -70,12 +60,7 @@ function IndexCard({ index, isRebuilding, setIsRebuilding }) {
         <LoadingIndicator />
       </div>
       <div className="mt-10 flex justify-evenly">
-        <button className="btn btn--secondary w-24"
-                disabled={isRebuilding}
-                onClick={() => clearIndex(index)}>
-          Clear
-        </button>
-        <button className="btn btn--primary w-24"
+        <button className="btn btn--primary w-48"
                 disabled={isRebuilding}
                 onClick={() => warmIndex(index)}>
           Rebuild

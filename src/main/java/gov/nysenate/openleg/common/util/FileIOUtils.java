@@ -24,13 +24,11 @@ public final class FileIOUtils {
      * Returns a collection of files sorted by file name (not file path!)
      *
      * @param directory - The directory to get files from.
-     * @param recursive - true to retrieve files from sub-directories.
      * @return Collection<File>
      * @throws java.io.IOException
      */
-    public static Collection<File> getSortedFiles(File directory, boolean recursive,
-                                                  String[] excludeDirs) throws IOException {
-        Collection<File> files = safeListFiles(directory, recursive, excludeDirs);
+    public static Collection<File> getSortedFiles(File directory) throws IOException {
+        Collection<File> files = safeListFiles(directory);
         ((List<File>) files).sort(Comparator.comparing(File::getName));
         return files;
     }
@@ -59,26 +57,11 @@ public final class FileIOUtils {
      * create them. This overload can be used to exclude certain directories if recursive is true.
      *
      * @param directory   - The directory to list files from (and create if necessary)
-     * @param recursive   - true when you want to list files recursively.
-     * @param excludeDirs - Array of directory names that should be excluded from the match.
-     *                    Set to null if all directories should be matched.
      * @return A collection of matching filenames
-     * @throws IOException
      */
-    public static Collection<File> safeListFiles(File directory, boolean recursive,
-                                                 String[] excludeDirs) throws IOException {
+    public static Collection<File> safeListFiles(File directory) throws IOException {
         FileUtils.forceMkdir(directory);
-        IOFileFilter dirFileFilter;
-        if (excludeDirs != null && excludeDirs.length > 0) {
-            List<IOFileFilter> excludeDirFilters = new ArrayList<>();
-            for (String excludeDir : excludeDirs) {
-                excludeDirFilters.add(FileFilterUtils.nameFileFilter(excludeDir));
-            }
-            dirFileFilter = FileFilterUtils.notFileFilter(new OrFileFilter(excludeDirFilters));
-        } else {
-            dirFileFilter = (recursive) ? TrueFileFilter.TRUE : FalseFileFilter.FALSE;
-        }
-        return FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
+        return FileUtils.listFiles(directory, TrueFileFilter.TRUE, FalseFileFilter.FALSE);
     }
 
     /**

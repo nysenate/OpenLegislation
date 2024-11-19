@@ -11,8 +11,7 @@ import java.io.Serializable;
  * set as the base version. This class can be useful when you want to reference
  * Bill containers where the amendment version is irrelevant.
  */
-public class BaseBillId extends BillId implements Serializable
-{
+public class BaseBillId extends BillId implements Serializable {
     @Serial
     private static final long serialVersionUID = -7708296547127325102L;
 

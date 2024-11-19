@@ -79,7 +79,6 @@ public class HearingGetCtrl extends BaseCtrl {
     private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        // TODO: just use the hearingData
         List<ViewObject> results = hearingSearch.searchHearings(year, sort, limOff).resultList().stream()
                 .map(searchResult -> hearingData.getHearing(searchResult.result()))
                 .map(hearing -> getHearingViewObject(hearing, summary, full)).toList();
