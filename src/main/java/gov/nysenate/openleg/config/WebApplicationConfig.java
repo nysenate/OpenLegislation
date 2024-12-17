@@ -89,7 +89,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public MappingJackson2HttpMessageConverter jackson2Converter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        var converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(appConfig.objectMapper());
         return converter;
     }

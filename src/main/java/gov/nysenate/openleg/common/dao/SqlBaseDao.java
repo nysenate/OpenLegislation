@@ -2,6 +2,7 @@ package gov.nysenate.openleg.common.dao;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.config.EnvironmentUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -38,6 +39,8 @@ public abstract class SqlBaseDao {
 
     /** Reference to the environment in which the data is stored */
     @Autowired protected OpenLegEnvironment environment;
+
+    @Autowired protected EnvironmentUtils envUtils;
 
     /** --- Common Param Methods --- */
 

@@ -102,6 +102,12 @@ function TranscriptListing({ isHearing, setHeaderText }) {
     history.push({ search: queryString.stringify(params) })
   }
 
+  const onSessionChange = event => {
+    params.page = 1
+    setSessionOnly(event.target.checked)
+    history.push({ search: queryString.stringify(params) })
+  }
+
   const onYearChange = event => {
     params.page = 1
     params.year = event.target.value
@@ -147,7 +153,7 @@ function TranscriptListing({ isHearing, setHeaderText }) {
           true, false)}
                 onChange={onYearChange} name="year" />
         <div hidden={isHearing}>
-          <Checkbox label="Session Days Only" value={sessionOnly} onChange={e => setSessionOnly(e.target.checked)}
+          <Checkbox label="Session Days Only" value={sessionOnly} onChange={onSessionChange}
                     name="Session Days Only"/>
         </div>
       </div>

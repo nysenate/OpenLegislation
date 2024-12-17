@@ -19,7 +19,8 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "WITH latest_laws AS (\n" +
         "    SELECT document_id, max(published_date) AS published_date " +
         "    FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-        "    WHERE law_id = :lawId AND published_date <= :endPublishedDate \n" +
+        "    WHERE law_id = :lawId AND published_date <= :endPublishedDate\n" +
+        "        AND law_file_name LIKE :lawFilenamePattern\n" +
         "    GROUP BY document_id" +
         ")\n" +
         "SELECT * FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +

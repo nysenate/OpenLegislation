@@ -55,6 +55,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         createIndex();
     }
 
+    // Need a separate method so indices are only destroyed during testing.
     @PreDestroy
     private void destroy() {
         if (envUtils.isTest()) {
@@ -82,7 +83,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @Override
     public void deleteIndex() {
-        if (indexType().isPrimaryStore()) {
+        if (!envUtils.isTest() && indexType().isPrimaryStore()) {
             throw new UnsupportedOperationException("Cannot delete a primary index.");
         }
         try {

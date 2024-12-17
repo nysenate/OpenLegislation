@@ -148,7 +148,7 @@ public class LawProcessor extends AbstractDataProcessor
      */
     private void persist(LawFile lawFile, Map<String, LawBuilder> lawBuilders) {
         // Persist the results
-        lawBuilders.forEach((lawId, lawBuilder) ->{
+        lawBuilders.forEach((lawId, lawBuilder) -> {
             logger.info("Persisting law documents for {}", lawId);
             lawBuilder.getProcessedLawDocuments().forEach(d -> lawDataService.saveLawDocument(lawFile, d));
             eventBus.post(new BulkLawUpdateEvent(lawBuilder.getProcessedLawDocuments()));

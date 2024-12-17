@@ -86,10 +86,12 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
     /** {@inheritDoc} */
     @Override
     public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishDate) throws DataAccessException {
-        ImmutableParams lawDocParams = ImmutableParams.from(new MapSqlParameterSource()
-            .addValue("lawId", lawId)
-            .addValue("endPublishedDate", toDate(endPublishDate)));
-        List<LawDocument> docs = jdbcNamed.query(SqlLawDataQuery.SELECT_ALL_LAW_DOCUMENTS.getSql(schema()), lawDocParams, lawDocRowMapper);
+        ImmutableParams lawDocParams = ImmutableParams.from(
+                new MapSqlParameterSource("lawId", lawId)
+                        .addValue("endPublishedDate", toDate(endPublishDate))
+                        .addValue("lawFilenamePattern", envUtils.isTest() ? "%test" : "%"));
+        List<LawDocument> docs = jdbcNamed.query(SqlLawDataQuery.SELECT_ALL_LAW_DOCUMENTS.getSql(schema()),
+                lawDocParams, lawDocRowMapper);
         return Maps.uniqueIndex(docs, LawDocument::getDocumentId);
     }
 
@@ -127,8 +129,8 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
      * Constructs a LawTree from the result set.
      */
     private static class LawTreeRowCallbackHandler implements RowCallbackHandler {
-        private LinkedHashMap<String, LawTreeNode> treeNodeMap = new LinkedHashMap<>();
-        private LawInfo info;
+        private final LinkedHashMap<String, LawTreeNode> treeNodeMap = new LinkedHashMap<>();
+        private final LawInfo info;
         private LawTreeNode root = null;
         private String lawId;
         private LocalDate publishedDate;
