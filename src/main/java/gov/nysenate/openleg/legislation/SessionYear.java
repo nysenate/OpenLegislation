@@ -7,6 +7,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Simple representation of a session year. The senate has two year session periods, the start of
@@ -65,5 +66,18 @@ public record SessionYear(int year) implements Serializable, Comparable<SessionY
     @Override
     public int compareTo(SessionYear o) {
         return ComparisonChain.start().compare(this.year, o.year).result();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SessionYear that = (SessionYear) o;
+        return year == that.year;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(year);
     }
 }
