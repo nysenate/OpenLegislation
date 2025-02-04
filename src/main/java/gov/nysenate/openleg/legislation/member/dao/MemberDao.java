@@ -6,13 +6,20 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.FullMember;
+import gov.nysenate.openleg.legislation.member.Member;
+import gov.nysenate.openleg.legislation.member.Person;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
 import java.util.List;
 import java.util.Map;
 
-public interface MemberDao
-{
+public interface MemberDao {
+    void updatePerson(MemberDataType dataType, Person person);
+
+    void updateMember(MemberDataType dataType, Member member);
+
+    void updateSessionMember(MemberDataType dataType, SessionMember sessionMember);
+
     /**
      * Retrieve member by id.
      *

@@ -18,8 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository("sqlMember")
-public class SqlMemberDao extends SqlBaseDao implements MemberDao
-{
+public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlMemberDao.class);
 
     /** --- Implemented Methods --- */
@@ -34,6 +33,22 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             throw new MemberNotFoundEx(id, null);
         }
         return new FullMember(memberList);
+    }
+
+
+    @Override
+    public void updatePerson(MemberDataType dataType, Person person) {
+        // TODO
+    }
+
+    @Override
+    public void updateMember(MemberDataType dataType, Member member) {
+        // TODO
+    }
+
+    @Override
+    public void updateSessionMember(MemberDataType dataType, SessionMember sessionMember) {
+        // TODO
     }
 
     /** {@inheritDoc} */
