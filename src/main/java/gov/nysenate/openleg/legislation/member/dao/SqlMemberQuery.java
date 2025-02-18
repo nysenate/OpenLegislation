@@ -41,13 +41,18 @@ public enum SqlMemberQuery implements BasicSqlQuery
     SELECT_MEMBER_BY_ID_SESSION_SQL(
         SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear AND sm.alternate = FALSE"
     ),
+
+    SELECT_MEMBER(
+            " SELECT * FROM " + SqlTable.SESSION_MEMBER + " WHERE  id = :id"
+    ),
+
     SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL(
         "WITH mr AS (" + SELECT_MOST_RECENT_DATA.sql +")\n" +
         "SELECT smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
         "       m.chamber, m.incumbent," + PERSON_FRAGMENT.sql + "mr.most_recent_chamber\n" +
         SELECT_MEMBER_TABLE_FRAGMENT.sql +
         "JOIN mr ON mr.id = p.id\n" +
-        "JOIN " + SqlTable.SESSION_MEMBER + " smp ON smp.member_id = sm.member_id AND smp.session_year = sm.session_year AND smp.alternate = FALSE\n" +
+        "JOIN " + SqlTable.SESSION_MEMBER + " smp ON smp.member_id = sm.member_id AND smp.session_year = sm.session_year\n" +
         "WHERE sm.id = :sessionMemberId"
     ),
     SELECT_MEMBER_BY_SHORTNAME_SQL(
@@ -59,7 +64,35 @@ public enum SqlMemberQuery implements BasicSqlQuery
     SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL(
         SELECT_MEMBER_BY_SHORTNAME_SQL.sql + " AND sm.session_year = :sessionYear"
     ),
+    UPDATE_MEMBER(
+            "UPDATE " + SqlTable.MEMBER +
+                    " SET person_id = :personId, chamber = :chamber::chamber, incumbent = :incumbent" +
+                    " WHERE id = :id"
+    ),
+    CREATE_MEMBER(
+            "INSERT INTO "  + SqlTable.MEMBER + "( person_id, chamber, incumbent) VALUES ( :personId, :chamber::chamber, :incumbent)" + "RETURNING id"
+    ),
+    DELETE_MEMBER("DELETE FROM " + SqlTable.MEMBER + " WHERE id = :id"),
 
+    UPDATE_PERSON(
+            "UPDATE " + SqlTable.PERSON +
+                    " SET email = :email, img_name = :imgName, first_name = :firstName, last_name = :lastName, suffix = :suffix" +
+                    " WHERE id = :id"
+    ),
+
+    CREATE_PERSON(
+            "INSERT INTO " + SqlTable.PERSON + " ( email, img_name, first_name, middle_name, last_name, suffix) " +
+                    "VALUES (:email, :imgName, :firstName, :middleName, :lastName, :suffix)" + "RETURNING id"
+
+    ),
+    DELETE_PERSON(
+            "DELETE FROM " +SqlTable.PERSON + " WHERE id = :id"
+    ),
+    CREATE_SESSION_MEMBER( "INSERT INTO " + SqlTable.SESSION_MEMBER + "( member_id, lbdc_short_name, session_year, district_code, alternate)" +" VALUES( :memberId, :lbdcShortName, :sessionYear, :districtCode, :alternate)" + "RETURNING id"),
+
+    DELETE_SESSION_MEMBER("DELETE FROM " +SqlTable.SESSION_MEMBER + " WHERE id = :id"),
+
+    UPDATE_SESSION_MEMBER("UPDATE " + SqlTable.SESSION_MEMBER + " SET member_id = :memberId, lbdc_short_name = :lbdcShortName, session_year = :sessionYear, district_code =:districtCode, alternate =:alternate" + " WHERE id = :id "),
     ;
 
     private String sql;

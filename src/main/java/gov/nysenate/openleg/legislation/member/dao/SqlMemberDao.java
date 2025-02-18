@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +24,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
 
     /** --- Implemented Methods --- */
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
@@ -36,22 +39,125 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     }
 
 
+//    Can we change this to manage person or handlePerosnChange
+
     @Override
-    public void updatePerson(MemberDataType dataType, Person person) {
-        // TODO
+    public int handlePersonChange(MemberDataType dataType, Person person) {
+
+        if (dataType == MemberDataType.CREATE) {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+
+            // Prepare the parameters for the INSERT operation
+            params.addValue("firstName", person.name().firstName());
+            params.addValue("lastName", person.name().lastName()).addValue("middleName", person.name().middleName());
+            params.addValue("suffix", person.name().suffix());
+            params.addValue("email", person.email());
+            params.addValue("imgName", person.imgName());
+
+            return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_PERSON.getSql(), params, new SingleColumnRowMapper<>());
+
+        }
+
+        //  TO UPDATE PERSON TABLE RECORD
+
+        else if (dataType == MemberDataType.UPDATE) {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("personId", person.personId());
+
+            // Fetch existing record
+            List<SessionMember> existingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_PERSON_ID_SQL.getSql(), params, new MemberRowMapper());
+
+            if (existingRecord.isEmpty()) {
+                throw new NoSuchElementException("Person with ID " + person.personId() + " does not exist.");
+            }
+            SessionMember existingPerson = existingRecord.get(0);
+            params.addValue("id", person.personId()).addValue("firstName",
+                    (person.name().firstName() != null && !person.name().firstName().isEmpty())
+                            ? person.name().firstName() : existingPerson.getMember().getPerson().name().firstName()).addValue("lastName",
+                    (person.name().lastName() != null && !person.name().lastName().isEmpty())
+                            ? person.name().lastName() : existingPerson.getMember().getPerson().name().lastName()).addValue("suffix",
+                    (person.name().suffix() != null && !person.name().suffix().isEmpty())
+                            ? person.name().suffix() : existingPerson.getMember().getPerson().name().suffix()).addValue("email",
+                    (person.email() != null && !person.email().isEmpty())
+                            ? person.email() : existingPerson.getMember().getPerson().email()).addValue("imgName",
+                    (person.imgName() != null && !person.imgName().isEmpty())
+                            ? person.imgName() : existingPerson.getMember().getPerson().imgName());
+            jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON.getSql(), params);
+        }
+
+
+        //TO DELETE PERSON RECORD
+        else if (dataType == MemberDataType.DELETE) {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("id", person.personId());
+            jdbcNamed.update(SqlMemberQuery.DELETE_PERSON.getSql(), params);
+        }
+        return 0;
+    }
+
+
+    @Override
+    public int handleMemberChange(MemberDataType dataType, Member member) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+         if (dataType == MemberDataType.CREATE) {
+            params.addValue("personId", member.getPerson().personId());
+            params.addValue("chamber", member.getChamber().name().toLowerCase());
+            params.addValue("incumbent", member.isIncumbent());
+            return  jdbcNamed.queryForObject(SqlMemberQuery.CREATE_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
+        }
+        else if (dataType == MemberDataType.UPDATE) {
+            params.addValue("memberId", member.getMemberId());
+            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(), params, new MemberRowMapper());
+            if (exisitingRecord.isEmpty()) {
+                throw new MemberNotFoundEx(member.getMemberId());
+            }
+            SessionMember existingMember = exisitingRecord.get(0);
+            params.addValue("id", member.getMemberId());
+            params.addValue("personId", member.getPerson().personId() != null ? member.getPerson().personId() : existingMember.getMember().getPerson().personId());
+            params.addValue("chamber", member.getChamber().name().toLowerCase() != null ? member.getChamber().name().toLowerCase() : existingMember.getMember().getChamber().name().toLowerCase());
+            params.addValue("incumbent", member.isIncumbent());
+            jdbcNamed.update(SqlMemberQuery.UPDATE_MEMBER.getSql(), params);
+        }  else if (dataType == MemberDataType.DELETE) {
+            params.addValue("id", member.getMemberId());
+            jdbcNamed.update(SqlMemberQuery.DELETE_MEMBER.getSql(), params);
+        }
+        return 0;
     }
 
     @Override
-    public void updateMember(MemberDataType dataType, Member member) {
-        // TODO
+    public int handleSessionChange(MemberDataType dataType, SessionMember sessionMember) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        if (dataType == MemberDataType.CREATE) {
+            params.addValue("memberId", sessionMember.getMember().getMemberId())
+                    .addValue("lbdcShortName", sessionMember.getLbdcShortName())
+                    .addValue("sessionYear", sessionMember.getSessionYear().year())
+                    .addValue("districtCode", sessionMember.getDistrictCode())
+                    .addValue("alternate", sessionMember.isAlternate());
+            return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_SESSION_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
+        } else if (dataType == MemberDataType.UPDATE) {
+            params.addValue("memberId", sessionMember.getMember().getMemberId());
+            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(), params, new MemberRowMapper());
+            if (exisitingRecord.isEmpty()) {
+                throw new MemberNotFoundEx(sessionMember.getSessionMemberId());
+            }
+            SessionMember existingMember = exisitingRecord.get(0);
+            params.addValue("id", sessionMember.getSessionMemberId())
+                .addValue("memberId", sessionMember.getMember().getMemberId())
+                .addValue("lbdcShortName", sessionMember.getLbdcShortName() != null ? sessionMember.getLbdcShortName() : existingMember.getLbdcShortName())
+                .addValue("sessionYear", sessionMember.getSessionYear().year()!= 0 ? sessionMember.getSessionYear().year(): existingMember.getSessionYear().year())
+                .addValue("districtCode", sessionMember.getDistrictCode() != null ? sessionMember.getDistrictCode() : existingMember.getDistrictCode())
+                .addValue("alternate", sessionMember.isAlternate());
+            jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER.getSql(), params);
+        } else if (dataType == MemberDataType.DELETE) {
+            params.addValue("id", sessionMember.getSessionMemberId());
+            jdbcNamed.update(SqlMemberQuery.DELETE_SESSION_MEMBER.getSql(), params);
+        }
+        return 0;
     }
 
-    @Override
-    public void updateSessionMember(MemberDataType dataType, SessionMember sessionMember) {
-        // TODO
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SessionMember getMemberById(int id, SessionYear session) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -65,15 +171,16 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         ImmutableParams params = ImmutableParams.from(
                 new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
         try {
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
-                    .getSql(schema()), params, new MemberRowMapper());
-        }
-        catch (EmptyResultDataAccessException ex) {
+            return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
+                    .getSql(schema()), params, new MemberRowMapper()).get(0);
+        } catch (EmptyResultDataAccessException ex) {
             throw new MemberNotFoundEx(sessionMemberId);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<SessionYear, SessionMember> getMembersByShortName(String lbdcShortName, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -85,14 +192,15 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         return getMemberSessionMap(members);
     }
 
-    /** {@inheritDoc}
-     *
-     *  Since the short names used in the source data can be inconsistent (the short name can get modified
-     *  during the middle of a session year) we have a notion of an alternate short name. A member can only
-     *  have one primary short name mapping during a session year but can have multiple 'alternate' short names
-     *  to deal with edge cases in the data. This method will attempt to match the primary short name first
-     *  and if that fails tries to check for an alternate form. If both attempts fail the calling method will
-     *  have to handle a DataAccessException.
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Since the short names used in the source data can be inconsistent (the short name can get modified
+     * during the middle of a session year) we have a notion of an alternate short name. A member can only
+     * have one primary short name mapping during a session year but can have multiple 'alternate' short names
+     * to deal with edge cases in the data. This method will attempt to match the primary short name first
+     * and if that fails tries to check for an alternate form. If both attempts fail the calling method will
+     * have to handle a DataAccessException.
      */
     @Override
     public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear,
@@ -106,20 +214,20 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         try {
             return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()),
                     params, new MemberRowMapper());
-        }
-        catch (EmptyResultDataAccessException ignored1) {
+        } catch (EmptyResultDataAccessException ignored1) {
             params.addValue("alternate", true);
             try {
                 return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
                         params, new MemberRowMapper());
-            }
-            catch (EmptyResultDataAccessException ignored2) {
+            } catch (EmptyResultDataAccessException ignored2) {
                 throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
             }
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("last_name", sortOrder);
@@ -127,7 +235,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<FullMember> getAllFullMembers() {
         return getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
@@ -136,7 +246,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                 .values().stream().map(FullMember::new).toList();
     }
 
-    /** --- Helper classes --- */
+    /**
+     * --- Helper classes ---
+     */
 
     public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override
@@ -160,7 +272,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         }
     }
 
-    /** --- Internal Methods --- */
+    /**
+     * --- Internal Methods ---
+     */
 
     private MapSqlParameterSource getPersonParams(Person person) {
         PersonName name = person.name();
