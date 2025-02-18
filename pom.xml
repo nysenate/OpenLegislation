@@ -133,6 +133,7 @@
     <log4j.version>2.22.1</log4j.version>
     <mail.version>1.6.2</mail.version>
     <mockito.version>4.6.1</mockito.version>
+    <nysenate-java-client.version>2.3</nysenate-java-client.version>
     <pdfbox.version>2.0.26</pdfbox.version>
     <postgres-jdbc.version>42.7.3</postgres-jdbc.version>
     <shiro.version>1.9.0</shiro.version>
@@ -507,6 +508,13 @@
       <groupId>org.bitbucket.cowwoc</groupId>
       <artifactId>diff-match-patch</artifactId>
       <version>1.2</version>
+    </dependency>
+
+    <!-- NY Senate Dependencies -->
+    <dependency>
+      <groupId>gov.nysenate</groupId>
+      <artifactId>nysenate-java-client</artifactId>
+      <version>${nysenate-java-client.version}</version>
     </dependency>
 
   </dependencies>
