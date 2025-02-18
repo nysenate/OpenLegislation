@@ -6,12 +6,18 @@ import org.apache.commons.lang3.StringUtils;
 
 public record Person(Integer personId, PersonName name, String email, String imgName)
         implements Comparable<Person> {
+
     public Person(Integer personId, PersonName name, String email, String imgName) {
         this.personId = personId;
         this.name = name;
         this.email = email;
         this.imgName = StringUtils.isBlank(imgName) ? "no_image.jpg" : imgName;
     }
+
+    public Person(int pId, Person person) {
+        this(pId, person.name(), person.email(), person.imgName());
+    }
+
     /**
      * A consistent naming convention for image names.
      * This should be used when naming the image for all new legislators.

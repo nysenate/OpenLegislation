@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface MemberDao {
-    void updatePerson(MemberDataType dataType, Person person);
+    int handlePersonChange(MemberDataType dataType, Person person);
 
-    void updateMember(MemberDataType dataType, Member member);
+    int handleMemberChange(MemberDataType dataType, Member member);
 
-    void updateSessionMember(MemberDataType dataType, SessionMember sessionMember);
+    int handleSessionChange(MemberDataType dataType, SessionMember sessionMember);
 
     /**
      * Retrieve member by id.
