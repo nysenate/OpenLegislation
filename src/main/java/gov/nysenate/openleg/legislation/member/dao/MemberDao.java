@@ -11,23 +11,13 @@ import gov.nysenate.openleg.legislation.member.Person;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 
 import java.util.List;
-import java.util.Map;
 
 public interface MemberDao {
-    int handlePersonChange(MemberDataType dataType, Person person);
+    int handlePersonChange(MemberChangeType dataType, Person person);
 
-    int handleMemberChange(MemberDataType dataType, Member member);
+    int handleMemberChange(MemberChangeType dataType, Member member);
 
-    int handleSessionChange(MemberDataType dataType, SessionMember sessionMember);
-
-    /**
-     * Retrieve member by id.
-     *
-     * @param id int
-     * @param session SessionYear
-     * @return Member
-     */
-    SessionMember getMemberById(int id, SessionYear session);
+    int handleSessionMemberChange(MemberChangeType dataType, SessionMember sessionMember);
 
     /**
      * Retrieve a member by session member id
@@ -46,15 +36,6 @@ public interface MemberDao {
      * @return Map<Integer, Member>
      */
     FullMember getMemberById(int id) throws MemberNotFoundEx;
-
-    /**
-     * Retrieve a map of session year -> Member given the LBDC short name.
-     *
-     * @param lbdcShortName String
-     * @param chamber Chamber
-     * @return Map<Integer,Member>
-     */
-    Map<SessionYear, SessionMember> getMembersByShortName(String lbdcShortName, Chamber chamber);
 
     /**
      * Retrieve the Member instance via the LBDC shortName and the session year.
