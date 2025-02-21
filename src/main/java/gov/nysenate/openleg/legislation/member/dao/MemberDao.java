@@ -9,9 +9,11 @@ import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.Member;
 import gov.nysenate.openleg.legislation.member.Person;
 import gov.nysenate.openleg.legislation.member.SessionMember;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MemberDao {
     int handlePersonChange(MemberChangeType dataType, Person person);
 
@@ -59,4 +61,6 @@ public interface MemberDao {
      * @return
      */
     List<FullMember> getAllFullMembers();
+
+    Person getPersonByPersonId(int personId) throws MemberNotFoundEx;
 }

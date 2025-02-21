@@ -9,11 +9,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+@Repository
 
 public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     /**
@@ -46,26 +49,28 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         }
 
         else if (dataType == MemberChangeType.UPDATE) {
-            params.addValue("personId", person.personId());
+            params.addValue("id", person.personId());
 
             // Fetch existing record
-            List<SessionMember> existingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_PERSON_ID_SQL.getSql(), params, new MemberRowMapper());
+            List<Person> existingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_BY_PERSON_ID.getSql(), params, new PersonRowMapper());
 
             if (existingRecord.isEmpty()) {
                 throw new NoSuchElementException("Person with ID " + person.personId() + " does not exist.");
             }
-            SessionMember existingPerson = existingRecord.get(0);
+            Person existingPerson = existingRecord.get(0);
             params.addValue("id", person.personId()).addValue("firstName",
                     (person.name().firstName() != null && !person.name().firstName().isEmpty())
-                            ? person.name().firstName() : existingPerson.getMember().getPerson().name().firstName()).addValue("lastName",
+                            ? person.name().firstName() : existingPerson.name().firstName()).addValue("lastName",
                     (person.name().lastName() != null && !person.name().lastName().isEmpty())
-                            ? person.name().lastName() : existingPerson.getMember().getPerson().name().lastName()).addValue("suffix",
+                            ? person.name().lastName() : existingPerson.name().lastName()).addValue("suffix",
                     (person.name().suffix() != null && !person.name().suffix().isEmpty())
-                            ? person.name().suffix() : existingPerson.getMember().getPerson().name().suffix()).addValue("email",
+                            ? person.name().suffix() : existingPerson.name().suffix()).addValue("email",
                     (person.email() != null && !person.email().isEmpty())
-                            ? person.email() : existingPerson.getMember().getPerson().email()).addValue("imgName",
+                            ? person.email() : existingPerson.email()).addValue("imgName",
                     (person.imgName() != null && !person.imgName().isEmpty())
-                            ? person.imgName() : existingPerson.getMember().getPerson().imgName());
+                            ? person.imgName() : existingPerson.imgName()).addValue("middleName",
+                    (person.name().middleName() != null && !person.name().middleName().isEmpty())
+                            ?person.name().middleName() : existingPerson.name().middleName());
             jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON.getSql(), params);
         }
 
@@ -82,7 +87,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public int handleMemberChange(MemberChangeType dataType, Member member) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         if (dataType == MemberChangeType.CREATE) {
-            params.addValue("personId", member.getPerson().personId())
+            params.addValue("personId", member.getPersonId())
                     .addValue("chamber", member.getChamber().name().toLowerCase())
                     .addValue("incumbent", member.isIncumbent());
             return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
@@ -111,7 +116,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public int handleSessionMemberChange(MemberChangeType dataType, SessionMember sessionMember) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         if (dataType == MemberChangeType.CREATE) {
-            params.addValue("memberId", sessionMember.getMember().getMemberId())
+            params.addValue("memberId", sessionMember.getMemberId())
                     .addValue("lbdcShortName", sessionMember.getLbdcShortName())
                     .addValue("sessionYear", sessionMember.getSessionYear().year())
                     .addValue("districtCode", sessionMember.getDistrictCode())
@@ -191,6 +196,21 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
+    @Override
+    public Person getPersonByPersonId(int personId) {
+        MapSqlParameterSource params = new MapSqlParameterSource().addValue("id", personId);
+        try {
+            List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_BY_PERSON_ID.getSql(), params, new PersonRowMapper());
+            if (!result.isEmpty()) {
+                return result.get(0);
+            } else {
+                throw new MemberNotFoundEx(personId);
+            }
+        } catch (EmptyResultDataAccessException ex) {
+            throw new MemberNotFoundEx(personId);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -205,6 +225,21 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     /**
      * --- Helper classes ---
      */
+
+    public static class PersonRowMapper implements RowMapper<Person> {
+        @Override
+        public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+            PersonName name = new PersonName(rs.getString("full_name"), rs.getString("first_name"), rs.getString("middle_name"), rs.getString("last_name"), rs.getString("suffix"));
+            return new Person(
+                    rs.getInt("id"),
+                    name,
+                    rs.getString("email"),
+                    rs.getString("img_name")
+            );
+        }
+    }
+
+
 
     public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override

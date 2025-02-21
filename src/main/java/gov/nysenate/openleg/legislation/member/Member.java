@@ -18,11 +18,14 @@ public class Member {
     /** Indicates if the member is currently an incumbent. */
     private final boolean incumbent;
 
+    private final int personId;
+
     public Member(Person person, int memberId, Chamber chamber, boolean incumbent) {
         this.person = person;
         this.memberId = memberId;
         this.chamber = chamber;
         this.incumbent = incumbent;
+        this.personId = person.personId();
     }
 
     public Member(Member member) {
@@ -30,6 +33,15 @@ public class Member {
         this.memberId = member.memberId;
         this.chamber = member.chamber;
         this.incumbent = member.incumbent;
+        this.personId = member.person.personId();
+    }
+
+    public Member(int personId, int memberId, Chamber chamber, boolean incumbent) {
+        this.personId = personId;
+        this.memberId = memberId;
+        this.chamber = chamber;
+        this.incumbent = incumbent;
+        this.person = null;
     }
 
     /** --- Overrides --- */
@@ -61,6 +73,10 @@ public class Member {
 
     public Chamber getChamber() {
         return chamber;
+    }
+
+    public Integer getPersonId() {
+        return personId;
     }
 
     public boolean isIncumbent() {

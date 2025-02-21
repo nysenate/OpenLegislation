@@ -16,6 +16,8 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
      * A member may have multiple sessionMemberIds in a single session for different representations of their shortname */
     protected int sessionMemberId;
 
+    protected int memberId;
+
     /** Member that this SessionMember matches up to. */
     protected Member member;
 
@@ -46,6 +48,15 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         this.alternate = alternate;
     }
 
+    public SessionMember(int sessionMemberId, int memberId, String lbdcShortName, SessionYear sessionYear, Integer districtCode, boolean alternate ) {
+        this.sessionMemberId = sessionMemberId;
+        this.memberId = memberId;
+        this.lbdcShortName = lbdcShortName;
+        this.sessionYear = sessionYear;
+        this.districtCode = districtCode;
+        this.alternate = alternate;
+    }
+
     public SessionMember(SessionMember other) {
         this.member = other.member;
         this.sessionMemberId = other.sessionMemberId;
@@ -53,6 +64,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         this.sessionYear = other.sessionYear;
         this.districtCode = other.districtCode;
         this.alternate = other.alternate;
+        this.memberId = other.memberId;
     }
 
     /**
@@ -141,6 +153,8 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
     public Integer getDistrictCode() {
         return districtCode;
     }
+
+    public Integer getMemberId() {return memberId;}
 
     public void setDistrictCode(Integer districtCode) {
         this.districtCode = districtCode;

@@ -1,5 +1,3 @@
-package gov.nysenate.openleg.processors;
-
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -15,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Category(SillyTest.class)
 public class MemberProcessorIT extends BaseTests {
@@ -32,6 +32,53 @@ public class MemberProcessorIT extends BaseTests {
         // Insert test file path as needed. Then, you can use memberService to retrieve and test the data.
         // I recommend creating test files in "src/test/resources" under a new "members" folder.
         memberProcessor.process(null);
+    }
+
+    @Test
+    public void testMemberProcessor() throws IOException, SAXException {
+
+        //Create Person XmlProcessor
+        Path path = Paths.get("/home/nystech/Desktop/Createperson.xml");
+        int id = memberProcessor.process(path);
+        Person createdPersonRecord =memberDao.getPersonByPersonId(id);
+        System.out.println("Created Person id\t" + createdPersonRecord.email());
+
+        //Create Member XmlProcessor
+        Path memberPath = Paths.get("/home/nystech/Desktop/Createmember.xml");
+        int m_id = memberProcessor.process(memberPath);
+        System.out.println("Created Member id\t" + m_id);
+
+        //Create Session XmlProcessor
+        Path sessionPath = Paths.get("/home/nystech/Desktop/Createsessionmember.xml");
+        int s_id = memberProcessor.process(sessionPath);
+        SessionMember createdSessionRecord  = memberDao.getMemberBySessionId(s_id);
+        System.out.println("Created Session id\t" + createdSessionRecord.getSessionYear());
+
+        FullMember createdMemberRecord2 = memberDao.getMemberById(m_id);
+        System.out.println("Created Member id\t" + createdMemberRecord2.getMemberId());
+
+        //Update Person XmlProcessor
+        Path personUpdatePath = Paths.get("/home/nystech/Desktop/Updateperson.xml");
+        memberProcessor.process(personUpdatePath);
+        Person updatedPerson = memberDao.getPersonByPersonId(283);
+        System.out.print("UpdatedPerosn" + updatedPerson.name() + updatedPerson.email());
+
+        //Update Member XmlProcessor
+        Path memberUpdatePath = Paths.get("/home/nystech/Desktop/Updatemember.xml");
+        memberProcessor.process(memberUpdatePath);
+        FullMember updatedMember = sqlMemberDao.getMemberById(1115);
+        System.out.println("Incumbent"+ updatedMember.isIncumbent());
+
+        //Update Session XmlProcessor
+        Path sessionUpdatePath = Paths.get("/home/nystech/Desktop/UpdateSession.xml");
+        memberProcessor.process(sessionUpdatePath);
+        SessionMember updatedSessionMember = sqlMemberDao.getMemberBySessionId(1);
+        System.out.println("Member details after updation\n" + "Updated member Chamber, Incumbent" + "\t"+ updatedSessionMember.getDistrictCode() +  updatedSessionMember.isAlternate());
+
+        //Delete XML parser
+        Path deletePath = Paths.get("/home/nystech/Desktop/Delete.xml");
+        memberProcessor.process(deletePath);
+
     }
 
 

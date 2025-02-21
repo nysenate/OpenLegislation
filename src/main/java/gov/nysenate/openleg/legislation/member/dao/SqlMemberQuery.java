@@ -34,12 +34,16 @@ public enum SqlMemberQuery implements BasicSqlQuery {
         SELECT_MEMBER_FRAGMENT.sql + " WHERE p.id = :personId"
     ),
 
+    SELECT_BY_PERSON_ID(
+          "SELECT * FROM "+ SqlTable.PERSON + " WHERE id = :id"
+    ),
+
     SELECT_MEMBER_BY_ID_SQL(
         SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId"
     ),
 
     SELECT_MEMBER_BY_ID_SESSION_SQL(
-        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear AND sm.alternate = FALSE"
+        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear"
     ),
 
     SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL(
@@ -71,7 +75,7 @@ public enum SqlMemberQuery implements BasicSqlQuery {
 
     UPDATE_PERSON(
         "UPDATE " + SqlTable.PERSON +
-        " SET email = :email, img_name = :imgName, first_name = :firstName, middle_name = :middle_name, last_name = :lastName, suffix = :suffix" +
+        " SET email = :email, img_name = :imgName, first_name = :firstName, middle_name = :middleName, last_name = :lastName, suffix = :suffix" +
         " WHERE id = :id"
     ),
 
@@ -80,7 +84,7 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     ),
 
     CREATE_MEMBER(
-        "INSERT INTO " + SqlTable.MEMBER + "(person_id, chamber) VALUES (:personId, :chamber::chamber) RETURNING id"
+        "INSERT INTO " + SqlTable.MEMBER + "(person_id, chamber) VALUES (:personId, :chamber::chamber)" + " RETURNING id"
     ),
 
     UPDATE_MEMBER(
@@ -91,7 +95,7 @@ public enum SqlMemberQuery implements BasicSqlQuery {
 
     DELETE_MEMBER("DELETE FROM " + SqlTable.MEMBER + " WHERE id = :id"),
 
-    CREATE_SESSION_MEMBER("INSERT INTO " + SqlTable.SESSION_MEMBER + " member_id, lbdc_short_name, session_year, district_code, alternate) " +
+    CREATE_SESSION_MEMBER("INSERT INTO " + SqlTable.SESSION_MEMBER + " (member_id, lbdc_short_name, session_year, district_code, alternate) " +
         "VALUES(:memberId, :lbdcShortName, :sessionYear, :districtCode, :alternate) RETURNING id"
     ),
 

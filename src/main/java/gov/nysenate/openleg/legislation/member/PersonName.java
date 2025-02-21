@@ -13,6 +13,10 @@ public record PersonName(String fullName, String prefix, String firstName, Strin
         this(fullName, mostRecentChamber == Chamber.SENATE ? "Senator" : "Assembly Member",
                 firstName, middleName, lastName, suffix);
     }
+    public PersonName(String fullName, String firstName, String middleName,
+                      String lastName, String suffix){
+        this( fullName,"", firstName, middleName, lastName, suffix);
+    }
 
     @Override
     public int compareTo(PersonName o) {
