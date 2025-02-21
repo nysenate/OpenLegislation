@@ -13,12 +13,14 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.member.MemberSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -117,6 +119,14 @@ public class MemberGetCtrl extends BaseCtrl {
         SearchResults<Integer> results =
                 memberSearch.searchMembers(SessionYear.of(sessionYear), chamberValue, sort, limOff);
         return getMemberResponse(full, limOff, results);
+    }
+
+    @PutMapping(value = "/{memberTable}")
+    public BaseResponse createMemberXml(@PathVariable String memberTable, @RequestParam String changeTypeStr, ModelMap modelMap) throws MemberNotFoundEx {
+        MemberChangeType changeType = MemberChangeType.valueOf(changeTypeStr);
+        // Assume the ModelMap contains mapping from field names to proper values
+        // Return a response indicating success or failure
+        return null;
     }
 
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {
