@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-
 public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     /**
      * {@inheritDoc}

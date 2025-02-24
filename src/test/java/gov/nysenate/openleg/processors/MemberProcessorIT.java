@@ -1,3 +1,5 @@
+package gov.nysenate.openleg.processors;
+
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.SessionYear;

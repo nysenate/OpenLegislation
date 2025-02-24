@@ -6,7 +6,6 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
-import gov.nysenate.openleg.processors.bill.xml.XmlBillTextProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import org.w3c.dom.Node;
 public class MemberProcessor extends AbstractDataProcessor {
     private final MemberDao memberDao;
     private final XmlHelper xmlHelper;
-    private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemberProcessor.class);
 
     @Autowired
     public MemberProcessor(MemberDao memberDao, XmlHelper xmlHelper) {
@@ -45,7 +44,7 @@ public class MemberProcessor extends AbstractDataProcessor {
             return 0;
         }
         Person existingRecord = null;
-        if (id != -1){
+        if (id != -1) {
              existingRecord = (action.equals("UPDATE")) ? memberDao.getPersonByPersonId(id) : null;
         }
         Person person = new Person(id,
@@ -95,7 +94,7 @@ public class MemberProcessor extends AbstractDataProcessor {
                 member = new Member(personId, id, Chamber.valueOf(chamber), incumbent);
                 return memberDao.handleMemberChange(MemberChangeType.CREATE, member);
             case "UPDATE":
-                member = new Member( existingRecord.getPerson(),id, existingRecord.getChamber(), incumbent);
+                member = new Member(existingRecord.getPerson(),id, existingRecord.getChamber(), incumbent);
                 return memberDao.handleMemberChange(MemberChangeType.UPDATE, member);
             case "DELETE":
                 member = new Member(id, member.getPerson().personId(),  existingRecord.getChamber(), incumbent);
@@ -147,7 +146,7 @@ public class MemberProcessor extends AbstractDataProcessor {
             final String action = xmlHelper.getStringSafe("@action", rootNode);
             MemberType memberType = MemberType.getMemberType(tableName);
             if (memberType == null) {
-                logger.error("Invalid action type: " + action);
+                logger.error("Invalid action type: {}", action);
                 return 0;
             }
             switch (memberType) {
@@ -158,7 +157,7 @@ public class MemberProcessor extends AbstractDataProcessor {
                 case SESSION:
                     return handleSessionMember(action, rootNode);
                 default:
-                    logger.error("Unhandled action: " + action);
+                    logger.error("Unhandled action: {}", action);
             }
 
         } catch (Exception e) {
@@ -166,5 +165,4 @@ public class MemberProcessor extends AbstractDataProcessor {
         }
         return 0;
     }
-
 }

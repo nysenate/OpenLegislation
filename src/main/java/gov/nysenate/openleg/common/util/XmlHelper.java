@@ -46,10 +46,6 @@ public class XmlHelper {
         return (String)xpath.evaluate(path, node, XPathConstants.STRING);
     }
 
-    public Double getDouble(String path, Node node) throws XPathExpressionException {
-        return (Double)xpath.evaluate(path, node, XPathConstants.NUMBER);
-    }
-
     public Integer getInteger(String path, Node node) throws XPathExpressionException {
         return ((Double)xpath.evaluate(path, node, XPathConstants.NUMBER)).intValue();
     }
@@ -61,6 +57,7 @@ public class XmlHelper {
     public NodeList getNodeList(String path, Node node) throws XPathExpressionException {
         return (NodeList)xpath.evaluate(path, node, XPathConstants.NODESET);
     }
+
     public String getStringSafe(String expression, Node node) {
         try {
             return getString(expression, node);
@@ -68,6 +65,7 @@ public class XmlHelper {
             return "";
         }
     }
+
     public int getIntegerSafe(String expression, Node node) {
         try {
             return getInteger(expression, node);
@@ -75,19 +73,12 @@ public class XmlHelper {
             return -1;
         }
     }
+
     public Boolean getBooleanSafe(String expression, Node node) {
         try {
             return getBoolean(expression,node);
-        } catch (XPathExpressionException e){
+        } catch (XPathExpressionException e) {
             return false;
         }
     }
-    public Node getNodeFromDoc(String tagName, Document document) {
-        try {
-            return (Node) xpath.evaluate("//" + tagName, document, javax.xml.xpath.XPathConstants.NODE);
-        } catch (XPathExpressionException e) {
-            return null;
-        }
-    }
-
 }
