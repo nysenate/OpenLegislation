@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionDetails tableName="session" action="UPDATE">
+    <id>1</id>
+    <districtCode>1300</districtCode>
+    <alternate>true</alternate>
+</actionDetails>
+

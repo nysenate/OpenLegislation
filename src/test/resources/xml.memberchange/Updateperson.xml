@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionDetails tableName="person" action="UPDATE">
+    <id>283</id>
+    <firstName>John2</firstName>
+    <lastName>Doe</lastName>
+    <middleName>Michael</middleName>
+    <email>john.doe@.gmail.com</email>
+    <img_name>john_doe.jpg</img_name>
+    <suffix>Mr.</suffix>
+ 
+</actionDetails>
+

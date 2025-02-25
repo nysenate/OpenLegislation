@@ -62,15 +62,15 @@ public class XmlHelper {
         try {
             return getString(expression, node);
         } catch (XPathExpressionException e) {
-            return "";
+            return null;
         }
     }
 
-    public int getIntegerSafe(String expression, Node node) {
+    public Integer getIntegerSafe(String expression, Node node) {
         try {
             return getInteger(expression, node);
         } catch (XPathExpressionException | NumberFormatException e) {
-            return -1;
+            return null;
         }
     }
 
