@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -38,9 +39,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         if (dataType == MemberChangeType.CREATE) {
             // Prepare the parameters for the INSERT operation
                 params.addValue("firstName", person.name().firstName())
-                        .addValue("middleName", person.name().middleName())
+                        .addValue("middleName", StringUtils.defaultIfEmpty(person.name().middleName(),""))
                         .addValue("lastName", person.name().lastName())
-                        .addValue("suffix", person.name().suffix())
+                        .addValue("suffix", StringUtils.defaultIfEmpty(person.name().suffix(),""))
                         .addValue("email", person.email())
                         .addValue("imgName", person.imgName());
 
@@ -115,15 +116,15 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public int handleSessionMemberChange(MemberChangeType dataType, SessionMember sessionMember) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         if (dataType == MemberChangeType.CREATE) {
-            params.addValue("memberId", sessionMember.getMemberId())
+            params.addValue("memberId", sessionMember.getMember().getMemberId())
                     .addValue("lbdcShortName", sessionMember.getLbdcShortName())
                     .addValue("sessionYear", sessionMember.getSessionYear().year())
                     .addValue("districtCode", sessionMember.getDistrictCode())
                     .addValue("alternate", sessionMember.isAlternate());
             return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_SESSION_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
         } else if (dataType == MemberChangeType.UPDATE) {
-            params.addValue("memberId", sessionMember.getMember().getMemberId());
-            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(), params, new MemberRowMapper());
+            params.addValue("sessionMemberId", sessionMember.getSessionMemberId());
+            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL.getSql(), params, new MemberRowMapper());
             if (exisitingRecord.isEmpty()) {
                 throw new MemberNotFoundEx(sessionMember.getSessionMemberId());
             }
@@ -134,10 +135,10 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                     .addValue("sessionYear", sessionMember.getSessionYear().year() != 0 ? sessionMember.getSessionYear().year(): existingMember.getSessionYear().year())
                     .addValue("districtCode", sessionMember.getDistrictCode() != null ? sessionMember.getDistrictCode() : existingMember.getDistrictCode())
                     .addValue("alternate", sessionMember.isAlternate());
-            jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER.getSql(), params);
+            return jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER.getSql(), params);
         } else if (dataType == MemberChangeType.DELETE) {
             params.addValue("id", sessionMember.getSessionMemberId());
-            jdbcNamed.update(SqlMemberQuery.DELETE_SESSION_MEMBER.getSql(), params);
+            return jdbcNamed.update(SqlMemberQuery.DELETE_SESSION_MEMBER.getSql(), params);
         }
         return 0;
     }
@@ -149,7 +150,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         try {
             return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
                     .getSql(schema()), params, new MemberRowMapper()).get(0);
-        } catch (EmptyResultDataAccessException ex) {
+        } catch (Exception ex) {
             throw new MemberNotFoundEx(sessionMemberId);
         }
     }
@@ -197,18 +198,36 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
 
     @Override
     public Person getPersonByPersonId(int personId) {
-        MapSqlParameterSource params = new MapSqlParameterSource().addValue("id", personId);
+        var params = new MapSqlParameterSource().addValue("id", personId);
         try {
             List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_BY_PERSON_ID.getSql(), params, new PersonRowMapper());
             if (!result.isEmpty()) {
                 return result.get(0);
-            } else {
-                throw new MemberNotFoundEx(personId);
             }
-        } catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(personId);
-        }
+        } catch (EmptyResultDataAccessException ignored) {}
+        throw new NoSuchElementException("Person with ID " + personId + " does not exist.");
     }
+
+    public Member getMemberByMemberId(int memberId) {
+        var params = new MapSqlParameterSource().addValue("id", memberId);
+        try {
+            // Execute query to fetch the Member based on the memberId
+            List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_MEMBER_ID.getSql(), params, new RowMapper<Member>() {
+                @Override
+                public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return new Member(rs.getInt("person_id"),rs.getInt("id"), Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
+                }
+            });
+
+            if (!result.isEmpty()) {
+                return result.get(0); // Return the first result if it's not empty
+            }
+        } catch (EmptyResultDataAccessException ignored) {
+        }
+        throw new MemberNotFoundEx(memberId, null);
+    }
+
+
 
     /**
      * {@inheritDoc}

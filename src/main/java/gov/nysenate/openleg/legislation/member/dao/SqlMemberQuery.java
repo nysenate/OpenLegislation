@@ -37,6 +37,9 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     SELECT_BY_PERSON_ID(
           "SELECT * FROM "+ SqlTable.PERSON + " WHERE id = :id"
     ),
+    SELECT_MEMBER_BY_MEMBER_ID(
+            "SELECT * FROM "+ SqlTable.MEMBER + " WHERE id = :id"
+    ),
 
     SELECT_MEMBER_BY_ID_SQL(
         SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId"

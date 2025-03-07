@@ -4,7 +4,7 @@
     <lastName>Doe</lastName>
     <middleName>Michael</middleName>
     <email>john.doe@example.com</email>
-    <img_name>john_doe.jpg</img_name>
+    <imgName>john_doe.jpg</imgName>
     <suffix>Jr.</suffix>
  
 </actionDetails>

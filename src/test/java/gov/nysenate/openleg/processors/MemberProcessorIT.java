@@ -1,9 +1,10 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.SillyTest;
+import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
+import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
 import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
@@ -11,14 +12,20 @@ import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.legislation.member.dao.SqlMemberDao;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
-@Category(SillyTest.class)
+import static org.junit.Assert.*;
+
+@Category(IntegrationTest.class)
 public class MemberProcessorIT extends BaseTests {
     @Autowired
     private MemberProcessor memberProcessor;
@@ -29,115 +36,388 @@ public class MemberProcessorIT extends BaseTests {
     @Autowired
     private SqlMemberDao sqlMemberDao;
 
-    @Test
-    public void testProcessMember() throws IOException, SAXException {
-        // Insert test file path as needed. Then, you can use memberService to retrieve and test the data.
-        // I recommend creating test files in "src/test/resources" under a new "members" folder.
-        memberProcessor.process(null);
-    }
-
+    private final ModelMap modelMap = new ModelMap();
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
-
-        //Create Person XmlProcessor
+        // Step 1: Create Person XmlProcessor
         Path path = Paths.get("/home/nystech/Desktop/Createperson.xml");
         int id = memberProcessor.process(path);
-        Person createdPersonRecord =memberDao.getPersonByPersonId(id);
-        System.out.println("Created Person id\t" + createdPersonRecord.email());
 
-        //Create Member XmlProcessor
+        // Fetch the person record from the database
+        Person createdPersonRecord = memberDao.getPersonByPersonId(id);
+        assertEquals("john.doe@example.com", createdPersonRecord.email());
+        assertEquals("John", createdPersonRecord.name().firstName());
+        assertEquals("Doe", createdPersonRecord.name().lastName());
+        assertEquals("Michael", createdPersonRecord.name().middleName());
+        assertEquals("Jr.", createdPersonRecord.name().suffix());
+        assertEquals("john_img.jpg", createdPersonRecord.imgName());
+
+        //Create Person with no firstName
+        try {
+             Path path2 = Paths.get("/home/nystech/Desktop/PersonWithNoFirstName.xml");
+             int id2 = memberProcessor.process(path2);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed Because of No first Name" + e.getMessage());
+        }
+
+
+        //Step 2: Create Member XmlProcessor
         Path memberPath = Paths.get("/home/nystech/Desktop/Createmember.xml");
         int m_id = memberProcessor.process(memberPath);
-        System.out.println("Created Member id\t" + m_id);
+        assertTrue(m_id >0);
 
-        //Create Session XmlProcessor
+        // Step 3: Create Session XmlProcessor
         Path sessionPath = Paths.get("/home/nystech/Desktop/Createsessionmember.xml");
         int s_id = memberProcessor.process(sessionPath);
-        SessionMember createdSessionRecord  = memberDao.getMemberBySessionId(s_id);
-        System.out.println("Created Session id\t" + createdSessionRecord.getSessionYear());
+        assertTrue(s_id >0);
 
-        FullMember createdMemberRecord2 = memberDao.getMemberById(m_id);
-        System.out.println("Created Member id\t" + createdMemberRecord2.getMemberId());
+        // Fetch full member record for verification
+        Member createdMemberRecord2 = memberDao.getMemberByMemberId(m_id);
+        assertEquals(createdMemberRecord2.getMemberId(), m_id);
+        assertEquals(707, createdMemberRecord2.getPersonId().intValue());
+        assertEquals("SENATE", (createdMemberRecord2.getChamber()).toString());
 
-        //Update Person XmlProcessor
+        // Fetch session member from the database
+        SessionMember createdSessionRecord = memberDao.getMemberBySessionId(s_id);
+        assertEquals(468, createdSessionRecord.getMember().getMemberId());
+        assertEquals(2023, createdSessionRecord.getSessionYear().year());
+        assertEquals(12208, createdSessionRecord.getDistrictCode().intValue());
+
+
+
+        // Step 4: Update Person XmlProcessor
         Path personUpdatePath = Paths.get("/home/nystech/Desktop/Updateperson.xml");
         memberProcessor.process(personUpdatePath);
-        Person updatedPerson = memberDao.getPersonByPersonId(283);
-        System.out.print("UpdatedPerosn" + updatedPerson.name() + updatedPerson.email());
 
-        //Update Member XmlProcessor
+        // Fetch the updated person record
+        Person updatedPerson = memberDao.getPersonByPersonId(283);
+        assertEquals("John2", updatedPerson.name().firstName());
+        assertEquals("Doe2", updatedPerson.name().lastName());
+        assertEquals("Michael2", updatedPerson.name().middleName());
+        assertEquals("Mr.", updatedPerson.name().suffix());
+        assertEquals("john_doe.jpg", updatedPerson.imgName());
+        assertEquals("john.doe@.gmail.com", updatedPerson.email());
+
+        // Step 5: Update Member XmlProcessor
         Path memberUpdatePath = Paths.get("/home/nystech/Desktop/Updatemember.xml");
         memberProcessor.process(memberUpdatePath);
-        FullMember updatedMember = sqlMemberDao.getMemberById(1115);
-        System.out.println("Incumbent"+ updatedMember.isIncumbent());
 
-        //Update Session XmlProcessor
+        // Fetch the updated member record
+        Member updatedMember = sqlMemberDao.getMemberByMemberId(1115);
+        assertTrue(updatedMember.isIncumbent());
+
+        // Step 6: Update Session XmlProcessor
         Path sessionUpdatePath = Paths.get("/home/nystech/Desktop/UpdateSession.xml");
         memberProcessor.process(sessionUpdatePath);
-        SessionMember updatedSessionMember = sqlMemberDao.getMemberBySessionId(1);
-        System.out.println("Member details after updation\n" + "Updated member Chamber, Incumbent" + "\t"+ updatedSessionMember.getDistrictCode() +  updatedSessionMember.isAlternate());
 
-        //Delete XML parser
-        Path deletePath = Paths.get("/home/nystech/Desktop/Delete.xml");
+        // Fetch the updated session record
+        SessionMember updatedSessionMember = sqlMemberDao.getMemberBySessionId(1); // Assuming 1 is the updated session ID
+        assertEquals(1300,updatedSessionMember.getDistrictCode().intValue());
+        assertTrue("Alternate status was not updated", updatedSessionMember.isAlternate());
+
+        // Step 7: Delete XML processor
+
+        try {
+        Path deletePath = Paths.get("/home/nystech/Desktop/deleteSessionMember.xml");
         memberProcessor.process(deletePath);
+            SessionMember deletedSession = sqlMemberDao.getMemberBySessionId(357);
+            fail("Session record was not deleted, expected exception to be thrown");
+        } catch (MemberNotFoundEx e) {
+            // Expected exception, session record was deleted
+            System.out.println("Session member deleted successfully: " + e.getMessage());
+        }
 
+////        Verify the deletion by trying to fetch the full member
+//        This need to be run after the getmemberbyId is updated, since throws the error due to memberById in memberprocessor
+//        try {
+//            Path deletePath = Paths.get("/home/nystech/Desktop/deleteMember.xml");
+//            memberProcessor.process(deletePath);
+//            fail("Member record was not deleted, expected exception to be thrown");
+//        } catch (MemberNotFoundEx e) {
+//            System.out.println("Member deleted successfully: " + e.getMessage());
+//        }
+
+        // Verify the deletion by trying to fetch the person record
+//        try {
+//            Path deletePath = Paths.get("/home/nystech/Desktop/deletePerson.xml");
+//            memberProcessor.process(deletePath);
+//            Person deletedPerson = memberDao.getPersonByPersonId(454);
+//            fail("Person record was not deleted, expected exception to be thrown");
+//        } catch (MemberNotFoundEx e) {
+//            // Expected exception, person record was deleted
+//            System.out.println("Person deleted successfully: " + e.getMessage());
+//        }
     }
 
+    @Test
+    public void testGetPersonXmlBuilder() {
+        Map<String, String> modelMap = new HashMap<>();
+        modelMap.put("id", "123");
+        modelMap.put("firstName", "John");
+        modelMap.put("lastName", "Doe");
+        modelMap.put("email", "john.doe@example.com");
+        modelMap.put("middleName", "M");
+        modelMap.put("imgName", "profile.jpg");
+        modelMap.put("suffix", "Jr");
+
+        // Test CREATE action
+        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
+
+        String expectedXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="MEMBER" action="CREATE">
+            <firstName>John</firstName>
+            <lastName>Doe</lastName>
+            <middleName>M</middleName>
+            <suffix>Jr</suffix>
+            <email>john.doe@example.com</email>
+            <imgName>profile.jpg</imgName>
+            </actionDetails>""";
+
+        assertEquals(expectedXml, xmlBuilder.toString());
+
+        // Test UPDATE action
+        modelMap.put("id", "123");
+        modelMap.put("firstName", "John");
+        modelMap.put("lastName", "Doe");
+        modelMap.put("email", "john.doe@example.com");
+        modelMap.put("middleName", "M");
+        modelMap.put("imgName", "profile.jpg");
+        modelMap.put("suffix", "Jr");
+
+        StringBuilder xmlUpdateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+
+        String expectedUpdateXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="MEMBER" action="UPDATE">
+            <id>123</id>
+            <firstName>John</firstName>
+            <lastName>Doe</lastName>
+            <middleName>M</middleName>
+            <suffix>Jr</suffix>
+            <email>john.doe@example.com</email>
+            <imgName>profile.jpg</imgName>
+            </actionDetails>""";
+
+        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+
+        // Test DELETE action
+        modelMap.put("id", "123");
+
+        StringBuilder xmlDeleteBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER);
+
+        String expectedDeleteXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="MEMBER" action="DELETE">
+            <id>123</id>
+            </actionDetails>""";
+
+        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
+
+        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+    }
 
     @Test
-    public void testMember(){
+    public void testGetPersonXmlBuilder_UpdateWithNullAttributes() {
+        Map<String, String> modelMap = new HashMap<>();
+        modelMap.put("id", "123");
+        modelMap.put("firstName", "abcd");
+        modelMap.put("lastName", "efg");
+        modelMap.put("email", null);
+        modelMap.put("middleName", null);
+        modelMap.put("imgName", null);
+        modelMap.put("suffix", null);
 
-        //Create Person Record
-        Person person = new Person(-1,new PersonName("NikhithaBi", "x", "Nikhitha","B","L","Jr" ), "bijjanikhitha@", "");
-        int p_id = sqlMemberDao.handlePersonChange(MemberChangeType.CREATE, person);
-        System.out.println("ID OF CREATED PERSON RECORD\n" + p_id);
-        Person person2 = new Person(p_id,new PersonName("NikhithaBi", "x", "Nikhitha","B","L","Jr" ), "bijjanikhitha@", "");
+        // Test UPDATE action
+        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
 
-        //Create Member Record
-        Member member = new Member(person2,-1, Chamber.SENATE, false);
-        int m_id = sqlMemberDao.handleMemberChange(MemberChangeType.CREATE, member);
-        System.out.println("ID OF CREATED MER RECORD\n" + m_id);
+        String expectedXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="MEMBER" action="UPDATE">
+            <id>123</id>
+            <firstName>abcd</firstName>
+            <lastName>efg</lastName>
+            </actionDetails>""";
 
-        //Create Session Record
-        Member member2 = new Member(person2,m_id, Chamber.SENATE, false);
-        SessionMember sessionMember = new SessionMember(-1, member2, "",  new SessionYear(2024), 12207,false);
-        int s_id = sqlMemberDao.handleSessionMemberChange(MemberChangeType.CREATE, sessionMember);
-        System.out.println("ID OF CREATED SESSION RECORD\n" + s_id);
+        assertEquals(expectedXml, xmlBuilder.toString());
 
-        SessionMember existingRecord = sqlMemberDao.getMemberBySessionId(s_id);
+        // Test CREATE action with the same attributes
+        StringBuilder xmlCreateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
 
-        // Person Record Update
-        Person updatedPerson = new Person(p_id,new PersonName("NikhithaBijjala", "", "Nikhitha","","Bijjala","" ), "nbijjala@senate.gov", "");
-        sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, updatedPerson);
+        String expectedCreatedXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="MEMBER" action="CREATE">
+            <firstName>abcd</firstName>
+            <lastName>efg</lastName>
+            </actionDetails>""";
 
+        assertEquals(expectedCreatedXml, xmlCreateBuilder.toString());
+    }
 
-        //Member Record Update
-        Member updatedMember = new Member(updatedPerson,m_id, Chamber.ASSEMBLY, true);
-        sqlMemberDao.handleMemberChange(MemberChangeType.UPDATE, updatedMember);
+    @Test
+    public void testGetSessionXmlBuilder_Create() {
+        Map<String, String> modelMap = new HashMap<>();
+        modelMap.put("id", "123");
+        modelMap.put("memberId", "456");
+        modelMap.put("sessionYear", "2025");
+        modelMap.put("lbdcShortName", "LB1");
+        modelMap.put("districtCode", "101");
+        modelMap.put("alternate", "true");
 
-        //Session Record Update
-        SessionMember updateSessionMember = new SessionMember(s_id, updatedMember, "",  new SessionYear(2024), 12208,true);
-        sqlMemberDao.handleSessionMemberChange(MemberChangeType.UPDATE, updateSessionMember);
+        // Test CREATE action
+        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION);
 
-        SessionMember y = sqlMemberDao.getMemberBySessionId(s_id);
-        System.out.println("Member details after updation\n" + "Updated member Chamber, Incumbent" + "\t" +y.getMember().getChamber() + "\t" + y.getMember().isIncumbent() +"\nUpdated Person name and email\t"+ y.getMember().getPerson().name()+ "\t"+y.getMember().getPerson().email()
-                + "\nUpdated Session Member lbdc district code and alternatee \t"+ y.getSessionYear()  + "\t" + y.getDistrictCode() + "\t" + y.isAlternate());
+        String expectedXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="SESSION" action="CREATE">
+            <memberId>456</memberId>
+            <sessionYear>2025</sessionYear>
+            <lbdcShortName>LB1</lbdcShortName>
+            <districtCode>101</districtCode>
+            </actionDetails>""";
 
-        sqlMemberDao.handleSessionMemberChange(MemberChangeType.DELETE, updateSessionMember);
-        try{
-            SessionMember z = sqlMemberDao.getMemberBySessionId(s_id);
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        sqlMemberDao.handleMemberChange(MemberChangeType.DELETE, updatedMember);
-        try{
-            FullMember z = sqlMemberDao.getMemberById(m_id);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        sqlMemberDao.handlePersonChange(MemberChangeType.DELETE, updatedPerson);
+        assertEquals(expectedXml, xmlBuilder.toString());
 
+        // Test UPDATE action with a different alternate value
+        modelMap.put("alternate", "false");
+
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION);
+
+        String expectedUpdateXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="SESSION" action="UPDATE">
+            <id>123</id>
+            <alternate>false</alternate>
+            <districtCode>101</districtCode>
+            </actionDetails>""";
+
+        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+
+        // Test DELETE action
+        modelMap.put("id", "123");
+
+        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION);
+
+        String expectedDeleteXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="SESSION" action="DELETE">
+            <id>123</id>
+            </actionDetails>""";
+
+        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
+    }
+
+    @Test
+    public void testGetSessionXmlBuilder_CreateWithNullAttributes() {
+        Map<String, String> modelMap = new HashMap<>();
+        modelMap.put("id", "123");
+        modelMap.put("memberId", "11");
+        modelMap.put("sessionYear", "null");
+        modelMap.put("lbdcShortName", "null");
+        modelMap.put("districtCode", "null");
+        modelMap.put("alternate", "null");
+
+        // Test CREATE action with null attributes
+        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION);
+
+        String expectedCreateXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="SESSION" action="CREATE">
+            <memberId>11</memberId>
+            <sessionYear>null</sessionYear>
+            <lbdcShortName>null</lbdcShortName>
+            <districtCode>null</districtCode>
+            </actionDetails>""";
+
+        assertEquals(expectedCreateXml, xmlCreateBuilder.toString());
+
+        // Test UPDATE action with null attributes
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION);
+
+        String expectedUpdateXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="SESSION" action="UPDATE">
+            <id>123</id>
+            </actionDetails>""";
+
+        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void noExpression() throws Exception {
+        Path path = Paths.get("/home/nystech/Desktop/Createperson2.xml");
+        int id = memberProcessor.process(path);  // This should throw IllegalArgumentException as missing lastname
+    }
+
+    @Test
+    public void testGetMemberXmlBuilder() {
+
+        Map<String, String> modelMap = new HashMap<>();
+        modelMap.put("personId", "123");
+        modelMap.put("chamber", "Senate");
+        modelMap.put("id", "456");
+
+        StringBuilder xmlBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
+
+        String expectedXml = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <actionDetails tableName="MEMBER" action="CREATE">
+                <personId>123</personId>
+                <chamber>Senate</chamber>
+                </actionDetails>
+                """;
+        assertEquals(expectedXml, xmlBuilder.toString());
+
+        modelMap.clear();
+        modelMap.put("personId", "123");
+        modelMap.put("incumbent", "true");
+        modelMap.put("chamber", "Senate");
+        modelMap.put("id", "456");
+
+        StringBuilder xmlBuilder2 = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+
+        String expectedXml2 = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <actionDetails tableName="MEMBER" action="UPDATE">
+                <id>456</id>
+                <incumbent>true</incumbent>
+                </actionDetails>
+                """;
+        assertEquals(expectedXml2, xmlBuilder2.toString());
+
+        modelMap.clear();
+        modelMap.put("personId", "123");
+        modelMap.put("incumbent", "true");
+        modelMap.put("chamber", "Senate");
+        modelMap.put("id", "456");
+
+        StringBuilder xmlDeleteBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER);
+
+        String expectedDeleteXml = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <actionDetails tableName="MEMBER" action="DELETE">
+                <id>456</id>
+                </actionDetails>
+                """;
+        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
+
+        // Re-initialize modelMap for another UPDATE case to check consistency
+        modelMap.clear();
+        modelMap.put("personId", "123");
+        modelMap.put("incumbent", "true");
+        modelMap.put("chamber", "Senate");
+        modelMap.put("id", "456");
+
+        StringBuilder xmlUpdateBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+
+        String expectedUpdateXml = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <actionDetails tableName="MEMBER" action="UPDATE">
+                <id>456</id>
+                <incumbent>true</incumbent>
+                </actionDetails>
+                """;
+        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
     }
 
 }

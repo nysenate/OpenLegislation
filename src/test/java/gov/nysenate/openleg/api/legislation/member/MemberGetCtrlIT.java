@@ -3,10 +3,7 @@ package gov.nysenate.openleg.api.legislation.member;
 import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
-import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.api.response.PaginationResponse;
-import gov.nysenate.openleg.api.response.ViewObjectResponse;
+import gov.nysenate.openleg.api.response.*;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
@@ -18,10 +15,9 @@ import gov.nysenate.openleg.search.SearchException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import org.springframework.ui.ModelMap;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -64,7 +60,7 @@ public class MemberGetCtrlIT extends ApiTest {
                 SessionYear(2011), 36, false);
 
         BaseResponse resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2011, false);
-        SessionMember actualSm = ((SessionMemberView)(((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
+        SessionMember actualSm = ((SessionMemberView) (((ViewObjectResponse<?>) resp).getResult())).toSessionMember();
         assertEquals(nonAlt2011, actualSm);
 
         SessionMember nonAlt2009 = new SessionMember(nonAlt2011);
@@ -97,7 +93,7 @@ public class MemberGetCtrlIT extends ApiTest {
         FullMemberView testFmv = new FullMemberView(new FullMember(Arrays.asList(alt2009, nonAlt2009,
                 alt2011, nonAlt2011, alt2013, nonAlt2013, only2015)));
         resp = testCtrl.getMembersByYearAndId(testMember.getMemberId(), 2015, true);
-        FullMemberView actualFmv = (FullMemberView)(((ViewObjectResponse<?>) resp).getResult());
+        FullMemberView actualFmv = (FullMemberView) (((ViewObjectResponse<?>) resp).getResult());
         assertTrue(isFullMemberViewEqual(testFmv, actualFmv));
     }
 
@@ -139,4 +135,89 @@ public class MemberGetCtrlIT extends ApiTest {
         }
         return true;
     }
+    @Test
+    public void testgetMemberXml() throws IOException {
+        // Create Map<String, String> for CREATE, UPDATE, DELETE
+        Map<String, String> createMap = new HashMap<>();
+        createMap.put("personId", "12345");
+        createMap.put("chamber", "Senate");
+
+        Map<String, String> updateMap = new HashMap<>();
+        updateMap.put("id", "1115");
+        updateMap.put("incumbent", "true");
+
+        Map<String, String> deleteMap = new HashMap<>();
+        deleteMap.put("id", "1115");
+
+        // Call the method with the proper Map
+        BaseResponse result = testCtrl.createMemberXml("MEMBER", "CREATE", createMap);
+        BaseResponse result2 = testCtrl.createMemberXml("MEMBER", "UPDATE", updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml("MEMBER", "DELETE", deleteMap);
+
+        // Assert the result
+        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
+        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
+        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
+    }
+
+
+    @Test
+    public void testGetPersonXml() throws IOException {
+        // Create Map<String, String> for CREATE, UPDATE, DELETE
+        Map<String, String> createMap = new HashMap<>();
+        createMap.put("firstName", "John");
+        createMap.put("lastName", "Doe");
+        createMap.put("email", "john.doe@example.com");
+        createMap.put("middleName", "Edward");
+        createMap.put("imgName", "john_doe.jpg");
+        createMap.put("suffix", "Jr");
+
+        Map<String, String> updateMap = new HashMap<>();
+        updateMap.put("id", "1115");
+        updateMap.put("email", "john.doe2@example.com");
+        updateMap.put("middleName", "Edward2");
+
+        Map<String, String> deleteMap = new HashMap<>();
+        deleteMap.put("id", "1115");
+
+        // Call the method with the proper Map
+        BaseResponse result = testCtrl.createMemberXml("PERSON", "CREATE", createMap);
+        BaseResponse result2 = testCtrl.createMemberXml("PERSON", "UPDATE", updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml("PERSON", "DELETE", deleteMap);
+
+        // Assert the result
+        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
+        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
+        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
+    }
+
+    @Test
+    public void testgetSessionXml() throws IOException {
+        // Create Map<String, String> for CREATE, UPDATE, DELETE
+        Map<String, String> createMap = new HashMap<>();
+        createMap.put("memberId", "1001");
+        createMap.put("sessionYear", "2023");
+        createMap.put("lbdcShortName", "JohnDoe");
+        createMap.put("districtCode", "45");
+
+        Map<String, String> updateMap = new HashMap<>();
+        updateMap.put("id", "1001");
+        updateMap.put("districtCode", "2024");
+        updateMap.put("alternate", "true");
+
+        Map<String, String> deleteMap = new HashMap<>();
+        deleteMap.put("id", "1001");
+
+        // Call the method with the proper Map
+        BaseResponse result = testCtrl.createMemberXml("SESSION", "CREATE", createMap);
+        BaseResponse result2 = testCtrl.createMemberXml("SESSION", "UPDATE", updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml("SESSION", "DELETE", deleteMap);
+
+        // Assert the result
+        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
+        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
+        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
+    }
+
+
 }

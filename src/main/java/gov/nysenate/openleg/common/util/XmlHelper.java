@@ -58,9 +58,24 @@ public class XmlHelper {
         return (NodeList)xpath.evaluate(path, node, XPathConstants.NODESET);
     }
 
+    public boolean hasChildNode(Node rootNode, String childName) {
+        NodeList childNodes = rootNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node childNode = childNodes.item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE && childNode.getNodeName().equals(childName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getStringSafe(String expression, Node node) {
         try {
-            return getString(expression, node);
+            String value =  getString(expression, node);
+            if (!hasChildNode(node, expression)) {
+                return null;
+            }
+            return value;
         } catch (XPathExpressionException e) {
             return null;
         }
@@ -68,7 +83,11 @@ public class XmlHelper {
 
     public Integer getIntegerSafe(String expression, Node node) {
         try {
-            return getInteger(expression, node);
+            Integer value =  getInteger(expression, node);
+            if (!hasChildNode(node, expression)) {
+                return null;
+            }
+            return value;
         } catch (XPathExpressionException | NumberFormatException e) {
             return null;
         }
