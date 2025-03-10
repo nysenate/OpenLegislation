@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,6 +28,10 @@ import javax.xml.xpath.XPathExpressionException;
 
 @Service
 public class MemberProcessor extends AbstractDataProcessor {
+    private static final String header = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <actionDetails tableName="%s" action="%s">
+            """;
     private final MemberDao memberDao;
     private final XmlHelper xmlHelper;
     private static final Logger logger = LoggerFactory.getLogger(MemberProcessor.class);
@@ -187,31 +191,14 @@ public class MemberProcessor extends AbstractDataProcessor {
     }
 
     public StringBuilder getMemberXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
-        String personIdStr = modelMap.get("personId");
-        String incumbentStr = modelMap.get("incumbent");
-        String chamber = modelMap.get("chamber");
-        String memberIdStr = modelMap.get("id");
+        var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
 
-        Integer personId = (personIdStr != null && !personIdStr.equals("null")) ? Integer.valueOf(personIdStr) : null;
-        Boolean incumbent = (incumbentStr != null && !incumbentStr.equals("null")) ? Boolean.valueOf(incumbentStr) : null;
-        Integer memberId = (memberIdStr != null && !memberIdStr.equals("null")) ? Integer.valueOf(memberIdStr) : null;
-
-        StringBuilder xmlBuilder = new StringBuilder();
-        xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-                .append("<actionDetails tableName=\"").append(memberTable).append("\" action=\"").append(changeType.name()).append("\">\n");
-
-        if (changeType == MemberChangeType.CREATE) {
-            xmlBuilder.append("<personId>").append(personId).append("</personId>\n")
-                    .append("<chamber>").append(chamber).append("</chamber>\n");
-        } else if (changeType == MemberChangeType.UPDATE) {
-            xmlBuilder.append("<id>").append(memberId).append("</id>\n")
-                    .append("<incumbent>").append(incumbent).append("</incumbent>\n");
-        } else if (changeType == MemberChangeType.DELETE) {
-            xmlBuilder.append("<id>").append(memberId).append("</id>\n");
-        }
-
-        xmlBuilder.append("</actionDetails>\n");
-        return xmlBuilder;
+        List<String> mappingNames = switch (changeType) {
+            case CREATE -> List.of("personId", "chamber");
+            case UPDATE -> List.of("id", "incumbent");
+            case DELETE ->  List.of("id");
+        };
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
     }
 
 
@@ -291,5 +278,16 @@ public class MemberProcessor extends AbstractDataProcessor {
         return xmlBuilder;
     }
 
+
+    private static String getXmlFragment(List<String> keys, Map<String, String> modelMap) {
+        var tempStringBuilder = new StringBuilder();
+        for (String key : keys) {
+            if (!modelMap.containsKey(key)) {
+                continue;
+            }
+            tempStringBuilder.append("<%s>%s</%s>\n".formatted(key, modelMap.get(key), key));
+        }
+        return tempStringBuilder.toString();
+    }
 }
 

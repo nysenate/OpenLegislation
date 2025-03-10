@@ -2,8 +2,6 @@ package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
@@ -12,9 +10,7 @@ import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.legislation.member.dao.SqlMemberDao;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -36,11 +32,10 @@ public class MemberProcessorIT extends BaseTests {
     @Autowired
     private SqlMemberDao sqlMemberDao;
 
-    private final ModelMap modelMap = new ModelMap();
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
         // Step 1: Create Person XmlProcessor
-        Path path = Paths.get("/home/nystech/Desktop/Createperson.xml");
+        Path path = Paths.get("src/test/resources/xml.memberchange/Createperson.xml");
         int id = memberProcessor.process(path);
 
         // Fetch the person record from the database
@@ -50,7 +45,7 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals("Doe", createdPersonRecord.name().lastName());
         assertEquals("Michael", createdPersonRecord.name().middleName());
         assertEquals("Jr.", createdPersonRecord.name().suffix());
-        assertEquals("john_img.jpg", createdPersonRecord.imgName());
+        assertEquals("john_doe.jpg", createdPersonRecord.imgName());
 
         //Create Person with no firstName
         try {
