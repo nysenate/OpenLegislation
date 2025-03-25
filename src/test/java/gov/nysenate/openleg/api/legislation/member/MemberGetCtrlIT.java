@@ -53,7 +53,7 @@ public class MemberGetCtrlIT extends ApiTest {
         String name = "HASSELL-THOMPSO";
         PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", "",
                 "Hassell-Thompson", "");
-        Person testPerson = new Person(199, pName, "hassellt@senate.state.ny.us",
+        Person testPerson = new Person(199, pName, null,
                 "380_ruth_hassell-thompson.jpg");
         Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);
         SessionMember nonAlt2011 = new SessionMember(74, testMember, name + "N", new

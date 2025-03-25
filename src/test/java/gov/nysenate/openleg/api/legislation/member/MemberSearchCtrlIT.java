@@ -34,7 +34,7 @@ public class MemberSearchCtrlIT extends ApiTest {
     public void aSimpleTest() throws SearchException {
         PersonName expectedName = new PersonName("Aurelia Greene", "Assembly Member", "Aurelia",
                 "", "Greene", "");
-        Person expectedPerson = new Person(498, expectedName, "", "no_image.jpg");
+        Person expectedPerson = new Person(498, expectedName, null, "no_image.jpg");
         Member expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
         SessionMember expectedSessionMember = new SessionMember(664, expectedMember, "GREENE",
                 new SessionYear(2009), 77, false);
