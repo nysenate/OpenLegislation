@@ -151,7 +151,7 @@ public class SqlMemberDaoIT extends BaseTests {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void testUpdatepersonNotInDB(){
+    public void testUpdatePersonNotInDB(){
         Person person = new Person(0,new PersonName("", "", "Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
         sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, person);
     }

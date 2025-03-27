@@ -141,7 +141,7 @@ public class MemberGetCtrl extends BaseCtrl {
     }
 
     @PutMapping(value = "/{memberTable}")
-    public BaseResponse createMemberXml(@PathVariable String memberTable, @RequestParam String action,
+    public BaseResponse createMemberXml(@PathVariable String memberTable, @RequestParam("action") String action,
                                         @RequestBody Map<String, String> modelMap) throws IOException {
         MemberChangeType changeType = MemberChangeType.valueOf(action);
         MemberType tableName = MemberType.valueOf(memberTable);
@@ -163,10 +163,10 @@ public class MemberGetCtrl extends BaseCtrl {
             File xmlFile = new File(filePath);
             FileIOUtils.writeStringToFile(xmlFile, xmlBuilder.toString());
         } catch (IOException e) {
-            return new SimpleResponse(false, "Failed to create a new memberXmlFile", "createMemberXml");
+            return new SimpleResponse(false, "Failed to create a new MemberXmlFile", "createMemberXml");
         }
 
-        return new SimpleResponse(true, "Successfully Created the MemberXMl file", "createMemberXml");
+        return new SimpleResponse(true, String.format("Successfully Created the %sMemberXml file", action), "createMemberXml");
     }
 
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {

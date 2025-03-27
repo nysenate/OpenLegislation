@@ -203,79 +203,26 @@ public class MemberProcessor extends AbstractDataProcessor {
 
 
     public StringBuilder getPersonXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
-        String personIdStr = modelMap.get("id");
-        String firstName = modelMap.get("firstName");
-        String lastName = modelMap.get("lastName");
-        String email = modelMap.get("email");
-        String middleName = modelMap.get("middleName");
-        String imgName = modelMap.get("imgName");
-        String suffix = modelMap.get("suffix");
+        var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
 
-        Integer personId = (personIdStr != null && !personIdStr.equals("null")) ? Integer.valueOf(personIdStr) : null;
+        List<String> mappingNames = switch(changeType){
+            case CREATE -> List.of("firstName", "lastName","middleName", "suffix", "email", "imgName");
+            case UPDATE -> List.of("id","firstName", "lastName", "middleName", "suffix", "email", "imgName");
+            case DELETE -> List.of("id");
+        };
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
 
-        StringBuilder xmlBuilder = new StringBuilder();
-        xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-                .append("<actionDetails tableName=\"").append(memberTable).append("\" action=\"").append(changeType.name()).append("\">\n");
-
-        if (changeType == MemberChangeType.CREATE) {
-            xmlBuilder.append("<firstName>").append(firstName).append("</firstName>\n")
-                    .append("<lastName>").append(lastName).append("</lastName>\n")
-                    .append(middleName != null ? "<middleName>" + middleName + "</middleName>\n" : "")
-                    .append(suffix != null ? "<suffix>" + suffix + "</suffix>\n" : "")
-                    .append(email != null ? "<email>" + email + "</email>\n" : "")
-                    .append(imgName != null ? "<imgName>" + imgName + "</imgName>\n" : "");
-
-        } else if (changeType == MemberChangeType.UPDATE) {
-            xmlBuilder.append("<id>").append(personId).append("</id>\n")
-                    .append(firstName != null ? "<firstName>" + firstName + "</firstName>\n" : "")
-                    .append(lastName != null ? "<lastName>" + lastName + "</lastName>\n" : "")
-                    .append(middleName != null ? "<middleName>" + middleName + "</middleName>\n" : "")
-                    .append(suffix != null ? "<suffix>" + suffix + "</suffix>\n" : "")
-                    .append(email != null ? "<email>" + email + "</email>\n" : "")
-                    .append(imgName != null ? "<imgName>" + imgName + "</imgName>\n" : "");
-
-        } else if (changeType == MemberChangeType.DELETE) {
-            xmlBuilder.append("<id>").append(personId).append("</id>\n");
-        }
-
-        xmlBuilder.append("</actionDetails>");
-        return xmlBuilder;
     }
 
-
     public StringBuilder getSessionXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
-        String idStr = modelMap.get("id");
-        String memberIdStr = modelMap.get("memberId");
-        String sessionYearStr = modelMap.get("sessionYear");
-        String lbdcShortName = modelMap.get("lbdcShortName");
-        String districtCodeStr = modelMap.get("districtCode");
-        String alternateStr = modelMap.get("alternate");
+        var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
 
-        Integer id = (idStr != null && !idStr.equals("null")) ? Integer.valueOf(idStr) : null;
-        Integer memberId = (memberIdStr != null && !memberIdStr.equals("null")) ? Integer.valueOf(memberIdStr) : null;
-        Integer sessionYear = (sessionYearStr != null && !sessionYearStr.equals("null")) ? Integer.valueOf(sessionYearStr) : null;
-        Integer districtCode = (districtCodeStr != null && !districtCodeStr.equals("null")) ? Integer.valueOf(districtCodeStr) : null;
-        Boolean alternate = (alternateStr != null && !alternateStr.equals("null")) ? Boolean.valueOf(alternateStr) : null;
-
-        StringBuilder xmlBuilder = new StringBuilder();
-        xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-                .append("<actionDetails tableName=\"").append(memberTable).append("\" action=\"").append(changeType.name()).append("\">\n");
-
-        if (changeType == MemberChangeType.CREATE) {
-            xmlBuilder.append("<memberId>").append(memberId).append("</memberId>\n")
-                    .append("<sessionYear>").append(sessionYear).append("</sessionYear>\n")
-                    .append("<lbdcShortName>").append(lbdcShortName).append("</lbdcShortName>\n")
-                    .append("<districtCode>").append(districtCode).append("</districtCode>\n");
-        } else if (changeType == MemberChangeType.UPDATE) {
-            xmlBuilder.append("<id>").append(id).append("</id>\n")
-                    .append(alternate != null ? "<alternate>" + alternate + "</alternate>\n" : "")
-                    .append(districtCode != null ? "<districtCode>" + districtCode + "</districtCode>\n" : "");
-        } else if (changeType == MemberChangeType.DELETE) {
-            xmlBuilder.append("<id>").append(id).append("</id>\n");
-        }
-
-        xmlBuilder.append("</actionDetails>");
-        return xmlBuilder;
+        List<String> mappingNames = switch(changeType){
+            case CREATE -> List.of("memberId", "sessionYear","lbdcShortName","districtCode");
+            case UPDATE -> List.of("id","districtCode","alternate");
+            case DELETE -> List.of("id");
+        };
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
     }
 
 

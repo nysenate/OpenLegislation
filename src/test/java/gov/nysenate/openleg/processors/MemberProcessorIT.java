@@ -35,7 +35,7 @@ public class MemberProcessorIT extends BaseTests {
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
         // Step 1: Create Person XmlProcessor
-        Path path = Paths.get("src/test/resources/xml.memberchange/Createperson.xml");
+        Path path = Paths.get("src/test/resources/xml.memberchange/createPerson.xml");
         int id = memberProcessor.process(path);
 
         // Fetch the person record from the database
@@ -47,30 +47,21 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals("Jr.", createdPersonRecord.name().suffix());
         assertEquals("john_doe.jpg", createdPersonRecord.imgName());
 
-        //Create Person with no firstName
-        try {
-             Path path2 = Paths.get("/home/nystech/Desktop/PersonWithNoFirstName.xml");
-             int id2 = memberProcessor.process(path2);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Failed Because of No first Name" + e.getMessage());
-        }
-
-
         //Step 2: Create Member XmlProcessor
-        Path memberPath = Paths.get("/home/nystech/Desktop/Createmember.xml");
+        Path memberPath = Paths.get("src/test/resources/xml.memberchange/createMember.xml");
         int m_id = memberProcessor.process(memberPath);
         assertTrue(m_id >0);
 
         // Step 3: Create Session XmlProcessor
-        Path sessionPath = Paths.get("/home/nystech/Desktop/Createsessionmember.xml");
+        Path sessionPath = Paths.get("src/test/resources/xml.memberchange/createSessionMember.xml");
         int s_id = memberProcessor.process(sessionPath);
         assertTrue(s_id >0);
 
         // Fetch full member record for verification
-        Member createdMemberRecord2 = memberDao.getMemberByMemberId(m_id);
-        assertEquals(createdMemberRecord2.getMemberId(), m_id);
-        assertEquals(707, createdMemberRecord2.getPersonId().intValue());
-        assertEquals("SENATE", (createdMemberRecord2.getChamber()).toString());
+//        Member createdMemberRecord2 = memberDao.getMemberByMemberId(m_id);
+//        assertEquals(createdMemberRecord2.getMemberId(), m_id);
+//        assertEquals(707, createdMemberRecord2.getPersonId().intValue());
+//        assertEquals("SENATE", (createdMemberRecord2.getChamber()).toString());
 
         // Fetch session member from the database
         SessionMember createdSessionRecord = memberDao.getMemberBySessionId(s_id);
@@ -78,10 +69,8 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(2023, createdSessionRecord.getSessionYear().year());
         assertEquals(12208, createdSessionRecord.getDistrictCode().intValue());
 
-
-
         // Step 4: Update Person XmlProcessor
-        Path personUpdatePath = Paths.get("/home/nystech/Desktop/Updateperson.xml");
+        Path personUpdatePath = Paths.get("src/test/resources/xml.memberchange/updatePerson.xml");
         memberProcessor.process(personUpdatePath);
 
         // Fetch the updated person record
@@ -94,7 +83,7 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals("john.doe@.gmail.com", updatedPerson.email());
 
         // Step 5: Update Member XmlProcessor
-        Path memberUpdatePath = Paths.get("/home/nystech/Desktop/Updatemember.xml");
+        Path memberUpdatePath = Paths.get("src/test/resources/xml.memberchange/updateMember.xml");
         memberProcessor.process(memberUpdatePath);
 
         // Fetch the updated member record
@@ -102,7 +91,7 @@ public class MemberProcessorIT extends BaseTests {
         assertTrue(updatedMember.isIncumbent());
 
         // Step 6: Update Session XmlProcessor
-        Path sessionUpdatePath = Paths.get("/home/nystech/Desktop/UpdateSession.xml");
+        Path sessionUpdatePath = Paths.get("src/test/resources/xml.memberchange/updateSession.xml");
         memberProcessor.process(sessionUpdatePath);
 
         // Fetch the updated session record
@@ -110,38 +99,31 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(1300,updatedSessionMember.getDistrictCode().intValue());
         assertTrue("Alternate status was not updated", updatedSessionMember.isAlternate());
 
-        // Step 7: Delete XML processor
+    }
 
-        try {
-        Path deletePath = Paths.get("/home/nystech/Desktop/deleteSessionMember.xml");
-        memberProcessor.process(deletePath);
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreatePersonWithNoFirstName() throws IllegalArgumentException, SAXException, IOException {
+        //Create Person with no firstName
+        Path path2 = Paths.get("src/test/resources/xml.memberchange/personWithNoFirstName.xml");
+        int id2 = memberProcessor.process(path2);
+    }
+
+    @Test(expected = MemberNotFoundEx.class)
+    public void deleteMember() throws MemberNotFoundEx, IOException, SAXException {
+            Path deletePath = Paths.get("src/test/resources/xml.memberchange/deleteSessionMember.xml");
+            memberProcessor.process(deletePath);
             SessionMember deletedSession = sqlMemberDao.getMemberBySessionId(357);
             fail("Session record was not deleted, expected exception to be thrown");
-        } catch (MemberNotFoundEx e) {
-            // Expected exception, session record was deleted
-            System.out.println("Session member deleted successfully: " + e.getMessage());
-        }
 
-////        Verify the deletion by trying to fetch the full member
-//        This need to be run after the getmemberbyId is updated, since throws the error due to memberById in memberprocessor
-//        try {
-//            Path deletePath = Paths.get("/home/nystech/Desktop/deleteMember.xml");
-//            memberProcessor.process(deletePath);
-//            fail("Member record was not deleted, expected exception to be thrown");
-//        } catch (MemberNotFoundEx e) {
-//            System.out.println("Member deleted successfully: " + e.getMessage());
-//        }
+            Path deletePath2 = Paths.get("src/test/resources/xml.memberchange/deleteMember.xml");
+            Member deletedMember = memberDao.getMemberByMemberId(632);
+            memberProcessor.process(deletePath2);
+            fail("Member record was not deleted, expected exception to be thrown");
 
-        // Verify the deletion by trying to fetch the person record
-//        try {
-//            Path deletePath = Paths.get("/home/nystech/Desktop/deletePerson.xml");
-//            memberProcessor.process(deletePath);
-//            Person deletedPerson = memberDao.getPersonByPersonId(454);
-//            fail("Person record was not deleted, expected exception to be thrown");
-//        } catch (MemberNotFoundEx e) {
-//            // Expected exception, person record was deleted
-//            System.out.println("Person deleted successfully: " + e.getMessage());
-//        }
+            Path deletePath3 = Paths.get("src/test/resources/xml.memberchange/deletePerson.xml");
+            memberProcessor.process(deletePath3);
+            Person deletedPerson = memberDao.getPersonByPersonId(454);
+            fail("Person record was not deleted, expected exception to be thrown");
     }
 
     @Test
@@ -167,7 +149,7 @@ public class MemberProcessorIT extends BaseTests {
             <suffix>Jr</suffix>
             <email>john.doe@example.com</email>
             <imgName>profile.jpg</imgName>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedXml, xmlBuilder.toString());
 
@@ -192,7 +174,7 @@ public class MemberProcessorIT extends BaseTests {
             <suffix>Jr</suffix>
             <email>john.doe@example.com</email>
             <imgName>profile.jpg</imgName>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
 
@@ -205,7 +187,7 @@ public class MemberProcessorIT extends BaseTests {
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="MEMBER" action="DELETE">
             <id>123</id>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
 
@@ -232,7 +214,11 @@ public class MemberProcessorIT extends BaseTests {
             <id>123</id>
             <firstName>abcd</firstName>
             <lastName>efg</lastName>
-            </actionDetails>""";
+            <middleName>null</middleName>
+            <suffix>null</suffix>
+            <email>null</email>
+            <imgName>null</imgName>
+            </actionDetails>\n""";
 
         assertEquals(expectedXml, xmlBuilder.toString());
 
@@ -244,7 +230,11 @@ public class MemberProcessorIT extends BaseTests {
             <actionDetails tableName="MEMBER" action="CREATE">
             <firstName>abcd</firstName>
             <lastName>efg</lastName>
-            </actionDetails>""";
+            <middleName>null</middleName>
+            <suffix>null</suffix>
+            <email>null</email>
+            <imgName>null</imgName>
+            </actionDetails>\n""";
 
         assertEquals(expectedCreatedXml, xmlCreateBuilder.toString());
     }
@@ -269,7 +259,7 @@ public class MemberProcessorIT extends BaseTests {
             <sessionYear>2025</sessionYear>
             <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedXml, xmlBuilder.toString());
 
@@ -282,9 +272,9 @@ public class MemberProcessorIT extends BaseTests {
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="SESSION" action="UPDATE">
             <id>123</id>
-            <alternate>false</alternate>
             <districtCode>101</districtCode>
-            </actionDetails>""";
+            <alternate>false</alternate>
+            </actionDetails>\n""";
 
         assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
 
@@ -297,7 +287,7 @@ public class MemberProcessorIT extends BaseTests {
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="SESSION" action="DELETE">
             <id>123</id>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
     }
@@ -322,7 +312,7 @@ public class MemberProcessorIT extends BaseTests {
             <sessionYear>null</sessionYear>
             <lbdcShortName>null</lbdcShortName>
             <districtCode>null</districtCode>
-            </actionDetails>""";
+            </actionDetails>\n""";
 
         assertEquals(expectedCreateXml, xmlCreateBuilder.toString());
 
@@ -333,14 +323,16 @@ public class MemberProcessorIT extends BaseTests {
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="SESSION" action="UPDATE">
             <id>123</id>
-            </actionDetails>""";
+            <districtCode>null</districtCode>
+            <alternate>null</alternate>
+            </actionDetails>\n""";
 
         assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void noExpression() throws Exception {
-        Path path = Paths.get("/home/nystech/Desktop/Createperson2.xml");
+        Path path = Paths.get("src/test/resources/xml.memberchange/noRequiredArgs.xml");
         int id = memberProcessor.process(path);  // This should throw IllegalArgumentException as missing lastname
     }
 

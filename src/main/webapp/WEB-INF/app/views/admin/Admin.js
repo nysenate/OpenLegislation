@@ -21,6 +21,7 @@ import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
 import BatchEmail from "app/views/admin/email/BatchEmail";
 import useAuth from "app/shared/useAuth";
 import SpotcheckReports from "app/views/admin/spotchecks/SpotcheckReports";
+import MemberHandler from "app/views/admin/memberUpdate/memberHandler";
 
 
 export default function Admin({ setHeaderText }) {
@@ -37,6 +38,9 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/indices">
           <Indices setHeaderText={setHeaderText} />
+        </PrivateRoute>
+        <PrivateRoute path="/admin/memberHandler">
+          <MemberHandler setHeaderText={setHeaderText} />
         </PrivateRoute>
         <PrivateRoute path="/admin/reports">
           <Reports setHeaderText={setHeaderText} />
@@ -96,6 +100,7 @@ function AdminDashboard({ setHeaderText }) {
             <li><Link to="/admin/config" className="link">App Properties</Link></li>
             <li><Link to="/admin/caches" className="link">In Memory Caches</Link></li>
             <li><Link to="/admin/indices" className="link">Elastic Search Indexes</Link></li>
+            <li><Link to = "/admin/memberHandler" className = "link">Update Member</Link></li>
           </ul>
         </div>
 
