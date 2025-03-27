@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionDetails tableName="person" action="CREATE">
+    <lastName>Doe</lastName>
+    <middleName>Michael</middleName>
+    <email>john.doe@example.com</email>
+    <imgName>john_img.jpg</imgName>
+    <suffix>Jr.</suffix>
+</actionDetails>
+
