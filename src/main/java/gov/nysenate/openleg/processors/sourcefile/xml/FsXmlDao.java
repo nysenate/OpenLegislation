@@ -109,6 +109,10 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
         return new File(dir, fileName);
     }
 
+    public File getIncomingSourceDir() {
+        return incomingSourceDir;
+    }
+
     /* --- Internal Methods --- */
 
     private XmlFile toXmlFile(File file) throws IOException {

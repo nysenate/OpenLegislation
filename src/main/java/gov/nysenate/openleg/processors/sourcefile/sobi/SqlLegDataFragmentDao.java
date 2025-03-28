@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.sourcefile.sobi;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.processors.sourcefile.SourceFileFsDao;
@@ -19,7 +18,6 @@ import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
@@ -41,21 +39,6 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
         OrderBy orderBy = fragmentOrderBy(pubDateOrder);
         return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS.getSql(schema(), orderBy, limOff),
                 new LegDataFragmentRowMapper(sourceFileDaoMap));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<LegDataFragment> getPendingLegDataFragments(ImmutableSet<LegDataFragmentType> restrict,
-                                                            SortOrder pubDateOrder,
-                                                            LimitOffset limOff) {
-        OrderBy orderBy = fragmentOrderBy(pubDateOrder);
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("fragmentTypes",
-                restrict.stream().map(Enum::name).collect(Collectors.toSet()));
-        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE.getSql(schema(), orderBy, limOff),
-                params, new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
     /**

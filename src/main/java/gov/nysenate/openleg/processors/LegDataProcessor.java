@@ -7,8 +7,7 @@ import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
  * Classes that implement functionality for processing a particular type of data
  * sent via sobi files should expose this interface.
  */
-public interface LegDataProcessor
-{
+public interface LegDataProcessor {
     /**
      * Returns a LegDataFragmentType value to indicate that the class will support
      * processing of the given type of fragment.
@@ -29,16 +28,15 @@ public interface LegDataProcessor
     /**
      * Perform any additional tasks that must be run prior to finishing processing.
      */
-    void postProcess();
+    default void postProcess() {}
 
     /**
-     * All processors must have this method to ensure that the ManagedLegDataProcessService can properly flush the
+     * Ensures that the ManagedLegDataProcessService can properly flush the
      * Ingest Cache or caches the processor is specified to flush
-     *
-     * This is an exmaple of a bill implementation of this method
+     * This is an example of a bill implementation of this method
      * if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
      *             flushBillUpdates();
      *         }
      */
-    void checkIngestCache();
+    default void checkIngestCache() {};
 }

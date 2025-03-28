@@ -47,13 +47,12 @@ public class MemberGetCtrl extends BaseCtrl {
     private static final Logger log = LoggerFactory.getLogger(MemberGetCtrl.class);
     private final MemberService memberData;
     private final MemberSearchService memberSearch;
-
-
     private final String stagingDirectory;
     private final MemberProcessor memberProcessor;
 
     @Autowired
-    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch, @Value("${env.staging}") String sourceCodeDir, MemberProcessor memberProcessor) {
+    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch,
+                         @Value("${member.staging}") String sourceCodeDir, MemberProcessor memberProcessor) {
         this.memberData = memberData;
         this.memberSearch = memberSearch;
         this.stagingDirectory = sourceCodeDir;
@@ -142,7 +141,7 @@ public class MemberGetCtrl extends BaseCtrl {
 
     @PutMapping(value = "/{memberTable}")
     public BaseResponse createMemberXml(@PathVariable String memberTable, @RequestParam("action") String action,
-                                        @RequestBody Map<String, String> modelMap) throws IOException {
+                                        @RequestBody Map<String, String> modelMap) {
         MemberChangeType changeType = MemberChangeType.valueOf(action);
         MemberType tableName = MemberType.valueOf(memberTable);
         StringBuilder xmlBuilder = switch (tableName) {
@@ -154,10 +153,10 @@ public class MemberGetCtrl extends BaseCtrl {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String date = now.format(dateFormatter);
 
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmssSSSSSSSSS");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm.ss.SSSSSS");
         String time = now.format(timeFormatter);
 
-        String filePath = stagingDirectory + "/" + date + "-" + time + "_" + "member" + "_" + "1" + ".xml";
+        String filePath = stagingDirectory + "/" + date + "-" + time + "_member_1.xml";
 
         try {
             File xmlFile = new File(filePath);
@@ -165,6 +164,7 @@ public class MemberGetCtrl extends BaseCtrl {
         } catch (IOException e) {
             return new SimpleResponse(false, "Failed to create a new MemberXmlFile", "createMemberXml");
         }
+        // TODO: trigger cache refresh
 
         return new SimpleResponse(true, String.format("Successfully Created the %sMemberXml file", action), "createMemberXml");
     }
@@ -183,5 +183,4 @@ public class MemberGetCtrl extends BaseCtrl {
     protected ErrorResponse handleMemberNotFoundEx(MemberNotFoundEx ex) {
         return new ErrorResponse(ErrorCode.MEMBER_NOT_FOUND);
     }
-
 }

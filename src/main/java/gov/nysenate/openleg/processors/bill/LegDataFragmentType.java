@@ -30,7 +30,8 @@ public enum LegDataFragmentType
     SAMEAS          ("<sameas .+", "</sameas>.+"),                          // Same as
     SENMEMO         ("<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
     VETOMSG         ("<veto_message .+", "</veto_message.+"),               // Veto memo
-    SENFLVOTE       ("<senfloorvote .+","</senfloorvote>.+");
+    SENFLVOTE       ("<senfloorvote .+","</senfloorvote>.+"),
+    MEMBER          ("<actionDetails .+","</actionDetails>.+"),;
 
     private final String startPattern;
     private final String endPattern;
@@ -38,10 +39,6 @@ public enum LegDataFragmentType
     LegDataFragmentType(String startPattern, String endPattern) {
         this.startPattern = startPattern;
         this.endPattern = endPattern;
-    }
-
-    public String getStartPattern() {
-        return startPattern;
     }
 
     public String getEndPattern() {
@@ -57,7 +54,7 @@ public enum LegDataFragmentType
      */
     public static LegDataFragmentType matchFragmentType(String line) {
         for (LegDataFragmentType fragmentType : LegDataFragmentType.values()) {
-            if (line.matches(fragmentType.getStartPattern())) {
+            if (line.matches(fragmentType.startPattern)) {
                 return fragmentType;
             }
         }

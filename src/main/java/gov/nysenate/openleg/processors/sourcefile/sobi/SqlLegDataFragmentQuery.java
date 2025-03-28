@@ -25,10 +25,6 @@ public enum SqlLegDataFragmentQuery implements BasicSqlQuery
         GET_LEG_DATA_FRAGMENTS.getSql() + "\n" +
         "WHERE " + SqlTable.LEG_DATA_FRAGMENT + ".pending_processing = true"
     ),
-    GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE(
-        GET_PENDING_LEG_DATA_FRAGMENTS.sql +
-                " AND " + SqlTable.LEG_DATA_FRAGMENT + ".fragment_type IN (:fragmentTypes)"
-    ),
     GET_LEG_DATA_FRAGMENT_BY_FRAGMENT_ID(
         GET_LEG_DATA_FRAGMENTS.getSql() + "\n" +
         "WHERE " + SqlTable.LEG_DATA_FRAGMENT + ".fragment_id = :fragmentId"

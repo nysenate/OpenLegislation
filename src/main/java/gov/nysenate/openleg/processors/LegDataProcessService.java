@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentNotFoundEx;
-import gov.nysenate.openleg.processors.bill.sobi.SobiProcessOptions;
 
 import java.util.List;
 
@@ -26,30 +23,16 @@ public interface LegDataProcessService extends ProcessService
     int collateSourceFiles();
 
     /**
-     * Retrieves the SobiFragments that are awaiting processing.
-     *
-     * @param sortByPubDate SortOrder - Sort order for the fragment id.
-     * @param limitOffset LimitOffset - Restrict the results list.
-     * @return List<LegDataFragment>
-     */
-    List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
-
-    /**
      * Process the list of supplied SobiFragments.
      *  @param fragments List<LegDataFragment> - List of fragments to process.
-     * @param options - SobiProcessOptions - Provide custom processing options or
      */
-    int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options);
+    int processFragments(List<LegDataFragment> fragments);
 
     /**
-     * Retrieves all pending fragments and processes them. This is essentially a shorthand
-     * for invoking {@link #getPendingFragments} and running {@link #processFragments} on
+     * Retrieves all pending fragments and processes them.
      * the results.
-     *
-     * @param options - SobiProcessOptions - Provide custom processing options or
-     *                                       set to null to use the default options. TODO
      */
-    int processPendingFragments(SobiProcessOptions options);
+    int processPendingFragments();
 
     /**
      * Toggle the pending processing status of a LegDataFragment via it's fragmentId.

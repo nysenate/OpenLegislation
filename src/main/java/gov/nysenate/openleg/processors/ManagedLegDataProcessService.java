@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.common.dao.LimitOffset;
@@ -9,7 +8,6 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.processors.bill.*;
 import gov.nysenate.openleg.processors.bill.sobi.SobiLineType;
-import gov.nysenate.openleg.processors.bill.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processors.config.ProcessConfig;
 import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.processors.log.DataProcessUnitEvent;
@@ -89,7 +87,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
      */
     @Override
     public int ingest() {
-        return processPendingFragments(SobiProcessOptions.builder().build());
+        return processPendingFragments();
     }
 
     @Override
@@ -128,15 +126,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
      * {@inheritDoc}
      */
     @Override
-    public List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset) {
-        return legDataFragmentDao.getPendingLegDataFragments(sortByPubDate, limitOffset);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options) {
+    public int processFragments(List<LegDataFragment> fragments) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
         final List<LegDataFragment> filteredFragments = processConfig.filterFileFragments(fragments);
@@ -172,20 +162,19 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
      * Perform the operation in small batches so memory is not saturated.
      */
     @Override
-    public int processPendingFragments(SobiProcessOptions options) {
+    public int processPendingFragments() {
         List<LegDataFragment> fragments;
         int processCount = 0;
 
         do {
-            ImmutableSet<LegDataFragmentType> allowedTypes = options.getAllowedFragmentTypes();
             LimitOffset limOff = new LimitOffset(env.getLegDataBatchSize());
-            fragments = legDataFragmentDao.getPendingLegDataFragments(allowedTypes, SortOrder.ASC, limOff);
+            fragments = legDataFragmentDao.getPendingLegDataFragments(SortOrder.ASC, limOff);
             // Process fragments in a batch, or one by one depending on sobi batch config.
             if (env.isLegDataBatchEnabled()) {
-                processCount += processFragments(fragments, options);
+                processCount += processFragments(fragments);
             } else {
                 for (LegDataFragment fragment : fragments) {
-                    processCount += processFragments(Collections.singletonList(fragment), options);
+                    processCount += processFragments(List.of(fragment));
                 }
             }
         } while (!fragments.isEmpty() && env.isProcessingEnabled());
@@ -300,15 +289,13 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
                 // tag and the xml text is stored in the fragment.
                 else {
                     String xmlText = extractXmlText(fragmentType, line, lineIterator);
-                    LegDataFragment fragment = new LegDataFragment(sourceFile, fragmentType, xmlText, sequenceNo++);
-                    legDataFragments.add(fragment);
+                    legDataFragments.add(new LegDataFragment(sourceFile, fragmentType, xmlText, sequenceNo++));
                 }
             }
         }
         // Convert the billBuffer into a single bill fragment (if applicable) with sequence no set to 0.
-        if (billBuffer.length() > 0) {
-            LegDataFragment billFragment = new LegDataFragment(sourceFile, LegDataFragmentType.BILL, billBuffer.toString(), 0);
-            legDataFragments.add(billFragment);
+        if (!billBuffer.isEmpty()) {
+            legDataFragments.add(new LegDataFragment(sourceFile, LegDataFragmentType.BILL, billBuffer.toString(), 0));
         }
         // Set manual fix flag and add notes if this file was a patch
         if (isPatch) {

@@ -51,9 +51,9 @@ public class XmlFile extends BaseSourceFile {
     @Override
     public LocalDateTime getPublishedDateTime() throws InvalidLegDataFileNameEx {
         try {
-            String fileName=getFileName();
+            String fileName = getFileName();
             Matcher m = fileNamePattern.matcher(fileName);
-            DateTimeFormatter dateTimeFormatter= DateTimeFormatter.ofPattern(xmlPattern);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(xmlPattern);
             if (m.matches()) {
                 return LocalDateTime.parse(m.group("date") + "T" + m.group("time"),
                         dateTimeFormatter);

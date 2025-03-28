@@ -7,6 +7,8 @@ import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
+import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ import org.w3c.dom.Node;
 import javax.xml.xpath.XPathExpressionException;
 
 @Service
-public class MemberProcessor extends AbstractDataProcessor {
+public class MemberProcessor implements LegDataProcessor {
     private static final String header = """
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="%s" action="%s">
@@ -42,6 +44,20 @@ public class MemberProcessor extends AbstractDataProcessor {
         this.xmlHelper = xmlHelper;
     }
 
+    @Override
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.MEMBER;
+    }
+
+    @Override
+    public void process(LegDataFragment fragment) {
+        try {
+            process(fragment.getParentLegDataFile().getFile().toPath());
+        } catch (IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int handlePerson(MemberChangeType action, Node rootNode) throws IllegalArgumentException {
         final Integer id = xmlHelper.getIntegerSafe("id", rootNode);
         final String firstName = xmlHelper.getStringSafe("firstName", rootNode);
@@ -51,7 +67,7 @@ public class MemberProcessor extends AbstractDataProcessor {
         final String suffix = StringUtils.defaultIfEmpty(xmlHelper.getStringSafe("suffix", rootNode),"");
         final String imgName = xmlHelper.getStringSafe("imgName", rootNode);
 
-        if ((MemberChangeType.CREATE == action) && (firstName == null || lastName == null)) {
+        if (MemberChangeType.CREATE == action && (firstName == null || lastName == null)) {
             logger.error("Missing required attribute FirstName or LastName");
             throw new IllegalArgumentException("Missing required attribute FirstName or LastName");
         }
@@ -71,9 +87,7 @@ public class MemberProcessor extends AbstractDataProcessor {
         );
 
         return switch (action) {
-            case CREATE -> {
-                yield memberDao.handlePersonChange(MemberChangeType.CREATE, person);
-            }
+            case CREATE -> memberDao.handlePersonChange(MemberChangeType.CREATE, person);
             case UPDATE -> {
                 if (id == null) {
                     throw new MemberNotFoundEx();
@@ -106,7 +120,7 @@ public class MemberProcessor extends AbstractDataProcessor {
                 if (personId == null || chamber == null) {
                     logger.error("Missing required attribute PersonId | Chamber");
                 }
-                member = new Member(personId, -1, Chamber.valueOf(chamber), incumbent);
+                member = new Member(personId, -1, Chamber.valueOf(chamber.toUpperCase()), incumbent);
                 return memberDao.handleMemberChange(MemberChangeType.CREATE, member);
             case UPDATE:
                 if (existingRecord == null) {
@@ -124,8 +138,7 @@ public class MemberProcessor extends AbstractDataProcessor {
         return 0;
     }
 
-
-    public int handleSessionMember(MemberChangeType action, Node rootNode) throws XPathExpressionException {
+    public int handleSessionMember(MemberChangeType action, Node rootNode) {
         final Integer id = xmlHelper.getIntegerSafe("id", rootNode);
         final Integer memberId = xmlHelper.getIntegerSafe("memberId", rootNode);
         final String lbdcShortName = xmlHelper.getStringSafe("lbdcShortName", rootNode);
@@ -155,12 +168,13 @@ public class MemberProcessor extends AbstractDataProcessor {
                 return memberDao.handleSessionMemberChange(MemberChangeType.UPDATE, sessionMember);
             case DELETE:
                 sessionMember = new SessionMember(id, -1, "", new SessionYear(2), 0, false);
-                return memberDao.handleSessionMemberChange(MemberChangeType.DELETE, sessionMember);}
+                return memberDao.handleSessionMemberChange(MemberChangeType.DELETE, sessionMember);
+        }
         return 0;
     }
 
     public int process(Path path) throws IOException, SAXException {
-        try{
+        try {
             File file = path.toFile();
             Document document = xmlHelper.parse(file);
             Node rootNode = document.getDocumentElement();
@@ -181,11 +195,8 @@ public class MemberProcessor extends AbstractDataProcessor {
                     logger.error("Unhandled action: {}", action);
             }
 
-        } catch (IllegalArgumentException e) {
+        } catch (XPathExpressionException e) {
             throw new IllegalArgumentException(e);
-        } catch (Exception e) {
-            logger.error("Error While Parsing MemberProcessorXML", e);
-            throw new SAXException(e);
         }
         return 0;
     }
@@ -200,7 +211,6 @@ public class MemberProcessor extends AbstractDataProcessor {
         };
         return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
     }
-
 
     public StringBuilder getPersonXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
@@ -224,7 +234,6 @@ public class MemberProcessor extends AbstractDataProcessor {
         };
         return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
     }
-
 
     private static String getXmlFragment(List<String> keys, Map<String, String> modelMap) {
         var tempStringBuilder = new StringBuilder();

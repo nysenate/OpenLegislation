@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.processors.sourcefile.sobi;
 
-import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
-import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -45,20 +43,7 @@ public interface LegDataFragmentDao {
      * @return List<LegDataFragment>
      */
     List<LegDataFragment> getPendingLegDataFragments(SortOrder pubDateOrder, LimitOffset limOff);
-    
-    /**
-     * Retrieves the SobiFragments that are awaiting processing and belong to one of the types
-     * in the given 'restrict' set.
-     *
-     * @param restrict ImmutableSet<LegDataFragmentType> - Filter result set to only include these types.
-     * @param pubDateOrder SortOrder - Sort order for the fragment's published date time
-     * @param limOff   LimitOffset - Restrict the results list.
-     *
-     * @return List<LegDataFragment>
-     */
-    List<LegDataFragment> getPendingLegDataFragments(ImmutableSet<LegDataFragmentType> restrict, SortOrder pubDateOrder,
-                                                     LimitOffset limOff);
-    
+
     /**
      * Persist the sobi fragment into the backing store. The parent SobiFile must be recorded in
      * the backing store prior to invoking this method.
