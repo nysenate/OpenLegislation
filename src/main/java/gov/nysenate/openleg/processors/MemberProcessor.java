@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.common.util.XmlHelper;
+import gov.nysenate.openleg.legislation.CacheType;
+import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
@@ -23,6 +25,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -56,6 +59,8 @@ public class MemberProcessor implements LegDataProcessor {
         } catch (IOException | SAXException e) {
             throw new RuntimeException(e);
         }
+        OpenLegCacheManager.clearCaches(Set.of(CacheType.SHORTNAME, CacheType.SESSION_MEMBER, CacheType.FULL_MEMBER),
+                true);
     }
 
     public int handlePerson(MemberChangeType action, Node rootNode) throws IllegalArgumentException {
@@ -228,8 +233,8 @@ public class MemberProcessor implements LegDataProcessor {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
 
         List<String> mappingNames = switch(changeType){
-            case CREATE -> List.of("memberId", "sessionYear","lbdcShortName","districtCode");
-            case UPDATE -> List.of("id","districtCode","alternate");
+            case CREATE -> List.of("memberId", "sessionYear", "lbdcShortName", "districtCode");
+            case UPDATE -> List.of("id", "districtCode", "alternate");
             case DELETE -> List.of("id");
         };
         return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");

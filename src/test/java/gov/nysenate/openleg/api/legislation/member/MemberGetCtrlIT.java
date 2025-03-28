@@ -136,7 +136,7 @@ public class MemberGetCtrlIT extends ApiTest {
         return true;
     }
     @Test
-    public void testgetMemberXml() throws IOException {
+    public void testGetMemberXml() {
         // Create Map<String, String> for CREATE, UPDATE, DELETE
         Map<String, String> createMap = new HashMap<>();
         createMap.put("personId", "12345");

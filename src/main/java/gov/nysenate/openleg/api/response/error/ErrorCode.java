@@ -31,6 +31,7 @@ public enum ErrorCode {
     DATA_PROCESS_RUN_FAILED(122, "The data process did not run, due to processing being disabled or an error"),
     SOURCE_FILE_NOT_FOUND(131, "The source file was not found"),
 
+
     /** --- Other missing data --- */
     TRANSCRIPT_NOT_FOUND(141, "The transcript was not found"),
     DUPLICATE_TRANSCRIPT(142, "There are two transcripts at this dateTime. Please specify."),
@@ -49,6 +50,7 @@ public enum ErrorCode {
     /** --- General --- */
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),
+    MEMBER_CHANGE_FAILURE(512, "Failed to create or process a new member XML file."),
     INVALID_DATE_RANGE(601, "The supplied date range is not valid."),
     API_KEY_REQUIRED(701, "A valid API key is needed to fulfill this request."),
     API_KEY_INVALID(702, "Sorry, the API key you provided is not valid.")

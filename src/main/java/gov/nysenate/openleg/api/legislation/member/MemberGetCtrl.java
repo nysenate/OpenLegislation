@@ -19,6 +19,7 @@ import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.MemberProcessor;
 import gov.nysenate.openleg.processors.MemberType;
+import gov.nysenate.openleg.processors.DataProcessor;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.member.MemberSearchService;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -47,16 +47,18 @@ public class MemberGetCtrl extends BaseCtrl {
     private static final Logger log = LoggerFactory.getLogger(MemberGetCtrl.class);
     private final MemberService memberData;
     private final MemberSearchService memberSearch;
-    private final String stagingDirectory;
     private final MemberProcessor memberProcessor;
+    private final DataProcessor dataProcessor;
+    private final String stagingDirectory;
 
     @Autowired
-    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch,
-                         @Value("${member.staging}") String sourceCodeDir, MemberProcessor memberProcessor) {
+    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch, MemberProcessor memberProcessor,
+                         DataProcessor dataProcessor, @Value("${member.staging}") String sourceCodeDir) {
         this.memberData = memberData;
         this.memberSearch = memberSearch;
-        this.stagingDirectory = sourceCodeDir;
         this.memberProcessor = memberProcessor;
+        this.dataProcessor = dataProcessor;
+        this.stagingDirectory = sourceCodeDir;
     }
 
     /**
@@ -159,12 +161,12 @@ public class MemberGetCtrl extends BaseCtrl {
         String filePath = stagingDirectory + "/" + date + "-" + time + "_member_1.xml";
 
         try {
-            File xmlFile = new File(filePath);
+            var xmlFile = new File(filePath);
             FileIOUtils.writeStringToFile(xmlFile, xmlBuilder.toString());
-        } catch (IOException e) {
-            return new SimpleResponse(false, "Failed to create a new MemberXmlFile", "createMemberXml");
+            dataProcessor.run("Create Member XML");
+        } catch (Exception e) {
+            return new ErrorResponse(ErrorCode.MEMBER_CHANGE_FAILURE);
         }
-        // TODO: trigger cache refresh
 
         return new SimpleResponse(true, String.format("Successfully Created the %sMemberXml file", action), "createMemberXml");
     }
