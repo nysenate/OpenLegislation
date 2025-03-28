@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -53,7 +52,7 @@ public class MemberGetCtrl extends BaseCtrl {
 
     @Autowired
     public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch, MemberProcessor memberProcessor,
-                         DataProcessor dataProcessor, @Value("${member.staging}") String sourceCodeDir) {
+                         DataProcessor dataProcessor, @Value("${env.staging}") String sourceCodeDir) {
         this.memberData = memberData;
         this.memberSearch = memberSearch;
         this.memberProcessor = memberProcessor;
