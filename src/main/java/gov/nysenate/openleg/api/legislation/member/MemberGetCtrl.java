@@ -52,7 +52,7 @@ public class MemberGetCtrl extends BaseCtrl {
 
     @Autowired
     public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch, MemberProcessor memberProcessor,
-                         DataProcessor dataProcessor, @Value("${env.staging}") String sourceCodeDir) {
+                         DataProcessor dataProcessor, @Value("${member.xml.src}") String sourceCodeDir) {
         this.memberData = memberData;
         this.memberSearch = memberSearch;
         this.memberProcessor = memberProcessor;

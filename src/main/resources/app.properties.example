@@ -35,6 +35,11 @@ env.staging = /data/openleg/staging
 
 env.archive = /data/openleg/archive
 
+# The directory for newly created member XMLs.
+# Should point to the LBDC transfer directory on prod.
+
+member.xml.src = /data/openleg/staging/xmls
+
 # The database schema where the legislative content is persisted.
 # (Default: master)
 
