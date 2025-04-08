@@ -21,7 +21,7 @@ import ManageNotifications from "app/views/admin/accounts/ManageNotifications";
 import BatchEmail from "app/views/admin/email/BatchEmail";
 import useAuth from "app/shared/useAuth";
 import SpotcheckReports from "app/views/admin/spotchecks/SpotcheckReports";
-import MemberHandler from "app/views/admin/memberUpdate/memberHandler";
+import MemberHandler from "app/views/admin/memberUpdate/MemberHandler";
 
 
 export default function Admin({ setHeaderText }) {

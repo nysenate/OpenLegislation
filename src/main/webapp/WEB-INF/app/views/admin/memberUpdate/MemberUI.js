@@ -3,7 +3,7 @@ import React, {
   useState
 } from "react";
 import Select from "app/shared/Select";
-import { handleUpdateMember } from "app/views/admin/memberUpdate/memberUpdateUtils";
+import { handleUpdateMember } from "app/views/admin/memberUpdate/MemberUpdateUtils";
 import ErrorMessage from "app/shared/ErrorMessage";
 import Modal from "app/shared/Modal";
 

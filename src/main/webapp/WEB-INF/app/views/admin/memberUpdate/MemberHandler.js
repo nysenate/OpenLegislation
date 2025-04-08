@@ -1,8 +1,8 @@
 import React from 'react';
 import {useEffect, useState} from "react";
 import Tabs from "app/shared/Tabs";
-import {MemberData, PersonData, SessionData} from "app/views/admin/memberUpdate/memberUpdateUtils";
-import MemberUI from "app/views/admin/memberUpdate/memberUI";
+import {MemberData, PersonData, SessionData} from "app/views/admin/memberUpdate/MemberUpdateUtils";
+import MemberUI from "app/views/admin/memberUpdate/MemberUI";
 
 export default function MemberHandler({ setHeaderText }) {
   const tabs = [
