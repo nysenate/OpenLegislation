@@ -16,16 +16,16 @@ term
 The term parameter takes in an `elasticsearch query string`_.
 
 The simplest way to search is to send a general search term.
-For example, to search for legislation pertaining to apples, the following query will do the job.
-::
+For example, to search for legislation pertaining to apples, the following query will do the job::
+
     /api/3/bills/search?term=apples
 
 In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under "result" is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
 Looking back at the :ref:`bill response<bill-response>`, we see that resolutions are designated by the "resolution" boolean under "billType".
-In order to filter resolutions out of the search results, a field query can be chained to the original query using "AND".
-::
+In order to filter resolutions out of the search results, a field query can be chained to the original query using "AND"::
+
     /api/3/bills/search?term=apples%20AND%20billType.resolution:false
 
 For a full enumeration of query features see the `elasticsearch query string`_ syntax.
@@ -43,13 +43,13 @@ from the field with a colon.
     e.g. ``...&sort=printNo.keyword:ASC...``
     This does not apply to date and time fields, which are indexed in a different manner.
 
-For example, to get the 2013 governor's program bills in canonical order:
-::
+For example, to get the 2013 governor's program bills in canonical order::
+
     /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                             &sort=programInfo.sequenceNo:ASC
 
-Or, you may want to order them by their status and action date:
-::
+Or, you may want to order them by their status and action date::
+
     /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                             &sort=status.statusType.keyword:ASC,status.actionDate:DESC
 

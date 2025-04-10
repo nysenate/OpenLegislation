@@ -1,15 +1,14 @@
 **Aggregate Updates API**
 =========================
 
-----------
 
 Get aggregate updates
 ---------------------
 
 **Usage**
 
-List of content that was updated during the given date/time range
-::
+List of content that was updated during the given date/time range::
+
     /api/3/updates/{fromDateTime}
     /api/3/updates/{fromDateTime}/{toDateTime}
 
@@ -42,22 +41,13 @@ reprocess it's data to fix issues. By default the type is set to published.
 
 **Example**
 
-Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015
-::
+Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015::
+
     /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
                     &content-type=AGENDA&content-type=BILL&content-type=CALENDAR
                     &detail=true&fields=true&limit=50
 
 **Response**
-
-See the following pages for info on the unique updates responses for each content type:
-
-| :ref:`agenda update token response<agenda-update-token-response>`, :ref:`agenda update digest response<agenda-update-digest-response>`
-| :ref:`bill update token response<bill-update-token-response>`, :ref:`bill update digest response<bill-update-digest-response>`
-| :ref:`calendar update token response<calendar-update-token-response>`, :ref:`calendar update digest response<calendar-update-digest-response>`
-| :ref:`law update token response<law-update-token-response>`, :ref:`law update digest response<law-update-digest-response>`
-
-----
 
 .. code-block:: javascript
 
@@ -96,5 +86,17 @@ See the following pages for info on the unique updates responses for each conten
       "fromDateTime" : "2014-01-10T00:00",
       "toDateTime" : "2015-03-18T13:16:17.383999999"
     }
+
+See the following pages for info on the unique update responses for each content type:
+
+* :ref:`agenda update token response<agenda-update-token-response>`
+* :ref:`agenda update digest response<agenda-update-digest-response>`
+* :ref:`bill update token response<bill-update-token-response>`
+* :ref:`bill update digest response<bill-update-digest-response>`
+* :ref:`calendar update token response<calendar-update-token-response>`
+* :ref:`calendar update digest response<calendar-update-digest-response>`
+* :ref:`law update token response<law-update-token-response>`
+* :ref:`law update digest response<law-update-digest-response>`
+
 
 .. warning:: This example uses processed date time. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

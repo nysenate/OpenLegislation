@@ -8,6 +8,7 @@ Get a single calendar
 
 **Usage**
 ::
+
    Full calendar:
       /api/3/calendars/{year}/{calendarNumber}
    Floor calendar:
@@ -27,6 +28,7 @@ Get a single calendar
 
 **Examples**
 ::
+
    /api/3/calendars/2014/54               (Get calendar 54 of 2014)
    /api/3/calendars/2014/54?&full=false   (Get a summary of calendar 54)
    /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
@@ -213,6 +215,7 @@ Get a listing of calendars
 
 **Usage**
 ::
+
    Full calendars:
       /api/3/calendars/{year}
    Supplemental/Floor calendars:
@@ -240,6 +243,7 @@ Get a listing of calendars
 
 **Examples**
 ::
+
    /api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
    /api/3/calendars/2014?limit=1&order=DESC              (Get the latest calendar from 2014)
    /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
@@ -255,12 +259,12 @@ structure.
 
 **Usage**
 
-Search across all session years
-::
+Search across all session years::
+
    (GET) /api/3/calendars/search?term=YOUR_TERM
 
-Search within a year
-::
+Search within a year::
+
    (GET) /api/3/calendars/{year}/search?term=YOUR_TERM
 
 
@@ -289,16 +293,16 @@ To identify which calendars have received updates within a given time period you
 
 **Usage**
 
-List of calendars updated within the past seven days
-::
+List of calendars updated within the past seven days::
+
     (GET) /api/3/calendars/updates
 
-List of calendars updated after the given date/time
-::
+List of calendars updated after the given date/time::
+
     (GET) /api/3/calendars/updates/{fromDateTime}
 
-List of calendars updated during the given date/time range
-::
+List of calendars updated during the given date/time range::
+
     (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
@@ -317,8 +321,8 @@ List of calendars updated during the given date/time range
 
 **Examples**
 
-Calendars that were updated between January 1st and January 20th of 2019
-::
+Calendars that were updated between January 1st and January 20th of 2019::
+
     (GET) /api/3/calendars/updates/2019-01-01T00:00:00/2019-01-20T00:00:00
 
 .. _calendar-update-token-response:
@@ -360,12 +364,12 @@ Get specific calendar updates
 
 **Usage**
 
-Get updates for a calendar within a datetime range
-::
+Get updates for a calendar within a datetime range::
+
     (GET) /api/3/calendars/{year}/{calendarNumber}/updates/{fromDateTime}/{toDateTime}
 
-Get all updates for a calendar
-::
+Get all updates for a calendar::
+
     (GET) /api/3/calendars/{year}/{calendarNumber}/updates
 
 **Optional Params**
@@ -384,8 +388,8 @@ Get all updates for a calendar
 
 **Examples**
 
-Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014
-::
+Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014::
+
     (GET) /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
 
 .. _calendar-update-digest-response:

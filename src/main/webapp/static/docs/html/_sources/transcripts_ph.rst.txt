@@ -8,19 +8,19 @@ Get a single Hearing
 
 **Usage**
 
-Retrieve hearing by id or filename
-::
+Retrieve hearing by id or filename::
+
     (GET) /api/3/hearings/{id}
     (GET) /api/3/hearings/{filename}
 
 **Examples**
 
-Request hearing 5
-::
+Request hearing 5::
+
     /api/3/hearings/5
 
-Request hearing "10-29-13 NYsenate_Flanagan_Education_FINAL.txt"
-::
+Request hearing "10-29-13 NYsenate_Flanagan_Education_FINAL.txt"::
+
     /api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
 
 
@@ -56,15 +56,15 @@ Get a hearing pdf
 
 **Usage**
 
-Retrieve hearing pdf by id or filename
-::
+Retrieve hearing pdf by id or filename::
+
     (GET) /api/3/hearings/{id}.pdf
     (GET) /api/3/hearings/{filename}.pdf
 
 **Examples**
 
-Request hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt
-::
+Request hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt::
+
     /api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf
 
 
@@ -75,8 +75,8 @@ Get a list of hearings
 
 **Usage**
 
-List hearings within a year
-::
+List hearings within a year::
+
     (GET) /api/3/hearings/{year}
 
 **Optional Params**
@@ -88,23 +88,23 @@ List hearings within a year
 +-----------+--------------------+--------------------------------------------------------+
 | offset    | > 1                | Result number to start from                            |
 +-----------+--------------------+--------------------------------------------------------+
-| full      | boolean            | Set to true to see the full hearing responses.  |
+| full      | boolean            | Set to true to see the full hearing responses.         |
 +-----------+--------------------+--------------------------------------------------------+
 | sort      | string             | Sort by any field from the response.                   |
 +-----------+--------------------+--------------------------------------------------------+
 
 **Examples**
 
-List 50 hearings from 2014
-::
+List 50 hearings from 2014::
+
     /api/3/hearings/2014?limit=50
 
-List 50 complete hearings starting from 51
-::
+List 50 complete hearings starting from 51::
+
     /api/3/hearings/2014?limit=50%offset=51&full=true
 
-List 10 complete hearings sorted by increasing date
-::
+List 10 complete hearings sorted by increasing date::
+
     /api/3/hearings/2014?limit=10&full=true&sort=dateTime:ASC
 
 **Response**
