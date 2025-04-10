@@ -140,15 +140,13 @@ public class MemberGetCtrl extends BaseCtrl {
         return getMemberResponse(full, limOff, results);
     }
 
-    @PutMapping(value = "/{memberTable}")
-    public BaseResponse createMemberXml(@PathVariable String memberTable, @RequestParam("action") String action,
+    @PutMapping(value = "/{memberTable}/{changeType}")
+    public BaseResponse createMemberXml(@PathVariable MemberType memberTable, @PathVariable MemberChangeType changeType,
                                         @RequestBody Map<String, String> modelMap) {
-        MemberChangeType changeType = MemberChangeType.valueOf(action);
-        MemberType tableName = MemberType.valueOf(memberTable);
-        StringBuilder xmlBuilder = switch (tableName) {
-            case MEMBER -> memberProcessor.getMemberXmlBuilder(changeType, modelMap, tableName);
-            case PERSON -> memberProcessor.getPersonXmlBuilder(changeType, modelMap, tableName);
-            case SESSION -> memberProcessor.getSessionXmlBuilder(changeType, modelMap, tableName);
+        StringBuilder xmlBuilder = switch (memberTable) {
+            case MEMBER -> memberProcessor.getMemberXmlBuilder(changeType, modelMap, memberTable);
+            case PERSON -> memberProcessor.getPersonXmlBuilder(changeType, modelMap, memberTable);
+            case SESSION_MEMBER -> memberProcessor.getSessionXmlBuilder(changeType, modelMap, memberTable);
         };
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -167,7 +165,8 @@ public class MemberGetCtrl extends BaseCtrl {
             return new ErrorResponse(ErrorCode.MEMBER_CHANGE_FAILURE);
         }
 
-        return new SimpleResponse(true, String.format("Successfully Created the %sMemberXml file", action), "createMemberXml");
+        return new SimpleResponse(true, "Successfully created the MemberXml %s file".formatted(changeType),
+                "createMemberXml");
     }
 
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {

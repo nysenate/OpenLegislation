@@ -1,8 +1,8 @@
 import { yearSortOptions } from "app/shared/Select";
 
-export const handleUpdateMember = async (tableName, operation, formData, feildData) => {
+export const handleUpdateMember = async (tableName, operation, formData, fieldData) => {
   let payload = {}
-  feildData[operation].forEach(field => {
+  fieldData[operation].forEach(field => {
     if (formData[field.fieldName] !== undefined) {
       payload[field.fieldName] = formData[field.fieldName];
     }
@@ -12,7 +12,7 @@ export const handleUpdateMember = async (tableName, operation, formData, feildDa
   } else if (operation === 'delete') {
     payload = { id: formData.id };
   }
-  const api = `/api/3/members/${tableName.toUpperCase()}?action=${operation.toUpperCase()}`
+  const api = `/api/3/members/${tableName.toUpperCase()}/${operation.toUpperCase()}`
   const myHeaders = new Headers()
   myHeaders.append("Content-Type", "application/json")
   const myRequest = new Request(api, {
@@ -27,11 +27,16 @@ export const handleUpdateMember = async (tableName, operation, formData, feildDa
   } catch (error) {
     return new Error(error);
   }
-
 }
 
+const memberIdInput = {
+  label: 'Member ID',
+  type: 'input',
+  fieldName: 'id',
+  required: true
+};
 export const MemberData = {
-  initialdata: {
+  initialData: {
     operation: 'create',
     incumbent: true,
     chamber: "Senate"
@@ -52,12 +57,7 @@ export const MemberData = {
       },
     ],
     update: [
-      {
-        label: 'Member ID',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
+      memberIdInput,
       {
         label: 'Incumbent',
         type: 'select',
@@ -65,104 +65,78 @@ export const MemberData = {
         fieldName: 'incumbent'
       },
     ],
-    delete: [
-      {
-        label: 'Member ID',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
-    ]
+    delete: [ memberIdInput ]
   }
+}
+
+const personIdInput = {
+  label: 'Person ID',
+  type: 'input',
+  fieldName: 'id',
+  required: true
+};
+const personDataFields = function(requireName) {
+  return [
+    {
+      label: 'First Name',
+      type: 'input',
+      fieldName: 'firstName',
+      required: requireName
+    },
+    {
+      label: 'Middle Name',
+      type: 'input',
+      fieldName: 'middleName'
+    },
+    {
+      label: 'Last Name',
+      type: 'input',
+      fieldName: 'lastName',
+      required: requireName
+    },
+    {
+      label: 'Suffix',
+      type: 'input',
+      fieldName: 'suffix'
+    },
+    {
+      label: 'Email Address',
+      type: 'input',
+      fieldName: 'email'
+    },
+    {
+      label: 'Profile Picture',
+      type: 'input',
+      fieldName: 'imgName'
+    }
+  ]
 }
 export const PersonData = {
   fieldData: {
-    create: [
-      {
-        label: 'First Name',
-        type: 'input',
-        fieldName: 'firstName',
-        required: true
-      },
-      {
-        label: 'Middle Name',
-        type: 'input',
-        fieldName: 'middleName'
-      },
-      {
-        label: 'Last Name',
-        type: 'input',
-        fieldName: 'lastName',
-        required: true
-      },
-      {
-        label: 'Suffix',
-        type: 'input',
-        fieldName: 'suffix'
-      },
-      {
-        label: 'Email Address',
-        type: 'input',
-        fieldName: 'email'
-      },
-      {
-        label: 'Profile Picture',
-        type: 'input',
-        fieldName: 'imgName'
-      },
-    ],
+    create: personDataFields(true),
     update: [
-      {
-        label: 'Person Id',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
-      {
-        label: 'First Name',
-        type: 'input',
-        fieldName: 'firstName'
-      },
-      {
-        label: 'Middle Name',
-        type: 'input',
-        fieldName: 'middleName'
-      },
-      {
-        label: 'Last Name',
-        type: 'input',
-        fieldName: 'lastName'
-      },
-      {
-        label: 'Suffix',
-        type: 'input',
-        fieldName: 'suffix'
-      },
-      {
-        label: 'Email Address',
-        type: 'input',
-        fieldName: 'email'
-      },
-      {
-        label: 'Profile Picture',
-        type: 'input',
-        fieldName: 'imgName'
-      },
-    ],
-    delete: [
-      {
-        label: 'Person Id',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
-    ]
+      personIdInput, ...personDataFields(false)],
+    delete: [ personIdInput ]
   },
-  initialdata: {
+  initialData: {
     operation: 'create',
   }
 }
 
+const sessionMemberIdInput = {
+  label: 'Session Member ID',
+  type: 'input',
+  fieldName: 'id',
+  required: true
+};
+const districtCodeInput = function(required) {
+  return {
+    label: 'District Code',
+    type: 'input',
+    fieldName: 'districtCode',
+    required: required
+  }
+}
 const sessionYearOptions = yearSortOptions(2009, false, true);
 export const SessionData = {
   initialData: {
@@ -173,7 +147,7 @@ export const SessionData = {
   fieldData: {
     create: [
       {
-        label: 'Member Id',
+        label: 'Member ID',
         type: 'input',
         fieldName: 'memberId',
         required: true
@@ -186,44 +160,23 @@ export const SessionData = {
         required: true
       },
       {
-        label: 'Lbdc Short Name',
+        label: 'LBDC Short Name',
         type: 'input',
         fieldName: 'lbdcShortName',
         required: true
       },
-      {
-        label: 'District Code',
-        type: 'input',
-        fieldName: 'districtCode',
-        required: true
-      },
+      districtCodeInput(true)
     ],
     update: [
-      {
-        label: 'Session Member Id',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
+      sessionMemberIdInput,
       {
         label: 'Alternate',
         type: 'select',
         options: [ { value: "true", label: "True" }, { value: "false", label: "False" } ],
         fieldName: 'alternate'
       },
-      {
-        label: 'District Code',
-        type: 'input',
-        fieldName: 'districtCode'
-      },
+      districtCodeInput(false)
     ],
-    delete: [
-      {
-        label: 'Session Member Id',
-        type: 'input',
-        fieldName: 'id',
-        required: true
-      },
-    ]
+    delete: [ sessionMemberIdInput ]
   }
 }

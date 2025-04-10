@@ -1,5 +1,4 @@
 import React, {
-  useEffect,
   useState
 } from "react";
 import Select from "app/shared/Select";
@@ -9,30 +8,20 @@ import Modal from "app/shared/Modal";
 
 const MemberUI = ({ initialData, memberType, fieldData }) => {
   const [ formData, setFormData ] = useState(initialData);
-
-  const [ isPopupVisible, setIsPopupVisible ] = useState(false);
-  const [ popupType, setPopupType ] = useState('');
-
-  const modalTitle = popupType === 'success' ? 'Success!' : 'Error!';
-
-  useEffect(() => {
-    setFormData({...initialData})
-  }, [initialData]);
+  const [ submitSuccess, setSubmitSuccess ] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = handleUpdateMember(memberType, formData.operation, formData, fieldData);
+    const response = handleUpdateMember(memberType.replaceAll(" ", "_"), formData.operation, formData, fieldData);
     response.then((data) => {
-      data.success ? setPopupType('success') : setPopupType('error');
+      setSubmitSuccess(data.success);
       setFormData((prevData) => ({ ...prevData, responseMessage: data.message }));
-      setIsPopupVisible(true);
     })
-
   };
 
   const closePopup = () => {
     setFormData(initialData);
-    setIsPopupVisible(false);
+    setSubmitSuccess(null)
   };
 
   return (<div className="p-3">
@@ -45,9 +34,9 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
           onChange={(e) => setFormData({ ...formData, operation: e.target.value })}
           className="select block ml-2"
         >
-          <option value="create">Create {memberType}</option>
-          <option value="update">Update {memberType}</option>
-          <option value="delete">Delete {memberType}</option>
+          <option value="create">Create</option>
+          <option value="update">Update</option>
+          <option value="delete">Delete</option>
         </select>
       </div>
 
@@ -58,14 +47,14 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
             {field.type === 'input' ? (
               <input
                 type="text"
-                value={formData[field.fieldName] !== undefined ? formData[field.fieldName] : ''}
+                value={formData[field.fieldName]}
                 onChange={(e) => setFormData({ ...formData, [field.fieldName]: e.target.value })}
                 className="input block w-52 text-sm"
                 required={field?.required ?? false}
               />
             ) : (
               <Select
-                value={formData[field.fieldName] !== undefined ? formData[field.fieldName] : ''}
+                value={formData[field.fieldName]}
                 options={field.options}
                 onChange={(e) => setFormData({ ...formData, [field.fieldName]: e.target.value })}
                 name={field.fieldName}
@@ -82,15 +71,13 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     </form>
 
     <Modal
-      isOpen={isPopupVisible}
+      isOpen={submitSuccess !== null}
       onDismiss={closePopup}
       ariaLabel={"Confirmation of Member Update"}
     >
       <div>
-        <strong className="font-semibold">{modalTitle === 'Error!' ? <ErrorMessage>{modalTitle}</ErrorMessage> :
-          <p>{modalTitle}</p>}</strong>
-        {modalTitle === 'Error!' ? <ErrorMessage>{formData.responseMessage}</ErrorMessage> :
-          <p>{formData.responseMessage}</p>}
+        <strong className="font-semibold">{submitSuccess ? <p>{'Success!'}</p> : <ErrorMessage>{"Error!"}</ErrorMessage>}</strong>
+        {submitSuccess ? <p>{formData.responseMessage}</p> : <ErrorMessage>{formData.responseMessage}</ErrorMessage>}
         <div className="mt-3 flex justify-end w-full">
           <button
             onClick={() => closePopup()}

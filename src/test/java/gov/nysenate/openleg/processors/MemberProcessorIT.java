@@ -250,7 +250,7 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("alternate", "true");
 
         // Test CREATE action
-        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION);
+        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -266,7 +266,7 @@ public class MemberProcessorIT extends BaseTests {
         // Test UPDATE action with a different alternate value
         modelMap.put("alternate", "false");
 
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION);
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -281,7 +281,7 @@ public class MemberProcessorIT extends BaseTests {
         // Test DELETE action
         modelMap.put("id", "123");
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION);
+        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -303,7 +303,7 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("alternate", "null");
 
         // Test CREATE action with null attributes
-        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION);
+        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER);
 
         String expectedCreateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -317,7 +317,7 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(expectedCreateXml, xmlCreateBuilder.toString());
 
         // Test UPDATE action with null attributes
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION);
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>

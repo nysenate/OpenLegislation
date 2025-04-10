@@ -15,10 +15,11 @@ import gov.nysenate.openleg.search.SearchException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import java.io.IOException;
 import java.util.*;
 
+import static gov.nysenate.openleg.legislation.member.dao.MemberChangeType.*;
+import static gov.nysenate.openleg.processors.MemberType.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -150,9 +151,9 @@ public class MemberGetCtrlIT extends ApiTest {
         deleteMap.put("id", "1115");
 
         // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml("MEMBER", "CREATE", createMap);
-        BaseResponse result2 = testCtrl.createMemberXml("MEMBER", "UPDATE", updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml("MEMBER", "DELETE", deleteMap);
+        BaseResponse result = testCtrl.createMemberXml(MEMBER, CREATE, createMap);
+        BaseResponse result2 = testCtrl.createMemberXml(MEMBER, UPDATE, updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml(MEMBER, DELETE, deleteMap);
 
         // Assert the result
         assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
@@ -181,9 +182,9 @@ public class MemberGetCtrlIT extends ApiTest {
         deleteMap.put("id", "1115");
 
         // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml("PERSON", "CREATE", createMap);
-        BaseResponse result2 = testCtrl.createMemberXml("PERSON", "UPDATE", updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml("PERSON", "DELETE", deleteMap);
+        BaseResponse result = testCtrl.createMemberXml(PERSON, CREATE, createMap);
+        BaseResponse result2 = testCtrl.createMemberXml(PERSON, UPDATE, updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml(PERSON, DELETE, deleteMap);
 
         // Assert the result
         assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
@@ -209,9 +210,9 @@ public class MemberGetCtrlIT extends ApiTest {
         deleteMap.put("id", "1001");
 
         // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml("SESSION", "CREATE", createMap);
-        BaseResponse result2 = testCtrl.createMemberXml("SESSION", "UPDATE", updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml("SESSION", "DELETE", deleteMap);
+        BaseResponse result = testCtrl.createMemberXml(SESSION_MEMBER, CREATE, createMap);
+        BaseResponse result2 = testCtrl.createMemberXml(SESSION_MEMBER, UPDATE, updateMap);
+        BaseResponse result3 = testCtrl.createMemberXml(SESSION_MEMBER, DELETE, deleteMap);
 
         // Assert the result
         assertTrue("The method should return success indicating true for CREATE", result.isSuccess());

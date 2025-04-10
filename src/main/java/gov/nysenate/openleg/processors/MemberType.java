@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processors;
 public enum MemberType {
     PERSON,
     MEMBER,
-    SESSION;
+    SESSION_MEMBER;
 
     public static MemberType getMemberType(String action) {
         try {

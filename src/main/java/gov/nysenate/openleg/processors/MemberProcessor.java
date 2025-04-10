@@ -194,7 +194,7 @@ public class MemberProcessor implements LegDataProcessor {
                     return handlePerson(action, rootNode);
                 case MEMBER:
                     return handleMember(action, rootNode);
-                case SESSION:
+                case SESSION_MEMBER:
                     return handleSessionMember(action, rootNode);
                 default:
                     logger.error("Unhandled action: {}", action);
