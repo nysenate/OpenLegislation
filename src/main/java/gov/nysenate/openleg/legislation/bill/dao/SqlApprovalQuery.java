@@ -3,8 +3,7 @@ package gov.nysenate.openleg.legislation.bill.dao;
 import gov.nysenate.openleg.common.dao.BasicSqlQuery;
 import gov.nysenate.openleg.common.dao.SqlTable;
 
-public enum SqlApprovalQuery implements BasicSqlQuery
-{
+public enum SqlApprovalQuery implements BasicSqlQuery {
     SELECT_APPROVAL_BY_ID(
         "SELECT * FROM ${schema}." + SqlTable.BILL_APPROVAL + "\n" +
         "WHERE year = :year AND approval_number = :approvalNumber"
@@ -41,7 +40,7 @@ public enum SqlApprovalQuery implements BasicSqlQuery
     )
     ;
 
-    private String sql;
+    private final String sql;
 
     SqlApprovalQuery(String sql){
         this.sql = sql;

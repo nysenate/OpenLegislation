@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.common.dao;
 
-public interface BasicSqlQuery
-{
+public interface BasicSqlQuery {
     /**
      * Return the sql query as is.
      */

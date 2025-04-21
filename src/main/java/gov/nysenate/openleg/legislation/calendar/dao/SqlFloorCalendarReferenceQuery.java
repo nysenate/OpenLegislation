@@ -21,7 +21,7 @@ public enum SqlFloorCalendarReferenceQuery implements BasicSqlQuery {
     ),
     SELECT_CALENDAR_SUPS_BY_YEAR(
             "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
-                    "   JOIN ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " ent" + "\n" +
+                    "   JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + " ent" + "\n" +
                     "       ON sup.id = ent.calendar_sup_id" + "\n" +
                     "WHERE calendar_year = :year"
     ),

@@ -20,7 +20,7 @@ public enum SqlDataProcessLogQuery implements BasicSqlQuery
 
     SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY(
         SELECT_DATA_PROCESS_RUNS_DURING.sql + "\n" +
-        "AND (id IN (SELECT DISTINCT process_id FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + ")\n" +
+        "AND (id IN (SELECT DISTINCT process_id FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + ")\n" +
         "     OR (exceptions IS NOT NULL AND exceptions != '')" +
         ")"
     ),
@@ -41,26 +41,26 @@ public enum SqlDataProcessLogQuery implements BasicSqlQuery
     SELECT_DATA_PROCESS_UNITS(
         "SELECT process_id, source_type, source_id, action, start_date_time, end_date_time, errors, messages,\n" +
         "       COUNT(*) OVER () AS total_count\n" +
-        "FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + "\n" +
         "WHERE process_id = :processId"
     ),
 
     SELECT_FIRST_AND_LAST_DATA_PROCESS_UNITS(
         "SELECT process_id, source_type, source_id, action, start_date_time, end_date_time, errors, messages\n" +
-        "FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + "\n" +
         "WHERE process_id = :processId AND start_date_time = " +
-            "(SELECT MIN(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + " WHERE process_id = :processId)\n" +
+            "(SELECT MIN(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + " WHERE process_id = :processId)\n" +
         "OR start_date_time = " +
-            "(SELECT MAX(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + " WHERE process_id = :processId)\n" +
+            "(SELECT MAX(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + " WHERE process_id = :processId)\n" +
         "ORDER BY start_date_time ASC"
     ),
 
     DELETE_PROCESS_UNITS(
-        "DELETE FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "DELETE FROM ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + "\n" +
         "WHERE process_id = :processId"
     ),
     INSERT_PROCESS_UNIT(
-        "INSERT INTO ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "INSERT INTO ${schema}." + SqlTable.DATA_PROCESS_RUN_UNIT + "\n" +
         "(process_id, source_type, source_id, action, start_date_time, end_date_time, messages, errors)\n" +
         "VALUES (:processId, :sourceType, :sourceId, :action, :startDateTime, :endDateTime, :messages, :errors)"
     )

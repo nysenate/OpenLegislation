@@ -60,7 +60,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Additional Bill Sponsors --- */
 
     SELECT_ADDTL_BILL_SPONSORS(
-        "SELECT session_member_id FROM ${schema}." + SqlTable.BILL_ADDITIONAL_SPONSOR + "\n" +
+        "SELECT session_member_id FROM ${schema}." + SqlTable.BILL_SPONSOR_ADDITIONAL + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
@@ -68,7 +68,7 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_ALTERNATE_PDF_URL(
         "SELECT url_path \n" +
-        "FROM ${schema}." + SqlTable.BILL_ALTERNATE_PDF + "\n" +
+        "FROM ${schema}." + SqlTable.BILL_TEXT_ALTERNATE_PDF + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "AND active = true"
     ),
@@ -133,7 +133,7 @@ public enum SqlBillQuery implements BasicSqlQuery
                     "FROM ${schema}." + SqlTable.BILL_SPONSOR + " s\n" +
                     "JOIN ${schema}." + SqlTable.BILL_AMENDMENT + " a\n" +
                     "  ON s.bill_print_no = a.bill_print_no AND s.bill_session_year = a.bill_session_year\n" +
-                    "LEFT JOIN ${schema}." + SqlTable.BILL_ALTERNATE_PDF + " p\n" +
+                    "LEFT JOIN ${schema}." + SqlTable.BILL_TEXT_ALTERNATE_PDF + " p\n" +
                     "  ON a.bill_print_no = p.bill_print_no\n" +
                     "  AND a.bill_session_year = p.bill_session_year\n" +
                     "  AND a.bill_amend_version = p.bill_amend_version\n" +
@@ -196,23 +196,23 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Bill Amendment Multi-sponsors --- */
 
     SELECT_BILL_MULTISPONSORS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTI_SPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "ORDER BY sequence_no ASC"
     ),
     INSERT_BILL_MULTISPONSOR(
-        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTI_SPONSOR + " " +
         "(bill_print_no, bill_session_year, bill_amend_version, session_member_id, sequence_no, last_fragment_id)\n" +
         "VALUES (:printNo, :sessionYear, :version, :sessionMemberId, :sequenceNo, :lastFragmentId)"
     ),
     UPDATE_BILL_MULTISPONSOR(
-        "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
+        "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_MULTI_SPONSOR + " " +
         "SET sequence_no = :sequenceNo, last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "      AND session_member_id = :sessionMemberId"
     ),
     DELETE_BILL_MULTISPONSORS(
-        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
+        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTI_SPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     DELETE_BILL_MULTISPONSOR(
@@ -376,14 +376,13 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_CALENDAR_IDS(
         "SELECT cs.calendar_no, cs.calendar_year \n" +
-        "FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " cse\n" +
+        "FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + " cse\n" +
         "JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " cs ON cse.calendar_sup_id = cs.id\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
-    ),
-    ;
+    );
 
 
-    private String sql;
+    private final String sql;
 
     SqlBillQuery(String sql) {
         this.sql = sql;

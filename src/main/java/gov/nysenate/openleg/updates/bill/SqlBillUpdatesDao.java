@@ -54,7 +54,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         updateMappings.put(FULLTEXT, new BillUpdateTable(BILL_AMENDMENT, "full_text"));
         updateMappings.put(LAW, new BillUpdateTable(BILL_AMENDMENT, "law_code", "law_section"));
         updateMappings.put(MEMO, new BillUpdateTable(BILL_AMENDMENT, "sponsor_memo"));
-        updateMappings.put(MULTISPONSOR, new BillUpdateTable(BILL_AMENDMENT_MULTISPONSOR));
+        updateMappings.put(MULTISPONSOR, new BillUpdateTable(BILL_AMENDMENT_MULTI_SPONSOR));
         updateMappings.put(SPONSOR, new BillUpdateTable(BILL_SPONSOR));
         updateMappings.put(STATUS, new BillUpdateTable(BILL, "status", "status_date", "bill_cal_no",
                                                                       "committee_name", "committee_chamber"));
@@ -140,7 +140,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         if (field != null && updateMappings.containsKey(field)) {
             BillUpdateTable updateTable = updateMappings.get(field);
             StringBuilder whereClause = new StringBuilder();
-            whereClause.append("table_name = '").append(updateTable.table.getTableName()).append("'");
+            whereClause.append("table_name = '").append(updateTable.table).append("'");
             if (!updateTable.columns.isEmpty()) {
                 List<String> existKeys = updateTable.columns.stream()
                     .map(column -> "exist(data, '" + column + "')")

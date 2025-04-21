@@ -23,19 +23,7 @@ public final class SqlQueryUtils {
      * @return String
      */
     public static String getSqlWithSchema(String sql, String schema) {
-        Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("schema", schema);
-        return new StringSubstitutor(replaceMap).replace(sql);
-    }
-
-    /**
-     * Adds support for a search schema as well.
-     */
-    public static String getSqlWithSchema(String sql, String dataSchema, String searchSchema) {
-        Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("schema", dataSchema);
-        replaceMap.put("search_schema", searchSchema);
-        return new StringSubstitutor(replaceMap).replace(sql);
+        return new StringSubstitutor(Map.of("schema", schema)).replace(sql);
     }
 
     /**
@@ -46,25 +34,10 @@ public final class SqlQueryUtils {
     }
 
     /**
-     * Overloaded to add LIMIT clause to getSqlWithSchema(sql, dataSchema, searchSchema) output.
-     */
-    public static String getSqlWithSchema(String sql, String dataSchema, String searchSchema, LimitOffset limitOffset) {
-        return getSqlWithSchema(sql, dataSchema, searchSchema) + getLimitOffsetClause(limitOffset);
-    }
-
-    /**
      * Overloaded to add LIMIT AND ORDER BY clause to getSqlWithSchema(sql, schema) output.
      */
     public static String getSqlWithSchema(String sql, String schema, OrderBy orderBy, LimitOffset limitOffset) {
         return getSqlWithSchema(sql, schema) + getOrderByClause(orderBy) + getLimitOffsetClause(limitOffset);
-    }
-
-    /**
-     * Overloaded to add LIMIT AND ORDER BY clause to getSqlWithSchema(sql, dataSchema, searchSchema) output.
-     */
-    public static String getSqlWithSchema(String sql, String dataSchema, String searchSchema, OrderBy orderBy,
-                                          LimitOffset limitOffset) {
-        return getSqlWithSchema(sql, dataSchema, searchSchema) + getOrderByClause(orderBy) + getLimitOffsetClause(limitOffset);
     }
 
     /**

@@ -48,7 +48,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     SELECT_CALENDAR_SUPS_BY_YEAR(
         "SELECT sup.id AS sup_id, ent.id AS ent_id, * \n" +
         "FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
-        "LEFT JOIN ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " ent" + "\n" +
+        "LEFT JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + " ent" + "\n" +
         "  ON sup.id = ent.calendar_sup_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
@@ -81,14 +81,14 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Supplemental Entries --- */
 
     SELECT_CALENDAR_SUP_ENTRIES(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + "\n" +
         "WHERE calendar_sup_id IN (" + SELECT_CALENDAR_SUP_ID.sql + ")"
     ),
     SELECT_CALENDAR_SUP_ENTRIES_BY_SECTION(
         SELECT_CALENDAR_SUP_ENTRIES.sql + " AND section_code = :sectionCode"
     ),
     INSERT_CALENDAR_SUP_ENTRY(
-        "INSERT INTO ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
+        "INSERT INTO ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + "\n" +
         "(calendar_sup_id, section_code, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, \n" +
         " sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high, last_fragment_id)\n" +
         "SELECT id, :sectionCode, :billCalNo, :printNo, :amendVersion, :session, :subPrintNo, :subAmendVersion, " +
@@ -97,7 +97,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion"
     ),
     DELETE_CALENDAR_SUP_ENTRIES(
-        "DELETE FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
+        "DELETE FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL_ENTRY + "\n" +
         "WHERE calendar_sup_id IN (" + SELECT_CALENDAR_SUP_ID.sql + ")"
     ),
 
