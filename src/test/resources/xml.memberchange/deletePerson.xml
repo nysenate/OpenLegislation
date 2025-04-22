@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actionDetails tableName="person" action="DELETE">
-    <id>454</id>
+    <id>357</id>
+    <firstName>John2</firstName>
+    <lastName>Doe2</lastName>
+    <middleName>Michael2</middleName>
+    <email>john.doe@.gmail.com</email>
+    <imgName>john_doe.jpg</imgName>
+    <suffix>Mr.</suffix>
 </actionDetails>
 

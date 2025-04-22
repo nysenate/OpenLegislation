@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actionDetails tableName="person" action="CREATE">
+    <id></id>
     <firstName>John</firstName>
     <lastName>Doe</lastName>
     <middleName>Michael</middleName>

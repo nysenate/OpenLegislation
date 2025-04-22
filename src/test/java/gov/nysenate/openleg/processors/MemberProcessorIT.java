@@ -16,8 +16,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +30,8 @@ public class MemberProcessorIT extends BaseTests {
     private MemberDao memberDao;
     @Autowired
     private SqlMemberDao sqlMemberDao;
+
+    HashSet<String> createAttributes = new HashSet<>();
 
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
@@ -112,7 +113,7 @@ public class MemberProcessorIT extends BaseTests {
     public void deleteMember() throws MemberNotFoundEx, IOException, SAXException {
             Path deletePath = Paths.get("src/test/resources/xml.memberchange/deleteSessionMember.xml");
             memberProcessor.process(deletePath);
-            SessionMember deletedSession = sqlMemberDao.getMemberBySessionId(357);
+            SessionMember deletedSession = sqlMemberDao.getMemberBySessionId(1);
             fail("Session record was not deleted, expected exception to be thrown");
 
             Path deletePath2 = Paths.get("src/test/resources/xml.memberchange/deleteMember.xml");
@@ -128,7 +129,7 @@ public class MemberProcessorIT extends BaseTests {
 
     @Test
     public void testGetPersonXmlBuilder() {
-        Map<String, String> modelMap = new HashMap<>();
+        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("id", "123");
         modelMap.put("firstName", "John");
         modelMap.put("lastName", "Doe");
@@ -137,12 +138,11 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("imgName", "profile.jpg");
         modelMap.put("suffix", "Jr");
 
-        // Test CREATE action
-        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
+        String xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.PERSON, createAttributes).toString();
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="MEMBER" action="CREATE">
+            <actionDetails tableName="PERSON" action="CREATE">
             <firstName>John</firstName>
             <lastName>Doe</lastName>
             <middleName>M</middleName>
@@ -151,25 +151,23 @@ public class MemberProcessorIT extends BaseTests {
             <imgName>profile.jpg</imgName>
             </actionDetails>\n""";
 
-        assertEquals(expectedXml, xmlBuilder.toString());
+        assertEquals(expectedXml, xmlBuilder);
 
         // Test UPDATE action
         modelMap.put("id", "123");
-        modelMap.put("firstName", "John");
-        modelMap.put("lastName", "Doe");
-        modelMap.put("email", "john.doe@example.com");
-        modelMap.put("middleName", "M");
-        modelMap.put("imgName", "profile.jpg");
-        modelMap.put("suffix", "Jr");
+        modelMap.put("firstName", "John2");
+        modelMap.put("lastName", "Doe2");
 
-        StringBuilder xmlUpdateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+        createAttributes.addAll(Arrays.asList("firstName", "lastName"));
+
+        StringBuilder xmlUpdateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="MEMBER" action="UPDATE">
             <id>123</id>
-            <firstName>John</firstName>
-            <lastName>Doe</lastName>
+            <firstName action="UPDATE">John2</firstName>
+            <lastName action="UPDATE">Doe2</lastName>
             <middleName>M</middleName>
             <suffix>Jr</suffix>
             <email>john.doe@example.com</email>
@@ -178,25 +176,29 @@ public class MemberProcessorIT extends BaseTests {
 
         assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
 
-        // Test DELETE action
-        modelMap.put("id", "123");
+       //Clear updatedAttributes
+        createAttributes.clear();
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER);
+        StringBuilder xmlDeleteBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="MEMBER" action="DELETE">
             <id>123</id>
+            <firstName>John2</firstName>
+            <lastName>Doe2</lastName>
+            <middleName>M</middleName>
+            <suffix>Jr</suffix>
+            <email>john.doe@example.com</email>
+            <imgName>profile.jpg</imgName>
             </actionDetails>\n""";
 
         assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
-
-        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
     }
 
     @Test
     public void testGetPersonXmlBuilder_UpdateWithNullAttributes() {
-        Map<String, String> modelMap = new HashMap<>();
+        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("id", "123");
         modelMap.put("firstName", "abcd");
         modelMap.put("lastName", "efg");
@@ -206,7 +208,7 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("suffix", null);
 
         // Test UPDATE action
-        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -223,7 +225,7 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(expectedXml, xmlBuilder.toString());
 
         // Test CREATE action with the same attributes
-        StringBuilder xmlCreateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
+        StringBuilder xmlCreateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedCreatedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -241,7 +243,7 @@ public class MemberProcessorIT extends BaseTests {
 
     @Test
     public void testGetSessionXmlBuilder_Create() {
-        Map<String, String> modelMap = new HashMap<>();
+        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("id", "123");
         modelMap.put("memberId", "456");
         modelMap.put("sessionYear", "2025");
@@ -249,44 +251,57 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("districtCode", "101");
         modelMap.put("alternate", "true");
 
+        createAttributes.clear();
+
         // Test CREATE action
-        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER);
+        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="SESSION" action="CREATE">
+            <actionDetails tableName="SESSION_MEMBER" action="CREATE">
             <memberId>456</memberId>
             <sessionYear>2025</sessionYear>
             <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
+            <alternate>true</alternate>
             </actionDetails>\n""";
 
         assertEquals(expectedXml, xmlBuilder.toString());
 
         // Test UPDATE action with a different alternate value
+        modelMap.put("id", "123");
         modelMap.put("alternate", "false");
+        createAttributes.add("alternate");
 
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER);
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="SESSION" action="UPDATE">
+            <actionDetails tableName="SESSION_MEMBER" action="UPDATE">
             <id>123</id>
+            <memberId>456</memberId>
+            <sessionYear>2025</sessionYear>
+            <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
-            <alternate>false</alternate>
+            <alternate action="UPDATE">false</alternate>
             </actionDetails>\n""";
 
         assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
 
-        // Test DELETE action
-        modelMap.put("id", "123");
+        createAttributes.clear();
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER);
+        // Test DELETE action
+        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER,createAttributes);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="SESSION" action="DELETE">
+            <actionDetails tableName="SESSION_MEMBER" action="DELETE">
             <id>123</id>
+            <memberId>456</memberId>
+            <sessionYear>2025</sessionYear>
+            <lbdcShortName>LB1</lbdcShortName>
+            <districtCode>101</districtCode>
+            <alternate>false</alternate>
             </actionDetails>\n""";
 
         assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
@@ -294,7 +309,7 @@ public class MemberProcessorIT extends BaseTests {
 
     @Test
     public void testGetSessionXmlBuilder_CreateWithNullAttributes() {
-        Map<String, String> modelMap = new HashMap<>();
+        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("id", "123");
         modelMap.put("memberId", "11");
         modelMap.put("sessionYear", "null");
@@ -302,28 +317,35 @@ public class MemberProcessorIT extends BaseTests {
         modelMap.put("districtCode", "null");
         modelMap.put("alternate", "null");
 
-        // Test CREATE action with null attributes
-        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER);
+        createAttributes.clear();
+
+        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedCreateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="SESSION" action="CREATE">
+            <actionDetails tableName="SESSION_MEMBER" action="CREATE">
             <memberId>11</memberId>
             <sessionYear>null</sessionYear>
             <lbdcShortName>null</lbdcShortName>
             <districtCode>null</districtCode>
+            <alternate>null</alternate>
             </actionDetails>\n""";
 
         assertEquals(expectedCreateXml, xmlCreateBuilder.toString());
 
+        createAttributes.add("districtCode");
+
         // Test UPDATE action with null attributes
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER);
+        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <actionDetails tableName="SESSION" action="UPDATE">
+            <actionDetails tableName="SESSION_MEMBER" action="UPDATE">
             <id>123</id>
-            <districtCode>null</districtCode>
+            <memberId>11</memberId>
+            <sessionYear>null</sessionYear>
+            <lbdcShortName>null</lbdcShortName>
+            <districtCode action="UPDATE">null</districtCode>
             <alternate>null</alternate>
             </actionDetails>\n""";
 
@@ -333,78 +355,61 @@ public class MemberProcessorIT extends BaseTests {
     @Test(expected = IllegalArgumentException.class)
     public void noExpression() throws Exception {
         Path path = Paths.get("src/test/resources/xml.memberchange/noRequiredArgs.xml");
-        int id = memberProcessor.process(path);  // This should throw IllegalArgumentException as missing lastname
+        int id = memberProcessor.process(path);
     }
 
     @Test
     public void testGetMemberXmlBuilder() {
-
-        Map<String, String> modelMap = new HashMap<>();
+        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("personId", "123");
         modelMap.put("chamber", "Senate");
         modelMap.put("id", "456");
 
-        StringBuilder xmlBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER);
+        createAttributes.clear();
+
+        StringBuilder xmlBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <actionDetails tableName="MEMBER" action="CREATE">
                 <personId>123</personId>
                 <chamber>Senate</chamber>
+                <incumbent>null</incumbent>
                 </actionDetails>
                 """;
         assertEquals(expectedXml, xmlBuilder.toString());
 
-        modelMap.clear();
-        modelMap.put("personId", "123");
-        modelMap.put("incumbent", "true");
-        modelMap.put("chamber", "Senate");
-        modelMap.put("id", "456");
+        modelMap.put("incumbent", "false");
+        createAttributes.add("incumbent");
 
-        StringBuilder xmlBuilder2 = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
+        StringBuilder xmlBuilder2 = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER,createAttributes);
 
         String expectedXml2 = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <actionDetails tableName="MEMBER" action="UPDATE">
                 <id>456</id>
-                <incumbent>true</incumbent>
+                <personId>123</personId>
+                <chamber>Senate</chamber>
+                <incumbent action="UPDATE">false</incumbent>
                 </actionDetails>
                 """;
         assertEquals(expectedXml2, xmlBuilder2.toString());
 
-        modelMap.clear();
-        modelMap.put("personId", "123");
-        modelMap.put("incumbent", "true");
-        modelMap.put("chamber", "Senate");
-        modelMap.put("id", "456");
+        createAttributes.clear();
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER);
+        StringBuilder xmlDeleteBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER,createAttributes);
 
         String expectedDeleteXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <actionDetails tableName="MEMBER" action="DELETE">
                 <id>456</id>
+                <personId>123</personId>
+                <chamber>Senate</chamber>
+                <incumbent>false</incumbent>
                 </actionDetails>
                 """;
         assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
 
-        // Re-initialize modelMap for another UPDATE case to check consistency
-        modelMap.clear();
-        modelMap.put("personId", "123");
-        modelMap.put("incumbent", "true");
-        modelMap.put("chamber", "Senate");
-        modelMap.put("id", "456");
-
-        StringBuilder xmlUpdateBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER);
-
-        String expectedUpdateXml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <actionDetails tableName="MEMBER" action="UPDATE">
-                <id>456</id>
-                <incumbent>true</incumbent>
-                </actionDetails>
-                """;
-        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
     }
 
 }

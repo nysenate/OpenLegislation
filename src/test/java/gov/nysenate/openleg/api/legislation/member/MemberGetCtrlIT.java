@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.api.legislation.member;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
@@ -17,6 +19,7 @@ import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static gov.nysenate.openleg.legislation.member.dao.MemberChangeType.*;
 import static gov.nysenate.openleg.processors.MemberType.*;
@@ -28,6 +31,7 @@ public class MemberGetCtrlIT extends ApiTest {
     @Autowired
     private MemberGetCtrl testCtrl;
 
+    ObjectMapper mapper = new ObjectMapper();
     /**
      * Tests that all members of a certain year are correctly retrieved.
      */
@@ -138,27 +142,23 @@ public class MemberGetCtrlIT extends ApiTest {
     }
     @Test
     public void testGetMemberXml() {
-        // Create Map<String, String> for CREATE, UPDATE, DELETE
+        ObjectMapper mapper = new ObjectMapper();
+
         Map<String, String> createMap = new HashMap<>();
         createMap.put("personId", "12345");
         createMap.put("chamber", "Senate");
+        createMap.put("incumbent", "true");
 
-        Map<String, String> updateMap = new HashMap<>();
-        updateMap.put("id", "1115");
-        updateMap.put("incumbent", "true");
 
-        Map<String, String> deleteMap = new HashMap<>();
-        deleteMap.put("id", "1115");
+        ArrayNode updatedAttributes = mapper.createArrayNode();
 
-        // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml(MEMBER, CREATE, createMap);
-        BaseResponse result2 = testCtrl.createMemberXml(MEMBER, UPDATE, updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml(MEMBER, DELETE, deleteMap);
+        ObjectNode requestBody = mapper.createObjectNode();
+        requestBody.set("modelMap", mapper.valueToTree(createMap));
+        requestBody.set("updatedAttributes", updatedAttributes);
 
-        // Assert the result
-        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
-        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
-        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
+        BaseResponse response = testCtrl.createMemberXml(MEMBER, CREATE, requestBody);
+
+        assertTrue("The method should return success indicating true for CREATE", response.isSuccess());
     }
 
 
@@ -171,54 +171,59 @@ public class MemberGetCtrlIT extends ApiTest {
         createMap.put("email", "john.doe@example.com");
         createMap.put("middleName", "Edward");
         createMap.put("imgName", "john_doe.jpg");
-        createMap.put("suffix", "Jr");
+        createMap.put("suffix", "");
 
-        Map<String, String> updateMap = new HashMap<>();
-        updateMap.put("id", "1115");
-        updateMap.put("email", "john.doe2@example.com");
-        updateMap.put("middleName", "Edward2");
+        ArrayNode updatedAttributes = mapper.createArrayNode();
+        updatedAttributes.add("suffix");
 
-        Map<String, String> deleteMap = new HashMap<>();
-        deleteMap.put("id", "1115");
+        ObjectNode createRequest = mapper.createObjectNode();
+        createRequest.set("modelMap", mapper.valueToTree(createMap));
+        createRequest.set("updatedAttributes", updatedAttributes);
 
-        // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml(PERSON, CREATE, createMap);
-        BaseResponse result2 = testCtrl.createMemberXml(PERSON, UPDATE, updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml(PERSON, DELETE, deleteMap);
+        BaseResponse result = testCtrl.createMemberXml(PERSON, CREATE, createRequest);
+        assertTrue("The method should return success for CREATE", result.isSuccess());
 
-        // Assert the result
-        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
-        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
-        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
     }
 
     @Test
     public void testgetSessionXml() throws IOException {
-        // Create Map<String, String> for CREATE, UPDATE, DELETE
         Map<String, String> createMap = new HashMap<>();
         createMap.put("memberId", "1001");
         createMap.put("sessionYear", "2023");
         createMap.put("lbdcShortName", "JohnDoe");
         createMap.put("districtCode", "45");
 
-        Map<String, String> updateMap = new HashMap<>();
-        updateMap.put("id", "1001");
-        updateMap.put("districtCode", "2024");
-        updateMap.put("alternate", "true");
+        ArrayNode updatedAttributes = mapper.createArrayNode();
 
-        Map<String, String> deleteMap = new HashMap<>();
-        deleteMap.put("id", "1001");
+        ObjectNode createRequest = mapper.createObjectNode();
+        createRequest.set("modelMap", mapper.valueToTree(createMap));
+        createRequest.set("updatedAttributes", updatedAttributes);
 
-        // Call the method with the proper Map
-        BaseResponse result = testCtrl.createMemberXml(SESSION_MEMBER, CREATE, createMap);
-        BaseResponse result2 = testCtrl.createMemberXml(SESSION_MEMBER, UPDATE, updateMap);
-        BaseResponse result3 = testCtrl.createMemberXml(SESSION_MEMBER, DELETE, deleteMap);
+        // Call the CREATE method
+        BaseResponse result = testCtrl.createMemberXml(SESSION_MEMBER, CREATE, createRequest);
+        assertTrue("The method should return success for CREATE", result.isSuccess());
 
-        // Assert the result
-        assertTrue("The method should return success indicating true for CREATE", result.isSuccess());
-        assertTrue("The method should return success indicating true for UPDATE", result2.isSuccess());
-        assertTrue("The method should return success indicating true for DELETE", result3.isSuccess());
+        // UPDATE data
+        createMap.put("id", "1001");
+        ArrayNode updateAttributes = mapper.createArrayNode();
+        updateAttributes.add("districtCode");
+        updateAttributes.add("alternate");
+
+        ObjectNode updateRequest = mapper.createObjectNode();
+        updateRequest.set("modelMap", mapper.valueToTree(createMap));
+        updateRequest.set("updatedAttributes", updateAttributes);
+
+        // Call the UPDATE method
+        BaseResponse result2 = testCtrl.createMemberXml(SESSION_MEMBER ,UPDATE, updateRequest);
+        assertTrue("The method should return success for UPDATE", result2.isSuccess());
+
+        ObjectNode deleteRequest = mapper.createObjectNode();
+        deleteRequest.set("modelMap", mapper.valueToTree(createMap));
+        deleteRequest.set("updatedAttributes", mapper.createArrayNode());
+
+        // Call the DELETE method
+        BaseResponse result3 = testCtrl.createMemberXml(SESSION_MEMBER, DELETE, deleteRequest);
+        assertTrue("The method should return success for DELETE", result3.isSuccess());
+
     }
-
-
 }

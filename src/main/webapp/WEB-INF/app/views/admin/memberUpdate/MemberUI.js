@@ -1,5 +1,5 @@
 import React, {
-  useState
+  useState, useEffect
 } from "react";
 import Select from "app/shared/Select";
 import { handleUpdateMember } from "app/views/admin/memberUpdate/MemberUpdateUtils";
@@ -9,6 +9,10 @@ import Modal from "app/shared/Modal";
 const MemberUI = ({ initialData, memberType, fieldData }) => {
   const [ formData, setFormData ] = useState(initialData);
   const [ submitSuccess, setSubmitSuccess ] = useState(null);
+
+  useEffect(() => {
+    setFormData({...initialData})
+  }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,14 +51,14 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
             {field.type === 'input' ? (
               <input
                 type="text"
-                value={formData[field.fieldName]}
+                value={formData[field.fieldName] !== undefined ? formData[field.fieldName] : ''}
                 onChange={(e) => setFormData({ ...formData, [field.fieldName]: e.target.value })}
                 className="input block w-52 text-sm"
                 required={field?.required ?? false}
               />
             ) : (
               <Select
-                value={formData[field.fieldName]}
+                value={formData[field.fieldName] !== undefined ? formData[field.fieldName] : ''}
                 options={field.options}
                 onChange={(e) => setFormData({ ...formData, [field.fieldName]: e.target.value })}
                 name={field.fieldName}

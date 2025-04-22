@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actionDetails tableName="member" action="DELETE">
     <id>632</id>
+    <personId>937</personId>
+    <incumbent>true</incumbent>
+    <chamber>Senate</chamber>
 </actionDetails>
+
 

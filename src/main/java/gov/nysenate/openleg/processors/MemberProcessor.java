@@ -22,10 +22,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import org.w3c.dom.Node;
 
@@ -76,36 +73,11 @@ public class MemberProcessor implements LegDataProcessor {
             logger.error("Missing required attribute FirstName or LastName");
             throw new IllegalArgumentException("Missing required attribute FirstName or LastName");
         }
-        Person existingRecord = null;
-        if (id != null) {
-            existingRecord = (action == MemberChangeType.UPDATE) ? memberDao.getPersonByPersonId(id) : null;
-        }
         Person person = new Person(id,
-                new PersonName("", "",
-                        firstName != null ? firstName : (existingRecord != null ? existingRecord.name().firstName() : ""),
-                        middleName != null ? middleName : (existingRecord != null ? existingRecord.name().middleName() : ""),
-                        lastName != null ? lastName : (existingRecord != null ? existingRecord.name().lastName() : ""),
-                        suffix != null ? suffix : (existingRecord != null ? existingRecord.name().suffix() : "")
-                ),
-                email != null ? email : (existingRecord != null ? existingRecord.email() : ""),
-                imgName != null ? imgName : (existingRecord != null ? existingRecord.imgName() : "")
-        );
+                new PersonName("", "", firstName, middleName, lastName, suffix ), email, imgName);
 
-        return switch (action) {
-            case CREATE -> memberDao.handlePersonChange(MemberChangeType.CREATE, person);
-            case UPDATE -> {
-                if (id == null) {
-                    throw new MemberNotFoundEx();
-                }
-                yield memberDao.handlePersonChange(MemberChangeType.UPDATE, person);
-            }
-            case DELETE -> {
-                if (id == null) {
-                    throw new MemberNotFoundEx();
-                }
-                yield memberDao.handlePersonChange(MemberChangeType.DELETE, person);
-            }
-        };
+        return memberDao.handlePersonChange(action, person);
+
     }
 
     public int handleMember(MemberChangeType action, Node rootNode) {
@@ -114,33 +86,12 @@ public class MemberProcessor implements LegDataProcessor {
         final String chamber = xmlHelper.getStringSafe("chamber", rootNode);
         final Boolean incumbent = xmlHelper.getBooleanSafe("incumbent", rootNode);
 
-        Member member = null;
-        FullMember existingRecord = null;
-        if (id != null) {
-            existingRecord = memberDao.getMemberById(id);
-        }
+        Member member = new Member(personId, id, Chamber.valueOf(chamber.toUpperCase()), incumbent);
 
-        switch (action) {
-            case CREATE:
-                if (personId == null || chamber == null) {
-                    logger.error("Missing required attribute PersonId | Chamber");
-                }
-                member = new Member(personId, -1, Chamber.valueOf(chamber.toUpperCase()), incumbent);
-                return memberDao.handleMemberChange(MemberChangeType.CREATE, member);
-            case UPDATE:
-                if (existingRecord == null) {
-                    throw new MemberNotFoundEx();
-                }
-                member = new Member(existingRecord.getPerson(), id, existingRecord.getChamber(), incumbent);
-                return memberDao.handleMemberChange(MemberChangeType.UPDATE, member);
-            case DELETE:
-                if (id == null) {
-                    throw new MemberNotFoundEx();
-                }
-                member = new Member(-1, id,Chamber.valueOf("SENATE"), false);
-                return memberDao.handleMemberChange(MemberChangeType.DELETE, member);
+        if ( MemberChangeType.CREATE == action && (personId == null || chamber == null)) {
+            logger.error("Missing required attribute PersonId | Chamber");
         }
-        return 0;
+        return  memberDao.handleMemberChange(action, member);
     }
 
     public int handleSessionMember(MemberChangeType action, Node rootNode) {
@@ -151,31 +102,12 @@ public class MemberProcessor implements LegDataProcessor {
         final Boolean alternate = xmlHelper.getBooleanSafe("alternate", rootNode);
         final Integer sessionYear = xmlHelper.getIntegerSafe("sessionYear", rootNode);
 
-        SessionMember sessionMember = null;
-
-        switch (action) {
-            case CREATE:
-                if (memberId == null || lbdcShortName == null || sessionYear == -1 || districtCode == -1) {
-                    logger.error("Missing required attributes: MemberId, lbdcShortName, sessionYear, or districtCode");
-                    throw new MemberNotFoundEx();
-                }
-                FullMember member = memberDao.getMemberById(memberId);
-                sessionMember = new SessionMember(-1, member, lbdcShortName, new SessionYear(sessionYear), districtCode, alternate);
-                return memberDao.handleSessionMemberChange(MemberChangeType.CREATE, sessionMember);
-            case UPDATE:
-                SessionMember existingRecord = memberDao.getMemberBySessionId(id);
-                if (existingRecord == null) {
-                    logger.error("No existing session member found for id: {}", id);
-                    throw new MemberNotFoundEx();
-                }
-                sessionMember = new SessionMember(id, existingRecord.getMember(), existingRecord.getLbdcShortName(), existingRecord.getSessionYear(),
-                        districtCode != null? districtCode : existingRecord.getDistrictCode(), alternate != null ? alternate : existingRecord.isAlternate());
-                return memberDao.handleSessionMemberChange(MemberChangeType.UPDATE, sessionMember);
-            case DELETE:
-                sessionMember = new SessionMember(id, -1, "", new SessionYear(2), 0, false);
-                return memberDao.handleSessionMemberChange(MemberChangeType.DELETE, sessionMember);
+        if( MemberChangeType.CREATE == action && (memberId == null || lbdcShortName == null || sessionYear == -1 || districtCode == -1)) {
+            logger.error("Missing required attributes: MemberId, lbdcShortName, sessionYear, or districtCode");
+            throw new MemberNotFoundEx();
         }
-        return 0;
+        SessionMember sessionMember = new SessionMember(id, memberId, lbdcShortName, new SessionYear(sessionYear), districtCode, alternate);
+        return memberDao.handleSessionMemberChange(action, sessionMember);
     }
 
     public int process(Path path) throws IOException, SAXException {
@@ -186,18 +118,18 @@ public class MemberProcessor implements LegDataProcessor {
             final String tableName = xmlHelper.getString("@tableName", rootNode);
             MemberType memberType = MemberType.getMemberType(tableName);
             MemberChangeType action = MemberChangeType.valueOf(xmlHelper.getString("@action", rootNode));
-            if (memberType == null) {
-                logger.error("Invalid action type: {}", action);
-            }
+
             switch (Objects.requireNonNull(memberType)) {
-                case PERSON:
+                case PERSON -> {
                     return handlePerson(action, rootNode);
-                case MEMBER:
+                }
+                case MEMBER -> {
                     return handleMember(action, rootNode);
-                case SESSION_MEMBER:
+                }
+                case SESSION_MEMBER -> {
                     return handleSessionMember(action, rootNode);
-                default:
-                    logger.error("Unhandled action: {}", action);
+                }
+                default -> logger.error("Unhandled action: {}", action);
             }
 
         } catch (XPathExpressionException e) {
@@ -206,49 +138,50 @@ public class MemberProcessor implements LegDataProcessor {
         return 0;
     }
 
-    public StringBuilder getMemberXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
+    public StringBuilder getMemberXmlBuilder(MemberChangeType changeType, HashMap<String, String> modelMap, MemberType memberTable, HashSet<String> changedAttributes) {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
-
-        List<String> mappingNames = switch (changeType) {
-            case CREATE -> List.of("personId", "chamber");
-            case UPDATE -> List.of("id", "incumbent");
-            case DELETE ->  List.of("id");
-        };
-        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
+        List<String> mappingNames = new ArrayList<>();
+        if(changeType != MemberChangeType.CREATE) {
+            mappingNames.add("id");
+        }
+        mappingNames.addAll(List.of("personId", "chamber", "incumbent"));
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap, changedAttributes)).append("</actionDetails>\n");
     }
 
-    public StringBuilder getPersonXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
+    public StringBuilder getPersonXmlBuilder(MemberChangeType changeType, HashMap<String, String> modelMap, MemberType memberTable, HashSet<String> changedAttributes) {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
-
-        List<String> mappingNames = switch(changeType){
-            case CREATE -> List.of("firstName", "lastName","middleName", "suffix", "email", "imgName");
-            case UPDATE -> List.of("id","firstName", "lastName", "middleName", "suffix", "email", "imgName");
-            case DELETE -> List.of("id");
-        };
-        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
+        List<String> mappingNames = new ArrayList<>();
+        if(changeType != MemberChangeType.CREATE) {
+            mappingNames.add("id");
+        }
+        mappingNames.addAll(List.of("firstName", "lastName","middleName", "suffix", "email", "imgName"));
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap, changedAttributes)).append("</actionDetails>\n");
 
     }
 
-    public StringBuilder getSessionXmlBuilder(MemberChangeType changeType, Map<String, String> modelMap, MemberType memberTable) {
+    public StringBuilder getSessionXmlBuilder(MemberChangeType changeType, HashMap<String, String> modelMap, MemberType memberTable, HashSet<String> changedAttributes) {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
-
-        List<String> mappingNames = switch(changeType){
-            case CREATE -> List.of("memberId", "sessionYear", "lbdcShortName", "districtCode");
-            case UPDATE -> List.of("id", "districtCode", "alternate");
-            case DELETE -> List.of("id");
-        };
-        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap)).append("</actionDetails>\n");
+        List<String> mappingNames = new ArrayList<>();
+        if(changeType != MemberChangeType.CREATE) {
+            mappingNames.add("id");
+        }
+        mappingNames.addAll(List.of("memberId", "sessionYear", "lbdcShortName", "districtCode", "alternate"));
+        return xmlBuilder.append(getXmlFragment(mappingNames, modelMap, changedAttributes)).append("</actionDetails>\n");
     }
 
-    private static String getXmlFragment(List<String> keys, Map<String, String> modelMap) {
+    private static String getXmlFragment(List<String> keys, Map<String, String> modelMap, HashSet<String> changedAttributes) {
         var tempStringBuilder = new StringBuilder();
         for (String key : keys) {
-            if (!modelMap.containsKey(key)) {
-                continue;
+            if(changedAttributes.contains(key)) {
+                tempStringBuilder.append(String.format("<%s action=\"UPDATE\">%s</%s>\n", key, modelMap.get(key), key));
             }
-            tempStringBuilder.append("<%s>%s</%s>\n".formatted(key, modelMap.get(key), key));
+            else{
+                tempStringBuilder.append("<%s>%s</%s>\n".formatted(key, modelMap.get(key), key));
+            }
+
         }
         return tempStringBuilder.toString();
     }
+
 }
 

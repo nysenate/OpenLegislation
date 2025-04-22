@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.legislation.member;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
@@ -34,8 +35,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -142,11 +142,22 @@ public class MemberGetCtrl extends BaseCtrl {
 
     @PutMapping(value = "/{memberTable}/{changeType}")
     public BaseResponse createMemberXml(@PathVariable MemberType memberTable, @PathVariable MemberChangeType changeType,
-                                        @RequestBody Map<String, String> modelMap) {
+                                        @RequestBody JsonNode requestBody) {
+
+        var modelMap = new HashMap<String, String>();
+        for (Iterator<Map.Entry<String, JsonNode>> it = requestBody.get("modelMap").fields(); it.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = it.next();
+            modelMap.put(entry.getKey(), entry.getValue().asText());
+        }
+        var changedAttributes = new HashSet<String>();
+        for (var x : requestBody.get("updatedAttributes")) {
+            changedAttributes.add(x.asText());
+        }
+
         StringBuilder xmlBuilder = switch (memberTable) {
-            case MEMBER -> memberProcessor.getMemberXmlBuilder(changeType, modelMap, memberTable);
-            case PERSON -> memberProcessor.getPersonXmlBuilder(changeType, modelMap, memberTable);
-            case SESSION_MEMBER -> memberProcessor.getSessionXmlBuilder(changeType, modelMap, memberTable);
+            case MEMBER -> memberProcessor.getMemberXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
+            case PERSON -> memberProcessor.getPersonXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
+            case SESSION_MEMBER -> memberProcessor.getSessionXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
         };
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

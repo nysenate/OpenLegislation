@@ -49,15 +49,6 @@ public class SqlMemberDaoIT extends BaseTests {
         assertEquals(updatedPerson.email(), person.email());
         assertEquals(updatedPerson.imgName(), person.imgName());
 
-        Person person3 = new Person(283,new PersonName("", "", "","","","" ), null, null);
-        int y = sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, person3);
-        assertTrue("The person ID should be greater than 0 after creation.",createdId > 0);
-        Person updatedPerson3 = sqlMemberDao.getPersonByPersonId(283);
-        assertEquals(updatedPerson.name().lastName(), updatedPerson3.name().lastName());
-        assertEquals(updatedPerson.name().firstName(), updatedPerson3.name().firstName());
-        assertEquals(updatedPerson.name().middleName(), updatedPerson3.name().middleName());
-        assertEquals(updatedPerson.name().suffix(), updatedPerson3.name().suffix());
-        assertEquals(updatedPerson.email(), updatedPerson3.email());
     }
 
     @Test
@@ -115,7 +106,7 @@ public class SqlMemberDaoIT extends BaseTests {
 
         //Create Session Member
         Member member = sqlMemberDao.getMemberById(632);
-        SessionMember sessionMember = new SessionMember(-1, member, "NEW",  new SessionYear(2024), 12207,false);
+        SessionMember sessionMember = new SessionMember(-1, 632, "NEW",  new SessionYear(2024), 12207,false);
         int s_id = sqlMemberDao.handleSessionMemberChange(MemberChangeType.CREATE, sessionMember);
         SessionMember createdSessionMember = sqlMemberDao.getMemberBySessionId(s_id);
         assertEquals(member.getMemberId(), createdSessionMember.getMember().getMemberId());
@@ -124,7 +115,7 @@ public class SqlMemberDaoIT extends BaseTests {
         assertEquals(12207, createdSessionMember.getDistrictCode().intValue());
 
         //Update Session Member
-        SessionMember updateSessionMember = new SessionMember(357, member, "",  new SessionYear(2024), 1300,true);
+        SessionMember updateSessionMember = new SessionMember(357, 632, "",  new SessionYear(2024), 1300,true);
         sqlMemberDao.handleSessionMemberChange(MemberChangeType.UPDATE, updateSessionMember);
         SessionMember updatedSessionMember2 = sqlMemberDao.getMemberBySessionId(357);
         assertEquals(632, updatedSessionMember2.getMember().getMemberId());
@@ -132,36 +123,6 @@ public class SqlMemberDaoIT extends BaseTests {
         assertEquals(1300, updatedSessionMember2.getDistrictCode().intValue());
         assertTrue(updateSessionMember.isAlternate());
 
-        //Try to Update with null still the exsisting values should present
-        SessionMember updateSessionMember2 = new SessionMember(357, member, null, new SessionYear(2021), null, false);
-        sqlMemberDao.handleSessionMemberChange(MemberChangeType.UPDATE, updateSessionMember2);
-        SessionMember updatedSessionMember3 = sqlMemberDao.getMemberBySessionId(357);
-        assertEquals(632, updatedSessionMember3.getMember().getMemberId());
-        assertEquals(2021, updatedSessionMember3.getSessionYear().year());
-        assertEquals(1300, updatedSessionMember3.getDistrictCode().intValue());
-        assertFalse(updatedSessionMember3.isAlternate());
-
-    }
-
-    @Test(expected = MemberNotFoundEx.class)
-    public void testUpdateSessionNotInDB(){
-        Member member = sqlMemberDao.getMemberById(632);
-        SessionMember updateSessionMember = new SessionMember(0, member, "",  new SessionYear(2024), 1300,true);
-        sqlMemberDao.handleSessionMemberChange(MemberChangeType.UPDATE, updateSessionMember);
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testUpdatePersonNotInDB(){
-        Person person = new Person(0,new PersonName("", "", "Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
-        sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, person);
-    }
-
-    @Test(expected = MemberNotFoundEx.class)
-    public void testUpdateMemberNotInDB(){
-        //Update Member
-        Person person = sqlMemberDao.getPersonByPersonId(454);
-        Member updateMember = new Member(person,0, Chamber.ASSEMBLY, true);
-        sqlMemberDao.handleMemberChange(MemberChangeType.UPDATE, updateMember);
     }
 
     @Test

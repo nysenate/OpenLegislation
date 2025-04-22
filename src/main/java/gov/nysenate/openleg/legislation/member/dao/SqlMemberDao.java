@@ -33,114 +33,88 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         return new FullMember(memberList);
     }
 
+    private int handleEntityChange(MemberChangeType dataType, MapSqlParameterSource params, String createQuery, String updateQuery, String deleteQuery) {
+        switch (dataType) {
+            case CREATE:
+                return jdbcNamed.queryForObject(createQuery, params, new SingleColumnRowMapper<>());
+            case UPDATE:
+                jdbcNamed.update(updateQuery, params);
+                break;
+            case DELETE:
+                jdbcNamed.update(deleteQuery, params);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid MemberChangeType");
+        }
+        return 0;
+    }
+
     @Override
     public int handlePersonChange(MemberChangeType dataType, Person person) {
         var params = new MapSqlParameterSource();
-        if (dataType == MemberChangeType.CREATE) {
-            // Prepare the parameters for the INSERT operation
-                params.addValue("firstName", person.name().firstName())
-                        .addValue("middleName", StringUtils.defaultIfEmpty(person.name().middleName(),""))
-                        .addValue("lastName", person.name().lastName())
-                        .addValue("suffix", StringUtils.defaultIfEmpty(person.name().suffix(),""))
-                        .addValue("email", person.email())
-                        .addValue("imgName", person.imgName());
 
-            return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_PERSON.getSql(), params, new SingleColumnRowMapper<>());
-        }
-
-        else if (dataType == MemberChangeType.UPDATE) {
+        if (dataType != MemberChangeType.CREATE) {
             params.addValue("id", person.personId());
+        }
 
-            // Fetch existing record
-            List<Person> existingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_BY_PERSON_ID.getSql(), params, new PersonRowMapper());
+        if (dataType != MemberChangeType.DELETE) {
+            params.addValue("firstName", person.name().firstName())
+                    .addValue("middleName", StringUtils.defaultIfEmpty(person.name().middleName(), ""))
+                    .addValue("lastName", person.name().lastName())
+                    .addValue("suffix", StringUtils.defaultIfEmpty(person.name().suffix(), ""))
+                    .addValue("email", person.email())
+                    .addValue("imgName", person.imgName());
 
-            if (existingRecord.isEmpty()) {
-                throw new NoSuchElementException("Person with ID " + person.personId() + " does not exist.");
-            }
-            Person existingPerson = existingRecord.get(0);
-            params.addValue("id", person.personId()).addValue("firstName",
-                    (person.name().firstName() != null && !person.name().firstName().isEmpty())
-                            ? person.name().firstName() : existingPerson.name().firstName()).addValue("lastName",
-                    (person.name().lastName() != null && !person.name().lastName().isEmpty())
-                            ? person.name().lastName() : existingPerson.name().lastName()).addValue("suffix",
-                    (person.name().suffix() != null && !person.name().suffix().isEmpty())
-                            ? person.name().suffix() : existingPerson.name().suffix()).addValue("email",
-                    (person.email() != null && !person.email().isEmpty())
-                            ? person.email() : existingPerson.email()).addValue("imgName",
-                    (person.imgName() != null && !person.imgName().isEmpty())
-                            ? person.imgName() : existingPerson.imgName()).addValue("middleName",
-                    (person.name().middleName() != null && !person.name().middleName().isEmpty())
-                            ?person.name().middleName() : existingPerson.name().middleName());
-            jdbcNamed.update(SqlMemberQuery.UPDATE_PERSON.getSql(), params);
         }
 
 
-        else if (dataType == MemberChangeType.DELETE) {
-            params.addValue("id", person.personId());
-            jdbcNamed.update(SqlMemberQuery.DELETE_PERSON.getSql(), params);
-        }
-        return 0;
+
+        return handleEntityChange(dataType, params,
+                SqlMemberQuery.CREATE_PERSON.getSql(),
+                SqlMemberQuery.UPDATE_PERSON.getSql(),
+                SqlMemberQuery.DELETE_PERSON.getSql());
     }
 
 
     @Override
     public int handleMemberChange(MemberChangeType dataType, Member member) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        if (dataType == MemberChangeType.CREATE) {
-            params.addValue("personId", member.getPersonId())
-                    .addValue("chamber", member.getChamber().name().toLowerCase())
-                    .addValue("incumbent", member.isIncumbent());
-            return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
-        }
-        else if (dataType == MemberChangeType.UPDATE) {
-            params.addValue("memberId", member.getMemberId());
-            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(), params, new MemberRowMapper());
-            if (exisitingRecord.isEmpty()) {
-                throw new MemberNotFoundEx(member.getMemberId());
-            }
-            SessionMember existingMember = exisitingRecord.get(0);
-            params.addValue("id", member.getMemberId())
-                    .addValue("personId", member.getPerson().personId() != null ? member.getPerson().personId() : existingMember.getMember().getPerson().personId())
-                    .addValue("chamber", member.getChamber().name().toLowerCase() != null ? member.getChamber().name().toLowerCase() : existingMember.getMember().getChamber().name().toLowerCase())
-                    .addValue("incumbent", member.isIncumbent());
-            jdbcNamed.update(SqlMemberQuery.UPDATE_MEMBER.getSql(), params);
-        }
-        else if (dataType == MemberChangeType.DELETE) {
+        if (dataType != MemberChangeType.CREATE) {
             params.addValue("id", member.getMemberId());
-            jdbcNamed.update(SqlMemberQuery.DELETE_MEMBER.getSql(), params);
         }
-        return 0;
+        if(dataType != MemberChangeType.DELETE) {
+            params.addValue("chamber", member.getChamber().name().toLowerCase())
+                    .addValue("incumbent", member.isIncumbent())
+                    .addValue("personId", member.getPersonId());
+        }
+
+        return handleEntityChange(dataType, params,
+                SqlMemberQuery.CREATE_MEMBER.getSql(),
+                SqlMemberQuery.UPDATE_MEMBER.getSql(),
+                SqlMemberQuery.DELETE_MEMBER.getSql());
     }
 
     @Override
     public int handleSessionMemberChange(MemberChangeType dataType, SessionMember sessionMember) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        if (dataType == MemberChangeType.CREATE) {
-            params.addValue("memberId", sessionMember.getMember().getMemberId())
+        if (dataType != MemberChangeType.CREATE) {
+            params.addValue("id", sessionMember.getSessionMemberId());
+        }
+
+        if (dataType != MemberChangeType.DELETE) {
+            params.addValue("memberId", sessionMember.getMemberId())
                     .addValue("lbdcShortName", sessionMember.getLbdcShortName())
                     .addValue("sessionYear", sessionMember.getSessionYear().year())
                     .addValue("districtCode", sessionMember.getDistrictCode())
                     .addValue("alternate", sessionMember.isAlternate());
-            return jdbcNamed.queryForObject(SqlMemberQuery.CREATE_SESSION_MEMBER.getSql(), params, new SingleColumnRowMapper<>());
-        } else if (dataType == MemberChangeType.UPDATE) {
-            params.addValue("sessionMemberId", sessionMember.getSessionMemberId());
-            List<SessionMember> exisitingRecord = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL.getSql(), params, new MemberRowMapper());
-            if (exisitingRecord.isEmpty()) {
-                throw new MemberNotFoundEx(sessionMember.getSessionMemberId());
-            }
-            SessionMember existingMember = exisitingRecord.get(0);
-            params.addValue("id", sessionMember.getSessionMemberId())
-                    .addValue("memberId", sessionMember.getMember().getMemberId())
-                    .addValue("lbdcShortName", sessionMember.getLbdcShortName() != null ? sessionMember.getLbdcShortName() : existingMember.getLbdcShortName())
-                    .addValue("sessionYear", sessionMember.getSessionYear().year() != 0 ? sessionMember.getSessionYear().year(): existingMember.getSessionYear().year())
-                    .addValue("districtCode", sessionMember.getDistrictCode() != null ? sessionMember.getDistrictCode() : existingMember.getDistrictCode())
-                    .addValue("alternate", sessionMember.isAlternate());
-            return jdbcNamed.update(SqlMemberQuery.UPDATE_SESSION_MEMBER.getSql(), params);
-        } else if (dataType == MemberChangeType.DELETE) {
-            params.addValue("id", sessionMember.getSessionMemberId());
-            return jdbcNamed.update(SqlMemberQuery.DELETE_SESSION_MEMBER.getSql(), params);
         }
-        return 0;
+
+
+        return handleEntityChange(dataType, params,
+                SqlMemberQuery.CREATE_SESSION_MEMBER.getSql(),
+                SqlMemberQuery.UPDATE_SESSION_MEMBER.getSql(),
+                SqlMemberQuery.DELETE_SESSION_MEMBER.getSql()
+        );
     }
 
     @Override
@@ -204,7 +178,8 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
             if (!result.isEmpty()) {
                 return result.get(0);
             }
-        } catch (EmptyResultDataAccessException ignored) {}
+        } catch (EmptyResultDataAccessException ignored) {
+        }
         throw new NoSuchElementException("Person with ID " + personId + " does not exist.");
     }
 
@@ -215,7 +190,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
             List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_MEMBER_ID.getSql(), params, new RowMapper<Member>() {
                 @Override
                 public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Member(rs.getInt("person_id"),rs.getInt("id"), Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
+                    return new Member(rs.getInt("person_id"), rs.getInt("id"), Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
                 }
             });
 
@@ -226,7 +201,6 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         }
         throw new MemberNotFoundEx(memberId, null);
     }
-
 
 
     /**
@@ -256,8 +230,6 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
             );
         }
     }
-
-
 
     public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actionDetails tableName="session" action="CREATE">
+<actionDetails tableName="session_member" action="CREATE">
+    <id></id>
     <memberId>468</memberId>
     <sessionYear>2024</sessionYear>
     <lbdcShortName>ab</lbdcShortName>

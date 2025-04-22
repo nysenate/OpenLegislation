@@ -1,23 +1,28 @@
 import { yearSortOptions } from "app/shared/Select";
 
 export const handleUpdateMember = async (tableName, operation, formData, fieldData) => {
-  let payload = {}
+  let modelMap = {};
+  let updatedAttributes = [];
   fieldData[operation].forEach(field => {
     if (formData[field.fieldName] !== undefined) {
-      payload[field.fieldName] = formData[field.fieldName];
+      modelMap[field.fieldName] = formData[field.fieldName];
     }
   });
   if (operation === 'update') {
-    payload = { id: formData.id, ...payload };
+    modelMap = { id: formData.id,
+      ...modelMap };
   } else if (operation === 'delete') {
-    payload = { id: formData.id };
+    modelMap = { id: formData.id };
   }
   const api = `/api/3/members/${tableName.toUpperCase()}/${operation.toUpperCase()}`
   const myHeaders = new Headers()
   myHeaders.append("Content-Type", "application/json")
   const myRequest = new Request(api, {
     method: 'PUT',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      modelMap: modelMap,
+      updatedAttributes: updatedAttributes
+    }),
     headers: myHeaders
   })
 

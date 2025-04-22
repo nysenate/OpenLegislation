@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actionDetails tableName="member" action="CREATE">
+    <id></id>
     <personId>944</personId>
     <chamber>SENATE</chamber>
 </actionDetails>

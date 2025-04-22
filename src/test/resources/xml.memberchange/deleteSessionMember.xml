@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actionDetails tableName="session" action="DELETE">
-    <id>357</id>
+<actionDetails tableName="session_member" action="DELETE">
+    <id>1</id>
+    <memberId>369</memberId>
+    <lbdcShortName></lbdcShortName>
+    <districtCode>1300</districtCode>
+    <sessionYear>2019</sessionYear>
+    <alternate>true</alternate>
 </actionDetails>
 
