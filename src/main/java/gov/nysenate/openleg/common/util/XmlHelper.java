@@ -46,7 +46,7 @@ public class XmlHelper {
         return (String)xpath.evaluate(path, node, XPathConstants.STRING);
     }
 
-    public Integer getInteger(String path, Node node) throws XPathExpressionException {
+    public int getInteger(String path, Node node) throws XPathExpressionException {
         return ((Double)xpath.evaluate(path, node, XPathConstants.NUMBER)).intValue();
     }
 
@@ -69,18 +69,6 @@ public class XmlHelper {
         return false;
     }
 
-    public String getStringSafe(String expression, Node node) {
-        try {
-            String value =  getString(expression, node);
-            if (!hasChildNode(node, expression)) {
-                return null;
-            }
-            return value;
-        } catch (XPathExpressionException e) {
-            return null;
-        }
-    }
-
     public Integer getIntegerSafe(String expression, Node node) {
         try {
             Integer value =  getInteger(expression, node);
@@ -93,11 +81,4 @@ public class XmlHelper {
         }
     }
 
-    public Boolean getBooleanSafe(String expression, Node node) {
-        try {
-            return getBoolean(expression,node);
-        } catch (XPathExpressionException e) {
-            return false;
-        }
-    }
 }

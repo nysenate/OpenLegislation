@@ -234,20 +234,19 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public static class MemberRowMapper implements RowMapper<SessionMember> {
         @Override
         public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
-            SessionMember sessionMember = new SessionMember();
+            var name = new PersonName(Chamber.getValue(rs.getString("most_recent_chamber")),
+                    rs.getString("first_name"), rs.getString("middle_name"),
+                    rs.getString("last_name"), rs.getString("suffix"));
+            var person = new Person(rs.getInt("person_id"), name,
+                    rs.getString("email"), rs.getString("img_name"));
+            var member = new Member(person, rs.getInt("member_id"),
+                    Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
+            var sessionMember = new SessionMember();
             sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
             sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
             sessionMember.setSessionYear(getSessionYearFromRs(rs, "session_year"));
             sessionMember.setDistrictCode(rs.getInt("district_code"));
             sessionMember.setAlternate(rs.getBoolean("alternate"));
-
-            PersonName name = new PersonName(rs.getString("full_name"), Chamber.getValue(rs.getString("most_recent_chamber")),
-                    rs.getString("first_name"), rs.getString("middle_name"),
-                    rs.getString("last_name"), rs.getString("suffix"));
-            Person person = new Person(rs.getInt("person_id"), name,
-                    rs.getString("email"), rs.getString("img_name"));
-            Member member = new Member(person, rs.getInt("member_id"),
-                    Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
             sessionMember.setMember(member);
             return sessionMember;
         }

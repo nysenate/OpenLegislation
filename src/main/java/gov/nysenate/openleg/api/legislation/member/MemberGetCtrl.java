@@ -154,11 +154,7 @@ public class MemberGetCtrl extends BaseCtrl {
             changedAttributes.add(x.asText());
         }
 
-        StringBuilder xmlBuilder = switch (memberTable) {
-            case MEMBER -> memberProcessor.getMemberXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
-            case PERSON -> memberProcessor.getPersonXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
-            case SESSION_MEMBER -> memberProcessor.getSessionXmlBuilder(changeType, modelMap, memberTable, changedAttributes);
-        };
+        String xmlString = MemberProcessor.getXmlString(changeType, modelMap, memberTable, changedAttributes);
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String date = now.format(dateFormatter);
@@ -170,7 +166,7 @@ public class MemberGetCtrl extends BaseCtrl {
 
         try {
             var xmlFile = new File(filePath);
-            FileIOUtils.writeStringToFile(xmlFile, xmlBuilder.toString());
+            FileIOUtils.writeStringToFile(xmlFile, xmlString);
             dataProcessor.run("Create Member XML");
         } catch (Exception e) {
             return new ErrorResponse(ErrorCode.MEMBER_CHANGE_FAILURE);

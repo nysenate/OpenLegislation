@@ -6,7 +6,6 @@ import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.*;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
 import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
-import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.legislation.member.dao.SqlMemberDao;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,13 +24,11 @@ public class MemberProcessorIT extends BaseTests {
     @Autowired
     private MemberProcessor memberProcessor;
     @Autowired
-    private MemberService memberService;
-    @Autowired
     private MemberDao memberDao;
     @Autowired
     private SqlMemberDao sqlMemberDao;
 
-    HashSet<String> createAttributes = new HashSet<>();
+    private HashSet<String> createAttributes = new HashSet<>();
 
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
@@ -106,39 +103,39 @@ public class MemberProcessorIT extends BaseTests {
     public void testCreatePersonWithNoFirstName() throws IllegalArgumentException, SAXException, IOException {
         //Create Person with no firstName
         Path path2 = Paths.get("src/test/resources/xml.memberchange/personWithNoFirstName.xml");
-        int id2 = memberProcessor.process(path2);
+        memberProcessor.process(path2);
     }
 
     @Test(expected = MemberNotFoundEx.class)
     public void deleteMember() throws MemberNotFoundEx, IOException, SAXException {
             Path deletePath = Paths.get("src/test/resources/xml.memberchange/deleteSessionMember.xml");
             memberProcessor.process(deletePath);
-            SessionMember deletedSession = sqlMemberDao.getMemberBySessionId(1);
+            sqlMemberDao.getMemberBySessionId(1);
             fail("Session record was not deleted, expected exception to be thrown");
 
             Path deletePath2 = Paths.get("src/test/resources/xml.memberchange/deleteMember.xml");
-            Member deletedMember = memberDao.getMemberByMemberId(632);
+            memberDao.getMemberByMemberId(632);
             memberProcessor.process(deletePath2);
             fail("Member record was not deleted, expected exception to be thrown");
 
             Path deletePath3 = Paths.get("src/test/resources/xml.memberchange/deletePerson.xml");
             memberProcessor.process(deletePath3);
-            Person deletedPerson = memberDao.getPersonByPersonId(454);
+            memberDao.getPersonByPersonId(454);
             fail("Person record was not deleted, expected exception to be thrown");
     }
 
     @Test
     public void testGetPersonXmlBuilder() {
-        HashMap<String, String> modelMap = new HashMap<>();
+        var modelMap = new HashMap<String, String>();
         modelMap.put("id", "123");
         modelMap.put("firstName", "John");
         modelMap.put("lastName", "Doe");
         modelMap.put("email", "john.doe@example.com");
         modelMap.put("middleName", "M");
         modelMap.put("imgName", "profile.jpg");
-        modelMap.put("suffix", "Jr");
+        modelMap.put("suffix", "Jr.");
 
-        String xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.PERSON, createAttributes).toString();
+        String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.PERSON, createAttributes);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -146,12 +143,13 @@ public class MemberProcessorIT extends BaseTests {
             <firstName>John</firstName>
             <lastName>Doe</lastName>
             <middleName>M</middleName>
-            <suffix>Jr</suffix>
+            <suffix>Jr.</suffix>
             <email>john.doe@example.com</email>
             <imgName>profile.jpg</imgName>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedXml, xmlBuilder);
+        assertEquals(expectedXml, xmlString);
 
         // Test UPDATE action
         modelMap.put("id", "123");
@@ -160,7 +158,7 @@ public class MemberProcessorIT extends BaseTests {
 
         createAttributes.addAll(Arrays.asList("firstName", "lastName"));
 
-        StringBuilder xmlUpdateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -169,17 +167,18 @@ public class MemberProcessorIT extends BaseTests {
             <firstName action="UPDATE">John2</firstName>
             <lastName action="UPDATE">Doe2</lastName>
             <middleName>M</middleName>
-            <suffix>Jr</suffix>
+            <suffix>Jr.</suffix>
             <email>john.doe@example.com</email>
             <imgName>profile.jpg</imgName>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+        assertEquals(expectedUpdateXml, xmlString);
 
-       //Clear updatedAttributes
+        //Clear updatedAttributes
         createAttributes.clear();
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -191,24 +190,26 @@ public class MemberProcessorIT extends BaseTests {
             <suffix>Jr</suffix>
             <email>john.doe@example.com</email>
             <imgName>profile.jpg</imgName>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
+        assertEquals(expectedDeleteXml, xmlString);
     }
 
     @Test
     public void testGetPersonXmlBuilder_UpdateWithNullAttributes() {
-        HashMap<String, String> modelMap = new HashMap<>();
+        var modelMap = new HashMap<String, String>();
         modelMap.put("id", "123");
         modelMap.put("firstName", "abcd");
         modelMap.put("lastName", "efg");
+        // TODO: should be empty
         modelMap.put("email", null);
         modelMap.put("middleName", null);
         modelMap.put("imgName", null);
         modelMap.put("suffix", null);
 
         // Test UPDATE action
-        StringBuilder xmlBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
+        String xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -220,12 +221,13 @@ public class MemberProcessorIT extends BaseTests {
             <suffix>null</suffix>
             <email>null</email>
             <imgName>null</imgName>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedXml, xmlBuilder.toString());
+        assertEquals(expectedXml, xmlString);
 
         // Test CREATE action with the same attributes
-        StringBuilder xmlCreateBuilder = memberProcessor.getPersonXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedCreatedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -236,14 +238,15 @@ public class MemberProcessorIT extends BaseTests {
             <suffix>null</suffix>
             <email>null</email>
             <imgName>null</imgName>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedCreatedXml, xmlCreateBuilder.toString());
+        assertEquals(expectedCreatedXml, xmlString);
     }
 
     @Test
     public void testGetSessionXmlBuilder_Create() {
-        HashMap<String, String> modelMap = new HashMap<>();
+        var modelMap = new HashMap<String, String>();
         modelMap.put("id", "123");
         modelMap.put("memberId", "456");
         modelMap.put("sessionYear", "2025");
@@ -254,7 +257,7 @@ public class MemberProcessorIT extends BaseTests {
         createAttributes.clear();
 
         // Test CREATE action
-        StringBuilder xmlBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
+        String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -264,16 +267,17 @@ public class MemberProcessorIT extends BaseTests {
             <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
             <alternate>true</alternate>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedXml, xmlBuilder.toString());
+        assertEquals(expectedXml, xmlString);
 
         // Test UPDATE action with a different alternate value
         modelMap.put("id", "123");
         modelMap.put("alternate", "false");
         createAttributes.add("alternate");
 
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -284,14 +288,15 @@ public class MemberProcessorIT extends BaseTests {
             <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
             <alternate action="UPDATE">false</alternate>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+        assertEquals(expectedUpdateXml, xmlString);
 
         createAttributes.clear();
 
         // Test DELETE action
-        StringBuilder xmlDeleteBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER,createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER,createAttributes);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -302,9 +307,10 @@ public class MemberProcessorIT extends BaseTests {
             <lbdcShortName>LB1</lbdcShortName>
             <districtCode>101</districtCode>
             <alternate>false</alternate>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
+        assertEquals(expectedDeleteXml, xmlString);
     }
 
     @Test
@@ -312,6 +318,7 @@ public class MemberProcessorIT extends BaseTests {
         HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("id", "123");
         modelMap.put("memberId", "11");
+        // TODO: this, too, is bad
         modelMap.put("sessionYear", "null");
         modelMap.put("lbdcShortName", "null");
         modelMap.put("districtCode", "null");
@@ -319,7 +326,7 @@ public class MemberProcessorIT extends BaseTests {
 
         createAttributes.clear();
 
-        StringBuilder xmlCreateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
+        String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedCreateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -329,14 +336,15 @@ public class MemberProcessorIT extends BaseTests {
             <lbdcShortName>null</lbdcShortName>
             <districtCode>null</districtCode>
             <alternate>null</alternate>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedCreateXml, xmlCreateBuilder.toString());
+        assertEquals(expectedCreateXml, xmlString);
 
         createAttributes.add("districtCode");
 
         // Test UPDATE action with null attributes
-        StringBuilder xmlUpdateBuilder = memberProcessor.getSessionXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -347,15 +355,16 @@ public class MemberProcessorIT extends BaseTests {
             <lbdcShortName>null</lbdcShortName>
             <districtCode action="UPDATE">null</districtCode>
             <alternate>null</alternate>
-            </actionDetails>\n""";
+            </actionDetails>
+            """;
 
-        assertEquals(expectedUpdateXml, xmlUpdateBuilder.toString());
+        assertEquals(expectedUpdateXml, xmlString);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void noExpression() throws Exception {
         Path path = Paths.get("src/test/resources/xml.memberchange/noRequiredArgs.xml");
-        int id = memberProcessor.process(path);
+        memberProcessor.process(path);
     }
 
     @Test
@@ -367,7 +376,7 @@ public class MemberProcessorIT extends BaseTests {
 
         createAttributes.clear();
 
-        StringBuilder xmlBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
+        String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -377,12 +386,12 @@ public class MemberProcessorIT extends BaseTests {
                 <incumbent>null</incumbent>
                 </actionDetails>
                 """;
-        assertEquals(expectedXml, xmlBuilder.toString());
+        assertEquals(expectedXml, xmlString);
 
         modelMap.put("incumbent", "false");
         createAttributes.add("incumbent");
 
-        StringBuilder xmlBuilder2 = memberProcessor.getMemberXmlBuilder(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER,createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedXml2 = """
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -393,11 +402,11 @@ public class MemberProcessorIT extends BaseTests {
                 <incumbent action="UPDATE">false</incumbent>
                 </actionDetails>
                 """;
-        assertEquals(expectedXml2, xmlBuilder2.toString());
+        assertEquals(expectedXml2, xmlString);
 
         createAttributes.clear();
 
-        StringBuilder xmlDeleteBuilder = memberProcessor.getMemberXmlBuilder(MemberChangeType.DELETE, modelMap, MemberType.MEMBER,createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedDeleteXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -408,8 +417,6 @@ public class MemberProcessorIT extends BaseTests {
                 <incumbent>false</incumbent>
                 </actionDetails>
                 """;
-        assertEquals(expectedDeleteXml, xmlDeleteBuilder.toString());
-
+        assertEquals(expectedDeleteXml, xmlString);
     }
-
 }
