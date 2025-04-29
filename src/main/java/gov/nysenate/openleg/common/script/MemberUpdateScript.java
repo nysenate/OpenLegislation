@@ -256,7 +256,7 @@ public class MemberUpdateScript extends BaseScript {
             if (isVacant) {
                 districtToMember.put(districtCode, null);
             } else {
-                PersonName name = new PersonName("", "", firstName, middleName, lastName, suffix);
+                PersonName name = new PersonName(firstName, middleName, lastName, suffix);
                 Person p = new Person(personId, name, "", "");
                 Member m = new Member(p, 0, Chamber.getValue(chamber), true);
                 SessionMember sm = new SessionMember(0, m, shortname, NEXT_SESSION_YEAR, districtCode, false);

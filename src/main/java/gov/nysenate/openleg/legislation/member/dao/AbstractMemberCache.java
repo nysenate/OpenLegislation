@@ -4,7 +4,7 @@ import gov.nysenate.openleg.legislation.CachingService;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import org.springframework.beans.factory.annotation.Autowired;
 
-abstract class AbstractMemberCache<Key, Value> extends CachingService<Key, Value> {
+public abstract class AbstractMemberCache<Key, Value> extends CachingService<Key, Value> {
     protected final MemberDao memberDao;
 
     @Autowired

@@ -32,11 +32,10 @@ public class MemberSearchCtrlIT extends ApiTest {
      */
     @Test
     public void aSimpleTest() throws SearchException {
-        PersonName expectedName = new PersonName("Aurelia Greene", "Assembly Member", "Aurelia",
-                "", "Greene", "");
-        Person expectedPerson = new Person(498, expectedName, null, "no_image.jpg");
-        Member expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
-        SessionMember expectedSessionMember = new SessionMember(664, expectedMember, "GREENE",
+        var expectedName = new PersonName(Chamber.ASSEMBLY, "Aurelia", null, "Green", null);
+        var expectedPerson = new Person(498, expectedName, null, "no_image.jpg");
+        var expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
+        var expectedSessionMember = new SessionMember(664, expectedMember, "GREENE",
                 new SessionYear(2009), 77, false);
 
         ListViewResponse<?> listResponse = (ListViewResponse<?>) testCtrl.globalSearch(
@@ -54,10 +53,10 @@ public class MemberSearchCtrlIT extends ApiTest {
     @Test
     public void searchBySessionMemberId() throws SearchException {
         Person testP = TestData.PERSON_DATA.get(499);
-        Member testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
-        SessionMember testSm = new SessionMember(666, testM, "HENNESSEY",
+        var testM = new Member(testP, 677, Chamber.ASSEMBLY, false);
+        var testSm = new SessionMember(666, testM, "HENNESSEY",
                 new SessionYear(2013), 3, false);
-        SessionMember testSmAlt = new SessionMember(testSm);
+        var testSmAlt = new SessionMember(testSm);
         testSmAlt.setSessionMemberId(667);
         testSmAlt.setLbdcShortName("HENNESSY");
         testSmAlt.setAlternate(true);

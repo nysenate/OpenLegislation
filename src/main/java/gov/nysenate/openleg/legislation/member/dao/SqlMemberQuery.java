@@ -16,7 +16,7 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     ),
 
     PERSON_FRAGMENT(
-        "\np.id AS person_id, p.full_name, p.first_name, p.middle_name, p.last_name, p.suffix, p.img_name, p.email,\n"
+        "\np.id AS person_id, p.first_name, p.middle_name, p.last_name, p.suffix, p.img_name, p.email,\n"
     ),
 
     SELECT_MEMBER_SELECT_FRAGMENT(
