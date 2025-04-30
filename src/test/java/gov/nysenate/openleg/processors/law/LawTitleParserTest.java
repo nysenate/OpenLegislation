@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.common.dao.SqlTable;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
@@ -15,15 +14,6 @@ import static org.junit.Assert.assertTrue;
 public class LawTitleParserTest {
 
     private final LawDocInfo lawInfo = new LawDocInfo();
-
-    @Test
-    public void AHHH() {
-        for (SqlTable table : SqlTable.values()) {
-            if (!table.toString().equals(table.name().toLowerCase())) {
-                System.out.println(table);
-            }
-        }
-    }
 
     // Article tests
     @Test
