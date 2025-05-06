@@ -6,113 +6,58 @@ package gov.nysenate.openleg.common.dao;
  * utilizes these tables.
  */
 public enum SqlTable {
-    ACTIVE_LIST_REFERENCE        (SqlSchema.MISC),
-    ACTIVE_LIST_REFERENCE_ENTRY  (SqlSchema.MISC),
+    ADMIN_USER (SqlSchema.USER), API_USER (SqlSchema.USER),
+    API_USER_ROLE (SqlSchema.USER), API_USER_SUBSCRIPTION (SqlSchema.USER),
 
-    ADMIN_USER(SqlSchema.USER),
+    AGENDA (SqlSchema.AGENDA), AGENDA_INFO_ADDENDUM (SqlSchema.AGENDA), AGENDA_INFO_COMMITTEE (SqlSchema.AGENDA),
+    AGENDA_INFO_COMMITTEE_ITEM (SqlSchema.AGENDA), AGENDA_VOTE_ADDENDUM (SqlSchema.AGENDA),
+    AGENDA_VOTE_COMMITTEE (SqlSchema.AGENDA), AGENDA_VOTE_COMMITTEE_ATTEND (SqlSchema.AGENDA),
+    AGENDA_VOTE_COMMITTEE_VOTE (SqlSchema.AGENDA), AGENDA_CHANGE_LOG (SqlSchema.AGENDA),
+    AGENDA_ALERT_INFO_COMMITTEE (SqlSchema.SPOTCHECK), AGENDA_ALERT_INFO_COMMITTEE_ITEM (SqlSchema.SPOTCHECK),
 
-    AGENDA                       (SqlSchema.AGENDA),
-    AGENDA_INFO_ADDENDUM         (SqlSchema.AGENDA),
-    AGENDA_INFO_COMMITTEE        (SqlSchema.AGENDA),
-    AGENDA_INFO_COMMITTEE_ITEM   (SqlSchema.AGENDA),
-    AGENDA_VOTE_ADDENDUM         (SqlSchema.AGENDA),
-    AGENDA_VOTE_COMMITTEE        (SqlSchema.AGENDA),
-    AGENDA_VOTE_COMMITTEE_ATTEND (SqlSchema.AGENDA),
-    AGENDA_VOTE_COMMITTEE_VOTE   (SqlSchema.AGENDA),
+    BILL(SqlSchema.BILL), BILL_APPROVAL (SqlSchema.BILL), BILL_COMMITTEE (SqlSchema.BILL), BILL_MILESTONE(SqlSchema.BILL),
+    BILL_PREVIOUS_VERSION(SqlSchema.BILL), BILL_SPONSOR(SqlSchema.BILL), BILL_VETO (SqlSchema.BILL),
+    BILL_SCRAPE_FILE (SqlSchema.BILL), BILL_SCRAPE_QUEUE (SqlSchema.BILL),
+    BILL_TEXT_ALTERNATE_PDF (SqlSchema.BILL), BILL_CHANGE_LOG (SqlSchema.BILL),
 
-    AGENDA_ALERT_INFO_COMMITTEE  (SqlSchema.SPOTCHECK),
-    AGENDA_ALERT_INFO_COMMITTEE_ITEM (SqlSchema.SPOTCHECK),
+    BILL_AMENDMENT (SqlSchema.BILL), BILL_AMENDMENT_ACTION (SqlSchema.BILL),
+    BILL_AMENDMENT_COSPONSOR (SqlSchema.BILL), BILL_AMENDMENT_MULTI_SPONSOR (SqlSchema.BILL),
+    BILL_AMENDMENT_SAME_AS (SqlSchema.BILL), BILL_AMENDMENT_PUBLISH_STATUS (SqlSchema.BILL),
+    BILL_AMENDMENT_VOTE_INFO (SqlSchema.BILL), BILL_AMENDMENT_VOTE_ROLL (SqlSchema.BILL),
+    BILL_AMENDMENT_TEXT_DIFF (SqlSchema.BILL),
 
-    AGENDA_CHANGE_LOG            (SqlSchema.AGENDA),
-
-    API_USER                     (SqlSchema.USER),
-    API_USER_ROLE                (SqlSchema.USER),
-    API_USER_SUBSCRIPTION        (SqlSchema.USER),
-
-    BILL                         (SqlSchema.BILL),
-
-    BILL_AMENDMENT               (SqlSchema.BILL),
-    BILL_AMENDMENT_ACTION        (SqlSchema.BILL),
-    BILL_AMENDMENT_COSPONSOR     (SqlSchema.BILL),
-    BILL_AMENDMENT_MULTI_SPONSOR(SqlSchema.BILL),
-    BILL_AMENDMENT_SAME_AS       (SqlSchema.BILL),
-    BILL_AMENDMENT_PUBLISH_STATUS(SqlSchema.BILL),
-    BILL_AMENDMENT_VOTE_INFO     (SqlSchema.BILL),
-    BILL_AMENDMENT_VOTE_ROLL     (SqlSchema.BILL),
-    BILL_AMENDMENT_TEXT_DIFF     (SqlSchema.BILL),
-
-    BILL_APPROVAL                (SqlSchema.BILL),
-    BILL_COMMITTEE               (SqlSchema.BILL),
-    BILL_MILESTONE               (SqlSchema.BILL),
-    BILL_PREVIOUS_VERSION        (SqlSchema.BILL),
-    BILL_SPONSOR                 (SqlSchema.BILL),
     // TODO: is this always empty?
-    BILL_SPONSOR_ADDITIONAL(SqlSchema.BILL),
-    BILL_VETO                    (SqlSchema.BILL),
-    BILL_SCRAPE_FILE             (SqlSchema.BILL),
-    BILL_SCRAPE_QUEUE            (SqlSchema.BILL),
-    BILL_TEXT_ALTERNATE_PDF(SqlSchema.BILL),
+    BILL_SPONSOR_ADDITIONAL (SqlSchema.BILL),
 
-    BILL_CHANGE_LOG              (SqlSchema.BILL),
+    CALENDAR (SqlSchema.CALENDAR), CALENDAR_ACTIVE_LIST (SqlSchema.CALENDAR),
+    CALENDAR_ACTIVE_LIST_ENTRY (SqlSchema.CALENDAR), CALENDAR_SUPPLEMENTAL (SqlSchema.CALENDAR),
+    CALENDAR_SUPPLEMENTAL_ENTRY (SqlSchema.CALENDAR), CALENDAR_CHANGE_LOG (SqlSchema.CALENDAR),
 
-    CALENDAR                     (SqlSchema.CALENDAR),
-    CALENDAR_ACTIVE_LIST         (SqlSchema.CALENDAR),
-    CALENDAR_ACTIVE_LIST_ENTRY   (SqlSchema.CALENDAR),
-    CALENDAR_SUPPLEMENTAL        (SqlSchema.CALENDAR),
-    CALENDAR_SUPPLEMENTAL_ENTRY(SqlSchema.CALENDAR),
+    ALERT_CALENDAR_FILE (SqlSchema.SPOTCHECK), ALERT_CALENDAR (SqlSchema.SPOTCHECK),
+    ALERT_ACTIVE_LIST (SqlSchema.SPOTCHECK), ALERT_ACTIVE_LIST_ENTRY (SqlSchema.SPOTCHECK),
+    ALERT_SUPPLEMENTAL (SqlSchema.SPOTCHECK), ALERT_SUPPLEMENTAL_ENTRY (SqlSchema.SPOTCHECK),
 
-    ALERT_CALENDAR_FILE          (SqlSchema.SPOTCHECK),
-    ALERT_CALENDAR               (SqlSchema.SPOTCHECK),
-    ALERT_ACTIVE_LIST(SqlSchema.SPOTCHECK),
-    ALERT_ACTIVE_LIST_ENTRY(SqlSchema.SPOTCHECK),
-    ALERT_SUPPLEMENTAL(SqlSchema.SPOTCHECK),
-    ALERT_SUPPLEMENTAL_ENTRY(SqlSchema.SPOTCHECK),
+    COMMITTEE (SqlSchema.COMMITTEE), COMMITTEE_VERSION (SqlSchema.COMMITTEE), COMMITTEE_MEMBER (SqlSchema.COMMITTEE),
 
-    CALENDAR_CHANGE_LOG          (SqlSchema.CALENDAR),
+    DAYBREAK_REPORT (SqlSchema.SPOTCHECK), DAYBREAK_FILE (SqlSchema.SPOTCHECK),
+    DAYBREAK_FRAGMENT (SqlSchema.SPOTCHECK), DAYBREAK_PAGE_FILE_ENTRY (SqlSchema.SPOTCHECK),
+    DAYBREAK_BILL (SqlSchema.SPOTCHECK), DAYBREAK_BILL_ACTION (SqlSchema.SPOTCHECK),
+    DAYBREAK_BILL_AMENDMENT (SqlSchema.SPOTCHECK), DAYBREAK_BILL_SPONSOR (SqlSchema.SPOTCHECK),
+    SPOTCHECK_REPORT (SqlSchema.SPOTCHECK), SPOTCHECK_MISMATCH (SqlSchema.SPOTCHECK),
 
-    COMMITTEE                    (SqlSchema.COMMITTEE),
-    COMMITTEE_VERSION            (SqlSchema.COMMITTEE),
-    COMMITTEE_MEMBER             (SqlSchema.COMMITTEE),
+    LAW_FILE (SqlSchema.LAW), LAW_INFO (SqlSchema.LAW), LAW_DOCUMENT (SqlSchema.LAW),
+    LAW_TREE (SqlSchema.LAW), LAW_CHANGE_LOG (SqlSchema.LAW),
 
-    DATA_PROCESS_RUN             (SqlSchema.MISC),
-    DATA_PROCESS_RUN_UNIT        (SqlSchema.MISC),
+    MEMBER (SqlSchema.LEG_DATA), PERSON (SqlSchema.LEG_DATA), SESSION_MEMBER (SqlSchema.LEG_DATA),
+    LEG_DATA_FILE (SqlSchema.LEG_DATA), LEG_DATA_FRAGMENT (SqlSchema.LEG_DATA),
 
-    DAYBREAK_REPORT              (SqlSchema.SPOTCHECK),
-    DAYBREAK_FILE                (SqlSchema.SPOTCHECK),
-    DAYBREAK_FRAGMENT            (SqlSchema.SPOTCHECK),
-    DAYBREAK_PAGE_FILE_ENTRY     (SqlSchema.SPOTCHECK),
-    DAYBREAK_BILL                (SqlSchema.SPOTCHECK),
-    DAYBREAK_BILL_ACTION         (SqlSchema.SPOTCHECK),
-    DAYBREAK_BILL_AMENDMENT      (SqlSchema.SPOTCHECK),
-    DAYBREAK_BILL_SPONSOR        (SqlSchema.SPOTCHECK),
+    TRANSCRIPT (SqlSchema.TRANSCRIPT), TRANSCRIPT_FILE (SqlSchema.TRANSCRIPT),
+    HEARING (SqlSchema.TRANSCRIPT), HEARING_HOST (SqlSchema.TRANSCRIPT),
+    HEARING_HOST_HEARING_ID_PAIRS( SqlSchema.TRANSCRIPT), HEARING_FILE (SqlSchema.TRANSCRIPT),
 
-    FLOOR_CALENDAR_REFERENCE       (SqlSchema.MISC),
-
-    LAW_FILE                     (SqlSchema.LAW),
-    LAW_INFO                     (SqlSchema.LAW),
-    LAW_DOCUMENT                 (SqlSchema.LAW),
-    LAW_TREE                     (SqlSchema.LAW),
-    LAW_CHANGE_LOG               (SqlSchema.LAW),
-
-    NOTIFICATION_SUBSCRIPTION    (SqlSchema.MISC),
-
-    MEMBER                       (SqlSchema.LEG_DATA),
-    PERSON                       (SqlSchema.LEG_DATA),
-    SESSION_MEMBER               (SqlSchema.LEG_DATA),
-
-    LEG_DATA_FILE                (SqlSchema.LEG_DATA),
-    LEG_DATA_FRAGMENT            (SqlSchema.LEG_DATA),
-
-    SPOTCHECK_REPORT             (SqlSchema.SPOTCHECK),
-    SPOTCHECK_MISMATCH           (SqlSchema.SPOTCHECK),
-
-    TRANSCRIPT                   (SqlSchema.TRANSCRIPT),
-    TRANSCRIPT_FILE              (SqlSchema.TRANSCRIPT),
-
-    HEARING                      (SqlSchema.TRANSCRIPT),
-    HEARING_HOST                 (SqlSchema.TRANSCRIPT),
-    HEARING_HOST_HEARING_ID_PAIRS(SqlSchema.TRANSCRIPT),
-    HEARING_FILE                 (SqlSchema.TRANSCRIPT);
+    ACTIVE_LIST_REFERENCE (SqlSchema.MISC), ACTIVE_LIST_REFERENCE_ENTRY (SqlSchema.MISC),
+    DATA_PROCESS_RUN (SqlSchema.MISC), DATA_PROCESS_RUN_UNIT (SqlSchema.MISC),
+    NOTIFICATION_SUBSCRIPTION (SqlSchema.MISC);
 
     private final SqlSchema schema;
 
@@ -122,6 +67,6 @@ public enum SqlTable {
 
     @Override
     public String toString() {
-        return (schema + "." + name()).toLowerCase();
+        return schema + "." + name().toLowerCase();
     }
 }

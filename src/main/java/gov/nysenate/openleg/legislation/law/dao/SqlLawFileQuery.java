@@ -6,16 +6,16 @@ import gov.nysenate.openleg.common.dao.SqlTable;
 public enum SqlLawFileQuery implements BasicSqlQuery
 {
     GET_PENDING_LAW_FILES(
-        "SELECT * FROM ${schema}." + SqlTable.LAW_FILE + "\n" +
+        "SELECT * FROM " + SqlTable.LAW_FILE + "\n" +
         "WHERE pending_processing = true"
     ),
     INSERT_LAW_FILE(
-        "INSERT INTO ${schema}." + SqlTable.LAW_FILE + "\n" +
+        "INSERT INTO " + SqlTable.LAW_FILE + "\n" +
         "(file_name, published_date_time, processed_date_time, processed_count, pending_processing, archived)\n" +
         "VALUES (:fileName, :publishedDateTime, :processedDateTime, :processedCount, :pendingProcessing, :archived)"
     ),
     UPDATE_LAW_FILE(
-        "UPDATE ${schema}." + SqlTable.LAW_FILE + "\n" +
+        "UPDATE " + SqlTable.LAW_FILE + "\n" +
         "SET published_date_time = :publishedDateTime, processed_date_time = :processedDateTime, " +
         "    processed_count = :processedCount, pending_processing = :pendingProcessing, archived = :archived\n" +
         "WHERE file_name = :fileName"

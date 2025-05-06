@@ -22,8 +22,8 @@ class SqlAdminUserDao extends SqlBaseDao {
      * @throws org.springframework.dao.DataAccessException
      */
     void addAdmin(AdminUser admin) throws DataAccessException {
-        if (jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(schema()), userParams(admin)) == 0)
-            jdbcNamed.update(AdminUserQuery.INSERT_ADMIN.getSql(schema()), userParams(admin));
+        if (jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(), userParams(admin)) == 0)
+            jdbcNamed.update(AdminUserQuery.INSERT_ADMIN.getSql(), userParams(admin));
     }
 
     /**
@@ -33,7 +33,7 @@ class SqlAdminUserDao extends SqlBaseDao {
      */
     void deleteAdmin(String username) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", username));
-        jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(schema()), params);
+        jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(), params);
     }
 
     /**
@@ -42,11 +42,11 @@ class SqlAdminUserDao extends SqlBaseDao {
      * @throws DataAccessException
      */
     void updateAdmin(AdminUser admin) throws DataAccessException {
-        jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(schema()), userParams(admin));
+        jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(), userParams(admin));
     }
 
     List<AdminUser> getAdminUsers() throws DataAccessException {
-        return jdbcNamed.query(AdminUserQuery.SELECT_ALL.getSql(schema()), adminUserRowMapper);
+        return jdbcNamed.query(AdminUserQuery.SELECT_ALL.getSql(), adminUserRowMapper);
     }
 
     /**
@@ -57,7 +57,7 @@ class SqlAdminUserDao extends SqlBaseDao {
      */
     AdminUser getAdminUser(String user) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", user));
-        return jdbcNamed.queryForObject(AdminUserQuery.SELECT_BY_NAME.getSql(schema()), params, adminUserRowMapper);
+        return jdbcNamed.queryForObject(AdminUserQuery.SELECT_BY_NAME.getSql(), params, adminUserRowMapper);
     }
 
     private MapSqlParameterSource userParams(AdminUser admin) {

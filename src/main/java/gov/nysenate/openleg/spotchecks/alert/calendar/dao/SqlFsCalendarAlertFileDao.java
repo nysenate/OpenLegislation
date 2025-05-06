@@ -84,8 +84,8 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
      */
     public void updateCalendarAlertFile(CalendarAlertFile calendarAlertFile) {
         MapSqlParameterSource params = getCalendarAlertFileParams(calendarAlertFile);
-        if (jdbcNamed.update(UPDATE_CALENDAR_ALERT_FILE.getSql(schema()), params) == 0) {
-            jdbcNamed.update(INSERT_CALENDAR_ALERT_FILE.getSql(schema()), params);
+        if (jdbcNamed.update(UPDATE_CALENDAR_ALERT_FILE.getSql(), params) == 0) {
+            jdbcNamed.update(INSERT_CALENDAR_ALERT_FILE.getSql(), params);
         }
     }
 
@@ -95,7 +95,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
      * @return
      */
     public List<CalendarAlertFile> getPendingCalendarAlertFiles(LimitOffset limOff) {
-        return jdbcNamed.query(GET_PENDING_CALENDAR_ALERT_FILES.getSql(schema(), limOff), new CalendarAlertFileRowMapper());
+        return jdbcNamed.query(GET_PENDING_CALENDAR_ALERT_FILES.getSql(limOff), new CalendarAlertFileRowMapper());
     }
 
     private CalendarAlertFile archive(File stagedFile) throws IOException {

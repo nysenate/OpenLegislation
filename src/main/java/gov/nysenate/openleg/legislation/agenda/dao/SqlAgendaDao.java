@@ -47,7 +47,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
     public Agenda getAgenda(AgendaId agendaId) throws DataAccessException {
         ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agendaId));
         Agenda agenda =
-            jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_ID.getSql(schema()), agendaIdParams, agendaRowMapper);
+            jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_ID.getSql(), agendaIdParams, agendaRowMapper);
         // Set the info addenda
         agenda.setAgendaInfoAddenda(getAgendaInfoAddenda(agendaIdParams));
         // Set the vote addenda
@@ -58,7 +58,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
     @Override
     public Agenda getAgenda(LocalDate weekOf) throws DataAccessException {
         ImmutableParams agendaWeekOfParams = ImmutableParams.from(new MapSqlParameterSource("weekOf", toDate(weekOf)));
-        Agenda agenda = jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_WEEK_OF.getSql(schema(), LimitOffset.ONE),
+        Agenda agenda = jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_WEEK_OF.getSql(LimitOffset.ONE),
                                                  agendaWeekOfParams, agendaRowMapper);
         ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agenda.getId()));
         // Set the info addenda
@@ -74,7 +74,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
                 .addValue("from", toDate(from))
                 .addValue("to", toDate(to)));
         List<AgendaInfoCommittee> infoCommittees = jdbcNamed.query(
-                SELECT_AGENDA_INFO_COMMITTEE_BY_DATE_RANGE.getSql(schema()),
+                SELECT_AGENDA_INFO_COMMITTEE_BY_DATE_RANGE.getSql(),
                 params, agendaInfoCommRowMapper);
         var infoMap = new WeekOfAgendaInfoMap();
         infoCommittees.forEach(committee -> {
@@ -82,7 +82,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
             addAgendaIdParams(committee.getAgendaId(), mapParams);
             ImmutableParams agendaInfoParams = ImmutableParams.from(mapParams);
             LocalDate weekOf = jdbcNamed.queryForObject(
-                    SELECT_WEEK_OF_AGENDA_INFO_ADDENDUM.getSql(schema()),
+                    SELECT_WEEK_OF_AGENDA_INFO_ADDENDUM.getSql(),
                     agendaInfoParams, weekOfRowMapper);
             infoMap.addCommittee(weekOf, committee);
         });
@@ -94,7 +94,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource("year", year);
         OrderBy orderBy = new OrderBy("agenda_no", idOrder);
-        return jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDAS_BY_YEAR.getSql(schema(), orderBy, LimitOffset.ALL), params,
+        return jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDAS_BY_YEAR.getSql(orderBy, LimitOffset.ALL), params,
             (rs, rowNum) -> new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
     }
 
@@ -104,8 +104,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
         logger.debug("Persisting {} in database...", agenda);
         // Update the base agenda record
         MapSqlParameterSource agendaParams = getAgendaParams(agenda, legDataFragment);
-        if (jdbcNamed.update(SqlAgendaQuery.UPDATE_AGENDA.getSql(schema()), agendaParams) == 0) {
-            jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA.getSql(schema()), agendaParams);
+        if (jdbcNamed.update(SqlAgendaQuery.UPDATE_AGENDA.getSql(), agendaParams) == 0) {
+            jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA.getSql(), agendaParams);
         }
         // Update the info addenda
         updateAgendaInfoAddenda(agenda, legDataFragment);
@@ -118,7 +118,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
     public void deleteAgenda(AgendaId agendaId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(agendaId, params);
-        jdbcNamed.update(SqlAgendaQuery.DELETE_AGENDA.getSql(schema()), params);
+        jdbcNamed.update(SqlAgendaQuery.DELETE_AGENDA.getSql(), params);
     }
 
     /** --- Internal Methods --- */
@@ -128,7 +128,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
      */
     private Map<String, AgendaInfoAddendum> getAgendaInfoAddenda(ImmutableParams agendaParams) {
         List<AgendaInfoAddendum> infoAddenda =
-            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_ADDENDA.getSql(schema()),
+            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_ADDENDA.getSql(),
                     agendaParams, agendaInfoRowMapper);
         // Create a new map where the addenda are grouped by their id.
         Map<String, AgendaInfoAddendum> infoAddendaMap =
@@ -147,7 +147,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
      */
     private Map<CommitteeId, AgendaInfoCommittee> getAgendaInfoCommittees(ImmutableParams agendaInfoParams) {
         List<AgendaInfoCommittee> infoComms =
-            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_COMMITTEES.getSql(schema()), agendaInfoParams, agendaInfoCommRowMapper);
+            jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_INFO_COMMITTEES.getSql(), agendaInfoParams, agendaInfoCommRowMapper);
         // Set the items for each info committee
         infoComms.forEach((infoComm) -> {
             CommitteeId cid = infoComm.getCommitteeId();
@@ -163,7 +163,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
      */
     private List<AgendaInfoCommitteeItem> getAgendaInfoCommItems(ImmutableParams infoCommParams) {
         return jdbcNamed.query(
-            SqlAgendaQuery.SELECT_AGENDA_INFO_COMM_ITEMS.getSql(schema()), infoCommParams, agendaInfoCommItemRowMapper);
+            SqlAgendaQuery.SELECT_AGENDA_INFO_COMM_ITEMS.getSql(), infoCommParams, agendaInfoCommItemRowMapper);
     }
 
     /**
@@ -179,7 +179,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
         Sets.union(diff.entriesOnlyOnLeft().keySet(), diff.entriesDiffering().keySet())
             .forEach(id -> {
                 ImmutableParams addendumParams = agendaIdParams.add(of("addendumId", id));
-                jdbcNamed.update(SqlAgendaQuery.DELETE_AGENDA_INFO_ADDENDUM.getSql(schema()), addendumParams);
+                jdbcNamed.update(SqlAgendaQuery.DELETE_AGENDA_INFO_ADDENDUM.getSql(), addendumParams);
             });
         // Update/insert any modified or new addenda
         Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet())
@@ -192,7 +192,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
      */
     private void insertAgendaInfoAddendum(AgendaInfoAddendum infoAddendum, LegDataFragment legDataFragment) {
         MapSqlParameterSource params = getAgendaInfoAddendumParams(infoAddendum, legDataFragment);
-        jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_ADDENDUM.getSql(schema()), params);
+        jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_ADDENDUM.getSql(), params);
         infoAddendum.getCommitteeInfoMap()
             .forEach((id, infoComm) -> insertAgendaInfoCommittee(infoAddendum, infoComm, legDataFragment));
      }
@@ -204,10 +204,10 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao {
      */
     private void insertAgendaInfoCommittee(AgendaInfoAddendum addendum, AgendaInfoCommittee infoComm, LegDataFragment fragment) {
         MapSqlParameterSource params = getAgendaInfoCommParams(addendum, infoComm, fragment);
-        jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_COMMITTEE.getSql(schema()), params);
+        jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_COMMITTEE.getSql(), params);
         infoComm.getItems().forEach(item -> {
             addAgendaInfoCommItemParams(item, params);
-            jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_COMM_ITEM.getSql(schema()), params);
+            jdbcNamed.update(SqlAgendaQuery.INSERT_AGENDA_INFO_COMM_ITEM.getSql(), params);
         });
     }
 

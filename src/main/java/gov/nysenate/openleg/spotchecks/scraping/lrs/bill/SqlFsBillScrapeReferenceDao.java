@@ -99,7 +99,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     @Override
     public List<BillScrapeFile> getIncomingScrapedBills() {
-        String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
+        String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql();
         return jdbcNamed.query(sql, billScrapeFileMapper);
     }
 
@@ -123,19 +123,19 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public void updateScrapedBill(BillScrapeFile scrapeFile) {
         MapSqlParameterSource params = billScrapeParams(scrapeFile);
-        String updateSql = UPDATE_BILL_SCRAPE_FILE.getSql(schema());
+        String updateSql = UPDATE_BILL_SCRAPE_FILE.getSql();
         int updated = jdbcNamed.update(updateSql, params);
 
         if (updated == 0) {
             // Insert if no rows updated.
-            String insertSql = INSERT_BILL_SCRAPE_FILE.getSql(schema());
+            String insertSql = INSERT_BILL_SCRAPE_FILE.getSql();
             jdbcNamed.update(insertSql, params);
         }
     }
 
     @Override
     public PaginatedList<BillScrapeFile> getPendingScrapeBills(LimitOffset limitOffset) {
-        String sql = SELECT_PENDING_BILL_SCRAPE_FILES.getSql(schema(), limitOffset);
+        String sql = SELECT_PENDING_BILL_SCRAPE_FILES.getSql(limitOffset);
         PaginatedRowHandler<BillScrapeFile> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total", billScrapeFileMapper);
         jdbcNamed.query(sql, rowHandler);
@@ -144,7 +144,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     @Override
     public int stageArchivedScrapeFiles(SessionYear sessionYear) {
-        String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql(schema());
+        String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql();
         MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.year());
         return jdbcNamed.update(sql, params);
     }
@@ -162,7 +162,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     public PaginatedList<BillScrapeQueueEntry> getScrapeQueue(LimitOffset limitOffset, SortOrder order) {
         PaginatedRowHandler<BillScrapeQueueEntry> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total", scrapeQueueEntryRowMapper);
-        jdbcNamed.query(SELECT_SCRAPE_QUEUE.getSql(schema(),
+        jdbcNamed.query(SELECT_SCRAPE_QUEUE.getSql(
                 new OrderBy("priority", order, "added_time", SortOrder.getOpposite(order)), limitOffset), rowHandler);
         return rowHandler.getList();
     }
@@ -170,16 +170,16 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public void addBillToScrapeQueue(BaseBillId id, int priority) {
         MapSqlParameterSource params = getQueueParams(id, priority);
-        int updated = jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
+        int updated = jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(), params);
         if (updated == 0) {
-            jdbcNamed.update(INSERT_SCRAPE_QUEUE.getSql(schema()), params);
+            jdbcNamed.update(INSERT_SCRAPE_QUEUE.getSql(), params);
         }
     }
 
     @Override
     public void deleteBillFromScrapeQueue(BaseBillId id){
         MapSqlParameterSource params = getQueueParams(id);
-        jdbcNamed.update(DELETE_SCRAPE_QUEUE.getSql(schema()), params);
+        jdbcNamed.update(DELETE_SCRAPE_QUEUE.getSql(), params);
     }
 
     /**----------   Map Parameters   -------*/

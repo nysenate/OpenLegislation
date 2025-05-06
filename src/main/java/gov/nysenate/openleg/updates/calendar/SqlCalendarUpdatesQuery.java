@@ -7,7 +7,7 @@ public enum SqlCalendarUpdatesQuery implements BasicSqlQuery
 {
     SELECT_CALENDAR_UPDATES_FRAGMENT(
         "SELECT calendar_no, calendar_year, %s\n" +
-        "FROM ${schema}." + SqlTable.CALENDAR_CHANGE_LOG + "\n" +
+        "FROM " + SqlTable.CALENDAR_CHANGE_LOG + "\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
         "%s\n" + // Additional WHERE clause
         "%s" // GROUP BY clause if necessary

@@ -44,7 +44,7 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames",
                 Collections.singletonList(fileName));
         return jdbcNamed.queryForObject(
-                SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(schema()), params,
+                SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(), params,
                 new SourceFileRowMapper(sourceFileDaoMap));
     }
 
@@ -54,8 +54,8 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
     @Override
     public void updateSourceFile(SourceFile sourceFile) {
         MapSqlParameterSource params = getSourceFileParams(sourceFile);
-        if (jdbcNamed.update(SqlSourceFileQuery.UPDATE_LEG_DATA_FILE.getSql(schema()), params) == 0) {
-            jdbcNamed.update(SqlSourceFileQuery.INSERT_LEG_DATA_FILE.getSql(schema()), params);
+        if (jdbcNamed.update(SqlSourceFileQuery.UPDATE_LEG_DATA_FILE.getSql(), params) == 0) {
+            jdbcNamed.update(SqlSourceFileQuery.INSERT_LEG_DATA_FILE.getSql(), params);
         }
     }
 
@@ -67,7 +67,7 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
         Map<String, SourceFile> sourceFileMap = new HashMap<>();
         List<SourceFile> sourceList = jdbcNamed.query(
-                SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(schema()),
+                SqlSourceFileQuery.GET_LEG_DATA_FILES_BY_FILE_NAMES.getSql(),
                 params, new SourceFileRowMapper(sourceFileDaoMap));
         for (SourceFile sourceFile : sourceList) {
             sourceFileMap.put(sourceFile.getFileName(), sourceFile);
@@ -83,7 +83,7 @@ public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao 
         OrderBy orderBy = new OrderBy("published_date_time", sortByPubDate);
         PaginatedRowHandler<SourceFile> handler = new PaginatedRowHandler<>(limOff,
                 "total_count", new SourceFileRowMapper(sourceFileDaoMap));
-        final String query = SqlSourceFileQuery.GET_LEG_DATA_FILES_DURING.getSql(schema(), orderBy, limOff);
+        final String query = SqlSourceFileQuery.GET_LEG_DATA_FILES_DURING.getSql(orderBy, limOff);
         jdbcNamed.query(query, params, handler);
         return handler.getList();
     }

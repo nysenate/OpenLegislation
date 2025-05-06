@@ -15,59 +15,6 @@ public final class SqlQueryUtils {
     private SqlQueryUtils() {}
 
     /**
-     * Replaces the ${schema} placeholder in the given sql String with the given schema name.
-     * This is mainly used for queries where the schema name can be user defined, e.g. the environment schema.
-     *
-     * @param sql String - A string that contains the ${schema} placeholders.
-     * @param schema String - The name of the database schema
-     * @return String
-     */
-    public static String getSqlWithSchema(String sql, String schema) {
-        return new StringSubstitutor(Map.of("schema", schema)).replace(sql);
-    }
-
-    /**
-     * Overloaded to add LIMIT clause to getSqlWithSchema(sql, schema) output.
-     */
-    public static String getSqlWithSchema(String sql, String schema, LimitOffset limitOffset) {
-        return getSqlWithSchema(sql, schema) + getLimitOffsetClause(limitOffset);
-    }
-
-    /**
-     * Overloaded to add LIMIT AND ORDER BY clause to getSqlWithSchema(sql, schema) output.
-     */
-    public static String getSqlWithSchema(String sql, String schema, OrderBy orderBy, LimitOffset limitOffset) {
-        return getSqlWithSchema(sql, schema) + getOrderByClause(orderBy) + getLimitOffsetClause(limitOffset);
-    }
-
-    /**
-     * Add LIMIT AND ORDER BY clause to SQL statement.
-     */
-    public static String addOrderAndLimitOffset(String sql, OrderBy orderBy, LimitOffset limitOffset) {
-        return sql + getOrderByClause(orderBy) + getLimitOffsetClause(limitOffset);
-    }
-
-    /**
-     * Returns a LIMIT OFFSET sql clause using the supplied LimitOffset instance.
-     * If neither the limit nor the offset is set an empty string will be returned.
-     *
-     * @param limitOffset LimitOffset
-     * @return String
-     */
-    private static String getLimitOffsetClause(LimitOffset limitOffset) {
-        String clause = "";
-        if (limitOffset != null) {
-            if (limitOffset.hasLimit()) {
-                clause = String.format(" LIMIT %d", limitOffset.limit());
-            }
-            if (limitOffset.hasOffset()) {
-                clause += String.format(" OFFSET %d", limitOffset.offsetStart() - 1);
-            }
-        }
-        return clause;
-    }
-
-    /**
      * Returns an ORDER BY sql clause using the supplied orderBy clause. Supports
      * multiple column orderings as specified in the OrderBy instance.
      *

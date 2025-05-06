@@ -29,7 +29,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<SessionMember> memberList =
-                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(), params, new MemberRowMapper());
         if (memberList.isEmpty()) {
             throw new MemberNotFoundEx(id, null);
         }
@@ -42,7 +42,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("memberId", id);
         params.addValue("sessionYear", session.year());
-        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(), params, new MemberRowMapper());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
         try {
             return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
-                    .getSql(schema()), params, new MemberRowMapper());
+                    .getSql(), params, new MemberRowMapper());
         }
         catch (EmptyResultDataAccessException ex) {
             throw new MemberNotFoundEx(sessionMemberId);
@@ -66,7 +66,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         List<SessionMember> members =
-                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
@@ -89,13 +89,13 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
         try {
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()),
+            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(),
                     params, new MemberRowMapper());
         }
         catch (EmptyResultDataAccessException ignored1) {
             params.addValue("alternate", true);
             try {
-                return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
+                return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(LimitOffset.ONE),
                         params, new MemberRowMapper());
             }
             catch (EmptyResultDataAccessException ignored2) {
@@ -108,7 +108,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     @Override
     public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("last_name", sortOrder);
-        return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
+        return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(orderBy, limOff),
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 

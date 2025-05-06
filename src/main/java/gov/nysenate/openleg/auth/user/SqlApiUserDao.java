@@ -20,8 +20,8 @@ public class SqlApiUserDao extends SqlBaseDao {
      * @throws org.springframework.dao.DataAccessException
      */
     void insertUser (ApiUser user) throws DataAccessException {
-        if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user)) == 0) {
-            jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user));
+        if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(), getUserParams(user)) == 0) {
+            jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(), getUserParams(user));
         }
         setSubscriptions(user.getApiKey(), user.getSubscriptions());
         revokeRoles(user.getApiKey());
@@ -36,7 +36,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      * @throws DataAccessException
      */
      void updateUser(ApiUser user) throws DataAccessException {
-        jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user));
+        jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(), getUserParams(user));
          setSubscriptions(user.getApiKey(), user.getSubscriptions());
          revokeRoles(user.getApiKey());
          for (OpenLegRole role : user.getGrantedRoles()) {
@@ -49,7 +49,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      * @throws DataAccessException
      */
     List<ApiUser> getAllUsers() throws DataAccessException {
-        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS.getSql(schema()), new MapSqlParameterSource(),
+        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS.getSql(), new MapSqlParameterSource(),
                 new ApiUserRowMapper());
     }
 
@@ -61,7 +61,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      */
     ApiUser getApiUserFromEmail(String email) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email));
-        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params, new ApiUserRowMapper());
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(), params, new ApiUserRowMapper());
     }
 
     /**
@@ -71,7 +71,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      */
     ApiUser getApiUserFromKey(String key) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
-        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params, new ApiUserRowMapper());
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(), params, new ApiUserRowMapper());
     }
 
     /**
@@ -81,7 +81,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      */
     ApiUser getApiUserFromToken(String token) {
         MapSqlParameterSource params = new MapSqlParameterSource("registrationToken", token);
-        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params, new ApiUserRowMapper());
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(), params, new ApiUserRowMapper());
     }
 
     /**
@@ -90,7 +90,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      * @return A list of ApiUsers
      */
     List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
-        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS_BY_SUBSCRIPTION.getSql(schema()),
+        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS_BY_SUBSCRIPTION.getSql(),
                 new MapSqlParameterSource().addValue("subscription_type", subscriptionType.name()), new ApiUserRowMapper());
     }
 
@@ -99,7 +99,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      * @param subscription ApiUserSubscriptionType
      */
     private void addSubscription(String apiKey, ApiUserSubscriptionType subscription) {
-        jdbcNamed.update(ApiUserQuery.INSERT_API_USER_SUBSCRIPTION.getSql(schema()),
+        jdbcNamed.update(ApiUserQuery.INSERT_API_USER_SUBSCRIPTION.getSql(),
                 getSubscriptionParams(apiKey, subscription));
     }
 
@@ -111,7 +111,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      */
     private void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions) {
         //delete existing subscriptions
-        jdbcNamed.update(ApiUserQuery.DELETE_ALL_API_USER_SUBSCRIPTIONS.getSql(schema()),
+        jdbcNamed.update(ApiUserQuery.DELETE_ALL_API_USER_SUBSCRIPTIONS.getSql(),
                 new MapSqlParameterSource().addValue("apiKey", apiKey));
         //add the new subscriptions
         for(ApiUserSubscriptionType sub : subscriptions) {
@@ -121,7 +121,7 @@ public class SqlApiUserDao extends SqlBaseDao {
 
     private void grantRole(String apiKey, OpenLegRole role) {
         try {
-            jdbcNamed.update(ApiUserQuery.INSERT_API_USER_ROLE.getSql(schema()), getRoleParams(apiKey, role));
+            jdbcNamed.update(ApiUserQuery.INSERT_API_USER_ROLE.getSql(), getRoleParams(apiKey, role));
         } catch (DuplicateKeyException ignored) {}
     }
 
@@ -129,7 +129,7 @@ public class SqlApiUserDao extends SqlBaseDao {
      * Revokes all roles for an API user.
      */
     private void revokeRoles(String apiKey) {
-        jdbcNamed.update(ApiUserQuery.DELETE_API_USER_ROLE.getSql(schema()), new MapSqlParameterSource("apiKey", apiKey));
+        jdbcNamed.update(ApiUserQuery.DELETE_API_USER_ROLE.getSql(), new MapSqlParameterSource("apiKey", apiKey));
     }
 
     /** --- Internal Methods --- */

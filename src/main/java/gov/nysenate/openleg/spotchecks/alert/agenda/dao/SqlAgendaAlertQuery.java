@@ -6,8 +6,8 @@ import gov.nysenate.openleg.common.dao.SqlTable;
 public enum SqlAgendaAlertQuery implements BasicSqlQuery{
 
     SELECT_INFO_COMMITTEE(
-        "SELECT * FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE +" a\n" +
-        "   LEFT JOIN ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + " ai\n" +
+        "SELECT * FROM " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE +" a\n" +
+        "   LEFT JOIN " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + " ai\n" +
         "   ON a.id = ai.alert_info_committee_id"
     ),
     SELECT_INFO_COMMITTEE_BY_ID(
@@ -39,30 +39,30 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
         "WHERE aaic.prod_checked = FALSE"
     ),
     INSERT_INFO_COMMITTEE(
-        "INSERT INTO ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
+        "INSERT INTO " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "       ( reference_date_time, week_of, addendum_id, chamber, committee_name, " +
         "       chair, location, meeting_date_time, notes, year)" +
         "VALUES (:referenceDateTime, :weekOf, :addendumId, :chamber::chamber, :committeeName, " +
         "      :chair, :location, :meetingDateTime, :notes, :year)"
     ),
     INSERT_INFO_COMMITTEE_ITEM(
-        "INSERT INTO ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + "\n" +
+        "INSERT INTO " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + "\n" +
         "       ( alert_info_committee_id, bill_print_no, bill_session_year, bill_amend_version, message)" +
         "VALUES (:alertInfoCommitteeId,   :billPrintNo,  :billSessionYear,  :billAmendVersion,  :message)"
     ),
     SET_INFO_COMMITTEE_CHECKED(
-        "UPDATE ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
+        "UPDATE " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "SET checked = :checked\n" +
         "WHERE year = :year AND week_of = :weekOf AND chamber = :chamber::chamber\n" +
         "       AND committee_name = :committeeName AND addendum_id = :addendumId"
     ),
     SET_MEETING_PROD_CHECKED(
-        "UPDATE ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
+        "UPDATE " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "SET prod_checked = :checked\n" +
         "WHERE chamber = :chamber::chamber AND committee_name = :committeeName AND meeting_date_time::date = :meetingDateTime::date"
     ),
     DELETE_INFO_COMMITTEE(
-        "DELETE FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
+        "DELETE FROM " + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "WHERE year = :year AND week_of = :weekOf AND addendum_id = :addendumId" +
         "   AND chamber = :chamber::chamber AND committee_name = :committeeName"
     );

@@ -5,18 +5,18 @@ import gov.nysenate.openleg.common.dao.SqlTable;
 
 public enum SqlAbstractTranscriptFileQuery implements BasicSqlQuery {
     GET_PENDING_TRANSCRIPT_FILES ("""
-        SELECT * FROM ${schema}.%s
+        SELECT * FROM %s
         WHERE pending_processing = true"""
     ),
     INSERT_TRANSCRIPT_FILE ("""
-        INSERT INTO ${schema}.%s
+        INSERT INTO %s
             (filename, processed_date_time, processed_count,
             pending_processing, archived)
         VALUES (:filename, :processedDateTime, :processedCount,
             :pendingProcessing, :archived)"""
     ),
     UPDATE_TRANSCRIPT_FILE ("""
-        UPDATE ${schema}.%s
+        UPDATE %s
         SET processed_date_time = :processedDateTime,
             processed_count = :processedCount,
             pending_processing = :pendingProcessing,
@@ -24,7 +24,7 @@ public enum SqlAbstractTranscriptFileQuery implements BasicSqlQuery {
         WHERE filename = :filename"""
     ),
     RENAME_TRANSCRIPT_FILE("""
-        UPDATE ${schema}.%s
+        UPDATE %s
         SET filename = :originalName
         WHERE filename = :newName""");
 
@@ -39,7 +39,7 @@ public enum SqlAbstractTranscriptFileQuery implements BasicSqlQuery {
         return this.sql;
     }
 
-    public String getSql(String schema, boolean isHearing) {
-        return getSql(schema).formatted(isHearing ? SqlTable.HEARING_FILE : SqlTable.TRANSCRIPT_FILE);
+    public String getSql(boolean isHearing) {
+        return getSql().formatted(isHearing ? SqlTable.HEARING_FILE : SqlTable.TRANSCRIPT_FILE);
     }
 }

@@ -89,7 +89,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         try {
             // Get a list of all pending daybreak fragments
             List<DaybreakFragment> pendingFragments = jdbcNamed.query(
-                    SqlDaybreakQuery.SELECT_PENDING_DAYBREAK_FRAGMENTS.getSql(schema()), new DaybreakFragmentRowMapper());
+                    SqlDaybreakQuery.SELECT_PENDING_DAYBREAK_FRAGMENTS.getSql(), new DaybreakFragmentRowMapper());
             // Group The fragments in a map by their report date
             Map<LocalDate, List<DaybreakFragment>> pendingReportFragments = new HashMap<>();
             for(DaybreakFragment daybreakFragment : pendingFragments){
@@ -121,7 +121,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         // Get a list of all page file entries
         MapSqlParameterSource params = getReportDateParams(reportDate);
         List<PageFileEntry> pageFileEntries = jdbcNamed.query(
-            SqlDaybreakQuery.SELECT_PAGE_FILE_ENTRIES_BY_REPORT.getSql(schema()), params, new PageFileEntryRowMapper());
+            SqlDaybreakQuery.SELECT_PAGE_FILE_ENTRIES_BY_REPORT.getSql(), params, new PageFileEntryRowMapper());
 
         // Map entries by base print number, then amendment
         Map<BaseBillId, Map<BillId, PageFileEntry>> reportPageFileEntries = new HashMap<>();
@@ -142,7 +142,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId)  throws DataAccessException{
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         DaybreakBill daybreakBill = jdbcNamed.queryForObject(
-                                        SqlDaybreakQuery.SELECT_DAYBREAK_BILL.getSql(schema()),
+                                        SqlDaybreakQuery.SELECT_DAYBREAK_BILL.getSql(),
                                         params, new DaybreakBillRowMapper());
         addAdditionalFields(daybreakBill);
         return daybreakBill;
@@ -159,7 +159,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public List<DaybreakBill> getDaybreakBills(LocalDate reportDate)  throws DataAccessException{
         MapSqlParameterSource params = getReportDateParams(reportDate);
         List<DaybreakBill> daybreakBills = jdbcNamed.query(
-                                                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_BY_REPORT.getSql(schema()),
+                                                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_BY_REPORT.getSql(),
                                                 params, new DaybreakBillRowMapper());
         daybreakBills.parallelStream().forEach(this::addAdditionalFields);
         return daybreakBills;
@@ -188,9 +188,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) throws DataAccessException {
         MapSqlParameterSource params = getReportDateRangeParams(dateRange);
         return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORTS.getSql(
-                        schema(),
                         new OrderBy("report_date", SortOrder.DESC),
-                        new LimitOffset(1)),
+                        LimitOffset.ONE),
                 params,
                 new DaybreakReportDateRowMapper()
         );
@@ -202,14 +201,14 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public boolean isChecked(LocalDate reportDate) throws DataAccessException {
         MapSqlParameterSource params = getReportDateParams(reportDate);
-        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORT_CHECKED.getSql(schema()), params, Boolean.class);
+        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORT_CHECKED.getSql(), params, Boolean.class);
     }
 
     @Override
     public List<LocalDate> getAllReportDates() throws DataAccessException {
     Range<LocalDate> allDates = Range.closed(DateUtils.LONG_AGO.toLocalDate(), LocalDate.now());
         MapSqlParameterSource params = getReportDateRangeParams(allDates);
-        return jdbcNamed.query(SqlDaybreakQuery.SELECT_REPORTS.getSql(schema()), params, new DaybreakReportDateRowMapper());
+        return jdbcNamed.query(SqlDaybreakQuery.SELECT_REPORTS.getSql(), params, new DaybreakReportDateRowMapper());
     }
 
     /** {@inheritDoc } */
@@ -218,7 +217,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         File archivedFile = new File(this.archiveDaybreakDir, daybreakFile.getFile().getName());
         FileIOUtils.moveFile(daybreakFile.getFile(), archivedFile);
         MapSqlParameterSource params = getDaybreakFileParams(daybreakFile);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FILE_ARCHIVED.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FILE_ARCHIVED.getSql(), params);
         daybreakFile.setArchived(true);
         daybreakFile.setFile(archivedFile);
     }
@@ -227,8 +226,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void updateDaybreakFile(DaybreakFile daybreakFile) {
         MapSqlParameterSource params = getDaybreakFileParams(daybreakFile);
-        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FILE.getSql(schema()), params) == 0){
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_FILE.getSql(schema()), params);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FILE.getSql(), params) == 0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_FILE.getSql(), params);
         }
     }
 
@@ -236,8 +235,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void updateDaybreakFragment(DaybreakFragment daybreakFragment) {
         MapSqlParameterSource params = getDaybreakFragmentParams(daybreakFragment);
-        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT.getSql(schema()), params) == 0){
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_FRAGMENT.getSql(schema()), params);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT.getSql(), params) == 0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_FRAGMENT.getSql(), params);
         }
     }
 
@@ -245,14 +244,14 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void setPendingProcessing(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING.getSql(), params);
     }
 
     /** {@inheritDoc } */
     @Override
     public void setPendingProcessing(LocalDate reportDate) {
         MapSqlParameterSource params = getReportDateParams(reportDate);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING_REPORT.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING_REPORT.getSql(), params);
         // Set the report as unprocessed
         updateDaybreakReport(reportDate);
     }
@@ -261,24 +260,24 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void setProcessed(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED.getSql(), params);
     }
 
     /** {@inheritDoc } */
     @Override
     public void setProcessed(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, false);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(), params);
         // Set all fragments as processed too
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED_REPORT.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED_REPORT.getSql(), params);
     }
 
     /** {@inheritDoc } */
     @Override
     public void updatePageFileEntry(PageFileEntry pageFileEntry) {
         MapSqlParameterSource params = getPageFileEntryParams(pageFileEntry);
-        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_PAGE_FILE_ENTRY.getSql(schema()), params) == 0){
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_PAGE_FILE_ENTRY.getSql(schema()), params);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_PAGE_FILE_ENTRY.getSql(), params) == 0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_PAGE_FILE_ENTRY.getSql(), params);
         }
     }
 
@@ -287,8 +286,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public void updateDaybreakBill(DaybreakBill daybreakBill) {
         // Update the bill table
         MapSqlParameterSource params = getDaybreakBillParams(daybreakBill);
-        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_BILL.getSql(schema()), params) ==0){
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL.getSql(schema()), params);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_BILL.getSql(), params) ==0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL.getSql(), params);
         }
         // Update the bill's associated tables
         updateDaybreakBillActions(daybreakBill.getDaybreakBillId(), daybreakBill.getActions());
@@ -301,8 +300,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void updateDaybreakReport(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, false, false);
-        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(schema()), params) == 0){
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_REPORT.getSql(schema()), params);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(), params) == 0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_REPORT.getSql(), params);
         }
     }
 
@@ -310,7 +309,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void updateDaybreakReportSetChecked(LocalDate reportDate, boolean checked) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, checked);
-        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(), params);
     }
 
     /** --- Internal Methods --- */
@@ -334,7 +333,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private Map<Version, DaybreakBillAmendment> getDaybreakBillAmendments(DaybreakBillId daybreakBillId){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         List<DaybreakBillAmendment> amendments = jdbcNamed.query(
-                                                    SqlDaybreakQuery.SELECT_DAYBREAK_BILL_AMENDMENTS.getSql(schema()),
+                                                    SqlDaybreakQuery.SELECT_DAYBREAK_BILL_AMENDMENTS.getSql(),
                                                     params, new DaybreakBillAmendmentRowMapper());
         return Maps.uniqueIndex(amendments, amendment -> amendment.getBillId().getVersion());
     }
@@ -348,7 +347,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         return jdbcNamed.query(
                 SqlDaybreakQuery.SELECT_DAYBREAK_BILL_ACTIONS.getSql(
-                        schema(), new OrderBy("sequence_no", SortOrder.ASC), null),
+                        new OrderBy("sequence_no", SortOrder.ASC), null),
                 params, new DaybreakBillActionRowMapper());
     }
 
@@ -360,7 +359,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private List<String> getDaybreakBillCoSponsors(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         return jdbcNamed.query(
-                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_COSPONSORS.getSql(schema()),
+                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_COSPONSORS.getSql(),
                 params, new DaybreakSponsorRowMapper());
     }
 
@@ -372,7 +371,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private List<String> getDaybreakBillMultiSponsors(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         return jdbcNamed.query(
-                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_MULTISPONSORS.getSql(schema()),
+                SqlDaybreakQuery.SELECT_DAYBREAK_BILL_MULTISPONSORS.getSql(),
                 params, new DaybreakSponsorRowMapper());
     }
 
@@ -385,11 +384,11 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                                               Map<Version, DaybreakBillAmendment> amendments){
         // Delete existing amendments
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_AMENDMENTS.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_AMENDMENTS.getSql(), params);
         // Insert new amendments
         for(DaybreakBillAmendment amendment : amendments.values()){
             params = getDaybreakBillAmendmentParams(daybreakBillId, amendment);
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_AMENDMENT.getSql(schema()), params);
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_AMENDMENT.getSql(), params);
         }
     }
 
@@ -401,11 +400,11 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private void updateDaybreakBillActions(DaybreakBillId daybreakBillId, List<BillAction> billActions){
         // Delete existing amendments
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_ACTIONS.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_ACTIONS.getSql(), params);
         // Insert new amendments
         for(BillAction billAction : billActions){
             params = getDaybreakBillActionParams(daybreakBillId, billAction);
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_ACTION.getSql(schema()), params);
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_ACTION.getSql(), params);
         }
     }
 
@@ -417,11 +416,11 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private void updateDaybreakBillCoSponsors(DaybreakBillId daybreakBillId, List<String> coSponsors){
         // Delete existing cosponsors
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_COSPONSORS.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_COSPONSORS.getSql(), params);
         // Insert new cosponsors
         for(String sponsor : coSponsors){
             params = getDaybreakBillSponsorParams(daybreakBillId, sponsor);
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_COSPONSOR.getSql(schema()), params);
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_COSPONSOR.getSql(), params);
         }
     }
 
@@ -433,11 +432,11 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private void updateDaybreakBillMultiSponsors(DaybreakBillId daybreakBillId, List<String> multiSponsors){
         // Delete existing multi-sponsors
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_MULTISPONSORS.getSql(schema()), params);
+        jdbcNamed.update(SqlDaybreakQuery.DELETE_DAYBREAK_BILL_MULTISPONSORS.getSql(), params);
         // Insert new multi-sponsors
         for(String sponsor : multiSponsors){
             params = getDaybreakBillSponsorParams(daybreakBillId, sponsor);
-            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_MULTISPONSOR.getSql(schema()), params);
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL_MULTISPONSOR.getSql(), params);
         }
     }
 

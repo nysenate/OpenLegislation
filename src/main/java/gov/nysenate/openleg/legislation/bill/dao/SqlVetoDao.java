@@ -33,7 +33,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao {
     @Override
     public VetoMessage getVetoMessage(VetoId vetoId) throws DataAccessException {
         MapSqlParameterSource params = getVetoIdParams(vetoId);
-        return jdbcNamed.queryForObject(SqlVetoQuery.SELECT_VETO_MESSAGE_SQL.getSql(schema()), params, new VetoRowMapper());
+        return jdbcNamed.queryForObject(SqlVetoQuery.SELECT_VETO_MESSAGE_SQL.getSql(), params, new VetoRowMapper());
     }
 
     /** @inheritDoc */
@@ -42,7 +42,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
         OrderBy orderBy = new OrderBy("year", SortOrder.ASC, "veto_number", SortOrder.ASC);
         List<VetoMessage> vetoMessageList = jdbcNamed.query(
-            SqlVetoQuery.SELECT_BILL_VETOES_SQL.getSql(schema(), orderBy, LimitOffset.ALL), params, new VetoRowMapper());
+            SqlVetoQuery.SELECT_BILL_VETOES_SQL.getSql(orderBy, LimitOffset.ALL), params, new VetoRowMapper());
         Map<VetoId,VetoMessage> vetoMap = new HashMap<>();
         for (VetoMessage vetoMessage : vetoMessageList) {
             vetoMap.put(vetoMessage.getVetoId(), vetoMessage);
@@ -54,8 +54,8 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao {
     @Override
     public void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment) throws DataAccessException {
         MapSqlParameterSource params = getVetoParams(vetoMessage, legDataFragment);
-        if (jdbcNamed.update(SqlVetoQuery.UPDATE_VETO_MESSAGE_SQL.getSql(schema()), params) == 0){
-           jdbcNamed.update(SqlVetoQuery.INSERT_VETO_MESSAGE_SQL.getSql(schema()), params);
+        if (jdbcNamed.update(SqlVetoQuery.UPDATE_VETO_MESSAGE_SQL.getSql(), params) == 0){
+           jdbcNamed.update(SqlVetoQuery.INSERT_VETO_MESSAGE_SQL.getSql(), params);
         }
     }
 
@@ -63,14 +63,14 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao {
     @Override
     public void deleteVetoMessage(VetoId vetoId) {
         MapSqlParameterSource params = getVetoIdParams(vetoId);
-        jdbcNamed.update(SqlVetoQuery.DELETE_VETO_MESSAGE.getSql(schema()), params);
+        jdbcNamed.update(SqlVetoQuery.DELETE_VETO_MESSAGE.getSql(), params);
     }
 
     /** @inheritDoc */
     @Override
     public void deleteBillVetoes(BaseBillId baseBillId) {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
-        jdbcNamed.update(SqlVetoQuery.DELETE_BILL_VETOES.getSql(schema()), params);
+        jdbcNamed.update(SqlVetoQuery.DELETE_BILL_VETOES.getSql(), params);
     }
 
     private static class VetoRowMapper implements RowMapper<VetoMessage> {

@@ -7,7 +7,7 @@ public enum SqlLawUpdatesQuery implements BasicSqlQuery
 {
     SELECT_LAW_UPDATES_FRAGMENT(
         "SELECT %s\n" +
-        "FROM ${schema}." + SqlTable.LAW_CHANGE_LOG + "\n" +
+        "FROM " + SqlTable.LAW_CHANGE_LOG + "\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
         "AND table_name = '" + SqlTable.LAW_DOCUMENT + "'\n" +
         "%s\n" + // Additional WHERE clause
@@ -23,13 +23,6 @@ public enum SqlLawUpdatesQuery implements BasicSqlQuery
         "law_file_name AS last_source_file, action_date_time AS last_processed_date_time, \n" +
         "published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
         "table_name, action\n"
-    ),
-
-    SELECT_LAW_UPDATE_TOKENS(
-        String.format(SELECT_LAW_UPDATES_FRAGMENT.sql,
-            "law_id, " + SELECT_COLUMNS_FOR_TOKEN_FRAGMENT.sql,
-            "",
-            "GROUP BY law_id")
     ),
 
     SELECT_LAW_UPDATE_DIGESTS(
@@ -55,13 +48,11 @@ public enum SqlLawUpdatesQuery implements BasicSqlQuery
 
     SELECT_LAW_TREE_UPDATES(
             "SELECT law_id, " + SELECT_COLUMNS_FOR_TOKEN_FRAGMENT.getSql() + "\n" +
-            "FROM ${schema}." + SqlTable.LAW_CHANGE_LOG + "\n" +
+            "FROM " + SqlTable.LAW_CHANGE_LOG + "\n" +
             "WHERE table_name = '" + SqlTable.LAW_TREE + "'\n" +
             "  AND ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
             "GROUP BY law_id"
-    ),
-
-    ;
+    );
 
     private String sql;
 

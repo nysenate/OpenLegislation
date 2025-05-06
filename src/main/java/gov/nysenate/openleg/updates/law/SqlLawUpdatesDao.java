@@ -84,8 +84,7 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
     private String getQuery(SqlLawUpdatesQuery query, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset) {
         String dateColumn = getDateColumnForUpdateType(type);
         OrderBy orderBy = getOrderByForUpdateType(type, dateOrder);
-        String sql = query.getSql(schema(), orderBy, limitOffset);
-        return queryReplace(sql, "dateColumn", dateColumn);
+        return queryReplace(query.getSql(orderBy, limitOffset), "dateColumn", dateColumn);
     }
 
     private static final RowMapper<UpdateToken<LawVersionId>> lawIdUpdateTokenMapper = (rs, rowNum) -> {

@@ -7,7 +7,7 @@ public enum SqlAgendaUpdatesQuery implements BasicSqlQuery
 {
     SELECT_AGENDA_UPDATES_FRAGMENT(
         "SELECT agenda_no, year, %s\n" + // Any additional columns are replaced here
-        "FROM ${schema}." + SqlTable.AGENDA_CHANGE_LOG + "\n" +
+        "FROM " + SqlTable.AGENDA_CHANGE_LOG + "\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
         "%s\n" + // Additional WHERE clause
         "%s" // GROUP BY clause if necessary

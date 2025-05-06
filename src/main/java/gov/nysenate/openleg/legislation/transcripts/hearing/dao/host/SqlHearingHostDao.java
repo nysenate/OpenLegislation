@@ -21,7 +21,7 @@ import static gov.nysenate.openleg.legislation.transcripts.hearing.dao.host.SqlH
 public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {
     @Override
     public Set<HearingHost> getHearingHosts(HearingId id) {
-        return new HashSet<>(jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
+        return new HashSet<>(jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(),
                 new MapSqlParameterSource("hearing_id", id.id()), HEARING_HOST_ROW_MAPPER));
     }
 
@@ -36,30 +36,30 @@ public class SqlHearingHostDao extends SqlBaseDao implements HearingHostDao {
                 hostId = getHostId(params);
             }
             catch (EmptyResultDataAccessException e) {
-                jdbcNamed.update(INSERT_HOST.getSql(schema()), params);
+                jdbcNamed.update(INSERT_HOST.getSql(), params);
                 hostId = getHostId(params);
             }
             params = new MapSqlParameterSource().addValue("hearing_host_id", hostId)
                     .addValue("hearing_id", hearingId.id());
-            jdbcNamed.update(INSERT_HOST_HEARING_ID_PAIR.getSql(schema()), params);
+            jdbcNamed.update(INSERT_HOST_HEARING_ID_PAIR.getSql(), params);
         }
     }
 
     @Override
     public void deleteHearingHosts(HearingId id) {
-        List<Integer> hostIds = jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(schema()),
+        List<Integer> hostIds = jdbcNamed.query(SELECT_HOSTS_BY_HEARING_ID.getSql(),
                 new MapSqlParameterSource("hearing_id", id.id()), ID_HOST_ROW_MAPPER);
-        jdbcNamed.update(DELETE_HOSTS_WITH_HEARING_ID.getSql(schema()), Map.of("hearing_id", id.id()));
+        jdbcNamed.update(DELETE_HOSTS_WITH_HEARING_ID.getSql(), Map.of("hearing_id", id.id()));
         for (int hostId : hostIds) {
             // If a host no longer has any associated hearings, it should be deleted.
-            String sql = SELECT_HEARING_ID_BY_HOST_ID.getSql(schema());
+            String sql = SELECT_HEARING_ID_BY_HOST_ID.getSql();
             if (jdbcNamed.queryForList(sql, Map.of("hearing_host_id", hostId)).isEmpty())
-                jdbcNamed.update(DELETE_HOST_BY_ID.getSql(schema()), Map.of("id", hostId));
+                jdbcNamed.update(DELETE_HOST_BY_ID.getSql(), Map.of("id", hostId));
         }
     }
 
     private Integer getHostId(MapSqlParameterSource params) {
-        return jdbcNamed.queryForObject(SELECT_HOST_ID.getSql(schema()), params, Integer.class);
+        return jdbcNamed.queryForObject(SELECT_HOST_ID.getSql(), params, Integer.class);
     }
 
     private static final RowMapper<HearingHost> HEARING_HOST_ROW_MAPPER = (rs, rowNum) -> {

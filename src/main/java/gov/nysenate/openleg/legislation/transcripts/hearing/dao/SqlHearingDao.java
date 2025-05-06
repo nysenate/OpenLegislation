@@ -31,14 +31,14 @@ public class SqlHearingDao extends SqlBaseDao implements HearingDao {
     /** {@inheritDoc} */
     @Override
     public List<HearingId> getHearingIds(SortOrder order, LimitOffset limOff) {
-        return jdbcNamed.query(SELECT_HEARING_IDS.getSql(schema(), new OrderBy("id", order), limOff), ID_ROW_MAPPER);
+        return jdbcNamed.query(SELECT_HEARING_IDS.getSql(new OrderBy("id", order), limOff), ID_ROW_MAPPER);
     }
 
     /** {@inheritDoc} */
     @Override
     public Hearing getHearing(HearingId hearingId) throws EmptyResultDataAccessException {
         var params = new MapSqlParameterSource("id", hearingId.id());
-        Hearing hearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID.getSql(schema()), params, HEARING_ROW_MAPPER);
+        Hearing hearing = jdbcNamed.queryForObject(SELECT_HEARING_BY_ID.getSql(), params, HEARING_ROW_MAPPER);
         if (hearing != null)
             hearing.setHosts(hearingHostDao.getHearingHosts(hearingId));
         return hearing;
@@ -54,23 +54,23 @@ public class SqlHearingDao extends SqlBaseDao implements HearingDao {
     @Override
     public String getFilename(HearingId hearingId) throws EmptyResultDataAccessException {
         var params = new MapSqlParameterSource("id", hearingId.id());
-        return jdbcNamed.queryForObject(SELECT_FILENAME_BY_ID.getSql(schema()), params, FILENAME_ROW_MAPPER);
+        return jdbcNamed.queryForObject(SELECT_FILENAME_BY_ID.getSql(), params, FILENAME_ROW_MAPPER);
     }
 
     private HearingId getId(String filename) throws EmptyResultDataAccessException {
-        return new HearingId(jdbcNamed.queryForObject(SELECT_ID_BY_FILENAME.getSql(schema()),
+        return new HearingId(jdbcNamed.queryForObject(SELECT_ID_BY_FILENAME.getSql(),
                 new MapSqlParameterSource("filename", filename), Integer.class));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateHearing(Hearing hearing) {
-        if (jdbc.queryForList(SELECT_HEARING_IDS.getSql(schema()), Integer.class).isEmpty())
-            jdbc.execute(RESET_ID.getSql(schema()));
+        if (jdbc.queryForList(SELECT_HEARING_IDS.getSql(), Integer.class).isEmpty())
+            jdbc.execute(RESET_ID.getSql());
         MapSqlParameterSource params = getHearingParams(hearing);
-        boolean isNew = jdbcNamed.update(UPDATE_HEARING.getSql(schema()), params) == 0;
+        boolean isNew = jdbcNamed.update(UPDATE_HEARING.getSql(), params) == 0;
         if (isNew)
-            jdbcNamed.update(INSERT_HEARING.getSql(schema()), params);
+            jdbcNamed.update(INSERT_HEARING.getSql(), params);
         var hearingId = getId(hearing.getFilename());
         if (!isNew)
             hearingHostDao.deleteHearingHosts(hearingId);
@@ -82,7 +82,7 @@ public class SqlHearingDao extends SqlBaseDao implements HearingDao {
     @Override
     public List<Hearing> getHearings(Integer year) {
         var sqlQuery = year == null ? SELECT_HEARINGS : SELECT_HEARINGS_BY_YEAR;
-        return jdbcNamed.query(sqlQuery.getSql(schema()),
+        return jdbcNamed.query(sqlQuery.getSql(),
                 new MapSqlParameterSource("year", year), HEARING_ROW_MAPPER);
     }
 
@@ -96,8 +96,7 @@ public class SqlHearingDao extends SqlBaseDao implements HearingDao {
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
         PaginatedRowHandler<HearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated",
                 TOKEN_ROW_MAPPER);
-        String sql = SqlQueryUtils.addOrderAndLimitOffset(SELECT_HEARING_UPDATES.getSql(schema()), orderBy, limOff);
-        jdbcNamed.query(sql, params, handler);
+        jdbcNamed.query(SELECT_HEARING_UPDATES.getSql(orderBy, limOff), params, handler);
         return handler.getList();
     }
 

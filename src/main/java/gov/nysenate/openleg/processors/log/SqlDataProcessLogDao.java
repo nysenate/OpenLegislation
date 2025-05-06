@@ -26,7 +26,7 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
     @Override
     public DataProcessRun getRun(int processId) throws DataAccessException {
         MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
-        return jdbcNamed.queryForObject(SELECT_DATA_PROCESS_RUN.getSql(schema()), params, processRunRowMapper);
+        return jdbcNamed.queryForObject(SELECT_DATA_PROCESS_RUN.getSql(), params, processRunRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -40,7 +40,7 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         SqlDataProcessLogQuery sqlQuery = (withActivityOnly) ? SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
         PaginatedRowHandler<DataProcessRun> handler = new PaginatedRowHandler<>(limOff, "total_count", processRunRowMapper);
-        jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, handler);
+        jdbcNamed.query(sqlQuery.getSql(orderBy, limOff), params, handler);
         return handler.getList();
     }
 
@@ -50,33 +50,33 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
         OrderBy orderBy = new OrderBy("start_date_time", dateOrder);
         PaginatedRowHandler<DataProcessUnit> handler = new PaginatedRowHandler<>(limOff, "total_count", processUnitRowMapper);
-        jdbcNamed.query(SELECT_DATA_PROCESS_UNITS.getSql(schema(), orderBy, limOff), params, handler);
+        jdbcNamed.query(SELECT_DATA_PROCESS_UNITS.getSql(orderBy, limOff), params, handler);
         return handler.getList();
     }
 
     @Override
     public List<DataProcessUnit> getFirstAndLastUnits(int processId) {
         MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
-        return jdbcNamed.query(SELECT_FIRST_AND_LAST_DATA_PROCESS_UNITS.getSql(schema()), params, processUnitRowMapper);
+        return jdbcNamed.query(SELECT_FIRST_AND_LAST_DATA_PROCESS_UNITS.getSql(), params, processUnitRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public void insertRun(DataProcessRun run) {
         MapSqlParameterSource params = getDataProcessRunParams(run);
-        int id = jdbcNamed.queryForObject(INSERT_DATA_PROCESS_RUN.getSql(schema()), params, new SingleColumnRowMapper<>());
+        int id = jdbcNamed.queryForObject(INSERT_DATA_PROCESS_RUN.getSql(), params, new SingleColumnRowMapper<>());
         run.setProcessId(id);
     }
 
     /** {@inheritDoc} */
     public void insertUnit(int processId, DataProcessUnit unit) {
-        jdbcNamed.update(INSERT_PROCESS_UNIT.getSql(schema()), getDataProcessUnitParams(processId, unit));
+        jdbcNamed.update(INSERT_PROCESS_UNIT.getSql(), getDataProcessUnitParams(processId, unit));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateRun(DataProcessRun run) {
-        jdbcNamed.update(UPDATE_DATA_PROCESS_RUN.getSql(schema()), getDataProcessRunParams(run));
+        jdbcNamed.update(UPDATE_DATA_PROCESS_RUN.getSql(), getDataProcessRunParams(run));
     }
 
     /** --- Internal --- */

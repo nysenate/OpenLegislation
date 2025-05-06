@@ -8,7 +8,7 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
     SELECT_BILL_UPDATES_FRAGMENT(
         "SELECT bill_print_no, bill_session_year,\n" +
         "       %s \n" + // Any additional columns are replaced here
-        "FROM ${schema}." + SqlTable.BILL_CHANGE_LOG + " log\n" +
+        "FROM " + SqlTable.BILL_CHANGE_LOG + " log\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
         "%s\n" + // Additional WHERE clause
         "AND (${updateFieldFilter}) \n" + // Update field filter gets replaced based on method args

@@ -59,7 +59,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     public DeNormSpotCheckMismatch<?> getMismatch(int mismatchId) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId);
-        String sql = GET_MISMATCH.getSql(schema());
+        String sql = GET_MISMATCH.getSql();
         List<DeNormSpotCheckMismatch<?>> results = jdbcNamed.query(sql, params, mismatchRowMapper);
         if (results.size() == 0) {
             throw new MismatchNotFoundEx(mismatchId);
@@ -98,7 +98,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         } else {
             query = GET_MISMATCHES;
         }
-        String sql = query.getSql(schema(), mmQuery.getOrderBy(), limitOffset);
+        String sql = query.getSql(mmQuery.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch<?>> handler =
                 new PaginatedRowHandler<>(limitOffset, "total_rows", mismatchRowMapper);
         jdbcNamed.query(sql, params, handler);
@@ -116,7 +116,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
                 .addValue("ignoreStatuses", extractEnumSetParams(ignoreStatuses))
                 .addValue("reportStartDateTime", getReportStartDateTime(reportDate))
                 .addValue("reportEndDateTime", getReportEndDateTime(reportDate));
-        String sql = MISMATCH_STATUS_SUMMARY.getSql(schema());
+        String sql = MISMATCH_STATUS_SUMMARY.getSql();
         MismatchStatusSummaryHandler summaryHandler = new MismatchStatusSummaryHandler();
         jdbcNamed.query(sql, params, summaryHandler);
         return summaryHandler.getSummary();
@@ -137,7 +137,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
                 .addValue("observedEndDateTime", mismatchStatus.getObservedEndDateTime(reportDate))
                 .addValue("contentType", contentType.name())
                 .addValue("state", mismatchStatus.getState().name());
-        String sql = MISMATCH_TYPE_SUMMARY.getSql(schema());
+        String sql = MISMATCH_TYPE_SUMMARY.getSql();
         MismatchTypeSummaryHandler summaryHandler = new MismatchTypeSummaryHandler(contentType);
         jdbcNamed.query(sql, params, summaryHandler);
         return summaryHandler.getSummary();
@@ -153,7 +153,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
                   .addValue("ignoreStatuses", extractEnumSetParams(ignoreStatuses))
                   .addValue("reportStartDateTime", getReportStartDateTime(reportDate))
                   .addValue("reportEndDateTime", getReportEndDateTime(reportDate));
-        String sql = MISMATCH_CONTENT_TYPE_SUMMARY.getSql(schema());
+        String sql = MISMATCH_CONTENT_TYPE_SUMMARY.getSql();
         MismatchContentTypeSummaryHandler summaryHandler = new MismatchContentTypeSummaryHandler();
         jdbcNamed.query(sql, params, summaryHandler);
         return summaryHandler.getSummary();
@@ -238,14 +238,14 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     private int insertReport(SpotCheckReport<?> report) {
         ImmutableParams reportParams = ImmutableParams.from(getReportIdParams(report));
         KeyHolder reportIdHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(INSERT_REPORT.getSql(schema()), reportParams, reportIdHolder, new String[]{"id"});
+        jdbcNamed.update(INSERT_REPORT.getSql(), reportParams, reportIdHolder, new String[]{"id"});
         return reportIdHolder.getKey().intValue();
     }
 
     private void insertMismatches(Collection<DeNormSpotCheckMismatch<?>> mismatches) {
         List<MapSqlParameterSource> params = mismatches.stream()
                 .map(this::mismatchParams).toList();
-        String sql = INSERT_MISMATCH.getSql(schema());
+        String sql = INSERT_MISMATCH.getSql();
         jdbcNamed.batchUpdate(sql, params.toArray(MapSqlParameterSource[]::new));
     }
 
@@ -320,7 +320,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
                 .addValue("ignoreStatus", ignoreStatus.name());
-        String sql = UPDATE_MISMATCH_IGNORE.getSql(schema());
+        String sql = UPDATE_MISMATCH_IGNORE.getSql();
         jdbcNamed.update(sql, params);
     }
 
@@ -332,7 +332,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
                 .addValue("issueId", issueId);
-        String sql = UPDATE_ISSUE_ID.getSql(schema());
+        String sql = UPDATE_ISSUE_ID.getSql();
         jdbcNamed.update(sql, params);
     }
 
@@ -344,7 +344,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
                 .addValue("issueId", issueId);
-        String sql = ADD_ISSUE_ID.getSql(schema());
+        String sql = ADD_ISSUE_ID.getSql();
         jdbcNamed.update(sql, params);
     }
 
@@ -357,7 +357,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
                 .addValue("issueId", issueId);
-        String sql = DELETE_ISSUE_ID.getSql(schema());
+        String sql = DELETE_ISSUE_ID.getSql();
         jdbcNamed.update(sql, params);
     }
 
@@ -368,7 +368,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     public void deleteAllIssueId(int mismatchId) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId);
-        String sql = DELETE_ALL_ISSUE_ID.getSql(schema());
+        String sql = DELETE_ALL_ISSUE_ID.getSql();
         jdbcNamed.update(sql, params);
     }
 

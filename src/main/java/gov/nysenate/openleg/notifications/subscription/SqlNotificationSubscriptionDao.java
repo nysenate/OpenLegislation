@@ -26,7 +26,7 @@ public class SqlNotificationSubscriptionDao extends SqlBaseDao implements Notifi
     @Override
     public Set<NotificationSubscription> getSubscriptions() {
         return new HashSet<>(
-                jdbcNamed.query(SELECT_ALL_SUBSCRIPTIONS.getSql(schema()),
+                jdbcNamed.query(SELECT_ALL_SUBSCRIPTIONS.getSql(),
                     new MapSqlParameterSource(), notificationSubscriptionRowMapper)
         );
     }
@@ -36,7 +36,7 @@ public class SqlNotificationSubscriptionDao extends SqlBaseDao implements Notifi
         MapSqlParameterSource params = getSubscriptionIdParams(subscriptionId);
         try {
             return jdbcNamed.queryForObject(
-                    SELECT_SUBSCRIPTION_BY_ID.getSql(schema()),
+                    SELECT_SUBSCRIPTION_BY_ID.getSql(),
                     params,
                     notificationSubscriptionRowMapper);
         } catch (EmptyResultDataAccessException ex) {
@@ -50,9 +50,9 @@ public class SqlNotificationSubscriptionDao extends SqlBaseDao implements Notifi
         MapSqlParameterSource params = getSubscriptionParams(subscription);
         Integer subId = subscription.getId();
         // Insert if there is no valid id, or an update attempt affects no rows
-        if (subId == null || jdbcNamed.update(UPDATE_SUBSCRIPTION.getSql(schema()), params) == 0) {
+        if (subId == null || jdbcNamed.update(UPDATE_SUBSCRIPTION.getSql(), params) == 0) {
             KeyHolder subIdHolder = new GeneratedKeyHolder();
-            jdbcNamed.update(INSERT_SUBSCRIPTION.getSql(schema()), params, subIdHolder, new String[]{"id"});
+            jdbcNamed.update(INSERT_SUBSCRIPTION.getSql(), params, subIdHolder, new String[]{"id"});
             subId = Objects.requireNonNull(subIdHolder.getKey()).intValue();
             // Replace the subscription parameter with an id'd version
             subscription = subscription.copy().setId(subId).build();
@@ -65,7 +65,7 @@ public class SqlNotificationSubscriptionDao extends SqlBaseDao implements Notifi
     @Override
     public void removeSubscription(int subscriptionId) {
         MapSqlParameterSource params = getSubscriptionIdParams(subscriptionId);
-        jdbcNamed.update(DELETE_SUBSCRIPTION.getSql(schema()), params);
+        jdbcNamed.update(DELETE_SUBSCRIPTION.getSql(), params);
     }
 
     /* --- Row Mappers --- */

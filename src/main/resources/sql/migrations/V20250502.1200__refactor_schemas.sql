@@ -1,0 +1,30 @@
+--    BILL, TRANSCRIPT, AGENDA, CALENDAR, LAW, USER, SPOTCHECK, COMMITTEE, LEG_DATA, MISC
+
+CREATE SCHEMA IF NOT EXISTS bill;
+CREATE SCHEMA IF NOT EXISTS transcript;
+CREATE SCHEMA IF NOT EXISTS agenda;
+CREATE SCHEMA IF NOT EXISTS calendar;
+CREATE SCHEMA IF NOT EXISTS law;
+CREATE SCHEMA IF NOT EXISTS "user";
+CREATE SCHEMA IF NOT EXISTS spotcheck;
+CREATE SCHEMA IF NOT EXISTS committee;
+CREATE SCHEMA IF NOT EXISTS leg_data;
+CREATE SCHEMA IF NOT EXISTS misc;
+
+--TODO: drop prefix from tables?
+ALTER TABLE adminuser
+RENAME TO admin_user;
+ALTER TABLE admin_user
+SET SCHEMA "user";
+ALTER TABLE apiuser
+RENAME TO api_user;
+ALTER TABLE api_user
+SET SCHEMA "user";
+ALTER TABLE apiuser_roles
+RENAME TO api_user_roles;
+ALTER TABLE api_user_roles
+SET SCHEMA "user";
+ALTER TABLE apiuser_subscription
+RENAME TO api_user_subscription;
+ALTER TABLE api_user_subscription
+SET SCHEMA "user";

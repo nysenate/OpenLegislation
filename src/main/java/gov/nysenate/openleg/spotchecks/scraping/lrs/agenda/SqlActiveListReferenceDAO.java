@@ -30,20 +30,20 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
         MapSqlParameterSource params = getActiveListParams(act);
         KeyHolder key = new GeneratedKeyHolder();
 
-        if (jdbcNamed.update(SqlActiveListReferenceQuery.UPDATE_ACTIVE_LIST.getSql(schema()), params, key, new String[] { "id" }) == 0){
-            jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE.getSql(schema()), params, key, new String[] { "id" });
+        if (jdbcNamed.update(SqlActiveListReferenceQuery.UPDATE_ACTIVE_LIST.getSql(), params, key, new String[] { "id" }) == 0){
+            jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE.getSql(), params, key, new String[] { "id" });
         }
         // use for adding new entries
         int alId = Objects.requireNonNull(key.getKey()).intValue();
         MapSqlParameterSource paramId = new MapSqlParameterSource();
         paramId.addValue("active_list_reference_id", alId);
-        jdbcNamed.update(SqlActiveListReferenceQuery.DELETE_REFERENCE_ENTRIES.getSql(schema()), paramId);
+        jdbcNamed.update(SqlActiveListReferenceQuery.DELETE_REFERENCE_ENTRIES.getSql(), paramId);
         act.getEntries().forEach(entry -> addActiveListEntry(alId, entry));
     }
 
     private void addActiveListEntry(int keyId, CalendarEntry entry){
         MapSqlParameterSource params = getEntryParams(keyId, entry);
-        jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE_ENTRY.getSql(schema()), params);
+        jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE_ENTRY.getSql(), params);
     }
 
     @Override
@@ -53,26 +53,26 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
                 .addValue("calendar_year", cal.getYear())
                 .addValue("calendar_no", cal.getCalNo())
                 .addValue("reference_date", DateUtils.toDate(time));
-        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(schema()), params, new ActiveRowMapper());
+        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(), params, new ActiveRowMapper());
     }
 
     @Override
     public ActiveListSpotcheckReference getMostRecentReference(CalendarActiveListId cal) {
         MapSqlParameterSource params = getActiveListIdParams(cal);
-        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_MOST_RECENT_REPORT.getSql(schema()), params, new ActiveRowMapper());
+        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_MOST_RECENT_REPORT.getSql(), params, new ActiveRowMapper());
     }
 
     @Override
     public List<ActiveListSpotcheckReference> getMostRecentEachYear(int year) {
         var params = new MapSqlParameterSource("calendar_year", year);
-        return jdbcNamed.query(SqlActiveListReferenceQuery.SELECT_MOST_RECENT_FROM_EACH_YEAR.getSql(schema()), params, new ActiveRowMapper());
+        return jdbcNamed.query(SqlActiveListReferenceQuery.SELECT_MOST_RECENT_FROM_EACH_YEAR.getSql(), params, new ActiveRowMapper());
     }
 
     // TODO
     @Override
     public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDateTime> dateRange) throws DataAccessException {
         MapSqlParameterSource params= null;// = getActiveListIdParams(cal, dateRange);
-        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(schema()), params, new ActiveRowMapper());
+        return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(), params, new ActiveRowMapper());
     }
 
     private static MapSqlParameterSource getEntryParams(int keyId, CalendarEntry entry) {

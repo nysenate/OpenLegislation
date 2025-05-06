@@ -24,7 +24,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     STANDARD_UPDATE_SUBQUERY(
         "\tSELECT %s AS id,\n" +            // id selector e.g. ARRAY['id_col1', id_val1, 'id_col2', id_val2, ...]
         "\t\t'%s' as content_type, %s\n" +  // content type, column replace string e.g. "${legDataColumns}"
-        "\tFROM ${schema}.%s\n" +           // table name
+        "\tFROM %s\n" +           // table name
         "\tWHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime"
     ),
     STANDARD_DIGEST_COLUMNS(
@@ -117,7 +117,6 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     /**
      * Generates and returns a query string based on the given parameters
      *
-     * @param schema String - The name of the master schema
      * @param limOff LimitOffset - Limit Offset for the query
      * @param order OrderBy - Ordering for the query
      * @param contentTypes Set<UpdateContentType> - The update content types to be retrieved
@@ -125,12 +124,12 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
      * @param updateType UpdateType - Determines which date column is used in the query
      * @return String - An aggregate updates query string
      */
-    public static String buildQuery(String schema, LimitOffset limOff, SortOrder order,
+    public static String buildQuery(LimitOffset limOff, SortOrder order,
                                     Set<UpdateContentType> contentTypes, UpdateReturnType returnType, UpdateType updateType) {
         OrderBy orderBy = new OrderBy(updateType == UpdateType.PROCESSED_DATE ? "last_processed_date_time" : "last_published_date_time", order);
         String aggregateQuery = String.format(
-                SELECT_AGGREGATE_UPDATES.getSql(schema, orderBy, limOff),
-                generateSubquery(contentTypes, returnType, schema));
+                SELECT_AGGREGATE_UPDATES.getSql(orderBy, limOff),
+                generateSubquery(contentTypes, returnType));
         Map<String, String> replaceMap = ImmutableMap.<String, String>builder()
                 .putAll(getColumnReplaceMap(returnType))
                 .put("dateColumn", updateType == UpdateType.PROCESSED_DATE ? "action_date_time" : "published_date_time")
@@ -142,7 +141,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     /**
      * Generates a subquery containing the union of updates queries for each represented content type
      */
-    private static String generateSubquery(Set<UpdateContentType> contentTypes, UpdateReturnType returnType, String schema) {
+    private static String generateSubquery(Set<UpdateContentType> contentTypes, UpdateReturnType returnType) {
         StringBuilder subqueryBuilder = new StringBuilder();
         boolean first = true;
         for (UpdateContentType contentType : contentTypes) {
@@ -151,27 +150,27 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
             switch (contentType) {
                 case AGENDA:
                     if (returnType == UpdateReturnType.TOKEN) {
-                        subqueryBuilder.append(AGENDA_UPDATE_TOKEN_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(AGENDA_UPDATE_TOKEN_SUBQUERY.getSql());
                     } else {
-                        subqueryBuilder.append(AGENDA_UPDATE_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(AGENDA_UPDATE_SUBQUERY.getSql());
                     } break;
                 case BILL:
                     if (returnType == UpdateReturnType.TOKEN) {
-                        subqueryBuilder.append(BILL_UPDATE_TOKEN_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(BILL_UPDATE_TOKEN_SUBQUERY.getSql());
                     } else {
-                        subqueryBuilder.append(BILL_UPDATE_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(BILL_UPDATE_SUBQUERY.getSql());
                     } break;
                 case CALENDAR:
                     if (returnType == UpdateReturnType.TOKEN) {
-                        subqueryBuilder.append(CALENDAR_UPDATE_TOKEN_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(CALENDAR_UPDATE_TOKEN_SUBQUERY.getSql());
                     } else {
-                        subqueryBuilder.append(CALENDAR_UPDATE_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(CALENDAR_UPDATE_SUBQUERY.getSql());
                     } break;
                 case LAW:
                     if (returnType == UpdateReturnType.TOKEN) {
-                        subqueryBuilder.append(LAW_UPDATE_TOKEN_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(LAW_UPDATE_TOKEN_SUBQUERY.getSql());
                     } else {
-                        subqueryBuilder.append(LAW_UPDATE_SUBQUERY.getSql(schema));
+                        subqueryBuilder.append(LAW_UPDATE_SUBQUERY.getSql());
                     } break;
             }
         }

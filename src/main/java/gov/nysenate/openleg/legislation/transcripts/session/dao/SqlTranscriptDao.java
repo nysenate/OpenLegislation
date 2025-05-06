@@ -24,7 +24,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     @Override
     public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("date_time", sortOrder, "session_type", SortOrder.getOpposite(sortOrder));
-        return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), transcriptIdRowMapper);
+        return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(orderBy, limOff), transcriptIdRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -36,15 +36,15 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
             params.addValue("sessionType", transcriptId.sessionType().toString());
             query = SELECT_TRANSCRIPT_BY_ID;
         }
-        return jdbcNamed.queryForObject(query.getSql(schema()), params, transcriptRowMapper);
+        return jdbcNamed.queryForObject(query.getSql(), params, transcriptRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateTranscript(Transcript transcript) {
         MapSqlParameterSource params = getTranscriptParams(transcript);
-        if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(schema()), params) == 0) {
-            jdbcNamed.update(INSERT_TRANSCRIPT.getSql(schema()), params);
+        if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(), params) == 0) {
+            jdbcNamed.update(INSERT_TRANSCRIPT.getSql(), params);
         }
     }
 
@@ -55,7 +55,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         addDateTimeRangeParams(params, dateRange);
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
         PaginatedRowHandler<TranscriptUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", transcriptUpdateRowMapper);
-        jdbcNamed.query(SELECT_TRANSCRIPTS_UPDATED_DURING.getSql(schema(), orderBy, limOff), params, handler);
+        jdbcNamed.query(SELECT_TRANSCRIPTS_UPDATED_DURING.getSql(orderBy, limOff), params, handler);
         return handler.getList();
     }
 

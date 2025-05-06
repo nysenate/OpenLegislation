@@ -22,7 +22,7 @@ public class SqlAggregateUpdatesDao extends SqlBaseDao implements AggregateUpdat
     public PaginatedList<UpdateToken<Map<String, String>>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
                                                                            Set<UpdateContentType> types, UpdateType updateType,
                                                                            SortOrder order, LimitOffset limitOffset) {
-        String query = buildQuery(schema(), limitOffset, order, types, UpdateReturnType.TOKEN, updateType);
+        String query = buildQuery(limitOffset, order, types, UpdateReturnType.TOKEN, updateType);
         PaginatedRowHandler<UpdateToken<Map<String, String>>> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total_updated", aggregateUpdateTokenRowMapper);
         jdbcNamed.query(query, getDateTimeRangeParams(dateTimeRange), rowHandler);
@@ -34,7 +34,7 @@ public class SqlAggregateUpdatesDao extends SqlBaseDao implements AggregateUpdat
     public PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
                                                                              Set<UpdateContentType> types, UpdateType updateType,
                                                                              SortOrder order, LimitOffset limitOffset, boolean detail) {
-        String query = buildQuery(schema(), limitOffset, order, types,
+        String query = buildQuery(limitOffset, order, types,
                 detail ? UpdateReturnType.DETAIL_DIGEST : UpdateReturnType.DIGEST, updateType);
         PaginatedRowHandler<UpdateDigest<Map<String, String>>> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total_updated", aggregateUpdateDigestRowMapper);

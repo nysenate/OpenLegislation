@@ -74,11 +74,11 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
         OrderBy orderBy = getOrderByForUpdateType(updateType, sortOrder);
         String sqlQuery;
         if (specificCalendar) {
-            sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_CALENDAR.getSql(schema(), orderBy, limOff);
+            sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_CALENDAR.getSql(orderBy, limOff);
         }
         else {
-            sqlQuery = (detail) ? SELECT_CALENDAR_UPDATE_DIGESTS.getSql(schema(), orderBy, limOff)
-                                : SELECT_CALENDAR_UPDATE_TOKENS.getSql(schema(), orderBy, limOff);
+            sqlQuery = (detail) ? SELECT_CALENDAR_UPDATE_DIGESTS.getSql(orderBy, limOff)
+                                : SELECT_CALENDAR_UPDATE_TOKENS.getSql(orderBy, limOff);
         }
         sqlQuery = queryReplace(sqlQuery, "dateColumn", dateColumn);
         return sqlQuery;

@@ -54,8 +54,8 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
     @Override
     public void updateFile(T file) {
         MapSqlParameterSource params = getTranscriptFileParams(file);
-        if (jdbcNamed.update(UPDATE_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params) == 0) {
-            jdbcNamed.update(INSERT_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params);
+        if (jdbcNamed.update(UPDATE_TRANSCRIPT_FILE.getSql(isHearing()), params) == 0) {
+            jdbcNamed.update(INSERT_TRANSCRIPT_FILE.getSql(isHearing()), params);
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
 
     @Override
     public List<T> getPendingFiles() {
-        var temp = jdbcNamed.query(GET_PENDING_TRANSCRIPT_FILES.getSql(schema(), isHearing()),
+        var temp = jdbcNamed.query(GET_PENDING_TRANSCRIPT_FILES.getSql(isHearing()),
                 new TranscriptFileRowMapper());
         Collections.sort(temp);
         return LimitOffset.limitList(temp, LimitOffset.FIFTY);
@@ -99,7 +99,7 @@ public abstract class SqlAbstractTranscriptFileDao<T extends AbstractTranscripts
             FileIOUtils.moveFile(archiveFile, archiveFileDest);
             var params = new MapSqlParameterSource("originalName", archiveFile.getName())
                     .addValue("newName", archiveFileDest.getName());
-            jdbcNamed.update(RENAME_TRANSCRIPT_FILE.getSql(schema(), isHearing()), params);
+            jdbcNamed.update(RENAME_TRANSCRIPT_FILE.getSql(isHearing()), params);
         }
     }
 

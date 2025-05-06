@@ -39,7 +39,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     @Override
     public List<LegDataFragment> getPendingLegDataFragments(SortOrder pubDateOrder, LimitOffset limOff) {
         OrderBy orderBy = fragmentOrderBy(pubDateOrder);
-        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS.getSql(schema(), orderBy, limOff),
+        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS.getSql(orderBy, limOff),
                 new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
@@ -54,7 +54,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentTypes",
                 restrict.stream().map(Enum::name).collect(Collectors.toSet()));
-        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE.getSql(schema(), orderBy, limOff),
+        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE.getSql(orderBy, limOff),
                 params, new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
@@ -64,8 +64,8 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     @Override
     public void updateLegDataFragment(LegDataFragment fragment) {
         MapSqlParameterSource params = getLegDataFragmentParams(fragment);
-        if (jdbcNamed.update(SqlLegDataFragmentQuery.UPDATE_LEG_DATA_FRAGMENT.getSql(schema()), params) == 0) {
-            jdbcNamed.update(SqlLegDataFragmentQuery.INSERT_LEG_DATA_FRAGMENT.getSql(schema()), params);
+        if (jdbcNamed.update(SqlLegDataFragmentQuery.UPDATE_LEG_DATA_FRAGMENT.getSql(), params) == 0) {
+            jdbcNamed.update(SqlLegDataFragmentQuery.INSERT_LEG_DATA_FRAGMENT.getSql(), params);
         }
     }
 
@@ -87,7 +87,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     public LegDataFragment getLegDataFragment(String fragmentId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentId", fragmentId);
-        return jdbcNamed.queryForObject(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENT_BY_FRAGMENT_ID.getSql(schema()), params,
+        return jdbcNamed.queryForObject(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENT_BY_FRAGMENT_ID.getSql(), params,
                 new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 
@@ -98,7 +98,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     public List<LegDataFragment> getLegDataFragments(String sourceFileName, SortOrder pubDateOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource("legDataFileName", sourceFileName);
         OrderBy orderBy = fragmentOrderBy(pubDateOrder);
-        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_SOURCE_FILE_NAME.getSql(schema(), orderBy, LimitOffset.ALL),
+        return jdbcNamed.query(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_SOURCE_FILE_NAME.getSql(orderBy, LimitOffset.ALL),
                 params, new LegDataFragmentRowMapper(sourceFileDaoMap));
     }
 

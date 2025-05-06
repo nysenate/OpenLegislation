@@ -10,14 +10,14 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     /** Partial query used to get all the most recent mismatches as of :reportEndDateTime. */
     ACTIVE_MISMATCHES(
             "SELECT DISTINCT ON (key, type) * \n" +
-            "FROM ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+            "FROM " + SPOTCHECK_MISMATCH + "\n" +
             "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
             "  AND datasource = :datasource \n" +
             "ORDER BY key, type, observed_date_time desc "
     ),
 
     INSERT_REPORT(
-        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_REPORT + " (report_date_time, reference_date_time, reference_type, notes)\n" +
+        "INSERT INTO " + SqlTable.SPOTCHECK_REPORT + " (report_date_time, reference_date_time, reference_type, notes)\n" +
         "VALUES (:reportDateTime, :referenceDateTime, :referenceType, :notes)"
     ),
 
@@ -25,7 +25,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "SELECT m.mismatch_id, m.report_id, hstore_to_array(key) key_arr, m.type, m.state, \n" +
         "m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
         "m.observed_date_time, m.first_seen_date_time, m.report_date_time, m.ignore_status, m.issue_ids \n" +
-        "  FROM ${schema}." + SPOTCHECK_MISMATCH + " m \n" +
+        "  FROM " + SPOTCHECK_MISMATCH + " m \n" +
         "  WHERE m.mismatch_id = :mismatchId \n"
     ),
 
@@ -64,7 +64,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
 
     INSERT_MISMATCH(
-        "INSERT INTO ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+        "INSERT INTO " + SPOTCHECK_MISMATCH + "\n" +
         "(key, type, report_id, datasource, content_type, reference_type,\n" +
         "state, reference_data, observed_data, notes, issue_ids, ignore_status,\n" +
         "report_date_time, observed_date_time, reference_active_date_time, first_seen_date_time)\n" +
@@ -118,31 +118,31 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
 
     UPDATE_MISMATCH_IGNORE(
-        "UPDATE ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+        "UPDATE " + SPOTCHECK_MISMATCH + "\n" +
         "SET ignore_status = :ignoreStatus\n" +
         "WHERE mismatch_id = :mismatchId\n"
     ),
 
     UPDATE_ISSUE_ID(
-        "UPDATE ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+        "UPDATE " + SPOTCHECK_MISMATCH + "\n" +
         "SET issue_ids = string_to_array(:issueId::text, ',')\n" +
         "WHERE mismatch_id = :mismatchId\n"
     ),
 
     ADD_ISSUE_ID(
-            "UPDATE ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+            "UPDATE " + SPOTCHECK_MISMATCH + "\n" +
                     "SET issue_ids = array_append(issue_ids, :issueId::text)\n" +
                     "WHERE mismatch_id = :mismatchId\n"
     ),
 
     DELETE_ISSUE_ID(
-        "UPDATE ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+        "UPDATE " + SPOTCHECK_MISMATCH + "\n" +
         "SET issue_ids = array_remove(issue_ids, :issueId::text)\n" +
         "WHERE mismatch_id = :mismatchId\n"
     ),
 
     DELETE_ALL_ISSUE_ID(
-            "UPDATE ${schema}." + SPOTCHECK_MISMATCH + "\n" +
+            "UPDATE " + SPOTCHECK_MISMATCH + "\n" +
                     "SET issue_ids =  ARRAY[]::text[]\n" +
                     "WHERE mismatch_id = :mismatchId\n"
     );

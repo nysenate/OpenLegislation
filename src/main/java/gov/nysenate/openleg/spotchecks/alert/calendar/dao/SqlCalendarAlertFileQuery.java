@@ -6,14 +6,14 @@ import gov.nysenate.openleg.common.dao.SqlTable;
 public enum SqlCalendarAlertFileQuery implements BasicSqlQuery {
 
     INSERT_CALENDAR_ALERT_FILE(
-            "INSERT INTO ${schema}." + SqlTable.ALERT_CALENDAR_FILE + "\n" +
+            "INSERT INTO " + SqlTable.ALERT_CALENDAR_FILE + "\n" +
             "(file_name, processed_date_time, processed_count," +
             "pending_processing, archived)" + "\n" +
             "VALUES (:fileName, :processedDateTime, :processedCount, " +
             ":pendingProcessing, :archived)"
     ),
     UPDATE_CALENDAR_ALERT_FILE(
-            "UPDATE ${schema}." + SqlTable.ALERT_CALENDAR_FILE + "\n" +
+            "UPDATE " + SqlTable.ALERT_CALENDAR_FILE + "\n" +
             "SET processed_date_time = :processedDateTime," +
             "    processed_count = :processedCount," +
             "    pending_processing = :pendingProcessing," +
@@ -21,7 +21,7 @@ public enum SqlCalendarAlertFileQuery implements BasicSqlQuery {
             "WHERE file_name = :fileName"
     ),
     GET_PENDING_CALENDAR_ALERT_FILES(
-            "SELECT * FROM ${schema}." + SqlTable.ALERT_CALENDAR_FILE + "\n" +
+            "SELECT * FROM " + SqlTable.ALERT_CALENDAR_FILE + "\n" +
             "WHERE pending_processing = true"
     );
 

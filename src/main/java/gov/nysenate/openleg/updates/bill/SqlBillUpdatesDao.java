@@ -120,11 +120,11 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         OrderBy orderBy = getOrderByForUpdateType(updateType, sortOrder);
         String sqlQuery;
         if (billId != null) {
-            sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL.getSql(schema(), orderBy, limOff);
+            sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL.getSql(orderBy, limOff);
         }
         else {
-            sqlQuery = (detail) ? SELECT_BILL_UPDATE_DIGESTS.getSql(schema(), orderBy, limOff)
-                                : SELECT_BILL_UPDATE_TOKENS.getSql(schema(), orderBy, limOff);
+            sqlQuery = (detail) ? SELECT_BILL_UPDATE_DIGESTS.getSql(orderBy, limOff)
+                                : SELECT_BILL_UPDATE_TOKENS.getSql(orderBy, limOff);
         }
         sqlQuery = queryReplace(sqlQuery, "dateColumn", dateColumn);
         sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(fieldFilter));

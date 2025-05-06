@@ -86,7 +86,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     @Override
     public AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaMeetingWeekId meetingWeekId) {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        String sql = SELECT_INFO_COMMITTEE_BY_ID.getSql(schema(), LimitOffset.ONE);
+        String sql = SELECT_INFO_COMMITTEE_BY_ID.getSql(LimitOffset.ONE);
         jdbcNamed.query(sql, getAgendaMeetingWeekIdParams(meetingWeekId), rowHandler);
         List<AgendaAlertInfoCommittee> result = rowHandler.getAlertInfoCommittees();
         if (result.size() == 1) {
@@ -102,7 +102,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     @Override
     public List<AgendaAlertInfoCommittee> getAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        jdbcNamed.query(SELECT_IN_RANGE.getSql(), getDateTimeRangeParams(dateTimeRange), rowHandler);
         return rowHandler.getAlertInfoCommittees();
     }
 
@@ -110,21 +110,21 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     @Override
     public List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences() {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_UNCHECKED.getSql(schema()), rowHandler);
+        jdbcNamed.query(SELECT_UNCHECKED.getSql(), rowHandler);
         return rowHandler.getAlertInfoCommittees();
     }
 
     @Override
     public List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences() {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_PROD_UNCHECKED.getSql(schema()), rowHandler);
+        jdbcNamed.query(SELECT_PROD_UNCHECKED.getSql(), rowHandler);
         return groupAlertInfoCommittees(rowHandler.getAlertInfoCommittees());
     }
 
     @Override
     public List<AgendaAlertInfoCommittee> getProdAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        jdbcNamed.query(SELECT_IN_RANGE.getSql(), getDateTimeRangeParams(dateTimeRange), rowHandler);
         return groupAlertInfoCommittees(rowHandler.getAlertInfoCommittees());
     }
 
@@ -134,7 +134,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         deleteAAIC(aaic.getAgendaMeetingWeekId());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(INSERT_INFO_COMMITTEE.getSql(schema()), getAgendaAlertInfoCommParams(aaic),
+        jdbcNamed.update(INSERT_INFO_COMMITTEE.getSql(), getAgendaAlertInfoCommParams(aaic),
                 keyHolder, new String[]{"id"});
 
         aaic.getItems().forEach(item -> insertAAICItem(item, keyHolder.getKey().intValue()));
@@ -145,7 +145,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     public void setAgendaAlertChecked(AgendaMeetingWeekId meetingWeekId, boolean checked) {
         MapSqlParameterSource params = getAgendaMeetingWeekIdParams(meetingWeekId);
         params.addValue("checked", checked);
-        jdbcNamed.update(SET_INFO_COMMITTEE_CHECKED.getSql(schema()), params);
+        jdbcNamed.update(SET_INFO_COMMITTEE_CHECKED.getSql(), params);
     }
 
     /** {@inheritDoc} */
@@ -153,7 +153,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     public void setAgendaAlertProdChecked(AgendaAlertInfoCommittee alertInfoCommittee, boolean checked) {
         MapSqlParameterSource params = getAgendaAlertInfoCommParams(alertInfoCommittee)
                 .addValue("checked", checked);
-        jdbcNamed.update(SET_MEETING_PROD_CHECKED.getSql(schema()), params);
+        jdbcNamed.update(SET_MEETING_PROD_CHECKED.getSql(), params);
     }
 
     /** --- Internal Methods --- */
@@ -163,7 +163,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
      * @param meetingWeekId {@link AgendaMeetingWeekId}
      */
     private void deleteAAIC(AgendaMeetingWeekId meetingWeekId) {
-        jdbcNamed.update(DELETE_INFO_COMMITTEE.getSql(schema()), getAgendaMeetingWeekIdParams(meetingWeekId));
+        jdbcNamed.update(DELETE_INFO_COMMITTEE.getSql(), getAgendaMeetingWeekIdParams(meetingWeekId));
     }
 
     /**
@@ -172,7 +172,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
      * @param aaicId int - row id for an AgendaAlertInfoCommittee
      */
     private void insertAAICItem(AgendaInfoCommitteeItem aici, int aaicId) {
-        jdbcNamed.update(INSERT_INFO_COMMITTEE_ITEM.getSql(schema()), getAgendaInfoCommItemParams(aici, aaicId));
+        jdbcNamed.update(INSERT_INFO_COMMITTEE_ITEM.getSql(), getAgendaInfoCommItemParams(aici, aaicId));
     }
 
     private List<AgendaAlertInfoCommittee> groupAlertInfoCommittees(List<AgendaAlertInfoCommittee> alertInfoCommittees) {

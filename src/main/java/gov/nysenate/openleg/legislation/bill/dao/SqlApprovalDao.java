@@ -23,7 +23,7 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
     @Override
     public ApprovalMessage getApprovalMessage(ApprovalId approvalId) throws DataAccessException {
         MapSqlParameterSource params = getApprovalIdParams(approvalId);
-        return jdbcNamed.queryForObject(SqlApprovalQuery.SELECT_APPROVAL_BY_ID.getSql(schema()),
+        return jdbcNamed.queryForObject(SqlApprovalQuery.SELECT_APPROVAL_BY_ID.getSql(),
                                         params, new ApprovalMessageRowMapper());
     }
 
@@ -32,14 +32,14 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
     public ApprovalMessage getApprovalMessage(BaseBillId baseBillId) throws DataAccessException {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
         return jdbcNamed.queryForObject(
-            SqlApprovalQuery.SELECT_APPROVAL_BY_BILL.getSql(schema()), params, new ApprovalMessageRowMapper());
+            SqlApprovalQuery.SELECT_APPROVAL_BY_BILL.getSql(), params, new ApprovalMessageRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public List<ApprovalMessage> getApprovalMessages(int year) throws DataAccessException {
         MapSqlParameterSource params = getYearParams(year);
-        return jdbcNamed.query(SqlApprovalQuery.SELECT_APPROVALS_BY_YEAR.getSql(schema()),
+        return jdbcNamed.query(SqlApprovalQuery.SELECT_APPROVALS_BY_YEAR.getSql(),
                 params, new ApprovalMessageRowMapper());
     }
 
@@ -47,8 +47,8 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
     @Override
     public void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment) {
         MapSqlParameterSource params = getApprovalMessageParams(approvalMessage, legDataFragment);
-        if(jdbcNamed.update(SqlApprovalQuery.UPDATE_APPROVAL.getSql(schema()), params) == 0){
-            jdbcNamed.update(SqlApprovalQuery.INSERT_APPROVAL.getSql(schema()), params);
+        if(jdbcNamed.update(SqlApprovalQuery.UPDATE_APPROVAL.getSql(), params) == 0){
+            jdbcNamed.update(SqlApprovalQuery.INSERT_APPROVAL.getSql(), params);
         }
     }
 
@@ -56,14 +56,14 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
     @Override
     public void deleteApprovalMessage(ApprovalId approvalId) {
         MapSqlParameterSource params = getApprovalIdParams(approvalId);
-        jdbcNamed.update(SqlApprovalQuery.DELETE_APPROVAL_BY_ID.getSql(schema()), params);
+        jdbcNamed.update(SqlApprovalQuery.DELETE_APPROVAL_BY_ID.getSql(), params);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteApprovalMessage(BaseBillId baseBillId) {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
-        jdbcNamed.update(SqlApprovalQuery.DELETE_APPROVAL_BY_BILL.getSql(schema()), params);
+        jdbcNamed.update(SqlApprovalQuery.DELETE_APPROVAL_BY_BILL.getSql(), params);
     }
 
     /** --- Row Mappers --- */

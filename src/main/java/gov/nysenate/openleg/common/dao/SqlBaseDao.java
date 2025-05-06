@@ -47,6 +47,7 @@ public abstract class SqlBaseDao {
     /**
      * Returns the schema of the environment instance.
      */
+    // TODO: should be removed
     protected String schema() {
         if (environment == null) {
             throw new IllegalStateException("The environment has not been initialized. Cannot perform SQL queries " +
