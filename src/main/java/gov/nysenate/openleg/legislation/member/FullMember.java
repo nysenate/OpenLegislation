@@ -27,6 +27,14 @@ public class FullMember extends Member {
         sessionMembers.forEach(sm -> sessionMemberMap.put(sm.getSessionYear(), sm));
     }
 
+    public FullMember(Member member) {
+        super(member);
+    }
+
+    public FullMember(Person person) {
+        super(new Member(person, -1, null, false));
+    }
+
     /** --- Functional Getters / Setters --- */
 
     /**

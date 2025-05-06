@@ -63,6 +63,7 @@ public class FetchSenatorUpdates {
         createMigration(updatedMembers);
     }
 
+    // TODO: rewrite to use member XML updates.
     private void createMigration(List<FullMember> members) throws IOException {
         String migrationDir = this.sourceCodeDir + "src/main/resources/sql/migrations/";
         LocalDateTime now = LocalDateTime.now();

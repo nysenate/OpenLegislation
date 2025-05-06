@@ -29,7 +29,7 @@ public class SqlMemberDaoIT extends BaseTests {
         MemberChangeType dataType = MemberChangeType.CREATE;
         int createdId = sqlMemberDao.handlePersonChange(dataType, person);
         assertTrue("The person ID should be greater than 0 after creation.",createdId > 0);
-        Person createdPerson = sqlMemberDao.getPersonByPersonId(createdId);
+        Person createdPerson = sqlMemberDao.getPerson(createdId);
         assertEquals(createdPerson.name().lastName(), person.name().lastName());
         assertEquals(createdPerson.name().firstName(), person.name().firstName());
         assertEquals(createdPerson.name().middleName(), person.name().middleName());
@@ -41,7 +41,7 @@ public class SqlMemberDaoIT extends BaseTests {
         Person person2 = new Person(283, new PersonName("", "Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
         int x = sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, person2);
         assertTrue("The person ID should be greater than 0 after creation.",createdId > 0);
-        Person updatedPerson = sqlMemberDao.getPersonByPersonId(283);
+        Person updatedPerson = sqlMemberDao.getPerson(283);
         assertEquals(updatedPerson.name().lastName(), person.name().lastName());
         assertEquals(updatedPerson.name().firstName(), person.name().firstName());
         assertEquals(updatedPerson.name().middleName(), person.name().middleName());
@@ -57,12 +57,12 @@ public class SqlMemberDaoIT extends BaseTests {
         //Create Member
         Member member = new Member(924,-1, Chamber.SENATE, false);
         int m_id = sqlMemberDao.handleMemberChange(MemberChangeType.CREATE, member);
-        Member memberCreated = sqlMemberDao.getMemberByMemberId(m_id);
+        Member memberCreated = sqlMemberDao.getMember(m_id);
         assertEquals( Chamber.SENATE, memberCreated.getChamber());
         assertEquals( 924, memberCreated.getPersonId().intValue());
 
         //Update Member
-        Person person = sqlMemberDao.getPersonByPersonId(454);
+        Person person = sqlMemberDao.getPerson(454);
         Member updateMember = new Member(person,632, Chamber.ASSEMBLY, true);
         sqlMemberDao.handleMemberChange(MemberChangeType.UPDATE, updateMember);
         FullMember memberUpdated = sqlMemberDao.getMemberById(632);
@@ -84,16 +84,16 @@ public class SqlMemberDaoIT extends BaseTests {
        //Delete Member
        sqlMemberDao.handleMemberChange(MemberChangeType.DELETE, updateMember);
        try {
-           Member d_member = sqlMemberDao.getMemberByMemberId(updateMember.getMemberId());
+           Member d_member = sqlMemberDao.getMember(updateMember.getMemberId());
            fail("Failed to delete Member, Should have thrown an exception");
        }catch (Exception e){
            assertEquals("Member with id: " + updateMember.getMemberId() + " was not found!", e.getMessage());
        }
 
-       person = sqlMemberDao.getPersonByPersonId(454);
+       person = sqlMemberDao.getPerson(454);
        sqlMemberDao.handlePersonChange(MemberChangeType.DELETE, person);
        try {
-            Person p_member = sqlMemberDao.getPersonByPersonId(454);
+            Person p_member = sqlMemberDao.getPerson(454);
             fail("Failed to delete Person, Should have thrown an exception");
        }catch (NoSuchElementException e){
            assertEquals("Person with ID " + 454 + " does not exist.", e.getMessage());

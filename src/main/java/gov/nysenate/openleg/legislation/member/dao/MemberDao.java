@@ -62,6 +62,6 @@ public interface MemberDao {
      */
     List<FullMember> getAllFullMembers();
 
-    Person getPersonByPersonId(int personId) throws MemberNotFoundEx;
-    Member getMemberByMemberId(int memberId) throws MemberNotFoundEx;
+    Person getPerson(int personId) throws MemberNotFoundEx;
+    Member getMember(int memberId) throws MemberNotFoundEx;
 }

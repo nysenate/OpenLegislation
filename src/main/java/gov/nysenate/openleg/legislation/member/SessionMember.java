@@ -154,7 +154,9 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
         return districtCode;
     }
 
-    public Integer getMemberId() {return memberId;}
+    public Integer getMemberId() {
+        return memberId;
+    }
 
     public void setDistrictCode(Integer districtCode) {
         this.districtCode = districtCode;

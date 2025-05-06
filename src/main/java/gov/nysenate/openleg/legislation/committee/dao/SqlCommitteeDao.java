@@ -10,7 +10,6 @@ import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -298,9 +297,9 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
         public CommitteeMember mapRow(ResultSet rs, int i) throws SQLException {
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
-            SqlMemberDao.MemberRowMapper memberRowMapper = new SqlMemberDao.MemberRowMapper();
+            var sessionMemberRowMapper = new SqlMemberDao.SessionMemberRowMapper();
             int sessionMemberId = rs.getInt("session_member_id");
-            committeeMember.setSessionMember(memberRowMapper.mapRow(rs, i));
+            committeeMember.setSessionMember(sessionMemberRowMapper.mapRow(rs, i));
             if (committeeMember.getSessionMember().getMember().getMemberId() == 0) {
                 logger.error("Could not retrieve session member " + sessionMemberId);
             }

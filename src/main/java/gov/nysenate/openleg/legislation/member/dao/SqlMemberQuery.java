@@ -30,23 +30,8 @@ public enum SqlMemberQuery implements BasicSqlQuery {
                 "JOIN mr ON mr.id = p.id"
     ),
 
-    SELECT_MEMBER_BY_PERSON_ID_SQL(
-        SELECT_MEMBER_FRAGMENT.sql + " WHERE p.id = :personId"
-    ),
-
-    SELECT_BY_PERSON_ID(
-          "SELECT * FROM "+ SqlTable.PERSON + " WHERE id = :id"
-    ),
-    SELECT_MEMBER_BY_MEMBER_ID(
-            "SELECT * FROM "+ SqlTable.MEMBER + " WHERE id = :id"
-    ),
-
     SELECT_MEMBER_BY_ID_SQL(
         SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId"
-    ),
-
-    SELECT_MEMBER_BY_ID_SESSION_SQL(
-        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear"
     ),
 
     SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL(
@@ -73,7 +58,14 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     CREATE_PERSON(
         "INSERT INTO " + SqlTable.PERSON + " (email, img_name, first_name, middle_name, last_name, suffix) " +
         "VALUES (:email, :imgName, :firstName, :middleName, :lastName, :suffix)" + "RETURNING id"
+    ),
 
+    SELECT_PERSON(
+        "SELECT * FROM " + SqlTable.PERSON + " WHERE id = :id"
+    ),
+
+    SELECT_ALL_PERSONS_NO_MEMBER(
+            "SELECT * FROM " + SqlTable.PERSON + "WHERE id NOT IN (SELECT person_id FROM " + SqlTable.MEMBER + ")"
     ),
 
     UPDATE_PERSON(
@@ -90,6 +82,14 @@ public enum SqlMemberQuery implements BasicSqlQuery {
         "INSERT INTO " + SqlTable.MEMBER + "(person_id, chamber) VALUES (:personId, :chamber::chamber)" + " RETURNING id"
     ),
 
+    SELECT_MEMBER(
+            "SELECT * FROM " + SqlTable.MEMBER + " WHERE id = :id"
+    ),
+
+    SELECT_ALL_MEMBERS_NO_SESSION_MEMBER(
+            "SELECT * FROM " + SqlTable.MEMBER + "WHERE id NOT IN (SELECT member_id FROM " + SqlTable.SESSION_MEMBER + ")"
+    ),
+
     UPDATE_MEMBER(
         "UPDATE " + SqlTable.MEMBER +
         " SET person_id = :personId, chamber = :chamber::chamber, incumbent = :incumbent" +
@@ -100,6 +100,10 @@ public enum SqlMemberQuery implements BasicSqlQuery {
 
     CREATE_SESSION_MEMBER("INSERT INTO " + SqlTable.SESSION_MEMBER + " (member_id, lbdc_short_name, session_year, district_code, alternate) " +
         "VALUES(:memberId, :lbdcShortName, :sessionYear, :districtCode, :alternate) RETURNING id"
+    ),
+
+    SELECT_SESSION_MEMBER(
+            "SELECT * FROM " + SqlTable.SESSION_MEMBER + " WHERE id = :id"
     ),
 
     UPDATE_SESSION_MEMBER(

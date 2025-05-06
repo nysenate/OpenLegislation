@@ -47,7 +47,7 @@ public class MemberProcessor implements LegDataProcessor {
                                       MemberType memberTable, Set<String> changedAttributes) {
         var xmlBuilder = new StringBuilder(header.formatted(memberTable.name(), changeType.name()));
         for (String key : modelMap.keySet()) {
-            final String label = changedAttributes.contains(key) ? " \"UPDATE\"" : "";
+            final String label = changedAttributes.contains(key) ? " action=\"UPDATE\"" : "";
             xmlBuilder.append("\t<%s%s>%s</%s>\n".formatted(key, label, modelMap.get(key), key));
         }
         return xmlBuilder.append("</actionDetails>\n").toString();

@@ -54,13 +54,6 @@ public interface MemberService
     SessionMember getSessionMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx;
 
     /**
-     * Retrieves all session members from all years and both chambers.
-     * Useful for rebuilding the search index.
-     * @return
-     */
-    List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff);
-
-    /**
      * @return List<FullMember> - a list of all members containing all linked session members
      */
     List<FullMember> getAllFullMembers();

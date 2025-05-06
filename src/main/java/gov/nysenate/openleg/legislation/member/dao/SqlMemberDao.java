@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -26,7 +27,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<SessionMember> memberList =
-                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new SessionMemberRowMapper());
         if (memberList.isEmpty()) {
             throw new MemberNotFoundEx(id, null);
         }
@@ -64,10 +65,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                     .addValue("suffix", StringUtils.defaultIfEmpty(person.name().suffix(), ""))
                     .addValue("email", person.email())
                     .addValue("imgName", person.imgName());
-
         }
-
-
 
         return handleEntityChange(dataType, params,
                 SqlMemberQuery.CREATE_PERSON.getSql(),
@@ -123,7 +121,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                 new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
         try {
             return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
-                    .getSql(schema()), params, new MemberRowMapper()).get(0);
+                    .getSql(schema()), params, new SessionMemberRowMapper()).get(0);
         } catch (Exception ex) {
             throw new MemberNotFoundEx(sessionMemberId);
         }
@@ -148,12 +146,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                 .addValue("alternate", false);
         try {
             return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()),
-                    params, new MemberRowMapper());
+                    params, new SessionMemberRowMapper());
         } catch (EmptyResultDataAccessException ignored1) {
             params.addValue("alternate", true);
             try {
                 return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
-                        params, new MemberRowMapper());
+                        params, new SessionMemberRowMapper());
             } catch (EmptyResultDataAccessException ignored2) {
                 throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
             }
@@ -167,80 +165,83 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("last_name", sortOrder);
         return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
-                new MapSqlParameterSource(), new MemberRowMapper());
+                new MapSqlParameterSource(), new SessionMemberRowMapper());
     }
 
     @Override
-    public Person getPersonByPersonId(int personId) {
+    public Person getPerson(int personId) {
         var params = new MapSqlParameterSource().addValue("id", personId);
         try {
-            List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_BY_PERSON_ID.getSql(), params, new PersonRowMapper());
+            List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_PERSON.getSql(), params, new PersonRowMapper());
             if (!result.isEmpty()) {
                 return result.get(0);
             }
-        } catch (EmptyResultDataAccessException ignored) {
-        }
+        } catch (EmptyResultDataAccessException ignored) {}
         throw new NoSuchElementException("Person with ID " + personId + " does not exist.");
     }
 
-    public Member getMemberByMemberId(int memberId) {
+    @Override
+    public Member getMember(int memberId) {
         var params = new MapSqlParameterSource().addValue("id", memberId);
         try {
             // Execute query to fetch the Member based on the memberId
-            List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_MEMBER_ID.getSql(), params, new RowMapper<Member>() {
-                @Override
-                public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Member(rs.getInt("person_id"), rs.getInt("id"), Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
-                }
-            });
-
+            List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER.getSql(), params,
+                    (rs, rowNum) -> new MemberRowMapper(getPerson(rs.getInt("person_id"))).mapRow(rs, rowNum));
             if (!result.isEmpty()) {
                 return result.get(0); // Return the first result if it's not empty
             }
-        } catch (EmptyResultDataAccessException ignored) {
-        }
+        } catch (EmptyResultDataAccessException ignored) {}
         throw new MemberNotFoundEx(memberId, null);
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
     public List<FullMember> getAllFullMembers() {
-        return getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        List<FullMember> fullMembers = new ArrayList<>();
+        getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
                 .collect(Collectors.groupingBy(sm -> sm.getMember().getMemberId(),
                         LinkedHashMap::new, Collectors.toList()))
-                .values().stream().map(FullMember::new).toList();
+                .values().forEach(smList -> fullMembers.add(new FullMember(smList)));
+
+        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_MEMBERS_NO_SESSION_MEMBER.getSql(),
+                (rs, rowNum) -> new MemberRowMapper(getPerson(rs.getInt("person_id"))).mapRow(rs, rowNum))
+                .forEach(member -> fullMembers.add(new FullMember(member)));
+
+        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_PERSONS_NO_MEMBER.getSql(), new PersonRowMapper())
+                .forEach(person -> fullMembers.add(new FullMember(person)));
+
+        return fullMembers;
     }
 
     /**
      * --- Helper classes ---
      */
-
-    public static class PersonRowMapper implements RowMapper<Person> {
+    private static class PersonRowMapper implements RowMapper<Person> {
         @Override
         public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
-            PersonName name = new PersonName(rs.getString("full_name"), rs.getString("first_name"), rs.getString("middle_name"), rs.getString("last_name"), rs.getString("suffix"));
-            return new Person(
-                    rs.getInt("id"),
-                    name,
-                    rs.getString("email"),
-                    rs.getString("img_name")
-            );
-        }
-    }
-
-    public static class MemberRowMapper implements RowMapper<SessionMember> {
-        @Override
-        public SessionMember mapRow(ResultSet rs, int rowNum) throws SQLException {
             var name = new PersonName(Chamber.getValue(rs.getString("most_recent_chamber")),
                     rs.getString("first_name"), rs.getString("middle_name"),
                     rs.getString("last_name"), rs.getString("suffix"));
-            var person = new Person(rs.getInt("person_id"), name,
+            return new Person(rs.getInt("person_id"), name,
                     rs.getString("email"), rs.getString("img_name"));
-            var member = new Member(person, rs.getInt("member_id"),
+        }
+    }
+
+    private record MemberRowMapper(Person person) implements RowMapper<Member> {
+        @Override
+        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Member(person, rs.getInt("member_id"),
                     Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
+        }
+    }
+
+    public static class SessionMemberRowMapper implements RowMapper<SessionMember> {
+        @Override
+        public SessionMember mapRow(@Nonnull ResultSet rs, int rowNum) throws SQLException {
+            Person person = new PersonRowMapper().mapRow(rs, rowNum);
+            Member member = new MemberRowMapper(person).mapRow(rs, rowNum);
             var sessionMember = new SessionMember();
             sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
             sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
@@ -250,53 +251,5 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
             sessionMember.setMember(member);
             return sessionMember;
         }
-    }
-
-    /**
-     * --- Internal Methods ---
-     */
-
-    private MapSqlParameterSource getPersonParams(Person person) {
-        PersonName name = person.name();
-        return new MapSqlParameterSource()
-                .addValue("personId", person.personId())
-                .addValue("fullName", name.fullName())
-                .addValue("firstName", name.firstName())
-                .addValue("lastName", name.lastName())
-                .addValue("middleName", name.middleName())
-                .addValue("email", person.email())
-                .addValue("prefix", name.prefix())
-                .addValue("suffix", name.suffix())
-                .addValue("img_name", person.imgName());
-    }
-
-    private MapSqlParameterSource getMemberParams(Member member) {
-        return getPersonParams(member.getPerson())
-                .addValue("memberId", member.getMemberId())
-                .addValue("chamber", Optional.ofNullable(member.getChamber()).map(Chamber::asSqlEnum).orElse(null))
-                .addValue("incumbent", member.isIncumbent())
-                .addValue("fullName", member.getPerson().name().fullName());
-    }
-
-    private MapSqlParameterSource getSessionMemberParams(SessionMember sessionMember) {
-        return getMemberParams(sessionMember.getMember())
-                .addValue("sessionMemberId", sessionMember.getSessionMemberId())
-                .addValue("lbdcShortName", sessionMember.getLbdcShortName())
-                .addValue("sessionYear", Optional.ofNullable(sessionMember.getSessionYear()).map(SessionYear::year).orElse(null))
-                .addValue("districtCode", sessionMember.getDistrictCode())
-                .addValue("alternate", sessionMember.isAlternate());
-    }
-
-    /**
-     * Converts a list of member objects referring to multiple session years into a
-     * map keyed by the session year.
-     *
-     * @param members List<Member>
-     * @return Map<SessionYear, Member>
-     */
-    private Map<SessionYear, SessionMember> getMemberSessionMap(List<SessionMember> members) {
-        TreeMap<SessionYear, SessionMember> memberMap = new TreeMap<>();
-        members.forEach(m -> memberMap.put(m.getSessionYear(), m));
-        return memberMap;
     }
 }

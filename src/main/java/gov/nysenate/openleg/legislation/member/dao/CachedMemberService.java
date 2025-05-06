@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CachedMemberService implements MemberService {
+class CachedMemberService implements MemberService {
     private final EventBus eventBus;
     private final MemberDao memberDao;
     private final FullMemberIdCache fullMemberIdCache;
@@ -77,14 +77,7 @@ public class CachedMemberService implements MemberService {
 
     /** {@inheritDoc} */
     @Override
-    public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
-        return memberDao.getAllSessionMembers(sortOrder, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public List<FullMember> getAllFullMembers() {
         return memberDao.getAllFullMembers();
     }
-
 }
