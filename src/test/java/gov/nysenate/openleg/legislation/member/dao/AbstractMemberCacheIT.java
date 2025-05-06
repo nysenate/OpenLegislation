@@ -14,7 +14,7 @@ import static org.junit.Assert.fail;
 
 public abstract class AbstractMemberCacheIT<Key, Value> extends AbstractCacheTest<Key, Value> {
     protected static final Person samplePerson = new Person(-1,
-            new PersonName("a", "b", "c", "d", "e"), "f", "g");
+            new PersonName("a", "b", "c", "d"), "e", "f");
     protected static final Member sampleMem = new Member(samplePerson, -2, Chamber.SENATE, false);
     protected static final SessionMember sampleSm = new SessionMember(-1, sampleMem, "ah",
             new SessionYear(1998), -3, false);

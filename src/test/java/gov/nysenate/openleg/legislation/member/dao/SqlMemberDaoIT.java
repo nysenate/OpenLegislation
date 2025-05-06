@@ -25,7 +25,7 @@ public class SqlMemberDaoIT extends BaseTests {
     @Test
     public void testHandlePersonChange(){
         //Create Person Record
-        Person person = new Person(-1,new PersonName("", "Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
+        Person person = new Person(-1, new PersonName("Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
         MemberChangeType dataType = MemberChangeType.CREATE;
         int createdId = sqlMemberDao.handlePersonChange(dataType, person);
         assertTrue("The person ID should be greater than 0 after creation.",createdId > 0);
@@ -38,7 +38,7 @@ public class SqlMemberDaoIT extends BaseTests {
         assertEquals(createdPerson.imgName(), person.imgName());
 
         //Update Person
-        Person person2 = new Person(283, new PersonName("", "Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
+        Person person2 = new Person(283, new PersonName("Doe","","John","Jr" ), "john@gmail.com", "566_John_Doe_Img.jpg");
         int x = sqlMemberDao.handlePersonChange(MemberChangeType.UPDATE, person2);
         assertTrue("The person ID should be greater than 0 after creation.",createdId > 0);
         Person updatedPerson = sqlMemberDao.getPerson(283);

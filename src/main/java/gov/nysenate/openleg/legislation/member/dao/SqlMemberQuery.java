@@ -10,19 +10,13 @@ public enum SqlMemberQuery implements BasicSqlQuery {
         "JOIN " + SqlTable.PERSON + " p ON p.id = m.person_id\n"
     ),
 
-    SELECT_MOST_RECENT_DATA(
-        "SELECT DISTINCT ON (p.id) p.id, m.chamber AS most_recent_chamber\n" +
-            SELECT_MEMBER_TABLE_FRAGMENT.sql + "ORDER BY p.id, sm.session_year DESC, sm.alternate ASC"
-    ),
-
     PERSON_FRAGMENT(
-        "\np.id AS person_id, p.first_name, p.middle_name, p.last_name, p.suffix, p.img_name, p.email,\n"
+        "\np.id AS person_id, p.first_name, p.middle_name, p.last_name, p.suffix, p.img_name, p.email\n"
     ),
 
     SELECT_MEMBER_SELECT_FRAGMENT(
-        "WITH mr AS (" + SELECT_MOST_RECENT_DATA.sql + ")\n" +
         "SELECT sm.id AS session_member_id, sm.member_id, sm.lbdc_short_name, sm.session_year, sm.district_code, sm.alternate,\n" +
-        "       m.chamber, m.incumbent," + PERSON_FRAGMENT.sql + "mr.most_recent_chamber"
+        "       m.chamber, m.incumbent," + PERSON_FRAGMENT.sql
     ),
 
     SELECT_MEMBER_FRAGMENT(
@@ -35,9 +29,8 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     ),
 
     SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL(
-        "WITH mr AS (" + SELECT_MOST_RECENT_DATA.sql +")\n" +
         "SELECT smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
-        "       m.chamber, m.incumbent," + PERSON_FRAGMENT.sql + "mr.most_recent_chamber\n" +
+        "       m.chamber, m.incumbent," + PERSON_FRAGMENT.sql + "\n" +
         SELECT_MEMBER_TABLE_FRAGMENT.sql +
         "JOIN mr ON mr.id = p.id\n" +
         "JOIN " + SqlTable.SESSION_MEMBER + " smp ON smp.member_id = sm.member_id AND smp.session_year = sm.session_year\n" +
@@ -87,7 +80,7 @@ public enum SqlMemberQuery implements BasicSqlQuery {
     ),
 
     SELECT_ALL_MEMBERS_NO_SESSION_MEMBER(
-            "SELECT * FROM " + SqlTable.MEMBER + "WHERE id NOT IN (SELECT member_id FROM " + SqlTable.SESSION_MEMBER + ")"
+            "SELECT * FROM " + SqlTable.MEMBER + " WHERE id NOT IN (SELECT member_id FROM " + SqlTable.SESSION_MEMBER + ")"
     ),
 
     UPDATE_MEMBER(

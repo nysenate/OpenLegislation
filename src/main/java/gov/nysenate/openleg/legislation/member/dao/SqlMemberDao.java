@@ -172,7 +172,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     public Person getPerson(int personId) {
         var params = new MapSqlParameterSource().addValue("id", personId);
         try {
-            List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_PERSON.getSql(), params, new PersonRowMapper());
+            List<Person> result = jdbcNamed.query(SqlMemberQuery.SELECT_PERSON.getSql(), params, new PersonRowMapper("id"));
             if (!result.isEmpty()) {
                 return result.get(0);
             }
@@ -186,7 +186,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         try {
             // Execute query to fetch the Member based on the memberId
             List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER.getSql(), params,
-                    (rs, rowNum) -> new MemberRowMapper(getPerson(rs.getInt("person_id"))).mapRow(rs, rowNum));
+                    new NoPersonMemberRowMapper());
             if (!result.isEmpty()) {
                 return result.get(0); // Return the first result if it's not empty
             }
@@ -205,11 +205,10 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
                         LinkedHashMap::new, Collectors.toList()))
                 .values().forEach(smList -> fullMembers.add(new FullMember(smList)));
 
-        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_MEMBERS_NO_SESSION_MEMBER.getSql(),
-                (rs, rowNum) -> new MemberRowMapper(getPerson(rs.getInt("person_id"))).mapRow(rs, rowNum))
+        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_MEMBERS_NO_SESSION_MEMBER.getSql(), new NoPersonMemberRowMapper())
                 .forEach(member -> fullMembers.add(new FullMember(member)));
 
-        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_PERSONS_NO_MEMBER.getSql(), new PersonRowMapper())
+        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_PERSONS_NO_MEMBER.getSql(), new PersonRowMapper("id"))
                 .forEach(person -> fullMembers.add(new FullMember(person)));
 
         return fullMembers;
@@ -218,30 +217,37 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     /**
      * --- Helper classes ---
      */
-    private static class PersonRowMapper implements RowMapper<Person> {
+    private record PersonRowMapper(String personIdColName) implements RowMapper<Person> {
         @Override
         public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
-            var name = new PersonName(Chamber.getValue(rs.getString("most_recent_chamber")),
-                    rs.getString("first_name"), rs.getString("middle_name"),
+            var name = new PersonName(rs.getString("first_name"), rs.getString("middle_name"),
                     rs.getString("last_name"), rs.getString("suffix"));
-            return new Person(rs.getInt("person_id"), name,
+            return new Person(rs.getInt(personIdColName), name,
                     rs.getString("email"), rs.getString("img_name"));
         }
     }
 
-    private record MemberRowMapper(Person person) implements RowMapper<Member> {
+    private record MemberRowMapper(Person person, String memerIdColName) implements RowMapper<Member> {
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Member(person, rs.getInt("member_id"),
+            return new Member(person, rs.getInt(memerIdColName),
                     Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
+        }
+    }
+
+    private class NoPersonMemberRowMapper implements RowMapper<Member> {
+        @Override
+        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Person person = getPerson(rs.getInt("person_id"));
+            return new MemberRowMapper(person, "id").mapRow(rs, rowNum);
         }
     }
 
     public static class SessionMemberRowMapper implements RowMapper<SessionMember> {
         @Override
         public SessionMember mapRow(@Nonnull ResultSet rs, int rowNum) throws SQLException {
-            Person person = new PersonRowMapper().mapRow(rs, rowNum);
-            Member member = new MemberRowMapper(person).mapRow(rs, rowNum);
+            Person person = new PersonRowMapper("person_id").mapRow(rs, rowNum);
+            Member member = new MemberRowMapper(person, "member_id").mapRow(rs, rowNum);
             var sessionMember = new SessionMember();
             sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
             sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));

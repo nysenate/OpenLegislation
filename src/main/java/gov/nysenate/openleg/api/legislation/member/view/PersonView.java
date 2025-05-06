@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.member.view;
 
 import gov.nysenate.openleg.api.ViewObject;
+import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.Person;
 
 public class PersonView implements ViewObject {
@@ -17,7 +18,7 @@ public class PersonView implements ViewObject {
     protected boolean verified = true;
     protected String imgName;
 
-    public PersonView(Person person) {
+    public PersonView(Person person, Chamber mostRecentChamber) {
         if (person == null)
             return;
         this.personId = person.personId();
@@ -30,7 +31,12 @@ public class PersonView implements ViewObject {
         this.firstName = name.firstName();
         this.middleName = name.middleName();
         this.lastName = name.lastName();
-        this.prefix = name.prefix();
+        if (mostRecentChamber != null) {
+            this.prefix = switch (mostRecentChamber) {
+                case SENATE -> "Senator";
+                case ASSEMBLY -> "Assembly Member";
+            };
+        }
         this.suffix = name.suffix();
     }
 

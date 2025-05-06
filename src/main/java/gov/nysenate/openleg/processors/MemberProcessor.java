@@ -108,7 +108,7 @@ public class MemberProcessor implements LegDataProcessor {
             logger.error("Missing required attribute FirstName or LastName");
             throw new IllegalArgumentException("Missing required attribute FirstName or LastName");
         }
-        var personName = new PersonName("", firstName, middleName, lastName, suffix);
+        var personName = new PersonName(firstName, middleName, lastName, suffix);
         var person = new Person(id, personName, email, imgName);
 
         return memberDao.handlePersonChange(action, person);

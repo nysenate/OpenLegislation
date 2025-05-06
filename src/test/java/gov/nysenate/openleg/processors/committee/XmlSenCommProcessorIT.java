@@ -51,7 +51,7 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         expected.setLocation("Room 412 LOB");
         expected.setSession(SessionYear.of(2017));
 
-        PersonName name = new PersonName("RITCHIE", "", "", "", "");
+        PersonName name = new PersonName("RITCHIE", "", "", "");
         Person person = new Person(1237, name, "", "");
         Member member = new Member(person, 1415, SENATE, true);
 
