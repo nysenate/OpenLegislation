@@ -16,7 +16,6 @@ public record PersonName(String firstName, String middleName,
                 .compare(firstName, o.firstName).compare(middleName, o.middleName).result();
     }
 
-    // TODO: drop from database, now that it's generated
     public String fullName() {
         return NonNullList.of(firstName, middleName, lastName, suffix).stream()
                 .collect(Collectors.joining(" "))
