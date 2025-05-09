@@ -20,20 +20,6 @@ import java.util.stream.Collectors;
 
 @Repository
 public class SqlMemberDao extends SqlBaseDao implements MemberDao {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FullMember getMemberById(int id) throws MemberNotFoundEx {
-        MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
-        List<SessionMember> memberList =
-                jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new SessionMemberRowMapper());
-        if (memberList.isEmpty()) {
-            throw new MemberNotFoundEx(id, null);
-        }
-        return new FullMember(memberList);
-    }
-
     private int handleEntityChange(MemberChangeType dataType, MapSqlParameterSource params, String createQuery, String updateQuery, String deleteQuery) {
         switch (dataType) {
             case CREATE:
@@ -115,56 +101,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         );
     }
 
-    @Override
-    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        ImmutableParams params = ImmutableParams.from(
-                new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
-        try {
-            return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL
-                    .getSql(schema()), params, new SessionMemberRowMapper()).get(0);
-        } catch (Exception ex) {
-            throw new MemberNotFoundEx(sessionMemberId);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Since the short names used in the source data can be inconsistent (the short name can get modified
-     * during the middle of a session year) we have a notion of an alternate short name. A member can only
-     * have one primary short name mapping during a session year but can have multiple 'alternate' short names
-     * to deal with edge cases in the data. This method will attempt to match the primary short name first
-     * and if that fails tries to check for an alternate form. If both attempts fail the calling method will
-     * have to handle a DataAccessException.
-     */
-    @Override
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear,
-                                              Chamber chamber) throws MemberNotFoundEx {
-        var params = new MapSqlParameterSource("shortName", lbdcShortName.trim())
-                .addValue("sessionYear", sessionYear.year())
-                .addValue("chamber", chamber.name().toLowerCase())
-                .addValue("alternate", false);
-        try {
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()),
-                    params, new SessionMemberRowMapper());
-        } catch (EmptyResultDataAccessException ignored1) {
-            params.addValue("alternate", true);
-            try {
-                return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
-                        params, new SessionMemberRowMapper());
-            } catch (EmptyResultDataAccessException ignored2) {
-                throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
-            }
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("last_name", sortOrder);
-        return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
+    public List<SessionMember> getAllSessionMembers() {
+        return jdbcNamed.query(SqlMemberQuery.SELECT_SESSION_MEMBERS.getSql(schema()),
                 new MapSqlParameterSource(), new SessionMemberRowMapper());
     }
 
@@ -182,16 +124,29 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
 
     @Override
     public Member getMember(int memberId) {
-        var params = new MapSqlParameterSource().addValue("id", memberId);
+        var params = new MapSqlParameterSource("id", memberId);
         try {
             // Execute query to fetch the Member based on the memberId
             List<Member> result = jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER.getSql(), params,
-                    new NoPersonMemberRowMapper());
+                    new MemberRowMapper());
             if (!result.isEmpty()) {
                 return result.get(0); // Return the first result if it's not empty
             }
         } catch (EmptyResultDataAccessException ignored) {}
         throw new MemberNotFoundEx(memberId, null);
+    }
+
+    @Override
+    public SessionMember getSessionMember(int sessionMemberId) throws MemberNotFoundEx {
+        var params = new MapSqlParameterSource("id", sessionMemberId);
+        try {
+            List<SessionMember> result = jdbcNamed.query(SqlMemberQuery.SELECT_SESSION_MEMBER.getSql(), params,
+                    new SessionMemberRowMapper());
+            if (!result.isEmpty()) {
+                return result.get(0); // Return the first result if it's not empty
+            }
+        } catch (EmptyResultDataAccessException ignored) {}
+        throw new MemberNotFoundEx(sessionMemberId, null);
     }
 
     /**
@@ -200,12 +155,12 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
     @Override
     public List<FullMember> getAllFullMembers() {
         List<FullMember> fullMembers = new ArrayList<>();
-        getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        getAllSessionMembers().stream()
                 .collect(Collectors.groupingBy(sm -> sm.getMember().getMemberId(),
                         LinkedHashMap::new, Collectors.toList()))
                 .values().forEach(smList -> fullMembers.add(new FullMember(smList)));
 
-        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_MEMBERS_NO_SESSION_MEMBER.getSql(), new NoPersonMemberRowMapper())
+        jdbcNamed.query(SqlMemberQuery.SELECT_ALL_MEMBERS_NO_SESSION_MEMBER.getSql(), new MemberRowMapper())
                 .forEach(member -> fullMembers.add(new FullMember(member)));
 
         jdbcNamed.query(SqlMemberQuery.SELECT_ALL_PERSONS_NO_MEMBER.getSql(), new PersonRowMapper("id"))
@@ -227,34 +182,24 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao {
         }
     }
 
-    private record MemberRowMapper(Person person, String memerIdColName) implements RowMapper<Member> {
+    private class MemberRowMapper implements RowMapper<Member> {
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Member(person, rs.getInt(memerIdColName),
+            return new Member(getPerson(rs.getInt("person_id")), rs.getInt("id"),
                     Chamber.getValue(rs.getString("chamber")), rs.getBoolean("incumbent"));
         }
     }
 
-    private class NoPersonMemberRowMapper implements RowMapper<Member> {
-        @Override
-        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Person person = getPerson(rs.getInt("person_id"));
-            return new MemberRowMapper(person, "id").mapRow(rs, rowNum);
-        }
-    }
-
-    public static class SessionMemberRowMapper implements RowMapper<SessionMember> {
+    private class SessionMemberRowMapper implements RowMapper<SessionMember> {
         @Override
         public SessionMember mapRow(@Nonnull ResultSet rs, int rowNum) throws SQLException {
-            Person person = new PersonRowMapper("person_id").mapRow(rs, rowNum);
-            Member member = new MemberRowMapper(person, "member_id").mapRow(rs, rowNum);
             var sessionMember = new SessionMember();
-            sessionMember.setSessionMemberId(rs.getInt("session_member_id"));
+            sessionMember.setSessionMemberId(rs.getInt("id"));
             sessionMember.setLbdcShortName(rs.getString("lbdc_short_name"));
             sessionMember.setSessionYear(getSessionYearFromRs(rs, "session_year"));
             sessionMember.setDistrictCode(rs.getInt("district_code"));
             sessionMember.setAlternate(rs.getBoolean("alternate"));
-            sessionMember.setMember(member);
+            sessionMember.setMember(getMember(rs.getInt("member_id")));
             return sessionMember;
         }
     }

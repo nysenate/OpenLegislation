@@ -59,7 +59,7 @@ public class MemberProcessorIT extends BaseTests {
 //        assertEquals("SENATE", (createdMemberRecord2.getChamber()).toString());
 
         // Fetch session member from the database
-        SessionMember createdSessionRecord = memberDao.getMemberBySessionId(s_id);
+        SessionMember createdSessionRecord = memberDao.getSessionMember(s_id);
         assertEquals(468, createdSessionRecord.getMember().getMemberId());
         assertEquals(2023, createdSessionRecord.getSessionYear().year());
         assertEquals(12208, createdSessionRecord.getDistrictCode().intValue());
@@ -90,7 +90,7 @@ public class MemberProcessorIT extends BaseTests {
         memberProcessor.process(sessionUpdatePath);
 
         // Fetch the updated session record
-        SessionMember updatedSessionMember = memberDao.getMemberBySessionId(1); // Assuming 1 is the updated session ID
+        SessionMember updatedSessionMember = memberDao.getSessionMember(1); // Assuming 1 is the updated session ID
         assertEquals(1300,updatedSessionMember.getDistrictCode().intValue());
         assertTrue("Alternate status was not updated", updatedSessionMember.isAlternate());
 
@@ -107,7 +107,7 @@ public class MemberProcessorIT extends BaseTests {
     public void deleteMember() throws MemberNotFoundEx, IOException, SAXException {
             Path deletePath = Paths.get("src/test/resources/xml.memberchange/deleteSessionMember.xml");
             memberProcessor.process(deletePath);
-            memberDao.getMemberBySessionId(1);
+            memberDao.getMember(1);
             fail("Session record was not deleted, expected exception to be thrown");
 
             Path deletePath2 = Paths.get("src/test/resources/xml.memberchange/deleteMember.xml");

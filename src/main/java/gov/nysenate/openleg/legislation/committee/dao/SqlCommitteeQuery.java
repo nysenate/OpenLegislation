@@ -2,7 +2,6 @@ package gov.nysenate.openleg.legislation.committee.dao;
 
 import gov.nysenate.openleg.common.dao.BasicSqlQuery;
 import gov.nysenate.openleg.common.dao.SqlTable;
-import gov.nysenate.openleg.legislation.member.dao.SqlMemberQuery;
 
 public enum SqlCommitteeQuery implements BasicSqlQuery
 {
@@ -21,10 +20,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     /** Compute the reformed column for backwards compatibility */
     SELECT_COMMITTEE_VERSION_HISTORY (
             "SELECT cv.*, " +
-              // Session Member Info
-              "smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
-              "m.chamber, m.incumbent,\n" +
-               "(\n" +
+            "(\n" +
             "  SELECT MIN(created)\n" +
             "  FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
             "  WHERE cv.committee_name = committee_name\n" +

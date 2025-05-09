@@ -6,6 +6,5 @@ package gov.nysenate.openleg.legislation;
  * up upon request.
  */
 public enum CacheType {
-    AGENDA, API_USER, BILL, BILL_INFO, CALENDAR, COMMITTEE, FULL_MEMBER, LAW,
-    SESSION_MEMBER, SHORTNAME
+    AGENDA, API_USER, BILL, BILL_INFO, CALENDAR, COMMITTEE, MEMBER, LAW
 }

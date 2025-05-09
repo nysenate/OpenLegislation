@@ -65,8 +65,7 @@ public class MemberProcessor implements LegDataProcessor {
         } catch (IOException | SAXException e) {
             throw new RuntimeException(e);
         }
-        OpenLegCacheManager.clearCaches(Set.of(CacheType.SHORTNAME, CacheType.SESSION_MEMBER, CacheType.FULL_MEMBER),
-                true);
+        OpenLegCacheManager.clearCaches(Set.of(CacheType.MEMBER), true);
     }
 
     public int process(Path path) throws IOException, SAXException {

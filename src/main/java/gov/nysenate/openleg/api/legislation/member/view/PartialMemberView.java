@@ -17,8 +17,8 @@ public class PartialMemberView implements ViewObject {
         this.memberId = member.getMemberId();
         this.chamber = member.getChamber() == null ? "" : member.getChamber().name();
         this.incumbent = member.isIncumbent();
+        // These are actually associated with a person, not a member.
         this.fullName = member.getPerson().name().fullName();
-        // This is actually associated with a person, not a member.
         this.imgName = member.getPerson().imgName();
     }
 

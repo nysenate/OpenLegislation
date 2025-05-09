@@ -68,7 +68,7 @@ public abstract class CachingService<Key, Value> {
     }
 
     // This method is only needed to prevent type errors during compilation.
-    void clearCache(boolean warmCaches) {
+    protected void clearCache(boolean warmCaches) {
         cache.clear();
         if (warmCaches) {
             cache.putAll(initialEntries());

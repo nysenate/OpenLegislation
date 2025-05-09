@@ -5,6 +5,7 @@ import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.legislation.SessionYear;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -35,8 +36,6 @@ public class FullMember extends Member {
         super(new Member(person, -1, null, false));
     }
 
-    /** --- Functional Getters / Setters --- */
-
     /**
      * @return Optional<SessionMember> this session member's most recent, primary session member
      */
@@ -61,5 +60,18 @@ public class FullMember extends Member {
      */
     public ImmutableMultimap<SessionYear, SessionMember> getSessionMemberMap() {
         return ImmutableMultimap.copyOf(sessionMemberMap);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        FullMember that = (FullMember) o;
+        return Objects.equals(sessionMemberMap, that.sessionMemberMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), sessionMemberMap);
     }
 }

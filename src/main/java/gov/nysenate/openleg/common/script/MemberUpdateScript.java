@@ -96,7 +96,7 @@ public class MemberUpdateScript extends BaseScript {
         for (Map.Entry<Integer, SessionMember> entry : csvMembers.entrySet()) {
             var entryPersonId = entry.getValue().getMember().getPerson().personId();
             if (entryPersonId != 0) {
-                Member prevMemberRecord = sqlMemberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream() // TODO inefficient
+                Member prevMemberRecord = sqlMemberDao.getAllSessionMembers().stream() // TODO inefficient
                         .filter(sm -> sm.getMember().getPerson().personId().equals(entryPersonId))
                         .findFirst().get().getMember();
                 entry.getValue().setMember(prevMemberRecord);
@@ -110,7 +110,7 @@ public class MemberUpdateScript extends BaseScript {
                 .filter(e -> e.getValue().getMember().getChamber().equals(Chamber.ASSEMBLY))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        List<SessionMember> allCurrentMembers = sqlMemberDao.getAllSessionMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+        List<SessionMember> allCurrentMembers = sqlMemberDao.getAllSessionMembers().stream()
                 .filter(sm -> sm.getSessionYear().equals(SessionYear.current()))
                 .filter(sm -> sm.getMember().isIncumbent())
                 .filter(sm -> !sm.isAlternate())

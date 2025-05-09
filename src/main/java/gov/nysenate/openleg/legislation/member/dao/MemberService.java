@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
-import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.FullMember;
@@ -10,8 +8,7 @@ import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 
 import java.util.List;
 
-public interface MemberService
-{
+public interface MemberService {
     /**
      * Retrieves Member using a unique member id and session year.
      *

@@ -5,7 +5,7 @@ import gov.nysenate.openleg.common.dao.SqlBaseDao;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
-import gov.nysenate.openleg.legislation.member.dao.SqlMemberDao;
+import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +35,12 @@ import static gov.nysenate.openleg.legislation.committee.dao.SqlCommitteeQuery.*
 @Repository
 public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     public static final Logger logger = LoggerFactory.getLogger(SqlCommitteeDao.class);
+
+    private final MemberService memberService;
+
+    public SqlCommitteeDao(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     /**
      * {@inheritDoc}
@@ -292,14 +298,13 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
         }
     }
 
-    protected static class CommitteeMemberRowMapper implements RowMapper<CommitteeMember> {
+    private class CommitteeMemberRowMapper implements RowMapper<CommitteeMember> {
         @Override
         public CommitteeMember mapRow(ResultSet rs, int i) throws SQLException {
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
-            var sessionMemberRowMapper = new SqlMemberDao.SessionMemberRowMapper();
             int sessionMemberId = rs.getInt("session_member_id");
-            committeeMember.setSessionMember(sessionMemberRowMapper.mapRow(rs, i));
+            committeeMember.setSessionMember(memberService.getSessionMemberBySessionId(sessionMemberId));
             if (committeeMember.getSessionMember().getMember().getMemberId() == 0) {
                 logger.error("Could not retrieve session member " + sessionMemberId);
             }
@@ -309,7 +314,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
         }
     }
 
-    protected static class CommitteeRowHandler implements RowCallbackHandler {
+    private class CommitteeRowHandler implements RowCallbackHandler {
         private final CommitteeRowMapper committeeRowMapper = new CommitteeRowMapper();
         private final CommitteeMemberRowMapper committeeMemberRowMapper = new CommitteeMemberRowMapper();
         private final CommitteeVersionIdRowMapper versionIdRowMapper = new CommitteeVersionIdRowMapper();
@@ -349,40 +354,33 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     /* --- Param Source Methods --- */
 
     private MapSqlParameterSource getCommitteeIdParams(CommitteeId cid) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("committeeName", cid.getName());
-        params.addValue("chamber", cid.getChamber().asSqlEnum());
-        return params;
+        return new MapSqlParameterSource("committeeName", cid.getName())
+                .addValue("chamber", cid.getChamber().asSqlEnum());
     }
 
     private MapSqlParameterSource getCommitteeSessionIdParams(CommitteeSessionId csid) {
-        MapSqlParameterSource params = getCommitteeIdParams(csid);
-        params.addValue("sessionYear", csid.getSession().year());
-        return params;
+        return getCommitteeIdParams(csid).addValue("sessionYear", csid.getSession().year());
     }
 
     private MapSqlParameterSource getCommitteeVersionIdParams(CommitteeVersionId cvid) {
-        MapSqlParameterSource params = getCommitteeSessionIdParams(cvid);
-        params.addValue("referenceDate", DateUtils.toDate(cvid.getReferenceDate()));
-        return params;
+        return getCommitteeSessionIdParams(cvid)
+                .addValue("referenceDate", DateUtils.toDate(cvid.getReferenceDate()));
     }
 
     private MapSqlParameterSource getCommitteeVersionParams(Committee committee) {
-        MapSqlParameterSource params = getCommitteeVersionIdParams(committee.getVersionId());
-        params.addValue("location", committee.getLocation());
-        params.addValue("meetday", committee.getMeetDay() != null ? committee.getMeetDay().toString() : null);
-        params.addValue("meettime", DateUtils.toTime(committee.getMeetTime()));
-        params.addValue("meetaltweek", committee.isMeetAltWeek());
-        params.addValue("meetaltweektext", committee.getMeetAltWeekText());
-        return params;
+        return getCommitteeVersionIdParams(committee.getVersionId())
+                .addValue("location", committee.getLocation())
+                .addValue("meetday", committee.getMeetDay() != null ? committee.getMeetDay().toString() : null)
+                .addValue("meettime", DateUtils.toTime(committee.getMeetTime()))
+                .addValue("meetaltweek", committee.isMeetAltWeek())
+                .addValue("meetaltweektext", committee.getMeetAltWeekText());
     }
 
     private MapSqlParameterSource getCommitteeMemberParams(CommitteeMember committeeMember, CommitteeVersionId cvid) {
-        MapSqlParameterSource params = getCommitteeVersionIdParams(cvid);
-        params.addValue("session_member_id", committeeMember.getSessionMember().getSessionMemberId());
-        params.addValue("sequence_no", committeeMember.getSequenceNo());
-        params.addValue("title", committeeMember.getTitle().asSqlEnum());
-        params.addValue("majority", committeeMember.isMajority());
-        return params;
+        return getCommitteeVersionIdParams(cvid)
+                .addValue("session_member_id", committeeMember.getSessionMember().getSessionMemberId())
+                .addValue("sequence_no", committeeMember.getSequenceNo())
+                .addValue("title", committeeMember.getTitle().asSqlEnum())
+                .addValue("majority", committeeMember.isMajority());
     }
 }
