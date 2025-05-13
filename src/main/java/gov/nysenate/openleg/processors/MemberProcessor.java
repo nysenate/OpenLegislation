@@ -109,15 +109,10 @@ public class MemberProcessor implements LegDataProcessor {
         final String email = xmlHelper.getString("email", rootNode);
         final String imgName = xmlHelper.getString("imgName", rootNode);
 
-        if (MemberChangeType.CREATE == action && (firstName == null || lastName == null)) {
-            logger.error("Missing required attribute FirstName or LastName");
-            throw new IllegalArgumentException("Missing required attribute FirstName or LastName");
-        }
         var personName = new PersonName(firstName, middleName, lastName, suffix);
         var person = new Person(id, personName, email, imgName);
 
         return memberDao.handlePersonChange(action, person);
-
     }
 
     private int handleMember(MemberChangeType action, Node rootNode) throws XPathExpressionException {
@@ -142,4 +137,3 @@ public class MemberProcessor implements LegDataProcessor {
         return memberDao.handleSessionMemberChange(action, sessionMember);
     }
 }
-
