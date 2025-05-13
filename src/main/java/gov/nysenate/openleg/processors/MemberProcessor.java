@@ -10,6 +10,7 @@ import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberDao;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
+import gov.nysenate.openleg.search.IndexedSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPathExpressionException;
 
-// TODO: problem is, need order. Take in as List, perhaps?
+// TODO: it would best for the XML fields to have an explicit order. Take in as List, perhaps?
 @Service
 public class MemberProcessor implements LegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(MemberProcessor.class);
@@ -36,11 +37,14 @@ public class MemberProcessor implements LegDataProcessor {
             """;
     private final MemberDao memberDao;
     private final XmlHelper xmlHelper;
+    private final IndexedSearchService<FullMember> memberSearchService;
 
     @Autowired
-    public MemberProcessor(MemberDao memberDao, XmlHelper xmlHelper) {
+    public MemberProcessor(MemberDao memberDao, XmlHelper xmlHelper,
+                           IndexedSearchService<FullMember> memberSearchService) {
         this.memberDao = memberDao;
         this.xmlHelper = xmlHelper;
+        this.memberSearchService = memberSearchService;
     }
 
     public static String getXmlString(MemberChangeType changeType, Map<String, String> modelMap,
@@ -66,6 +70,8 @@ public class MemberProcessor implements LegDataProcessor {
             throw new RuntimeException(e);
         }
         OpenLegCacheManager.clearCaches(Set.of(CacheType.MEMBER), true);
+        memberSearchService.clearIndex();
+        memberSearchService.rebuildIndex();
     }
 
     public int process(Path path) throws IOException, SAXException {
