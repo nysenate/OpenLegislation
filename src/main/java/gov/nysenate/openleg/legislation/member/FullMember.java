@@ -32,8 +32,10 @@ public class FullMember extends Member {
         super(member);
     }
 
+    // The memberId is set to -personId to ensure it's unique and doesn't conflict with real members.
+    // This is janky, but necessary for Person-only entries to be integrated with search functionality.
     public FullMember(Person person) {
-        super(new Member(person, -1, null, false));
+        super(new Member(person, -person.personId(), null, false));
     }
 
     /**

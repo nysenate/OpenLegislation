@@ -56,8 +56,7 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
     protected Map<Integer, FullMember> initialEntries() {
         List<FullMember> fullMembers = memberDao.getAllFullMembers();
         fullMembers.forEach(this::checkName);
-        return fullMembers.stream().filter(m -> m.getMemberId() != -1)
-                .collect(Collectors.toMap(FullMember::getMemberId, Function.identity()));
+        return fullMembers.stream().collect(Collectors.toMap(FullMember::getMemberId, Function.identity()));
     }
 
     @Override
