@@ -24,8 +24,6 @@ import gov.nysenate.openleg.processors.DataProcessor;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.member.MemberSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -43,19 +41,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberGetCtrl extends BaseCtrl {
-    private static final Logger log = LoggerFactory.getLogger(MemberGetCtrl.class);
     private final MemberService memberData;
     private final MemberSearchService memberSearch;
-    private final MemberProcessor memberProcessor;
     private final DataProcessor dataProcessor;
     private final String stagingDirectory;
 
     @Autowired
-    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch, MemberProcessor memberProcessor,
+    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch,
                          DataProcessor dataProcessor, @Value("${member.xml.src}") String sourceCodeDir) {
         this.memberData = memberData;
         this.memberSearch = memberSearch;
-        this.memberProcessor = memberProcessor;
         this.dataProcessor = dataProcessor;
         this.stagingDirectory = sourceCodeDir;
     }
@@ -179,8 +174,8 @@ public class MemberGetCtrl extends BaseCtrl {
     private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {
         List<ViewObject> memberList = results.getRawResults().stream()
                 .map(memberData::getFullMemberById)
-                .map(member -> full ? new FullMemberView(member) :
-                        new SessionMemberView(member.getLatestSessionMember().get()))
+                .map(member -> full || member.getLatestSessionMember().isEmpty() ?
+                        new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()))
                 .toList();
         return ListViewResponse.of(memberList, results.totalResults(), limOff);
     }

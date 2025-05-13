@@ -89,7 +89,8 @@ public class MemberSearchCtrl extends BaseCtrl {
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewTypes.add((full) ? new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
+            viewTypes.add(full || member.getLatestSessionMember().isEmpty() ?
+                    new FullMemberView(member) : new SessionMemberView(member.getLatestSessionMember().get()));
         }
         return ListViewResponse.of(viewTypes, results.totalResults(), limOff);
     }
