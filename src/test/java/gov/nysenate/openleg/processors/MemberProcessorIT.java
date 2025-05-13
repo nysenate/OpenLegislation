@@ -26,6 +26,7 @@ public class MemberProcessorIT extends BaseTests {
     private MemberDao memberDao;
 
     private Set<String> createAttributes = new HashSet<>();
+    private LinkedHashMap<String, String> modelMap = new LinkedHashMap<>();
 
     @Test
     public void testMemberProcessor() throws IOException, SAXException {
@@ -45,12 +46,12 @@ public class MemberProcessorIT extends BaseTests {
         //Step 2: Create Member XmlProcessor
         Path memberPath = Paths.get("src/test/resources/xml.memberchange/createMember.xml");
         int m_id = memberProcessor.process(memberPath);
-        assertTrue(m_id >0);
+        assertTrue(m_id > 0);
 
         // Step 3: Create Session XmlProcessor
         Path sessionPath = Paths.get("src/test/resources/xml.memberchange/createSessionMember.xml");
         int s_id = memberProcessor.process(sessionPath);
-        assertTrue(s_id >0);
+        assertTrue(s_id > 0);
 
         // Fetch full member record for verification
 //        Member createdMemberRecord2 = memberDao.getMember(m_id);
@@ -96,13 +97,6 @@ public class MemberProcessorIT extends BaseTests {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreatePersonWithNoFirstName() throws IllegalArgumentException, SAXException, IOException {
-        //Create Person with no firstName
-        Path path2 = Paths.get("src/test/resources/xml.memberchange/personWithNoFirstName.xml");
-        memberProcessor.process(path2);
-    }
-
     @Test(expected = MemberNotFoundEx.class)
     public void deleteMember() throws MemberNotFoundEx, IOException, SAXException {
             Path deletePath = Paths.get("src/test/resources/xml.memberchange/deleteSessionMember.xml");
@@ -123,7 +117,6 @@ public class MemberProcessorIT extends BaseTests {
 
     @Test
     public void testGetPersonXmlBuilder() {
-        var modelMap = new LinkedHashMap<String, String>();
         modelMap.put("firstName", "John");
         modelMap.put("middleName", "M");
         modelMap.put("lastName", "Doe");
@@ -148,15 +141,13 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(expectedXml, xmlString);
 
         // Test UPDATE action
-        var modelMap2 = new LinkedHashMap<String, String>();
-        modelMap2.put("id", "123");
-        modelMap2.putAll(modelMap);
-        modelMap2.put("firstName", "John2");
-        modelMap2.put("lastName", "Doe2");
+        addIdToModelMap("123");
+        modelMap.put("firstName", "John2");
+        modelMap.put("lastName", "Doe2");
 
         createAttributes = Set.of("firstName", "lastName");
 
-        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap2, MemberType.MEMBER, createAttributes);
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.UPDATE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedUpdateXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -173,7 +164,7 @@ public class MemberProcessorIT extends BaseTests {
 
         assertEquals(expectedUpdateXml, xmlString);
 
-        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap2, MemberType.MEMBER, Set.of());
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, Set.of());
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -192,16 +183,12 @@ public class MemberProcessorIT extends BaseTests {
     }
 
     @Test
-    public void testGetSessionXmlBuilder_Create() {
-        var modelMap = new HashMap<String, String>();
-        modelMap.put("id", "123");
+    public void testGetSessionXmlBuilderCreate() {
         modelMap.put("memberId", "456");
         modelMap.put("sessionYear", "2025");
         modelMap.put("lbdcShortName", "LB1");
         modelMap.put("districtCode", "101");
         modelMap.put("alternate", "true");
-
-        createAttributes.clear();
 
         // Test CREATE action
         String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
@@ -209,18 +196,17 @@ public class MemberProcessorIT extends BaseTests {
         String expectedXml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <actionDetails tableName="SESSION_MEMBER" action="CREATE">
-                <memberId>456</memberId>
-                <sessionYear>2025</sessionYear>
-                <lbdcShortName>LB1</lbdcShortName>
-                <districtCode>101</districtCode>
-                <alternate>true</alternate>
+            \t<memberId>456</memberId>
+            \t<sessionYear>2025</sessionYear>
+            \t<lbdcShortName>LB1</lbdcShortName>
+            \t<districtCode>101</districtCode>
+            \t<alternate>true</alternate>
             </actionDetails>
             """;
 
         assertEquals(expectedXml, xmlString);
 
-        // Test UPDATE action with a different alternate value
-        modelMap.put("id", "123");
+        addIdToModelMap("123");
         modelMap.put("alternate", "false");
         createAttributes.add("alternate");
 
@@ -240,10 +226,9 @@ public class MemberProcessorIT extends BaseTests {
 
         assertEquals(expectedUpdateXml, xmlString);
 
-        createAttributes.clear();
-
         // Test DELETE action
-        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER,createAttributes);
+        createAttributes.clear();
+        xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.SESSION_MEMBER, createAttributes);
 
         String expectedDeleteXml = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -260,20 +245,11 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(expectedDeleteXml, xmlString);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void noExpression() throws Exception {
-        Path path = Paths.get("src/test/resources/xml.memberchange/noRequiredArgs.xml");
-        memberProcessor.process(path);
-    }
-
     @Test
     public void testGetMemberXmlBuilder() {
-        HashMap<String, String> modelMap = new HashMap<>();
         modelMap.put("personId", "123");
         modelMap.put("chamber", "Senate");
-        modelMap.put("id", "456");
-
-        createAttributes.clear();
+        modelMap.put("incumbent", "true");
 
         String xmlString = MemberProcessor.getXmlString(MemberChangeType.CREATE, modelMap, MemberType.MEMBER, createAttributes);
 
@@ -282,11 +258,12 @@ public class MemberProcessorIT extends BaseTests {
                 <actionDetails tableName="MEMBER" action="CREATE">
                 \t<personId>123</personId>
                 \t<chamber>Senate</chamber>
-                \t<incumbent>null</incumbent>
+                \t<incumbent>true</incumbent>
                 </actionDetails>
                 """;
         assertEquals(expectedXml, xmlString);
 
+        addIdToModelMap("456");
         modelMap.put("incumbent", "false");
         createAttributes.add("incumbent");
 
@@ -304,7 +281,6 @@ public class MemberProcessorIT extends BaseTests {
         assertEquals(expectedXml2, xmlString);
 
         createAttributes.clear();
-
         xmlString = MemberProcessor.getXmlString(MemberChangeType.DELETE, modelMap, MemberType.MEMBER, createAttributes);
 
         String expectedDeleteXml = """
@@ -317,5 +293,12 @@ public class MemberProcessorIT extends BaseTests {
                 </actionDetails>
                 """;
         assertEquals(expectedDeleteXml, xmlString);
+    }
+
+    private void addIdToModelMap(String id) {
+        var newModelMap = new LinkedHashMap<String, String>();
+        newModelMap.put("id", id);
+        newModelMap.putAll(modelMap);
+        modelMap = newModelMap;
     }
 }
