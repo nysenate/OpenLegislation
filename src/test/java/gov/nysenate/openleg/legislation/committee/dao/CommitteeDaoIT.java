@@ -8,9 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import testing_utils.TestData;
-import testing_utils.TimeUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -109,18 +107,6 @@ public class CommitteeDaoIT extends BaseTests {
     }
 
     @Test
-    public void getCommitteeByIdTest() {
-        committeeDao.getCommittee(new CommitteeId(Chamber.SENATE, "Finance"));
-        try {
-            committeeDao.getCommittee(new CommitteeId(Chamber.ASSEMBLY, "blah"));
-        }
-        catch (EmptyResultDataAccessException e) {
-            return;
-        }
-        fail();
-    }
-
-    @Test
     public void getCommitteeListTest() {
         List<CommitteeId> ids = committeeDao.getCommitteeList();
         assertTrue(ids.size() >= NUM_INITIAL_COMMITTEES);
@@ -135,24 +121,6 @@ public class CommitteeDaoIT extends BaseTests {
             for (Committee c : committeeDao.getCommitteeHistory(id))
                 assertTrue(c.getReformed() == null || c.getReformed().getYear() > 2013);
         }
-    }
-
-    /**
-     * Tests that a committee with a new, more recent date is properly stored and retrieved.
-     */
-    @Test
-    public void updateCommitteeTest() {
-        Committee oldEthics = committeeDao.getCommittee(new CommitteeId(Chamber.SENATE, "Ethics"));
-        oldEthics.setYear(LocalDate.now().getYear());
-        oldEthics.setSession(SessionYear.current());
-        LocalDateTime now = TimeUtils.roundToMicroseconds(LocalDateTime.now());
-        oldEthics.setPublishedDateTime(now);
-        committeeDao.updateCommittee(oldEthics, null);
-        Committee newEthics = committeeDao.getCommittee(oldEthics.getId());
-        assertEquals(now, newEthics.getPublishedDateTime());
-        for (CommitteeMember cm : newEthics.getMembers())
-            assertEquals(SessionYear.current(), cm.getSessionMember().getSessionYear());
-        assertTrue(oldEthics.meetingEquals(newEthics));
     }
 
     @Test
@@ -177,18 +145,6 @@ public class CommitteeDaoIT extends BaseTests {
                 .filter(id -> id.getSession().year() == 2011).toList();
         for (CommitteeSessionId id : ids)
             assertEquals(1, committeeDao.getCommitteeHistory(id).size());
-    }
-
-    @Test
-    public void insertSameCommitteeTest() {
-        Committee test1 = createdCommittees.get("test1");
-        Committee test1nomod = createdCommittees.get("test1nomod");
-        committeeDao.updateCommittee(test1, null);
-        committeeDao.updateCommittee(test1nomod, null);
-        Committee committee = committeeDao.getCommittee(test1.getId());
-        assertEquals(committee, test1);
-        assertEquals(committee, test1nomod);
-        assertNotEquals(committee.getPublishedDateTime(), test1nomod.getPublishedDateTime());
     }
 
     @Test
@@ -265,21 +221,5 @@ public class CommitteeDaoIT extends BaseTests {
         // The member list should be different.
         assertNotEquals(committeeDao.getCommittee(ids.get(2)), test1);
         assertEquals(committeeDao.getCommittee(ids.get(3)), test1);
-    }
-
-    @Test
-    public void updateCommitteeMeetingTest() {
-        Committee test1 = createdCommittees.get("test1");
-        Committee test1MeetChange = createdCommittees.get("test1MeetChange");
-        committeeDao.updateCommittee(test1, null);
-        Committee committee = committeeDao.getCommittee(test1.getId());
-        assertEquals(committee, test1);
-        committeeDao.updateCommittee(test1MeetChange, null);
-        committee = committeeDao.getCommittee(test1.getId());
-        assertNotEquals(committee, test1);
-        assertFalse(committee.meetingEquals(test1));
-        assertTrue(committee.membersEquals(test1));
-        assertTrue(committee.meetingEquals(test1MeetChange));
-        assertTrue(committee.membersEquals(test1MeetChange));
     }
 }

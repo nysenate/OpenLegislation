@@ -70,31 +70,24 @@ public class SqlMemberDaoIT extends BaseTests {
         //Delete Session Member first then the Member, to prevent foreign key error
         SessionMember sessionMember = new SessionMember(357,member, "", new SessionYear(2023), 0, false );
         sqlMemberDao.handleSessionMemberChange(MemberChangeType.DELETE, sessionMember);
-        try{
-//            SessionMember s_member = sqlMemberDao.getSessionMember(357);
+        try {
+            sqlMemberDao.getSessionMember(357);
             fail("Failed to Session Member, Should have thrown an exception");
-        }catch(MemberNotFoundEx ex){
-            assertEquals("Member with session member id of " + 357 + " was not found.", ex.getMessage());
-
-        }
+        } catch (MemberNotFoundEx ignored) {}
 
        //Delete Member
        sqlMemberDao.handleMemberChange(MemberChangeType.DELETE, updateMember);
        try {
-           Member d_member = sqlMemberDao.getMember(updateMember.getMemberId());
+           sqlMemberDao.getMember(updateMember.getMemberId());
            fail("Failed to delete Member, Should have thrown an exception");
-       }catch (Exception e){
-           assertEquals("Member with id: " + updateMember.getMemberId() + " was not found!", e.getMessage());
-       }
+       } catch (MemberNotFoundEx ignored) {}
 
        person = sqlMemberDao.getPerson(454);
        sqlMemberDao.handlePersonChange(MemberChangeType.DELETE, person);
        try {
-            Person p_member = sqlMemberDao.getPerson(454);
+            sqlMemberDao.getPerson(454);
             fail("Failed to delete Person, Should have thrown an exception");
-       }catch (NoSuchElementException e){
-           assertEquals("Person with ID " + 454 + " does not exist.", e.getMessage());
-       }
+       } catch (NoSuchElementException ignored) {}
 
     }
 

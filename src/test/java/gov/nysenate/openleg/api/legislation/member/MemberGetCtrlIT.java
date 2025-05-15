@@ -56,7 +56,7 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
-        PersonName pName = new PersonName("Ruth", "", "Hassell-Thompson", "");
+        PersonName pName = new PersonName("Ruth", null, "Hassell-Thompson", null);
         Person testPerson = new Person(199, pName, null,
                 "380_ruth_hassell-thompson.jpg");
         Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);

@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -40,24 +41,6 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
 
     public SqlCommitteeDao(MemberService memberService) {
         this.memberService = memberService;
-    }
-
-    /**
-     * {@inheritDoc}
-     * */
-    @Override
-    public Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException {
-        Committee committee;
-        for (SessionYear year = SessionYear.current(); year.year() >= DateUtils.LEG_DATA_START_YEAR;
-             year = year.previousSessionYear()) {
-            try {
-                committee = getCommittee(new CommitteeVersionId(
-                        committeeId, year, DateUtils.THE_FUTURE));
-                return committee;
-            }
-            catch (EmptyResultDataAccessException ignored){}
-        }
-        throw new EmptyResultDataAccessException(1);
     }
 
     /**
@@ -103,7 +86,11 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     @Override
     public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId)
             throws EmptyResultDataAccessException {
-        List<Committee> committeeHistory = selectCommitteeVersionHistory(committeeSessionId);
+        MapSqlParameterSource params = getCommitteeSessionIdParams(committeeSessionId);
+        CommitteeRowHandler rowHandler = new CommitteeRowHandler();
+        jdbcNamed.query(SELECT_COMMITTEE_VERSION_HISTORY.getSql(schema(), new OrderBy("created", DESC), ALL),
+                params, rowHandler);
+        List<Committee> committeeHistory = rowHandler.getCommitteeList();
         if (committeeHistory.isEmpty()) {
             throw new EmptyResultDataAccessException("No committee history found for given committee id", 1);
         }
@@ -116,7 +103,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     @Override
     @Transactional
     public void updateCommittee(Committee committee, LegDataFragment legDataFragment) {
-        logger.info("Updating committee " + committee.getChamber() + " " + committee.getName());
+        logger.info("Updating committee {} {}", committee.getChamber(), committee.getName());
         // Make sure that there is a record for the given committee name
         ensureCommitteeExists(committee.getId());
 
@@ -147,77 +134,32 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     /* --- Private Methods --- */
 
     /**
-     * Tries to insert a new committee into the database from the given parameter
-     * @param committeeId
-     * @return true if a new committee was created, false if the committee already exists
-     */
-    private void insertCommittee(CommitteeId committeeId) {
-        // Create the committees
-        logger.debug("Creating new committee " + committeeId);
-        MapSqlParameterSource params = getCommitteeIdParams(committeeId);
-        jdbcNamed.update(INSERT_COMMITTEE.getSql(schema()), params);
-    }
-
-    /**
-     *  Test if the committee exists in database
-     * @param committeeId the committee id
-     * @return return true if exists. otherwise return false;
-     */
-    private Boolean committeeExists(CommitteeId committeeId) {
-        logger.debug("Testing whether committee exists " + committeeId);
-        MapSqlParameterSource params = getCommitteeIdParams(committeeId);
-        return jdbcNamed.queryForObject(TEST_COMMITTEE_ID.getSql(schema()), params, Boolean.class);
-    }
-
-    /**
      * Ensures that a committee record exists for the given id.
      * @param committeeId {@link CommitteeId}
      */
     private void ensureCommitteeExists(CommitteeId committeeId) {
-        if (!committeeExists(committeeId)) {
-            insertCommittee(committeeId);
+        MapSqlParameterSource params = getCommitteeIdParams(committeeId);
+        boolean committeeExists = jdbcNamed.queryForObject(TEST_COMMITTEE_ID.getSql(schema()), params, Boolean.class);
+        if (!committeeExists) {
+            jdbcNamed.update(INSERT_COMMITTEE.getSql(schema()), getCommitteeIdParams(committeeId));
         }
     }
 
     /**
-     * Creates a record for a new version of a committee
-     * @param committee
+     * Creates a record for a new version of a committee.
      */
     private void insertCommitteeVersion(Committee committee, LegDataFragment legDataFragment){
-        logger.debug("Inserting new version of " + committee.getVersionId());
         MapSqlParameterSource params = getCommitteeVersionParams(committee);
         addLastFragmentParam(legDataFragment, params);
         jdbcNamed.update(INSERT_COMMITTEE_VERSION.getSql(schema()), params);
-        insertCommitteeMembers(committee);
-    }
-
-    /**
-     * Inserts the committee members for a particular version of a committee
-     * @param committee
-     */
-    private void insertCommitteeMembers(Committee committee){
         for (CommitteeMember committeeMember : committee.getMembers()) {
-            MapSqlParameterSource params = getCommitteeMemberParams(committeeMember, committee.getVersionId());
+            params = getCommitteeMemberParams(committeeMember, committee.getVersionId());
             jdbcNamed.update(INSERT_COMMITTEE_MEMBER.getSql(schema()), params);
         }
     }
 
     /**
-     * Gets all versions of a committee for a particular session year.
-     * @param committeeSessionId
-     * @return
-     */
-    private List<Committee> selectCommitteeVersionHistory(CommitteeSessionId committeeSessionId){
-        MapSqlParameterSource params = getCommitteeSessionIdParams(committeeSessionId);
-        CommitteeRowHandler rowHandler = new CommitteeRowHandler();
-        jdbcNamed.query(SELECT_COMMITTEE_VERSION_HISTORY.getSql(schema(), new OrderBy("created", DESC), ALL),
-                params, rowHandler);
-        return rowHandler.getCommitteeList();
-    }
-
-    /**
      * Modifies the record of a given committee version update data relating to meetings
-     * @param committee
      */
     private void updateCommitteeMeetingInfo(Committee committee, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getCommitteeVersionParams(committee);
@@ -227,26 +169,17 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
 
     /**
      * Removes the all entries for a given committee version
-     * @param committeeVersionId
      */
     private void deleteCommitteeVersion(CommitteeVersionId committeeVersionId) {
-        deleteCommitteeMembers(committeeVersionId);
-        MapSqlParameterSource params = getCommitteeVersionIdParams(committeeVersionId);
-        jdbcNamed.update(DELETE_COMMITTEE_VERSION.getSql(schema()), params);
-    }
-
-    /**
-     * Removes all committee member records for a given committee version
-     * @param committeeVersionId
-     */
-    private void deleteCommitteeMembers(CommitteeVersionId committeeVersionId) {
         MapSqlParameterSource params = getCommitteeVersionIdParams(committeeVersionId);
         jdbcNamed.update(DELETE_COMMITTEE_MEMBERS.getSql(schema()), params);
+        params = getCommitteeVersionIdParams(committeeVersionId);
+        jdbcNamed.update(DELETE_COMMITTEE_VERSION.getSql(schema()), params);
     }
 
     /* --- Row Mappers --- */
 
-    protected static class CommitteeIdRowMapper implements RowMapper<CommitteeId> {
+    private static class CommitteeIdRowMapper implements RowMapper<CommitteeId> {
         @Override
         public CommitteeId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommitteeId(
@@ -256,7 +189,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
         }
     }
 
-    protected static class CommitteeSessionIdRowMapper implements RowMapper<CommitteeSessionId> {
+    private static class CommitteeSessionIdRowMapper implements RowMapper<CommitteeSessionId> {
         @Override
         public CommitteeSessionId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommitteeSessionId(
@@ -267,19 +200,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
         }
     }
 
-    protected static class CommitteeVersionIdRowMapper implements RowMapper<CommitteeVersionId> {
-        private final CommitteeSessionIdRowMapper sessionIdRowMapper = new CommitteeSessionIdRowMapper();
-
-        @Override
-        public CommitteeVersionId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CommitteeVersionId(
-                    sessionIdRowMapper.mapRow(rs, rowNum),
-                    getLocalDateTimeFromRs(rs, "created")
-            );
-        }
-    }
-
-    protected static class CommitteeRowMapper implements RowMapper<Committee> {
+    private static class CommitteeRowMapper implements RowMapper<Committee> {
         @Override
         public Committee mapRow(ResultSet rs, int i) throws SQLException {
             Committee committee = new Committee();
@@ -306,7 +227,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
             int sessionMemberId = rs.getInt("session_member_id");
             committeeMember.setSessionMember(memberService.getSessionMemberBySessionId(sessionMemberId));
             if (committeeMember.getSessionMember().getMember().getMemberId() == 0) {
-                logger.error("Could not retrieve session member " + sessionMemberId);
+                logger.error("Could not retrieve session member {}", sessionMemberId);
             }
             committeeMember.setTitle(CommitteeMemberTitle.valueOfSqlEnum(rs.getString("title")));
             committeeMember.setMajority(rs.getBoolean("majority"));
@@ -317,13 +238,16 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
     private class CommitteeRowHandler implements RowCallbackHandler {
         private final CommitteeRowMapper committeeRowMapper = new CommitteeRowMapper();
         private final CommitteeMemberRowMapper committeeMemberRowMapper = new CommitteeMemberRowMapper();
-        private final CommitteeVersionIdRowMapper versionIdRowMapper = new CommitteeVersionIdRowMapper();
+        private final CommitteeSessionIdRowMapper sessionIdRowMapper = new CommitteeSessionIdRowMapper();
 
         private final Map<CommitteeVersionId, Committee> committeeMap = new LinkedHashMap<>();
 
         @Override
-        public void processRow(ResultSet rs) throws SQLException {
-            CommitteeVersionId versionId = versionIdRowMapper.mapRow(rs, rs.getRow());
+        public void processRow(@Nonnull ResultSet rs) throws SQLException {
+            CommitteeVersionId versionId = new CommitteeVersionId(
+                    sessionIdRowMapper.mapRow(rs, rs.getRow()),
+                    getLocalDateTimeFromRs(rs, "created")
+            );
             if (!committeeMap.containsKey(versionId)) {
                 committeeMap.put(versionId, committeeRowMapper.mapRow(rs, rs.getRow()));
             }
@@ -353,21 +277,21 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
 
     /* --- Param Source Methods --- */
 
-    private MapSqlParameterSource getCommitteeIdParams(CommitteeId cid) {
+    private static MapSqlParameterSource getCommitteeIdParams(CommitteeId cid) {
         return new MapSqlParameterSource("committeeName", cid.getName())
                 .addValue("chamber", cid.getChamber().asSqlEnum());
     }
 
-    private MapSqlParameterSource getCommitteeSessionIdParams(CommitteeSessionId csid) {
+    private static MapSqlParameterSource getCommitteeSessionIdParams(CommitteeSessionId csid) {
         return getCommitteeIdParams(csid).addValue("sessionYear", csid.getSession().year());
     }
 
-    private MapSqlParameterSource getCommitteeVersionIdParams(CommitteeVersionId cvid) {
+    private static MapSqlParameterSource getCommitteeVersionIdParams(CommitteeVersionId cvid) {
         return getCommitteeSessionIdParams(cvid)
                 .addValue("referenceDate", DateUtils.toDate(cvid.getReferenceDate()));
     }
 
-    private MapSqlParameterSource getCommitteeVersionParams(Committee committee) {
+    private static MapSqlParameterSource getCommitteeVersionParams(Committee committee) {
         return getCommitteeVersionIdParams(committee.getVersionId())
                 .addValue("location", committee.getLocation())
                 .addValue("meetday", committee.getMeetDay() != null ? committee.getMeetDay().toString() : null)
@@ -376,7 +300,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao {
                 .addValue("meetaltweektext", committee.getMeetAltWeekText());
     }
 
-    private MapSqlParameterSource getCommitteeMemberParams(CommitteeMember committeeMember, CommitteeVersionId cvid) {
+    private static MapSqlParameterSource getCommitteeMemberParams(CommitteeMember committeeMember, CommitteeVersionId cvid) {
         return getCommitteeVersionIdParams(cvid)
                 .addValue("session_member_id", committeeMember.getSessionMember().getSessionMemberId())
                 .addValue("sequence_no", committeeMember.getSequenceNo())

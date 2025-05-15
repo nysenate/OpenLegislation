@@ -30,11 +30,18 @@ import java.nio.charset.Charset;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains common methods used when testing {@link LegDataProcessor}s
  */
 public abstract class BaseXmlProcessorTest extends BaseTests {
+    // Clear caches to ensure proper saves
+    private static final Set<CacheType> toClear = EnumSet.allOf(CacheType.class);
+    // Member XML processing already clears their cache.
+    static {
+        toClear.remove(CacheType.MEMBER);
+    }
 
     @Autowired private CachedBillDataService billDataService;
     @Autowired private SourceFileRefDao sourceFileRefDao;
@@ -77,7 +84,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         env.setElasticIndexing(originalIndexingSetting);
         env.setBillScrapeQueueEnabled(originalScrapeQueueSetting);
         env.setNotificationsEnabled(originalNotificationSetting);
-        OpenLegCacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
+        OpenLegCacheManager.clearCaches(toClear, false);
     }
 
     /**
@@ -116,8 +123,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         LegDataProcessor processor = processorMap.get(fragment.getType());
         processor.process(fragment);
         processor.postProcess();
-        // Clear caches to ensure proper saves
-        OpenLegCacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
+        OpenLegCacheManager.clearCaches(toClear, false);
     }
 
     /**

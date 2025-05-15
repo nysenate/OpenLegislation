@@ -29,14 +29,8 @@ public abstract class IndexedSearchService<T> {
 
     @PostConstruct
     private void init() {
-        // Members are normally updated by direct SQL, so force an index rebuild every time.
-        if (searchDao.indexType() == SearchIndex.MEMBER) {
-            searchDao.deleteIndex();
-            searchDao.createIndex();
-            rebuildIndex();
-        }
-        // Ensures indices are filled with data, since even non-search operations uses the data.
-        else if (searchDao.getDocCount() == 0 && !envUtils.isTest()) {
+        // Ensures indices are filled with data, since even non-search operations use the data.
+        if (searchDao.getDocCount() == 0 && (!envUtils.isTest() || getIndex() == SearchIndex.MEMBER)) {
             rebuildIndex();
         }
     }

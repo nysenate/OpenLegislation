@@ -32,6 +32,11 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
     private Map<ShortNameKey, SessionMember> sessionMemberShortnameMap;
 
     private record ShortNameKey(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
+        ShortNameKey {
+            if (lbdcShortName != null) {
+                lbdcShortName = lbdcShortName.toUpperCase();
+            }
+        }
         private ShortNameKey(SessionMember sm) {
             this(sm.getLbdcShortName(), sm.getSessionYear(), sm.getMember().getChamber());
         }
@@ -62,9 +67,18 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
     @Override
     protected void clearCache(boolean warmCaches) {
         if (!warmCaches) {
-            logger.warn("Tried to clear cache without warming: will clear and warm instead.");
+            logger.warn("Tried to clear MEMBER cache without warming: will clear and warm instead.");
         }
-        super.clearCache(true);
+        // This may seem like a messier version of super.clearCache(true), but it ensures the cache is never empty.
+        Map<Integer, FullMember> initialEntries = initialEntries();
+        Set<Integer> idsToRemove = new HashSet<>();
+        for (var entry : cache) {
+            if (!initialEntries.containsKey(entry.getKey())) {
+                idsToRemove.add(entry.getKey());
+            }
+        }
+        cache.removeAll(idsToRemove);
+        cache.putAll(initialEntries);
         refreshOtherData();
     }
 
@@ -105,7 +119,7 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
     @Override
     public SessionMember getSessionMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         try {
-            FullMember member = cache.get(memberId);
+            FullMember member = getFullMemberById(memberId);
             Optional<SessionMember> sessionMemOpt = member.getSessionMemberForYear(sessionYear);
             if (sessionMemOpt.isPresent()) {
                 return sessionMemOpt.get();
@@ -116,13 +130,21 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
 
     @Override
     public FullMember getFullMemberById(int memberId) throws MemberNotFoundEx {
-        return cache.get(memberId);
+        FullMember result = cache.get(memberId);
+        if (result == null) {
+            throw new MemberNotFoundEx();
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
     @Override
     public SessionMember getSessionMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        return sessionMemberIdMap.get(sessionMemberId);
+        SessionMember result = sessionMemberIdMap.get(sessionMemberId);
+        if (result == null) {
+            throw new MemberNotFoundEx(sessionMemberId);
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -131,7 +153,11 @@ class CachedMemberService extends CachingService<Integer, FullMember> implements
                                                      Chamber chamber) throws MemberNotFoundEx {
         if (lbdcShortName == null || chamber == null)
             throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
-        return sessionMemberShortnameMap.get(new ShortNameKey(lbdcShortName, sessionYear, chamber));
+        SessionMember result = sessionMemberShortnameMap.get(new ShortNameKey(lbdcShortName, sessionYear, chamber));
+        if (result == null) {
+            throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
+        }
+        return result;
     }
 
     /** {@inheritDoc} */

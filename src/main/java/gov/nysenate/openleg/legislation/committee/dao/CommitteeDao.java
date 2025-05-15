@@ -11,15 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 
-public interface CommitteeDao
-{
-    /**
-     * Retrieves the most recent information on the committee designated by name.
-     * @param committeeId
-     * @return Committee
-     */
-    Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException;
-
+public interface CommitteeDao {
     /**
      * Retrieves committee information for the specified committee name at a particular time.
      * @param committeeVersionId

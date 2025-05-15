@@ -48,7 +48,7 @@ public final class TestData {
         String[] nameParts = fullName.split(" ");
         boolean hasMiddleName = nameParts.length == 3;
         var name = new PersonName(nameParts[0],
-                hasMiddleName ? nameParts[1] : "", nameParts[hasMiddleName ? 2 : 1], "");
+                hasMiddleName ? nameParts[1] : null, nameParts[hasMiddleName ? 2 : 1], null);
         return new Person(id, name, email, imgName);
     }
 

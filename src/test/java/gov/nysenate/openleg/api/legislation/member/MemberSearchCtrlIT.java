@@ -32,7 +32,7 @@ public class MemberSearchCtrlIT extends ApiTest {
      */
     @Test
     public void aSimpleTest() throws SearchException {
-        var expectedName = new PersonName("Aurelia", null, "Green", null);
+        var expectedName = new PersonName("Aurelia", null, "Greene", null);
         var expectedPerson = new Person(498, expectedName, null, "no_image.jpg");
         var expectedMember = new Member(expectedPerson, 676, Chamber.ASSEMBLY, false);
         var expectedSessionMember = new SessionMember(664, expectedMember, "GREENE",
