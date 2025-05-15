@@ -39,8 +39,8 @@ public class CachedCommitteeDataService
      * This is a strange class, only needed for accurate type-checking of cache Values.
      * Otherwise, the generic part of any List would be subject to type erasure.
      */
-    static class CommitteeList extends ArrayList<Committee> {
-        CommitteeList(Collection<Committee> list) {
+    public static class CommitteeList extends ArrayList<Committee> {
+        private CommitteeList(Collection<Committee> list) {
             super(list);
         }
     }
@@ -99,14 +99,6 @@ public class CachedCommitteeDataService
         throw new CommitteeNotFoundEx(committeeVersionId, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<CommitteeId> getCommitteeIds() {
-        return committeeDao.getCommitteeList();
-    }
-
     @Override
     public List<CommitteeSessionId> getAllCommitteeSessionIds() {
         return committeeDao.getAllSessionIds();
@@ -119,7 +111,7 @@ public class CachedCommitteeDataService
             throw new IllegalArgumentException("Chamber cannot be null!");
 
         List<Committee> committeeList = new ArrayList<>();
-        getCommitteeIds().stream()
+        committeeDao.getCommitteeList().stream()
                 .filter(committeeId -> committeeId.getChamber().equals(chamber))
                 .map(committeeId -> new CommitteeSessionId(committeeId, sessionYear))
                 .forEach(committeeSessionId -> {

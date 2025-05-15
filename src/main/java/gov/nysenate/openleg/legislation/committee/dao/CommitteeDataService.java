@@ -36,12 +36,6 @@ public interface CommitteeDataService
     Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx;
 
     /**
-     * Retrieves a list containing all committee ids
-     * @return
-     */
-    List<CommitteeId> getCommitteeIds();
-
-    /**
      * Returns a list of committee session ids for every committee and all sessions that contain data
      *
      * @return

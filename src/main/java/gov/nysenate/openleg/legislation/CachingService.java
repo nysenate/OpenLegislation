@@ -32,7 +32,7 @@ public abstract class CachingService<Key, Value> {
         Map<Key, Value> initialEntries = initialEntries();
         int size = getCacheSize(initialEntries.size());
         this.cache = OpenLegCacheManager.createCache(this, size);
-        initialEntries.forEach((k, v) -> cache.put(k, v));
+        cache.putAll(initialEntries);
     }
 
     /**
