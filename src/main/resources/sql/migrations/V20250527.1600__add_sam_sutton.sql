@@ -9,4 +9,4 @@ m AS (
     RETURNING id
 )
 INSERT INTO public.session_member(member_id, lbdc_short_name, session_year, district_code)
-VALUES ((SELECT id from m), 'Sutton', 2025, 22);
+VALUES ((SELECT id from m), 'SUTTON', 2025, 22);
