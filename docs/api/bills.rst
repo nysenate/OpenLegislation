@@ -10,8 +10,7 @@ Get a single bill
 
 **Usage**
 
-Retrieve bill by session year and print no
-::
+Retrieve bill by session year and print no::
 
     (GET) /api/3/bills/{sessionYear}/{printNo}
 
@@ -51,13 +50,11 @@ View options
 
 **Examples**
 
-Request bill S2180 of session year 2013
-::
+Request bill S2180 of session year 2013::
 
     /api/3/bills/2013/S2180
 
-Request summary of bill A450 of session year 2013
-::
+Request summary of bill A450 of session year 2013::
 
     /api/3/bills/2013/A450?view=info
 
@@ -314,8 +311,7 @@ If **view** is set to 'with_refs', the default response will be returned with th
 Get PDF of bill text
 --------------------
 
-If you just need a pdf of the latest full text of the bill, you can make the following request:
-::
+If you just need a pdf of the latest full text of the bill, you can make the following request::
 
     (GET) /api/3/bills/{sessionYear}/{printNo}.pdf
 
@@ -328,8 +324,7 @@ Get a list of bills
 
 **Usage**
 
-List bills within a session year
-::
+List bills within a session year::
 
     (GET) /api/3/bills/{sessionYear}
 
@@ -362,23 +357,19 @@ the results will be in ascending order by the bill's published date time (sort=p
 
 **Examples**
 
-List 100 bills from 2013
-::
+List 100 bills from 2013::
 
     /api/3/bills/2013?limit=100
 
-List 100 complete bills starting from 101
-::
+List 100 complete bills starting from 101::
 
     /api/3/bills/2013?limit=100&offset=101&full=true
 
-Sort by increasing published date
-::
+Sort by increasing published date::
 
     /api/3/bills/2013?sort=publishedDateTime:ASC
 
-Sort by increasing status action date, (default)
-::
+Sort by increasing status action date, (default)::
 
     /api/3/bills/2013?sort=status.actionDate:ASC
 
@@ -412,13 +403,11 @@ structure.
 
 **Usage**
 
-Search across all session years
-::
+Search across all session years::
 
     (GET) /api/3/bills/search?term=YOUR_TERM
 
-Search within a session year
-::
+Search within a session year::
 
     (GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
 
@@ -439,28 +428,23 @@ Same as the `bill listing params`_.
 
 .. warning:: If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \\*. This is a wildcard expression. E.g   ?term=\\*memo:'Some phrase'
 
-Search for a general term (matches against any data field)
-::
+Search for a general term (matches against any data field)::
 
     (GET) /api/3/bills/search?term=Gun Control
 
-Search for 2013 'resolutions'
-::
+Search for 2013 'resolutions'::
 
     (GET) /api/3/bills/2013/search?term=billType.resolution:true
 
-Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update
-::
+Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update::
 
     (GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
 
-Search for full text containing the phrase 'Marriage Equality'. Note the use of the \\* prefix to match full texts regardless of amendment version
-::
+Search for full text containing the phrase 'Marriage Equality'. Note the use of the \\* prefix to match full texts regardless of amendment version::
 
     (GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
 
-Search for bills that were published between a certain date range, ordered by increasing published date
-::
+Search for bills that were published between a certain date range, ordered by increasing published date::
 
     (GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
 
@@ -483,13 +467,11 @@ To identify which bills have received updates within a given time period you can
 
 **Usage**
 
-List of bills updated during the given date/time range
-::
+List of bills updated during the given date/time range::
 
     /api/3/bills/updates/{fromDateTime}/{toDateTime}
 
-List of bills updated since the given date/time
-::
+List of bills updated since the given date/time::
 
     /api/3/bills/updates/{fromDateTime}
 
@@ -523,8 +505,7 @@ List of bills updated since the given date/time
 
 **Examples**
 
-Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM
-::
+Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM::
 
     /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
 
@@ -606,8 +587,7 @@ Update Filters:
 
 **Examples**
 
-Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM
-::
+Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM::
 
     (GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
 
@@ -617,25 +597,21 @@ To view the actual updates that have occurred on a bill use the following API
 
 **Usage**
 
-All updates on a specific bill
-::
+All updates on a specific bill::
 
     /api/3/bills/{sessionYear}/{printNo}/updates/
 
-Updates on a specific bill from a given date/time.
-::
+Updates on a specific bill from a given date/time.::
 
     /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
 
-Updates on a specific bill during a given date/time range.
-::
+Updates on a specific bill during a given date/time range.::
 
     /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
 
 **Example**
 
-Updates for S1234-2013 between December 1, 2014 and December 2, 2014
-::
+Updates for S1234-2013 between December 1, 2014 and December 2, 2014::
 
     /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
 

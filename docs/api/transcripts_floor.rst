@@ -8,15 +8,15 @@ Get a single Transcript
 
 **Usage**
 
-Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime
-::
+Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime::
+
     (GET) /api/3/transcripts/{dateTime}
     (GET) /api/3/transcripts/{dateTime}/{sessionType}
 
 **Examples**
 
-Request transcript 2014-09-03T09:00
-::
+Request transcript 2014-09-03T09:00::
+
     /api/3/transcripts/2014-09-03T09:00
 
 **Response**
@@ -37,8 +37,8 @@ Full Transcript Response
         }
     }
 
-Request the extraordinary session 3 transcript on 2010-12-31T10:00
-::
+Request the extraordinary session 3 transcript on 2010-12-31T10:00::
+
     /api/3/transcripts/2010-12-31T10:00/EXTRAORDINARY SESSION III
 
 **Response**
@@ -64,15 +64,15 @@ Get a transcript pdf
 
 **Usage**
 
-Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime
-::
+Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime::
+
     (GET) /api/3/transcripts/{dateTime}.pdf
     (GET) /api/3/transcripts/{dateTime}/{sessionType}.pdf
 
 **Examples**
 
-Request transcript 2014-09-03T09:00
-::
+Request transcript 2014-09-03T09:00::
+
     /api/3/transcripts/2014-09-03T09:00
 
 Get a list of transcripts
@@ -80,8 +80,8 @@ Get a list of transcripts
 
 **Usage**
 
-List transcripts within a year
-::
+List transcripts within a year::
+
     (GET) /api/3/transcripts/{year}
 
 **Optional Params**
@@ -100,14 +100,16 @@ List transcripts within a year
 
 **Examples**
 
-List 50 transcripts from 2014
-::
+List 50 transcripts from 2014::
+
     /api/3/transcripts/2014?limit=50
-List 50 complete transcripts starting from 51
-::
+
+List 50 complete transcripts starting from 51::
+
     /api/3/transcripts/2014?limit=50%offset=51&full=true
-List 10 complete transcripts sorted by increasing date
-::
+
+List 10 complete transcripts sorted by increasing date::
+
     /api/3/transcripts/2014?limit=10&full=true
 
 **Response**

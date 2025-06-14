@@ -54,12 +54,12 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        logger.info("Registering resource path {} for files under {}", resourcePath, resourceLocation);
-        registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
-        logger.info("Registering resource path {} for files under {}", "/favicon.ico", resourceLocation);
-        registry.addResourceHandler("/favicon.ico").addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
-        logger.info("Registering resource path {} for files under {}", "/apple-touch-icon.png", resourceLocation);
-        registry.addResourceHandler("/apple-touch-icon.png").addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
+        for (String filename : List.of(resourcePath, "/robots.txt", "/favicon.ico", "/apple-touch-icon.png",
+                "/apple-touch-icon-precomposed.png", "/apple-touch-icon-120x120-precomposed.png",
+                "/apple-touch-icon-152x152-precomposed.png")) {
+            logger.info("Registering resource path {} under {}", filename, resourceLocation);
+            registry.addResourceHandler(filename).addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
+        }
     }
 
     /**

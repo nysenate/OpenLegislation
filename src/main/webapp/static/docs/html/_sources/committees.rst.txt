@@ -13,10 +13,12 @@ Get a current committee version
 
 **Usage**
 ::
+
    /api/3/committees/{session}/{chamber}/{committeeName}
 
 **Example**
 ::
+
    /api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
    (Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)
 
@@ -32,10 +34,12 @@ before or on the given time and reformed after the given time.
 
 **Usage**
 ::
+
    /api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}
 
 **Example**
 ::
+
    /api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
    (Get the codes committee at 9:30 AM on March 1st, 2014)
 
@@ -89,6 +93,7 @@ Get committee history
 
 **Usage**
 ::
+
    /api/3/committees/{session}/{chamber}/{committeeName}/history
 
 .. _comm-history-params:
@@ -109,6 +114,7 @@ Get committee history
 
 **Example**
 ::
+
    /api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
    /api/3/committees/2013/senate/Aging/history?limit=1&order=ASC&full=true
    (Get the first version of the Aging committee from 2013)
@@ -118,6 +124,7 @@ Get all current committees
 
 **Usage**
 ::
+
    /api/3/committees/{session}/{chamber}
 
 **Optional Params**
@@ -130,6 +137,7 @@ Get all current committees
 
 **Example**
 ::
+
    /api/3/committees/2013/senate?&full=true
    (Get full responses for all current senate committees for session 2013)
 
@@ -143,12 +151,12 @@ so query and sort strings will be based on that response structure.
 
 **Usage**
 
-Search across all session years
-::
+Search across all session years::
+
    (GET) /api/3/committees/search?term=YOUR_TERM
 
-Search within a session year
-::
+Search within a session year::
+
    (GET) /api/3/committees/{sessionYear}/search?term=YOUR_TERM
 
 

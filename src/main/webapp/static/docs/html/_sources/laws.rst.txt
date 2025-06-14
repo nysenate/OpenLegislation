@@ -21,6 +21,7 @@ Get a list of law ids
 
 **Usage**
 ::
+
    (GET) /api/3/laws
 
 **Optional Params**
@@ -71,6 +72,7 @@ The following call will provide the structure of the law.
 
 **Usage**
 ::
+
     (GET) /api/3/laws/{lawId}
 
 **Optional Params**
@@ -85,6 +87,7 @@ The following call will provide the structure of the law.
 
 **Examples**
 ::
+
     /api/3/laws/ABC                  // Get latest law structure for ABC law
     /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
     /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
@@ -166,6 +169,7 @@ Get a law sub document
 
 **Usage**
 ::
+
     (GET) /api/3/laws/{lawId}/{locationId}
 
 The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
@@ -174,6 +178,7 @@ You can discover the locationId when you make an API request for the law structu
 
 **Examples**
 ::
+
     /api/3/laws/TAX/8/     // Get section 8 of Tax law
     /api/3/laws/EDN/A2/    // Get article 2 of Education law
 
@@ -258,6 +263,7 @@ Search for law documents
 
 **Usage**
 ::
+
     (GET) /api/3/laws/search?term=           // Search across all law volumes
     (GET) /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 
@@ -283,6 +289,7 @@ Search for law documents
 
 **Examples**
 ::
+
     /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
 
 Get law document updates
@@ -296,21 +303,21 @@ To detect updates to the structure of the law document tree, see `Get law tree u
 
 **Usage**
 
-List of laws updated during the given date/time range
-::
+List of laws updated during the given date/time range::
+
     /api/3/laws/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
 
-All updates made on a specific body of law
-::
+All updates made on a specific body of law::
+
     /api/3/laws/{lawId}/updates/
 
     e.g. /api/3/laws/ABC/updates/
          /api/3/laws/VAT/updates/
 
-All updates made on a specific body of law during a date/time range
-::
+All updates made on a specific body of law during a date/time range::
+
     /api/3/laws/{lawId}/updates/{fromDateTime}/{toDateTime}
 
 
@@ -332,9 +339,11 @@ All updates made on a specific body of law during a date/time range
 
 **Response**
 
-Global law updates
-::
+Global law updates::
+
     e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
+
+.. _law-update-token-response:
 
 .. code-block:: javascript
 
@@ -359,10 +368,12 @@ Global law updates
                 processedDateTime: "2015-09-10T15:00:14.551822"  // Date we processed this update
             },  (truncated..)
 
-Detailed law doc updates
-::
+Detailed law doc updates::
+
     e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&type=published
          /api/3/laws/ABC/updates/
+
+.. _law-update-digest-response:
 
 .. code-block:: javascript
 
@@ -403,6 +414,7 @@ To see updates to the content of law documents, see `Get law document updates`_.
 
 List of laws with tree updates during the given date/time range
 ::
+
     /api/3/laws/tree/updates
     /api/3/laws/tree/updates/{fromDateTime}?type=published
     /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
@@ -429,8 +441,8 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 
 **Response**
 
-Get law tree updates by published date
-::
+Get law tree updates by published date::
+
     e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
 
 .. code-block:: javascript
@@ -465,8 +477,8 @@ The date/time range applies to the processed date of the law document, not the o
 
 **Usage**
 
-List of laws repealed during the given date/time range
-::
+List of laws repealed during the given date/time range::
+
     /api/3/laws/repealed
 
 **Optional Params**
@@ -485,8 +497,8 @@ Get a law pdf
 **Usage**
 
 Retrieve law pdf by document id.
-Inputting only the law ID will get you the root node for that chapter.
-::
+Inputting only the law ID will get you the root node for that chapter::
+
     (GET) /pdf/laws/{docId}
 
 **Optional Params**
@@ -499,6 +511,6 @@ Inputting only the law ID will get you the root node for that chapter.
 
 **Examples**
 
-Request law document CC0A1 and its children
-::
+Request law document CC0A1 and its children::
+
     /api/3/laws/CCOA1?full=true

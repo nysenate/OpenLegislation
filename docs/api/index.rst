@@ -28,14 +28,14 @@ To register and obtain an API key, visit our main page `here <http://legislation
 
 **Making requests**
 
-All URIs listed in these docs are relative to the Open Legislation subdomain:
-::
+All URIs listed in these docs are relative to the Open Legislation subdomain::
+
     legislation.nysenate.gov
 
 To make an API request using your key, set the key string as the value of the 'key' request parameter in the request URL.
 
-For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this:
-::
+For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this::
+
     legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
 
 Legislative Content Types
