@@ -49,6 +49,8 @@ public class WebInitializer implements WebApplicationInitializer {
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
         dispatcher.setAsyncSupported(true);
+        dispatcher.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+
 
         /* Encoding filter - sets Content-Type charset to UTF-8 */
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
