@@ -58,7 +58,7 @@ public class ReactAppCtrl {
     })
     public String home(HttpServletRequest request) {
         setRequestAttributes(request);
-        return "index";
+        return "forward:/static/dist/index.html";
     }
 
     @ResponseBody

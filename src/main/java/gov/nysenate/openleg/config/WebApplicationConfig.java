@@ -23,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.List;
 @Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class, WebSocketsConfig.class})
 public class WebApplicationConfig implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
-    private static final String resourcePath = "/static/**";
     private static final String resourceLocation = "/static/";
     private static final int CACHE_PERIOD = 64000;
 
@@ -51,26 +51,26 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         logger.info("{}", AsciiArt.OPENLEG_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
     }
 
-    /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */
+    /** Sets paths that should not be intercepted by a controller. */
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        for (String filename : List.of(resourcePath, "/robots.txt", "/favicon.ico", "/apple-touch-icon.png",
+    public void addResourceHandlers(@Nonnull ResourceHandlerRegistry registry) {
+        for (String filename : List.of(resourceLocation + "**", "/robots.txt", "/favicon.ico", "/apple-touch-icon.png",
                 "/apple-touch-icon-precomposed.png", "/apple-touch-icon-120x120-precomposed.png",
-                "/apple-touch-icon-152x152-precomposed.png")) {
+                "/apple-touch-icon-152x152-precomposed.png", "/.well-known/gpc.json")) {
             logger.info("Registering resource path {} under {}", filename, resourceLocation);
             registry.addResourceHandler(filename).addResourceLocations(resourceLocation).setCachePeriod(CACHE_PERIOD);
         }
     }
 
     /**
-     * This view resolver will map view names returned from the controllers to html files stored in the
+     * This view resolver will map view names returned from the controllers to jsp files stored in the
      * configured 'prefix' url.
      */
     @Bean(name = "viewResolver")
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/static/dist/");
-        viewResolver.setSuffix(".html");
+        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setSuffix(".jsp");
         return viewResolver;
     }
 
