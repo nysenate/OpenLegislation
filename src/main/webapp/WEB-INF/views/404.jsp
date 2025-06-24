@@ -36,7 +36,7 @@
 <body>
 <div>
   <h4>404</h4>
-  <p className="text-2xl">Sorry, the page you requested appears to be missing</p>
+  <p className="text-2xl">Sorry, the page you requested appears to be missing. Please refer to our documentation <a href="/docs">here.</a></p>
 </div>
 </body>
 </html>
