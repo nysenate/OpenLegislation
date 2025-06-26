@@ -1,5 +1,7 @@
 import React, {
-  useState, useEffect
+  useState,
+  useEffect,
+  useMemo
 } from "react";
 import Select from "app/shared/Select";
 import {
@@ -13,68 +15,164 @@ import Modal from "app/shared/Modal";
 const MemberUI = ({ initialData, memberType, fieldData }) => {
   const [ formData, setFormData ] = useState(initialData);
   const [ submitSuccess, setSubmitSuccess ] = useState(null);
-  const [filterByLastName,setFilterByLastName] = useState(undefined)
-  const [filterByPerson, setFilterByPerson] = useState(undefined)
-  const [persons, setPersons] = useState([])
-  const [filterByChamber, setFilterByChamber] = useState()
+  const [ filterByLastName, setFilterByLastName ] = useState(undefined)
+  const [ filterByPerson, setFilterByPerson ] = useState(undefined)
+  const [ persons, setPersons ] = useState([])
+  const [fullPersons, setFullPersons] = useState([]);
+  const [ filterByChamber, setFilterByChamber ] = useState("")
+  const [ selectedSessionYear, setSelectedSessionYear ] = useState()
 
   useEffect(() => {
-    setFormData({...initialData})
-  }, [initialData]);
+    setFormData({ ...initialData });
+    setFilterByLastName(undefined);
+    setFilterByPerson(undefined);
+    setSelectedSessionYear(undefined);
+    setPersons([]);
+    setFullPersons([]);
+    setFilterByChamber("");
+    console.log("member type", memberType, (filterByChamber && (memberType === 'Session Member' && formData.operation !== 'create')))
+  }, [ initialData ]);
 
-  useEffect(async() => {
-    const data = await fetchPersons(filterByLastName)
-      setPersons(data)
-  }, [filterByLastName]);
+
+  const uniquePersons = useMemo(() => {
+    const seen = new Set();
+    return persons.filter((p) => {
+      const id = p.person?.personId;
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }, [ persons ]);
+
+
+  useEffect(async () => {
+    const loadPersons = async () => {
+      const data = await fetchPersons(filterByLastName);
+      setFullPersons(data);
+      setPersons(data);
+    };
+    if (filterByLastName !== undefined) {
+      loadPersons();
+    }
+  }, [ filterByLastName ]);
 
   useEffect(() => {
     if (filterByPerson !== undefined) {
       const newData = { ...formData };
-
       Object.keys(formData).forEach((key) => {
         if (key === 'lbdcShortName' && 'shortName' in filterByPerson) {
-          console.log("truee")
           newData[key] = filterByPerson.shortName;
-        } else if (key in filterByPerson) {
-          newData[key] = filterByPerson[key];
         } else if (filterByPerson.person && key in filterByPerson.person) {
           newData[key] = filterByPerson.person[key];
+        } else if (key in filterByPerson) {
+          newData[key] = filterByPerson[key];
         }
       });
       setFormData(newData);
     }
-  }, [filterByPerson]);
-
+  }, [ filterByPerson ]);
 
   useEffect(() => {
-      const data = persons.filter((person) => person.chamber === filterByChamber.toUpperCase())
-    setPersons(data)
-  }, [filterByChamber]);
+    if (filterByChamber === "") {
+      setPersons(fullPersons);
+    } else {
+      const filtered = fullPersons.filter(
+        (person) => person.chamber === filterByChamber.toUpperCase()
+      );
+      console.log("after filtering persons,", filtered)
+      setPersons(filtered);
+      setFilterByPerson(filtered[0])
+    }
+  }, [ filterByChamber ]);
+
+  useEffect(() => {
+    if (filterByPerson?.sessionShortNameMap && selectedSessionYear) {
+      const id = filterByPerson.sessionShortNameMap[selectedSessionYear]?.[0]?.sessionMemberId;
+      setFormData({
+        ...formData,
+        sessionYear: selectedSessionYear,
+        sessionMemberId: id
+      });
+    }
+  }, [ selectedSessionYear ]);
+
 
   const showFilterByLastName = !(memberType === 'Person' && formData.operation === 'create')
+
   const showFilterByPerson = filterByLastName && showFilterByLastName
-  const availableChamberOptions = [
-    ...chamberOptions.filter((option) =>
-      persons.some((person) => person.chamber === option.value.toUpperCase())
-    )
-  ];
+
+  const availableChamberOptions = useMemo(() => {
+    if (!filterByPerson?.person?.personId) return [];
+    const personId = filterByPerson.person.personId;
+    const matchingChambers = [
+      ...new Set(
+        persons
+          .filter(p => p.person?.personId === personId)
+          .map(p => p.chamber.toUpperCase())
+      )
+    ];
+    console.log(matchingChambers,"matching")
+    return chamberOptions.filter(option =>
+      matchingChambers.includes(option.value.toUpperCase())
+    );
+  }, [filterByPerson, filterByChamber]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const confirmed = window.confirm("Are you sure you want to submit?");
     if (!confirmed) return;
-    const response = handleUpdateMember(memberType.replaceAll(" ", "_"), formData.operation, formData, fieldData);
-    response.then((data) => {
-      setSubmitSuccess(data.success);
-      setFormData((prevData) => ({ ...prevData, responseMessage: data.message }));
-    })
+
+    // Get hidden and required fields
+    const hiddenFields = fieldData[initialData.operation]?.filter(
+      (f) => f.display === false && f.required === true
+    ) || [];
+
+    // Check if any required hidden field is missing
+    for (const field of hiddenFields) {
+      if (
+        formData[field.fieldName] == null ||
+        formData[field.fieldName] === ""
+      ) {
+        // Stop submission and show error
+        setFormData((prev) => ({
+          ...prev,
+          responseMessage: `Required hidden field "${field.label}" is missing.`,
+        }));
+        setSubmitSuccess(false);
+        return; // ✅ Important: stop form submission
+      }
+    }
+
+    // Continue with form submission
+    try {
+      const response = await handleUpdateMember(
+        memberType.replaceAll(" ", "_"),
+        formData.operation,
+        formData,
+        fieldData
+      );
+
+      setSubmitSuccess(response.success);
+      setFormData((prevData) => ({
+        ...prevData,
+        responseMessage: response.message,
+      }));
+    } catch (error) {
+      setSubmitSuccess(false);
+      setFormData((prevData) => ({
+        ...prevData,
+        responseMessage: "Submission failed. Please try again.",
+      }));
+    }
   };
+
 
   const closePopup = () => {
     setFormData(initialData);
     setSubmitSuccess(null)
   };
 
-  return (<div className="p-3">
+  return <div className="p-3">
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex justify-end">
         <label className="label label--top">Choose Operation:</label>
@@ -89,84 +187,112 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
           <option value="delete">Delete</option>
         </select>
       </div>
-      <div className="flex gap-x-6 gap-y-3">
-        {showFilterByLastName && (<div className="flex flex-col">
-          <label className="label label--top">Last Name:</label>
-          <input
-            type="text"
-            value={filterByLastName !== undefined ? filterByLastName : ''}
-            onChange={(e) => setFilterByLastName(e.target.value)}
-            className="input block w-52 text-sm"
-          />
-        </div>)}
-        { showFilterByPerson && (<div className="flex flex-col">
-          <label className="label label">Person:</label>
-          <select
-            value={filterByPerson?.memberId || ''}
-            onChange={(e) => {
-              const selectedId = Number(e.target.value);
-              const selectedPerson = persons?.find(p => p.memberId === selectedId);
-              setFilterByPerson(selectedPerson);
-            }}
-            className="input w-52 text-sm"
-          >
-            {persons?.map(person => (
-              <option key={person.memberId} value={person.memberId}>
-                {person.person?.fullName || 'Unknown'}
-              </option>
-            ))}
-          </select>
-        </div>)}
-        {(filterByPerson &&  (memberType !== 'Person' && formData.operation !== 'create') ) && (<div>
-          <label className="label label--top">Chamber:</label>
-          <Select
-            value={filterByChamber}
-            options = {availableChamberOptions}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              if (newValue === filterByChamber) {
+      {showFilterByLastName && <div className="flex flex-col gap-x-6 gap-y-3 justify-center border m-5 p-3">
+        <div>
+          <p>Filter By:</p>
+        </div>
+        <div className="flex flex-row gap-x-6 gap-y-3">
+          {showFilterByLastName && <div className="flex flex-col">
+            <label className="label label--top">Last Name:</label>
+            <input
+              type="text"
+              value={filterByLastName !== undefined ? filterByLastName : ''}
+              onChange={(e) => {
+                setFilterByLastName(e.target.value);
+                setFilterByPerson(undefined);
                 setFilterByChamber("");
-              } else {
-                setFilterByChamber(newValue);
-              }
-            }}
-            className="input w-52 text-sm"
-          />
-        </div>)}
-        {(filterByChamber && (memberType === 'Session Member' && formData.operation !== 'create')) && (
-          <div className="flex flex-col">
-            <label className="label label--top">Session Member:</label>
+                setSelectedSessionYear(undefined);
+              }}
+              className="input block w-52 text-sm"
+              // className={`input block w-52 text-sm ${isDisabled ? 'bg-gray-200 text-gray-500' : 'bg-white text-black'}`}
+            />
+          </div>}
+          {showFilterByPerson && <div className="flex flex-col">
+            <label className="label label">Person:</label>
             <select
               value={filterByPerson?.memberId || ''}
               onChange={(e) => {
                 const selectedId = Number(e.target.value);
-                const selectedPerson = persons?.find(p => p.memberId === selectedId);
-                setFilterByPerson(selectedPerson);
+                if (!selectedId) {
+                  setFilterByPerson(undefined);
+                  setFilterByChamber("");
+                  setSelectedSessionYear(undefined);
+                  setPersons(fullPersons);
+                } else {
+                  const selectedPerson = persons?.find(p => p.memberId === selectedId);
+                  setFilterByPerson(selectedPerson);
+                }
               }}
               className="input w-52 text-sm"
             >
-              {persons?.map((person) => {
-                const sessionYear =
-                  person.sessionYear || Object.keys(person.sessionShortNameMap || {})[0];
-                const shortName = person.shortName || 'UNKNOWN';
-                const label = `${shortName}, ${sessionYear}`;
-
-                return (
-                  <option key={`${person.memberId}-${sessionYear}`} value={person.memberId}>
-                    {label}
-                  </option>
-                );
-              })}
+              <option value="">Select Person</option>
+              {uniquePersons?.map(person => (
+                <option key={person.memberId} value={person.memberId}>
+                  {person.person?.fullName || 'Unknown'}
+                </option>
+              ))}
             </select>
-          </div>
-        )}
+          </div>}
+          {filterByPerson && (memberType !== 'Person' && formData.operation !== 'create') && <div>
+            <label className="label label--top">Chamber:</label>
+            <Select
+              value={filterByChamber}
+              options={[ { value: "", label: "Select Chamber" }, ...availableChamberOptions ]}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFilterByChamber(value);
+                if (value === "") {
+                  setSelectedSessionYear(undefined);
+                }
+              }}
+              className="input w-52 text-sm"
+            />
+          </div>}
+          {filterByChamber && (memberType === 'Session Member' && formData.operation !== 'create') &&
+            <div className="flex flex-col">
+              <label className="label label--top">Session Member:</label>
+              <select
+                value={filterByPerson ? JSON.stringify({
+                  memberId: filterByPerson.memberId,
+                  sessionYear: filterByPerson.sessionYear
+                }) : ''}
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    setSelectedSessionYear(undefined);
+                    return;
+                  }
+                  const selectedValue = JSON.parse(e.target.value);
+                  const selectedPerson = persons.find(
+                    (p) => p.memberId === selectedValue.memberId
+                  );
+                  setSelectedSessionYear(selectedValue.sessionYear);
+                  setFilterByPerson({
+                    ...selectedPerson,
+                    sessionYear: selectedValue.sessionYear
+                  });
+                }}
+                className="input w-52 text-sm"
+              >
+                <option value="">Select Session Member</option>
+                {persons?.flatMap((person) => {
+                  const shortName = person.shortName || 'UNKNOWN';
+                  return Object.entries(person.sessionShortNameMap || {}).flatMap(([ year, entries ]) =>
+                    entries.map((entry) => (
+                      <option key={`${entry.memberId}-${year}`}
+                              value={JSON.stringify({ memberId: entry.memberId, sessionYear: year })}>
+                        {`${entry.memberId}, ${shortName}, ${year}`}
+                      </option>
+                    ))
+                  );
+                })}
+              </select>
+            </div>}
+        </div>
       </div>
-
-
-
+      }
 
       <div className="flex gap-x-6 gap-y-3 flex-wrap">
-        {fieldData[formData.operation].filter((field) => field?.display !== false).map((field) => (
+        {fieldData[formData.operation].filter((field) => field?.display !== false).map((field) =>
           <div key={field.fieldName}>
             <label className="label label--top">{field.label}:</label>
             {field.type === 'input' ? (
@@ -177,6 +303,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
                 className="input block w-52 text-sm"
                 required={field?.required ?? false}
                 disabled={field?.disabled ?? false}
+                className={`input block w-52 text-sm ${field?.disabled  ? 'text-gray-500' : 'text-black'}`}
               />
             ) : (
               <Select
@@ -184,11 +311,11 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
                 options={field.options}
                 onChange={(e) => setFormData({ ...formData, [field.fieldName]: e.target.value })}
                 name={field.fieldName}
+                disabled={field?.disabled ?? false}
                 className="w-52 text-sm"
               />
             )}
-          </div>
-        ))}
+          </div>)}
       </div>
 
       <div className="flex justify-end mt-3">
@@ -202,7 +329,8 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
       ariaLabel={"Confirmation of Member Update"}
     >
       <div>
-        <strong className="font-semibold">{submitSuccess ? <p>{'Success!'}</p> : <ErrorMessage>{"Error!"}</ErrorMessage>}</strong>
+        <strong className="font-semibold">{submitSuccess ? <p>{'Success!'}</p> :
+          <ErrorMessage>{"Error!"}</ErrorMessage>}</strong>
         {submitSuccess ? <p>{formData.responseMessage}</p> : <ErrorMessage>{formData.responseMessage}</ErrorMessage>}
         <div className="mt-3 flex justify-end w-full">
           <button
@@ -215,6 +343,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
       </div>
     </Modal>
 
-  </div>);
+  </div>;
 };
 export default MemberUI;

@@ -13,7 +13,7 @@ import React from 'react'
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Select({ label, value, options, onChange, name, tabIndex, isHighlighted = false, className }) {
+export default function Select({ label, value, options, onChange, name, tabIndex, isHighlighted = false, className, disabled = false }) {
   let labelClasses = "label label--top"
   labelClasses += isHighlighted ? " bg-yellow-100" : ""
 
@@ -24,6 +24,7 @@ export default function Select({ label, value, options, onChange, name, tabIndex
               value={value}
               tabIndex={tabIndex}
               onChange={onChange}
+              disabled={disabled}
               className={`select block ${className}`}>
         {options && options.map((opt) => <option value={opt.value} key={opt.value}>{opt.label}</option>)}
       </select>

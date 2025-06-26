@@ -1,8 +1,12 @@
 import { yearSortOptions } from "app/shared/Select";
+import { sessionYear } from "app/lib/dateUtils";
 
-export const chamberOptions = [ { value: "Senate", label: "Senate" }, { value: "Assembly", label: "Assembly" } ];
+export const chamberOptions = [ {value:"", label: "Select Chamber"},{ value: "Senate", label: "Senate" }, { value: "Assembly", label: "Assembly" } ];
 
 export const handleUpdateMember = async (tableName, operation, formData, fieldData) => {
+
+  const myHeaders = new Headers()
+  myHeaders.append("Content-Type", "application/json")
   let modelMap = {};
   let updatedAttributes = [];
   fieldData[operation].forEach(field => {
@@ -17,8 +21,7 @@ export const handleUpdateMember = async (tableName, operation, formData, fieldDa
     modelMap = { id: formData.id };
   }
   const api = `/api/3/members/${tableName.toUpperCase()}/${operation.toUpperCase()}`
-  const myHeaders = new Headers()
-  myHeaders.append("Content-Type", "application/json")
+
   const myRequest = new Request(api, {
     method: 'PUT',
     body: JSON.stringify({
@@ -27,6 +30,8 @@ export const handleUpdateMember = async (tableName, operation, formData, fieldDa
     }),
     headers: myHeaders
   })
+
+  console.log("Model Map before sending to controller", modelMap)
 
   try {
     const results = await fetch(myRequest)
@@ -71,7 +76,7 @@ export const MemberData = {
     memberId: undefined,
     personId: undefined,
     incumbent: true,
-    chamber: "Senate"
+    chamber: ""
   },
   fieldData: {
     create: [
@@ -79,7 +84,7 @@ export const MemberData = {
         label: 'Person ID',
         type: 'input',
         fieldName: 'personId',
-        required: true
+        display: false
       },
       {
         label: 'Chamber',
@@ -95,7 +100,7 @@ export const MemberData = {
       }
     ],
     update: [
-      memberIdInput,
+      { ...memberIdInput, required:true },
       {
         label: 'Incumbent',
         type: 'select',
@@ -103,7 +108,7 @@ export const MemberData = {
         fieldName: 'incumbent'
       },
     ],
-    delete: [ memberIdInput ]
+    delete: [ { ...memberIdInput, required:true } ]
   }
 }
 
@@ -153,8 +158,8 @@ export const PersonData = {
   fieldData: {
     create: personDataFields(true),
     update: [
-      personIdInput, ...personDataFields(false)],
-    delete: [ personIdInput ]
+      { ...personIdInput, required:true }, ...personDataFields(false)],
+    delete: [ { ...personIdInput, required:true } ]
   },
   initialData: {
     operation: 'create',
@@ -201,6 +206,7 @@ export const SessionData = {
         type: 'input',
         fieldName: 'memberId',
         display: false,
+        required: true,
       },
       {
         label: 'Session Year',
@@ -224,11 +230,11 @@ export const SessionData = {
       }
     ],
     update: [
-      sessionMemberIdInput,
+      { ...sessionMemberIdInput, required:true},
       {
         label: 'Alternate',
         type: 'select',
-        options: [ { value: "true", label: "True" }, { value: "false", label: "False" } ],
+        options: [ { value: "true", label: "true" }, { value: "false", label: "false" } ],
         fieldName: 'alternate'
       },
       districtCodeInput(false),
@@ -237,6 +243,7 @@ export const SessionData = {
         type: 'input',
         fieldName: 'memberId',
         display: false,
+        required: true,
       },
       {
         label: 'LBDC Short Name',
@@ -247,13 +254,12 @@ export const SessionData = {
       },
       {
         label: 'Session Year',
-        type: 'select',
-        options: sessionYearOptions,
+        type: 'input',
         fieldName: 'sessionYear',
         required: true,
         disabled: true,
       },
     ],
-    delete: [ sessionMemberIdInput ]
+    delete: [ { ...sessionMemberIdInput, required:true } ]
   }
 }

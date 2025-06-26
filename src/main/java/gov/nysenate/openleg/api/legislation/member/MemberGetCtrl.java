@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.api.legislation.member;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
@@ -16,6 +18,8 @@ import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.member.Member;
+import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberChangeType;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.MemberProcessor;
@@ -104,8 +108,20 @@ public class MemberGetCtrl extends BaseCtrl {
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{memberId:\\d+}")
     public BaseResponse getMembersByYearAndId(@PathVariable int memberId,
                                               @PathVariable int sessionYear,
-                                              @RequestParam(defaultValue = "true") boolean full)
+                                              @RequestParam(defaultValue = "true", required = false) boolean full)
             throws MemberNotFoundEx {
+        return new ViewObjectResponse<>(
+                (full) ? new FullMemberView(memberData.getFullMemberById(memberId))
+                        : new SessionMemberView(memberData.getSessionMemberById(memberId, SessionYear.of(sessionYear)))
+        );
+    }
+
+    @RequestMapping(value = "/test")
+    public BaseResponse getMembersByYearAndIdOKOK(@RequestParam int memberId,
+                                              @RequestParam int sessionYear,
+                                              @RequestParam(defaultValue = "true", required = false) boolean full)
+            throws MemberNotFoundEx {
+        System.out.println(memberId);
         return new ViewObjectResponse<>(
                 (full) ? new FullMemberView(memberData.getFullMemberById(memberId))
                         : new SessionMemberView(memberData.getSessionMemberById(memberId, SessionYear.of(sessionYear)))
@@ -133,6 +149,31 @@ public class MemberGetCtrl extends BaseCtrl {
         SearchResults<Integer> results =
                 memberSearch.searchMembers(SessionYear.of(sessionYear), chamberValue, sort, limOff);
         return getMemberResponse(full, limOff, results);
+    }
+
+    @PostMapping(value = "/autoGenerateSessionMembers")
+    public BaseResponse autoGenerateSessionMembers() throws Exception {
+        SessionYear.current().nextSessionYear();
+        ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
+        List<SessionMember> sessionMembers = memberData.getAllFullMembers().stream().filter(Member::isIncumbent)
+                .flatMap(fm -> fm.getSessionMemberForYear(SessionYear.current()).stream()).toList();
+        System.out.println("Session Members"+sessionMembers);
+        dataNode.set("updatedAttributes", JsonNodeFactory.instance.objectNode());
+        for (SessionMember sessionMember : sessionMembers) {
+            var modelMap = new ObjectNode(JsonNodeFactory.instance);
+            modelMap.put("sessionMemberId", sessionMember.getSessionMemberId());
+            modelMap.put("sessionYear", sessionMember.getSessionYear().nextSessionYear().toString());
+            modelMap.put("lbdcShortName", sessionMember.getLbdcShortName());
+            modelMap.put("districtCode", sessionMember.getDistrictCode().toString());
+            modelMap.put("alternate", sessionMember.isAlternate());
+            dataNode.set("modelMap", modelMap);
+            BaseResponse response = createMemberXml(MemberType.SESSION_MEMBER, MemberChangeType.CREATE, dataNode );
+            if (! response.isSuccess())  return  new SimpleResponse(false, "Failed creating the Session Member Record %s file".formatted(sessionMember.getSessionMemberId()),
+                    "createMemberXml");
+
+        }
+        dataProcessor.run("Auto-generate Member XML");
+        return new SimpleResponse(true, "Successfully auto generated the session memebers", "autoGenerateSessionMembers");
     }
 
     @PutMapping(value = "/{memberTable}/{changeType}")
