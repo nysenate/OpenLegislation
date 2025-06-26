@@ -30,7 +30,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     setPersons([]);
     setFullPersons([]);
     setFilterByChamber("");
-    console.log("member type", memberType, (filterByChamber && (memberType === 'Session Member' && formData.operation !== 'create')))
   }, [ initialData ]);
 
 
@@ -139,7 +138,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
           responseMessage: `Required hidden field "${field.label}" is missing.`,
         }));
         setSubmitSuccess(false);
-        return; // ✅ Important: stop form submission
+        return;
       }
     }
 
