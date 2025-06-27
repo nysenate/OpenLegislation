@@ -104,7 +104,7 @@ export const MemberData = {
       {
         label: 'Incumbent',
         type: 'select',
-        options: [ { value: "true", label: "True" }, { value: "false", label: "False" } ],
+        options: [ { value: "true", label: "true" }, { value: "false", label: "false" } ],
         fieldName: 'incumbent'
       },
     ],

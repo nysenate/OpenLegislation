@@ -116,18 +116,6 @@ public class MemberGetCtrl extends BaseCtrl {
         );
     }
 
-    @RequestMapping(value = "/test")
-    public BaseResponse getMembersByYearAndIdOKOK(@RequestParam int memberId,
-                                              @RequestParam int sessionYear,
-                                              @RequestParam(defaultValue = "true", required = false) boolean full)
-            throws MemberNotFoundEx {
-        System.out.println(memberId);
-        return new ViewObjectResponse<>(
-                (full) ? new FullMemberView(memberData.getFullMemberById(memberId))
-                        : new SessionMemberView(memberData.getSessionMemberById(memberId, SessionYear.of(sessionYear)))
-        );
-    }
-
     /**
      * Member Listing API
      * ------------------
