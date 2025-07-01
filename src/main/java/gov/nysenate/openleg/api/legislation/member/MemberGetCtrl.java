@@ -108,7 +108,7 @@ public class MemberGetCtrl extends BaseCtrl {
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{memberId:\\d+}")
     public BaseResponse getMembersByYearAndId(@PathVariable int memberId,
                                               @PathVariable int sessionYear,
-                                              @RequestParam(defaultValue = "true", required = false) boolean full)
+                                              @RequestParam(defaultValue = "true") boolean full)
             throws MemberNotFoundEx {
         return new ViewObjectResponse<>(
                 (full) ? new FullMemberView(memberData.getFullMemberById(memberId))
@@ -145,7 +145,6 @@ public class MemberGetCtrl extends BaseCtrl {
         ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
         List<SessionMember> sessionMembers = memberData.getAllFullMembers().stream().filter(Member::isIncumbent)
                 .flatMap(fm -> fm.getSessionMemberForYear(SessionYear.current()).stream()).toList();
-        System.out.println("Session Members"+sessionMembers);
         dataNode.set("updatedAttributes", JsonNodeFactory.instance.objectNode());
         for (SessionMember sessionMember : sessionMembers) {
             var modelMap = new ObjectNode(JsonNodeFactory.instance);

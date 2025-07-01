@@ -3,23 +3,31 @@ import { sessionYear } from "app/lib/dateUtils";
 
 export const chamberOptions = [ {value:"", label: "Select Chamber"},{ value: "Senate", label: "Senate" }, { value: "Assembly", label: "Assembly" } ];
 
-export const handleUpdateMember = async (tableName, operation, formData, fieldData) => {
+export const handleUpdateMember = async (tableName, operation, formData, fieldData, updatedAttributes) => {
 
   const myHeaders = new Headers()
   myHeaders.append("Content-Type", "application/json")
   let modelMap = {};
-  let updatedAttributes = [];
   fieldData[operation].forEach(field => {
-    if (formData[field.fieldName] !== undefined) {
-      modelMap[field.fieldName] = formData[field.fieldName];
-    }
+    const value = formData[field.fieldName];
+    modelMap[field.fieldName] = value !== undefined ? value : "";
   });
-  if (operation === 'update') {
-    modelMap = { id: formData.id,
-      ...modelMap };
-  } else if (operation === 'delete') {
-    modelMap = { id: formData.id };
+
+  let key;
+  if (tableName.toLowerCase().includes("session_member")) {
+    key = "sessionMemberId";
+  } else if (tableName.toLowerCase().includes("person")) {
+    key = "personId";
+  } else {
+    key = "memberId";
   }
+
+  if (operation === 'update') {
+    modelMap = { ...modelMap };
+  } else if (operation === 'delete') {
+    modelMap = {id: formData[key] };
+  }
+
   const api = `/api/3/members/${tableName.toUpperCase()}/${operation.toUpperCase()}`
 
   const myRequest = new Request(api, {
@@ -30,8 +38,6 @@ export const handleUpdateMember = async (tableName, operation, formData, fieldDa
     }),
     headers: myHeaders
   })
-
-  console.log("Model Map before sending to controller", modelMap)
 
   try {
     const results = await fetch(myRequest)
@@ -84,7 +90,8 @@ export const MemberData = {
         label: 'Person ID',
         type: 'input',
         fieldName: 'personId',
-        display: false
+        display: false,
+        required: true,
       },
       {
         label: 'Chamber',
@@ -158,7 +165,9 @@ export const PersonData = {
   fieldData: {
     create: personDataFields(true),
     update: [
-      { ...personIdInput, required:true }, ...personDataFields(false)],
+      { ...personIdInput, required: true },
+      ...personDataFields(false)
+    ],
     delete: [ { ...personIdInput, required:true } ]
   },
   initialData: {
@@ -214,6 +223,12 @@ export const SessionData = {
         options: sessionYearOptions,
         fieldName: 'sessionYear',
         required: true
+      },
+      {
+        label: 'Chamber',
+        type: 'select',
+        options: chamberOptions,
+        fieldName: 'chamber'
       },
       {
         label: 'LBDC Short Name',

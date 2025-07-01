@@ -21,6 +21,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
   const [fullPersons, setFullPersons] = useState([]);
   const [ filterByChamber, setFilterByChamber ] = useState("")
   const [ selectedSessionYear, setSelectedSessionYear ] = useState()
+  const [originalData, setOriginalData] = useState(initialData);
 
   useEffect(() => {
     setFormData({ ...initialData });
@@ -32,7 +33,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     setFilterByChamber("");
   }, [ initialData ]);
 
-
+  //Filtering distinct persons with personId
   const uniquePersons = useMemo(() => {
     const seen = new Set();
     return persons.filter((p) => {
@@ -43,7 +44,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     });
   }, [ persons ]);
 
-
+  //Fetch Persons with entered last name
   useEffect(async () => {
     const loadPersons = async () => {
       const data = await fetchPersons(filterByLastName);
@@ -59,7 +60,10 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     if (filterByPerson !== undefined) {
       const newData = { ...formData };
       Object.keys(formData).forEach((key) => {
-        if (key === 'lbdcShortName' && 'shortName' in filterByPerson) {
+        if(key === 'alternate') {
+           newData[key] = true;
+        }
+        else if (key === 'lbdcShortName' && 'shortName' in filterByPerson) {
           newData[key] = filterByPerson.shortName;
         } else if (filterByPerson.person && key in filterByPerson.person) {
           newData[key] = filterByPerson.person[key];
@@ -68,6 +72,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
         }
       });
       setFormData(newData);
+      setOriginalData(newData);
     }
   }, [ filterByPerson ]);
 
@@ -78,7 +83,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
       const filtered = fullPersons.filter(
         (person) => person.chamber === filterByChamber.toUpperCase()
       );
-      console.log("after filtering persons,", filtered)
       setPersons(filtered);
       setFilterByPerson(filtered[0])
     }
@@ -110,7 +114,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
           .map(p => p.chamber.toUpperCase())
       )
     ];
-    console.log(matchingChambers,"matching")
     return chamberOptions.filter(option =>
       matchingChambers.includes(option.value.toUpperCase())
     );
@@ -132,7 +135,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
         formData[field.fieldName] == null ||
         formData[field.fieldName] === ""
       ) {
-        // Stop submission and show error
         setFormData((prev) => ({
           ...prev,
           responseMessage: `Required hidden field "${field.label}" is missing.`,
@@ -141,14 +143,25 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
         return;
       }
     }
+    let updatedAttributes = [];
+    if (formData.operation === 'update') {
+      updatedAttributes = fieldData.update
+        .filter(field => field.fieldName in formData)
+        .filter(field => {
+          const fieldName = field.fieldName;
+          return formData[fieldName] !== originalData[fieldName];
+        })
+        .map(field => field.fieldName);
+    }
 
-    // Continue with form submission
     try {
+      console.log("try")
       const response = await handleUpdateMember(
         memberType.replaceAll(" ", "_"),
         formData.operation,
         formData,
-        fieldData
+        fieldData,
+        updatedAttributes
       );
 
       setSubmitSuccess(response.success);
