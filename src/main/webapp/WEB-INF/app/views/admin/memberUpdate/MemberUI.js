@@ -155,7 +155,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
     }
 
     try {
-      console.log("try")
       const response = await handleUpdateMember(
         memberType.replaceAll(" ", "_"),
         formData.operation,
@@ -216,7 +215,6 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
                 setSelectedSessionYear(undefined);
               }}
               className="input block w-52 text-sm"
-              // className={`input block w-52 text-sm ${isDisabled ? 'bg-gray-200 text-gray-500' : 'bg-white text-black'}`}
             />
           </div>}
           {showFilterByPerson && <div className="flex flex-col">
@@ -245,7 +243,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
               ))}
             </select>
           </div>}
-          {filterByPerson && (memberType !== 'Person' && formData.operation !== 'create') && <div>
+          {filterByPerson && (memberType !== 'Person' &&  !( memberType ==='Member' && formData.operation === 'Create')) && <div>
             <label className="label label--top">Chamber:</label>
             <Select
               value={filterByChamber}

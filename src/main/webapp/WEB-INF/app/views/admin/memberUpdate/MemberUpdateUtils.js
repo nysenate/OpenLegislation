@@ -225,12 +225,6 @@ export const SessionData = {
         required: true
       },
       {
-        label: 'Chamber',
-        type: 'select',
-        options: chamberOptions,
-        fieldName: 'chamber'
-      },
-      {
         label: 'LBDC Short Name',
         type: 'input',
         fieldName: 'lbdcShortName',
