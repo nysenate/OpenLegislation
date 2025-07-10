@@ -140,27 +140,32 @@ public class MemberGetCtrl extends BaseCtrl {
     }
 
     @PostMapping(value = "/autoGenerateSessionMembers")
-    public BaseResponse autoGenerateSessionMembers() throws Exception {
-        SessionYear.current().nextSessionYear();
-        ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
+    public BaseResponse autoGenerateSessionMembers() {
+        ObjectNode dataNode = JsonNodeFactory.instance.objectNode()
+                .set("updatedAttributes", JsonNodeFactory.instance.objectNode());
         List<SessionMember> sessionMembers = memberData.getAllFullMembers().stream().filter(Member::isIncumbent)
                 .flatMap(fm -> fm.getSessionMemberForYear(SessionYear.current()).stream()).toList();
-        dataNode.set("updatedAttributes", JsonNodeFactory.instance.objectNode());
+        List<Integer> failedIds = new ArrayList<>();
         for (SessionMember sessionMember : sessionMembers) {
-            var modelMap = new ObjectNode(JsonNodeFactory.instance);
-            modelMap.put("sessionMemberId", sessionMember.getSessionMemberId());
-            modelMap.put("sessionYear", sessionMember.getSessionYear().nextSessionYear().toString());
-            modelMap.put("lbdcShortName", sessionMember.getLbdcShortName());
-            modelMap.put("districtCode", sessionMember.getDistrictCode().toString());
-            modelMap.put("alternate", sessionMember.isAlternate());
+            var modelMap = new ObjectNode(JsonNodeFactory.instance)
+                    .put("memberId", sessionMember.getMemberId())
+                    .put("sessionYear", sessionMember.getSessionYear().nextSessionYear().toString())
+                    .put("lbdcShortName", sessionMember.getLbdcShortName())
+                    .put("districtCode", sessionMember.getDistrictCode().toString())
+                    .put("alternate", false);
             dataNode.set("modelMap", modelMap);
-            BaseResponse response = createMemberXml(MemberType.SESSION_MEMBER, MemberChangeType.CREATE, dataNode );
-            if (! response.isSuccess())  return  new SimpleResponse(false, "Failed creating the Session Member Record %s file".formatted(sessionMember.getSessionMemberId()),
-                    "createMemberXml");
-
+            BaseResponse response = createMemberXml(MemberType.SESSION_MEMBER, MemberChangeType.CREATE, dataNode);
+            if (!response.isSuccess()) {
+                failedIds.add(sessionMember.getSessionMemberId());
+            }
         }
-        dataProcessor.run("Auto-generate Member XML");
-        return new SimpleResponse(true, "Successfully auto generated the session memebers", "autoGenerateSessionMembers");
+        if (failedIds.isEmpty()) {
+            return new SimpleResponse(true, "Successfully auto-generated session members",
+                    "autoGenerateSessionMembers");
+        }
+        return new SimpleResponse(false,
+                "Failed to generate new session members from these IDs: %s".formatted(failedIds),
+                "autoGenerateSessionMembers");
     }
 
     @PutMapping(value = "/{memberTable}/{changeType}")
