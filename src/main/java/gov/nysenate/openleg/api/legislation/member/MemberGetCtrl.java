@@ -148,7 +148,7 @@ public class MemberGetCtrl extends BaseCtrl {
         List<Integer> failedIds = new ArrayList<>();
         for (SessionMember sessionMember : sessionMembers) {
             var modelMap = new ObjectNode(JsonNodeFactory.instance)
-                    .put("memberId", sessionMember.getMemberId())
+                    .put("memberId", sessionMember.getMember().getMemberId())
                     .put("sessionYear", sessionMember.getSessionYear().nextSessionYear().toString())
                     .put("lbdcShortName", sessionMember.getLbdcShortName())
                     .put("districtCode", sessionMember.getDistrictCode().toString())
@@ -190,7 +190,7 @@ public class MemberGetCtrl extends BaseCtrl {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm.ss.SSSSSS");
         String time = now.format(timeFormatter);
 
-        String filePath = stagingDirectory + "/" + date + "-" + time + "_member_1.xml";
+        String filePath = stagingDirectory + "/" + date + "-" + time + "_MEMBER_1.XML";
 
         try {
             var xmlFile = new File(filePath);
