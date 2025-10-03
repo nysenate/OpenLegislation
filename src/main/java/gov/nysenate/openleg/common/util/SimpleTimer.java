@@ -21,6 +21,7 @@ public class SimpleTimer {
         System.out.print(message + ": ");
         if (timer == null) {
             System.err.println("Error! Timer was not started.");
+            return;
         }
         System.out.println(timer.until(LocalTime.now(), ChronoUnit.SECONDS));
         timer = null;
