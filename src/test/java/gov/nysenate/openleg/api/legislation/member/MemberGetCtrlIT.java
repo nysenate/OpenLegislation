@@ -23,8 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static gov.nysenate.openleg.legislation.member.dao.MemberChangeType.*;
 import static gov.nysenate.openleg.processors.MemberType.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
 public class MemberGetCtrlIT extends ApiTest {
@@ -224,5 +223,26 @@ public class MemberGetCtrlIT extends ApiTest {
         BaseResponse result3 = testCtrl.createMemberXml(SESSION_MEMBER, DELETE, deleteRequest);
         assertTrue("The method should return success for DELETE", result3.isSuccess());
 
+    }
+
+    @Test
+    public void testAutoGenerateSessionMembers() {
+        BaseResponse response = testCtrl.autoGenerateSessionMembers();
+
+        assertNotNull("Response should not be null", response);
+        assertEquals("Successfully auto-generated session members", response.getMessage());
+
+        String message = response.getMessage();
+        assertNotNull("Response message should not be null", message);
+        assertFalse("Response message should not be empty", message.isEmpty());
+
+        if (response.isSuccess()) {
+            assertEquals("Successfully auto-generated session members", message);
+        } else {
+            assertTrue("Failure message should contain 'Failed to generate new session members'",
+                    message.contains("Failed to generate new session members"));
+            assertTrue("Failure message should list failed IDs",
+                    message.contains("[") && message.contains("]"));
+        }
     }
 }

@@ -290,7 +290,7 @@ const MemberUI = ({ initialData, memberType, fieldData }) => {
                     entries.map((entry) => (
                       <option key={`${entry.memberId}-${year}`}
                               value={JSON.stringify({ memberId: entry.memberId, sessionYear: year })}>
-                        {`${entry.memberId}, ${shortName}, ${year}`}
+                        {`${shortName}, ${year}`}
                       </option>
                     ))
                   );
