@@ -16,6 +16,7 @@ public class SessionMember implements Comparable<SessionMember>, Serializable
      * A member may have multiple sessionMemberIds in a single session for different representations of their shortname */
     protected Integer sessionMemberId;
 
+    // TODO: should be derived field
     protected int memberId;
 
     /** Member that this SessionMember matches up to. */
