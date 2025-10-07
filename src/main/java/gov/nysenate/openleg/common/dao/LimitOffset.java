@@ -31,18 +31,25 @@ public record LimitOffset(int limit, int offsetStart) {
     /**
      * If the 'limitOffset' is valid, return a new sub-list according to the given 'limitOffset'.
      *
-     * @param list List<T> - The original list.
-     * @param limOff LimitOffset - The limit/offset to trim the list to.
+     * @param list   List<T> - The original list.
+     * @param limitOffset LimitOffset - The limit/offset to trim the list to.
      * @return List<T> - The trimmed list.
      */
-    public static <T> List<T> limitList(List<T> list, LimitOffset limOff) {
-        if (limOff != null && limOff.hasLimit()) {
-            int start = limOff.offsetStart() - 1;
-            int end = start + limOff.limit();
-            end = Math.min(end, list.size());
-            return new ArrayList<>(list.subList(start, end));
+    public static <T> List<T> limitList(List<T> list, LimitOffset limitOffset) {
+        if (limitOffset == null || !limitOffset.hasLimit()) {
+            // If limit data is not provided, return the list unchanged.
+            // A limit = 0 means no limit should be applied.
+            return list;
         }
-        return list;
+        if (limitOffset.offsetStart() > list.size()) {
+            // If offset is beyond the size of the list, return an empty list.
+            return new ArrayList<>();
+        }
+
+        int start = limitOffset.offsetStart() - 1;
+        int end = start + limitOffset.limit();
+        end = Math.min(end, list.size());
+        return new ArrayList<>(list.subList(start, end));
     }
 
     /**

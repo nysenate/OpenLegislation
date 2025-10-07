@@ -6,6 +6,7 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -53,7 +54,18 @@ public class LimitOffsetTest {
         assertEquals(list.subList(0,2), LimitOffset.limitList(list, new LimitOffset(2, 1)));
         assertEquals(list.subList(2,7), LimitOffset.limitList(list, new LimitOffset(5, 3)));
         assertEquals(list.subList(2,10), LimitOffset.limitList(list, new LimitOffset(50, 3)));
+        assertEquals(ImmutableList.of(10), LimitOffset.limitList(list, new LimitOffset(5, 10)));
         assertEquals(list, LimitOffset.limitList(list, null));
+        assertEquals(
+                "limitList should return an empty list if offset > list size",
+                ImmutableList.of(),
+                LimitOffset.limitList(list, new LimitOffset(5, 11))
+        );
+        assertEquals(
+                "limitList should return all the data when limit = 0",
+                list,
+                LimitOffset.limitList(list, new LimitOffset(0, 0))
+        );
     }
 
     @Test

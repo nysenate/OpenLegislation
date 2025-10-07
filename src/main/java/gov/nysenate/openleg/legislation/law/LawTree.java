@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.legislation.law;
 
+import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
+
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,8 +15,7 @@ import java.util.stream.Collectors;
  * should be implemented on the LawTreeNode, so this class serves more as a container to represent a tree for a given
  * law at a given time.
  */
-public class LawTree
-{
+public class LawTree {
     /** The identifier for this tree. */
     protected final LawVersionId lawVersionId;
 
@@ -28,7 +29,7 @@ public class LawTree
     protected LawTreeNode rootNode;
 
     /** Map of doc id to all nodes within this law tree. Necessary for quick lookup. */
-    private Map<String, LawTreeNode> nodeLookupMap;
+    private CaseInsensitiveKeyMap<LawTreeNode> nodeLookupMap;
 
     /** --- Constructors --- */
 
@@ -44,8 +45,10 @@ public class LawTree
     /** --- Method --- */
 
     public void rebuildLookupMap() {
-        this.nodeLookupMap = this.rootNode.getAllNodes().stream()
-            .collect(Collectors.toMap(LawTreeNode::getDocumentId, Function.identity()));
+        Map<String, LawTreeNode> tempMap = this.rootNode.getAllNodes().stream()
+                .collect(Collectors.toMap(LawTreeNode::getDocumentId, Function.identity()));
+        this.nodeLookupMap = new CaseInsensitiveKeyMap<>();
+        nodeLookupMap.putAll(tempMap);
     }
 
     public Optional<LawTreeNode> find(String documentId) {
