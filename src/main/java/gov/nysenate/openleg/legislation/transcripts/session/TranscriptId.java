@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
 /**
@@ -11,6 +12,7 @@ public record TranscriptId(LocalDateTime dateTime, SessionType sessionType)
         return new TranscriptId(dateTime, new SessionType(typeStr));
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "(%s, %s)".formatted(dateTime, sessionType);

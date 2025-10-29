@@ -13,6 +13,7 @@ import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.transcripts.session.SessionTypeParseException;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
@@ -433,6 +434,13 @@ public abstract class BaseCtrl {
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
                 new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf",
                         "", Objects.toString(ex)));
+    }
+
+    @ExceptionHandler(SessionTypeParseException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleSessionTypeParseException(SessionTypeParseException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
     }
 
     private void pushExceptionNotification(Exception ex) {
