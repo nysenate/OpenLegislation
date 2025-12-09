@@ -42,8 +42,6 @@ public class SenateSiteLawReportServiceIT extends BaseTests {
                 SENATE_SITE_LAW, dump.getDumpId().dumpTime(), LocalDateTime.now());
         SpotCheckReport<LawSpotCheckId> report = new SpotCheckReport<>(reportId);
         reportService.checkDump(dump, report);
-        logger.info("{}", report.getMismatchTypeCounts(false));
         logger.info("yup");
     }
-
 }

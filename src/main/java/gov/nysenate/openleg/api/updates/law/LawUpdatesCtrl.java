@@ -18,8 +18,6 @@ import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
 import gov.nysenate.openleg.updates.law.LawUpdatesDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,10 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/laws", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class LawUpdatesCtrl extends BaseCtrl
-{
-    private static final Logger logger = LoggerFactory.getLogger(LawUpdatesCtrl.class);
-
+public class LawUpdatesCtrl extends BaseCtrl {
     @Autowired private LawUpdatesDao lawUpdatesDao;
 
     /**
@@ -132,17 +127,17 @@ public class LawUpdatesCtrl extends BaseCtrl
      * Where lawId is the three letter id for the law (e.g. ABC or EDN).
      * @see #getAllUpdates for request params and output.
      */
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates")
+    @RequestMapping(value = "/{lawId:\\w{3}}/updates")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, WebRequest request) {
         return getUpdatesForLaw(lawId, DateUtils.LONG_AGO, DateUtils.THE_FUTURE, request);
     }
 
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}")
+    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:\\w{}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
     }
 
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:.*\\.?.*}/{to:\\w{3}}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to,
                                          WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
@@ -153,6 +148,7 @@ public class LawUpdatesCtrl extends BaseCtrl
      * -----------------------------------------
      *
      * Usages:
+     * // TODO: confine lawId to \w{3}
      * (GET) /api/3/laws/{lawId}/{locationId}/updates/
      * (GET) /api/3/laws/{lawId}/{locationId}/updates/{from date-time}
      * (GET) /api/3/laws/{lawId}/{locationId}/updates/{from date-time}/{to date-time}
@@ -233,8 +229,8 @@ public class LawUpdatesCtrl extends BaseCtrl
         boolean detail;
     }
 
-    private BaseLawUpdatesParams getBaseParams(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        BaseLawUpdatesParams params = new BaseLawUpdatesParams();
+    private static BaseLawUpdatesParams getBaseParams(LocalDateTime from, LocalDateTime to, WebRequest request) {
+        var params = new BaseLawUpdatesParams();
         params.limOff = getLimitOffset(request, 50);
         params.updateRange = getClosedOpenRange(from, to, "from", "to");
         params.sortOrder = getSortOrder(request, SortOrder.ASC);

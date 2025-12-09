@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.spotchecks.base;
 
-import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckRefType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 
@@ -14,9 +13,7 @@ import java.time.LocalDateTime;
  * @param <ContentKey> - The class that can uniquely identify an instance being checked
  *                       (e.g BaseBillId if checking Bill objects)
  */
-public interface SpotCheckReportService<ContentKey>
-{
-
+public interface SpotCheckReportService<ContentKey> {
     /**
      * @return The SpotCheckRefType that is used for this report
      */
@@ -29,19 +26,15 @@ public interface SpotCheckReportService<ContentKey>
      * @param start LocalDateTime - The reference data will be active after (or on) this date/time.
      * @param end LocalDateTime - The reference data will be active prior to (or on) this date/time.
      * @return SpotCheckReport<ContentKey>
-     * @throws ReferenceDataNotFoundEx - If there is no reference data that can be used for this report.
      */
-    SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end)
-            throws Exception;
+    SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end) throws Exception;
 
     /**
      * Get the running mode of the report service.
-     *
      * Default to {@link SpotCheckReportRunMode#EVENT_DRIVEN}
      * @return {@link SpotCheckReportRunMode}
      */
     default SpotCheckReportRunMode getRunMode() {
         return SpotCheckReportRunMode.EVENT_DRIVEN;
     }
-
 }

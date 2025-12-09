@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.spotchecks.sensite;
 
 import gov.nysenate.openleg.spotchecks.base.SpotCheckReportService;
-import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReport;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckReportId;
 import gov.nysenate.openleg.spotchecks.sensite.bill.SenateSiteDao;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 
 /**
  * Base class for NYSenate.gov report services.
- *
  * Handles retrieval of NYSenate.gov node dumps and creating report objects.
  * @param <ContentKey>
  */
@@ -28,6 +26,9 @@ public abstract class BaseSenateSiteReportService<ContentKey> implements SpotChe
     @Override
     public synchronized SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump dump = getMostRecentDump();
+        if (dump == null) {
+            return null;
+        }
         SpotCheckReportId reportId = new SpotCheckReportId(
                 getSpotcheckRefType(), dump.getDumpId().dumpTime(), LocalDateTime.now());
         SpotCheckReport<ContentKey> report = new SpotCheckReport<>(reportId);
@@ -46,10 +47,10 @@ public abstract class BaseSenateSiteReportService<ContentKey> implements SpotChe
      */
     protected abstract void checkDump(SenateSiteDump dump, SpotCheckReport<ContentKey> report);
 
-    private SenateSiteDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
+    private SenateSiteDump getMostRecentDump() throws IOException {
         return senateSiteDao.getPendingDumps(getSpotcheckRefType()).stream()
                 .filter(SenateSiteDump::isComplete)
                 .max(SenateSiteDump::compareTo)
-                .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full " + getSpotcheckRefType() + " dumps"));
+                .orElse(null);
     }
 }

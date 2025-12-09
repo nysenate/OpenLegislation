@@ -42,25 +42,20 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
     /**
      * {@inheritDoc}
-     *
-     * @throws ReferenceDataNotFoundEx if no references are checked in the report.
      */
     @Override
     public SpotCheckReport<AgendaMeetingWeekId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
-        logger.info("Getting agenda references...");
-        // Get all unchecked references outside of the grace period.
+        logger.debug("Getting agenda references...");
+        // Get all unchecked references outside the grace period.
         List<AgendaAlertInfoCommittee> allReferences = getReferences(start, end);
         List<AgendaAlertInfoCommittee> references = allReferences.stream()
                 .filter(this::outsideGracePeriod)
                 .toList();
 
-        if (references.isEmpty()) {
-            throw new ReferenceDataNotFoundEx( "All unchecked agenda references (" +
-                            allReferences.size() +
-                            ") were still in their grace period.");
-        }
-
         SpotCheckReport<AgendaMeetingWeekId> report = initSpotcheckReport(references);
+        if (report == null) {
+            return null;
+        }
 
         // Add references to a map, keyed by AgendaAlertCheckId
         Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> referenceMap = references.stream()
@@ -68,7 +63,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
         // Get associated Openleg data and transform it into the same data types to make comparisons easy.
         Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> observedMap = createObservedMap(references);
 
-        logger.info("Checking references...");
+        logger.debug("Checking references...");
         for (AgendaMeetingWeekId refKey : referenceMap.keySet()) {
             // Check for observedDataMissing mismatches
             if (observedMap.get(refKey) == null) {
@@ -98,6 +93,9 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
     }
 
     private SpotCheckReport<AgendaMeetingWeekId> initSpotcheckReport(List<AgendaAlertInfoCommittee> references) {
+        if (references.isEmpty()) {
+            return null;
+        }
         SpotCheckReport<AgendaMeetingWeekId> report = new SpotCheckReport<>();
 
         // Use the earliest reference date as the report reference date
@@ -162,16 +160,13 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
     /**
      * Gets all eligible Agenda Alert references with reference dates between the start and end date times
-     *
-     * @throws ReferenceDataNotFoundEx if no references were found
      */
-    protected abstract List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx;
+    protected abstract List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end);
 
     /**
      * Retrieves an agenda for the week of the given date
      *
      * @param agendaAlertInfoCommittee@return Agenda
-     * @throws AgendaNotFoundEx
      */
     protected abstract Agenda getAgenda(AgendaAlertInfoCommittee agendaAlertInfoCommittee) throws AgendaNotFoundEx;
 

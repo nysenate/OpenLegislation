@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.spotchecks.model;
 
-import com.google.common.collect.LinkedListMultimap;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,26 +17,18 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.REFERE
  * @param <ContentKey> Class that is used as a key for identifying the specific piece of
  *                     content that is being compared during the spot check.
  */
-public class SpotCheckObservation<ContentKey>
-{
+public class SpotCheckObservation<ContentKey> {
     /** The source used to compare our data against. */
-    protected SpotCheckReferenceId referenceId;
+    private SpotCheckReferenceId referenceId;
 
     /** A key that identifies the content being checked. */
-    protected ContentKey key;
+    private final ContentKey key;
 
     /** The datetime this observation was made. */
-    protected LocalDateTime observedDateTime;
-
-    /** The date time when the report that generated this observation was run */
-    protected LocalDateTime reportDateTime;
+    private LocalDateTime observedDateTime;
 
     /** Mapping of mismatches that exist between the reference content and our content. */
-    protected Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches = new HashMap<>();
-
-    /** Mapping of prior mismatches keyed by the mismatch type. This is only populated if the observation
-     * is made within the content of previously saved reports and the mismatch is one that has appeared before. */
-    protected LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> priorMismatches = LinkedListMultimap.create();
+    private final Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches = new HashMap<>();
 
     /* --- Constructors --- */
 
@@ -54,7 +44,6 @@ public class SpotCheckObservation<ContentKey>
      * Generates an observation with a reference data missing observation
      * @param referenceId {@link SpotCheckReferenceId}
      * @param key {@link ContentKey}
-     * @param <ContentKey>
      * @return {@link SpotCheckObservation}
      */
     public static <ContentKey> SpotCheckObservation<ContentKey> getRefMissingObs(
@@ -68,7 +57,6 @@ public class SpotCheckObservation<ContentKey>
      * Generates an observation with an observed data missing observation
      * @param referenceId {@link SpotCheckReferenceId}
      * @param key {@link ContentKey}
-     * @param <ContentKey>
      * @return {@link SpotCheckObservation}
      */
     public static <ContentKey> SpotCheckObservation<ContentKey> getObserveDataMissingObs(
@@ -88,38 +76,14 @@ public class SpotCheckObservation<ContentKey>
     }
 
     /**
-     * Returns the number of mismatches grouped by mismatch status. So for example:
-     * {NEW=4, EXISTING=2} would be returned if there were four new mismatches and two
-     * existing mismatches.
-     *
-     * @param ignored boolean - if true, will return counts for ignored mismatches, which are left out if false
-     * @return Map<SpotCheckMismatchStatus, Long>
-     */
-    public Map<MismatchState, Long> getMismatchStatusCounts(boolean ignored) {
-        if (mismatches != null) {
-            return mismatches.values().stream()
-                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.groupingBy(SpotCheckMismatch::getState, Collectors.counting()));
-        }
-        else {
-            throw new IllegalStateException("Collection of mismatches is null");
-        }
-    }
-
-    /**
      * Returns a mapping of mismatch type to status.
      *
      * @return Map<SpotCheckMismatchType, SpotCheckMismatchStatus>
      */
     public Map<SpotCheckMismatchType, MismatchState> getMismatchStatusTypes(boolean ignored) {
-        if (mismatches != null) {
-            return mismatches.values().stream()
-                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getState));
-        }
-        else {
-            throw new IllegalStateException("Collection of mismatches is null");
-        }
+        return mismatches.values().stream()
+                .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
+                .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getState));
     }
 
     /**
@@ -128,15 +92,7 @@ public class SpotCheckObservation<ContentKey>
      * @return Set<SpotCheckMismatchType>
      */
     public Set<SpotCheckMismatchType> getMismatchTypes(boolean ignored) {
-        if (mismatches != null) {
-            return mismatches.values().stream()
-                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .map(SpotCheckMismatch::getMismatchType)
-                    .collect(Collectors.toSet());
-        }
-        else {
-            throw new IllegalStateException("Collection of mismatches is null");
-        }
+        return getMismatchStatusTypes(ignored).keySet();
     }
 
     /**
@@ -165,7 +121,6 @@ public class SpotCheckObservation<ContentKey>
 
     /**
      * Merge another observation of the same content in the same report into this observation..
-     *
      * todo: add check for report id.
      *  - Didn't add initially because reportDateTime isn't properly set and would require major refactor.
      *
@@ -178,18 +133,9 @@ public class SpotCheckObservation<ContentKey>
                     this.key + " and " + other.key);
         }
         this.mismatches.putAll(other.mismatches);
-        this.priorMismatches.putAll(other.priorMismatches);
     }
 
     /* --- Basic Getters/Setters --- */
-
-    public LocalDateTime getReportDateTime() {
-        return reportDateTime;
-    }
-
-    public void setReportDateTime(LocalDateTime reportDateTime) {
-        this.reportDateTime = reportDateTime;
-    }
 
     public SpotCheckReferenceId getReferenceId() {
         return referenceId;
@@ -203,10 +149,6 @@ public class SpotCheckObservation<ContentKey>
         return key;
     }
 
-    public void setKey(ContentKey key) {
-        this.key = key;
-    }
-
     public LocalDateTime getObservedDateTime() {
         return observedDateTime;
     }
@@ -217,9 +159,5 @@ public class SpotCheckObservation<ContentKey>
 
     public Map<SpotCheckMismatchType, SpotCheckMismatch> getMismatches() {
         return mismatches;
-    }
-
-    public LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> getPriorMismatches() {
-        return priorMismatches;
     }
 }

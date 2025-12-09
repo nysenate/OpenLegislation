@@ -48,7 +48,8 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
     /** {@inheritDoc} */
     @Override
     public PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdatesForLaw(
-        String lawId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset) {
+            String lawId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder,
+            LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("lawId", lawId);
         addDateTimeRangeParams(params, dateTimeRange);

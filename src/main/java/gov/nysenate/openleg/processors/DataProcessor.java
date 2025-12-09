@@ -72,7 +72,7 @@ public class DataProcessor {
             return null;
         }
 
-        logger.info("Starting data processor...");
+        logger.debug("Starting data processor...");
         currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
         if (async)
             asyncUtils.run(this::doRun);
@@ -145,10 +145,10 @@ public class DataProcessor {
      */
     private synchronized void processAll(boolean isCollate) {
         if (!env.isProcessingEnabled()) {
-            logger.info("Not {} data, processing is disabled.", isCollate ? "collating" : "ingesting");
+            logger.debug("Not {} data, processing is disabled.", isCollate ? "collating" : "ingesting");
             return;
         }
-        logger.info("Begin {} data", isCollate ? "collating" : "ingesting");
+        logger.debug("Begin {} data", isCollate ? "collating" : "ingesting");
         Map<String, Integer> processedCounts = new LinkedHashMap<>();
         for (ProcessService processor : processServices) {
             String type = isCollate ? processor.getCollateType() : processor.getIngestType();
@@ -157,7 +157,7 @@ public class DataProcessor {
                 processedCounts.put(type, count);
         }
         if (processedCounts.isEmpty())
-            logger.info("Nothing to {}", isCollate ? "collate" : "ingest");
+            logger.debug("Nothing to {}", isCollate ? "collate" : "ingest");
         else {
             logger.info("Completed {}. Statistics:", isCollate ? "collation" : "ingestion");
             logger.info(processedCounts.entrySet().stream()
@@ -180,6 +180,6 @@ public class DataProcessor {
             logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
         }
         processLogService.finishRun(currentRun);
-        logger.info("Exiting data processor.");
+        logger.debug("Exiting data processor.");
     }
 }

@@ -12,6 +12,7 @@ import gov.nysenate.openleg.spotchecks.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ import java.util.List;
  */
 @Service
 public class SpotcheckRunService {
-
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckRunService.class);
+    private static final int notesCutoff = 140;
 
     private final EventBus eventBus;
     private final OpenLegEnvironment env;
@@ -36,28 +37,29 @@ public class SpotcheckRunService {
     /**
      * A multimap of reports that run whenever pertinent references are generated
      */
-    private final ImmutableSetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
+    private final ImmutableSetMultimap<SpotCheckRefType, SpotCheckReportService<?>> eventTriggeredReports;
 
     /**
      * A set of reports are automatically ran based on the scheduler.spotcheck.interval.cron
      */
-    private final ImmutableSet<SpotCheckReportService> intervalReports;
+    private final ImmutableSet<SpotCheckReportService<?>> intervalReports;
 
+    @Autowired
     public SpotcheckRunService(OpenLegEnvironment env,
                                EventBus eventBus,
                                SpotCheckNotificationService spotCheckNotificationService,
                                SpotCheckReportDao reportDao,
-                               List<SpotCheckReportService> reportServices) {
+                               List<SpotCheckReportService<?>> reportServices) {
         this.env = env;
         this.spotCheckNotificationService = spotCheckNotificationService;
         this.reportDao = reportDao;
         this.eventBus = eventBus;
 
-        ImmutableSetMultimap.Builder<SpotCheckRefType, SpotCheckReportService> eventReportsBuilder =
+        ImmutableSetMultimap.Builder<SpotCheckRefType, SpotCheckReportService<?>> eventReportsBuilder =
                 ImmutableSetMultimap.builder();
-        ImmutableSet.Builder<SpotCheckReportService> intervalReportsBuilder = ImmutableSet.builder();
+        ImmutableSet.Builder<SpotCheckReportService<?>> intervalReportsBuilder = ImmutableSet.builder();
         // Sort report services into periodic and event driven collections
-        for (SpotCheckReportService reportService : reportServices) {
+        for (SpotCheckReportService<?> reportService : reportServices) {
             switch (reportService.getRunMode()) {
                 case EVENT_DRIVEN -> eventReportsBuilder.put(reportService.getSpotcheckRefType(), reportService);
                 case PERIODIC -> intervalReportsBuilder.add(reportService);
@@ -138,11 +140,15 @@ public class SpotcheckRunService {
     /* --- Internal Methods --- */
 
     private void runReport(SpotCheckReportService<?> reportService, Range<LocalDateTime> reportRange) {
-        logger.info("Attempting to run a {} report...", reportService.getSpotcheckRefType());
+        logger.debug("Attempting to run a {} report...", reportService.getSpotcheckRefType());
         try {
             SpotCheckReport<?> report = reportService.generateReport(
-                    DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
-            int notesCutoff = 140;
+                    DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange)
+            );
+            if (report == null) {
+                logger.debug("No report generated: no {} references could be found.", reportService.getSpotcheckRefType());
+                return;
+            }
             logger.info("Saving {} report. obs: {} mm: {}({}ig.) notes: {}",
                     report.getReferenceType(), report.getObservedCount(),
                     report.getOpenMismatchCount(false), report.getOpenMismatchCount(true),
@@ -151,8 +157,6 @@ public class SpotcheckRunService {
             reportDao.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
             logger.info("Done saving spotcheck report.");
-        } catch (ReferenceDataNotFoundEx ex) {
-            logger.info("No report generated: no {} references could be found. Message: " + ex.getMessage(), reportService.getSpotcheckRefType());
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, true);
         }

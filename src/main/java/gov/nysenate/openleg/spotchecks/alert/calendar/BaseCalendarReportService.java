@@ -50,22 +50,15 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
 
     @Override
     public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
-        List<Calendar> references = retrieveReferences(start, end).stream()
+        List<Calendar> references = getReferences(start, end).stream()
                 .filter(this::outsideGracePeriod)
                 .toList();
         SpotCheckReport<CalendarEntryListId> report = initSpotCheckReport(references);
-        report.setNotes(getNotes());
-        report.addObservations(createObservations(references));
-        return report;
-    }
-
-    private List<Calendar> retrieveReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<Calendar> references = getReferences(start, end);
-        if (references.isEmpty()) {
-            throw new ReferenceDataNotFoundEx(
-                    String.format("No calendar alerts references were found between %s and %s", start, end));
+        if (report != null) {
+            report.setNotes(getNotes());
+            report.addObservations(createObservations(references));
         }
-        return references;
+        return report;
     }
 
     // Returns true if this references is outside the specified grace period.
@@ -76,6 +69,9 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     private SpotCheckReport<CalendarEntryListId> initSpotCheckReport(List<Calendar> references) {
+        if (references.isEmpty()) {
+            return null;
+        }
         LocalDateTime referenceDateTime = getMostRecentReference(references);
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
                 referenceDateTime,
@@ -99,7 +95,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     private static LocalDateTime getMostRecentReference(List<Calendar> references) {
-        LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO);
+        LocalDateTime dateTime = DateUtils.LONG_AGO;
         for (Calendar cal : references) {
             if (cal.getPublishedDateTime().isAfter(dateTime)) {
                 dateTime = cal.getPublishedDateTime();

@@ -12,7 +12,6 @@ import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
-import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.updates.UpdateDigest;
 import gov.nysenate.openleg.updates.UpdateToken;
 import gov.nysenate.openleg.updates.UpdateType;
@@ -32,7 +31,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
     private final CalendarUpdatesDao calendarUpdatesDao;
 
     @Autowired
-    public CalendarUpdatesCtrl(CalendarUpdatesDao calendarUpdatesDao, CalendarDataService calendarDataService) {
+    public CalendarUpdatesCtrl(CalendarUpdatesDao calendarUpdatesDao) {
         this.calendarUpdatesDao = calendarUpdatesDao;
     }
 
@@ -57,8 +56,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
      */
 
     @RequestMapping(value = "/updates")
-    public BaseResponse getUpdatesDuring(@RequestParam(defaultValue = "false") boolean detail,
-                                         WebRequest webRequest) {
+    public BaseResponse getUpdatesDuring(@RequestParam(defaultValue = "false") boolean detail, WebRequest webRequest) {
         return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), detail, webRequest);
     }
 

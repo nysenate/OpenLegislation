@@ -73,7 +73,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
                                               @RequestParam String term,
                                               @RequestParam(defaultValue = "") String sort,
                                               @RequestParam(defaultValue = "false") boolean detail,
-                                      WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
+                                              WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, limitOffset, year, detail);
     }

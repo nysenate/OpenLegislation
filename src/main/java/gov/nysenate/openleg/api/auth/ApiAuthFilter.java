@@ -49,7 +49,6 @@ public class ApiAuthFilter implements Filter {
         if (!enabled || authenticate(subject, ipAddress, key)) {
             filterChain.doFilter(request, response);
         } else {
-            logger.warn("Invalid key used in API request. ip: [{}] key: [{}]", ipAddress, key);
             if (subject.isRemembered()) {
                 // We should log out of the current session for security purposes.
                 subject.logout();

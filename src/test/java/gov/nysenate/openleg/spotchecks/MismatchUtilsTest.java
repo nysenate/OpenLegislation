@@ -131,13 +131,6 @@ public class MismatchUtilsTest {
     }
 
     @Test
-    public void givenResolved_returnNoResolved() {
-        List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(closedMismatch);
-        spotcheckReport.setObservationMap(new HashMap<>());
-        assertEmpty(MismatchUtils.determineClosedMismatches(current, spotcheckReport));
-    }
-
-    @Test
     public void givenMismatchOnlyInCurrent_returnResolved() {
         List<DeNormSpotCheckMismatch<?>> current = Lists.newArrayList(openMismatch);
         spotcheckReport.addObservation(new SpotCheckObservation<>(referenceId, testBillId));

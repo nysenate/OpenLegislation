@@ -3,7 +3,6 @@ package gov.nysenate.openleg.spotchecks.alert.agenda;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.legislation.agenda.dao.CachedAgendaDataService;
-import gov.nysenate.openleg.spotchecks.model.ReferenceDataNotFoundEx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +20,8 @@ public class AgendaReportService extends BaseAgendaCheckReportService {
 
     /** {@inheritDoc} */
     @Override
-    protected List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<AgendaAlertInfoCommittee> references = agendaAlertDao.getUncheckedAgendaAlertReferences();
-        if (references.isEmpty()) {
-            throw new ReferenceDataNotFoundEx(
-                    String.format("no unchecked agenda references were found within the given range %s to %s", start, end));
-        }
-        return references;
+    protected List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) {
+        return agendaAlertDao.getUncheckedAgendaAlertReferences();
     }
 
     /** {@inheritDoc} */

@@ -59,7 +59,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, IOException {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws IOException {
         PaginatedList<BillScrapeFile> pendingScrapeFiles = dao.getPendingScrapeBills(new LimitOffset(maxBillsPerReport));
         if (pendingScrapeFiles.total() > maxBillsPerReport) {
             logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.total());
@@ -67,7 +67,7 @@ public class BillScrapeReportService implements SpotCheckReportService<BaseBillI
         List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.results());
 
         if (references.isEmpty()) {
-            throw new ReferenceDataNotFoundEx();
+            return null;
         }
 
         SpotCheckReport<BaseBillId> report = createReport(references);

@@ -50,10 +50,6 @@ public class OpenlegAgendaReportService implements SpotCheckReportService<Commit
 
     @Override
     public SpotCheckReport<CommitteeAgendaAddendumId> generateReport(LocalDateTime start, LocalDateTime end) {
-        // Create New spotcheck report
-        SpotCheckReportId reportId = new SpotCheckReportId(OPENLEG_AGENDA, LocalDateTime.now(), LocalDateTime.now());
-        SpotCheckReport<CommitteeAgendaAddendumId> report = new SpotCheckReport<>(reportId);
-
         int year = start.getYear();
 
         // Get Local agenda data
@@ -67,9 +63,15 @@ public class OpenlegAgendaReportService implements SpotCheckReportService<Commit
         // Create Maps of content and source AgendaCommAddendumView
         Map<CommitteeAgendaAddendumId, AgendaCommAddendumView> contentAddenda = getAddendumMap(contentAgendaViews);
         Map<CommitteeAgendaAddendumId, AgendaCommAddendumView> referenceAddenda = getAddendumMap(referenceAgendaViews);
-
         Set<CommitteeAgendaAddendumId> allIds = Sets.union(contentAddenda.keySet(), referenceAddenda.keySet());
 
+        if (allIds.isEmpty()) {
+            return null;
+        }
+
+        // Create New spotcheck report
+        var reportId = new SpotCheckReportId(OPENLEG_AGENDA, LocalDateTime.now(), LocalDateTime.now());
+        var report = new SpotCheckReport<CommitteeAgendaAddendumId>(reportId);
         // Check addenda
         for (CommitteeAgendaAddendumId id : allIds) {
             if (!contentAddenda.containsKey(id)) {
