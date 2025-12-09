@@ -132,12 +132,12 @@ public class LawUpdatesCtrl extends BaseCtrl {
         return getUpdatesForLaw(lawId, DateUtils.LONG_AGO, DateUtils.THE_FUTURE, request);
     }
 
-    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:\\w{}")
+    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE, request);
     }
 
-    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:.*\\.?.*}/{to:\\w{3}}")
+    @RequestMapping(value = "/{lawId:\\w{3}}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to,
                                          WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
