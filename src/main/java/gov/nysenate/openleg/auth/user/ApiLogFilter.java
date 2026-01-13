@@ -33,7 +33,7 @@ public class ApiLogFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         LocalDateTime requestStart = LocalDateTime.now();
         filterChain.doFilter(servletRequest, servletResponse);
         if (((HttpServletRequest) servletRequest).getRequestURI().matches(ignoredPaths)) {
