@@ -30,7 +30,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao<CommitteeVersionId
 
     @Override
     protected CommitteeVersionId toId(String idStr) {
-        String[] parts = idStr.split("-");
+        String[] parts = idStr.split("-", 4);
         return new CommitteeVersionId(Chamber.getValue(parts[0]), parts[1],
                 SessionYear.of(Integer.parseInt(parts[2])), LocalDateTime.parse(parts[3]));
     }

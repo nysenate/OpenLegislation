@@ -12,6 +12,9 @@ flyway.password =
 # Schemas managed by flyway
 flyway.schemas = public, master
 
+# Flyway should not create the schemas it manages, our migrations handle that.
+flyway.createSchemas=false
+
 # Version set when using flyway:baseline
 flyway.baselineVersion = 20181218.0000
 
