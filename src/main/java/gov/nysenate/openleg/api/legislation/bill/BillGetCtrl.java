@@ -11,6 +11,7 @@ import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.util.stringDiffer.Diff;
 import gov.nysenate.openleg.common.util.stringDiffer.StringDiffer;
+import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
@@ -93,7 +94,7 @@ public class BillGetCtrl extends BaseCtrl {
                                  WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<BaseBillId> results =
-            billSearch.searchBills(getSessionYearParam(sessionYear, "sessionYear"), sort, limOff);
+            billSearch.searchBills(SessionYear.of(sessionYear), sort, limOff);
         // The bill data is retrieved from the data service so the data is always fresh.
         return ListViewResponse.of(
             results.resultList().stream()

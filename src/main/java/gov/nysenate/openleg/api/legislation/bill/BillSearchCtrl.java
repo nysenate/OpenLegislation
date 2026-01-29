@@ -77,7 +77,7 @@ public class BillSearchCtrl extends BaseCtrl {
                                       @RequestParam(defaultValue = "false") boolean idOnly,
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SessionYear session = getSessionYearParam(sessionYear, "sessionYear");
+        SessionYear session = SessionYear.of(sessionYear);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, session, sort, limOff);
         return getBillSearchResponse(results, full, idOnly, limOff, webRequest);
     }

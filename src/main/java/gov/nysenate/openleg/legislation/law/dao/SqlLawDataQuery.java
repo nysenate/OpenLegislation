@@ -8,24 +8,52 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     /** --- Law Documents --- */
 
     SELECT_LAW_DOCUMENT(
-        "WITH max_date AS (\n" +
-        "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-        "    WHERE document_id = :docId AND published_date <= :endPublishedDate" +
-        ")\n" +
-        "SELECT * FROM max_date, ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-        "WHERE document_id = :docId AND published_date = max_date.pub_date"
+            "WITH all_dates AS (\n" +
+            "  SELECT document_id, \n" +
+            "         array_agg(published_date ORDER BY published_date) AS all_published_dates\n" +
+            "  FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+            "  WHERE document_id = :docId\n" +
+            "  GROUP BY document_id\n" +
+            "),\n" +
+            "latest AS (\n" +
+            "  SELECT *\n" +
+            "  FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+            "  WHERE document_id = :docId\n" +
+            "    AND published_date <= :endPublishedDate\n" +
+            "  ORDER BY published_date DESC\n" +
+            "  LIMIT 1\n" +
+            ")\n" +
+            "SELECT latest.*, all_dates.all_published_dates\n" +
+            "FROM latest\n" +
+            "JOIN all_dates USING(document_id)"
     ),
     SELECT_ALL_LAW_DOCUMENTS(
-        "WITH latest_laws AS (\n" +
-        "    SELECT document_id, max(published_date) AS published_date " +
-        "    FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-        "    WHERE law_id = :lawId AND published_date <= :endPublishedDate\n" +
-        "        AND law_file_name LIKE :lawFilenamePattern\n" +
-        "    GROUP BY document_id" +
-        ")\n" +
-        "SELECT * FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-        "JOIN latest_laws USING (document_id, published_date)"
+            "WITH latest_laws AS (\n" +
+            "  SELECT document_id,\n" +
+            "         max(published_date) AS published_date\n" +
+            "  FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+            "  WHERE law_id = :lawId\n" +
+            "    AND published_date <= :endPublishedDate\n" +
+            "    AND law_file_name LIKE :lawFilenamePattern\n" +
+            "  GROUP BY document_id\n" +
+            "),\n" +
+            "all_dates AS (\n" +
+            "  SELECT document_id,\n" +
+            "         array_agg(published_date ORDER BY published_date) AS all_published_dates\n" +
+            "  FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+            "  WHERE law_id = :lawId\n" +
+            "    AND law_file_name LIKE :lawFilenamePattern\n" +
+            "  GROUP BY document_id\n" +
+            ")\n" +
+            "SELECT ld.*, ad.all_published_dates\n" +
+            "FROM ${schema}." + SqlTable.LAW_DOCUMENT + " ld\n" +
+            "JOIN latest_laws ll\n" +
+            "  ON ld.document_id = ll.document_id\n" +
+            " AND ld.published_date = ll.published_date\n" +
+            "JOIN all_dates ad\n" +
+            "  ON ad.document_id = ld.document_id\n"
     ),
+
     INSERT_LAW_DOCUMENT(
         "INSERT INTO ${schema}." + SqlTable.LAW_DOCUMENT +
         "(document_id, published_date, document_type, law_id, location_id, document_type_id, title, text, dummy, law_file_name)\n" +
@@ -52,18 +80,43 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "WHERE law_id = :lawId"
     ),
     SELECT_LAW_TREE(
-        "WITH max_date AS (\n" +
-        "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
-        "    WHERE law_id = :lawId AND published_date <= :endPublishedDate" +
-        ")\n" +
-        "SELECT t.law_id, t.published_date AS tree_published_date, t.is_root, t.sequence_no, t.repealed_date, " +
-        "       d1.document_id, d1.published_date, d1.document_type, d1.location_id, d1.title, d1.document_type_id, d1.dummy," +
-        "       t.parent_doc_id\n" +
-        "FROM max_date, ${schema}." + SqlTable.LAW_TREE + " t\n" +
-        "LEFT JOIN ${schema}." + SqlTable.LAW_DOCUMENT + " d1 \n" +
-        "     ON t.doc_id = d1.document_id AND t.doc_published_date = d1.published_date\n" +
-        "WHERE t.law_id = :lawId AND t.published_date = max_date.pub_date"
+            "WITH max_date AS (\n" +
+            "    SELECT max(published_date) AS pub_date\n" +
+            "    FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
+            "    WHERE law_id = :lawId\n" +
+            "      AND published_date <= :endPublishedDate\n" +
+            "),\n" +
+            "all_dates AS (\n" +
+            "    SELECT document_id,\n" +
+            "           array_agg(published_date ORDER BY published_date) AS all_published_dates\n" +
+            "    FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+            "    GROUP BY document_id\n" +
+            ")\n" +
+            "SELECT t.law_id,\n" +
+            "       t.published_date AS tree_published_date,\n" +
+            "       t.is_root,\n" +
+            "       t.sequence_no,\n" +
+            "       t.repealed_date,\n" +
+            "       d1.document_id,\n" +
+            "       d1.published_date,\n" +
+            "       d1.document_type,\n" +
+            "       d1.location_id,\n" +
+            "       d1.title,\n" +
+            "       d1.document_type_id,\n" +
+            "       d1.dummy,\n" +
+            "       ad.all_published_dates,\n" +
+            "       t.parent_doc_id\n" +
+            "FROM max_date\n" +
+            "JOIN ${schema}." + SqlTable.LAW_TREE + " t\n" +
+            "  ON t.published_date = max_date.pub_date\n" +
+            "LEFT JOIN ${schema}." + SqlTable.LAW_DOCUMENT + " d1\n" +
+            "  ON t.doc_id = d1.document_id\n" +
+            " AND t.doc_published_date = d1.published_date\n" +
+            "LEFT JOIN all_dates ad\n" +
+            "  ON ad.document_id = d1.document_id\n" +
+            "WHERE t.law_id = :lawId"
     ),
+
     SELECT_REPEALED_LAWS(
         "SELECT doc_id AS document_id, published_date, repealed_date\n" +
         "FROM ${schema}." + SqlTable.LAW_TREE + "\n" +

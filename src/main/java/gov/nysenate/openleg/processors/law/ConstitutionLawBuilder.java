@@ -91,9 +91,8 @@ public class ConstitutionLawBuilder extends IdBasedLawBuilder implements LawBuil
                 continue;
             String articleTitle = articleMatch.group("title");
             titles.put("A" + i, articleTitle.trim());
-            LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
-                    CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
-                    articleMatch.group("numerals"), rootDoc.getPublishedDate(), false);
+            LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i, rootDoc.getPublishedDate(),
+                    CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE, articleMatch.group("numerals"));
             LawDocument currDoc = new LawDocument(articleInfo,
                     LawDocumentType.ARTICLE.name() + " " + articles[i]);
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());

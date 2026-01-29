@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 public class FullMemberView extends MemberView {
 
     protected PersonView personView;
+    protected MemberServiceView service;
     protected Map<Integer, List<SessionMemberView>> sessionShortNameMap;
 
     public FullMemberView(FullMember member) {
         super(member.getLatestSessionMember().orElse(null));
         this.personView = new PersonView(member.getPerson());
+        this.service = new MemberServiceView(member);
         this.sessionShortNameMap = member.getSessionMemberMap().keySet().stream()
                 .collect(Collectors.toMap(SessionYear::year,
                         session -> member.getSessionMemberMap().get(session).stream()
@@ -31,6 +33,10 @@ public class FullMemberView extends MemberView {
 
     public PersonView getPerson() {
         return personView;
+    }
+
+    public MemberServiceView getService() {
+        return service;
     }
 
     public Map<Integer, List<SessionMemberView>> getSessionShortNameMap() {

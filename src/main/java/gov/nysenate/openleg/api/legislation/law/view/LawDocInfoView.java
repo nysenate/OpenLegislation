@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class LawDocInfoView implements ViewObject
 {
@@ -13,6 +14,7 @@ public class LawDocInfoView implements ViewObject
     protected String locationId;
     protected String title;
     protected String docType;
+    protected List<LocalDate> publishedDates;
     // TODO: should really be docTypeId.
     protected String docLevelId;
     protected LocalDate activeDate;
@@ -24,6 +26,7 @@ public class LawDocInfoView implements ViewObject
             this.locationId = docInfo.getLocationId();
             this.title = (docInfo.getTitle() != null) ? docInfo.getTitle().replaceAll("\\\\n", " ") : null;
             this.docType = docInfo.getDocType().name();
+            this.publishedDates = docInfo.getPublishedDates();
             this.docLevelId = docInfo.getDocTypeId();
             this.activeDate = docInfo.getPublishedDate();
         }
@@ -52,6 +55,10 @@ public class LawDocInfoView implements ViewObject
 
     public String getDocType() {
         return docType;
+    }
+
+    public List<LocalDate> getPublishedDates() {
+        return publishedDates;
     }
 
     public String getDocLevelId() {

@@ -17,12 +17,12 @@ import java.util.Objects;
 public record SessionYear(int year) implements Serializable, Comparable<SessionYear> {
     @Serial
     private static final long serialVersionUID = 4084929981265208671L;
+    private static final int senateStartYear = 1777;
 
     public SessionYear(int year) {
         int computedSession = (year % 2 == 0) ? year - 1 : year;
-        if (computedSession <= 0) {
-            throw new IllegalArgumentException("Session year must be positive! " +
-                    "(" + computedSession + " computed from " + year + ")");
+        if (computedSession < senateStartYear) {
+            throw new BadSessionYearException(year, senateStartYear);
         }
         this.year = computedSession;
     }
@@ -66,18 +66,5 @@ public record SessionYear(int year) implements Serializable, Comparable<SessionY
     @Override
     public int compareTo(SessionYear o) {
         return ComparisonChain.start().compare(this.year, o.year).result();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SessionYear that = (SessionYear) o;
-        return year == that.year;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(year);
     }
 }

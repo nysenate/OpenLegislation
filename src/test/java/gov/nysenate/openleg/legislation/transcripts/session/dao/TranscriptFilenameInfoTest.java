@@ -34,10 +34,9 @@ public class TranscriptFilenameInfoTest {
 
     @Test
     public void fromTranscriptTest() {
-        var id = new TranscriptId(LocalDate.of(1, 1, 1).atStartOfDay(), new SessionType("Regular Session"));
+        var id = new TranscriptId(LocalDate.of(2001, 1, 1).atStartOfDay(), new SessionType("Regular Session"));
         var transcript = new Transcript(id, DayType.SESSION, "010101.txt", "Mars", "");
         assertTrue(new TranscriptFilenameInfo(transcript).getMismatches().isEmpty());
-
     }
 
     private static void createAndTest(String filename1, String filename2, LocalDate date, DayType dayType, String sessionType,

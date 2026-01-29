@@ -10,8 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
-public class SessionYearTest
-{
+public class SessionYearTest {
     @Test
     public void basicTest() {
         assertEquals(SessionYear.current(), new SessionYear(LocalDate.now().getYear()));
@@ -20,7 +19,7 @@ public class SessionYearTest
         assertEquals(1999, new SessionYear(2000).year());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = BadSessionYearException.class)
     public void zeroSessionTest() {
         new SessionYear(0);
     }

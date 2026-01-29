@@ -14,9 +14,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Array;
+import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,16 +193,38 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
      * Constructs LawDocInfo from result set.
      */
     private static final RowMapper<LawDocInfo> lawDocInfoRowMapper = (rs, rowNum) ->
-        new LawDocInfo(
-                rs.getString("document_id"),
-                rs.getString("law_id"),
-                rs.getString("location_id"),
-                rs.getString("title"),
-                LawDocumentType.valueOf(rs.getString("document_type")),
-                rs.getString("document_type_id"),
-                getLocalDateFromRs(rs, "published_date"),
-                rs.getBoolean("dummy")
-        );
+        {
+            LawDocInfo lawDocInfo = new LawDocInfo(
+                    rs.getString("document_id"),
+                    getLocalDateFromRs(rs, "published_date"),
+                    rs.getString("law_id"),
+                    rs.getString("location_id"),
+                    rs.getString("title"),
+                    LawDocumentType.valueOf(rs.getString("document_type")),
+                    rs.getString("document_type_id"),
+                    getLocalDateListFromArray(rs, "all_published_dates"),
+                    rs.getBoolean("dummy")
+            );
+            return lawDocInfo;
+        };
+
+    private static List<LocalDate> getLocalDateListFromArray(ResultSet rs, String column) throws SQLException {
+        Array sqlArray = rs.getArray(column);
+        if (sqlArray == null) {
+            return null;
+        }
+        try {
+            Date[] dates = (Date[]) sqlArray.getArray();
+            if (dates == null) {
+                return null;
+            }
+            return Arrays.stream(dates)
+                    .map(date -> date != null ? date.toLocalDate() : null)
+                    .toList();
+        } finally {
+            sqlArray.free();
+        }
+    }
 
     /**
      * Constructs a LawInfo from the result set.

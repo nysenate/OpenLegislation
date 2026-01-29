@@ -8,7 +8,7 @@ import gov.nysenate.openleg.api.response.error.*;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.BadSessionYearException;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
@@ -167,22 +167,6 @@ public abstract class BaseCtrl {
             return parseISODateTime(dateTimeString, "don't matter");
         } catch (InvalidRequestParamEx ex) {
             return defaultValue;
-        }
-    }
-
-    /**
-     * Validate and return a session year given a year.
-     *
-     * @param year int
-     * @param paramName String
-     * @return {@link SessionYear}
-     */
-    protected static SessionYear getSessionYearParam(int year, String paramName) {
-        try {
-            return SessionYear.of(year);
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidRequestParamEx(
-                    Integer.toString(year), paramName, "int", "Must be a positive integer.");
         }
     }
 
@@ -440,6 +424,12 @@ public abstract class BaseCtrl {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleSessionTypeParseException(SessionTypeParseException ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
+    }
+
+    @ExceptionHandler(BadSessionYearException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleBadSessionYearException(BadSessionYearException ex) {
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, ex.getMessage());
     }
 

@@ -3,6 +3,8 @@ package gov.nysenate.openleg.legislation.law;
 import gov.nysenate.openleg.processors.law.LawBlock;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 public class LawDocInfo extends LawDocId
 {
@@ -17,6 +19,11 @@ public class LawDocInfo extends LawDocId
      * 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
 
+    /**
+     * All published dates relevant to this specific Law Document.
+     */
+    protected List<LocalDate> publishedDates = Collections.emptyList();
+
     /** True if this doc was created as a dummy.  i.e it was created by the parser but not specified in the sources.*/
     protected boolean dummy = false;
 
@@ -24,28 +31,29 @@ public class LawDocInfo extends LawDocId
 
     public LawDocInfo() {}
 
-    public LawDocInfo(String documentId, String lawId, String locationId, String title, LawDocumentType docType,
-                      String docTypeId, LocalDate publishedDate, boolean dummy) {
+    public LawDocInfo(String documentId, LocalDate publishedDate, String lawId, String locationId, String title,
+                      LawDocumentType docType, String docTypeId, List<LocalDate> publishedDates, boolean dummy) {
         super(documentId, publishedDate, locationId, lawId);
         this.title = title;
         this.docType = docType;
         this.docTypeId = docTypeId;
+        this.publishedDates = publishedDates == null ? Collections.emptyList() : publishedDates;
         this.dummy = dummy;
     }
 
+    public LawDocInfo(String documentId, LocalDate publishedDate, String lawId, String locationId, String title,
+                      LawDocumentType docType, String docTypeId) {
+        this(documentId, publishedDate, lawId, locationId, title,
+                docType, docTypeId, Collections.emptyList(), false);
+    }
+
     public LawDocInfo(LawDocInfo other) {
-        super(other);
-        this.title = other.title;
-        this.docType = other.docType;
-        this.docTypeId = other.docTypeId;
-        this.dummy = other.dummy;
+        this(other.documentId, other.publishedDate, other.lawId, other.locationId, other.title,
+                other.docType, other.docTypeId, other.publishedDates, other.dummy);
     }
 
     public LawDocInfo(LawBlock lawBlock) {
-        this.documentId = lawBlock.getDocumentId();
-        this.lawId = lawBlock.getLawId();
-        this.locationId = lawBlock.getLocationId();
-        this.publishedDate = lawBlock.getPublishedDate();
+        super(lawBlock.getDocumentId(), lawBlock.getPublishedDate(), lawBlock.getLocationId(), lawBlock.getLawId());
     }
 
     /** --- Overrides --- */
@@ -79,6 +87,14 @@ public class LawDocInfo extends LawDocId
 
     public void setDocTypeId(String docTypeId) {
         this.docTypeId = docTypeId;
+    }
+
+    public List<LocalDate> getPublishedDates() {
+        return publishedDates;
+    }
+
+    public void setPublishedDates(List<LocalDate> publishedDates) {
+        this.publishedDates = publishedDates == null ? Collections.emptyList() : publishedDates;
     }
 
     public boolean isDummy() {
