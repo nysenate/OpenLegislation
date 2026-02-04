@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 
 /**
@@ -13,6 +15,7 @@ public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
     private final DayType dayType;
     private final String location, text, filename;
+    private final LinkedHashSet<BaseBillId> linkedBills;
 
     /** --- Constructors --- */
 
@@ -26,6 +29,20 @@ public class Transcript extends BaseLegislativeContent {
         this.location = location;
         this.text =  text;
         this.filename = filename;
+        this.linkedBills = new LinkedHashSet<>();
+    }
+
+    public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text, LinkedHashSet<BaseBillId> linkedBills) {
+        super(id.dateTime().getYear());
+        this.id = id;
+        if (dayType == null) {
+            throw new IllegalArgumentException("dayType cannot be null");
+        }
+        this.dayType = dayType;
+        this.location = location;
+        this.text =  text;
+        this.filename = filename;
+        this.linkedBills = linkedBills;
     }
 
     public TranscriptId getId() {
@@ -56,6 +73,8 @@ public class Transcript extends BaseLegislativeContent {
     public String getFilename() {
         return filename;
     }
+
+    public LinkedHashSet<BaseBillId> getLinkedBills() { return linkedBills; }
 
     @Override
     public boolean equals(Object o) {

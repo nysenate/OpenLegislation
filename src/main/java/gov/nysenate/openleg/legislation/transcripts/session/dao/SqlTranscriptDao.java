@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.common.util.DateUtils;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
@@ -42,9 +44,23 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     /** {@inheritDoc} */
     @Override
     public void updateTranscript(Transcript transcript) {
+        LinkedHashSet<BaseBillId> billIds = transcript.getLinkedBills();
         MapSqlParameterSource params = getTranscriptParams(transcript);
         if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_TRANSCRIPT.getSql(schema()), params);
+        }
+        else {
+            for (BaseBillId billId : billIds) {
+                params.addValue("billPrintNo", billId.getBasePrintNo())
+                        .addValue("billSessionYear", billId.getSession().year());
+                jdbcNamed.update(DELETE_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
+
+            }
+        }
+        for (BaseBillId billId : billIds) {
+            params.addValue("billPrintNo", billId.getBasePrintNo())
+                    .addValue("billSessionYear", billId.getSession().year());
+            jdbcNamed.update(INSERT_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
         }
     }
 

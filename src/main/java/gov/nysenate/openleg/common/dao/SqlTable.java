@@ -118,6 +118,7 @@ public enum SqlTable {
 
     TRANSCRIPT                   ("transcript"),
     TRANSCRIPT_FILE              ("transcript_file"),
+    TRANSCRIPT_BILLS             ("transcript_bills"),
 
     HEARING                      ("hearing"),
     HEARING_HOST                 ("hearing_host"),

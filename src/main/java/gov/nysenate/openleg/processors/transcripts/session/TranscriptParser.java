@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
+import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.processors.ParseError;
 import org.apache.commons.io.Charsets;
@@ -12,9 +14,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class TranscriptParser {
     private static final Charset CP_850 = Charset.forName("CP850"),
@@ -50,7 +51,60 @@ public final class TranscriptParser {
             LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.parse(timeStr, TIME_FORMATTER));
             DayType dayType = DayType.from(transcriptText);
             TranscriptId transcriptId = new TranscriptId(dateTime, new SessionType(data.get(3)));
-            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
+
+            // transcripts before 2009 describe bills differently
+            if (dateTime.getYear() < 2009) {
+                return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
+            }
+
+            // include parsed bills in transcript data
+            String input = transcriptText.replaceAll("\\d+\\s+", "").replaceAll("\\s+", " ");
+            SessionYear sessionYear = new SessionYear(dateTime.getYear());
+            LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
+
+            // Parse for Senate Bills
+            Pattern.compile("Senate (?:Print )?(?:Bill )?(?:Number )?(\\d+)w?", Pattern.CASE_INSENSITIVE)
+                    .matcher(input)
+                    .results()
+                    .map(m -> "S" + m.group(1))
+                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+            // Parse for Assembly Bills
+            Pattern.compile("Assembly (?:Print )?(?:Bill )?(?:Number )?(\\d+)w?", Pattern.CASE_INSENSITIVE)
+                    .matcher(input)
+                    .results()
+                    .map(m -> "A" + m.group(1))
+                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+            // Parse for Senate Resolutions
+            Pattern.compile("Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
+                    .matcher(input)
+                    .results()
+                    .map(m -> "J" + m.group(1))
+                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+
+            /* TODO: Add assembly resolutions if applicable (K####)
+             * It is unclear if senate transcripts include references to assembly resolutions
+             * Jan 7, 2026 refers to a assemblyConcurrentResolution as "Assembly Resolution ####"
+             */
+//            Pattern.compile("", Pattern.CASE_INSENSITIVE)
+//                    .matcher(input)
+//                    .results()
+//                    .map(m -> "K" + m.group(1))
+//                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+
+            // Parse for Senate Concurrent Resolutions
+            Pattern.compile("Senate Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
+                    .matcher(input)
+                    .results()
+                    .map(m -> "B" + m.group(1))
+                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+            // Parse for Assembly Concurrent Resolutions
+            Pattern.compile("Assembly Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
+                    .matcher(input)
+                    .results()
+                    .map(m -> "C" + m.group(1))
+                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+
+            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText, billIds);
         }
         catch (RuntimeException ex) {
             throw new ParseError("Problem parsing " + transcriptFile.getFileName(), ex);

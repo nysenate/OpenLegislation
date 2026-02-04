@@ -23,6 +23,15 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
         "(date_time, session_type, day_type, location, text, transcript_filename)\n" +
         "VALUES (:dateTime, :sessionType, :dayType, :location, :text, :transcriptFilename)"
     ),
+    INSERT_TRANSCRIPT_BILL_IDS (
+        "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+        "(session_type, date_time, bill_print_no, bill_session_year)\n" +
+        "VALUES (:sessionType, :dateTime, :billPrintNo, :billSessionYear)"
+    ),
+    DELETE_TRANSCRIPT_BILL_IDS (
+        "DELETE FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+        "WHERE session_type = :sessionType AND date_time = :dateTime AND bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear"
+    ),
     SELECT_TRANSCRIPTS_UPDATED_DURING (
         "SELECT date_time, session_type, modified_date_time, COUNT(*) OVER() as total_updated " +
         "FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
