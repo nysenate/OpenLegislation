@@ -13,6 +13,12 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     SELECT_TRANSCRIPT_BY_ID (
         SELECT_TRANSCRIPT_BY_DATE_TIME.sql + " AND session_type ILIKE :sessionType"
     ),
+    SELECT_TRANSCRIPTS_AND_BILLS (
+        "SELECT * FROM ${schema}." + SqlTable.TRANSCRIPT + " AS t\n" +
+        "LEFT JOIN ${schema}." + SqlTable.TRANSCRIPT_BILLS + " AS b\n" +
+        "ON t.session_type = b.session_type AND t.date_time = b.date_time\n" +
+        "WHERE t.date_time = :dateTime AND t.session_type ILIKE :sessionType"
+    ),
     UPDATE_TRANSCRIPT (
         "UPDATE ${schema}." + SqlTable.TRANSCRIPT + "\n" +
         "SET day_type = :dayType, location = :location, text = :text, modified_date_time = :modified_date_time, transcript_filename = :transcriptFilename\n" +
@@ -26,7 +32,11 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     INSERT_TRANSCRIPT_BILL_IDS (
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
         "(session_type, date_time, bill_print_no, bill_session_year)\n" +
-        "VALUES (:sessionType, :dateTime, :billPrintNo, :billSessionYear)"
+        "SELECT :sessionType, :dateTime, :billPrintNo, :billSessionYear\n" +
+        "WHERE EXISTS (\n" +
+        "   SELECT 1\n" +
+        "   FROM ${schema}." + SqlTable.BILL + "\n" +
+        "   WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear)"
     ),
     DELETE_TRANSCRIPT_BILL_IDS (
         "DELETE FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +

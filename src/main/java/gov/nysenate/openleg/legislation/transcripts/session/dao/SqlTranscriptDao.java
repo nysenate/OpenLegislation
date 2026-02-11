@@ -9,6 +9,8 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -36,7 +38,8 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         SqlTranscriptQuery query = SELECT_TRANSCRIPT_BY_DATE_TIME;
         if (transcriptId.sessionType() != null) {
             params.addValue("sessionType", transcriptId.sessionType().toString());
-            query = SELECT_TRANSCRIPT_BY_ID;
+            query = SELECT_TRANSCRIPTS_AND_BILLS;
+            return jdbcNamed.query(query.getSql(schema()), params, transcriptResultSetExtractor);
         }
         return jdbcNamed.queryForObject(query.getSql(schema()), params, transcriptRowMapper);
     }
@@ -88,6 +91,40 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     }
 
     /** --- Row Mapper Instances --- */
+
+    // gets parsed bill data associated with the transcript
+    private static final ResultSetExtractor<Transcript> transcriptResultSetExtractor = (rs) -> {
+        if (!rs.next()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
+        // read first row of result set for most transcript values
+        LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
+        LocalDateTime modifiedDateTime = getLocalDateTimeFromRs(rs, "modified_date_time");
+        LocalDateTime publishedDateTime = getLocalDateTimeFromRs(rs, "published_date_time");
+        TranscriptId id = TranscriptId.from(dateTime, rs.getString("session_type"));
+        String dayTypeStr = rs.getString("day_type");
+        String filename = rs.getString("transcript_filename");
+        String location = rs.getString("location");
+        String text = rs.getString("text");
+
+        LinkedHashSet<BaseBillId> linkedBills = new LinkedHashSet<>();
+        // do-while reuses first row for bill data
+        do {
+            String printNo = rs.getString("bill_print_no");
+            int year = rs.getInt("bill_session_year");
+
+            if (printNo != null && year != 0) {
+                linkedBills.add(new BaseBillId(printNo, year));
+            }
+        }
+        while (rs.next());
+
+        Transcript transcript = new Transcript(id, DayType.valueOf(dayTypeStr), filename, location, text, linkedBills);
+        transcript.setModifiedDateTime(modifiedDateTime);
+        transcript.setPublishedDateTime(publishedDateTime);
+        return transcript;
+    };
 
     private static final RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
         LocalDateTime dateTime = getLocalDateTimeFromRs(rs, "date_time");
