@@ -20,16 +20,7 @@ public class Transcript extends BaseLegislativeContent {
     /** --- Constructors --- */
 
     public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text) {
-        super(id.dateTime().getYear());
-        this.id = id;
-        if (dayType == null) {
-            throw new IllegalArgumentException("dayType cannot be null");
-        }
-        this.dayType = dayType;
-        this.location = location;
-        this.text =  text;
-        this.filename = filename;
-        this.linkedBills = new LinkedHashSet<>();
+        this(id, dayType, filename, location, text, new LinkedHashSet<>());
     }
 
     public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text, LinkedHashSet<BaseBillId> linkedBills) {

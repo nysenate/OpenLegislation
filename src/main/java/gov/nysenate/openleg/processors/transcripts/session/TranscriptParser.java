@@ -52,24 +52,24 @@ public final class TranscriptParser {
             DayType dayType = DayType.from(transcriptText);
             TranscriptId transcriptId = new TranscriptId(dateTime, new SessionType(data.get(3)));
 
-            // transcripts before 2009 describe bills differently
+            // We don't have bill data before 2009
             if (dateTime.getYear() < 2009) {
                 return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
             }
 
             // include parsed bills in transcript data
-            String input = transcriptText.replaceAll("\\d+\\s+", "").replaceAll("\\s+", " ");
+            String input = transcriptText.replaceAll("\\d*\\s{2,}", " ");
             SessionYear sessionYear = new SessionYear(dateTime.getYear());
             LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
 
             // Parse for Senate Bills
-            Pattern.compile("Senate (?:Print )?(?:Bill )?(?:Number )?(\\d+)w?", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("Senate (?:Print )?(?:Bill )?(?:Number )?(\\d+)\\w?", Pattern.CASE_INSENSITIVE)
                     .matcher(input)
                     .results()
                     .map(m -> "S" + m.group(1))
                     .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
             // Parse for Assembly Bills
-            Pattern.compile("Assembly (?:Print )?(?:Bill )?(?:Number )?(\\d+)w?", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("Assembly (?:Print )?(?:Bill )?(?:Number )?(\\d+)\\w?", Pattern.CASE_INSENSITIVE)
                     .matcher(input)
                     .results()
                     .map(m -> "A" + m.group(1))
@@ -80,16 +80,6 @@ public final class TranscriptParser {
                     .results()
                     .map(m -> "J" + m.group(1))
                     .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
-
-            /* TODO: Add assembly resolutions if applicable (K####)
-             * It is unclear if senate transcripts include references to assembly resolutions
-             * Jan 7, 2026 refers to a assemblyConcurrentResolution as "Assembly Resolution ####"
-             */
-//            Pattern.compile("", Pattern.CASE_INSENSITIVE)
-//                    .matcher(input)
-//                    .results()
-//                    .map(m -> "K" + m.group(1))
-//                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
 
             // Parse for Senate Concurrent Resolutions
             Pattern.compile("Senate Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
