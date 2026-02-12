@@ -380,6 +380,14 @@ public enum SqlBillQuery implements BasicSqlQuery
         "JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " cs ON cse.calendar_sup_id = cs.id\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+
+    /** --- Associated Transcript Ids -- */
+
+    SELECT_TRANSCRIPT_IDS(
+            "SELECT session_type, date_time \n" +
+            "FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+            "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
     ;
 
 

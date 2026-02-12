@@ -8,6 +8,7 @@ import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaIdView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarIdView;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeVersionIdView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 
@@ -32,6 +33,7 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
     protected ListView<CommAgendaIdView> committeeAgendas;
+    protected ListView<TranscriptIdView> transcripts;
     protected ListView<CalendarIdView> calendars;
 
     public BillView(){}
@@ -79,6 +81,9 @@ public class BillView extends BillInfoView implements ViewObject
 
             this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
                 .map(CommAgendaIdView::new).toList());
+
+            this.transcripts = ListView.of(bill.getTranscripts().stream()
+                    .map(TranscriptIdView::new).toList());
 
             this.calendars = ListView.of(bill.getCalendars().stream()
                 .map(CalendarIdView::new).toList());
@@ -129,6 +134,8 @@ public class BillView extends BillInfoView implements ViewObject
     public ListView<CommAgendaIdView> getCommitteeAgendas() {
         return committeeAgendas;
     }
+
+    public ListView<TranscriptIdView> getTranscripts() { return transcripts; }
 
     public ListView<CalendarIdView> getCalendars() {
         return calendars;

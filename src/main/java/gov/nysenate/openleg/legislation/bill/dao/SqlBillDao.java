@@ -20,6 +20,7 @@ import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
+import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -104,6 +105,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         bill.setCommitteeAgendas(getCommitteeAgendas(baseParams));
         // Get the associated calendars
         bill.setCalendars(getCalendars(baseParams));
+        // Get the associated transcripts
+        bill.setTranscripts(getTranscripts(baseParams));
         // Bill has been fully constructed
         return bill;
     }
@@ -442,6 +445,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         OrderBy orderBy = new OrderBy("cs.calendar_year", ASC, "cs.calendar_no", ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_CALENDAR_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
                 (rs, rowNum) -> new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
+    }
+
+    /**
+     * Get a list of the associated transcript ids.
+     */
+    public List<TranscriptId> getTranscripts(ImmutableParams baseParams) {
+        OrderBy orderBy = new OrderBy("date_time", ASC);
+        return jdbcNamed.query(SqlBillQuery.SELECT_TRANSCRIPT_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
+                (rs, rowNum) -> TranscriptId.from(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type")));
     }
 
     /**

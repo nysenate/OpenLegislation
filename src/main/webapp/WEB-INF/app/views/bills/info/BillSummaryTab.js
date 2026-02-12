@@ -11,6 +11,7 @@ export default function BillSummaryTab({ bill, selectedAmd }) {
       <Summary bill={bill} />
       <AffectedLaw amendment={bill.amendments.items[selectedAmd]} />
       <AgendaCalendarReferences bill={bill} />
+      <TranscriptReferences bill={bill} />
       <PreviousVersions bill={bill} />
     </div>
   )
@@ -159,6 +160,34 @@ function AgendaCalendarReferences({ bill }) {
           )
         })}
       </div>
+    </section>
+  )
+}
+
+function TranscriptReferences({ bill }) {
+  if (bill.transcripts.size === 0) {
+    return null
+  }
+
+  return (
+    <section className="mt-8">
+      <header>
+        <h3 className="h5">Transcript References</h3>
+        <div className="mx-5 my-3">
+          {bill.transcripts.items.map((transcript) => {
+            const date = new Date(transcript.dateTime);
+            const formattedDate = date.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+            const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            return (
+              <div key={`${transcript.dateTime}-${transcript.sessionType}`}>
+                <Link to={`/transcripts/session/${transcript.dateTime}/${transcript.sessionType}`} className="link">
+                  {transcript.sessionType} on {formattedDate} at {formattedTime}
+                </Link>
+              </div>
+            )
+          })}
+        </div>
+      </header>
     </section>
   )
 }
