@@ -181,7 +181,7 @@
 <h2>Get a single Member<a class="headerlink" href="#get-a-single-member" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve member by session year and member id</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">memberId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -200,47 +200,68 @@
 <tbody>
 <tr class="row-even"><td><p>full</p></td>
 <td><p>boolean</p></td>
-<td><p>(default true) Set to true to get a full member response instead of a summary.</p></td>
+<td><p>(default = true) Set to true to get a full member response instead of a summary.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Get member with id 371 during 2013 session year.</p>
+<p>Get member with member id 371 during 2013 session year.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">members</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="mi">371</span>
 </pre></div>
 </div>
 <p><strong>Sample Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;member-sessions&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mf">371</span><span class="p">,</span>
-    <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;incumbent&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;sessionShortNameMap&quot;</span> <span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&quot;2013&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
-        <span class="s2">&quot;sessionMemberId&quot;</span> <span class="o">:</span> <span class="mf">127</span><span class="p">,</span>
-        <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mf">2013</span><span class="p">,</span>
-        <span class="s2">&quot;districtCode&quot;</span> <span class="o">:</span> <span class="mf">51</span><span class="p">,</span>
-        <span class="s2">&quot;alternate&quot;</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mf">371</span>
-      <span class="p">}</span> <span class="p">]</span>
+  <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;member-sessions&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">371</span><span class="p">,</span>
+    <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>                  <span class="c1">// Chamber of service</span>
+    <span class="s2">&quot;incumbent&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                    <span class="c1">// Whether the member is currently serving</span>
+    <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;service&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;sessionYearsServed&quot;</span><span class="o">:</span> <span class="p">[</span>             <span class="c1">// Sorted list of session years served</span>
+        <span class="mf">2009</span><span class="p">,</span>
+        <span class="mf">2011</span><span class="p">,</span>
+        <span class="mf">2013</span><span class="p">,</span>
+        <span class="mf">2015</span>
+        <span class="p">]</span>
     <span class="p">},</span>
-    <span class="s2">&quot;person&quot;</span> <span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&quot;personId&quot;</span> <span class="o">:</span> <span class="mf">190</span><span class="p">,</span>
-      <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;firstName&quot;</span> <span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;middleName&quot;</span> <span class="o">:</span> <span class="s2">&quot;L.&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;lastName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Seward&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;email&quot;</span> <span class="o">:</span> <span class="s2">&quot;seward@senate.state.ny.us&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;prefix&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senator&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;suffix&quot;</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-      <span class="s2">&quot;verified&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="s2">&quot;imgName&quot;</span> <span class="o">:</span> <span class="s2">&quot;371_james_l._seward.jpg&quot;</span>
+    <span class="s2">&quot;sessionShortNameMap&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;2009&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s2">&quot;sessionMemberId&quot;</span><span class="o">:</span> <span class="mf">3</span><span class="p">,</span>
+          <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2009</span><span class="p">,</span>
+          <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">51</span><span class="p">,</span>
+          <span class="s2">&quot;alternate&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">371</span>
+        <span class="p">}</span>
+      <span class="p">],</span>
+      <span class="s2">&quot;2011&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s2">&quot;sessionMemberId&quot;</span><span class="o">:</span> <span class="mf">65</span><span class="p">,</span>
+          <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;SEWARD&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mf">2011</span><span class="p">,</span>
+          <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mf">51</span><span class="p">,</span>
+          <span class="s2">&quot;alternate&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mf">371</span>
+        <span class="p">}</span>
+      <span class="p">],</span>
+      <span class="c1">// ...</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;person&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;personId&quot;</span><span class="o">:</span> <span class="mf">190</span><span class="p">,</span>
+      <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;James L. Seward&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;firstName&quot;</span><span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;middleName&quot;</span><span class="o">:</span> <span class="s2">&quot;L.&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;lastName&quot;</span><span class="o">:</span> <span class="s2">&quot;Seward&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;email&quot;</span><span class="o">:</span> <span class="s2">&quot;seward@senate.state.ny.us&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;prefix&quot;</span><span class="o">:</span> <span class="s2">&quot;Senator&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;suffix&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="s2">&quot;verified&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="s2">&quot;imgName&quot;</span><span class="o">:</span> <span class="s2">&quot;371_james_l._seward.jpg&quot;</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -277,7 +298,7 @@
 <td><p>(default = 50) Number of results to return</p></td>
 </tr>
 <tr class="row-odd"><td><p>offset</p></td>
-<td><p>&gt; 1</p></td>
+<td><p>&gt;= 1</p></td>
 <td><p>(default = 1) Result number to start from</p></td>
 </tr>
 <tr class="row-even"><td><p>full</p></td>
@@ -332,7 +353,7 @@
 <tbody>
 <tr class="row-even"><td><p>term</p></td>
 <td><p>string</p></td>
-<td><p><a class="reference internal" href="search_api.html#search-term"><span class="std std-ref">ElasticSearch query string</span></a></p></td>
+<td><p><a class="reference internal" href="search_api.html#search-term"><span class="std std-ref">Elasticsearch query string</span></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -355,7 +376,7 @@
 <td><p>(default = 50) Number of results to return</p></td>
 </tr>
 <tr class="row-odd"><td><p>offset</p></td>
-<td><p>&gt; 1</p></td>
+<td><p>&gt;= 1</p></td>
 <td><p>(default = 1) Result number to start from</p></td>
 </tr>
 <tr class="row-even"><td><p>full</p></td>
@@ -371,6 +392,10 @@
 <p><strong>Examples</strong></p>
 <p>List all members who have served district code 20</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/members/search?term=districtCode:20
+</pre></div>
+</div>
+<p>List all currently serving members for session year 2025</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/members/2025/search?term=incumbent:true
 </pre></div>
 </div>
 </div>

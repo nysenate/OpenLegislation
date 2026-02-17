@@ -9,19 +9,19 @@ Get a single Member
 Retrieve member by session year and member id
 ::
 
-    (GET) /api/3/members/{sessionYear}/{id}
+    (GET) /api/3/members/{sessionYear}/{memberId}
 
 **Optional Params**
 
 +-----------+---------+---------------------------------------------------------------------------------------------+
 | Parameter | Values  | Description                                                                                 |
 +===========+=========+=============================================================================================+
-| full      | boolean | (default true) Set to true to get a full member response instead of a summary.              |
+| full      | boolean | (default = true) Set to true to get a full member response instead of a summary.            |
 +-----------+---------+---------------------------------------------------------------------------------------------+
 
 **Examples**
 
-Get member with id 371 during 2013 session year.
+Get member with member id 371 during 2013 session year.
 ::
 
     /api/3/members/2013/371
@@ -31,36 +31,57 @@ Get member with id 371 during 2013 session year.
 .. code-block:: javascript
 
   {
-    "success" : true,
-    "message" : "",
-    "responseType" : "member-sessions",
-    "result" : {
-      "memberId" : 371,
-      "chamber" : "SENATE",
-      "incumbent" : true,
-      "fullName" : "James L. Seward",
-      "shortName" : "SEWARD",
-      "sessionShortNameMap" : {
-        "2013" : [ {
-          "sessionMemberId" : 127,
-          "shortName" : "SEWARD",
-          "sessionYear" : 2013,
-          "districtCode" : 51,
-          "alternate" : false,
-          "memberId" : 371
-        } ]
+    "success": true,
+    "message": "",
+    "responseType": "member-sessions",
+    "result": {
+      "memberId": 371,
+      "chamber": "SENATE",                  // Chamber of service
+      "incumbent": true,                    // Whether the member is currently serving
+      "fullName": "James L. Seward",
+      "shortName": "SEWARD",
+      "service": {
+        "sessionYearsServed": [             // Sorted list of session years served
+          2009,
+          2011,
+          2013,
+          2015
+          ]
       },
-      "person" : {
-        "personId" : 190,
-        "fullName" : "James L. Seward",
-        "firstName" : "James",
-        "middleName" : "L.",
-        "lastName" : "Seward",
-        "email" : "seward@senate.state.ny.us",
-        "prefix" : "Senator",
-        "suffix" : null,
-        "verified" : true,
-        "imgName" : "371_james_l._seward.jpg"
+      "sessionShortNameMap": {
+        "2009": [
+          {
+            "sessionMemberId": 3,
+            "shortName": "SEWARD",
+            "sessionYear": 2009,
+            "districtCode": 51,
+            "alternate": false,
+            "memberId": 371
+          }
+        ],
+        "2011": [
+          {
+            "sessionMemberId": 65,
+            "shortName": "SEWARD",
+            "sessionYear": 2011,
+            "districtCode": 51,
+            "alternate": false,
+            "memberId": 371
+          }
+        ],
+        // ...
+      },
+      "person": {
+        "personId": 190,
+        "fullName": "James L. Seward",
+        "firstName": "James",
+        "middleName": "L.",
+        "lastName": "Seward",
+        "email": "seward@senate.state.ny.us",
+        "prefix": "Senator",
+        "suffix": null,
+        "verified": true,
+        "imgName": "371_james_l._seward.jpg"
       }
     }
   }
@@ -88,7 +109,7 @@ List members in a chamber for a session year
 +===========+====================+======================================================================+
 | limit     | 1 - 1000           | (default = 50) Number of results to return                           |
 +-----------+--------------------+----------------------------------------------------------------------+
-| offset    | > 1                | (default = 1) Result number to start from                            |
+| offset    | >= 1               | (default = 1) Result number to start from                            |
 +-----------+--------------------+----------------------------------------------------------------------+
 | full      | boolean            | (default = false) Set to true to see the full member responses.      |
 +-----------+--------------------+----------------------------------------------------------------------+
@@ -134,7 +155,7 @@ Note: given a sessionMemberId = #### in a session year yyyy, you can get the mem
 +-----------+--------------------+--------------------------------------------------------+
 | Parameter | Values             | Description                                            |
 +===========+====================+========================================================+
-| term      | string             | :ref:`ElasticSearch query string<search-term>`         |
+| term      | string             | :ref:`Elasticsearch query string<search-term>`         |
 +-----------+--------------------+--------------------------------------------------------+
 
 **Optional Params**
@@ -144,7 +165,7 @@ Note: given a sessionMemberId = #### in a session year yyyy, you can get the mem
 +===========+====================+======================================================================+
 | limit     | 1 - 1000           | (default = 50) Number of results to return                           |
 +-----------+--------------------+----------------------------------------------------------------------+
-| offset    | > 1                | (default = 1) Result number to start from                            |
+| offset    | >= 1               | (default = 1) Result number to start from                            |
 +-----------+--------------------+----------------------------------------------------------------------+
 | full      | boolean            | (default = false) Set to true to see the full member responses.      |
 +-----------+--------------------+----------------------------------------------------------------------+
@@ -157,3 +178,8 @@ List all members who have served district code 20
 ::
 
     /api/3/members/search?term=districtCode:20
+
+List all currently serving members for session year 2025
+::
+
+    /api/3/members/2025/search?term=incumbent:true
