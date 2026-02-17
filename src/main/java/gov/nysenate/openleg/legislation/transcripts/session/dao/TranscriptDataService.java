@@ -6,6 +6,7 @@ import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptE
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,10 +16,20 @@ import java.util.List;
  */
 public interface TranscriptDataService {
     /**
-     * Attempts to fetch a transcript based only on it's dateTime.
+     * Attempts to fetch a transcript based only on its dateTime.
      * @throws DuplicateTranscriptEx if multiple transcripts have the same dateTime.
      */
-    Transcript getTranscriptByDateTime(LocalDateTime localDateTime) throws TranscriptNotFoundEx, DuplicateTranscriptEx;
+    default Transcript getTranscriptByDateTime(LocalDateTime localDateTime) throws TranscriptNotFoundEx, DuplicateTranscriptEx {
+        if (localDateTime == null) {
+            throw new IllegalArgumentException("TranscriptId cannot be null");
+        }
+        try {
+            return getTranscript(new TranscriptId(localDateTime, null));
+        }
+        catch (IncorrectResultSizeDataAccessException ex) {
+            throw new DuplicateTranscriptEx(localDateTime);
+        }
+    }
 
     /**
      * Fetch a transcript given an id.
