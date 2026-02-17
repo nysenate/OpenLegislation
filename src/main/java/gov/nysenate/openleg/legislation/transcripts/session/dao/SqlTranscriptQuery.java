@@ -13,11 +13,9 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     SELECT_TRANSCRIPT_BY_ID (
         SELECT_TRANSCRIPT_BY_DATE_TIME.sql + " AND session_type ILIKE :sessionType"
     ),
-    SELECT_TRANSCRIPTS_AND_BILLS (
-        "SELECT * FROM ${schema}." + SqlTable.TRANSCRIPT + " AS t\n" +
-        "LEFT JOIN ${schema}." + SqlTable.TRANSCRIPT_BILLS + " AS b\n" +
-        "ON t.session_type = b.session_type AND t.date_time = b.date_time\n" +
-        "WHERE t.date_time = :dateTime AND t.session_type ILIKE :sessionType"
+    SELECT_TRANSCRIPT_BILLS (
+        "SELECT bill_print_no, bill_session_year FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+        "WHERE date_time = :dateTime AND session_type ILIKE :sessionType"
     ),
     UPDATE_TRANSCRIPT (
         "UPDATE ${schema}." + SqlTable.TRANSCRIPT + "\n" +
@@ -40,7 +38,7 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     ),
     DELETE_TRANSCRIPT_BILL_IDS (
         "DELETE FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
-        "WHERE session_type = :sessionType AND date_time = :dateTime AND bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear"
+        "WHERE session_type = :sessionType AND date_time = :dateTime"
     ),
     SELECT_TRANSCRIPTS_UPDATED_DURING (
         "SELECT date_time, session_type, modified_date_time, COUNT(*) OVER() as total_updated " +
