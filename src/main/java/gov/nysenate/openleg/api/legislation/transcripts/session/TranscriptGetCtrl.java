@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
@@ -37,14 +35,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class TranscriptGetCtrl extends BaseCtrl {
+public class TranscriptGetCtrl extends TranscriptBaseCtrl {
     private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
-    private final TranscriptDataService transcriptData;
     private final TranscriptSearchService transcriptSearch;
 
     @Autowired
     public TranscriptGetCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
-        this.transcriptData = transcriptData;
+        super(transcriptData);
         this.transcriptSearch = transcriptSearch;
     }
 
@@ -64,10 +61,11 @@ public class TranscriptGetCtrl extends BaseCtrl {
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
                                           @RequestParam(defaultValue = "true") boolean sessionOnly,
+                                          @RequestParam(defaultValue = "") String linkType,
                                           WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff, sessionOnly);
-        return getTranscriptResponse(summary, full, limOff, results);
+        return getTranscriptResponse(summary, full, linkType, limOff, results);
     }
 
     /**
@@ -87,10 +85,11 @@ public class TranscriptGetCtrl extends BaseCtrl {
                                              @RequestParam(defaultValue = "false") boolean summary,
                                              @RequestParam(defaultValue = "false") boolean full,
                                              @RequestParam(defaultValue = "true") boolean sessionOnly,
+                                             @RequestParam(defaultValue = "") String linkType,
                                              WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff, sessionOnly);
-        return getTranscriptResponse(summary, full, limOff, results);
+        return getTranscriptResponse(summary, full, linkType, limOff, results);
     }
 
 
@@ -102,10 +101,11 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * Expected Output: TranscriptView
      */
     @RequestMapping("/{dateTime:.*}")
-    public BaseResponse getTranscript(@PathVariable String dateTime) {
+    public BaseResponse getTranscript(@PathVariable String dateTime,
+                                      @RequestParam(defaultValue = "") String linkType) {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         return new ViewObjectResponse<>(
-                new TranscriptView(transcriptData.getTranscriptByDateTime(localDateTime)),
+                getFullView(linkType, transcriptData.getTranscriptByDateTime(localDateTime)),
                 "Data for transcript " + dateTime);
     }
 
@@ -117,10 +117,11 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * Expected Output: TranscriptView
      */
     @RequestMapping("/{dateTime}/{sessionType}")
-    public BaseResponse getTranscript(@PathVariable String dateTime, @PathVariable String sessionType) {
+    public BaseResponse getTranscript(@PathVariable String dateTime, @PathVariable String sessionType,
+                                      @RequestParam(defaultValue = "") String linkType) {
         var id = TranscriptId.from(parseISODateTime(dateTime, "dateTime"), sessionType);
-        return new ViewObjectResponse<>(new TranscriptView(transcriptData.getTranscript(id)),
-                "Data for transcript " + dateTime);
+        return new ViewObjectResponse<>(getFullView(linkType, transcriptData.getTranscript(id)),
+                "Data for transcript " + id);
     }
 
     /**
@@ -150,9 +151,10 @@ public class TranscriptGetCtrl extends BaseCtrl {
 
     /** --- Internal --- */
 
-    private BaseResponse getTranscriptResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
+    private BaseResponse getTranscriptResponse(boolean summary, boolean full, String linkType,
+                                               LimitOffset limOff, SearchResults<TranscriptId> results) {
         return ListViewResponse.of(results.resultList().stream().map(r ->
-            (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
+            (full) ? getFullView(linkType, transcriptData.getTranscript(r.result()))
                     : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
                     : new TranscriptIdView(r.result()))
             .toList(), results.totalResults(), limOff);

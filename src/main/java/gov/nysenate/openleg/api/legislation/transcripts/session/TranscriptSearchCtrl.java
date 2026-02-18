@@ -1,9 +1,5 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
@@ -25,14 +21,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class TranscriptSearchCtrl extends BaseCtrl {
+public class TranscriptSearchCtrl extends TranscriptBaseCtrl {
     private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
-    private final TranscriptDataService transcriptData;
     private final TranscriptSearchService transcriptSearch;
 
     @Autowired
     public TranscriptSearchCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
-        this.transcriptData = transcriptData;
+        super(transcriptData);
         this.transcriptSearch = transcriptSearch;
     }
 
@@ -53,10 +48,11 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                      @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      @RequestParam(defaultValue = "true") boolean sessionOnly,
+                                     @RequestParam(defaultValue = "") String linkType,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff, sessionOnly);
-        return getSearchResponse(summary, full, limOff, results);
+        return getSearchResponse(summary, full, linkType, limOff, results);
     }
 
     /**
@@ -72,17 +68,17 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                    @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
                                    @RequestParam(defaultValue = "true") boolean sessionOnly,
+                                   @RequestParam(defaultValue = "") String linkType,
                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff, sessionOnly);
-        return getSearchResponse(summary, full, limOff, results);
+        return getSearchResponse(summary, full, linkType, limOff, results);
     }
 
-    private BaseResponse getSearchResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
+    private BaseResponse getSearchResponse(boolean summary, boolean full, String linkType,
+                                             LimitOffset limOff, SearchResults<TranscriptId> results) {
         return ListViewResponse.of(results.resultList().stream().map(r -> new SearchResultView(
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
-                        : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
-                        : new TranscriptIdView(r.result()), r.rank(), r.highlights()))
+                        getTranscriptView(summary, full, linkType, r.result()), r.rank(), r.highlights()))
                 .toList(), results.totalResults(), limOff);
     }
 }

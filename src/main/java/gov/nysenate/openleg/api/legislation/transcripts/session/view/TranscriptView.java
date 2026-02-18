@@ -10,6 +10,11 @@ public class TranscriptView extends TranscriptInfoView {
         this.text = transcript.getText();
     }
 
+    public TranscriptView(Transcript transcript, String linkBase) {
+        super(transcript);
+        this.text = transcript.getLinkedText(linkBase);
+    }
+
     public String getText() {
         return text;
     }

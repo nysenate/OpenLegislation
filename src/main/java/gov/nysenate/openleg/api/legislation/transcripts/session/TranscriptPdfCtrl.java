@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
@@ -21,13 +20,12 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "/pdf/transcripts")
-public class TranscriptPdfCtrl extends BaseCtrl {
+public class TranscriptPdfCtrl extends TranscriptBaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptPdfCtrl.class);
-    private final TranscriptDataService transcriptData;
 
     @Autowired
     public TranscriptPdfCtrl(TranscriptDataService transcriptData) {
-        this.transcriptData = transcriptData;
+        super(transcriptData);
     }
 
     /**

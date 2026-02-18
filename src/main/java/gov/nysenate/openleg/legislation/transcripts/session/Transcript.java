@@ -58,14 +58,22 @@ public class Transcript extends BaseLegislativeContent {
     }
 
     public String getText() {
+        // TODO: return the plain text, without any links
         return text;
+    }
+
+    public String getLinkedText(String linkBase) {
+        // TODO: insert linkBase into the database's version of a Transcript's text
+        return null;
     }
 
     public String getFilename() {
         return filename;
     }
 
-    public LinkedHashSet<BaseBillId> getLinkedBills() { return linkedBills; }
+    public LinkedHashSet<BaseBillId> getLinkedBills() {
+        return linkedBills;
+    }
 
     @Override
     public boolean equals(Object o) {
