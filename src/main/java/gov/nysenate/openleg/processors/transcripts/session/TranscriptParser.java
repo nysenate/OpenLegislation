@@ -15,6 +15,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TranscriptParser {
@@ -26,18 +28,26 @@ public final class TranscriptParser {
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
 
-    private static final Pattern PAGE_AND_LINE_NUMBERS_PATTERN = Pattern.compile(
-            "^\\s*\\d+\\v*", Pattern.MULTILINE);
-    private static final Pattern EXCESS_WHITESPACE_PATTERN = Pattern.compile(
-            "\\s+");
+    private static final String WORD_SEP = "(?:\\h+|\\h*\\v\\h*(?:\\d+\\s+)*)+";
     private static final Pattern BILL_PATTERNS = Pattern.compile(
-            "\\bSenate (?:Print |Bill )(?:Number )?(\\d+)" +
-            "|\\bAssembly (?:Print |Bill )(?:Number )?(\\d+)" +
-            "|\\bResolution (?:Number )?(\\d+)" +
-            "|\\bSenate Concurrent Resolution (?:Number )?(\\d+)" +
-            "|\\bAssembly Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE);
+            "\\bSenate" + WORD_SEP + "(?:Print|Bill)" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
+                    "|\\bAssembly" + WORD_SEP + "(?:Print|Bill)" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
+                    "|\\bResolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
+                    "|\\bSenate" + WORD_SEP + "Concurrent" + WORD_SEP + "Resolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
+                    "|\\bAssembly" + WORD_SEP + "Concurrent" + WORD_SEP + "Resolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LINE_PAGE_BREAK_SEP = Pattern.compile(
+            "\\h*(?:\\v\\h*(?:\\d+\\s+)*)+");
 
     private TranscriptParser() {}
+
+    private static String toBillId(MatchResult m) {
+        if (m.group(1) != null) return "S" + m.group(1);
+        if (m.group(2) != null) return "A" + m.group(2);
+        if (m.group(3) != null) return "J" + m.group(3);
+        if (m.group(4) != null) return "B" + m.group(4);
+        if (m.group(5) != null) return "C" + m.group(5);
+        return null;
+    }
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
         var scanner = new Scanner(transcriptFile.getFile(), CP_850);
@@ -68,27 +78,42 @@ public final class TranscriptParser {
                 return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
             }
 
-            // remove page/line numbers and excess whitespace
-            String input = PAGE_AND_LINE_NUMBERS_PATTERN.matcher(transcriptText).replaceAll("");
-            input = EXCESS_WHITESPACE_PATTERN.matcher(input).replaceAll(" "); // also converts newlines to spaces
-
-            // parse for Senate Bills, Assembly Bills, Senate Resolutions, and Concurrent Resolutions
+            // parse for bill, resolution data and insert links into text
             SessionYear sessionYear = new SessionYear(dateTime.getYear());
             LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
-            BILL_PATTERNS.matcher(input).results()
-                    .map(m -> {
-                        if (m.group(1) != null) return "S" + m.group(1);
-                        if (m.group(2) != null) return "A" + m.group(2);
-                        if (m.group(3) != null) return "J" + m.group(3);
-                        if (m.group(4) != null) return "B" + m.group(4);
-                        if (m.group(5) != null) return "C" + m.group(5);
-                        return "err";
-                    })
-                    .forEach(m -> {
-                        if (!m.equals("err")) billIds.add(new BaseBillId(m, sessionYear));
-                    });
+            String textWithLinks = BILL_PATTERNS.matcher(transcriptText).replaceAll(match -> {
+                String billId = toBillId(match);
+                if (billId == null) return Matcher.quoteReplacement(match.group(0));
+                billIds.add(new BaseBillId(billId, sessionYear));
 
-            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText, billIds);
+                String href = "/bills/" + sessionYear.year() + "/" + billId;
+                String fullMatch = match.group(0);
+
+                String[] segments = LINE_PAGE_BREAK_SEP.split(fullMatch);
+                String[] separators = LINE_PAGE_BREAK_SEP.matcher(fullMatch).results()
+                        .map(r -> r.group(0))
+                        .toArray(String[]::new);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < segments.length; i++) {
+                    if (!segments[i].isBlank()) {
+                        stringBuilder.append("<a href=\"").append(href).append("\">")
+                                .append(segments[i].trim())
+                                .append("</a>");
+                    }
+                    else {
+                        stringBuilder.append(segments[i]);
+                    }
+
+                    if (i < separators.length) {
+                        stringBuilder.append(separators[i]);
+                    }
+                }
+                return Matcher.quoteReplacement(stringBuilder.toString());
+            });
+
+            System.out.println(textWithLinks);
+            return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), textWithLinks, billIds);
         }
         catch (RuntimeException ex) {
             throw new ParseError("Problem parsing " + transcriptFile.getFileName(), ex);

@@ -180,7 +180,7 @@ function TranscriptReferences({ bill }) {
             const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
             return (
               <div key={`${transcript.dateTime}-${transcript.sessionType}`}>
-                <Link to={`/transcripts/session/${transcript.dateTime}/${transcript.sessionType}`} className="link">
+                <Link to={`/transcripts/session/${transcript.dateTime}/${transcript.sessionType}#bills-${bill.session}-${bill.printNo}`} target="_blank" className="link">
                   {transcript.sessionType} on {formattedDate} at {formattedTime}
                 </Link>
               </div>
