@@ -57,7 +57,14 @@ public class Transcript extends BaseLegislativeContent {
         return location;
     }
 
-    public String getText() {
+    /**
+     * Returns the text as it exists in the database.
+     */
+    public String getUnformattedText() {
+        return text;
+    }
+
+    public String getPlainText() {
         // TODO: return the plain text, without any links
         return text;
     }

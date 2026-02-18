@@ -50,7 +50,7 @@ public class SqlTranscriptDaoIT extends BaseTests {
         }
         Transcript curr = TRANSCRIPTS.get(0);
         UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
-                curr.getLocation(), curr.getText() + "v1");
+                curr.getLocation(), curr.getPlainText() + "v1");
         try {
             UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
         } catch (FileNotFoundException e) {

@@ -101,7 +101,7 @@ public class FullTranscriptTests extends BaseTests {
     @Test
     public void testEncoding() {
         for (Transcript transcript : transcripts) {
-            var problemLines = transcript.getText().lines().map(line -> new TranscriptLine(line).getText())
+            var problemLines = transcript.getPlainText().lines().map(line -> new TranscriptLine(line).getText())
                     .filter(text -> !text.matches(validChars)).toList();
             if (!problemLines.isEmpty()) {
                 System.err.printf("Problems in %s:%n", transcript.getFilename());
@@ -122,7 +122,7 @@ public class FullTranscriptTests extends BaseTests {
     }
 
     private static Range<Integer> getPageNumRange(Transcript transcript) {
-        List<List<String>> pages = new TranscriptPdfParser(transcript.getText()).getPages();
+        List<List<String>> pages = new TranscriptPdfParser(transcript.getPlainText()).getPages();
         final int firstPageNum = Integer.parseInt(pages.get(0).get(0));
         int currPageNum = firstPageNum;
         for (int i = 1; i < pages.size(); i++) {

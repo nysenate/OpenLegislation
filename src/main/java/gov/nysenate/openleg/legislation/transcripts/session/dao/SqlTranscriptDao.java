@@ -78,7 +78,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
                 .addValue("dateTime", toDate(transcript.getDateTime()))
                 .addValue("dayType", transcript.getDayType().toString())
                 .addValue("location", transcript.getLocation())
-                .addValue("text", transcript.getText())
+                .addValue("text", transcript.getUnformattedText())
                 .addValue("modified_date_time", toDate(LocalDateTime.now()));
     }
 

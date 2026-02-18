@@ -48,7 +48,7 @@ public class TranscriptPdfParserTest {
     private void testTranscript(String dateTime, int expectedPageCount, int defaultPageLength,
                                 Map<Integer, Integer> badPageLengths) throws IOException {
         var tFile = new TranscriptFile(new File(TEST_FILE_DIR + dateTime.replaceAll(":", "")));
-        var pdfParser = new TranscriptPdfParser(TranscriptParser.parse(tFile).getText());
+        var pdfParser = new TranscriptPdfParser(TranscriptParser.parse(tFile).getPlainText());
         assertEquals(expectedNumberedLines, pdfParser.hasLineNumbers());
         List<List<String>> pages = pdfParser.getPages();
         assertEquals(expectedPageCount, pages.size());

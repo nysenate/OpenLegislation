@@ -7,7 +7,7 @@ public class TranscriptView extends TranscriptInfoView {
 
     public TranscriptView(Transcript transcript) {
         super(transcript);
-        this.text = transcript.getText();
+        this.text = transcript.getPlainText();
     }
 
     public TranscriptView(Transcript transcript, String linkBase) {
