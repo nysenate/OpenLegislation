@@ -65,6 +65,9 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
 function addLinks(text, linkedBills) {
   let textNodes = [text];
 
+  // match line or page breaks
+  const sep = `(\\s+\\d+\\s+)?`;
+
   for (const bill of linkedBills) {
     const billSplitIndex = bill.indexOf('-');
     const billPrintNo = bill.substring(0, billSplitIndex);
@@ -72,22 +75,36 @@ function addLinks(text, linkedBills) {
     const billYear = bill.substring(billSplitIndex + 1);
     let pattern;
 
-    if (bill.startsWith("S")) pattern = new RegExp(`(Senate (?:Print )?(?:Bill )?(?:Number )?${billNo}\\w?)`, 'g');
-    else if (bill.startsWith("A")) pattern = new RegExp(`(Assembly (?:Print )?(?:Bill )?(?:Number )?${billNo}\\w?)`, 'g');
-    else if (bill.startsWith("J")) pattern = new RegExp(`(Resolution (?:Number )?${billNo})`, 'g');
-    else if (bill.startsWith("B")) pattern = new RegExp(`(Senate Concurrent Resolution (?:Number )?${billNo})`, 'g');
-    else if (bill.startsWith("C")) pattern = new RegExp(`(Assembly Concurrent Resolution (?:Number )?${billNo})`, 'g');
+    if (bill.startsWith("S")) pattern = new RegExp(`(Senate (?:${sep}Print )?(?:${sep}Bill )?(?:${sep}Number )?${sep}${billNo}\\w?)`, 'g');
+    else if (bill.startsWith("A")) pattern = new RegExp(`(Assembly (?:${sep}Print )?(?:${sep}Bill )?(?:${sep}Number )?${sep}${billNo}\\w?)`, 'g');
+    else if (bill.startsWith("J")) pattern = new RegExp(`(Resolution (?:${sep}Number )?${sep}${billNo})`, 'g');
+    else if (bill.startsWith("B")) pattern = new RegExp(`(Senate ${sep}Concurrent ${sep}Resolution (?:${sep}Number )?${sep}${billNo})`, 'g');
+    else if (bill.startsWith("C")) pattern = new RegExp(`(Assembly ${sep}Concurrent ${sep}Resolution (?:${sep}Number )?${sep}${billNo})`, 'g');
     else continue;
 
     textNodes = textNodes.flatMap((node) => {
       if (typeof node !== 'string') return [node]; // skip over anything that has already been converted to a React element
 
       // odd indices are captured groups and should link to their respective bills, even indices are non-captured groups
-      return node.split(pattern).map((segment, i) =>
-        i % 2 === 1
-          ? <Link to={`/bills/${billYear}/${billPrintNo}`} target="_blank" className="link">{segment}</Link>
-          : segment
-      );
+      return node.split(pattern).map((segment, i) => {
+        if (!segment) return;
+        const newlineIndex = segment.search(/\n/);
+        if (newlineIndex === -1) {
+          return i % 2 === 1
+            ? <Link to={`/bills/${billYear}/${billPrintNo}`} target="_blank" className="link">{segment}</Link>
+            : segment;
+        }
+        else {
+          const charAfterNewlineIndex = segment.substring(newlineIndex).search(/[a-zA-Z]/) + newlineIndex;
+          return i % 2 === 1
+            ? <>
+              <Link to={`/bills/${billYear}/${billPrintNo}`} target="_blank" className="link">{segment.substring(0, newlineIndex).trim()}</Link>
+              {segment.substring(newlineIndex, charAfterNewlineIndex)}
+              <Link to={`/bills/${billYear}/${billPrintNo}`} target="_blank" className="link">{segment.substring(charAfterNewlineIndex)}</Link>
+            </>
+            : segment;
+        }
+      });
     });
   }
   return textNodes;

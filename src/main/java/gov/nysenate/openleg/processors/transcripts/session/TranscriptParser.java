@@ -26,6 +26,17 @@ public final class TranscriptParser {
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
 
+    private static final Pattern PAGE_AND_LINE_NUMBERS_PATTERN = Pattern.compile(
+            "^\\s*\\d+\\v*", Pattern.MULTILINE);
+    private static final Pattern EXCESS_WHITESPACE_PATTERN = Pattern.compile(
+            "\\s+");
+    private static final Pattern BILL_PATTERNS = Pattern.compile(
+            "\\bSenate (?:Print |Bill )(?:Number )?(\\d+)" +
+            "|\\bAssembly (?:Print |Bill )(?:Number )?(\\d+)" +
+            "|\\bResolution (?:Number )?(\\d+)" +
+            "|\\bSenate Concurrent Resolution (?:Number )?(\\d+)" +
+            "|\\bAssembly Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE);
+
     private TranscriptParser() {}
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
@@ -57,42 +68,25 @@ public final class TranscriptParser {
                 return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText);
             }
 
-            // include parsed bills in transcript data
-            String input = transcriptText.replaceAll("\\d*\\s{2,}", " ");
+            // remove page/line numbers and excess whitespace
+            String input = PAGE_AND_LINE_NUMBERS_PATTERN.matcher(transcriptText).replaceAll("");
+            input = EXCESS_WHITESPACE_PATTERN.matcher(input).replaceAll(" "); // also converts newlines to spaces
+
+            // parse for Senate Bills, Assembly Bills, Senate Resolutions, and Concurrent Resolutions
             SessionYear sessionYear = new SessionYear(dateTime.getYear());
             LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
-
-            // Parse for Senate Bills
-            Pattern.compile("Senate (?:Print )?(?:Bill )?(?:Number )?(\\d+)\\w?", Pattern.CASE_INSENSITIVE)
-                    .matcher(input)
-                    .results()
-                    .map(m -> "S" + m.group(1))
-                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
-            // Parse for Assembly Bills
-            Pattern.compile("Assembly (?:Print )?(?:Bill )?(?:Number )?(\\d+)\\w?", Pattern.CASE_INSENSITIVE)
-                    .matcher(input)
-                    .results()
-                    .map(m -> "A" + m.group(1))
-                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
-            // Parse for Senate Resolutions
-            Pattern.compile("Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
-                    .matcher(input)
-                    .results()
-                    .map(m -> "J" + m.group(1))
-                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
-
-            // Parse for Senate Concurrent Resolutions
-            Pattern.compile("Senate Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
-                    .matcher(input)
-                    .results()
-                    .map(m -> "B" + m.group(1))
-                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
-            // Parse for Assembly Concurrent Resolutions
-            Pattern.compile("Assembly Concurrent Resolution (?:Number )?(\\d+)", Pattern.CASE_INSENSITIVE)
-                    .matcher(input)
-                    .results()
-                    .map(m -> "C" + m.group(1))
-                    .forEach(m -> billIds.add(new BaseBillId(m, sessionYear)));
+            BILL_PATTERNS.matcher(input).results()
+                    .map(m -> {
+                        if (m.group(1) != null) return "S" + m.group(1);
+                        if (m.group(2) != null) return "A" + m.group(2);
+                        if (m.group(3) != null) return "J" + m.group(3);
+                        if (m.group(4) != null) return "B" + m.group(4);
+                        if (m.group(5) != null) return "C" + m.group(5);
+                        return "err";
+                    })
+                    .forEach(m -> {
+                        if (!m.equals("err")) billIds.add(new BaseBillId(m, sessionYear));
+                    });
 
             return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), transcriptText, billIds);
         }
