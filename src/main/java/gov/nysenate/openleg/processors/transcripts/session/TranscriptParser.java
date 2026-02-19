@@ -4,7 +4,6 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.processors.ParseError;
-import org.apache.commons.io.Charsets;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -86,7 +85,7 @@ public final class TranscriptParser {
                 if (billId == null) return Matcher.quoteReplacement(match.group(0));
                 billIds.add(new BaseBillId(billId, sessionYear));
 
-                String href = "/bills/" + sessionYear.year() + "/" + billId;
+                String href = "/" + sessionYear.year() + "/" + billId;
                 String fullMatch = match.group(0);
 
                 String[] segments = LINE_PAGE_BREAK_SEP.split(fullMatch);
