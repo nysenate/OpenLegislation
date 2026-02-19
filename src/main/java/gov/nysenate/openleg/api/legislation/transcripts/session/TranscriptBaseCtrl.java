@@ -20,6 +20,17 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
         this.transcriptData = transcriptData;
     }
 
+    private enum TranscriptLinkType {
+        NONE, OPEN_LEGISLATION, PUBLIC_WEBSITE;
+
+        public static TranscriptLinkType fromString(String string) {
+            if (string.isEmpty()) {
+                return NONE;
+            }
+            return valueOf(string.toUpperCase());
+        }
+    }
+
     protected TranscriptView getFullView(String linkTypeStr, Transcript transcript) {
         var linkType = TranscriptLinkType.fromString(linkTypeStr);
         if (linkType == TranscriptLinkType.NONE) {
