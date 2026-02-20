@@ -32,11 +32,11 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
     }
 
     protected TranscriptView getFullView(String linkTypeStr, Transcript transcript) {
-        var linkType = TranscriptLinkType.fromString(linkTypeStr);
+        TranscriptLinkType linkType = TranscriptLinkType.fromString(linkTypeStr);
         if (linkType == TranscriptLinkType.NONE) {
             return new TranscriptView(transcript);
         }
-        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : env.getSenSiteUrl();
+        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : env.getSenSiteUrl() + "/legislation";
         return new TranscriptView(transcript, baseUrl + "/bills");
     }
 
