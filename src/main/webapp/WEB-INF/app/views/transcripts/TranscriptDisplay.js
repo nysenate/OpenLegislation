@@ -88,10 +88,10 @@ function processLinks(text) {
 
     // id and style let links on bill pages scroll directly to anchors without being obscured by header
     textNodes.push(
-      <Link to={href} target="_blank" className="link" key={match.index}
+      <a href={href} target="_blank" className="link" key={match.index}
             id={href.replace(/\//g, '-').replace(/^-/, '')} style={{ scrollMarginTop: '5rem' }}>
         {linkText}
-      </Link>
+      </a>
     );
 
     lastIndex = match.index + fullMatch.length;

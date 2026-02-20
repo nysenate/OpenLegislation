@@ -111,7 +111,6 @@ public final class TranscriptParser {
                 return Matcher.quoteReplacement(stringBuilder.toString());
             });
 
-            System.out.println(textWithLinks);
             return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), textWithLinks, billIds);
         }
         catch (RuntimeException ex) {
