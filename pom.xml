@@ -109,6 +109,7 @@
   </build>
 
   <properties>
+    <nysenate-java-client.version>2.3</nysenate-java-client.version>
     <c3p0.version>0.9.5.5</c3p0.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-csv.version>1.10.0</commons-csv.version>
@@ -143,6 +144,13 @@
   </properties>
 
   <dependencies>
+    <!-- NY Senate Dependencies -->
+    <dependency>
+      <groupId>gov.nysenate</groupId>
+      <artifactId>nysenate-java-client</artifactId>
+      <version>${nysenate-java-client.version}</version>
+    </dependency>
+
     <!-- Spring -->
     <dependency>
       <groupId>org.springframework</groupId>
