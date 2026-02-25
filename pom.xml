@@ -103,6 +103,20 @@
               <goal>migrate</goal>
             </goals>
           </execution>
+          <execution>
+            <id>flyway-migrate-test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+            <configuration>
+              <configFiles>
+                <!-- Properties in the 2nd file overwrite the first file. -->
+                <configFile>src/main/resources/flyway.conf</configFile>
+                <configFile>src/test/resources/test.flyway.conf</configFile>
+              </configFiles>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
