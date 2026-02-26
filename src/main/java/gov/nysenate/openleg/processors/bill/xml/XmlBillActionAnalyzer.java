@@ -327,7 +327,7 @@ public class XmlBillActionAnalyzer
             for (BillStatus status : statusList) {
                 if (status.getActionSequenceNo() <= lastSequenceNo) {
                     // Allow for detecting a vetoed status
-                    if (milestoneType.equals(SIGNED_BY_GOV)) {
+                    if (milestoneType.equals(SIGNED_BY_GOV) || milestoneType.equals(POCKET_APPROVAL)) {
                         break;
                     }
                     skippedMilestones.add(milestoneType);
