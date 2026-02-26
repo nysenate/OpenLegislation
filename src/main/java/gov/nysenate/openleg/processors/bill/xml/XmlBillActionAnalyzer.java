@@ -78,15 +78,22 @@ public class XmlBillActionAnalyzer
         Pattern.compile("AMEND(?:ED)? BY RESTORING TO ORIGINAL PRINT " + simpleBillRegex)
     );
 
-    private static final List<BillStatusType> senateMilestones = Arrays.asList(
-        IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE, IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY,
-        DELIVERED_TO_GOV, SIGNED_BY_GOV, POCKET_APPROVAL, VETOED
+    /** Chamber-specific linear progression up to (but excluding) governor delivery. */
+    private static final List<BillStatusType> senatePreGovMilestones = Arrays.asList(
+        IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE, IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY
     );
 
-    private static final List<BillStatusType> assemblyMilestones = Arrays.asList(
-        IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY, IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE,
-        DELIVERED_TO_GOV, SIGNED_BY_GOV, POCKET_APPROVAL, VETOED
+    /** Chamber-specific linear progression up to (but excluding) governor delivery. */
+    private static final List<BillStatusType> assemblyPreGovMilestones = Arrays.asList(
+        IN_ASSEMBLY_COMM, ASSEMBLY_FLOOR, PASSED_ASSEMBLY, IN_SENATE_COMM, SENATE_FLOOR, PASSED_SENATE
     );
+
+    /** Governor phase boundary milestone between chamber passage and final governor action. */
+    private static final BillStatusType governorEntryMilestone = DELIVERED_TO_GOV;
+
+    /** Mutually exclusive governor outcomes; only one should be emitted as a milestone. */
+    private static final Set<BillStatusType> governorTerminalMilestones =
+        EnumSet.of(SIGNED_BY_GOV, POCKET_APPROVAL, VETOED);
 
     /** --- Input --- */
 
@@ -308,28 +315,34 @@ public class XmlBillActionAnalyzer
         if (actions.isEmpty()) {
             return milestones;
         }
-        List<BillStatusType> milestoneTypes;
-        // Resolutions have a different set of milestones.
-        if (billId.getBillType().isResolution()) {
-            milestoneTypes = Collections.singletonList(ADOPTED);
-        }
-        // Assembly and senate bills have their milestones ordered accordingly.
-        else {
-            milestoneTypes = (billId.getChamber().equals(Chamber.SENATE)) ? senateMilestones : assemblyMilestones;
-        }
-        int lastSequenceNo = 0;
         List<BillStatus> statusList = new ArrayList<>(statuses);
-        // Keep track of milestones that didn't match, so they can be back-filled if a later milestone is detected.
-        var skippedMilestones = new LinkedHashSet<BillStatusType>();
         // Search through the actions list from most recent to oldest.
         statusList.sort((a, b) -> Integer.compare(b.getActionSequenceNo(), a.getActionSequenceNo()));
+
+        // Resolutions have a single milestone and no governor branch.
+        if (billId.getBillType().isResolution()) {
+            appendLinearMilestones(Collections.singletonList(ADOPTED), statusList, milestones, 0);
+            return milestones;
+        }
+
+        List<BillStatusType> preGovMilestones =
+            (billId.getChamber().equals(Chamber.SENATE)) ? senatePreGovMilestones : assemblyPreGovMilestones;
+        int lastSequenceNo = appendLinearMilestones(preGovMilestones, statusList, milestones, 0);
+        appendGovernorMilestones(statusList, milestones, lastSequenceNo);
+
+        return milestones;
+    }
+
+    /**
+     * Appends milestones for a linear progression where a later matched milestone can back-fill any earlier
+     * skipped milestones.
+     */
+    private int appendLinearMilestones(List<BillStatusType> milestoneTypes, List<BillStatus> statusList,
+                                       List<BillStatus> milestones, int lastSequenceNo) {
+        var skippedMilestones = new LinkedHashSet<BillStatusType>();
         for (BillStatusType milestoneType : milestoneTypes) {
             for (BillStatus status : statusList) {
                 if (status.getActionSequenceNo() <= lastSequenceNo) {
-                    // Allow for detecting a vetoed status
-                    if (milestoneType.equals(SIGNED_BY_GOV) || milestoneType.equals(POCKET_APPROVAL)) {
-                        break;
-                    }
                     skippedMilestones.add(milestoneType);
                 }
                 else if (status.getStatusType().equals(milestoneType)) {
@@ -341,7 +354,54 @@ public class XmlBillActionAnalyzer
                 }
             }
         }
-        return milestones;
+        return lastSequenceNo;
+    }
+
+    /**
+     * Appends the governor milestone branch explicitly: a delivered-to-governor milestone followed by at most one
+     * actual outcome milestone (signed, pocket approval, or vetoed).
+     */
+    private void appendGovernorMilestones(List<BillStatus> statusList, List<BillStatus> milestones, int lastSequenceNo) {
+        BillStatus deliveredStatus = findGovEntryAfter(statusList, lastSequenceNo);
+        if (deliveredStatus != null) {
+            milestones.add(deliveredStatus);
+            lastSequenceNo = deliveredStatus.getActionSequenceNo();
+        }
+
+        BillStatus outcomeStatus = findLatestGovernorOutcomeAfter(statusList, lastSequenceNo);
+        if (outcomeStatus == null) {
+            return;
+        }
+
+        // If the source data has an outcome but omits delivery, infer delivery at the outcome date.
+        if (deliveredStatus == null) {
+            milestones.add(new BillStatus(governorEntryMilestone, outcomeStatus.getActionDate()));
+        }
+        milestones.add(outcomeStatus);
+    }
+
+    private BillStatus findGovEntryAfter(List<BillStatus> statusList, int minExclusiveSequenceNo) {
+        for (BillStatus status : statusList) {
+            if (status.getActionSequenceNo() <= minExclusiveSequenceNo) {
+                continue;
+            }
+            if (status.getStatusType().equals(governorEntryMilestone)) {
+                return status;
+            }
+        }
+        return null;
+    }
+
+    private BillStatus findLatestGovernorOutcomeAfter(List<BillStatus> statusList, int minExclusiveSequenceNo) {
+        for (BillStatus status : statusList) {
+            if (status.getActionSequenceNo() <= minExclusiveSequenceNo) {
+                continue;
+            }
+            if (governorTerminalMilestones.contains(status.getStatusType())) {
+                return status;
+            }
+        }
+        return null;
     }
 
     /** --- Basic Getters --- */
