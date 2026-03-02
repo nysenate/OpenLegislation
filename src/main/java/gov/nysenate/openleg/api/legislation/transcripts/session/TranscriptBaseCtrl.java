@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class TranscriptBaseCtrl extends BaseCtrl {
     protected final TranscriptDataService transcriptData;
     @Autowired
-    private OpenLegEnvironment env;
+    protected OpenLegEnvironment env;
 
     protected TranscriptBaseCtrl(TranscriptDataService transcriptData) {
         this.transcriptData = transcriptData;
     }
 
-    private enum TranscriptLinkType {
+    public enum TranscriptLinkType {
         NONE, OPEN_LEGISLATION, PUBLIC_WEBSITE;
 
         public static TranscriptLinkType fromString(String string) {
@@ -36,7 +36,7 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
         if (linkType == TranscriptLinkType.NONE) {
             return new TranscriptView(transcript);
         }
-        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : env.getSenSiteUrl() + "/legislation";
+        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : (env.getSenSiteUrl() + "/legislation");
         return new TranscriptView(transcript, baseUrl + "/bills");
     }
 

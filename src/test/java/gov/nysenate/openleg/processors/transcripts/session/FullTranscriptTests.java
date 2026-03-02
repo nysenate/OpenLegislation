@@ -7,6 +7,7 @@ import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptP
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.common.util.Tuple;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -30,6 +31,8 @@ public class FullTranscriptTests extends BaseTests {
     private static final String validChars = "[\\p{Graph} ½¾àãáçèëéÍíîïòõöôóÑñšÚúüý¡{}’ª\t]*";
     @Autowired
     private TranscriptDataService transcriptService;
+    @Autowired
+    private OpenLegEnvironment env;
     private List<Transcript> transcripts;
 
     @Before
@@ -117,7 +120,7 @@ public class FullTranscriptTests extends BaseTests {
     @Test
     public void testPdfs() throws IOException {
         for (Transcript transcript : transcripts) {
-            new TranscriptPdfView(transcript).writeData();
+            new TranscriptPdfView(transcript, "", env).writeData();
         }
     }
 

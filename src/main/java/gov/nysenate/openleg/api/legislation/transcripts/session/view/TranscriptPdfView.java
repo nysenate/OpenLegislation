@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
 import gov.nysenate.openleg.api.legislation.transcripts.AbstractTranscriptPdfView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.TranscriptBaseCtrl;
+import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.processors.transcripts.session.Stenographer;
 
@@ -16,10 +18,18 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
     private final String stenographer;
     private final float stenographerCenter;
 
-    public TranscriptPdfView(Transcript transcript) throws IOException {
+    public TranscriptPdfView(Transcript transcript, String linkTypeStr, OpenLegEnvironment env) throws IOException {
         if (transcript == null)
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
-        var pages = new TranscriptPdfParser(transcript.getPlainText()).getPages();
+        TranscriptBaseCtrl.TranscriptLinkType linkType = TranscriptBaseCtrl.TranscriptLinkType.fromString(linkTypeStr);
+        List<List<String>> pages;
+        if (linkType == TranscriptBaseCtrl.TranscriptLinkType.NONE) {
+            pages = new TranscriptPdfParser(transcript.getPlainText()).getPages();
+        }
+        else {
+            String baseUrl = (linkType == TranscriptBaseCtrl.TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : (env.getSenSiteUrl() + "/legislation");
+            pages = new TranscriptPdfParser(transcript.getLinkedText(baseUrl + "/bills")).getPages();
+        }
         this.stenographer = Stenographer.getStenographer(transcript.getDateTime().toLocalDate());
         this.stenographerCenter = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
         writeTranscriptPages(pages);

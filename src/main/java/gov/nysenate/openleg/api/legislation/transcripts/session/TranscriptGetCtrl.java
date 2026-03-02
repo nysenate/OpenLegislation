@@ -133,20 +133,21 @@ public class TranscriptGetCtrl extends TranscriptBaseCtrl {
      */
 
     @RequestMapping("/{dateTime}.pdf")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @RequestParam(defaultValue = "") String linkType)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         Transcript transcript = transcriptData.getTranscriptByDateTime(localDateTime);
-        return new TranscriptPdfView(transcript).writeData();
+        return new TranscriptPdfView(transcript, linkType, env).writeData();
     }
 
     @RequestMapping("/{dateTime}/{sessionType}.pdf")
-    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType)
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType,
+                                                   @RequestParam(defaultValue = "") String linkType)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         var id = TranscriptId.from(localDateTime, sessionType);
         Transcript transcript = transcriptData.getTranscript(id);
-        return new TranscriptPdfView(transcript).writeData();
+        return new TranscriptPdfView(transcript, linkType, env).writeData();
     }
 
     /** --- Internal --- */
