@@ -8,14 +8,9 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
-import org.apache.pdfbox.pdmodel.interactive.action.OpenMode;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionLaunch;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderEffectDictionary;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
-import org.apache.pdfbox.pdmodel.interactive.annotation.handlers.PDLinkAppearanceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -120,24 +115,24 @@ public abstract class BasePdfView {
 
             Matcher matcher = LINK_PATTERN.matcher(line);
             StringBuilder plainText = new StringBuilder();
-            int lastEnd = 0;
+            int prevEnd = 0;
 
             // extract link text from HTML
             while (matcher.find()) {
-                plainText.append(line, lastEnd, matcher.start());
+                plainText.append(line, prevEnd, matcher.start());
                 int startPos = plainText.length();
                 String linkText = matcher.group(2);
                 plainText.append(linkText);
                 int endPos = plainText.length();
-                lastEnd = matcher.end();
+                prevEnd = matcher.end();
 
-                // calculate link position
+                // calculate link position and size
                 float x1 = currX + startPos * CHAR_WIDTH;
                 float x2 = currX + endPos * CHAR_WIDTH;
-                linkRectangles.add(new float[]{x1, currY - 2, x2, currY + FONT_SIZE});
+                linkRectangles.add(new float[]{x1, currY - 2, x2 - x1, FONT_SIZE + 2}); // x, y, width, height; 2 is arbitrary for padding
                 urls.add(matcher.group(1));
             }
-            plainText.append(line, lastEnd, line.length());
+            plainText.append(line, prevEnd, line.length());
 
             writeLine(plainText.toString());
 
@@ -147,10 +142,9 @@ public abstract class BasePdfView {
                 PDActionJavaScript actionJS = new PDActionJavaScript("app.launchURL('" + urls.get(i) + "', true);");
                 link.setAction(actionJS);
                 float[] r = linkRectangles.get(i);
-                link.setRectangle(new PDRectangle(r[0], r[1], r[2] - r[0], r[3] - r[1]));
+                link.setRectangle(new PDRectangle(r[0], r[1], r[2], r[3]));
                 link.setColor(LINK_COLOR);
                 link.setBorderStyle(LINK_UNDERLINE);
-                link.setHighlightMode(PDAnnotationLink.HIGHLIGHT_MODE_NONE);
                 currPage.getAnnotations().add(link);
             }
 
