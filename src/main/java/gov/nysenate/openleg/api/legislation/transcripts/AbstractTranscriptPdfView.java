@@ -30,13 +30,13 @@ public abstract class AbstractTranscriptPdfView extends BasePdfView {
     protected void writePage(List<String> page) throws IOException {
         String pageNum = page.get(0).trim();
         float xOffsetPageNum = RIGHT - (pageNum.length() + 1) * FONT_WIDTH;
-        contentStream.newLineAtOffset(xOffsetPageNum, FONT_SIZE/2);
+        newLineAtOffsetTracked(xOffsetPageNum, FONT_SIZE / 2);
         contentStream.showText(pageNum);
         contentStream.newLine();
         float xOffsetLine = LEFT - indent * FONT_WIDTH;
-        contentStream.newLineAtOffset(-xOffsetPageNum + xOffsetLine, -FONT_SIZE/2);
+        newLineAtOffsetTracked(-xOffsetPageNum + xOffsetLine, -FONT_SIZE / 2);
         super.writePage(page.subList(1, page.size()));
-        contentStream.newLineAtOffset(-xOffsetLine, 0);
+        newLineAtOffsetTracked(-xOffsetLine, 0);
     }
 
     protected static int getIndent(List<String> page) {

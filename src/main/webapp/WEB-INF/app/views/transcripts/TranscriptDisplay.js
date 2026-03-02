@@ -47,7 +47,7 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
     pdfUrl = `/pdf/hearings/${transcript.id}`
   }
   else {
-    pdfUrl = `/pdf/transcripts/${transcript.dateTime}/${transcript.sessionType}`
+    pdfUrl = `/pdf/transcripts/${transcript.dateTime}/${transcript.sessionType}?linkType=OPEN_LEGISLATION`
   }
 
   return (

@@ -30,7 +30,7 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
         super.writePage(page);
         // The stenographer should be centered at the bottom of the page.
         float yOffset = (page.size() - STENOGRAPHER_LINE_NUM) * FONT_SIZE * getSpacing();
-        contentStream.newLineAtOffset(stenographerCenter, yOffset);
+        newLineAtOffsetTracked(stenographerCenter, yOffset);
         contentStream.showText(stenographer);
     }
 
