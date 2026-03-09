@@ -28,7 +28,7 @@ General installation instructions for Ubuntu.
 2. `mkdir ~/tomcat9`
 3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat9`
 4. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
-Make sure the contents of the tomcat directory are readable an executable for all users.
+Make sure the contents of the tomcat directory are readable and executable for all users.
 e.g. `chmod -R +rx ~/tomcat9`
 
 ### Elasticsearch
@@ -78,19 +78,25 @@ In psql, create a user with the same name as you linux user.
    `CREATE USER <<linux_username>> WITH LOGIN SUPERUSER PASSWORD '<<password>>';`
 
 ### Create Open Legislation Database
-
 1. Enter psql in a terminal with the database user you created in the previous step: `psql -U openleg <<linux_username>>`
-2. Create a database for Open Legislation: `CREATE DATABSE openleg;`
-3. Exit psql with `\q`
+2. Create the main database: `CREATE DATABASE openleg;`
+3. Create the test database: `CREATE DATABASE openleg_test;`
+4. Exit psql with `\q`
 
 ## Property Files
 `cd 'src/main/resources'`
 
 `cp app.properties.example app.properties`
 
+`echo "postgresdb.name = openleg_test" >> ../../test/resources/test.app.properties`
+
 `cp log4j2.xml.example log4j2.xml`
 
+`cp log4j2.xml ../../test/resources/test.log4j2.xml`
+
 `cp flyway.conf.example flyway.conf`
+
+`echo "flyway.url=jdbc:postgresql://localhost:5432/openleg_test" >> ../../test/resources/test.flyway.conf`
 
 ### `app.properties` Configuration
 
@@ -105,6 +111,8 @@ Alternatively, modify the regexp `api.auth.ip.whitelist` to not enforce API auth
 #### Admin Settings
 
 Set `default.admin.user` to your email address and `default.admin.password` to your desired admin password.
+
+Set `admin.email.regex` in `app.properties` to match your user email address and fit any other admin users you would want to add.
 
 #### Data Directory Configuration
 
@@ -147,12 +155,6 @@ If you picked a name for the database that was not 'openleg', replace 'openleg' 
 Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
-
-### Test Configuration
-
-`cp src/main/resources/log4j2.xml src/test/resources/test.log4j2.xml`
- 
-Set `admin.email.regex` in `app.properties` to match your user email address and fit any other admin users you would want to add.
 
 ## Building
 

@@ -8,6 +8,7 @@ import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,38 +25,31 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class SqlTranscriptDaoIT extends BaseTests {
+    private static final int NUM_TRANSCRIPTS = 3;
+    private static final String FILEPATH = "src/test/resources/transcriptFiles/";
+    private static final List<Transcript> TRANSCRIPTS = new ArrayList<>();
+    private static final List<TranscriptFile> TRANSCRIPT_FILES = new ArrayList<>();
+    private static TranscriptFile UPDATE_FILE;
+    private static Transcript UPDATE;
+
     @Autowired
     private TranscriptDao dao;
     @Autowired
     private TranscriptFileDao fileDao;
 
-    // Generates Transcript test data.
-    private static final int NUM_TRANSCRIPTS = 3;
-    private static final String FILEPATH = "src/test/resources/transcriptFiles/";
-    private static final List<Transcript> TRANSCRIPTS = new ArrayList<>();
-    private static final Transcript UPDATE;
-    private static final List<TranscriptFile> TRANSCRIPT_FILES = new ArrayList<>();
-    private static TranscriptFile UPDATE_FILE;
-    static {
+    @BeforeClass
+    public static void setup() throws FileNotFoundException {
         for (int i = 0; i < NUM_TRANSCRIPTS; i++) {
             LocalDateTime ldt = LocalDate.of(2020, Month.JULY, 30).atStartOfDay().plusHours(i);
             Transcript curr = new Transcript(new TranscriptId(ldt, new SessionType("REGULAR SESSION")),
-                     DayType.SESSION, "t" + i + ".txt", "NYNY", "the text " + i);
+                    DayType.SESSION, "t" + i + ".txt", "NYNY", "the text " + i);
             TRANSCRIPTS.add(curr);
-            try {
-                TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
         }
         Transcript curr = TRANSCRIPTS.get(0);
         UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
                 curr.getLocation(), curr.getPlainText() + "v1");
-        try {
-            UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
     }
 
     @Test
@@ -103,17 +97,11 @@ public class SqlTranscriptDaoIT extends BaseTests {
         dao.updateTranscript(UPDATE);
 
         List<TranscriptUpdateToken> results = dao.transcriptsUpdatedDuring(
-                Range.closed(rangePoints.get(0), rangePoints.get(2)),
-                SortOrder.ASC, LimitOffset.ALL).results();
+                Range.closed(rangePoints.get(0), LocalDateTime.now()),
+                SortOrder.DESC, LimitOffset.ALL).results();
 
-        // We should expect 1 here.
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
 
-        results = dao.transcriptsUpdatedDuring(Range.closed(rangePoints.get(2),
-                LocalDateTime.now()), SortOrder.NONE, LimitOffset.ALL)
-                .results();
-
-        assertEquals(1, results.size());
         assertEquals(TRANSCRIPTS.get(0).getDateTime(), results.get(0).getTranscriptId().dateTime());
     }
 

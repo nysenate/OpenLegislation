@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -52,6 +53,11 @@ public class ElasticApiLogSearchService extends IndexedSearchService<ApiResponse
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updateIndex(Collection<ApiResponse> content) {
+        logger.debug("{} API responses are being ignored instead of indexed", content.size());
     }
 
     @Scheduled(cron = "${scheduler.log.index:* * * * * *}")
