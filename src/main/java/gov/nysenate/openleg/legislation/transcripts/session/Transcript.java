@@ -96,11 +96,11 @@ public class Transcript extends BaseLegislativeContent {
         Transcript that = (Transcript) o;
         return Objects.equals(id, that.id) && dayType == that.dayType &&
                 Objects.equals(location, that.location) && Objects.equals(text, that.text) &&
-                Objects.equals(filename, that.filename);
+                Objects.equals(filename, that.filename) && Objects.equals(linkedBills, that.linkedBills);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, dayType, location, text, filename);
+        return Objects.hash(super.hashCode(), id, dayType, location, text, filename, linkedBills);
     }
 }

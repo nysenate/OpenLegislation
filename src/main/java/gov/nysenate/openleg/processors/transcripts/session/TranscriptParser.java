@@ -44,8 +44,7 @@ public final class TranscriptParser {
         if (m.group(2) != null) return "A" + m.group(2);
         if (m.group(3) != null) return "J" + m.group(3);
         if (m.group(4) != null) return "B" + m.group(4);
-        if (m.group(5) != null) return "C" + m.group(5);
-        return null;
+        return "C" + m.group(5); // implicit m.group(5) != null
     }
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
@@ -82,7 +81,6 @@ public final class TranscriptParser {
             LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
             String textWithLinks = BILL_PATTERNS.matcher(transcriptText).replaceAll(match -> {
                 String billId = toBillId(match);
-                if (billId == null) return Matcher.quoteReplacement(match.group(0));
                 billIds.add(new BaseBillId(billId, sessionYear));
 
                 String href = "/" + sessionYear.year() + "/" + billId;
@@ -95,14 +93,10 @@ public final class TranscriptParser {
 
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < segments.length; i++) {
-                    if (!segments[i].isBlank()) {
-                        stringBuilder.append("<a href=\"").append(href).append("\">")
-                                .append(segments[i].trim())
-                                .append("</a>");
-                    }
-                    else {
-                        stringBuilder.append(segments[i]);
-                    }
+                    stringBuilder.append("<a href=\"")
+                            .append(href).append("\">")
+                            .append(segments[i].trim())
+                            .append("</a>");
 
                     if (i < separators.length) {
                         stringBuilder.append(separators[i]);

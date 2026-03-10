@@ -35,6 +35,20 @@ public class TranscriptParserTest {
     }
 
     @Test
+    public void testNoBillInformation() throws IOException {
+        TranscriptId testId = TranscriptId.from(LocalDate.of(2007, 7, 16).atTime(12, 56),
+                "REGULAR SESSION");
+        String filename = "billsBefore2009.txt";
+
+        LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
+        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
+
+        Transcript actualTranscript = processFilename(filename);
+
+        assertEquals(expectedTranscript.getLinkedBills(), actualTranscript.getLinkedBills());
+    }
+
+    @Test
     public void testBillVariations() throws IOException {
         TranscriptId testId = TranscriptId.from(LocalDate.of(2009, 7, 16).atTime(12, 56),
                 "REGULAR SESSION");

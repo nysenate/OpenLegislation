@@ -6,6 +6,9 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
+import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.dao.BillDao;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 import org.junit.BeforeClass;
@@ -19,9 +22,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 @Category(IntegrationTest.class)
 public class SqlTranscriptDaoIT extends BaseTests {
@@ -36,6 +41,8 @@ public class SqlTranscriptDaoIT extends BaseTests {
     private TranscriptDao dao;
     @Autowired
     private TranscriptFileDao fileDao;
+    @Autowired
+    private BillDao billDao;
 
     @BeforeClass
     public static void setup() throws FileNotFoundException {
@@ -47,8 +54,10 @@ public class SqlTranscriptDaoIT extends BaseTests {
             TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
         }
         Transcript curr = TRANSCRIPTS.get(0);
+        LinkedHashSet<BaseBillId> updatedBills = new LinkedHashSet<>();
+        updatedBills.add(new BaseBillId("S1", 2026));
         UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
-                curr.getLocation(), curr.getPlainText() + "v1");
+                curr.getLocation(), curr.getPlainText() + "v1", updatedBills);
         UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
     }
 
@@ -80,6 +89,13 @@ public class SqlTranscriptDaoIT extends BaseTests {
     public void updateTranscriptTest() {
         fileDao.updateFile(TRANSCRIPT_FILES.get(0));
         dao.updateTranscript(TRANSCRIPTS.get(0));
+
+        // linkedBills should fail to update when referenced bill does not exist
+        fileDao.updateFile(UPDATE_FILE);
+        dao.updateTranscript(UPDATE);
+        assertNotEquals(UPDATE.getLinkedBills(), dao.getTranscript(TRANSCRIPTS.get(0).getId()).getLinkedBills());
+
+        billDao.updateBill(new Bill(new BaseBillId("S1", 2026)), null);
         fileDao.updateFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
         assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getId()));
