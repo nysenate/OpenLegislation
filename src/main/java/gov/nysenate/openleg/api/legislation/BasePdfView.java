@@ -32,6 +32,7 @@ public abstract class BasePdfView {
     private static final Logger logger = LoggerFactory.getLogger(BasePdfView.class);
     protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f, CHAR_WIDTH = FONT_SIZE * 0.6f;
     protected static final PDFont FONT = PDType1Font.COURIER;
+    protected static final PDColor TEXT_COLOR = new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE);
     protected static final PDColor LINK_COLOR = new PDColor(new float[]{0, 0, 1}, PDDeviceRGB.INSTANCE);
     protected static final PDBorderStyleDictionary LINK_UNDERLINE = new PDBorderStyleDictionary();
     static {
@@ -44,6 +45,7 @@ public abstract class BasePdfView {
     private float currX, currY;
     private PDPage currPage;
     private static final Pattern LINK_PATTERN = Pattern.compile("<a href=\"([^\"]+)\">([^<]+)</a>");
+    private static final Pattern LINK_COLOR_INSERTION_PATTERN = Pattern.compile("<<<<<(.)*>>>>>");
 
     public ResponseEntity<byte[]> writeData() throws IOException {
         doc.close();
@@ -122,8 +124,10 @@ public abstract class BasePdfView {
                 plainText.append(line, prevEnd, matcher.start());
                 int startPos = plainText.length();
                 String linkText = matcher.group(2);
+                plainText.append("<<<<<");
                 plainText.append(linkText);
-                int endPos = plainText.length();
+                plainText.append(">>>>>");
+                int endPos = plainText.length() - 10;
                 prevEnd = matcher.end();
 
                 // calculate link position and size
@@ -155,7 +159,23 @@ public abstract class BasePdfView {
 
     protected void writeLine(String line) throws IOException {
         try {
-            contentStream.showText(line);
+            Matcher matcher = LINK_COLOR_INSERTION_PATTERN.matcher(line);
+            int lastEnd = 0;
+
+            while (matcher.find()) {
+                String plainText = line.substring(lastEnd, matcher.start());
+                contentStream.setNonStrokingColor(TEXT_COLOR);
+                contentStream.showText(plainText);
+
+                String markedText = matcher.group().replaceAll("<<<<<|>>>>>", "");
+                contentStream.setNonStrokingColor(LINK_COLOR);
+                contentStream.showText(markedText);
+
+                lastEnd = matcher.end();
+            }
+            String remainingText = line.substring(lastEnd);
+            contentStream.setNonStrokingColor(TEXT_COLOR);
+            contentStream.showText(remainingText);
         }
         catch (IllegalArgumentException ex) {
             logger.warn("Bad character in PDF. Line: " + line);
