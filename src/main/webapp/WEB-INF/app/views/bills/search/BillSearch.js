@@ -35,6 +35,9 @@ export default function BillSearch() {
     const params = queryString.parse(location.search, { parseBooleans: true })
     const page = params.page || 1
     const offset = (page - 1) * limit + 1
+    if (params.term === false) {
+      params.term = "false"
+    }
     const term = params.term || '*'
     const sort = params.sort
     const session = params.session
