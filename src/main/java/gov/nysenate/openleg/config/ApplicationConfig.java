@@ -15,6 +15,8 @@ import gov.nysenate.openleg.notifications.NotificationDispatcher;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.processors.IngestCache;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
+import gov.nysenate.services.NYSenateClientService;
+import gov.nysenate.services.NYSenateJSONClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -89,6 +92,11 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
         scheduler.setPoolSize(8);
         scheduler.initialize();
         return scheduler;
+    }
+
+    @Bean
+    public NYSenateClientService nySenateClientService() throws IOException {
+        return new NYSenateJSONClient();
     }
 
     @Override

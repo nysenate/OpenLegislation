@@ -20,10 +20,8 @@ target/
 !.idea/codeStyleSettings.xml
 !.idea/codeStyles/**
 
-flyway.conf
-log4j2.xml
-log4j2-cli.xml
-test.log4j2.xml
+*flyway.conf
+*log4j2*.xml
 
 legislation.ipr
 legislation.iws
