@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
@@ -11,12 +9,13 @@ import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.session.InvalidLinkTypeEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.io.IOException;
 
 public abstract class TranscriptBaseCtrl extends BaseCtrl {
     protected final TranscriptDataService transcriptData;
@@ -27,7 +26,7 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
         this.transcriptData = transcriptData;
     }
 
-    public enum TranscriptLinkType {
+    private enum TranscriptLinkType {
         NONE, OPEN_LEGISLATION, PUBLIC_WEBSITE;
 
         public static TranscriptLinkType fromString(String string) {
@@ -38,7 +37,16 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
         }
     }
 
-    protected TranscriptView getFullView(String linkTypeStr, Transcript transcript) throws InvalidLinkTypeEx {
+    protected TranscriptView getFullView(String linkTypeStr, Transcript transcript) {
+        return new TranscriptView(transcript, getTranscriptText(linkTypeStr, transcript));
+    }
+
+    protected TranscriptPdfView getPdfView(String linkTypeStr, Transcript transcript) throws IOException {
+        return new TranscriptPdfView(getTranscriptText(linkTypeStr, transcript),
+                transcript.getId().dateTime().toLocalDate());
+    }
+
+    private String getTranscriptText(String linkTypeStr, Transcript transcript) {
         TranscriptLinkType linkType;
         try {
             linkType = TranscriptLinkType.fromString(linkTypeStr);
@@ -46,22 +54,12 @@ public abstract class TranscriptBaseCtrl extends BaseCtrl {
         catch (IllegalArgumentException ex) {
             throw new InvalidLinkTypeEx(linkTypeStr);
         }
-
         if (linkType == TranscriptLinkType.NONE) {
-            return new TranscriptView(transcript);
+            return transcript.getPlainText();
         }
-        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() : (env.getSenSiteUrl() + "/legislation");
-        return new TranscriptView(transcript, baseUrl + "/bills");
-    }
-
-    protected ViewObject getTranscriptView(boolean summary, boolean full, String linkType, TranscriptId result) {
-        if (full) {
-            return getFullView(linkType, transcriptData.getTranscript(result));
-        }
-        if (summary) {
-            return new TranscriptInfoView(transcriptData.getTranscript(result));
-        }
-        return new TranscriptIdView(result);
+        String baseUrl = (linkType == TranscriptLinkType.OPEN_LEGISLATION) ? env.getUrl() :
+                (env.getSenSiteUrl() + "/legislation");
+        return transcript.getLinkedText(baseUrl + "/bills");
     }
 
     @ExceptionHandler(InvalidLinkTypeEx.class)

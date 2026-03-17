@@ -5,14 +5,9 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 public class TranscriptView extends TranscriptInfoView {
     protected String text;
 
-    public TranscriptView(Transcript transcript) {
-        super(transcript);
-        this.text = transcript.getPlainText();
-    }
-
-    public TranscriptView(Transcript transcript, String linkBase) {
-        super(transcript);
-        this.text = transcript.getLinkedText(linkBase);
+    public TranscriptView(Transcript transcriptInfo, String text) {
+        super(transcriptInfo);
+        this.text = text;
     }
 
     public String getText() {

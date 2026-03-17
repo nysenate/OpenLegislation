@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.legislation.transcripts.session.DuplicateTranscriptEx;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -32,11 +31,8 @@ public class TranscriptPdfCtrl extends TranscriptBaseCtrl {
     /**
      * Single Transcript PDF retrieval
      * -------------------------------
-     *
      * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{dateTime}/{optional sessionType}
-     *
      * Request Parameters: None.
-     *
      * Expected Output: PDF response.
      */
 
@@ -61,7 +57,7 @@ public class TranscriptPdfCtrl extends TranscriptBaseCtrl {
             Transcript transcript = sessionType == null ?
                     transcriptData.getTranscriptByDateTime(ldt) :
                     transcriptData.getTranscript(TranscriptId.from(ldt, sessionType));
-            return new TranscriptPdfView(transcript, linkType, env).writeData();
+            return getPdfView(linkType, transcript).writeData();
         }
         catch (DuplicateTranscriptEx | TranscriptNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

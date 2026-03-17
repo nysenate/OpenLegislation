@@ -35,7 +35,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptId, Tra
 
     @Override
     protected TranscriptView getDoc(Transcript data) {
-        return new TranscriptView(data);
+        return new TranscriptView(data, data.getPlainText());
     }
 
     @Override

@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * A Transcript is a written record of a Senate session.
@@ -17,8 +16,6 @@ public class Transcript extends BaseLegislativeContent {
     private final DayType dayType;
     private final String location, text, filename;
     private final LinkedHashSet<BaseBillId> linkedBills;
-    private static final Pattern LINK_REMOVAL_PATTERN = Pattern.compile("</?a[^>]*>");
-    private static final Pattern LINK_BASE_INSERTION_PATTERN = Pattern.compile("<a href=\"");
 
     /** --- Constructors --- */
 
@@ -61,7 +58,7 @@ public class Transcript extends BaseLegislativeContent {
     }
 
     /**
-     * Returns the text as it exists in the database.
+     * Returns the text as it is stored in the database.
      */
     public String getUnformattedText() {
         return text;
@@ -71,14 +68,14 @@ public class Transcript extends BaseLegislativeContent {
      * Returns the text with all links removed
      */
     public String getPlainText() {
-        return LINK_REMOVAL_PATTERN.matcher(text).replaceAll("");
+        return text.replaceAll("</?a[^>]*>", "");
     }
 
     /**
      * Returns the text with links matching source url
      */
     public String getLinkedText(String linkBase) {
-        return LINK_BASE_INSERTION_PATTERN.matcher(text).replaceAll("$0" + linkBase);
+        return text.replaceAll("<a href=\"", "$0" + linkBase);
     }
 
     public String getFilename() {

@@ -178,7 +178,7 @@ public abstract class BasePdfView {
             contentStream.showText(remainingText);
         }
         catch (IllegalArgumentException ex) {
-            logger.warn("Bad character in PDF. Line: " + line);
+            logger.warn("Bad character in PDF. Line: {}", line);
         }
     }
 }
