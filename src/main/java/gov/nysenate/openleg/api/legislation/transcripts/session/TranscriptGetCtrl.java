@@ -2,7 +2,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
