@@ -26,10 +26,11 @@ public final class TranscriptParser {
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
 
-    private static final String WORD_SEP = "(?: +| *\\v *(?:\\d+\\s+)*)+";
+    private static final String WORD_SEP = "(?: +|(?: *\\v* *\\d+\\s+)*)";
     private static final Pattern BILL_PATTERNS = Pattern.compile((
             "\\bSenate (?:Print|Bill) (?:Number )?(\\d+)" +
                     "|\\bAssembly (?:Print|Bill) (?:Number )?(\\d+)" +
+                    "|\\bSenate Resolution (?:Number )?(\\d+)" +
                     "|\\bResolution (?:Number )?(\\d+)" +
                     "|\\bSenate Concurrent Resolution (?:Number )?(\\d+)" +
                     "|\\bAssembly Concurrent Resolution (?:Number )?(\\d+)").replace(" ", WORD_SEP),
@@ -42,9 +43,10 @@ public final class TranscriptParser {
     private static String toBillId(MatchResult m) {
         if (m.group(1) != null) return "S" + m.group(1);
         if (m.group(2) != null) return "A" + m.group(2);
-        if (m.group(3) != null) return "J" + m.group(3);
-        if (m.group(4) != null) return "B" + m.group(4);
-        return "C" + m.group(5); // implicit m.group(5) != null
+        if (m.group(3) != null) return "R" + m.group(3);
+        if (m.group(4) != null) return "J" + m.group(4);
+        if (m.group(5) != null) return "B" + m.group(5);
+        return "C" + m.group(6); // implicit m.group(6) != null
     }
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {

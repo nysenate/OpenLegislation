@@ -55,7 +55,7 @@ public class TranscriptParserTest {
         String filename = "billVariations.txt";
 
         LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
-        String[] ids = {"S2", "S3", "S4", "S5", "A7", "A8", "A9", "A10", "J1", "J2", "B10", "B20", "C30", "C40"};
+        String[] ids = {"S2", "S3", "S4", "S5", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
         for (String id : ids) {
             expectedBillIds.add(new BaseBillId(id, 2009));
         }
@@ -73,7 +73,7 @@ public class TranscriptParserTest {
         String filename = "billsAcrossLines.txt";
 
         LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
-        String[] ids = {"S1", "S2", "S3", "S4"};
+        String[] ids = {"S1", "S2", "S3", "S4", "R8"};
         for (String id : ids) {
             expectedBillIds.add(new BaseBillId(id, 2009));
         }

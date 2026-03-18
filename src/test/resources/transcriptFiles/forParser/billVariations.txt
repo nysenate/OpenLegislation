@@ -40,21 +40,25 @@
 
         19          Resolution Number 2
 
-        20          Senate Concurrent Resolution 10
+        20          Senate Resolution 3
 
-        21          Senate Concurrent Resolution Number 20
+        21          Senate Resolution Number 4
 
-        22          Assembly Concurrent Resolution 30
+        22          Senate Concurrent Resolution 10
 
-        23          Assembly Concurrent Resolution Number 40
+        23          Senate Concurrent Resolution Number 20
 
-        24          THE PRESIDENT: The Senate will come to order.
+        24          Assembly Concurrent Resolution 30
 
-        25          THE SECRETARY: The Senate will come to order.
+        25          Assembly Concurrent Resolution Number 40
 
-        26          SOMEONE ELSE: The DayType is now Session
+        26          THE PRESIDENT: The Senate will come to order.
 
-        27
+        27          THE SECRETARY: The Senate will come to order.
+
+        28          SOMEONE ELSE: The DayType is now Session
+
+        29
 
 
 
