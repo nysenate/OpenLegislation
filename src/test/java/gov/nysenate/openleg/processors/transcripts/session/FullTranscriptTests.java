@@ -23,11 +23,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Maant to be run on a full database of transcripts.
+ * Meant to be run on a full database of transcripts.
+ * Note that this means the test doesn't work as intended with the normal test configuration.
  */
 @Category(SillyTest.class)
 public class FullTranscriptTests extends BaseTests {
-    private static final String validChars = "[\\p{Graph} ½¾àãáçèëéÍíîïòõöôóÑñšÚúüý¡{}’ª\t]*";
+    private static final String validChars = "[\\p{Graph}\\s½¾ÁàãáçèëéÍíîïòõöôóÑñšÚúüý¡’ª]*";
     @Autowired
     private TranscriptDataService transcriptService;
     private List<Transcript> transcripts;
@@ -100,13 +101,16 @@ public class FullTranscriptTests extends BaseTests {
 
     @Test
     public void testEncoding() {
+        System.out.println(transcripts.size());
         for (Transcript transcript : transcripts) {
-            var problemLines = transcript.getPlainText().lines().map(line -> new TranscriptLine(line).getText())
-                    .filter(text -> !text.matches(validChars)).toList();
-            if (!problemLines.isEmpty()) {
+            String plainText = transcript.getPlainText();
+            var problemLines = plainText.lines().filter(text -> !text.matches(validChars)).toList();
+            if (!problemLines.isEmpty() || !plainText.matches(validChars)) {
                 System.err.printf("Problems in %s:%n", transcript.getFilename());
-                System.err.println(String.join("\n", problemLines));
-                System.err.println("********************");
+                if (!problemLines.isEmpty()) {
+                    System.err.println(String.join("\n", problemLines));
+                    System.err.println("********************");
+                }
             }
         }
     }

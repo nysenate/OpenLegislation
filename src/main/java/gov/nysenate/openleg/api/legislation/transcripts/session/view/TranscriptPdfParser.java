@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TranscriptPdfParser {
+    // Note that transcripts after 2004 always have line numbers.
     private final boolean hasLineNumbers;
     private final List<List<String>> pages = new ArrayList<>();
     private List<String> currPage = new ArrayList<>();

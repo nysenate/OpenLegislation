@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TranscriptParser {
@@ -27,15 +26,16 @@ public final class TranscriptParser {
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive().appendPattern("MMMM d[ ][,][ ]yyyy").toFormatter();
 
-    private static final String WORD_SEP = "(?:\\h+|\\h*\\v\\h*(?:\\d+\\s+)*)+";
-    private static final Pattern BILL_PATTERNS = Pattern.compile(
-            "\\bSenate" + WORD_SEP + "(?:Print|Bill)" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
-                    "|\\bAssembly" + WORD_SEP + "(?:Print|Bill)" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
-                    "|\\bResolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
-                    "|\\bSenate" + WORD_SEP + "Concurrent" + WORD_SEP + "Resolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)" +
-                    "|\\bAssembly" + WORD_SEP + "Concurrent" + WORD_SEP + "Resolution" + WORD_SEP + "(?:Number" + WORD_SEP + ")?(\\d+)", Pattern.CASE_INSENSITIVE);
+    private static final String WORD_SEP = "(?: +| *\\v *(?:\\d+\\s+)*)+";
+    private static final Pattern BILL_PATTERNS = Pattern.compile((
+            "\\bSenate (?:Print|Bill) (?:Number )?(\\d+)" +
+                    "|\\bAssembly (?:Print|Bill) (?:Number )?(\\d+)" +
+                    "|\\bResolution (?:Number )?(\\d+)" +
+                    "|\\bSenate Concurrent Resolution (?:Number )?(\\d+)" +
+                    "|\\bAssembly Concurrent Resolution (?:Number )?(\\d+)").replace(" ", WORD_SEP),
+            Pattern.CASE_INSENSITIVE);
     private static final Pattern LINE_PAGE_BREAK_SEP = Pattern.compile(
-            "\\h*(?:\\v\\h*(?:\\d+\\s+)*)+");
+            " *(?:\\v *(?:\\d+\\s+)*)+");
 
     private TranscriptParser() {}
 
@@ -79,30 +79,14 @@ public final class TranscriptParser {
             // parse for bill, resolution data and insert links into text
             SessionYear sessionYear = new SessionYear(dateTime.getYear());
             LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
+            // TODO: Can be done better in Java 20 with named groups in MatchResult.
+            //  Just name the number groups in the (\\d) group! Can remove lots of ?: too
             String textWithLinks = BILL_PATTERNS.matcher(transcriptText).replaceAll(match -> {
                 String billId = toBillId(match);
                 billIds.add(new BaseBillId(billId, sessionYear));
-
-                String href = "/" + sessionYear.year() + "/" + billId;
-                String fullMatch = match.group(0);
-
-                String[] segments = LINE_PAGE_BREAK_SEP.split(fullMatch);
-                String[] separators = LINE_PAGE_BREAK_SEP.matcher(fullMatch).results()
-                        .map(r -> r.group(0))
-                        .toArray(String[]::new);
-
-                StringBuilder stringBuilder = new StringBuilder();
-                for (int i = 0; i < segments.length; i++) {
-                    stringBuilder.append("<a href=\"")
-                            .append(href).append("\">")
-                            .append(segments[i].trim())
-                            .append("</a>");
-
-                    if (i < separators.length) {
-                        stringBuilder.append(separators[i]);
-                    }
-                }
-                return Matcher.quoteReplacement(stringBuilder.toString());
+                String tagStart = "<a href=\"/%d/%s\">".formatted(sessionYear.year(), billId);
+                // Line and page breaks should not be linked.
+                return tagStart + match.group(0).replaceAll(LINE_PAGE_BREAK_SEP.pattern(), "</a>$0" + tagStart) + "</a>";
             });
 
             return new Transcript(transcriptId, dayType, transcriptFile.getFileName(), data.get(0), textWithLinks, billIds);
