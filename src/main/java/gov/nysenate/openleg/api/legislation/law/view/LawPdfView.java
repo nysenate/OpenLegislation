@@ -54,7 +54,7 @@ public class LawPdfView extends BasePdfView {
     private static List<List<String>> getPages(List<String> lines) {
         // Even with no text, a page should still be generated.
         if (lines.isEmpty())
-            return Collections.singletonList(new ArrayList<>());
+            return List.of(new ArrayList<>());
         int numPages = (int) Math.ceil((double)lines.size()/LINES_PER_PAGE);
         List<List<String>> pages = new ArrayList<>(numPages);
         for (int page = 1; page <= numPages; page++) {

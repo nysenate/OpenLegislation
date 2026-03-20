@@ -71,7 +71,7 @@ public class BillPdfView extends BasePdfView {
             super.writeLine(line);
         }
         catch (IllegalArgumentException ex) {
-            logger.warn("In " + displayName + ", there's a bad character in line: " + line);
+            logger.warn("In {}, there's a bad character in line: {}", displayName, line);
             Matcher m = BAD_CHAR_PATTERN.matcher(ex.getMessage());
             if (!m.find())
                 throw ex;
@@ -117,15 +117,13 @@ public class BillPdfView extends BasePdfView {
      *  (These are replaced with <pre class="header"></pre> after parsing.)
      */
     private static void writeHtml(Node node, StringBuilder sBuilder, boolean headerParent) {
-        if (node instanceof TextNode) {
-            TextNode textNode = (TextNode) node;
+        if (node instanceof TextNode textNode) {
             if (headerParent) {
                 sBuilder.append(textNode.getWholeText());
             } else {
                 sBuilder.append(textNode.outerHtml());
             }
-        } else if (node instanceof Element){
-            Element ele = (Element) node;
+        } else if (node instanceof Element ele){
             sBuilder.append("<")
                     .append(ele.tagName())
                     .append(ele.attributes().html());
