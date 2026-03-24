@@ -11,20 +11,16 @@ import java.util.*;
  * Converts a LawDocument, and potentially its children in order, into a PDF.
  */
 public class LawPdfView extends BasePdfView {
-    private static final float SPACING = 1.5f, BOTTOM = 60f, MARGIN = 50f;
-    private static final int LINES_PER_PAGE = (int) ((DEFAULT_TOP - BOTTOM)/(FONT_SIZE * SPACING));
+    private static final float BOTTOM = 60f;
+    private final int LINES_PER_PAGE = (int) ((top - BOTTOM)/(FONT_SIZE * spacing));
     private boolean bold = false;
 
     public LawPdfView(Queue<LawDocument> lawDocQueue) throws IOException {
+        super(null, 50f, 1.5f);
         List<String> lines = new ArrayList<>();
         for (LawDocument doc : lawDocQueue)
             lines.addAll(LawPdfUtil.getLines(doc));
-        writePages(DEFAULT_TOP, MARGIN, getPages(lines));
-    }
-
-    @Override
-    protected float getSpacing() {
-        return 1.5f;
+        writePages(getPages(lines));
     }
 
     /**
@@ -51,7 +47,7 @@ public class LawPdfView extends BasePdfView {
      * @param lines of the full text.
      * @return the pages, formatted as in other PDFs.
      */
-    private static List<List<String>> getPages(List<String> lines) {
+    private List<List<String>> getPages(List<String> lines) {
         // Even with no text, a page should still be generated.
         if (lines.isEmpty())
             return List.of(new ArrayList<>());

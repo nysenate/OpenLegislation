@@ -10,18 +10,22 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractTranscriptPdfView extends BasePdfView {
     private static final Pattern LINE_NUM_PATTERN = Pattern.compile("^ {0,11}\\d{0,2}");
-    protected static final float TOP = 710f, BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f;
+    protected static final float BOTTOM = 90f, LEFT = 105f, RIGHT = 575f, FONT_WIDTH = 7f;
 
     protected int indent;
 
+    protected AbstractTranscriptPdfView(Float spacing) {
+        super(710f, 0f, spacing);
+    }
+
     protected void writeTranscriptPages(List<List<String>> pages) throws IOException {
         this.indent = getIndent(pages.get(1));
-        writePages(TOP, 0, pages);
+        writePages(pages);
     }
 
     @Override
     protected void newPageSetup() throws IOException {
-        contentStream.addRect(LEFT, BOTTOM, RIGHT - LEFT, TOP - BOTTOM);
+        contentStream.addRect(LEFT, BOTTOM, RIGHT - LEFT, top - BOTTOM);
         contentStream.setStrokingColor(Color.BLACK);
         contentStream.stroke();
     }

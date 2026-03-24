@@ -18,6 +18,7 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
     private final float stenographerCenter;
 
     public TranscriptPdfView(String transcriptText, LocalDate date) throws IOException, InvalidLinkTypeEx {
+        super(2f);
         List<List<String>> pages = new TranscriptPdfParser(transcriptText).getPages();
         this.stenographer = Stenographer.getStenographer(date);
         this.stenographerCenter = (RIGHT + LEFT - stenographer.length() * FONT_WIDTH) / 2;
@@ -28,13 +29,8 @@ public class TranscriptPdfView extends AbstractTranscriptPdfView {
     protected void writePage(List<String> page) throws IOException {
         super.writePage(page);
         // The stenographer should be centered at the bottom of the page.
-        float yOffset = (page.size() - STENOGRAPHER_LINE_NUM) * FONT_SIZE * getSpacing();
+        float yOffset = (page.size() - STENOGRAPHER_LINE_NUM) * FONT_SIZE * spacing;
         newLineAtOffsetTracked(stenographerCenter, yOffset);
         contentStream.showText(stenographer);
-    }
-
-    @Override
-    protected float getSpacing() {
-        return 2;
     }
 }

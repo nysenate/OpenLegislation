@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public abstract class BasePdfView {
     private static final Logger logger = LoggerFactory.getLogger(BasePdfView.class);
-    protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f, CHAR_WIDTH = FONT_SIZE * 0.6f;
+    protected static final float FONT_SIZE = 12f, CHAR_WIDTH = FONT_SIZE * 0.6f;
     protected static final PDFont FONT = PDType1Font.COURIER;
     protected static final PDColor TEXT_COLOR = new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE);
     protected static final PDColor LINK_COLOR = new PDColor(new float[]{0, 0, 1}, PDDeviceRGB.INSTANCE);
@@ -42,12 +42,18 @@ public abstract class BasePdfView {
     protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
     protected PDPageContentStream contentStream;
     private final PDDocument doc = new PDDocument();
+    protected final float top, margin, spacing;
     private float currX, currY;
     private PDPage currPage;
     private static final Pattern LINK_PATTERN = Pattern.compile("(.*?)<a href=\"([^\"]+)\">([^<]+)</a>");
 
-    public ResponseEntity<byte[]> writeData() throws IOException {
-        doc.close();
+    protected BasePdfView(Float top, Float margin, Float spacing) {
+        this.top = top == null ? 740f : top;
+        this.margin = margin == null ? 0f : margin;
+        this.spacing = spacing == null ? 1f : spacing;
+    }
+
+    public ResponseEntity<byte[]> getData() throws IOException {
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
@@ -56,18 +62,17 @@ public abstract class BasePdfView {
     /**
      * Writes the given pages to the PDF, then saves the document.
      * @param pages to write.
-     * @param top where to start page.
-     * @param margin on each page.
      */
-    protected void writePages(float top, float margin, List<List<String>> pages) throws IOException {
+    protected void writePages(List<List<String>> pages) throws IOException {
         for (List<String> page : pages) {
-            createPage(top, margin);
+            createPage();
             writePage(page);
             contentStream.endText();
             contentStream.close();
             doc.addPage(currPage);
         }
         doc.save(pdfBytes);
+        doc.close();
     }
 
     /**
@@ -89,31 +94,25 @@ public abstract class BasePdfView {
 
     /**
      * Creates and initializes a new page.
-     * @param top of the new page.
-     * @param margin of the new page.
      * @throws IOException if the page can't be written to.
      */
-    private void createPage(float top, float margin) throws IOException {
+    private void createPage() throws IOException {
         currPage = new PDPage();
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
         contentStream.beginText();
         currX = margin;
-        currY = top - FONT_SIZE * getSpacing(); // offset so first decrement lands at top
+        currY = top - FONT_SIZE * spacing; // offset so first decrement lands at top
         contentStream.newLineAtOffset(margin, top);
         contentStream.setFont(FONT, FONT_SIZE);
-        contentStream.setLeading(FONT_SIZE * getSpacing());
-    }
-
-    protected float getSpacing() {
-        return 1;
+        contentStream.setLeading(FONT_SIZE * spacing);
     }
 
     protected void writePage(List<String> page) throws IOException {
         for (String line : page) {
             writeLine(line);
             contentStream.newLine();
-            currY -= FONT_SIZE * getSpacing();
+            currY -= FONT_SIZE * spacing;
         }
     }
 

@@ -177,7 +177,7 @@ public class BillGetCtrl extends BaseCtrl {
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(BaseBillId.of(billId));
-        return new BillPdfView(bill, billId.getVersion()).writeData();
+        return new BillPdfView(bill, billId.getVersion()).getData();
     }
 
     /**

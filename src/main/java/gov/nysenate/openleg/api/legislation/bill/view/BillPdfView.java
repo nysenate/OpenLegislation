@@ -16,7 +16,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +29,6 @@ import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
  */
 public class BillPdfView extends BasePdfView {
     private static final Logger logger = LoggerFactory.getLogger(BillPdfView.class);
-    private static final float BILL_MARGIN = 10f, RESOLUTION_MARGIN = 46f;
     private static final Pattern BAD_CHAR_PATTERN = Pattern.compile("(?i)U\\+(?<unicode>[A-F0-9]{4})");
     private final String displayName;
     private static final String STYLES = """
@@ -49,8 +47,7 @@ public class BillPdfView extends BasePdfView {
                     "body {font-size: 16px;}\n";
 
     public BillPdfView(Bill bill, Version version) throws IOException {
-        if (bill == null)
-            throw new IllegalArgumentException("Supplied bill cannot be null when converting to pdf!");
+        super(null, bill.isResolution() ? 46f : 10f, null);
         if (!bill.hasAmendment(version))
             throw new BillAmendNotFoundEx(bill.getBaseBillId().withVersion(version));
         BillAmendment ba = bill.getAmendment(version);
@@ -146,9 +143,7 @@ public class BillPdfView extends BasePdfView {
         List<List<String>> pages = billId.getBillType().isResolution() ?
                 BillTextUtils.getResolutionPages(fullText) : BillTextUtils.getBillPages(fullText);
         if (pages.isEmpty())
-            pages = Collections.singletonList(Collections.singletonList(
-                    "No full text available for " + billId));
-        float margin = billId.getBillType().isResolution() ? RESOLUTION_MARGIN : BILL_MARGIN;
-        writePages(DEFAULT_TOP, margin, pages);
+            pages = List.of(List.of("No full text available for " + billId));
+        writePages(pages);
     }
 }

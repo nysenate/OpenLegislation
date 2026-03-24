@@ -45,7 +45,7 @@ public class HearingPdfCtrl {
             catch (NumberFormatException ex) {
                 hearing = hearingData.getHearing(identifier);
             }
-            return new HearingPdfView(hearing).writeData();
+            return new HearingPdfView(hearing).getData();
         } catch (HearingNotFoundEx ex) {
             response.sendError(404, ex.getMessage());
         } catch (IOException ex) {

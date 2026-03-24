@@ -136,7 +136,7 @@ public class TranscriptGetCtrl extends TranscriptBaseCtrl {
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         Transcript transcript = transcriptData.getTranscriptByDateTime(localDateTime);
-        return getPdfView(linkType, transcript).writeData();
+        return getPdfView(linkType, transcript).getData();
     }
 
     @RequestMapping("/{dateTime}/{sessionType}.pdf")
@@ -146,7 +146,7 @@ public class TranscriptGetCtrl extends TranscriptBaseCtrl {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
         var id = TranscriptId.from(localDateTime, sessionType);
         Transcript transcript = transcriptData.getTranscript(id);
-        return getPdfView(linkType, transcript).writeData();
+        return getPdfView(linkType, transcript).getData();
     }
 
     /** --- Internal --- */

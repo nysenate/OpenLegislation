@@ -57,7 +57,7 @@ public class TranscriptPdfCtrl extends TranscriptBaseCtrl {
             Transcript transcript = sessionType == null ?
                     transcriptData.getTranscriptByDateTime(ldt) :
                     transcriptData.getTranscript(TranscriptId.from(ldt, sessionType));
-            return getPdfView(linkType, transcript).writeData();
+            return getPdfView(linkType, transcript).getData();
         }
         catch (DuplicateTranscriptEx | TranscriptNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

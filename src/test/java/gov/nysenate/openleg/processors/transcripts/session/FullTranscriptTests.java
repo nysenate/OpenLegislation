@@ -121,7 +121,7 @@ public class FullTranscriptTests extends BaseTests {
     @Test
     public void testPdfs() throws IOException {
         for (Transcript transcript : transcripts) {
-            new TranscriptPdfView(transcript.getPlainText(), transcript.getId().dateTime().toLocalDate()).writeData();
+            new TranscriptPdfView(transcript.getPlainText(), transcript.getId().dateTime().toLocalDate()).getData();
         }
     }
 
