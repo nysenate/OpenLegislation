@@ -59,6 +59,19 @@ Full Transcript Response
       }
     }
 
+Get a single Transcript that links to referenced bills
+-----------------------
+
+**Usage**
+
+Request transcript that links to www.nysenate.gov::
+
+    (GET) /api/3/transcripts/{dateTime}/{sessionType}?linkType=PUBLIC_WEBSITE
+
+Request transcript that links to legislation.nysenate.gov::
+
+    (GET) /api/3/transcripts/{dateTime}/{sessionType}?linkType=OPEN_LEGISLATION
+
 Get a transcript pdf
 --------------------
 
