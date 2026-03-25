@@ -11,7 +11,7 @@ export default function BillSummaryTab({ bill, selectedAmd }) {
       <Summary bill={bill} />
       <AffectedLaw amendment={bill.amendments.items[selectedAmd]} />
       <AgendaCalendarReferences bill={bill} />
-      <TranscriptReferences bill={bill} />
+      <TranscriptReferences amendment={bill.amendments.items[selectedAmd]} />
       <PreviousVersions bill={bill} />
     </div>
   )
@@ -164,8 +164,8 @@ function AgendaCalendarReferences({ bill }) {
   )
 }
 
-function TranscriptReferences({ bill }) {
-  if (bill.transcripts.size === 0) {
+function TranscriptReferences({ amendment }) {
+  if (amendment.transcripts.size === 0) {
     return null
   }
 
@@ -174,13 +174,17 @@ function TranscriptReferences({ bill }) {
       <header>
         <h3 className="h5">Transcript References</h3>
         <div className="mx-5 my-3">
-          {bill.transcripts.items.map((transcript) => {
+          {amendment.transcripts.items.map((transcript) => {
             const date = new Date(transcript.dateTime);
             const formattedDate = date.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
             const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            let href = `/transcripts/session/${transcript.dateTime}/${transcript.sessionType}#bills-${amendment.session}-${amendment.basePrintNo}`;
+            if (amendment.version !== '') {
+              href += `?amendment=${amendment.version}`
+            }
             return (
               <div key={`${transcript.dateTime}-${transcript.sessionType}`}>
-                <Link to={`/transcripts/session/${transcript.dateTime}/${transcript.sessionType}#bills-${bill.session}-${bill.printNo}`} target="_blank" className="link">
+                <Link to={href} target="_blank" className="link">
                   {transcript.sessionType} on {formattedDate} at {formattedTime}
                 </Link>
               </div>

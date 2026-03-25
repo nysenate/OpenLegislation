@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
+import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
@@ -30,6 +31,7 @@ public class BillAmendmentView extends BillIdView
     protected boolean uniBill;
     protected boolean isStricken;
     protected MapView<String, ListView<String>> relatedLaws;
+    protected ListView<TranscriptIdView> transcripts;
 
     public BillAmendmentView(){}
 
@@ -64,6 +66,9 @@ public class BillAmendmentView extends BillIdView
             billAmendment.getRelatedLawsMap().forEach((k,v) ->
                     relatedLawNames.put(k, ListView.ofStringList(v)));
             this.relatedLaws = MapView.of(relatedLawNames);
+
+            this.transcripts = ListView.of(billAmendment.getTranscripts().stream()
+                    .map(TranscriptIdView::new).toList());
         }
     }
 
@@ -131,6 +136,8 @@ public class BillAmendmentView extends BillIdView
     public MapView<String, ListView<String>> getRelatedLaws() {
         return relatedLaws;
     }
+
+    public ListView<TranscriptIdView> getTranscripts() { return transcripts; }
 
     public String getFullTextTemplate() {
         return fullTextTemplate;

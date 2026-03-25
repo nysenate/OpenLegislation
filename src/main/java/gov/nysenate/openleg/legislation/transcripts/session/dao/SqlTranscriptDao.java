@@ -3,7 +3,7 @@ package gov.nysenate.openleg.legislation.transcripts.session.dao;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -44,7 +44,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     /** {@inheritDoc} */
     @Override
     public void updateTranscript(Transcript transcript) {
-        LinkedHashSet<BaseBillId> billIds = transcript.getLinkedBills();
+        LinkedHashSet<BillId> billIds = transcript.getLinkedBills();
         MapSqlParameterSource params = getTranscriptParams(transcript);
         if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_TRANSCRIPT.getSql(schema()), params);
@@ -52,9 +52,10 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         else {
             jdbcNamed.update(DELETE_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
         }
-        for (BaseBillId billId : billIds) {
+        for (BillId billId : billIds) {
             params.addValue("billPrintNo", billId.getBasePrintNo())
-                    .addValue("billSessionYear", billId.getSession().year());
+                    .addValue("billSessionYear", billId.getSession().year())
+                    .addValue("billAmendVersion", billId.getVersion().toString());
             jdbcNamed.update(INSERT_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
         }
     }
@@ -92,9 +93,9 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("sessionType", rs.getString("session_type"))
                 .addValue("dateTime", toDate(dateTime));
-        LinkedHashSet<BaseBillId> linkedBills = new LinkedHashSet<>();
+        LinkedHashSet<BillId> linkedBills = new LinkedHashSet<>();
         jdbcNamed.query(SELECT_TRANSCRIPT_BILLS.getSql(schema()), params,
-                (rs1, rowNum1) -> linkedBills.add(new BaseBillId(rs1.getString("bill_print_no"), rs1.getInt("bill_session_year"))
+                (rs1, rowNum1) -> linkedBills.add(new BillId(rs1.getString("bill_print_no"), rs1.getInt("bill_session_year"), rs1.getString("bill_amend_version"))
         ));
 
         Transcript transcript = new Transcript(id, DayType.valueOf(dayTypeStr),

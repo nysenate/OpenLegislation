@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.legislation.SessionYear;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.processors.ParseError;
 
@@ -28,8 +28,8 @@ public final class TranscriptParser {
 
     private static final String WORD_SEP = "(?: +|(?: *\\v* *\\d+\\s+)*)";
     private static final Pattern BILL_PATTERNS = Pattern.compile((
-            "\\bSenate (?:Print|Bill) (?:Number )?(\\d+)" +
-                    "|\\bAssembly (?:Print|Bill) (?:Number )?(\\d+)" +
+            "\\bSenate (?:Print|Bill) (?:Number )?(\\d+)([A-Z]?)" +
+                    "|\\bAssembly (?:Print|Bill) (?:Number )?(\\d+)([A-Z]?)" +
                     "|\\bSenate Resolution (?:Number )?(\\d+)" +
                     "|\\bResolution (?:Number )?(\\d+)" +
                     "|\\bSenate Concurrent Resolution (?:Number )?(\\d+)" +
@@ -41,12 +41,14 @@ public final class TranscriptParser {
     private TranscriptParser() {}
 
     private static String toBillId(MatchResult m) {
-        if (m.group(1) != null) return "S" + m.group(1);
-        if (m.group(2) != null) return "A" + m.group(2);
-        if (m.group(3) != null) return "R" + m.group(3);
-        if (m.group(4) != null) return "J" + m.group(4);
-        if (m.group(5) != null) return "B" + m.group(5);
-        return "C" + m.group(6); // implicit m.group(6) != null
+        // Senate and Assembly Bills may need to append amendment
+        if (m.group(1) != null) return "S" + m.group(1) + ((m.group(2) != null) ? m.group(2) : "");
+        if (m.group(3) != null) return "A" + m.group(3) + ((m.group(4) != null) ? m.group(4) : "");
+
+        if (m.group(5) != null) return "R" + m.group(5);
+        if (m.group(6) != null) return "J" + m.group(6);
+        if (m.group(7) != null) return "B" + m.group(7);
+        return "C" + m.group(8); // implicit m.group(8) != null
     }
 
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
@@ -79,14 +81,20 @@ public final class TranscriptParser {
             }
 
             // parse for bill, resolution data and insert links into text
-            SessionYear sessionYear = new SessionYear(dateTime.getYear());
-            LinkedHashSet<BaseBillId> billIds = new LinkedHashSet<>();
+            int sessionYear = (new SessionYear(dateTime.getYear())).year();
+            LinkedHashSet<BillId> billIds = new LinkedHashSet<>();
             // TODO: Can be done better in Java 20 with named groups in MatchResult.
             //  Just name the number groups in the (\\d) group! Can remove lots of ?: too
             String textWithLinks = BILL_PATTERNS.matcher(transcriptText).replaceAll(match -> {
                 String billId = toBillId(match);
-                billIds.add(new BaseBillId(billId, sessionYear));
-                String tagStart = "<a href=\"/%d/%s\">".formatted(sessionYear.year(), billId);
+                billIds.add(new BillId(billId, sessionYear));
+
+                // if last char is non-numeric replace implicit amendment version with param
+                char version = billId.charAt(billId.length() - 1);
+                String tagStart = Character.isDigit(version)
+                        ? "<a href=\"/%d/%s\">".formatted(sessionYear, billId)
+                        : "<a href=\"/%d/%s?amendment=%c\">".formatted(sessionYear, billId.substring(0, billId.length() - 1), version);
+
                 // Line and page breaks should not be linked.
                 return tagStart + match.group(0).replaceAll(LINE_PAGE_BREAK_SEP.pattern(), "</a>$0" + tagStart) + "</a>";
             });

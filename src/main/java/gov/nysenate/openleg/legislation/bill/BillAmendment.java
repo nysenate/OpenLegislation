@@ -5,6 +5,7 @@ import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -68,6 +69,9 @@ public class BillAmendment implements Serializable, Cloneable
 
     /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;
+
+    /** Links to transcripts that involve this bill amendment. */
+    protected List<TranscriptId> transcripts = Collections.synchronizedList(new ArrayList<>());
 
     /** --- Constructors --- */
 
@@ -254,6 +258,10 @@ public class BillAmendment implements Serializable, Cloneable
     public String getLawCode() {
         return lawCode;
     }
+
+    public List<TranscriptId> getTranscripts() { return transcripts; }
+
+    public void setTranscripts(List<TranscriptId> transcripts) { this.transcripts = transcripts; }
 
     public String getRelatedLawsJson() { return relatedLawsJson;}
 

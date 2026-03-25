@@ -82,9 +82,6 @@ public class BillView extends BillInfoView implements ViewObject
             this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
                 .map(CommAgendaIdView::new).toList());
 
-            this.transcripts = ListView.of(bill.getTranscripts().stream()
-                    .map(TranscriptIdView::new).toList());
-
             this.calendars = ListView.of(bill.getCalendars().stream()
                 .map(CalendarIdView::new).toList());
         }
@@ -134,8 +131,6 @@ public class BillView extends BillInfoView implements ViewObject
     public ListView<CommAgendaIdView> getCommitteeAgendas() {
         return committeeAgendas;
     }
-
-    public ListView<TranscriptIdView> getTranscripts() { return transcripts; }
 
     public ListView<CalendarIdView> getCalendars() {
         return calendars;

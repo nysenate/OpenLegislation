@@ -384,9 +384,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Associated Transcript Ids -- */
 
     SELECT_TRANSCRIPT_IDS(
-            "SELECT session_type, date_time \n" +
-            "FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
-            "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+        "SELECT session_type, date_time \n" +
+        "FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     ;
 

@@ -78,6 +78,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amendment.setVotesMap(getBillVotes(amendParams));
             // Get BillText
             amendment.setBillText(getBillText(amendParams));
+            // Get the associated transcripts
+            amendment.setTranscripts(getTranscripts(amendParams));
         }
         // Set the amendments
         bill.addAmendments(billAmendments);
@@ -105,8 +107,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         bill.setCommitteeAgendas(getCommitteeAgendas(baseParams));
         // Get the associated calendars
         bill.setCalendars(getCalendars(baseParams));
-        // Get the associated transcripts
-        bill.setTranscripts(getTranscripts(baseParams));
         // Bill has been fully constructed
         return bill;
     }

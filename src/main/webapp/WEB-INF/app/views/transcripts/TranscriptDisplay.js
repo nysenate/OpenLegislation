@@ -80,7 +80,8 @@ function processLinks(text) {
   let lastIndex = 0;
 
   for (const match of text.matchAll(linkPattern)) {
-    const [fullMatch, href, linkText] = match; // deconstruct match into capture groups
+    let [fullMatch, href, linkText] = match; // deconstruct match into capture groups
+    href = href.replace(/[A-Z](\?amendment=[A-Z])$/, '$1'); // remove amendment from billId if exists, since it is already a param
 
     // push preceding plaintext
     if (match.index > lastIndex)

@@ -26,39 +26,43 @@
 
         12          Senate Bill Number 5
 
-        13          Assembly 6
+        13          Senate Print 6A
 
-        14          Assembly Print 7
+        14          Senate Print 6B
 
-        15          Assembly Print Number 8
+        15          Assembly 6
 
-        16          Assembly Bill 9
+        16          Assembly Print 7
 
-        17          Assembly Bill Number 10
+        17          Assembly Print Number 8
 
-        18          Resolution 1
+        18          Assembly Bill 9
 
-        19          Resolution Number 2
+        19          Assembly Bill Number 10
 
-        20          Senate Resolution 3
+        20          Resolution 1
 
-        21          Senate Resolution Number 4
+        21          Resolution Number 2
 
-        22          Senate Concurrent Resolution 10
+        22          Senate Resolution 3
 
-        23          Senate Concurrent Resolution Number 20
+        23          Senate Resolution Number 4
 
-        24          Assembly Concurrent Resolution 30
+        24          Senate Concurrent Resolution 10
 
-        25          Assembly Concurrent Resolution Number 40
+        25          Senate Concurrent Resolution Number 20
 
-        26          THE PRESIDENT: The Senate will come to order.
+        26          Assembly Concurrent Resolution 30
 
-        27          THE SECRETARY: The Senate will come to order.
+        27          Assembly Concurrent Resolution Number 40
 
-        28          SOMEONE ELSE: The DayType is now Session
+        28          THE PRESIDENT: The Senate will come to order.
 
-        29
+        29          THE SECRETARY: The Senate will come to order.
+
+        30          SOMEONE ELSE: The DayType is now Session
+
+        31
 
 
 

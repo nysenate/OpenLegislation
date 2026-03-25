@@ -6,8 +6,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.config.annotation.IntegrationTest;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
-import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.BillDao;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
@@ -54,8 +53,8 @@ public class SqlTranscriptDaoIT extends BaseTests {
             TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        LinkedHashSet<BaseBillId> updatedBills = new LinkedHashSet<>();
-        updatedBills.add(new BaseBillId("S1", 2026));
+        LinkedHashSet<BillId> updatedBills = new LinkedHashSet<>();
+        updatedBills.add(new BillId("S1A", 2026));
         UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
                 curr.getLocation(), curr.getPlainText() + "v1", updatedBills);
         UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));
@@ -95,7 +94,10 @@ public class SqlTranscriptDaoIT extends BaseTests {
         dao.updateTranscript(UPDATE);
         assertNotEquals(UPDATE.getLinkedBills(), dao.getTranscript(TRANSCRIPTS.get(0).getId()).getLinkedBills());
 
-        billDao.updateBill(new Bill(new BaseBillId("S1", 2026)), null);
+        BaseBillId billId = new BaseBillId("S1", 2026);
+        Bill bill = new Bill(billId);
+        bill.addAmendment(new BillAmendment(billId, Version.of("A")));
+        billDao.updateBill(bill, null);
         fileDao.updateFile(UPDATE_FILE);
         dao.updateTranscript(UPDATE);
         assertEquals(UPDATE, dao.getTranscript(TRANSCRIPTS.get(0).getId()));

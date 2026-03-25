@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
@@ -40,7 +40,7 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billsBefore2009.txt";
 
-        LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
+        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
         Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 
         Transcript actualTranscript = processFilename(filename);
@@ -54,10 +54,10 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billVariations.txt";
 
-        LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
-        String[] ids = {"S2", "S3", "S4", "S5", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
+        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
+        String[] ids = {"S2", "S3", "S4", "S5", "S6A", "S6B", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
         for (String id : ids) {
-            expectedBillIds.add(new BaseBillId(id, 2009));
+            expectedBillIds.add(new BillId(id, 2009));
         }
         Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 
@@ -72,10 +72,10 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billsAcrossLines.txt";
 
-        LinkedHashSet<BaseBillId> expectedBillIds = new LinkedHashSet<>();
+        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
         String[] ids = {"S1", "S2", "S3", "S4", "R8"};
         for (String id : ids) {
-            expectedBillIds.add(new BaseBillId(id, 2009));
+            expectedBillIds.add(new BillId(id, 2009));
         }
         Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 

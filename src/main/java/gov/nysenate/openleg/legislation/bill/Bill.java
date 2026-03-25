@@ -8,7 +8,6 @@ import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -97,9 +96,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** Associated floor calendar ids. */
     protected List<CalendarId> calendars =  Collections.synchronizedList(new ArrayList<>());
-
-    /** Links to transcripts that involve this bill. */
-    protected List<TranscriptId> transcripts = Collections.synchronizedList(new ArrayList<>());
 
     /** Bills that are passed are assigned a chapter number. */
     protected Integer chapterNum;
@@ -507,10 +503,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public void setCommitteeAgendas(List<CommitteeAgendaId> committeeAgendas) {
         this.committeeAgendas = committeeAgendas;
     }
-
-    public List<TranscriptId> getTranscripts() { return transcripts; }
-
-    public void setTranscripts(List<TranscriptId> transcripts) { this.transcripts = transcripts; }
 
     public List<CalendarId> getCalendars() {
         return calendars;
