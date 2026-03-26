@@ -11,6 +11,8 @@ import {
 import {
   LawNavigationBar,
 } from "app/views/laws/chapter/NavigationLinks";
+import Select, { SelectOption } from "app/shared/Select";
+import { useQueryParam } from "app/lib/urlUtils";
 
 
 /**
@@ -18,24 +20,38 @@ import {
  */
 export default function LawLeafNodeView({ setHeaderText }) {
   const match = useRouteMatch()
+
   const [ leafNode, setLeafNode ] = React.useState()
+  const [ date, setDate ] = useQueryParam("date")
+  const [ dateOptions, setDateOptions ] = React.useState()
 
   React.useEffect(() => {
-    getLawsApi(match.params.chapterId, match.params.locationId)
+    getLawsApi(match.params.chapterId, match.params.locationId, date ? { date } : {})
       .then(response => {
         response.text = response.text.replaceAll("\\n", "\n")
         setLeafNode(response)
       })
-  }, [ match ])
+  }, [ match, date ])
 
   React.useEffect(() => {
     setHeaderText(leafNode?.lawName || "")
+    if (!leafNode) return
+    const options = [...leafNode.publishedDates].reverse().map((t) => new SelectOption(t, t))
+    setDateOptions(options)
+    if (date) {
+      const closest = options.find(o => o.value <= date)
+      if (closest && closest.value !== date) setDate(closest.value)
+    }
+    else {
+      setDate(options[0]?.value)
+    }
   }, [leafNode])
 
   if (!leafNode) {
     return null
   }
 
+  // TODO: LawNavigationBar should keep dates in mind
   return (
     <section className="p-3">
       <header className="text-center">
@@ -45,6 +61,12 @@ export default function LawLeafNodeView({ setHeaderText }) {
         <h4 className="h4">{capitalize(leafNode.docType)} {leafNode.locationId}</h4>
         <h4 className="h5">{leafNode.title}</h4>
       </header>
+
+      <Select label="View Historical Revision as of:"
+              name="Historical Revision"
+              value={date}
+              options={dateOptions}
+              onChange={(e) => setDate(e.target.value)} />
 
       <div className="my-5 overflow-x-auto md:flex md:justify-center">
         <div>

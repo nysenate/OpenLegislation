@@ -4,18 +4,18 @@ import {
 } from "react-router-dom";
 import { capitalize } from "app/lib/textUtils";
 
-export default function LawNodeChildrenList({ nodes }) {
+export default function LawNodeChildrenList({ nodes, date }) {
   return (
     <div>
-      {nodes.map(node => <NodeRow node={node} key={node.locationId} />)}
+      {nodes.map(node => <NodeRow node={node} date={date} key={node.locationId} />)}
     </div>
   )
 }
 
-function NodeRow({ node }) {
+function NodeRow({ node, date }) {
   const to = node.docType === "SECTION"
-    ? `/laws/${node.lawId}/leaf/${node.locationId}`
-    : `/laws/${node.lawId}/node/${node.locationId}`
+    ? `/laws/${node.lawId}/leaf/${node.locationId}?date=${date}`
+    : `/laws/${node.lawId}/node/${node.locationId}?date=${date}`
   return (
     <Link to={to} className="link border-0">
       <div className="flex items-center text px-3 py-1 rounded hover:bg-gray-200">

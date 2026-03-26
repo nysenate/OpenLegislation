@@ -3,7 +3,10 @@ import {
   CaretLeft,
   CaretRight
 } from "phosphor-react";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useLocation
+} from "react-router-dom";
 import React from "react";
 import { capitalize } from "app/lib/textUtils";
 
@@ -82,6 +85,7 @@ function Spacer() {
 }
 
 function NavigationLink({ label, type, to }) {
+  const { search } = useLocation()
   let icon
   let header
   let containerClass = "flex"
@@ -103,9 +107,10 @@ function NavigationLink({ label, type, to }) {
       break
   }
 
+  // TODO: Date will persist as user travels up layers, which may not lead them to the date used to travel down layers
   return (
     <div className={containerClass}>
-      <Link to={to} className="border-0" class="link border-0">
+      <Link to={`${to}${search}`} className="link border-0">
         <div className="flex items-center p-3 hover:bg-gray-200 rounded">
           {type === "next"
             ? <>{label} {icon}</>

@@ -1,4 +1,8 @@
 import * as queryString from "query-string";
+import {
+  useHistory,
+  useLocation
+} from "react-router-dom";
 
 
 /**
@@ -16,4 +20,24 @@ export function anonymousUrl(url) {
   let params = queryString.parse(url.slice(searchParamStartIndex + 1))
   delete params.key
   return endpoint + "?" + queryString.stringify(params)
+}
+
+/**
+ * Returns a query parameter value and a setter function that updates
+ * the URL search string without losing other existing params.
+ *
+ * @param {string} key - The query parameter to read and write
+ */
+export function useQueryParam(key) {
+  const location = useLocation()
+  const history = useHistory()
+  const value = queryString.parse(location.search)[key] || undefined
+
+  const setValue = (newValue) => {
+    const params = queryString.parse(location.search)
+    params[key] = newValue
+    history.replace({ search: queryString.stringify(params) })
+  }
+
+  return [ value, setValue ]
 }
