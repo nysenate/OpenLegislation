@@ -122,7 +122,7 @@ public class HearingGetCtrl extends BaseCtrl {
         } catch (NumberFormatException ex) {
             hearing = hearingData.getHearing(identifier);
         }
-        return new HearingPdfView(hearing).writeData();
+        return new HearingPdfView(hearing).getData();
     }
 
     /**

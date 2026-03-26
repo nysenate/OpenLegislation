@@ -3,7 +3,6 @@ package gov.nysenate.openleg.processors.transcripts.session;
 import com.google.common.collect.ImmutableSortedSet;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

@@ -50,7 +50,7 @@ public class BillPdfCtrl extends BaseCtrl {
                 response.sendRedirect(urlString);
             } else {
                 Bill bill = billData.getBill(BaseBillId.of(billId));
-                return new BillPdfView(bill, billId.getVersion()).writeData();
+                return new BillPdfView(bill, billId.getVersion()).getData();
             }
         } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
             response.sendError(404, ex.getMessage());

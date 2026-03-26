@@ -14,6 +14,7 @@ public class HearingPdfView extends AbstractTranscriptPdfView {
     private final boolean isWrongFormat;
 
     public HearingPdfView(Hearing hearing) throws IOException {
+        super(null);
         if (hearing == null) {
             throw new IllegalArgumentException("Supplied Hearing cannot be null when converting to pdf.");
         }

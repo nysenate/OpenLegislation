@@ -8,7 +8,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public abstract class BasePdfView {
     private static final Logger logger = LoggerFactory.getLogger(BasePdfView.class);
-    protected static final float FONT_SIZE = 12f, DEFAULT_TOP = 740f, CHAR_WIDTH = FONT_SIZE * 0.6f;
+    protected static final float FONT_SIZE = 12f, CHAR_WIDTH = FONT_SIZE * 0.6f;
     protected static final PDFont FONT = PDType1Font.COURIER;
     protected static final PDColor TEXT_COLOR = new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE);
     protected static final PDColor LINK_COLOR = new PDColor(new float[]{0, 0, 1}, PDDeviceRGB.INSTANCE);
@@ -42,14 +42,19 @@ public abstract class BasePdfView {
     protected final ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
     protected PDPageContentStream contentStream;
     private final PDDocument doc = new PDDocument();
+    protected final float top, margin, spacing;
     private float currX, currY;
     private PDPage currPage;
-    private static final Pattern LINK_PATTERN = Pattern.compile("<a href=\"([^\"]+)\">([^<]+)</a>");
-    private static final Pattern LINK_COLOR_INSERTION_PATTERN = Pattern.compile("<<<<<(.)*>>>>>");
+    private static final Pattern LINK_PATTERN = Pattern.compile("(.*?)<a href=\"([^\"]+)\">([^<]+)</a>");
 
-    public ResponseEntity<byte[]> writeData() throws IOException {
-        doc.close();
-        HttpHeaders headers = new HttpHeaders();
+    protected BasePdfView(Float top, Float margin, Float spacing) {
+        this.top = top == null ? 740f : top;
+        this.margin = margin == null ? 0f : margin;
+        this.spacing = spacing == null ? 1f : spacing;
+    }
+
+    public ResponseEntity<byte[]> getData() throws IOException {
+        var headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
     }
@@ -57,18 +62,17 @@ public abstract class BasePdfView {
     /**
      * Writes the given pages to the PDF, then saves the document.
      * @param pages to write.
-     * @param top where to start page.
-     * @param margin on each page.
      */
-    protected void writePages(float top, float margin, List<List<String>> pages) throws IOException {
+    protected void writePages(List<List<String>> pages) throws IOException {
         for (List<String> page : pages) {
-            createPage(top, margin);
+            createPage();
             writePage(page);
             contentStream.endText();
             contentStream.close();
             doc.addPage(currPage);
         }
         doc.save(pdfBytes);
+        doc.close();
     }
 
     /**
@@ -90,95 +94,90 @@ public abstract class BasePdfView {
 
     /**
      * Creates and initializes a new page.
-     * @param top of the new page.
-     * @param margin of the new page.
      * @throws IOException if the page can't be written to.
      */
-    private void createPage(float top, float margin) throws IOException {
+    private void createPage() throws IOException {
         currPage = new PDPage();
         contentStream = new PDPageContentStream(doc, currPage);
         newPageSetup();
         contentStream.beginText();
         currX = margin;
-        currY = top - FONT_SIZE * getSpacing(); // offset so first decrement lands at top
+        currY = top - FONT_SIZE * spacing; // offset so first decrement lands at top
         contentStream.newLineAtOffset(margin, top);
         contentStream.setFont(FONT, FONT_SIZE);
-        contentStream.setLeading(FONT_SIZE * getSpacing());
-    }
-
-    protected float getSpacing() {
-        return 1;
+        contentStream.setLeading(FONT_SIZE * spacing);
     }
 
     protected void writePage(List<String> page) throws IOException {
         for (String line : page) {
-            List<String> urls = new ArrayList<>();
-            List<float[]> linkRectangles = new ArrayList<>();
-
-            Matcher matcher = LINK_PATTERN.matcher(line);
-            StringBuilder plainText = new StringBuilder();
-            int prevEnd = 0;
-
-            // extract link text from HTML
-            while (matcher.find()) {
-                plainText.append(line, prevEnd, matcher.start());
-                int startPos = plainText.length();
-                String linkText = matcher.group(2);
-                plainText.append("<<<<<");
-                plainText.append(linkText);
-                plainText.append(">>>>>");
-                int endPos = plainText.length() - 10;
-                prevEnd = matcher.end();
-
-                // calculate link position and size
-                float x1 = currX + startPos * CHAR_WIDTH;
-                float x2 = currX + endPos * CHAR_WIDTH;
-                linkRectangles.add(new float[]{x1, currY - 2, x2 - x1, FONT_SIZE + 2}); // x, y, width, height; 2 is arbitrary for padding
-                urls.add(matcher.group(1));
-            }
-            plainText.append(line, prevEnd, line.length());
-
-            writeLine(plainText.toString());
-
-            // insert each link into the page
-            for (int i = 0; i < urls.size(); i++) {
-                PDAnnotationLink link = new PDAnnotationLink();
-                PDActionJavaScript actionJS = new PDActionJavaScript("app.launchURL('" + urls.get(i) + "', true);");
-                link.setAction(actionJS);
-                float[] r = linkRectangles.get(i);
-                link.setRectangle(new PDRectangle(r[0], r[1], r[2], r[3]));
-                link.setColor(LINK_COLOR);
-                link.setBorderStyle(LINK_UNDERLINE);
-                currPage.getAnnotations().add(link);
-            }
-
+            writeLine(line);
             contentStream.newLine();
-            currY -= FONT_SIZE * getSpacing();
+            currY -= FONT_SIZE * spacing;
         }
     }
 
     protected void writeLine(String line) throws IOException {
-        try {
-            Matcher matcher = LINK_COLOR_INSERTION_PATTERN.matcher(line);
-            int lastEnd = 0;
+        List<PdfText> textSegments = new ArrayList<>();
+        Matcher linkMatcher = LINK_PATTERN.matcher(line);
+        int charsPrinted = 0;
+        int lastEnd = 0;
 
-            while (matcher.find()) {
-                String plainText = line.substring(lastEnd, matcher.start());
-                contentStream.setNonStrokingColor(TEXT_COLOR);
-                contentStream.showText(plainText);
+        while (linkMatcher.find()) {
+            textSegments.add(new PdfText(linkMatcher.group(1)));
+            charsPrinted += linkMatcher.group(1).length();
 
-                String markedText = matcher.group().replaceAll("<<<<<|>>>>>", "");
-                contentStream.setNonStrokingColor(LINK_COLOR);
-                contentStream.showText(markedText);
-
-                lastEnd = matcher.end();
-            }
-            String remainingText = line.substring(lastEnd);
-            contentStream.setNonStrokingColor(TEXT_COLOR);
-            contentStream.showText(remainingText);
+            String linkedText = linkMatcher.group(3);
+            // 2 is arbitrary for padding
+            var linkRectangle = new PDRectangle(currX + charsPrinted * CHAR_WIDTH, currY - 2,
+                    linkedText.length() * CHAR_WIDTH, FONT_SIZE + 2);
+            textSegments.add(new LinkedPdfText(linkedText, linkMatcher.group(2), linkRectangle));
+            charsPrinted += linkedText.length();
+            lastEnd = linkMatcher.end();
         }
-        catch (IllegalArgumentException ex) {
-            logger.warn("Bad character in PDF. Line: {}", line);
+        // TODO: can use linkMatcher.hasMatch() in Java 20, and remove lastEnd
+        textSegments.add(new PdfText(line.substring(lastEnd)));
+
+        for (PdfText textSegment : textSegments) {
+            textSegment.showText();
+        }
+    }
+
+    private class PdfText {
+        private final String text;
+
+        public PdfText(String text) {
+            this.text = text;
+        }
+
+        public void showText() throws IOException {
+            try {
+                contentStream.showText(text);
+            } catch (IllegalArgumentException ex) {
+                logger.warn("Bad character in PDF. Text: {}", text);
+            }
+        }
+    }
+
+    private class LinkedPdfText extends PdfText {
+        private final PDAnnotationLink link;
+
+        public LinkedPdfText(String text, String url, PDRectangle rectangle) {
+            super(text);
+            var uriAction = new PDActionURI();
+            uriAction.setURI(url);
+            this.link = new PDAnnotationLink();
+            link.setAction(uriAction);
+            link.setRectangle(rectangle);
+            link.setColor(LINK_COLOR);
+            link.setBorderStyle(LINK_UNDERLINE);
+        }
+
+        @Override
+        public void showText() throws IOException {
+            contentStream.setNonStrokingColor(LINK_COLOR);
+            super.showText();
+            contentStream.setNonStrokingColor(TEXT_COLOR);
+            currPage.getAnnotations().add(link);
         }
     }
 }

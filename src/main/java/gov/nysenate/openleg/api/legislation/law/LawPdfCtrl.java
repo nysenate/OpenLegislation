@@ -61,7 +61,7 @@ public class LawPdfCtrl extends BaseCtrl {
         }
         else
             lawDocs.add(lawData.getLawDocument(docNode.getDocumentId(), null));
-        return new LawPdfView(lawDocs).writeData();
+        return new LawPdfView(lawDocs).getData();
     }
 
     @ExceptionHandler(LawTreeNotFoundEx.class)
