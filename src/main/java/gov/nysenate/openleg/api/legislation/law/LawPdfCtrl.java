@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.regex.Matcher;
@@ -37,19 +38,22 @@ public class LawPdfCtrl extends BaseCtrl {
      *
      * @param documentId of the law document to look up. If you want the root
      * node, enter just the 3 letter law id instead.
+     * @param date The published date of the law tree (defaults to latest law tree)
      * @param full if you want the children to be shown.
      * @return a law document PDF.
      * @throws IOException if PDF cannot be written.
      */
     @RequestMapping("/{documentId}")
     public ResponseEntity<byte[]> getLawPdf(@PathVariable String documentId,
+                                            @RequestParam(required = false) String date,
                                             @RequestParam(defaultValue = "false") boolean full)
             throws IOException {
         Matcher matcher = DOCUMENT_ID_PATTERN.matcher(documentId);
         if (!matcher.matches())
             throw new InvalidRequestParamEx(documentId, "documentId", "String",
                     "Document ID must start with a 3 letter law ID.");
-        LawTree lawTree = lawData.getLawTree(matcher.group(1));
+        LocalDate publishedDate = (date != null) ? parseISODate(date, "date") : null;
+        LawTree lawTree = lawData.getLawTree(matcher.group(1), publishedDate);
         // This allows full law trees to be obtained.
         if (matcher.group(2).isEmpty())
             documentId = lawTree.getRootNode().getDocumentId();
