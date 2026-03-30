@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +70,7 @@ public class BillSobiProcessor extends AbstractBillProcessor {
     public void process(LegDataFragment legDataFragment) {
         LocalDateTime date = legDataFragment.getPublishedDateTime();
         List<SobiBlock> blocks = legDataFragment.getSobiBlocks();
-        logger.info("Processing " + legDataFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
+        logger.info("Processing {} with ({}) blocks.", legDataFragment.getFragmentId(), blocks.size());
         DataProcessUnit unit = createProcessUnit(legDataFragment);
         for (SobiBlock block : processConfig.filterSobiBlocks(blocks)) {
             String data = block.getData();
@@ -430,8 +427,8 @@ public class BillSobiProcessor extends AbstractBillProcessor {
         }
         else {
             specifiedAmendment.setLawCode(data.replace("\n", " ").trim());
-            String json = BillLawCodeParser.parse(specifiedAmendment.getLawCode(), baseBill.hasValidLaws(version));
-            specifiedAmendment.setRelatedLawsJson(json);
+            Map<String, List<String>> relatedLawsMap = BillLawCodeParser.parseToMap(specifiedAmendment.getLawCode(), baseBill.hasValidLaws(version));
+            specifiedAmendment.setRelatedLawsMap(relatedLawsMap);
         }
         baseBill.setModifiedDateTime(date);
     }

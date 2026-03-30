@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.processors.bill;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -40,6 +43,22 @@ public class BillLawCodeParser {
         lawCode = lawCode.replaceAll("(?i) to be", ", rento");
         // Law codes are usually delimited by semi-colons for each affected volume.
         return new ArrayList<>(Splitter.on(";").trimResults().omitEmptyStrings().splitToList(lawCode));
+    }
+
+    /**
+     * Calls BillLawCodeParser.parse() and converts the json result to a map.
+     * @return a map of LawActionTypes to list of associated laws
+     */
+    public static Map<String, List<String>> parseToMap(String lawCode, boolean hasValidLaws) {
+        String json = parse(lawCode, hasValidLaws);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(json, new TypeReference<>() {});
+        }
+        catch (JsonProcessingException ex) {
+            logger.error("Failed to apply bill amendment's related laws", ex);
+            return new HashMap<>();
+        }
     }
 
     /**

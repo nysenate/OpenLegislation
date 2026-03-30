@@ -10,10 +10,7 @@ import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.processors.log.DataProcessUnit;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import gov.nysenate.openleg.processors.bill.LegDataFragmentType;
-import gov.nysenate.openleg.processors.AbstractDataProcessor;
 import gov.nysenate.openleg.processors.ParseError;
-import gov.nysenate.openleg.processors.LegDataProcessor;
-import gov.nysenate.openleg.common.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,6 +20,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
@@ -39,7 +38,7 @@ public class XmlLDSummProcessor extends AbstractLegDataProcessor {
 
     @Override
     public void process(LegDataFragment legDataFragment) {
-        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        logger.info("Processing {} (xml file).", legDataFragment.getFragmentId());
         DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
             final Document doc = xmlHelper.parse(legDataFragment.getText());
@@ -56,8 +55,8 @@ public class XmlLDSummProcessor extends AbstractLegDataProcessor {
             baseBill.setSummary(summary);
             BillAmendment amendment = baseBill.getAmendment(version);
             amendment.setLawCode(lawCode);
-            String json = BillLawCodeParser.parse(amendment.getLawCode(), baseBill.hasValidLaws(version));
-            amendment.setRelatedLawsJson(json);
+            Map<String, List<String>> relatedLawsMap = BillLawCodeParser.parseToMap(amendment.getLawCode(), baseBill.hasValidLaws(version));
+            amendment.setRelatedLawsMap(relatedLawsMap);
 
             if (action.equals("replace")) { //replace bill
                 // add previous bills

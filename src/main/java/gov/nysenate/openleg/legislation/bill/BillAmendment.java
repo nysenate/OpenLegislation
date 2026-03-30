@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import com.google.gson.Gson;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
@@ -38,8 +37,8 @@ public class BillAmendment implements Serializable, Cloneable
     /** The section of the law the bill affects. e.g (Vehicle And Traffic) */
     protected String lawSection = "";
 
-    /** The JSON version of the parsed law code */
-    private String relatedLawsJson;
+    /** The map version of the parsed law code */
+    private Map<String, List<String>> relatedLawsMap = new HashMap<>();
 
     /** The law code of the bill. e.g (Amd §1373, Pub Health L) pulled directly from the file. */
     protected String lawCode = "";
@@ -263,22 +262,15 @@ public class BillAmendment implements Serializable, Cloneable
 
     public void setTranscripts(List<TranscriptId> transcripts) { this.transcripts = transcripts; }
 
-    public String getRelatedLawsJson() { return relatedLawsJson;}
-
     public void setLawCode(String lawCode) {
         this.lawCode = lawCode;
     }
 
-    public void setRelatedLawsJson(String json) {
-        relatedLawsJson = json;
+    public Map<String, List<String>> getRelatedLawsMap() {
+        return relatedLawsMap;
     }
 
-    @SuppressWarnings("unchecked")
-    public Map<String, List<String>> getRelatedLawsMap() {
-        Map<String, List<String>> mapping = new HashMap<>();
-        if (relatedLawsJson == null || relatedLawsJson.equals("")){
-            return mapping;
-        }
-        return new Gson().fromJson(relatedLawsJson, mapping.getClass());
+    public void setRelatedLawsMap(Map<String, List<String>> map) {
+        relatedLawsMap = map;
     }
 }

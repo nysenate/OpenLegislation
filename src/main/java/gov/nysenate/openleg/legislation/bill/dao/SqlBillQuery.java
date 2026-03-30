@@ -110,7 +110,7 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_BILL_AMENDMENTS(
         "SELECT bill_print_no, bill_session_year, bill_amend_version,\n" +
-        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, related_laws, law_code\n" +
+        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, law_code\n" +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
@@ -118,15 +118,15 @@ public enum SqlBillQuery implements BasicSqlQuery
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause,\n" +
         "    stricken = :stricken, uni_bill = :uniBill, last_fragment_id = :lastFragmentId,\n" +
-        "    law_section = :lawSection, law_code = :lawCode, related_laws = CAST(:relatedLawsJson AS JSON)\n" +
+        "    law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, \n" +
-        "    stricken, uni_bill, last_fragment_id, law_section, law_code, related_laws)\n" +
+        "    stricken, uni_bill, last_fragment_id, law_section, law_code\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, \n" +
-        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode, CAST(:relatedLawsJson AS JSON))"
+        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
     SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
             "SELECT a.bill_print_no, a.bill_session_year, a.bill_amend_version\n" +
@@ -247,6 +247,27 @@ public enum SqlBillQuery implements BasicSqlQuery
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo \n" +
         "AND COALESCE(committee_name, '') = COALESCE(:committeeName, '')"
+    ),
+
+    /** --- Bill Amendment Related Laws --- */
+
+    SELECT_BILL_AMENDMENT_RELATED_LAWS(
+        "SELECT action_type, law\n" +
+        "FROM ${schema}." + SqlTable.BILL_AMENDMENT_RELATED_LAWS + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+    DELETE_BILL_AMENDMENT_RELATED_LAWS(
+        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_RELATED_LAWS + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+    INSERT_BILL_AMENDMENT_RELATED_LAWS(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_RELATED_LAWS + "\n" +
+        "(bill_print_no, bill_session_year, bill_amend_version, action_type, law)\n" +
+        "SELECT :printNo, :sessionYear, :version, :action, :law\n" +
+        "WHERE EXISTS (\n" +
+        "   SELECT 1\n" +
+        "   FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
+        "   WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version)"
     ),
 
     /** --- Bill Actions --- */

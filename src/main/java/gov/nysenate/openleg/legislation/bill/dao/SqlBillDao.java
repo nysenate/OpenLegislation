@@ -18,6 +18,7 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
+import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -43,8 +44,7 @@ import java.util.*;
 import static gov.nysenate.openleg.common.dao.SortOrder.ASC;
 import static gov.nysenate.openleg.common.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
-import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.SELECT_BILL_AMENDMENTS;
-import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.SELECT_BILL_AMEND_MEMO;
+import static gov.nysenate.openleg.legislation.bill.dao.SqlBillQuery.*;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao {
@@ -53,6 +53,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     @Autowired private MemberService memberService;
     @Autowired private VetoDataService vetoDataService;
     @Autowired private ApprovalDataService approvalDataService;
+    @Autowired private LawDataService lawDataService;
 
     /* --- Implemented Methods --- */
 
@@ -177,6 +178,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             updateBillVotes(amendment, legDataFragment, amendParams);
             // Update bill text diffs
             updateBillTextDiff(amendment, amendParams);
+            // Update bill related laws
+            updateBillRelatedLaws(amendment, amendParams);
         }
         // Update the publish statuses of the amendments
         updateBillAmendPublishStatus(bill, legDataFragment, billParams);
@@ -325,7 +328,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      */
     public List<BillAmendment> getBillAmendments(ImmutableParams baseParams) {
         final String query = SELECT_BILL_AMENDMENTS.getSql(schema());
-        return jdbcNamed.query(query, baseParams, new BillAmendmentRowMapper());
+        return jdbcNamed.query(query, baseParams, billAmendmentRowMapper);
     }
 
     /**
@@ -724,6 +727,28 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         jdbcNamed.update(SqlBillQuery.UPDATE_BILL_AMEND_PLAIN_TEXT.getSql(schema()), amendParams);
     }
 
+    /**
+     * Update the bill's related laws map by deleting, inserting, and updating as needed.
+     */
+    private void updateBillRelatedLaws(BillAmendment billAmendment, ImmutableParams amendParams) {
+        // delete old related laws
+        jdbcNamed.update(DELETE_BILL_AMENDMENT_RELATED_LAWS.getSql(schema()), amendParams);
+
+        // loop through and insert related laws
+        Map<String, List<String>> relatedLawsMap = billAmendment.getRelatedLawsMap();
+        for (var entry : relatedLawsMap.entrySet()) {
+            String action = entry.getKey();
+            for (String law : entry.getValue()) {
+                // apply to database
+                MapSqlParameterSource params = new MapSqlParameterSource();
+                addBillIdParams(new Bill(billAmendment.getBaseBillId()), params);
+                params.addValue("action", action)
+                        .addValue("law", law);
+                jdbcNamed.update(INSERT_BILL_AMENDMENT_RELATED_LAWS.getSql(schema()), params);
+            }
+        }
+    }
+
     public List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear) {
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         billParams.addValue("sessionYear", sessionYear.year());
@@ -785,25 +810,31 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
-    private static class BillAmendmentRowMapper implements RowMapper<BillAmendment> {
+    private final RowMapper<BillAmendment> billAmendmentRowMapper = (rs, rowNum) -> {
+        String printNo = rs.getString("bill_print_no");
+        int sessionYear = rs.getInt("bill_session_year");
+        String amendmentVersion = rs.getString("bill_amend_version");
+        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        BillAmendment amend = new BillAmendment(baseBillId, Version.of(amendmentVersion));
+        amend.setMemo(rs.getString("sponsor_memo"));
+        amend.setActClause(rs.getString("act_clause"));
+        amend.setStricken(rs.getBoolean("stricken"));
+        amend.setUniBill(rs.getBoolean("uni_bill"));
+        amend.setLawSection(rs.getString("law_section"));
+        amend.setLawCode(rs.getString("law_code"));
 
-        public BillAmendmentRowMapper() {
-        }
-
-        @Override
-        public BillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            BaseBillId baseBillId = new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"));
-            BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("bill_amend_version")));
-            amend.setMemo(rs.getString("sponsor_memo"));
-            amend.setActClause(rs.getString("act_clause"));
-            amend.setStricken(rs.getBoolean("stricken"));
-            amend.setUniBill(rs.getBoolean("uni_bill"));
-            amend.setLawSection(rs.getString("law_section"));
-            amend.setLawCode(rs.getString("law_code"));
-            amend.setRelatedLawsJson(rs.getString("related_laws"));
-            return amend;
-        }
-    }
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("printNo", printNo)
+                .addValue("sessionYear", sessionYear)
+                .addValue("version", amendmentVersion);
+        Map<String, List<String>> relatedLawsMap = new HashMap<>();
+        jdbcNamed.query(SELECT_BILL_AMENDMENT_RELATED_LAWS.getSql(schema()), params,
+                (rs1, rowNum1) ->
+                    relatedLawsMap.computeIfAbsent(rs1.getString("action_type"),
+                            k -> new ArrayList<>()).add(rs1.getString("law")));
+        amend.setRelatedLawsMap(relatedLawsMap);
+        return amend;
+    };
 
     private static class BillAmendPublishStatusHandler implements RowCallbackHandler
     {
@@ -947,8 +978,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLawCode())
-                .addValue("uniBill", amendment.isUniBill())
-                .addValue("relatedLawsJson", amendment.getRelatedLawsJson());
+                .addValue("uniBill", amendment.isUniBill());
         addLastFragmentParam(fragment, params);
         return params;
     }

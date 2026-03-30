@@ -44,6 +44,7 @@ public enum SqlTable {
     BILL_AMENDMENT_VOTE_INFO     ("bill_amendment_vote_info"),
     BILL_AMENDMENT_VOTE_ROLL     ("bill_amendment_vote_roll"),
     BILL_AMENDMENT_TEXT_DIFF     ("bill_amendment_text_diff"),
+    BILL_AMENDMENT_RELATED_LAWS  ("bill_amendment_related_laws"),
 
     BILL_APPROVAL                ("bill_approval"),
     BILL_COMMITTEE               ("bill_committee"),
