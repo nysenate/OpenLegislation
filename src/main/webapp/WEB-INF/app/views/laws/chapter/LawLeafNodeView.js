@@ -13,6 +13,7 @@ import {
 } from "app/views/laws/chapter/NavigationLinks";
 import Select, { SelectOption } from "app/shared/Select";
 import { useQueryParam } from "app/lib/urlUtils";
+import * as queryString from "query-string";
 
 
 /**
@@ -39,7 +40,14 @@ export default function LawLeafNodeView({ setHeaderText }) {
     const options = [...leafNode.publishedDates].reverse().map((t) => new SelectOption(t, t))
     setDateOptions(options)
     if (date) {
-      const closest = options.find(o => o.value <= date)
+      const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
+      let closest
+      if (findNext) {
+        closest = options.findLast(o => o.value >= date)
+      }
+      else {
+        closest = options.find(o => o.value <= date)
+      }
       if (closest && closest.value !== date) setDate(closest.value)
     }
     else {

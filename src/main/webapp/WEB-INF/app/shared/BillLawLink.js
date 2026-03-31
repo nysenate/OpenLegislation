@@ -1,28 +1,28 @@
 import React from "react"
 import { Link } from "react-router-dom";
 
-export function BillLawLink({ action, isPassed, law, oldDate, newDate }) {
+export function BillLawLink({ action, isPassed, law, date }) {
   if (action === 'AMEND' && isPassed) {
     return (
       <span>
-        {law}(<Link to={lawToHref(law, oldDate)} target="_blank" className="link">old</Link>,&nbsp;
-        <Link to={lawToHref(law, newDate)} target="_blank" className="link">new</Link>)
+        {law}&nbsp;(<Link to={lawToHref(law, date, false)} target="_blank" className="link">old</Link>,&nbsp;
+        <Link to={lawToHref(law, date, true)} target="_blank" className="link">new</Link>)
     </span>
     )
   }
   else if (action === 'AMEND' && !isPassed) {
     return (
-      <Link to={lawToHref(law, oldDate)} target="_blank" className="link">{law}</Link>
+      <Link to={lawToHref(law, date, false)} target="_blank" className="link">{law}</Link>
     )
   }
   else if (action === 'ADD' && isPassed) {
     return (
-      <Link to={lawToHref(law, newDate)} target="_blank" className="link">{law}</Link>
+      <Link to={lawToHref(law, date, true)} target="_blank" className="link">{law}</Link>
     )
   }
   else if (action === 'REPEAL') {
     return (
-      <Link to={lawToHref(law, oldDate)} target="_blank" className="link">{law}</Link>
+      <Link to={lawToHref(law, date, false)} target="_blank" className="link">{law}</Link>
     )
   }
   else {
@@ -45,7 +45,7 @@ export function BillLawChapterLink({ lawChapter }) {
   }
 }
 
-function lawToHref(law, date) {
+function lawToHref(law, date, findNext) {
   const sectionCode = law.substring(0, 3)
 
   let href = "/laws/" + sectionCode
@@ -58,7 +58,7 @@ function lawToHref(law, date) {
   else {
     href += "/node/"
   }
-  href = href + law.substring(3) + "?date=" + date.toISOString().slice(0, 10)
+  href = href + law.substring(3) + "?date=" + date.toISOString().slice(0, 10) + "&findNext=" + findNext
 
   return href;
 }

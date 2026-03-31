@@ -11,6 +11,7 @@ import {
 import { FilePdf } from "phosphor-react";
 import Select, { SelectOption } from "app/shared/Select";
 import { useQueryParam } from "app/lib/urlUtils";
+import * as queryString from "query-string";
 
 
 export default function ChapterView({ setHeaderText }) {
@@ -34,7 +35,14 @@ export default function ChapterView({ setHeaderText }) {
     const options = [...chapter.publishedDates].reverse().map((t) => new SelectOption(t, t))
     setDateOptions(options)
     if (date) {
-      const closest = options.find(o => o.value <= date)
+      const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
+      let closest
+      if (findNext) {
+        closest = options.findLast(o => o.value >= date)
+      }
+      else {
+        closest = options.find(o => o.value <= date)
+      }
       if (closest && closest.value !== date) setDate(closest.value)
     }
     else {

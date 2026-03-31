@@ -77,13 +77,8 @@ function Summary({ bill }) {
 }
 
 function AffectedLaw({ amendment, billStatus }) {
-  // TODO: determine whether bill is passed and find date of original and new law
-  // TODO: should substituted bills have the same links
   const isPassed = billStatus.statusType === 'ADOPTED' || billStatus.statusType === 'SIGNED_BY_GOV' || billStatus.statusType === 'POCKET_APPROVAL'
-  const oldDate = new Date(billStatus.actionDate)
-  oldDate.setDate(oldDate.getDate() - 21)
-  const newDate = new Date(billStatus.actionDate)
-  newDate.setDate(newDate.getDate() + 21)
+  const date = new Date(billStatus.actionDate)
   return (
     <section className="mt-8">
       <header>
@@ -105,7 +100,7 @@ function AffectedLaw({ amendment, billStatus }) {
                     {index !== 0 &&
                     <span>,&nbsp;</span>
                     }
-                    <BillLawLink action={key} isPassed={isPassed} law={law} oldDate={oldDate} newDate={newDate} />
+                    <BillLawLink action={key} isPassed={isPassed} law={law} date={date} />
                   </React.Fragment>
                 )
               })}

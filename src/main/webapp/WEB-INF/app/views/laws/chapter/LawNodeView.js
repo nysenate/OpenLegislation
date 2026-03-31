@@ -9,6 +9,7 @@ import { FilePdf } from "phosphor-react";
 import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 import Select, { SelectOption } from "app/shared/Select";
 import { useQueryParam } from "app/lib/urlUtils";
+import * as queryString from "query-string";
 
 
 export default function LawNodeView({ setHeaderText }) {
@@ -33,7 +34,14 @@ export default function LawNodeView({ setHeaderText }) {
     const options = [...node.publishedDates].reverse().map((t) => new SelectOption(t, t))
     setDateOptions(options)
     if (date) {
-      const closest = options.find(o => o.value <= date)
+      const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
+      let closest
+      if (findNext) {
+        closest = options.findLast(o => o.value >= date)
+      }
+      else {
+        closest = options.find(o => o.value <= date)
+      }
       if (closest && closest.value !== date) setDate(closest.value)
     }
     else {
