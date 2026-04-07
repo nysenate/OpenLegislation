@@ -32,7 +32,7 @@ export function BillLawLink({ action, isPassed, law, date }) {
   }
 }
 
-export function BillLawChapterLink({ lawChapter }) {
+export function BillLawChapterLink({ lawChapter, date }) {
   if (lawChapter === 'Resolutions, Legislative') {
     return (
       <p className="text">Primary Law Section - {lawChapter}</p>
@@ -40,7 +40,7 @@ export function BillLawChapterLink({ lawChapter }) {
   }
   else {
     return (
-      <Link to={lawSectionToHref(lawChapter)} target="_blank" className="link">Primary Law Section - {lawChapter}</Link>
+      <Link to={lawSectionToHref(lawChapter, date)} target="_blank" className="link">Primary Law Section - {lawChapter}</Link>
     )
   }
 }
@@ -58,15 +58,15 @@ function lawToHref(law, date, findNext) {
   else {
     href += "/node/"
   }
-  href = href + law.substring(3) + "?date=" + date.toISOString().slice(0, 10) + "&findNext=" + findNext
+  href = href + law.substring(3) + "?date=" + date + "&findNext=" + findNext
 
   return href;
 }
 
-function lawSectionToHref(lawSectionName) {
+function lawSectionToHref(lawSectionName, date) {
   const lawSectionCode = LAW_CHAPTERS[lawSectionName];
   if (lawSectionCode) {
-    return ("/laws/" + lawSectionCode);
+    return "/laws/" + lawSectionCode + "?date=" + date
   }
   else {
     return "/laws";

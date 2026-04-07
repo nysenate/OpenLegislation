@@ -78,14 +78,14 @@ function Summary({ bill }) {
 
 function AffectedLaw({ amendment, billStatus }) {
   const isPassed = billStatus.statusType === 'ADOPTED' || billStatus.statusType === 'SIGNED_BY_GOV' || billStatus.statusType === 'POCKET_APPROVAL'
-  const date = new Date(billStatus.actionDate)
+  const date = new Date(billStatus.actionDate).toISOString().slice(0, 10)
   return (
     <section className="mt-8">
       <header>
         <h3 className="h5">Affected Law</h3>
       </header>
       <div className="mx-5 my-3">
-        <BillLawChapterLink lawChapter={amendment.lawSection} />
+        <BillLawChapterLink lawChapter={amendment.lawSection} date={date} />
       </div>
       {amendment.relatedLaws.size !== 0 &&
       <div className="mx-5 my-3">
