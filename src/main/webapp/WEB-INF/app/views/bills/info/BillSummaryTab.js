@@ -10,7 +10,7 @@ export default function BillSummaryTab({ bill, selectedAmd }) {
       <SameAs bill={bill} selectedAmd={selectedAmd} />
       <EnactingClause bill={bill} selectedAmd={selectedAmd} />
       <Summary bill={bill} />
-      <AffectedLaw amendment={bill.amendments.items[selectedAmd]} billStatus={bill.status} />
+      <AffectedLaw amendment={bill.amendments.items[selectedAmd]} activeVersion={bill.activeVersion} billStatus={bill.status} />
       <AgendaCalendarReferences bill={bill} />
       <TranscriptReferences amendment={bill.amendments.items[selectedAmd]} />
       <PreviousVersions bill={bill} />
@@ -76,9 +76,15 @@ function Summary({ bill }) {
   )
 }
 
-function AffectedLaw({ amendment, billStatus }) {
-  const isPassed = billStatus.statusType === 'ADOPTED' || billStatus.statusType === 'SIGNED_BY_GOV' || billStatus.statusType === 'POCKET_APPROVAL'
-  const date = new Date(billStatus.actionDate).toISOString().slice(0, 10)
+function AffectedLaw({ amendment, activeVersion, billStatus }) {
+  const isActiveVersion = amendment.version === activeVersion
+  const isPassed = isActiveVersion &&
+    (billStatus.statusType === 'ADOPTED' || billStatus.statusType === 'SIGNED_BY_GOV' || billStatus.statusType === 'POCKET_APPROVAL')
+
+  // use date of latest milestone on latest amendment, otherwise use publish date
+  const rawDate = isActiveVersion ? billStatus.actionDate : amendment.publishDate
+  const date = new Date(rawDate).toISOString().slice(0, 10)
+
   return (
     <section className="mt-8">
       <header>
