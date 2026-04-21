@@ -91,7 +91,7 @@ function AffectedLaw({ amendment, activeVersion, billStatus }) {
         <h3 className="h5">Affected Law</h3>
       </header>
       <div className="mx-5 my-3">
-        <BillLawChapterLink lawChapter={amendment.lawSection} date={date} />
+        <BillLawChapterLink lawChapterName={amendment.lawSection} date={date} />
       </div>
       {amendment.relatedLaws.size !== 0 &&
       <div className="mx-5 my-3">

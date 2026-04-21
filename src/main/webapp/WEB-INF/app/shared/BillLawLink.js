@@ -2,29 +2,34 @@ import React from "react"
 import { Link } from "react-router-dom";
 
 export function BillLawLink({ action, isPassed, law, date }) {
-  if (action === 'AMEND' && isPassed) {
+  if (date < earliestLawTree()) {
+    return (
+      <span>{law}</span>
+    )
+  }
+  // show old and new version of law
+  else if (action === 'AMEND' && isPassed) {
     return (
       <span>
         {law}&nbsp;(<Link to={lawToHref(law, date, false)} target="_blank" className="link">old</Link>,&nbsp;
         <Link to={lawToHref(law, date, true)} target="_blank" className="link">new</Link>)
-    </span>
+      </span>
     )
   }
-  else if (action === 'AMEND' && !isPassed) {
+  // only show old version of law
+  else if ((action === 'AMEND' && !isPassed) ||
+          new Set(['REPEAL', 'RENAME', 'RENUMERATE', 'RELETTER', 'DESIGNATE', 'REDESIGNATE', 'RELETTER', 'RENUMBER']).has(action)) {
     return (
       <Link to={lawToHref(law, date, false)} target="_blank" className="link">{law}</Link>
     )
   }
+  // only show new version of law
   else if (action === 'ADD' && isPassed) {
     return (
       <Link to={lawToHref(law, date, true)} target="_blank" className="link">{law}</Link>
     )
   }
-  else if (action === 'REPEAL') {
-    return (
-      <Link to={lawToHref(law, date, false)} target="_blank" className="link">{law}</Link>
-    )
-  }
+  // do not link to law
   else {
     return (
       <span>{law}</span>
@@ -32,15 +37,20 @@ export function BillLawLink({ action, isPassed, law, date }) {
   }
 }
 
-export function BillLawChapterLink({ lawChapter, date }) {
-  if (lawChapter === 'Resolutions, Legislative') {
+export function BillLawChapterLink({ lawChapterName, date }) {
+  const chapterCode = LAW_CHAPTERS[lawChapterName] ??
+    LAW_CHAPTERS[lawChapterName.replace(/ Law/g, "")] ??
+    LAW_CHAPTERS[lawChapterName.replace(/s$/, "")]
+
+  if (!chapterCode || date < earliestLawTree()) {
     return (
-      <p className="text">Primary Law Section - {lawChapter}</p>
+      <p className="text">Primary Law Section - {lawChapterName}</p>
     )
   }
   else {
+    const chapterLink = "/laws/" + chapterCode + "?date=" + date
     return (
-      <Link to={lawSectionToHref(lawChapter, date)} target="_blank" className="link">Primary Law Section - {lawChapter}</Link>
+      <Link to={chapterLink} target="_blank" className="link">Primary Law Section - {lawChapterName}</Link>
     )
   }
 }
@@ -50,7 +60,6 @@ function lawToHref(law, date, findNext) {
 
   let href = "/laws/" + sectionCode
 
-  // TODO: confirm that all leaves start with numbers and that all nodes start with letters
   // if first character of documentId is numerical, link to leaf, otherwise link to node
   if (/^\d$/.test(law.charAt(3))) {
     href += "/leaf/"
@@ -63,37 +72,40 @@ function lawToHref(law, date, findNext) {
   return href;
 }
 
-function lawSectionToHref(lawSectionName, date) {
-  const lawSectionCode = LAW_CHAPTERS[lawSectionName];
-  if (lawSectionCode) {
-    return "/laws/" + lawSectionCode + "?date=" + date
-  }
-  else {
-    return "/laws";
-  }
+/**
+ * There are no law trees before the returned date
+ */
+function earliestLawTree() {
+  return '2014-09-22'
 }
 
+/**
+ * LawChapterCode enum with some modifications so that it matches actual bill data. Some keys are unused, and some chapters have multiple keys.
+ * There are a number of law sections in bills that do not match to any particular law chapter.
+ */
 const LAW_CHAPTERS = {
   'Abandoned Property': 'ABP',
-  'Agriculture & Markets': 'AGM',
+  'Agriculture and Markets': 'AGM',
   'Alcoholic Beverage Control': 'ABC',
-  'Alternative County Government': 'ACG',
+  'Alternative County Government': 'ACG', // no matches
   'Arts and Cultural Affairs': 'ACA',
   'Banking': 'BNK',
+  'Banks': 'BNK',
   'Benevolent Orders': 'BVO',
   'Business Corporation': 'BSC',
   'Canal': 'CAL',
   'Cannabis': 'CAN',
-  'Civil Practice Law & Rules': 'CVP',
+  'Civil Practice Law and Rules': 'CVP',
   'Civil Rights': 'CVR',
   'Civil Service': 'CVS',
   'Cooperative Corporations': 'CCO',
   'Correction': 'COR',
   'County': 'CNT',
+  'Counties': 'CNT',
   'Criminal Procedure': 'CPL',
-  'Debtor & Creditor': 'DCD',
+  'Debtor and Creditor': 'DCD',
   'Domestic Relations': 'DOM',
-  'Economic Development Law': 'COM',
+  'Economic Development': 'COM',
   'Education': 'EDN',
   'Elder': 'ELD',
   'Election': 'ELN',
@@ -101,9 +113,9 @@ const LAW_CHAPTERS = {
   'Employers\' Liability': 'EML',
   'Energy': 'ENG',
   'Environmental Conservation': 'ENV',
-  'Estates, Powers & Trusts': 'EPT',
+  'Estates, Powers and Trusts': 'EPT',
   'Executive': 'EXC',
-  'Financial Services Law': 'FIS',
+  'Financial Services': 'FIS',
   'General Associations': 'GAS',
   'General Business': 'GBS',
   'General City': 'GCT',
@@ -117,19 +129,19 @@ const LAW_CHAPTERS = {
   'Labor': 'LAB',
   'Legislative': 'LEG',
   'Lien': 'LIE',
-  'Limited Liability Company Law': 'LLC',
+  'Limited Liability Company': 'LLC',
   'Local Finance': 'LFN',
   'Mental Hygiene': 'MHY',
   'Military': 'MIL',
   'Multiple Dwelling': 'MDW',
   'Multiple Residence': 'MRE',
-  'Municipal Housing Authorities': 'MHA',
+  'Municipal Housing Authorities': 'MHA', // no matches
   'Municipal Home Rule': 'MHR',
   'Navigation': 'NAV',
   'New York State Printing and Public Documents': 'PPD',
   'Not-for-Profit Corporation': 'NPC',
   'Parks, Recreation and Historic Preservation': 'PAR',
-  'Partnership': 'PTR',
+  'Partnership': 'PTR', // no matches
   'Penal': 'PEN',
   'Personal Property': 'PEP',
   'Private Housing Finance': 'PVH',
@@ -140,66 +152,36 @@ const LAW_CHAPTERS = {
   'Public Lands': 'PBL',
   'Public Officers': 'PBO',
   'Public Service': 'PBS',
-  'Racing, Pari-Mutuel Wagering and Breeding Law': 'PML',
+  'Racing, Pari-Mutuel Wagering and Breeding': 'PML',
   'Railroad': 'RRD',
-  'Rapid Transit': 'RAT',
+  'Rapid Transit': 'RAT', // no matches
   'Real Property': 'RPP',
-  'Real Property Actions & Proceedings': 'RPA',
+  'Real Property Actions and Proceedings': 'RPA',
   'Real Property Tax': 'RPT',
+  'Real Property Taxation': 'RPT',
   'Religious Corporations': 'RCO',
-  'Retirement & Social Security': 'RSS',
+  'Retirement and Social Security': 'RSS',
   'Rural Electric Cooperative': 'REL',
-  'Second Class Cities': 'SCC',
+  'Second Class Cities': 'SCC', // no matches
   'Social Services': 'SOS',
-  'Soil & Water Conservation Districts': 'SWC',
+  'Soil and Water Conservation Districts': 'SWC',
   'State': 'STL',
   'State Administrative Procedure Act': 'SAP',
   'State Finance': 'STF',
   'State Technology': 'STT',
-  'Statute of Local Governments': 'SLG',
+  'Statute of Local Governments': 'SLG', // no matches
   'Tax': 'TAX',
   'Town': 'TWN',
   'Transportation': 'TRA',
   'Transportation Corporations': 'TCP',
   'Uniform Commercial Code': 'UCC',
-  'Vehicle & Traffic': 'VAT',
-  'Veterans\' Services': 'VET',
+  'Vehicle and Traffic': 'VAT',
+  'Veterans': 'VET',
+  'Veterans\' Service': 'VET',
   'Village': 'VIL',
   'Volunteer Ambulance Workers\' Benefit': 'VAW',
   'Volunteer Firefighters\' Benefit': 'VOL',
   'Workers\' Compensation': 'WKC',
-  'Boxing, Sparring and Wrestling Ch. 912/20': 'BSW',
-  'Bridges and Tunnels New York/New Jersey 47/31': 'BAT',
-  'Cigarettes, Cigars, Tobacco 235/52': 'CCT',
-  'City of Troy Issuance of Serial Bonds': 'TRY',
-  'Defense Emergency Act 1951 784/51': 'DEA',
-  'Development of Port of New York 43/22': 'DPN',
-  'Emergency Tenant Protection Act 576/74': 'ETP',
-  'Expanded Health Care Coverage Act 703/88': 'EHC',
-  'NYS Financial Emergency Act for the city of NY 868/75': 'FEA',
-  'NYS Project Finance Agency Act 7/75': 'NYP',
-  'Yonkers Financial Emergency Act 103/84': 'YFA',
-  'Yonkers Income Tax Surcharge': 'YTS',
-  'Facilities Development Corporation Act 359/68': 'FDC',
-  'General City Model 772/66': 'GCM',
-  'Local Emergency Housing Rent Control Act 21/62': 'LEH',
-  'Emergency Housing Rent Control Law 274/46 337/61': 'ERL',
-  'Lost and Strayed Animals 115/1894': 'LSA',
-  'Medical Care Facilities Finance Agency 392/73': 'MCF',
-  'N. Y. Wine/Grape 80/85': 'NYW',
-  'New York City Health and Hospitals Corporation Act 1016/69': 'HHC',
-  'Police Certain Municipalities 360/11': 'PCM',
-  'Port of New York Authority 154/21': 'PNY',
-  'Port of Albany 192/25': 'POA',
-  'Private Activity Bond 47/90': 'PAB',
-  'Regulation of Lobbying Act 1040/81': 'RLA',
-  'Special Needs Housing Act 261/88': 'SNH',
-  'Suffolk County Tax Act': 'SCT',
-  'Tobacco Settlement Financing Corporation Act': 'TSF',
-  'Urban Development Guarantee Fund of New York 175/68': 'UDG',
-  'Urban Development Corporation Act 174/68': 'UDA',
-  'Urban Development Research Corporation Act 173/68': 'UDR',
-  'New, New York Bond Act 649/92': 'NNY',
   'Court of Claims Act': 'CTC',
   'Family Court Act': 'FCT',
   'New York City Civil Court Act': 'CCA',
@@ -209,8 +191,46 @@ const LAW_CHAPTERS = {
   'Uniform District Court Act': 'UDC',
   'Uniform Justice Court Act': 'UJC',
   'Assembly Rules': 'CMA',
+  'Resolutions, Assembly': 'CMA',
   'Senate Rules': 'CMS',
+  'Resolutions, Senate': 'CMS',
   'Constitution': 'CNS',
+  'Constitution, Concurrent Resolutions to Amend': 'CNS',
   'New York City Administrative Code': 'ADC',
   'New York City Charter': 'NYC',
+
+  // most unconsolidated law chapters do not match properly
+  'Boxing, Sparring and Wrestling': 'BSW',
+  'Boxing': 'BSW',
+  'Bridges and Tunnels New York/New Jersey': 'BAT',
+  'Cigarettes, Cigars, Tobacco': 'CCT',
+  'City of Troy Issuance of Serial Bonds': 'TRY',
+  'Defense Emergency Act 1951': 'DEA',
+  'Development of Port of New York': 'DPN',
+  'Emergency Tenant Protection Act': 'ETP',
+  'Expanded Health Care Coverage Act': 'EHC',
+  'NYS Financial Emergency Act for the city of NY': 'FEA',
+  'NYS Project Finance Agency Act': 'NYP',
+  'Yonkers Financial Emergency Act': 'YFA',
+  'Yonkers Income Tax Surcharge': 'YTS',
+  'Facilities Development Corporation Act': 'FDC',
+  'General City Model': 'GCM',
+  'Local Emergency Housing Rent Control Act': 'LEH',
+  'Emergency Housing Rent Control': 'ERL',
+  'Lost and Strayed Animals': 'LSA',
+  'Medical Care Facilities Finance Agency': 'MCF',
+  'N. Y. Wine/Grape': 'NYW',
+  'New York City Health and Hospitals Corporation Act': 'HHC',
+  'Police Certain Municipalities': 'PCM',
+  'Port of New York Authority': 'PNY',
+  'Port of Albany': 'POA',
+  'Private Activity Bond': 'PAB',
+  'Regulation of Lobbying Act': 'RLA',
+  'Special Needs Housing Act': 'SNH',
+  'Suffolk County Tax Act': 'SCT',
+  'Tobacco Settlement Financing Corporation Act': 'TSF',
+  'Urban Development Guarantee Fund of New York': 'UDG',
+  'Urban Development Corporation Act': 'UDA',
+  'Urban Development Research Corporation Act': 'UDR',
+  'New, New York Bond Act': 'NNY',
 }
