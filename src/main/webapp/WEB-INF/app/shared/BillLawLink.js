@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "react-router-dom";
 
 export function BillLawLink({ action, isPassed, law, date }) {
-  if (date < earliestLawTree()) {
+  if (date < earliestLawTree() || law.includes('(generally)')) {
     return (
       <span>{law}</span>
     )
