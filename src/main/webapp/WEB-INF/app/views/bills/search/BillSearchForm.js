@@ -82,6 +82,9 @@ export default function BillSearchForm() {
    */
   React.useEffect(() => {
     const params = queryString.parse(location.search, { parseBooleans: true })
+    if (params.term === false) {
+      params.term = "false"
+    }
     setTerm(params.term || "")
     setSession(params.session || sessionOptions[0].value)
     setSort(params.sort || sortOptions[0].value)
