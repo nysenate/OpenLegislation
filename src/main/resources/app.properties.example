@@ -119,7 +119,7 @@ postgresdb.name = openleg
 # The username for the user that has access to the database named above.
 postgresdb.user =
 
-# And the password..
+# And the password.
 postgresdb.pass =
 
 # c3p0 connection pool size configuration
