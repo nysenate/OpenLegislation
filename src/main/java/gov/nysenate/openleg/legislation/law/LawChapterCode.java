@@ -20,7 +20,7 @@ public enum LawChapterCode
     ABC("Alcoholic Beverage Control", CONSOLIDATED),
     ACG("Alternative County Government", CONSOLIDATED),
     ACA("Arts and Cultural Affairs", CONSOLIDATED),
-    BNK("Banking",  CONSOLIDATED),
+    BNK("Banking",  CONSOLIDATED, "Banks"),
     BVO("Benevolent Orders", CONSOLIDATED),
     BSC("Business Corporation", CONSOLIDATED),
     CAL("Canal", CONSOLIDATED),
@@ -86,7 +86,7 @@ public enum LawChapterCode
     RAT("Rapid Transit", CONSOLIDATED),
     RPP("Real Property", CONSOLIDATED),
     RPA("Real Property Actions & Proceedings", CONSOLIDATED),
-    RPT("Real Property Tax", CONSOLIDATED),
+    RPT("Real Property Tax", CONSOLIDATED, "Real Property Taxation"),
     RCO("Religious Corporations", CONSOLIDATED),
     RSS("Retirement & Social Security", CONSOLIDATED),
     REL("Rural Electric Cooperative", CONSOLIDATED),
@@ -98,7 +98,7 @@ public enum LawChapterCode
     STF("State Finance", CONSOLIDATED),
     STT("State Technology", CONSOLIDATED),
     SLG("Statute of Local Governments", CONSOLIDATED),
-    TAX("Tax", CONSOLIDATED),
+    TAX("Tax", CONSOLIDATED, "Taxation"),
     TWN("Town", CONSOLIDATED),
     TRA("Transportation", CONSOLIDATED),
     TCP("Transportation Corporations", CONSOLIDATED),
@@ -171,6 +171,7 @@ public enum LawChapterCode
 
     private final String chapterName;
     private final LawType type;
+    private final String[] alternateNames;
 
     public static final Pattern NUMBERED_CHAPTER = Pattern.compile("Chap (\\d+) of (\\d+)");
     private static final Set<LawChapterCode> NON_NUMERICAL_VOLUMES = Set.of(ACA, CPL, CVS, PAR, MHY, PEN);
@@ -276,9 +277,10 @@ public enum LawChapterCode
 
     /** --- Constructor --- */
 
-    LawChapterCode(String chapterName, LawType type) {
+    LawChapterCode(String chapterName, LawType type, String... alternateNames) {
         this.chapterName = chapterName;
         this.type = type;
+        this.alternateNames = alternateNames;
     }
 
     /**
@@ -298,5 +300,9 @@ public enum LawChapterCode
 
     public LawType getType() {
         return type;
+    }
+
+    public String[] getAlternateNames() {
+        return alternateNames;
     }
 }
