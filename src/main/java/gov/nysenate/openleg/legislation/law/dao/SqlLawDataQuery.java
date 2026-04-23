@@ -19,7 +19,8 @@ public enum SqlLawDataQuery implements BasicSqlQuery
             "  SELECT *\n" +
             "  FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
             "  WHERE document_id = :docId\n" +
-            "    AND published_date <= :endPublishedDate\n" +
+            "    AND ((:findNext = false AND published_date <= :endPublishedDate)\n" +
+            "      OR (:findNext = true  AND published_date >= :endPublishedDate))\n" +
             "  ORDER BY published_date DESC\n" +
             "  LIMIT 1\n" +
             ")\n" +

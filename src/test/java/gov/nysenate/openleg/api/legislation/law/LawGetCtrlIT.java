@@ -72,7 +72,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
     @Test
     public void getLawDocumentTest() {
         loadTestData(true, ETP.name());
-        ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ETP.name(), "2", null, null);
+        ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ETP.name(), "2", null, false, null);
         LawDocWithRefsView doc = ((LawDocWithRefsView) genericDocument.getResult());
         assertEquals(1, doc.getParentLocationIds().size());
         assertEquals("1974", doc.getParentLocationIds().get(0));
@@ -87,7 +87,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         String initialDate = "2014-09-22";
         String[] locIds = {"A1", "4", "5", "A2", "6", "7"};
         for (String locId : locIds) {
-            ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ABC.name(), locId, null, initialDate);
+            ViewObjectResponse<?> genericDocument = (ViewObjectResponse<?>)testCtrl.getLawDocument(ABC.name(), locId, null, false, initialDate);
             LawDocWithRefsView doc = ((LawDocWithRefsView) genericDocument.getResult());
             assertNotNull(doc.getParents());
         }
@@ -147,7 +147,7 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         String badDocId = lawId + "0";
         String date = "2020-06-30";
         try {
-            testCtrl.getLawDocument(badDocId.substring(0, 3), badDocId.substring(3), date, null);
+            testCtrl.getLawDocument(badDocId.substring(0, 3), badDocId.substring(3), date, false, null);
         }
         catch (LawDocumentNotFoundEx ex) {
             ViewObjectErrorResponse response = (ViewObjectErrorResponse) testCtrl.handleLawDocNotFoundEx(ex);

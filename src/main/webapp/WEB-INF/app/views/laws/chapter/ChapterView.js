@@ -19,6 +19,7 @@ export default function ChapterView({ setHeaderText }) {
   const [ chapter, setChapter ] = React.useState()
   const [ date, setDate ] = useQueryParam("date")
   const [ dateOptions, setDateOptions ] = React.useState()
+  const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
   const [ isLoading, setIsLoading ] = React.useState(true)
 
   React.useEffect(() => {
@@ -35,7 +36,6 @@ export default function ChapterView({ setHeaderText }) {
     const options = [...chapter.publishedDates].reverse().map((t) => new SelectOption(t, t))
     setDateOptions(options)
     if (date) {
-      const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
       let closest
       if (findNext) {
         closest = options.findLast(o => o.value >= date)

@@ -49,10 +49,25 @@ public interface LawDataService
      *
      * @param documentId String - The law document id
      * @param endPublishedDate LocalDate - The upper bound for published date
+     * @param findNext Boolean - If false, finds the document before the given date. If true, find the document after the given date
      * @return LawDocument
      * @throws LawDocumentNotFoundEx - If there is no law document that meets the given criteria.
      */
-    LawDocument getLawDocument(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx;
+    LawDocument getLawDocument(String documentId, LocalDate endPublishedDate, boolean findNext) throws LawDocumentNotFoundEx;
+
+    /**
+     * Retrieves the LawDocument from the backing store given the document id and an endPublishedDate. The most recent
+     * law document with a published date prior to or on 'endPublishedDate' will be returned. Otherwise a
+     * LawDocumentNotFoundEx will be thrown.
+     *
+     * @param documentId String - The law document id
+     * @param endPublishedDate LocalDate - The upper bound for published date
+     * @return LawDocument
+     * @throws LawDocumentNotFoundEx - If there is no law document that meets the given criteria.
+     */
+    default LawDocument getLawDocument(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx {
+        return getLawDocument(documentId, endPublishedDate, false);
+    }
 
     /**
      * Similar to getLawDocument except the text is omitted which may result in a faster result.

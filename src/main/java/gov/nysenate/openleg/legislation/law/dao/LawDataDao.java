@@ -63,7 +63,22 @@ public interface LawDataDao
      * @return LawDocument
      * @throws DataAccessException - If there was an error while trying to retrieve the law document.
      */
-    LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException;
+    LawDocument getLawDocument(String documentId, LocalDate endPublishDate, boolean findNext) throws DataAccessException;
+
+    /**
+     * Retrieve a LawDocument using the given document id and end published date. The most recent law document
+     * that with a published date prior to or on 'endPublishDate' will be returned, otherwise a DataAccessException will
+     * be thrown.
+     *
+     * @param documentId String - The LBDC document id
+     * @param endPublishDate LocalDate - Returns the law document that has the most recent publish date that
+     *                                   is prior to or on this date.
+     * @return LawDocument
+     * @throws DataAccessException - If there was an error while trying to retrieve the law document.
+     */
+    default LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException {
+        return getLawDocument(documentId, endPublishDate, false);
+    }
 
     /**
      * Retrieve all the law documents (with greatest pub date that is <= 'endPublishDate') for the

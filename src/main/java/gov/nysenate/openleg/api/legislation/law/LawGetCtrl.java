@@ -99,6 +99,7 @@ public class LawGetCtrl extends BaseCtrl {
      *
      * Optional Params:
      * date (iso date) - Published date of the document (defaults to latest).
+     * findNext (boolean) - If false (default), finds the document before the given date. If true, find the document after the given date
      * refTreeDate (iso date) - Published date of the containing law tree (defaults to latest).
      *
      * Expected output: LawDocWithRefsView
@@ -106,10 +107,11 @@ public class LawGetCtrl extends BaseCtrl {
     @RequestMapping("/{lawId}/{locationId}")
     public BaseResponse getLawDocument(@PathVariable String lawId, @PathVariable String locationId,
                                        @RequestParam(required = false) String date,
+                                       @RequestParam(defaultValue = "false") boolean findNext,
                                        @RequestParam(required = false) String refTreeDate) {
         LocalDate activeDate = (date != null) ? parseISODate(date, "date") : LocalDate.now();
         String documentId = lawId + locationId;
-        LawDocument doc = lawDataService.getLawDocument(documentId, activeDate);
+        LawDocument doc = lawDataService.getLawDocument(documentId, activeDate, findNext);
         LocalDate refTreeLocalDate = (refTreeDate != null) ? parseISODate(refTreeDate, "refTreeDate") : LocalDate.now();
         Optional<LawTreeNode> lawTreeNodeOpt = lawDataService.getLawTree(lawId, refTreeLocalDate).find(documentId);
         ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, lawTreeNodeOpt));

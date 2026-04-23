@@ -89,11 +89,11 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
 
     /** {@inheritDoc} */
     @Override
-    public LawDocument getLawDocument(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx {
+    public LawDocument getLawDocument(String documentId, LocalDate endPublishedDate, boolean findNext) throws LawDocumentNotFoundEx {
         if (documentId == null) throw new IllegalArgumentException("Supplied documentId cannot be null");
         if (endPublishedDate == null) endPublishedDate = LocalDate.now();
         try {
-            return lawDataDao.getLawDocument(documentId.toUpperCase(), endPublishedDate);
+            return lawDataDao.getLawDocument(documentId.toUpperCase(), endPublishedDate, findNext);
         }
         catch (EmptyResultDataAccessException ex) {
             throw new LawDocumentNotFoundEx(documentId, endPublishedDate, "");

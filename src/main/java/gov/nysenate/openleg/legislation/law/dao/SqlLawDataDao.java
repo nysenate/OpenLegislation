@@ -80,10 +80,11 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
 
     /** {@inheritDoc} */
     @Override
-    public LawDocument getLawDocument(String documentId, LocalDate endPublishDate) {
+    public LawDocument getLawDocument(String documentId, LocalDate endPublishDate, boolean findNext) {
         ImmutableParams lawDocParams = ImmutableParams.from(new MapSqlParameterSource()
             .addValue("docId", documentId)
-            .addValue("endPublishedDate", toDate(endPublishDate)));
+            .addValue("endPublishedDate", toDate(endPublishDate))
+            .addValue("findNext", findNext));
         return jdbcNamed.queryForObject(SqlLawDataQuery.SELECT_LAW_DOCUMENT.getSql(schema()), lawDocParams, lawDocRowMapper);
     }
 

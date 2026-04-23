@@ -8,6 +8,7 @@ public class LawDocumentNotFoundEx extends RuntimeException
 
     String docId;
     LocalDate endPublishedDate;
+    boolean findNext;
     String details;
 
     public LawDocumentNotFoundEx(String docId, LocalDate endPublishedDate, String details) {
@@ -15,6 +16,16 @@ public class LawDocumentNotFoundEx extends RuntimeException
                 details);
         this.docId = docId;
         this.endPublishedDate = endPublishedDate;
+        this.findNext = false;
+        this.details = details;
+    }
+
+    public LawDocumentNotFoundEx(String docId, LocalDate endPublishedDate, boolean findNext, String details) {
+        super("Law Document with id: " + docId + " and " + (findNext ? "end" : "start") + " publish date " + endPublishedDate + " could not be found!\n" +
+                details);
+        this.docId = docId;
+        this.endPublishedDate = endPublishedDate;
+        this.findNext = findNext;
         this.details = details;
     }
 
@@ -24,6 +35,10 @@ public class LawDocumentNotFoundEx extends RuntimeException
 
     public LocalDate getEndPublishedDate() {
         return endPublishedDate;
+    }
+
+    public boolean getFindNext() {
+        return findNext;
     }
 
     public String getDetails() {

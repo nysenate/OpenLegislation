@@ -25,9 +25,12 @@ export default function LawLeafNodeView({ setHeaderText }) {
   const [ leafNode, setLeafNode ] = React.useState()
   const [ date, setDate ] = useQueryParam("date")
   const [ dateOptions, setDateOptions ] = React.useState()
+  const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
 
   React.useEffect(() => {
-    getLawsApi(match.params.chapterId, match.params.locationId, date ? { date } : {})
+    getLawsApi(match.params.chapterId, match.params.locationId, {
+      ...(date && { date }),
+      ...(findNext && { findNext }), })
       .then(response => {
         response.text = response.text.replaceAll("\\n", "\n")
         setLeafNode(response)
@@ -40,7 +43,6 @@ export default function LawLeafNodeView({ setHeaderText }) {
     const options = [...leafNode.publishedDates].reverse().map((t) => new SelectOption(t, t))
     setDateOptions(options)
     if (date) {
-      const findNext = queryString.parse(location.search, { parseBooleans: true })["findNext"]
       let closest
       if (findNext) {
         closest = options.findLast(o => o.value >= date)
