@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
  * This is mostly useful when other classes need to reference a particular bill but do not
  * necessarily need to store a complete object reference of the Bill or BillAmendment.
  */
-public class BillId implements Serializable, Comparable<BillId>
-{
+public class BillId implements Serializable, Comparable<BillId> {
     @Serial
     private static final long serialVersionUID = 6494036869654732240L;
 
@@ -47,6 +46,8 @@ public class BillId implements Serializable, Comparable<BillId>
         this(printNo, new SessionYear(session));
     }
 
+    //TODO: the two following constructors can combine common functionality in Java 25+ with JEP 513
+
     /**
      * Use this constructor when the version is not known or when the version may
      * be attached to the print no and needs to be parsed out.
@@ -61,10 +62,33 @@ public class BillId implements Serializable, Comparable<BillId>
             this.version = Version.of(printNo.substring(printNo.length() - 1));
             printNo = printNo.substring(0, printNo.length() - 1);
         }
-        checkBasePrintHasNoVersion(printNo);
+
+        checkBasePrintNo(printNo);
         this.basePrintNo = printNo;
         checkSessionYear(session);
         this.session = session;
+    }
+
+    /**
+     * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
+     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
+     * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
+     *
+     * @param basePrintNo String - e.g. S1234 -> GOOD,  S1234A -> INVALID
+     * @param session int
+     * @param version String
+     */
+    public BillId(String basePrintNo, SessionYear session, Version version) {
+        basePrintNo = normalizePrintNo(basePrintNo);
+        checkBasePrintNo(basePrintNo);
+        this.basePrintNo = basePrintNo;
+        checkSessionYear(session);
+        this.session = session;
+
+        if (version == null) {
+            version = DEFAULT_VERSION;
+        }
+        this.version = version;
     }
 
     /**
@@ -88,29 +112,8 @@ public class BillId implements Serializable, Comparable<BillId>
      * @param baseBillId
      * @param version
      */
-    public BillId(BaseBillId baseBillId, Version version){
-        this(baseBillId.getBasePrintNo(),baseBillId.getSession(), version );
-    }
-
-    /**
-     * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
-     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
-     * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
-     *
-     * @param basePrintNo String - e.g. S1234 -> GOOD,  S1234A -> INVALID
-     * @param session int
-     * @param version String
-     */
-    public BillId(String basePrintNo, SessionYear session, Version version) {
-        basePrintNo = normalizePrintNo(basePrintNo);
-        checkBasePrintHasNoVersion(basePrintNo);
-        this.basePrintNo = basePrintNo;
-        checkSessionYear(session);
-        this.session = session;
-        if (version == null) {
-            version = DEFAULT_VERSION;
-        }
-        this.version = version;
+    public BillId(BaseBillId baseBillId, Version version) {
+        this(baseBillId.getBasePrintNo(),baseBillId.getSession(), version);
     }
 
 
@@ -153,8 +156,9 @@ public class BillId implements Serializable, Comparable<BillId>
      */
     @JsonIgnore
     public int getNumber() {
-        return Integer.parseInt(basePrintNo.replaceAll("[^\\d]", ""));
+        return Integer.parseInt(basePrintNo.replaceAll("\\D", ""));
     }
+
     /**
      * Indicates if this bill is currently set to the base version.
      *
@@ -257,7 +261,7 @@ public class BillId implements Serializable, Comparable<BillId>
      * @param printNo String - Input printNo
      * @return String - Normalized printNo
      */
-    private String normalizePrintNo(String printNo) {
+    private static String normalizePrintNo(String printNo) {
         // Basic Null Check
         if (printNo == null || printNo.trim().isEmpty()) {
             throw new IllegalArgumentException("PrintNo when constructing BillId cannot be null/empty.");
@@ -291,7 +295,10 @@ public class BillId implements Serializable, Comparable<BillId>
      * @param basePrintNo String
      * @throws java.lang.IllegalArgumentException - If basePrintNo has a character appended at the end
      */
-    private void checkBasePrintHasNoVersion(String basePrintNo) {
+    private static void checkBasePrintNo(String basePrintNo) {
+        if (basePrintNo.isEmpty()) {
+            throw new IllegalArgumentException("BasePrintNo cannot be empty.");
+        }
         if (basePrintNo.matches(".*[A-Z]$")) {
             throw new IllegalArgumentException("BasePrintNo cannot have a version appended to it. (" + basePrintNo + ")");
         }
@@ -302,7 +309,7 @@ public class BillId implements Serializable, Comparable<BillId>
      *
      * @param session SessionYear
      */
-    private void checkSessionYear(SessionYear session) {
+    private static void checkSessionYear(SessionYear session) {
         if (session == null) {
             throw new IllegalArgumentException("Supplied SessionYear cannot be null");
         }

@@ -197,4 +197,4 @@ Now we can process the xml data we downloaded in our local Open Legislation envi
 1. `cd to /etc/elasticsearch/jvm.options.d/`
 2. Add a file ending in .options : each line will be a command line argument to ES. So e.g. -Xmx4g sets the maximum memory ES uses to 4 GB.
 3. `sudo systemctl restart elasticsearch.service`
-See more info [here]( https://www.elastic.co/guide/en/elasticsearch/reference/master/advanced-configuration.html#set-jvm-options).
+See more info [here](https://www.elastic.co/guide/en/elasticsearch/reference/master/advanced-configuration.html#set-jvm-options).

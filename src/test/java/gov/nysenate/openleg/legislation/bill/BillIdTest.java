@@ -9,8 +9,7 @@ import org.junit.experimental.categories.Category;
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
-public class BillIdTest
-{
+public class BillIdTest {
     @Test
     public void testBillIdConstructor() {
         assertEquals("S1234-2013", new BillId("S1234", 2013).toString());
@@ -29,7 +28,7 @@ public class BillIdTest
         assertEquals(Version.A, id.getVersion());
 
         id = new BillId("A1133", new SessionYear(2019), null);
-        assertEquals(id.getVersion(), Version.ORIGINAL);
+        assertEquals(Version.ORIGINAL, id.getVersion());
     }
 
     @Test
@@ -78,6 +77,16 @@ public class BillIdTest
     @Test(expected = IllegalArgumentException.class)
     public void testBillIdConstructor_missingSessionYear() {
         new BillId("S1234", null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBillIdConstructor_badType() {
+        new BillId("Z1234", 2025);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBillIdConstructor_printNo0() {
+        new BillId("A0000", 2025);
     }
 
     @Test
