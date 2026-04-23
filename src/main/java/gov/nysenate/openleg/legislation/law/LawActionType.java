@@ -1,21 +1,19 @@
 package gov.nysenate.openleg.legislation.law;
 
-import com.google.common.collect.Sets;
-
 import java.util.*;
 
 public enum LawActionType
 {
-    ADD(Sets.newHashSet("ADD")),
-    AMEND(Sets.newHashSet("AMD", "AMDS")),
-    REPEAL(Sets.newHashSet("RPLD", "RPL")),
-    RENAME(Sets.newHashSet("REN", "REL", "RELET")),
-    DESIGNATE(Sets.newHashSet("DESIG")),
-    REDESIGNATE(Sets.newHashSet("REDESIG", "REDES")),
-    RENUMERATE(Sets.newHashSet("RENUM")),
-    REPEAL_ADD(Sets.newHashSet("RPLDADD")),
-    // rename §126 to be §127 -> RENAME 126, REN_TO 127
-    REN_TO(Sets.newHashSet("RENTO"));
+    ADD(Set.of("ADD")),
+    AMEND(Set.of("AMD", "AMDS")),
+    REPEAL(Set.of("RPLD", "RPL")),
+    RELETTER(Set.of("REL", "RELET")),
+    DESIGNATE(Set.of("DESIG")),
+    REDESIGNATE(Set.of("REDESIG", "REDES")),
+    RENUMBER(Set.of("REN", "RENUM")),
+    REPEAL_ADD(Set.of("RPLDADD")),
+    // renumber §126 to be §127 -> RENUMBER 126, REN_TO 127
+    REN_TO(Set.of("RENTO"));
 
     private static final Map<String, LawActionType> lookupMap = new HashMap<>();
     static {

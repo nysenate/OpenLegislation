@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawActionType;
-import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -16,7 +15,7 @@ import static gov.nysenate.openleg.legislation.law.LawActionType.*;
 
 @Category(UnitTest.class)
 public class BillLawCodeParserTest {
-    private Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
+    private final Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
 
     // HELPERS
     private void compareToLawCode(String lawCode) {
@@ -193,25 +192,25 @@ public class BillLawCodeParserTest {
 
     @Test
     // Tests that the new context created by "Art 10" is ignored
-    public void renameTests() {
+    public void renumberTests() {
         // A270, 2015
         put(ADD, "LAB465");
-        put(RENAME, "LAB465");
+        put(RENUMBER, "LAB465");
         compareToLawCode("Ren §465 to be §466, add §465, Lab L");
 
         // S405, 2017
         put(ADD, "CVRA9");
-        put(RENAME, "CVR90", "CVR91");
+        put(RENUMBER, "CVR90", "CVR91");
         compareToLawCode("Ren Art 9 §§90 & 91 to be Art 10 §§100 & 101, add Art 9 §§90 - 98, Civ Rts");
     }
 
 
     @Test
-    public void renameMultiTest() {
+    public void renumberMultiTest() {
         // A4739, 2019
         put(ADD, "ENV37-0209");
         put(AMEND, "ENV37-0203", "ENV37-0211");
-        put(RENAME, "ENV37-0213", "ENV37-0209", "ENV37-0211");
+        put(RENUMBER, "ENV37-0213", "ENV37-0209", "ENV37-0211");
         compareToLawCode("Amd §§37-0203 & 37-0211, ren §§37-0209, 37-0211 & 37-0213 to be §§37-0211, " +
                 "37-0213 & 37-0215, add §37-0209, En Con L");
     }
@@ -387,5 +386,17 @@ public class BillLawCodeParserTest {
         // Can't find in database
         put(ADD, "PEN145.75") ;
         compareToLawCode("Add §145.75, Pen L; amd §510.10");
+    }
+
+    @Test
+    public void testParseToMap() {
+        Map<String, List<String>> expected = Map.of(
+            "ADD", List.of("ABC110-C"),
+            "AMEND", List.of("ABC110-B", "ABC64", "ABC64-A", "ABC64-C")
+        );
+
+        // S344, 2017
+        Map<String, List<String>> actual = BillLawCodeParser.parseToMap("Add §110-c, amd §§110-b, 64, 64-a & 64-c, ABC L", true);
+        assertEquals(expected, actual);
     }
 }
