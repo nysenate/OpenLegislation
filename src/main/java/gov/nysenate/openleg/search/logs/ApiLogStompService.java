@@ -4,11 +4,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class ApiLogStompService {
@@ -31,7 +32,7 @@ public class ApiLogStompService {
     private final AsyncApiLogStomper asyncStomper;
 
     @Autowired
-    public ApiLogStompService(EventBus eventBus, AsyncApiLogStomper asyncStomper) {
+    public ApiLogStompService(@Qualifier("eventBus") EventBus eventBus, AsyncApiLogStomper asyncStomper) {
         this.eventBus = eventBus;
         this.asyncStomper = asyncStomper;
     }

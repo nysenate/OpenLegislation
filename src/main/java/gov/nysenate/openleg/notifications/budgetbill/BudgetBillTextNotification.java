@@ -9,6 +9,7 @@ import gov.nysenate.openleg.notifications.model.NotificationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class BudgetBillTextNotification {
     private static final String summary = "MISSING BUDGET BILL TEXT";
 
     @Autowired
-    public BudgetBillTextNotification(EventBus eventBus, BillDao billDao) {
+    public BudgetBillTextNotification(@Qualifier("eventBus") EventBus eventBus, BillDao billDao) {
         this.eventBus = eventBus;
         this.billDao = billDao;
     }

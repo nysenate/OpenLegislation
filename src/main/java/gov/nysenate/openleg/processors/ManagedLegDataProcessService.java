@@ -19,11 +19,12 @@ import gov.nysenate.openleg.processors.sourcefile.sobi.LegDataFragmentDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -48,7 +49,7 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
     @Autowired
     public ManagedLegDataProcessService(List<SourceFileFsDao> sourceFileFsDaos,
                                         SourceFileRefDao sourceFileRefDao,
-                                        LegDataFragmentDao legDataFragmentDao, EventBus eventBus,
+                                        LegDataFragmentDao legDataFragmentDao,@Qualifier("eventBus") EventBus eventBus,
                                         OpenLegEnvironment env, ProcessConfig processConfig,
                                         List<LegDataProcessor> legDataProcessors) {
         this.sourceFileFsDaos = sourceFileFsDaos;

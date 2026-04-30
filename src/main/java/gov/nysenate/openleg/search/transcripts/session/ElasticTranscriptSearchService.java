@@ -15,6 +15,7 @@ import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataSe
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +28,7 @@ public class ElasticTranscriptSearchService extends IndexedSearchService<Transcr
 
     @Autowired
     public ElasticTranscriptSearchService(SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao,
-                                          TranscriptDataService transcriptDataService, EventBus eventBus) {
+                                          TranscriptDataService transcriptDataService, @Qualifier("eventBus") EventBus eventBus) {
         super(transcriptSearchDao);
         this.transcriptSearchDao = transcriptSearchDao;
         this.transcriptDataService = transcriptDataService;

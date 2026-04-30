@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.notifications.mail;
 
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
 import org.springframework.mail.SimpleMailMessage;
 
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeMessage;
 import java.util.Collection;
 
 public interface SendMailService {
@@ -42,18 +42,21 @@ public interface SendMailService {
 
     /**
      * Creates and returns a MIME message
+     *
      * @return MimeMessage
      */
     MimeMessage createMessage();
 
     /**
      * Creates and returns a MimeMultiPart
+     *
      * @return MimeMultiPart
      */
     MimeMultipart createMimeMultipart();
 
     /**
      * Creates and returns an empty BodyPart
+     *
      * @return BodyPart
      */
     MimeBodyPart getMimeBodyPart();

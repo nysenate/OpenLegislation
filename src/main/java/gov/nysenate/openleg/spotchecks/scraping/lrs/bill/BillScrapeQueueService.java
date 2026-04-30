@@ -12,6 +12,7 @@ import gov.nysenate.openleg.updates.bill.BillFieldUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Adds bills to the bill text scrape queue based on certain events */
@@ -22,7 +23,7 @@ public class BillScrapeQueueService {
     private final OpenLegEnvironment env;
 
     @Autowired
-    public BillScrapeQueueService(BillScrapeReferenceDao btrDao, OpenLegEnvironment env, EventBus eventBus) {
+    public BillScrapeQueueService(BillScrapeReferenceDao btrDao, OpenLegEnvironment env, @Qualifier("eventBus") EventBus eventBus) {
         this.btrDao = btrDao;
         this.env = env;
         eventBus.register(this);

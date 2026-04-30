@@ -31,8 +31,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import javax.annotation.Nonnull;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.PreDestroy;
 import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -73,12 +73,12 @@ public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer 
 
     /** --- Guava Event Bus Configuration --- */
 
-    @Bean
+    @Bean(name = "eventBus")
     public EventBus eventBus() {
         return new EventBus(this::handleEventBusException);
     }
 
-    @Bean
+    @Bean(name = "asyncEventBus")
     public AsyncEventBus asyncEventBus() {
         return new AsyncEventBus(getAsyncExecutor(), this::handleEventBusException);
     }

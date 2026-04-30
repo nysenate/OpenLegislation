@@ -8,13 +8,13 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-import javax.servlet.SessionTrackingMode;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.SessionTrackingMode;
 import java.util.EnumSet;
 
-import static javax.servlet.DispatcherType.*;
+import static jakarta.servlet.DispatcherType.*;
 
 /**
  * Basically the web.xml in programmatic form.

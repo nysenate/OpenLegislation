@@ -12,6 +12,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,7 +31,7 @@ public class SpotCheckNotificationService {
     private final OpenLegEnvironment env;
 
     @Autowired
-    public SpotCheckNotificationService(EventBus eventBus, OpenLegEnvironment env) {
+    public SpotCheckNotificationService(@Qualifier("eventBus") EventBus eventBus, OpenLegEnvironment env) {
         this.eventBus = eventBus;
         this.env = env;
     }

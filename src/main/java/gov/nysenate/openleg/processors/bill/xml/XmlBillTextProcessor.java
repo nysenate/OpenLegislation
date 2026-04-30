@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -40,7 +41,7 @@ public class XmlBillTextProcessor extends AbstractLegDataProcessor {
     private final BillTextDiffProcessor textDiffProcessor;
 
     @Autowired
-    public XmlBillTextProcessor(XmlHelper xmlHelper, EventBus eventBus, BillTextDiffProcessor textDiffProcessor) {
+    public XmlBillTextProcessor(XmlHelper xmlHelper, @Qualifier("eventBus") EventBus eventBus, BillTextDiffProcessor textDiffProcessor) {
         this.xmlHelper = xmlHelper;
         this.eventBus = eventBus;
         this.textDiffProcessor = textDiffProcessor;

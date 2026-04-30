@@ -13,6 +13,7 @@ import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class SqlTranscriptDataService implements TranscriptDataService {
     private final TranscriptDao transcriptDao;
 
     @Autowired
-    public SqlTranscriptDataService(EventBus eventBus, TranscriptDao transcriptDao) {
+    public SqlTranscriptDataService(@Qualifier("eventBus") EventBus eventBus, TranscriptDao transcriptDao) {
         this.eventBus = eventBus;
         this.transcriptDao = transcriptDao;
         this.eventBus.register(this);

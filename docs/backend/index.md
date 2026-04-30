@@ -23,13 +23,13 @@ General installation instructions for Ubuntu.
 
 ### Tomcat
 
-1. Download the latest version of Tomcat from https://tomcat.apache.org/download-90.cgi
+1. Download the latest version of Tomcat 10 from https://tomcat.apache.org/download-10.cgi
     * You want the Core tar.gz distribution.
-2. `mkdir ~/tomcat9`
-3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat9`
+2. `mkdir ~/tomcat10`
+3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat10`
 4. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
 Make sure the contents of the tomcat directory are readable and executable for all users.
-e.g. `chmod -R +rx ~/tomcat9`
+e.g. `chmod -R +rx ~/tomcat10`
 
 ### Elasticsearch
 

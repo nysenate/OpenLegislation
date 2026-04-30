@@ -8,10 +8,11 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingNotFoundEx;
 import gov.nysenate.openleg.updates.transcripts.hearing.HearingUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -20,7 +21,7 @@ public class SqlHearingDataService implements HearingDataService {
     private final HearingDao hearingDao;
 
     @Autowired
-    public SqlHearingDataService(EventBus eventBus, HearingDao hearingDao) {
+    public SqlHearingDataService(@Qualifier("eventBus") EventBus eventBus, HearingDao hearingDao) {
         this.eventBus = eventBus;
         this.hearingDao = hearingDao;
     }

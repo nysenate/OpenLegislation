@@ -11,6 +11,7 @@ import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.committee.CommitteeUpdateEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ElasticCommitteeSearchService extends IndexedSearchService<Committe
     private final CommitteeDataService committeeDataService;
 
     public ElasticCommitteeSearchService(ElasticCommitteeSearchDao committeeSearchDao,
-                                         CommitteeDataService committeeDataService, EventBus eventBus) {
+                                         CommitteeDataService committeeDataService,@Qualifier("eventBus") EventBus eventBus) {
         super(committeeSearchDao);
         this.committeeSearchDao = committeeSearchDao;
         this.committeeDataService = committeeDataService;

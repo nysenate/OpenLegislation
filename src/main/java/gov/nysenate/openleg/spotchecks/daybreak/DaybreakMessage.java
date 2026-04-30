@@ -3,8 +3,8 @@ package gov.nysenate.openleg.spotchecks.daybreak;
 import gov.nysenate.openleg.common.util.DateUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import java.time.LocalDateTime;
 
 public class DaybreakMessage implements DaybreakDocument {
