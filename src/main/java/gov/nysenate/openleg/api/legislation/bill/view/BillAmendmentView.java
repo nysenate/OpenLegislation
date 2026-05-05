@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.MapView;
 import gov.nysenate.openleg.api.legislation.member.view.MemberView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.BillAmendment;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
@@ -14,8 +13,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BillAmendmentView extends BillIdView
-{
+public class BillAmendmentView extends BillIdView {
     protected LocalDate publishDate;
     protected ListView<BillIdView> sameAs;
     protected String memo;
@@ -31,7 +29,7 @@ public class BillAmendmentView extends BillIdView
     protected boolean uniBill;
     protected boolean isStricken;
     protected MapView<String, ListView<String>> relatedLaws;
-    protected ListView<TranscriptIdView> transcripts;
+    protected ListView<TranscriptMentionView> transcriptMentions;
 
     public BillAmendmentView(){}
 
@@ -67,8 +65,9 @@ public class BillAmendmentView extends BillIdView
                     relatedLawNames.put(k, ListView.ofStringList(v)));
             this.relatedLaws = MapView.of(relatedLawNames);
 
-            this.transcripts = ListView.of(billAmendment.getTranscripts().stream()
-                    .map(TranscriptIdView::new).toList());
+            this.transcriptMentions = ListView.of(billAmendment.getTranscriptMentions().entries().stream().map(
+                    entry -> new TranscriptMentionView(entry.getKey(), entry.getValue())).toList()
+            );
         }
     }
 
@@ -137,7 +136,9 @@ public class BillAmendmentView extends BillIdView
         return relatedLaws;
     }
 
-    public ListView<TranscriptIdView> getTranscripts() { return transcripts; }
+    public ListView<TranscriptMentionView> getTranscriptMentions() {
+        return transcriptMentions;
+    }
 
     public String getFullTextTemplate() {
         return fullTextTemplate;

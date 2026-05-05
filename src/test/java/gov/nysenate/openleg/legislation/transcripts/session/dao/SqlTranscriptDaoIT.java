@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -53,8 +52,8 @@ public class SqlTranscriptDaoIT extends BaseTests {
             TRANSCRIPT_FILES.add(new TranscriptFile(new File(FILEPATH + curr.getFilename())));
         }
         Transcript curr = TRANSCRIPTS.get(0);
-        LinkedHashSet<BillId> updatedBills = new LinkedHashSet<>();
-        updatedBills.add(new BillId("S1A", 2026));
+        var updatedBills = new ArrayList<BillMention>();
+        updatedBills.add(new BillMention(new BillId("S1A", 2026), new Position(1, 1)));
         UPDATE = new Transcript(curr.getId(), DayType.SESSION, "t0v1.txt",
                 curr.getLocation(), curr.getPlainText() + "v1", updatedBills);
         UPDATE_FILE = new TranscriptFile(new File(FILEPATH + UPDATE.getFilename()));

@@ -2,10 +2,7 @@ package gov.nysenate.openleg.processors.transcripts.session;
 
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.transcripts.session.DayType;
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -13,7 +10,9 @@ import org.junit.experimental.categories.Category;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -40,8 +39,7 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billsBefore2009.txt";
 
-        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
-        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
+        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "");
 
         Transcript actualTranscript = processFilename(filename);
 
@@ -54,10 +52,12 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billVariations.txt";
 
-        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
-        String[] ids = {"S2", "S3", "S4", "S5", "S6A", "S6B", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
-        for (String id : ids) {
-            expectedBillIds.add(new BillId(id, 2009));
+        final int startingLineNum = 9;
+        var expectedBillIds = new ArrayList<BillMention>();
+        String[] ids = {"S2", "S3", "S4", "S5", "S6A", "S6B", "A6", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
+        for (int lineNum = startingLineNum; lineNum <= 27; lineNum++) {
+            var currId = new BillId(ids[lineNum - startingLineNum], 2009);
+            expectedBillIds.add(new BillMention(currId, new Position(1, lineNum)));
         }
         Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 
@@ -77,7 +77,7 @@ public class TranscriptParserTest {
         for (String id : ids) {
             expectedBillIds.add(new BillId(id, 2009));
         }
-        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
+        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", List.of());
 
         Transcript actualTranscript = processFilename(filename);
 

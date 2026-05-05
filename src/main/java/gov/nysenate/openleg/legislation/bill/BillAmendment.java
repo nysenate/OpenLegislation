@@ -1,10 +1,14 @@
 package gov.nysenate.openleg.legislation.bill;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import com.google.gson.Gson;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.member.SessionMember;
+import gov.nysenate.openleg.legislation.transcripts.session.Position;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 
 import java.io.Serial;
@@ -24,7 +28,7 @@ public class BillAmendment implements Serializable, Cloneable
     /** The parent base bill id. */
     protected BaseBillId baseBillId;
 
-    /** Amendment version (e.g ORIGINAL, A, B, C, etc). */
+    /** Amendment version (e.g. ORIGINAL, A, B, C, etc.) */
     protected final Version version;
 
     /** The "sameAs" bill in the other chamber that matches this version.
@@ -70,8 +74,8 @@ public class BillAmendment implements Serializable, Cloneable
     /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;
 
-    /** Links to transcripts that involve this bill amendment. */
-    protected List<TranscriptId> transcripts = Collections.synchronizedList(new ArrayList<>());
+    /** Information about Transcripts that mention this bill.*/
+    protected SortedSetMultimap<TranscriptId, Position> transcriptMentions;
 
     /** --- Constructors --- */
 
@@ -259,9 +263,13 @@ public class BillAmendment implements Serializable, Cloneable
         return lawCode;
     }
 
-    public List<TranscriptId> getTranscripts() { return transcripts; }
+    public SortedSetMultimap<TranscriptId, Position> getTranscriptMentions() {
+        return transcriptMentions;
+    }
 
-    public void setTranscripts(List<TranscriptId> transcripts) { this.transcripts = transcripts; }
+    public void setTranscriptMentions(Multimap<TranscriptId, Position> transcriptMentions) {
+        this.transcriptMentions = TreeMultimap.create(transcriptMentions);
+    }
 
     public String getRelatedLawsJson() { return relatedLawsJson;}
 
@@ -276,7 +284,7 @@ public class BillAmendment implements Serializable, Cloneable
     @SuppressWarnings("unchecked")
     public Map<String, List<String>> getRelatedLawsMap() {
         Map<String, List<String>> mapping = new HashMap<>();
-        if (relatedLawsJson == null || relatedLawsJson.equals("")){
+        if (relatedLawsJson == null || relatedLawsJson.isEmpty()) {
             return mapping;
         }
         return new Gson().fromJson(relatedLawsJson, mapping.getClass());

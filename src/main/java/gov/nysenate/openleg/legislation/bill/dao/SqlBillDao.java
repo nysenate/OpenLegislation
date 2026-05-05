@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.legislation.bill.dao;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -20,9 +22,11 @@ import gov.nysenate.openleg.legislation.committee.CommitteeVersionId;
 import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
+import gov.nysenate.openleg.legislation.transcripts.session.Position;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.apache.commons.lang3.tuple.Pair;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,12 +82,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amendment.setVotesMap(getBillVotes(amendParams));
             // Get BillText
             amendment.setBillText(getBillText(amendParams));
-            // Get the associated transcripts
-            amendment.setTranscripts(getTranscripts(amendParams));
+            // Get the associated bill mentions
+            amendment.setTranscriptMentions(getTranscriptMentions(amendParams));
         }
         // Set the amendments
         bill.addAmendments(billAmendments);
-        // Set the publish status for each amendment
+        // Set the PublishStatus for each amendment
         bill.setPublishStatuses(getBillAmendPublishStatuses(baseParams));
         // Get the sponsor
         bill.setSponsor(getBillSponsor(baseParams));
@@ -450,10 +454,17 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /**
      * Get a list of the associated transcript ids.
      */
-    public List<TranscriptId> getTranscripts(ImmutableParams baseParams) {
-        OrderBy orderBy = new OrderBy("date_time", ASC);
-        return jdbcNamed.query(SqlBillQuery.SELECT_TRANSCRIPT_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
-                (rs, rowNum) -> TranscriptId.from(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type")));
+    private Multimap<TranscriptId, Position> getTranscriptMentions(ImmutableParams baseParams) {
+        Multimap<TranscriptId, Position> multiMap = ArrayListMultimap.create();
+        jdbcNamed.query(SqlBillQuery.SELECT_TRANSCRIPT_IDS.getSql(schema()), baseParams, new RowCallbackHandler() {
+            @Override
+            public void processRow(@NonNull ResultSet rs) throws SQLException {
+                var id = TranscriptId.from(getLocalDateTimeFromRs(rs, "date_time"), rs.getString("session_type"));
+                var position = new Position(rs.getInt("page_num"), rs.getInt("line_num"));
+                multiMap.put(id, position);
+            }
+        });
+        return multiMap;
     }
 
     /**

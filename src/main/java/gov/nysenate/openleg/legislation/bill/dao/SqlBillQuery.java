@@ -384,14 +384,12 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Associated Transcript Ids -- */
 
     SELECT_TRANSCRIPT_IDS(
-        "SELECT session_type, date_time \n" +
+        "SELECT session_type, date_time, page_num, line_num \n" +
         "FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
-    ),
-    ;
+    );
 
-
-    private String sql;
+    private final String sql;
 
     SqlBillQuery(String sql) {
         this.sql = sql;

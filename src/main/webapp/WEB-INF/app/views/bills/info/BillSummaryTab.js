@@ -165,7 +165,7 @@ function AgendaCalendarReferences({ bill }) {
 }
 
 function TranscriptReferences({ amendment }) {
-  if (amendment.transcripts.size === 0) {
+  if (amendment.transcriptMentions.size === 0) {
     return null
   }
 
@@ -174,18 +174,18 @@ function TranscriptReferences({ amendment }) {
       <header>
         <h3 className="h5">Transcript References</h3>
         <div className="mx-5 my-3">
-          {amendment.transcripts.items.map((transcript) => {
-            const date = new Date(transcript.dateTime);
+          {amendment.transcriptMentions.items.map((transcriptMention) => {
+            const id = transcriptMention.id;
+            console.log(transcriptMention)
+            const date = new Date(id.dateTime);
             const formattedDate = date.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
             const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-            let href = `/transcripts/session/${transcript.dateTime}/${transcript.sessionType}#bills-${amendment.session}-${amendment.basePrintNo}`;
-            if (amendment.version !== '') {
-              href += `?amendment=${amendment.version}`
-            }
+            let href = `/transcripts/session/${id.dateTime}/${id.sessionType}` +
+              `#${amendment.session}-${amendment.printNo}-p${transcriptMention.position.pageNumStart}-l${transcriptMention.position.lineNumStart}`;
             return (
-              <div key={`${transcript.dateTime}-${transcript.sessionType}`}>
+              <div key={`${id.dateTime}-${id.sessionType}`}>
                 <Link to={href} target="_blank" className="link">
-                  {transcript.sessionType} on {formattedDate} at {formattedTime}
+                  {id.sessionType} on {formattedDate} at {formattedTime}
                 </Link>
               </div>
             )

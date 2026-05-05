@@ -7,6 +7,7 @@ import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.auth.model.ApiKeyLoginToken;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.legislation.bill.BillId;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -15,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +57,21 @@ public class ReactAppCtrl {
     public String home(HttpServletRequest request) {
         setRequestAttributes(request);
         return "forward:/static/dist/index.html";
+    }
+
+    /**
+     * Redirects amendment-suffixed bill URLs (e.g. /bills/2024/S1234A) to the
+     * base print number with the amendment as a query param (/bills/2024/S1234?amendment=A).
+     * This matches the public website's handling of amendments.
+     */
+    @GetMapping(value = "/bills/{sessionYear:\\d{4}}/{printNo:[A-Z]\\d+[A-Z]}")
+    public String redirectAmendedBill(@PathVariable int sessionYear,
+                                      @PathVariable String printNo,
+                                      HttpServletRequest request) {
+        var billId = new BillId(printNo, sessionYear);
+        String existing = request.getQueryString();
+        String prefix = (existing == null || existing.isEmpty()) ? "" : existing + "&";
+        return "redirect:/bills/%d/%s?%samendment=%s".formatted(sessionYear, billId.getBasePrintNo(), prefix, billId.getVersion().toString());
     }
 
     @ResponseBody

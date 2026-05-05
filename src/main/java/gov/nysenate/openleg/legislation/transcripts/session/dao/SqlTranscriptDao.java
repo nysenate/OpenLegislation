@@ -4,9 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.bill.BillId;
-import gov.nysenate.openleg.legislation.transcripts.session.DayType;
-import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
-import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static gov.nysenate.openleg.common.util.DateUtils.toDate;
@@ -44,7 +41,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
     /** {@inheritDoc} */
     @Override
     public void updateTranscript(Transcript transcript) {
-        LinkedHashSet<BillId> billIds = transcript.getLinkedBills();
+        List<BillMention> billMentions = transcript.getLinkedBills();
         MapSqlParameterSource params = getTranscriptParams(transcript);
         if (jdbcNamed.update(UPDATE_TRANSCRIPT.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_TRANSCRIPT.getSql(schema()), params);
@@ -52,10 +49,13 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         else {
             jdbcNamed.update(DELETE_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
         }
-        for (BillId billId : billIds) {
+        for (BillMention billMention : billMentions) {
+            BillId billId = billMention.billId();
             params.addValue("billPrintNo", billId.getBasePrintNo())
                     .addValue("billSessionYear", billId.getSession().year())
-                    .addValue("billAmendVersion", billId.getVersion().toString());
+                    .addValue("billAmendVersion", billId.getVersion().toString())
+                    .addValue("pageNum", billMention.position().pageNumStart())
+                    .addValue("lineNum", billMention.position().lineNumStart());
             jdbcNamed.update(INSERT_TRANSCRIPT_BILL_IDS.getSql(schema()), params);
         }
     }
@@ -93,14 +93,17 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("sessionType", rs.getString("session_type"))
                 .addValue("dateTime", toDate(dateTime));
-        LinkedHashSet<BillId> linkedBills = new LinkedHashSet<>();
-        jdbcNamed.query(SELECT_TRANSCRIPT_BILLS.getSql(schema()), params,
-                (rs1, rowNum1) -> linkedBills.add(new BillId(rs1.getString("bill_print_no"), rs1.getInt("bill_session_year"), rs1.getString("bill_amend_version"))
-        ));
+        List<BillMention> billMentions = jdbcNamed.query(SELECT_TRANSCRIPT_BILLS.getSql(schema()), params,
+                (rs1, rowNum1) -> {
+            var billId = new BillId(rs1.getString("bill_print_no"), rs1.getInt("bill_session_year"),
+                    rs1.getString("bill_amend_version"));
+            var position = new Position(rs1.getInt("page_num"), rs1.getInt("line_num"));
+            return new BillMention(billId, position);
+        });
 
         Transcript transcript = new Transcript(id, DayType.valueOf(dayTypeStr),
                 rs.getString("transcript_filename"), rs.getString("location"),
-                rs.getString("text"), linkedBills);
+                rs.getString("text"), billMentions);
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return transcript;

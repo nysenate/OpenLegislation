@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS master.transcript_bills(
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
     bill_amend_version char NOT NULL,
+    page_num int NOT NULL,
+    line_num int NOT NULL,
     FOREIGN KEY (date_time, session_type)
         REFERENCES master.transcript(date_time, session_type),
     FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version)

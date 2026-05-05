@@ -14,7 +14,7 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
         SELECT_TRANSCRIPT_BY_DATE_TIME.sql + " AND session_type ILIKE :sessionType"
     ),
     SELECT_TRANSCRIPT_BILLS (
-        "SELECT bill_print_no, bill_session_year, bill_amend_version FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
         "WHERE date_time = :dateTime AND session_type ILIKE :sessionType"
     ),
     UPDATE_TRANSCRIPT (
@@ -29,8 +29,8 @@ public enum SqlTranscriptQuery implements BasicSqlQuery {
     ),
     INSERT_TRANSCRIPT_BILL_IDS (
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT_BILLS + "\n" +
-        "(session_type, date_time, bill_print_no, bill_session_year, bill_amend_version)\n" +
-        "SELECT :sessionType, :dateTime, :billPrintNo, :billSessionYear, :billAmendVersion\n" +
+        "(session_type, date_time, bill_print_no, bill_session_year, bill_amend_version, page_num, line_num)\n" +
+        "SELECT :sessionType, :dateTime, :billPrintNo, :billSessionYear, :billAmendVersion, :pageNum, :lineNum\n" +
         "WHERE EXISTS (\n" +
         "   SELECT 1\n" +
         "   FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +

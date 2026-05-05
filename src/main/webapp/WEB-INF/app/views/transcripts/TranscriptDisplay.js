@@ -33,6 +33,7 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
   React.useEffect(() => {
     if (loading) return;
 
+    // Get the element ID from the URL
     const hash = window.location.hash;
     if (!hash) return;
 
@@ -67,43 +68,10 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
       </div>
       {isHearing ? <HearingHeading hearing={transcript} /> : <SessionHeading session={transcript} />}
       <div className="my-3">
-        <pre className="text text--small">{processLinks(transcript.text)}</pre>
+        <pre className="text text--small transcript-text" dangerouslySetInnerHTML={{ __html: transcript.text }} />
       </div>
     </section>
   )
-}
-
-function processLinks(text) {
-  const linkPattern = /<a href="([^"]+)">([^<]+)<\/a>/g;
-
-  const textNodes = [];
-  let lastIndex = 0;
-
-  for (const match of text.matchAll(linkPattern)) {
-    let [fullMatch, href, linkText] = match; // deconstruct match into capture groups
-    href = href.replace(/[A-Z](\?amendment=[A-Z])$/, '$1'); // remove amendment from billId if exists, since it is already a param
-
-    // push preceding plaintext
-    if (match.index > lastIndex)
-      textNodes.push(text.substring(lastIndex, match.index));
-
-    // id and style let links on bill pages scroll directly to anchors without being obscured by header
-    const id = href.substring(href.indexOf("bills/")).replaceAll(/\//g, '-');
-    textNodes.push(
-      <a href={href} target="_blank" className="link" key={match.index}
-            id={id} style={{ scrollMarginTop: '5rem' }}>
-        {linkText}
-      </a>
-    );
-
-    lastIndex = match.index + fullMatch.length;
-  }
-
-  // push remaining plaintext
-  if (lastIndex < text.length)
-    textNodes.push(text.substring(lastIndex));
-
-  return textNodes;
 }
 
 function SessionHeading({ session }) {

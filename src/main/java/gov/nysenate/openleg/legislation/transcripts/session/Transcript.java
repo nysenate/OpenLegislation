@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
+import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.legislation.BaseLegislativeContent;
-import gov.nysenate.openleg.legislation.bill.BillId;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -15,15 +15,15 @@ public class Transcript extends BaseLegislativeContent {
     private final TranscriptId id;
     private final DayType dayType;
     private final String location, text, filename;
-    private final LinkedHashSet<BillId> linkedBills;
+    private final ImmutableList<BillMention> billMentions;
 
     /** --- Constructors --- */
 
     public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text) {
-        this(id, dayType, filename, location, text, new LinkedHashSet<>());
+        this(id, dayType, filename, location, text, List.of());
     }
 
-    public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text, LinkedHashSet<BillId> linkedBills) {
+    public Transcript(TranscriptId id, DayType dayType, String filename, String location, String text, List<BillMention> billMentions) {
         super(id.dateTime().getYear());
         this.id = id;
         if (dayType == null) {
@@ -33,7 +33,7 @@ public class Transcript extends BaseLegislativeContent {
         this.location = location;
         this.text =  text;
         this.filename = filename;
-        this.linkedBills = linkedBills;
+        this.billMentions = ImmutableList.copyOf(billMentions);
     }
 
     public TranscriptId getId() {
@@ -82,8 +82,8 @@ public class Transcript extends BaseLegislativeContent {
         return filename;
     }
 
-    public LinkedHashSet<BillId> getLinkedBills() {
-        return linkedBills;
+    public ImmutableList<BillMention> getLinkedBills() {
+        return billMentions;
     }
 
     @Override
@@ -93,11 +93,11 @@ public class Transcript extends BaseLegislativeContent {
         Transcript that = (Transcript) o;
         return Objects.equals(id, that.id) && dayType == that.dayType &&
                 Objects.equals(location, that.location) && Objects.equals(text, that.text) &&
-                Objects.equals(filename, that.filename) && Objects.equals(linkedBills, that.linkedBills);
+                Objects.equals(filename, that.filename) && Objects.equals(billMentions, that.billMentions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, dayType, location, text, filename, linkedBills);
+        return Objects.hash(super.hashCode(), id, dayType, location, text, filename, billMentions);
     }
 }

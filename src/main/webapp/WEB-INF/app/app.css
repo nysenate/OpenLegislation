@@ -163,6 +163,10 @@
            @apply w-11/12;
         }
     }
+
+    .transcript-text a {
+        scroll-margin-top: 5rem;
+    }
 }
 
 /*
