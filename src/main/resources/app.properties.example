@@ -232,7 +232,7 @@ slack.notification.line.limit = 5
 
 # The domain url and context path that openleg is hosted on (used for generating links)
 # do not use a trailing slash
-domain.url = http://localhost:8080/legislation
+domain.url = http://localhost:8080
 
 # The base url of the NYSenate public website
 # Useful when testing openleg alongside a development instance of NYSenate.gov

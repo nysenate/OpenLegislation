@@ -60,7 +60,7 @@ public class SqlTranscriptDataService implements TranscriptDataService {
             if (newInfo.isLessAccurateThan(currInfo)) {
                 final String summary = "Skipped transcript file " + transcript.getFilename();
                 var notif = new Notification(NotificationType.PROCESS_WARNING, LocalDateTime.now(),
-                        summary, summary + "\nAn older version of this file has more accurate data.");
+                        summary, summary + ". An older version of this file has more accurate data.");
                 logger.warn(notif.getMessage());
                 eventBus.post(notif);
                 return;

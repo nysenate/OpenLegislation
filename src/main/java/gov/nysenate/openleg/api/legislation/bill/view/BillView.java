@@ -33,7 +33,6 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
     protected ListView<CommAgendaIdView> committeeAgendas;
-    protected ListView<TranscriptIdView> transcripts;
     protected ListView<CalendarIdView> calendars;
 
     public BillView(){}
