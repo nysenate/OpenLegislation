@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -53,11 +52,13 @@ public class TranscriptParserTest {
         String filename = "billVariations.txt";
 
         final int startingLineNum = 9;
-        var expectedBillIds = new ArrayList<BillMention>();
+        List<BillMention> expectedBillIds = new ArrayList<>();
         String[] ids = {"S2", "S3", "S4", "S5", "S6A", "S6B", "A6", "A7", "A8", "A9", "A10", "J1", "J2", "R3", "R4", "B10", "B20", "C30", "C40"};
         for (int lineNum = startingLineNum; lineNum <= 27; lineNum++) {
-            var currId = new BillId(ids[lineNum - startingLineNum], 2009);
-            expectedBillIds.add(new BillMention(currId, new Position(1, lineNum)));
+            // skip lines that correspond to incorrect bill patterns
+            if (lineNum == 15) continue;
+            BillId currId = new BillId(ids[lineNum - startingLineNum], 2009);
+            expectedBillIds.add(new BillMention(currId, new Position(1001, lineNum)));
         }
         Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 
@@ -72,12 +73,15 @@ public class TranscriptParserTest {
                 "REGULAR SESSION");
         String filename = "billsAcrossLines.txt";
 
-        LinkedHashSet<BillId> expectedBillIds = new LinkedHashSet<>();
+        List<BillMention> expectedBillIds = new ArrayList<>();
         String[] ids = {"S1", "S2", "S3", "S4", "R8"};
-        for (String id : ids) {
-            expectedBillIds.add(new BillId(id, 2009));
+        int[] lineNums = {11, 13, 15, 2, 4};
+        int[] pageNums = {1001, 1001, 1001, 1002, 1003};
+        for (int i = 0; i < ids.length; i++) {
+            BillId currId = new BillId(ids[i], 2009);
+            expectedBillIds.add(new BillMention(currId, new Position(pageNums[i], lineNums[i])));
         }
-        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", List.of());
+        Transcript expectedTranscript = new Transcript(testId, DayType.SESSION, filename, "ALBANY, NEW YORK", "", expectedBillIds);
 
         Transcript actualTranscript = processFilename(filename);
 

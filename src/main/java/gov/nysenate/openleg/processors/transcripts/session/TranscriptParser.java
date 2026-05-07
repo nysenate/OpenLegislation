@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
+import com.google.common.collect.Range;
+import com.google.common.collect.TreeRangeMap;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
@@ -17,6 +19,7 @@ import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("UnstableApiUsage")
 public final class TranscriptParser {
     private static final Charset CP_850 = Charset.forName("CP850"),
             CP_1252 = Charset.forName("CP1252");
@@ -50,6 +53,37 @@ public final class TranscriptParser {
         return "C" + m.group(6); // implicit m.group(6) != null
     }
 
+    /**
+     * Builds a map from each line's character range to its Position (i.e. page and line number).
+     */
+    private static TreeRangeMap<Integer, Position> buildPositionIndex(String text) {
+        var entries = TranscriptLine.prepareLinesWithOffsets(text);
+        TreeRangeMap<Integer, Position> positionIndex = TreeRangeMap.create();
+
+        if (entries.isEmpty()) return positionIndex;
+
+        int pageNum = entries.get(0).getValue().getStartingInt();
+        Position lastPosition = null;
+        for (int i = 0; i < entries.size(); i++) {
+            var curr = entries.get(i);
+            var next = i + 1 < entries.size() ? entries.get(i + 1) : null;
+            TranscriptLine nextLine = next != null ? next.getValue() : null;
+            int rangeEnd = next != null ? next.getKey() : text.length();
+            if (TranscriptLine.isNextPageNumber(curr.getValue(), nextLine, pageNum, true)) {
+                pageNum = curr.getValue().getStartingInt();
+            }
+            else {
+                if (curr.getValue().getStartingInt() != null) {
+                    lastPosition = new Position(pageNum, curr.getValue().getStartingInt());
+                }
+                if (lastPosition != null) {
+                    positionIndex.put(Range.closedOpen(curr.getKey(), rangeEnd), lastPosition);
+                }
+            }
+        }
+        return positionIndex;
+    }
+
     public static Transcript parse(TranscriptFile transcriptFile) throws IOException {
         var scanner = new Scanner(transcriptFile.getFile(), CP_850);
         List<String> data = new ArrayList<>(MAX_DATA_LENGTH);
@@ -81,16 +115,16 @@ public final class TranscriptParser {
 
             // parse for bill/resolution data and insert links into text
             int sessionYear = (new SessionYear(dateTime.getYear())).year();
-            var billMentions = new ArrayList<BillMention>();
+            TreeRangeMap<Integer, Position> positionIndex = buildPositionIndex(transcriptText);
+            List<BillMention> billMentions = new ArrayList<>();
             // TODO: Can be done better in Java 20 with named groups in MatchResult.
             //  Just name the number groups in the (\\d) group! Can remove lots of ?: too
             String textWithLinks = BILL_PATTERNS.matcher(transcriptText).replaceAll(match -> {
-                var billId = new BillId(getBillIdStr(match), sessionYear);
-                // TODO: set page and line number
-                var currBillMention = new BillMention(billId, new Position(1, 1));
-                billMentions.add(currBillMention);
-                String tagStart = currBillMention.getTagStart();
-                // Line and page breaks should not be linked.
+                BillId billId = new BillId(getBillIdStr(match), sessionYear);
+                BillMention billMention = new BillMention(billId, positionIndex.get(match.start()));
+                billMentions.add(billMention);
+                String tagStart = billMention.getTagStart();
+                // Line and page breaks should not have overlaying links.
                 return tagStart + match.group(0).replaceAll(LINE_PAGE_BREAK_SEP.pattern(), "</a>$0" + tagStart) + "</a>";
             });
 

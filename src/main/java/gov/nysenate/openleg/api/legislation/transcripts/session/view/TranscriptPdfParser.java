@@ -20,11 +20,7 @@ public class TranscriptPdfParser {
             String.join("|", BLANK_LINES.keySet()) + ").*");
 
     public TranscriptPdfParser(String transcriptText) {
-        var lineArrayList = transcriptText.lines().map(TranscriptLine::new)
-                .filter(tl -> !tl.getCleanText().isBlank() && !tl.isStenographer())
-                // Some starting lines may need to be skipped.
-                .dropWhile(tLine -> tLine.getStartingInt() == null)
-                .toList();
+        List<TranscriptLine> lineArrayList = TranscriptLine.prepareLines(transcriptText);
         this.currPageNum = lineArrayList.get(0).getStartingInt();
         this.hasLineNumbers = lineArrayList.get(1).getStartingInt() != null;
         processLines(lineArrayList);
@@ -46,11 +42,6 @@ public class TranscriptPdfParser {
         return index < lines.size() ? lines.get(index) : null;
     }
 
-    private boolean isNextPageNumber(TranscriptLine currLine, TranscriptLine nextLine) {
-        return currLine.getCleanText().matches(String.valueOf(currPageNum + 1)) && nextLine != null
-                && (!hasLineNumbers || Objects.equals(nextLine.getStartingInt(), 1));
-    }
-
     /**
      * Various problems with Transcripts require corrections to lines.
      * @param lines to process and save.
@@ -59,7 +50,7 @@ public class TranscriptPdfParser {
         for (int i = 0; i < lines.size(); i++) {
             TranscriptLine currLine = lines.get(i);
             TranscriptLine nextLine = getLine(lines, i + 1);
-            if (isNextPageNumber(currLine, nextLine)) {
+            if (TranscriptLine.isNextPageNumber(currLine, nextLine, currPageNum, hasLineNumbers)) {
                 addCurrPage();
                 currPageNum = currLine.getStartingInt();
             }
@@ -78,7 +69,7 @@ public class TranscriptPdfParser {
      * @return if this line needs to be combined with the last one.
      */
     private boolean needsCorrecting(TranscriptLine nextLine, TranscriptLine nextNextLine) {
-        if (currPage.isEmpty() || isNextPageNumber(nextLine, nextNextLine)) {
+        if (currPage.isEmpty() || TranscriptLine.isNextPageNumber(nextLine, nextNextLine, currPageNum, hasLineNumbers)) {
             return false;
         }
         if (!hasLineNumbers) {

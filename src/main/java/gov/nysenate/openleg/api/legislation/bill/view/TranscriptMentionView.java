@@ -1,13 +1,16 @@
 package gov.nysenate.openleg.api.legislation.bill.view;
 
+import gov.nysenate.openleg.api.ListView;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.legislation.transcripts.session.Position;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 
-public record TranscriptMentionView(TranscriptIdView id, Position position) implements ViewObject {
-    public TranscriptMentionView(TranscriptId id, Position position) {
-        this(new TranscriptIdView(id), position);
+import java.util.Collection;
+
+public record TranscriptMentionView(TranscriptIdView id, ListView<PositionView> positions) implements ViewObject {
+    public TranscriptMentionView(TranscriptId id, Collection<Position> positions) {
+        this(new TranscriptIdView(id), ListView.of(positions.stream().map(PositionView::new).toList()));
     }
 
     @Override

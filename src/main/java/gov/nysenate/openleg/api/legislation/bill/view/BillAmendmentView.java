@@ -65,9 +65,9 @@ public class BillAmendmentView extends BillIdView {
                     relatedLawNames.put(k, ListView.ofStringList(v)));
             this.relatedLaws = MapView.of(relatedLawNames);
 
-            this.transcriptMentions = ListView.of(billAmendment.getTranscriptMentions().entries().stream().map(
-                    entry -> new TranscriptMentionView(entry.getKey(), entry.getValue())).toList()
-            );
+            this.transcriptMentions = ListView.of(billAmendment.getTranscriptMentions().asMap().entrySet().stream()
+                    .map(e -> new TranscriptMentionView(e.getKey(), e.getValue()))
+                    .toList());
         }
     }
 

@@ -175,20 +175,28 @@ function TranscriptReferences({ amendment }) {
         <h3 className="h5">Transcript References</h3>
         <div className="mx-5 my-3">
           {amendment.transcriptMentions.items.map((transcriptMention) => {
-            const id = transcriptMention.id;
-            console.log(transcriptMention)
+            const { id, positions } = transcriptMention;
             const date = new Date(id.dateTime);
             const formattedDate = date.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
             const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-            let href = `/transcripts/session/${id.dateTime}/${id.sessionType}` +
-              `#${amendment.session}-${amendment.printNo}-p${transcriptMention.position.pageNumStart}-l${transcriptMention.position.lineNumStart}`;
+            const transcriptRef = `/transcripts/session/${id.dateTime}/${id.sessionType}#${amendment.session}-${amendment.printNo}-`;
             return (
               <div key={`${id.dateTime}-${id.sessionType}`}>
-                <Link to={href} target="_blank" className="link">
-                  {id.sessionType} on {formattedDate} at {formattedTime}
-                </Link>
+                <span>{id.sessionType} on {formattedDate} at {formattedTime}</span>
+                <div className="mx-5">
+                  {positions.items.map((position) => {
+                    const href = transcriptRef + `p${position.pageNumStart}-l${position.lineNumStart}`;
+                    return (
+                      <div>
+                        <Link to={href} target="_blank" className="link">
+                          Page {position.pageNumStart}, Line {position.lineNumStart}
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            )
+            );
           })}
         </div>
       </header>
