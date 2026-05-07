@@ -45,7 +45,7 @@ public abstract class BasePdfView {
     protected final float top, margin, spacing;
     private float currX, currY;
     private PDPage currPage;
-    private static final Pattern LINK_PATTERN = Pattern.compile("(.*?)<a href=\"([^\"]+)\">([^<]+)</a>");
+    private static final Pattern LINK_PATTERN = Pattern.compile("(.*?)<a href=\"([^\"]+)\"[^>]*>([^<]+)</a>");
 
     protected BasePdfView(Float top, Float margin, Float spacing) {
         this.top = top == null ? 740f : top;
