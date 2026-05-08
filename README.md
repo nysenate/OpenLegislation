@@ -10,11 +10,11 @@ Open Legislation is an open source web service developed in-house by the New Yor
 Updates to legislative data are distributed by the Legislative Bill drafting Commission (LBDC) in a raw, plain text format. Open Legislation parses the updates in real time and redistributes the data through the JSON API for integration with various web applications. It is developed and run using several open-source technologies and frameworks including: 
 
 * Java 17
-* Spring 5 Framework
+* Spring 6 Framework
 * PostgreSQL
 * Elasticsearch 8
 * React
-* Tomcat 9
+* Tomcat 11
 
 ![Bill page demo](https://raw.githubusercontent.com/nysenate/OpenLegislation/dev/src/main/webapp/static/img/bill-page.png)
 

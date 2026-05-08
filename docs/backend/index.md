@@ -23,13 +23,13 @@ General installation instructions for Ubuntu.
 
 ### Tomcat
 
-1. Download the latest version of Tomcat 10 from https://tomcat.apache.org/download-10.cgi
+1. Download the latest version of Tomcat 11 from https://tomcat.apache.org/download-11.cgi
     * You want the Core tar.gz distribution.
-2. `mkdir ~/tomcat10`
-3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat10`
+2. `mkdir ~/tomcat11`
+3. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat11`
 4. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
-Make sure the contents of the tomcat directory are readable and executable for all users.
-e.g. `chmod -R +rx ~/tomcat10`
+Make sure the contents of the Tomcat directory are readable and executable for all users.
+e.g. `chmod -R +rx ~/tomcat11`
 
 ### Elasticsearch
 
@@ -158,7 +158,7 @@ Set `flyway.password` to the database user password.
 
 ## Building
 
-Run `mvn compile flyway:migrate` to generate a build that is deployable by tomcat.  Our unit tests are currently not in a good state, so we can't get any further in the Maven build process.
+Run `mvn compile flyway:migrate` to generate a build that is deployable by Tomcat.
 
 ## Running Open Legislation
 
@@ -167,7 +167,7 @@ We typically run Open Legislation in Tomcat through IntelliJ.
 1. Open Intellij and go to menu: Run -> Edit Configurations
 2. Click the plus sign in the top left corner
 3. Scroll down until you find Tomcat Server. Select local server
-4. In the Server tab -> application server link your download of tomcat from before
+4. In the Server tab -> application server link your download of Tomcat from before
 5. In the Deployment tab -> hit the plus sign again and select legislation:war exploded. Set the Application Context to `/`.
 6. Apply these changes
 
