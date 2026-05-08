@@ -5,11 +5,11 @@ import gov.nysenate.openleg.common.util.FileIOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
+import jakarta.annotation.PostConstruct;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

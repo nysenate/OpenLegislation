@@ -3,7 +3,7 @@ package gov.nysenate.openleg.search.logs;
 
 import gov.nysenate.openleg.auth.model.ApiUser;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;

@@ -5,10 +5,11 @@ import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.logs.ApiLogEvent;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class ApiLogFilter implements Filter {
     private final ApiUserService apiUserService;
 
     @Autowired
-    public ApiLogFilter(EventBus eventBus, ApiUserService apiUserService) {
+    public ApiLogFilter(@Qualifier("eventBus") EventBus eventBus, ApiUserService apiUserService) {
         this.eventBus = eventBus;
         this.apiUserService = apiUserService;
     }

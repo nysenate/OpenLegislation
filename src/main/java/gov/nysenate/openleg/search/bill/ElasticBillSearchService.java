@@ -16,6 +16,7 @@ import gov.nysenate.openleg.updates.bill.BulkBillUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class ElasticBillSearchService extends IndexedSearchService<Bill> impleme
 
     @Autowired
     public ElasticBillSearchService(ElasticBillSearchDao billSearchDao, BillDataService billDataService,
-                                    AsyncUtils asyncUtils, EventBus eventBus) {
+                                    AsyncUtils asyncUtils,@Qualifier("eventBus") EventBus eventBus) {
         super(billSearchDao);
         this.billSearchDao = billSearchDao;
         this.billDataService = billDataService;

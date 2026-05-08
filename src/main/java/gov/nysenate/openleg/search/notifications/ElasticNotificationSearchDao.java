@@ -6,9 +6,10 @@ import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,7 +18,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao<Long, Notificat
     private AtomicLong nextId;
 
     @Autowired
-    public ElasticNotificationSearchDao(EventBus eventBus) {
+    public ElasticNotificationSearchDao(@Qualifier("eventBus") EventBus eventBus) {
         eventBus.register(this);
     }
 

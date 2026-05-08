@@ -10,9 +10,10 @@ import gov.nysenate.openleg.legislation.CacheType;
 import gov.nysenate.openleg.legislation.OpenLegCacheManager;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class CacheCtrl extends BaseCtrl {
     private final EventBus eventBus;
 
     @Autowired
-    public CacheCtrl(EventBus eventBus) {
+    public CacheCtrl(@Qualifier("eventBus") EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

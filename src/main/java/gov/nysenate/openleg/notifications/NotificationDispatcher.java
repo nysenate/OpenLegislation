@@ -13,6 +13,7 @@ import gov.nysenate.openleg.search.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class NotificationDispatcher {
     private final NotificationGroups notificationGroups;
 
     @Autowired
-    public NotificationDispatcher(EventBus eventBus,
+    public NotificationDispatcher(@Qualifier("eventBus") EventBus eventBus,
                                   OpenLegEnvironment environment,
                                   NotificationService notificationService,
                                   NotificationSubscriptionDataService subDataService,

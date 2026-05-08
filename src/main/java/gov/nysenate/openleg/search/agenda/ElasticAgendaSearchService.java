@@ -16,6 +16,7 @@ import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.agenda.AgendaUpdateEvent;
 import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class ElasticAgendaSearchService extends IndexedSearchService<Tuple<Agend
 
     @Autowired
     public ElasticAgendaSearchService(ElasticAgendaSearchDao agendaSearchDao,
-                                      AgendaDataService agendaDataService, EventBus eventBus) {
+                                      AgendaDataService agendaDataService, @Qualifier("eventBus") EventBus eventBus) {
         super(agendaSearchDao);
         this.agendaSearchDao = agendaSearchDao;
         this.agendaDataService = agendaDataService;

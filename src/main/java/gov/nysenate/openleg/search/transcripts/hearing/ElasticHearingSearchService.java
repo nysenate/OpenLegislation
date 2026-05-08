@@ -11,6 +11,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataServi
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.transcripts.hearing.HearingUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +21,7 @@ public class ElasticHearingSearchService extends IndexedSearchService<Hearing> i
 
     @Autowired
     public ElasticHearingSearchService(SearchDao<HearingId, HearingView, Hearing> hearingSearchDao,
-                                       HearingDataService hearingDataService, EventBus eventBus) {
+                                       HearingDataService hearingDataService,@Qualifier("eventBus") EventBus eventBus) {
         super(hearingSearchDao);
         this.hearingSearchDao = hearingSearchDao;
         this.hearingDataService = hearingDataService;

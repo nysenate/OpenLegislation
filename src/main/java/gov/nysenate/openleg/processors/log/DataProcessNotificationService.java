@@ -6,6 +6,7 @@ import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.model.Notification;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class DataProcessNotificationService {
     private final EventBus eventBus;
 
     @Autowired
-    public DataProcessNotificationService(OpenLegEnvironment environment, EventBus eventBus) {
+    public DataProcessNotificationService(OpenLegEnvironment environment, @Qualifier("eventBus") EventBus eventBus) {
         this.environment = environment;
         this.eventBus = eventBus;
         eventBus.register(this);

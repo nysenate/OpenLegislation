@@ -13,6 +13,7 @@ import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
@@ -25,7 +26,7 @@ public class ElasticCalendarSearchService extends IndexedSearchService<Calendar>
     private final CalendarDataService calendarDataService;
 
     public ElasticCalendarSearchService(SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao,
-                                        CalendarDataService calendarDataService, EventBus eventBus) {
+                                        CalendarDataService calendarDataService, @Qualifier("eventBus") EventBus eventBus) {
         super(calendarSearchDao);
         this.calendarSearchDao = calendarSearchDao;
         this.calendarDataService = calendarDataService;

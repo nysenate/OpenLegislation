@@ -13,6 +13,7 @@ import org.apache.shiro.event.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class SenateSiteArchiveManager {
     private final int monthsToKeep;
 
     @Autowired
-    public SenateSiteArchiveManager(EventBus eventBus, OpenLegEnvironment environment,
+    public SenateSiteArchiveManager(@Qualifier("eventBus") EventBus eventBus, OpenLegEnvironment environment,
                                     @Value("${spotcheck.senatesite.archives.months.to.keep:6}") int monthsToKeep) {
         this.eventBus = eventBus;
         this.eventBus.register(this);

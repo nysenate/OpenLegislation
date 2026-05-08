@@ -10,9 +10,10 @@ import gov.nysenate.openleg.updates.agenda.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Evicts bills from the cached bill data service cache based on events
@@ -23,7 +24,7 @@ public class BillCacheEvictionService {
     private final CachedBillDataService billDataService;
 
     @Autowired
-    public BillCacheEvictionService(EventBus eventBus, CachedBillDataService billDataService) {
+    public BillCacheEvictionService(@Qualifier("eventBus") EventBus eventBus, CachedBillDataService billDataService) {
         this.eventBus = eventBus;
         this.billDataService = billDataService;
     }

@@ -9,9 +9,10 @@ import gov.nysenate.openleg.legislation.committee.MemberNotFoundEx;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class CachedMemberService implements MemberService {
     private final SessionMemberNonIdCache sessionMemberNonIdCache;
 
     @Autowired
-    public CachedMemberService(EventBus eventBus, MemberDao memberDao,
+    public CachedMemberService(@Qualifier("eventBus") EventBus eventBus, MemberDao memberDao,
                                FullMemberIdCache fullMemberIdCache,
                                SessionMemberIdCache sessionMemberIdCache,
                                SessionMemberNonIdCache sessionMemberNonIdCache) {

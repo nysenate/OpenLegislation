@@ -16,6 +16,7 @@ import gov.nysenate.openleg.updates.law.LawUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
 
     @Autowired
     public ElasticLawSearchService(ElasticLawSearchDao lawSearchDao, LawDataService lawDataService,
-                                   EventBus eventBus) {
+                                   @Qualifier("eventBus") EventBus eventBus) {
         super(lawSearchDao);
         this.lawSearchDao = lawSearchDao;
         this.lawDataService = lawDataService;

@@ -3,7 +3,7 @@ package gov.nysenate.openleg.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
-import javax.mail.*;
+import jakarta.annotation.PreDestroy;
+import jakarta.mail.*;
 import java.util.List;
 import java.util.Properties;
 

@@ -7,7 +7,7 @@ import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

@@ -40,8 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;

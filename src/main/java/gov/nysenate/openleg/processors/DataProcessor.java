@@ -13,6 +13,7 @@ import gov.nysenate.openleg.spotchecks.base.BaseSpotcheckProcessService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public class DataProcessor {
     /** Hold a reference to the current data process run instance for event-based logging purposes. */
     private volatile DataProcessRun currentRun;
 
-    public DataProcessor(OpenLegEnvironment env, EventBus eventBus,
+    public DataProcessor(OpenLegEnvironment env, @Qualifier("eventBus") EventBus eventBus,
                          DataProcessLogService processLogService, AsyncUtils asyncUtils,
                          LegDataProcessService legDataProcessService,
                          TranscriptProcessService transcriptProcessService,
