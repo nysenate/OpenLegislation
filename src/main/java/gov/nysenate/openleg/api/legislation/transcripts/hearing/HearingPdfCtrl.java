@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
+import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingPdfView;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
@@ -18,7 +19,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/pdf/hearings")
-public class HearingPdfCtrl {
+public class HearingPdfCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(HearingPdfCtrl.class);
     private final HearingDataService hearingData;
 
