@@ -36,6 +36,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
@@ -405,9 +406,9 @@ public abstract class BaseCtrl {
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ClientAbortException.class)
-    public void handleClientAbortException(ClientAbortException ex) {
-        logger.debug("Client aborted", ex);
+    @ExceptionHandler({ClientAbortException.class, AsyncRequestNotUsableException.class})
+    public void handleClientDisconnectException(Exception ex) {
+        logger.debug("Client disconnected before response could be written", ex);
         // Do Nothing
     }
 
