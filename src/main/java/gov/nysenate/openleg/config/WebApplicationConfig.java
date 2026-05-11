@@ -20,7 +20,6 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -50,11 +49,6 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     @PostConstruct
     public void init() {
         logger.info("{}", AsciiArt.OPENLEG_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
-    }
-
-    @Override
-    public void configurePathMatch(@Nonnull PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
     }
 
     /** Sets paths that should not be intercepted by a controller. */
