@@ -179,10 +179,8 @@ You can discover the locationId when you make an API request for the law structu
 **Examples**
 ::
 
-    /api/3/laws/TAX/8/     // Get section 8 of Tax law
-    /api/3/laws/EDN/A2/    // Get article 2 of Education law
-
-.. note:: A trailing slash is important for this API call because the locationId may have periods which would otherwise be interpreted as an extension of sorts. When in doubt, try adding the trailing slash.
+    /api/3/laws/TAX/8     // Get section 8 of Tax law
+    /api/3/laws/EDN/A2    // Get article 2 of Education law
 
 **Response**
 
@@ -311,10 +309,10 @@ List of laws updated during the given date/time range::
 
 All updates made on a specific body of law::
 
-    /api/3/laws/{lawId}/updates/
+    /api/3/laws/{lawId}/updates
 
-    e.g. /api/3/laws/ABC/updates/
-         /api/3/laws/VAT/updates/
+    e.g. /api/3/laws/ABC/updates
+         /api/3/laws/VAT/updates
 
 All updates made on a specific body of law during a date/time range::
 
@@ -371,7 +369,7 @@ Global law updates::
 Detailed law doc updates::
 
     e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&type=published
-         /api/3/laws/ABC/updates/
+         /api/3/laws/ABC/updates
 
 .. _law-update-digest-response:
 

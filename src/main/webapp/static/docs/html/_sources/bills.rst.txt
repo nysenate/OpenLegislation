@@ -599,11 +599,11 @@ To view the actual updates that have occurred on a bill use the following API
 
 All updates on a specific bill::
 
-    /api/3/bills/{sessionYear}/{printNo}/updates/
+    /api/3/bills/{sessionYear}/{printNo}/updates
 
 Updates on a specific bill from a given date/time.::
 
-    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
+    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}
 
 Updates on a specific bill during a given date/time range.::
 
