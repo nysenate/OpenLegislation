@@ -14,7 +14,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  */
 @Configuration
 @PropertySource("classpath:/app.properties")
-@PropertySource("classpath:/test.app.properties")
+@PropertySource(value = "classpath:/test.app.properties", ignoreResourceNotFound = true)
 @Profile({"test"})
 public class TestConfig {
     @Bean
