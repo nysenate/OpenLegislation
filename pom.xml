@@ -154,6 +154,8 @@
     <spring.version>6.2.3</spring.version>
     <tomcat.version>11.0.22</tomcat.version>
     <woodstox.version>4.4.1</woodstox.version>
+    <!--This property fixes some warnings.-->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
