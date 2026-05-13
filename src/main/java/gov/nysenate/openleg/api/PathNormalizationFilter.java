@@ -28,23 +28,35 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String requestUri = request.getRequestURI();
+        String requestPath = request.getRequestURI();
 
-        if (requestUri.contains("//")) {
-            String normalizedPath = normalizePath(requestUri);
-            response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            response.setHeader("Location", buildRedirectLocation(request, normalizedPath));
+        if (hasDuplicateSlashes(requestPath)) {
+            redirectToNormalizedPath(request, response, requestPath);
             return;
         }
 
-        if (requestUri.length() > 1 && requestUri.endsWith("/")) {
-            String normalizedPath = requestUri.substring(0, requestUri.length() - 1);
-            request.getRequestDispatcher(appendRawQueryString(normalizedPath, request.getQueryString()))
-                    .forward(request, response);
+        if (hasTrailingSlash(requestPath)) {
+            forwardToTrimmedPath(request, response, requestPath);
             return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private static void redirectToNormalizedPath(HttpServletRequest request,
+                                                 HttpServletResponse response,
+                                                 String requestPath) {
+        String normalizedPath = collapseDuplicateAndTrailingSlashes(requestPath);
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        response.setHeader("Location", buildRedirectLocation(request, normalizedPath));
+    }
+
+    private static void forwardToTrimmedPath(HttpServletRequest request,
+                                             HttpServletResponse response,
+                                             String requestPath) throws ServletException, IOException {
+        String trimmedPath = removeTrailingSlash(requestPath);
+        request.getRequestDispatcher(appendRawQueryString(trimmedPath, request.getQueryString()))
+                .forward(request, response);
     }
 
     private static String buildRedirectLocation(HttpServletRequest request, String normalizedPath) {
@@ -55,16 +67,29 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
         return appendRawQueryString(redirectUri, request.getQueryString());
     }
 
+    private static boolean hasDuplicateSlashes(String path) {
+        return path.contains("//");
+    }
+
+    private static boolean hasTrailingSlash(String path) {
+        // The root context path "/" is valid as-is and must not be trimmed.
+        return path.length() > 1 && path.endsWith("/");
+    }
+
     private static String appendRawQueryString(String path, String queryString) {
+        // Preserve the incoming queryString exactly.
         return queryString == null ? path : path + "?" + queryString;
     }
 
-    private static String normalizePath(String path) {
+    private static String collapseDuplicateAndTrailingSlashes(String path) {
         String normalized = MULTI_SLASH.matcher(path).replaceAll("/");
-        int normalizedLength = normalized.length();
-        if (normalizedLength > 1 && normalized.charAt(normalizedLength - 1) == '/') {
-            normalized = normalized.substring(0, normalizedLength - 1);
+        if (hasTrailingSlash(normalized)) {
+            normalized = removeTrailingSlash(normalized);
         }
         return normalized;
+    }
+
+    private static String removeTrailingSlash(String path) {
+        return path.substring(0, path.length() - 1);
     }
 }
