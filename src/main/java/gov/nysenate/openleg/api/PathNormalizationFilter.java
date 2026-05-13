@@ -9,6 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Normalizes slash sequences in incoming request URIs.
@@ -21,6 +22,9 @@ import java.io.IOException;
  */
 @Component("pathNormalizationFilter")
 public class PathNormalizationFilter extends OncePerRequestFilter {
+
+    private static final Pattern MULTI_SLASH = Pattern.compile("/{2,}");
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -56,24 +60,11 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
     }
 
     private static String normalizePath(String path) {
-        StringBuilder normalized = new StringBuilder(path.length());
-        boolean previousWasSlash = false;
-        for (int i = 0; i < path.length(); i++) {
-            char current = path.charAt(i);
-            if (current == '/') {
-                if (!previousWasSlash) {
-                    normalized.append(current);
-                }
-                previousWasSlash = true;
-            } else {
-                normalized.append(current);
-                previousWasSlash = false;
-            }
-        }
+        String normalized = MULTI_SLASH.matcher(path).replaceAll("/");
         int normalizedLength = normalized.length();
         if (normalizedLength > 1 && normalized.charAt(normalizedLength - 1) == '/') {
-            normalized.setLength(normalizedLength - 1);
+            normalized = normalized.substring(0, normalizedLength - 1);
         }
-        return normalized.toString();
+        return normalized;
     }
 }
