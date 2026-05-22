@@ -4,7 +4,7 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.10.3</version>
+  <version>3.11</version>
 
   <!-- NY Senate Maven Repository -->
 
@@ -22,10 +22,9 @@
       <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.12.1</version>
+        <version>3.15.0</version>
         <configuration>
-          <source>17</source>
-          <target>17</target>
+          <release>21</release>
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
@@ -33,16 +32,11 @@
           <encoding>utf-8</encoding>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.4.0</version>
-      </plugin>
       <!-- Surefire Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.3</version>
+        <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <skipTests>false</skipTests>
@@ -53,7 +47,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.2.3</version>
+        <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
           <groups>gov.nysenate.openleg.config.annotation.IntegrationTest</groups>
@@ -69,8 +63,13 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.5.1</version>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <version>3.0.0</version>
+        <version>3.6.3</version>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -92,7 +91,14 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>8.5.2</version>
+        <version>${flyway.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>${flyway.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <configFiles>
             <configFile>src/main/resources/flyway.conf</configFile>
@@ -137,24 +143,24 @@
     <ehcache.version>3.9.9</ehcache.version>
     <elasticsearch.version>8.14.3</elasticsearch.version>
     <flying-saucer.version>9.1.22</flying-saucer.version>
-    <gson.version>2.9.0</gson.version>
+    <flyway.version>12.5.0</flyway.version>
+    <gson.version>2.14.0</gson.version>
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.17.0</jackson.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jaxb.version>4.0.5</jaxb.version>
     <jbcrypt.version>0.4</jbcrypt.version>
-    <jsoup.version>1.14.3</jsoup.version>
+    <jsoup.version>1.22.2</jsoup.version>
     <junit.version>4.13.2</junit.version>
-    <log4j.version>2.22.1</log4j.version>
+    <log4j.version>2.26.0</log4j.version>
     <mockito.version>4.6.1</mockito.version>
     <pdfbox.version>2.0.26</pdfbox.version>
-    <postgres-jdbc.version>42.7.3</postgres-jdbc.version>
+    <postgres-jdbc.version>42.7.11</postgres-jdbc.version>
     <shiro.version>2.1.0</shiro.version>
-    <slf4j.version>1.7.36</slf4j.version>
+    <slf4j.version>2.0.18</slf4j.version>
     <spring.version>6.2.3</spring.version>
     <tomcat.version>11.0.22</tomcat.version>
-    <woodstox.version>4.4.1</woodstox.version>
   </properties>
 
   <dependencies>
@@ -281,7 +287,7 @@
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
       <version>${log4j.version}</version>
     </dependency>
 
@@ -343,12 +349,6 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
       <version>${jackson.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>woodstox-core-asl</artifactId>
-      <version>${woodstox.version}</version>
     </dependency>
 
     <!-- Apache Commons -->

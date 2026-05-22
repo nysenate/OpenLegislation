@@ -150,7 +150,7 @@ Get updated agenda Id's
 
 Return a list of agenda ids that have changed during a specified date/time range::
 
-    (GET) /api/3/agendas/updates/
+    (GET) /api/3/agendas/updates
 
 .. note:: This api call gets updates in the last 7 days
 
@@ -164,7 +164,7 @@ Get updates from the time specified to now::
 
 Get updates for all of the 2017 session::
 
-    /api/3/agendas/updates/2017-01-01/
+    /api/3/agendas/updates/2017-01-01
 
 **Usage**
 

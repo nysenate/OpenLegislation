@@ -45,7 +45,7 @@ public final class FileIOUtils {
      */
     public static Collection<File> safeListFiles(File directory, String[] extensions,
                                                  boolean recursive) throws IOException {
-        // After shutdown is signalled, file moves shouldn't be attempted.
+        // After shutdown is signaled, file moves shouldn't be attempted.
         if (Thread.currentThread().isInterrupted())
             return List.of();
         FileUtils.forceMkdir(directory);

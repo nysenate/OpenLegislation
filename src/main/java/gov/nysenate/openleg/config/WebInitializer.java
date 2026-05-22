@@ -59,11 +59,12 @@ public class WebInitializer implements WebApplicationInitializer {
         servletContext.addFilter("encodingFilter", encodingFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
-        /* Temporary compatibility for API clients sending duplicate trailing slashes. */
-        DelegatingFilterProxy trailingSlashCompatibilityFilter =
-                new DelegatingFilterProxy("trailingSlashCompatibilityFilter", dispatcherContext);
-        servletContext.addFilter("trailingSlashCompatibilityFilter", trailingSlashCompatibilityFilter)
-                .addMappingForUrlPatterns(EnumSet.of(REQUEST), false, BaseCtrl.BASE_API_PATH + "/*");
+        /* Normalize request paths by collapsing duplicate slashes and forwarding single trailing
+         * slash requests to the canonical path Spring 6 no longer matches transparently. */
+        DelegatingFilterProxy pathNormalizationFilter =
+                new DelegatingFilterProxy("pathNormalizationFilter", dispatcherContext);
+        servletContext.addFilter("pathNormalizationFilter", pathNormalizationFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST), false, "/*");
 
         /* Register Apache Shiro */
         DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
