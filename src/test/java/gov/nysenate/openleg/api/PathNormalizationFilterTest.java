@@ -78,6 +78,18 @@ public class PathNormalizationFilterTest {
     }
 
     @Test
+    public void redirectsDuplicateSlashesWithContextPath() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/legislation/api//3/laws//");
+        request.setContextPath("/legislation");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        filter.doFilter(request, response, mock(FilterChain.class));
+
+        assertEquals(MOVED_PERMANENTLY, response.getStatus());
+        assertEquals("http://localhost/legislation/api/3/laws", response.getHeader("Location"));
+    }
+
+    @Test
     public void preservesQueryStringOnRedirect() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/3/laws//");
         request.setQueryString("limit=10&offset=20");
@@ -176,6 +188,32 @@ public class PathNormalizationFilterTest {
 
         assertEquals("/api/3/laws", response.getForwardedUrl());
         verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test
+    public void forwardsSingleTrailingSlashWithoutContextPath() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/legislation/api/3/laws/");
+        request.setContextPath("/legislation");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        filter.doFilter(request, response, chain);
+
+        assertEquals("/api/3/laws", response.getForwardedUrl());
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test
+    public void doesNotTrimContextRootRequest() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/legislation/");
+        request.setContextPath("/legislation");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        filter.doFilter(request, response, chain);
+
+        assertNull(response.getForwardedUrl());
+        verify(chain).doFilter(request, response);
     }
 
     @Test
