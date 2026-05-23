@@ -55,7 +55,7 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
                                              HttpServletResponse response,
                                              String requestPath) throws ServletException, IOException {
         String trimmedPath = removeTrailingSlash(requestPath);
-        request.getRequestDispatcher(appendRawQueryString(trimmedPath, request.getQueryString()))
+        request.getRequestDispatcher(trimmedPath)
                 .forward(request, response);
     }
 

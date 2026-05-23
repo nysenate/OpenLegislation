@@ -179,7 +179,7 @@ public class PathNormalizationFilterTest {
     }
 
     @Test
-    public void preservesQueryStringOnForward() throws Exception {
+    public void forwardsWithoutAppendingQueryString() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/3/laws/");
         request.setQueryString("limit=10&offset=20");
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -187,20 +187,29 @@ public class PathNormalizationFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertEquals("/api/3/laws?limit=10&offset=20", response.getForwardedUrl());
+        assertEquals("/api/3/laws", response.getForwardedUrl());
         verify(chain, never()).doFilter(request, response);
     }
 
     @Test
-    public void preservesRawEncodedQueryStringOnForward() throws Exception {
+    public void preservesOriginalRequestParametersOnForward() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/3/laws/");
         request.setQueryString("term=a+b&redirect=%2Fapi%2F3%2Flaws%2F&empty=");
+        request.addParameter("term", "a b");
+        request.addParameter("redirect", "/api/3/laws/");
+        request.addParameter("empty", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
         filter.doFilter(request, response, chain);
 
-        assertEquals("/api/3/laws?term=a+b&redirect=%2Fapi%2F3%2Flaws%2F&empty=", response.getForwardedUrl());
+        assertEquals("/api/3/laws", response.getForwardedUrl());
+        assertEquals(1, request.getParameterValues("term").length);
+        assertEquals("a b", request.getParameter("term"));
+        assertEquals(1, request.getParameterValues("redirect").length);
+        assertEquals("/api/3/laws/", request.getParameter("redirect"));
+        assertEquals(1, request.getParameterValues("empty").length);
+        assertEquals("", request.getParameter("empty"));
         verify(chain, never()).doFilter(request, response);
     }
 
