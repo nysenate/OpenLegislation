@@ -136,7 +136,7 @@
     <c3p0.version>0.9.5.5</c3p0.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-csv.version>1.10.0</commons-csv.version>
-    <commons-io.version>2.15.1</commons-io.version>
+    <commons-io.version>2.22.0</commons-io.version>
     <commons-lang3.version>3.14.0</commons-lang3.version>
     <commons-text.version>1.11.0</commons-text.version>
     <commons-validator.version>1.8.0</commons-validator.version>
@@ -148,6 +148,7 @@
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.17.0</jackson.version>
+    <jakarta-mail.version>2.0.4</jakarta-mail.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jaxb.version>4.0.5</jaxb.version>
     <jbcrypt.version>0.4</jbcrypt.version>
@@ -224,7 +225,6 @@
     </dependency>
 
     <!-- Servlet -->
-
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
@@ -245,21 +245,12 @@
       <version>${tomcat.version}</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
     <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail -->
-    <dependency>
-      <groupId>com.sun.mail</groupId>
+      <groupId>org.eclipse.angus</groupId>
       <artifactId>jakarta.mail</artifactId>
-      <version>2.0.1</version>
+      <version>${jakarta-mail.version}</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>

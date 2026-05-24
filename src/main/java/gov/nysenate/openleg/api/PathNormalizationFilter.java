@@ -28,15 +28,15 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String requestPath = request.getRequestURI();
+        String pathWithinApplication = getPathWithinApplication(request);
 
-        if (hasDuplicateSlashes(requestPath)) {
-            redirectToNormalizedPath(request, response, requestPath);
+        if (hasDuplicateSlashes(pathWithinApplication)) {
+            redirectToNormalizedPath(request, response, pathWithinApplication);
             return;
         }
 
-        if (hasTrailingSlash(requestPath)) {
-            forwardToTrimmedPath(request, response, requestPath);
+        if (hasTrailingSlash(pathWithinApplication)) {
+            forwardToTrimmedPath(request, response, pathWithinApplication);
             return;
         }
 
@@ -45,8 +45,8 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
 
     private static void redirectToNormalizedPath(HttpServletRequest request,
                                                  HttpServletResponse response,
-                                                 String requestPath) {
-        String normalizedPath = collapseDuplicateAndTrailingSlashes(requestPath);
+                                                 String pathWithinApplication) {
+        String normalizedPath = request.getContextPath() + collapseDuplicateAndTrailingSlashes(pathWithinApplication);
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", buildRedirectLocation(request, normalizedPath));
     }
@@ -55,7 +55,7 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
                                              HttpServletResponse response,
                                              String requestPath) throws ServletException, IOException {
         String trimmedPath = removeTrailingSlash(requestPath);
-        request.getRequestDispatcher(appendRawQueryString(trimmedPath, request.getQueryString()))
+        request.getRequestDispatcher(trimmedPath)
                 .forward(request, response);
     }
 
@@ -65,6 +65,10 @@ public class PathNormalizationFilter extends OncePerRequestFilter {
                 .build(false)
                 .toUriString();
         return appendRawQueryString(redirectUri, request.getQueryString());
+    }
+
+    private static String getPathWithinApplication(HttpServletRequest request) {
+        return request.getRequestURI().substring(request.getContextPath().length());
     }
 
     private static boolean hasDuplicateSlashes(String path) {
