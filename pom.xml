@@ -148,7 +148,7 @@
     <guava.version>31.1-jre</guava.version>
     <http-client.version>4.5.13</http-client.version>
     <jackson.version>2.17.0</jackson.version>
-    <jakarta-mail.version>2.0.4</jakarta-mail.version>
+    <jakarta.mail.version>2.0.5</jakarta.mail.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jaxb.version>4.0.5</jaxb.version>
     <jbcrypt.version>0.4</jbcrypt.version>
@@ -160,9 +160,21 @@
     <postgres-jdbc.version>42.7.11</postgres-jdbc.version>
     <shiro.version>2.1.0</shiro.version>
     <slf4j.version>2.0.18</slf4j.version>
-    <spring.version>6.2.3</spring.version>
+    <spring.version>6.2.18</spring.version>
     <tomcat.version>11.0.22</tomcat.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <!-- NY Senate Dependencies -->
@@ -176,7 +188,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>commons-logging</artifactId>
@@ -189,39 +200,33 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-websocket</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-messaging</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <!-- Spring context support -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <!-- Spring JDBC -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <!-- Servlet -->
@@ -248,7 +253,7 @@
     <dependency>
       <groupId>org.eclipse.angus</groupId>
       <artifactId>jakarta.mail</artifactId>
-      <version>${jakarta-mail.version}</version>
+      <version>${jakarta.mail.version}</version>
     </dependency>
 
     <dependency>
@@ -404,7 +409,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
 
