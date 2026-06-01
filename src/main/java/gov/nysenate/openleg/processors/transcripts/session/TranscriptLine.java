@@ -13,7 +13,7 @@ public class TranscriptLine {
     private final Integer startingInt;
 
     public TranscriptLine(@NonNull String text) {
-        this.text = text.stripTrailing().replaceAll("\f", "");
+        this.text = text.stripTrailing().replace("\f", "");
         this.cleanText = text.replaceAll(INVALID_CHARACTERS_REGEX, "").trim();
         Integer temp = null;
         try {

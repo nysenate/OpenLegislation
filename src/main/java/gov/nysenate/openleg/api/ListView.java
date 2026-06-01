@@ -20,8 +20,6 @@ public class ListView<ViewType> implements ViewObject {
         return new ListView<>(items);
     }
 
-    public ListView() {}
-
     private ListView(List<ViewType> items) {
         if (items != null) {
             this.items = ImmutableList.copyOf(items);
@@ -41,7 +39,7 @@ public class ListView<ViewType> implements ViewObject {
 
     @Override
     public String getViewType() {
-        String listContentType = items.size() > 0 ? ViewObject.getViewTypeOf(items.get(0)) : "empty";
+        String listContentType = !items.isEmpty() ? ViewObject.getViewTypeOf(items.getFirst()) : "empty";
         return listContentType + " list";
     }
 }
