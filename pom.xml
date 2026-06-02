@@ -146,8 +146,8 @@
     <flyway.version>12.5.0</flyway.version>
     <gson.version>2.14.0</gson.version>
     <guava.version>31.1-jre</guava.version>
-    <http-client.version>4.5.13</http-client.version>
-    <jackson.version>2.17.0</jackson.version>
+    <httpclient.version>4.5.14</httpclient.version>
+    <jackson.version>2.21.3</jackson.version>
     <jakarta.mail.version>2.0.5</jakarta.mail.version>
     <javax-cache.version>1.1.1</javax-cache.version>
     <jaxb.version>4.0.5</jaxb.version>
@@ -166,6 +166,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
@@ -307,12 +314,6 @@
       <version>${guava.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-guava</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-
     <!-- Elastic Search -->
 
     <dependency>
@@ -326,25 +327,26 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-xml</artifactId>
-      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-guava</artifactId>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
 
     <!-- Apache Commons -->
@@ -394,7 +396,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${http-client.version}</version>
+      <version>${httpclient.version}</version>
     </dependency>
 
     <!-- Unit Testing -->
