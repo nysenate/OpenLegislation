@@ -19,22 +19,14 @@ public interface ViewObject extends Serializable {
     /**
      * Infers the view type of any object
      * This allows for the identification of strings and integers
-     *
-     * @param obj
      * @return String
      */
     static String getViewTypeOf(Object obj) {
-        if (obj instanceof ViewObject) {
-            return ((ViewObject) obj).getViewType();
-        }
-        else if (obj instanceof String) {
-            return "string";
-        }
-        else if (obj instanceof Integer) {
-            return "integer";
-        }
-        else {
-            return "unspecified";
-        }
+        return switch (obj) {
+            case ViewObject viewObject -> viewObject.getViewType();
+            case String ignored -> "string";
+            case Integer ignored -> "integer";
+            case null, default -> "unspecified";
+        };
     }
 }

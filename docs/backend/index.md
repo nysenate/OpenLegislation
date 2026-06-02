@@ -4,8 +4,8 @@
 
 General installation instructions for Ubuntu.
 
-### Java 17
-1. Download the Linux/x64 build of 17 from https://jdk.java.net/17/.
+### Java 21
+1. Download the Linux/x64 build of 21 from https://jdk.java.net/java-se-ri/21.
 2. `sudo tar -xvf ~/Downloads/<<filename>>`.
 3. Set `$JAVA_HOME` environment variable
     * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
