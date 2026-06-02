@@ -47,7 +47,9 @@ module.exports = {
     historyApiFallback: {
       disableDotRule: true,
     },
-    static: ['../static']
+    static: {
+      directory: path.resolve(__dirname, '../static')
+    }
   },
   devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map'
 }

@@ -48,8 +48,8 @@
     "style-loader": "^2.0.0",
     "tailwindcss": "^3.4.19",
     "webpack": "^5.72.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.4"
   },
   "browserslist": "defaults"
 }
