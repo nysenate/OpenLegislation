@@ -125,7 +125,8 @@ public class CachedLawDataService extends CachingService<LawVersionId, LawTree> 
             throw new IllegalArgumentException("Supplied lawTree cannot be null");
         }
         lawDataDao.updateLawTree(lawFile, lawTree);
-        cache.put(lawTree.getLawVersionId(), lawTree);
+        // The real LawTree requires other values from the database, and will be recached automatically when accessed.
+        cache.remove(lawTree.getLawVersionId());
     }
 
     /** {@inheritDoc} */
