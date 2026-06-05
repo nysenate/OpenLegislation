@@ -20,7 +20,7 @@ public abstract class AbstractLawBuilder implements LawBuilder {
     protected static final Pattern LOCATION_PATTERN = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
-    private static final Pattern SPECIAL_CHAPTER_PATTERN = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
+    private static final Pattern SPECIAL_CHAPTER_PATTERN = Pattern.compile("^(AS(CHED)?|ASSEMBLYRULES|SENATERULES)$");
 
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = GCT.name() + "25-A";
@@ -334,7 +334,6 @@ public abstract class AbstractLawBuilder implements LawBuilder {
     /**
      * Create our own root law doc to serve as the root document in the event that we don't receive a top level doc
      * from the dumps. This is common for unconsolidated laws where they just start with the first section or article.
-     *
      * If the previous root exists and was a dummy parent, reuse it.
      * @param block LawBlock
      */

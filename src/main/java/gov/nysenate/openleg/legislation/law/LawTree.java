@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
  */
 public class LawTree {
     /** The identifier for this tree. */
-    protected final LawVersionId lawVersionId;
+    private final LawVersionId lawVersionId;
 
     /** Information about the law. */
-    protected LawInfo lawInfo;
+    private final LawInfo lawInfo;
 
-    /** List of dates during which this tree was modified. */
-    protected List<LocalDate> publishedDates;
+    /** List of dates during which any document in this chapter was modified. */
+    private List<LocalDate> publishedDates = null;
 
     /** Reference to the root tree node (should be the chapter node) */
-    protected LawTreeNode rootNode;
+    private final LawTreeNode rootNode;
 
     /** Map of doc id to all nodes within this law tree. Necessary for quick lookup. */
     private CaseInsensitiveKeyMap<LawTreeNode> nodeLookupMap;
@@ -39,7 +39,6 @@ public class LawTree {
         this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
         this.lawInfo = lawInfo;
-        this.publishedDates = rootNode.getAllNodes().stream().map(LawTreeNode::getPublishDate).distinct().toList();
     }
 
     /** --- Method --- */
