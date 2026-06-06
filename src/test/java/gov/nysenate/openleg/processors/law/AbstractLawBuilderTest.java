@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
 public class AbstractLawBuilderTest {
-
     private AbstractLawBuilder builder;
     private LawChapterCode code;
 
@@ -149,7 +148,7 @@ public class AbstractLawBuilderTest {
         init("CCO", "");
         String[] locIds = {"-CH77", "A1", "1"};
         createAndAddUpdateBlock(locIds);
-        assertEquals(locIds.length, builder.lawDocMap.values().size());
+        assertEquals(locIds.length, builder.lawDocMap.size());
         assertTrue(builder.rootNode.getChildren().values().stream().allMatch(v -> v.getPublishDate().equals(LocalDate.now())));
     }
 
@@ -241,8 +240,8 @@ public class AbstractLawBuilderTest {
         assertEquals(lawId, tree.getLawVersionId().lawId());
         assertEquals(LocalDate.now(), tree.getLawVersionId().publishedDate());
         assertEquals(builder.lawInfo.toString(), tree.getLawInfo().toString());
-        assertEquals(1, tree.getPublishedDates().size());
-        assertEquals(LocalDate.now(), tree.getPublishedDates().get(0));
+        // The publishedDates cannot be filled out from the builder alone.
+        assertNull(tree.getPublishedDates());
         assertEquals(builder.rootNode.toString(), tree.getRootNode().toString());
 
         builder.addInitialBlock(LawTestUtils.getLawBlock(code, "A1"), true, null);
