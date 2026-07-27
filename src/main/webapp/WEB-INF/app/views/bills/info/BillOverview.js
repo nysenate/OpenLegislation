@@ -50,6 +50,18 @@ function SponsorInfo({ sponsor }) {
         <h4 className="h4">From the Rules Committee</h4>
       </div>
     )
+  } else if (sponsor.redistricting) {
+    return (
+      <div>
+        <h4 className="h4">From the Independent Redistricting Commission</h4>
+      </div>
+    )
+  } else if (!sponsor.member) {
+    return (
+      <div>
+        <h4 className="h4">Sponsor Not Available</h4>
+      </div>
+    )
   } else {
     return (
       <div className="flex flex-col">
