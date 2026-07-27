@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.CacheControl;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import jakarta.annotation.PostConstruct;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -54,6 +56,17 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     /** Sets paths that should not be intercepted by a controller. */
     @Override
     public void addResourceHandlers(@Nonnull ResourceHandlerRegistry registry) {
+        // The generated HTML contains content-hashed asset URLs and must be fetched on each navigation
+        // so clients learn about new bundles immediately after a deployment.
+        registry.addResourceHandler("/static/dist/*.html")
+                .addResourceLocations(resourceLocation + "dist/")
+                .setCacheControl(CacheControl.noStore());
+
+        // Content-hashed build assets are immutable and can be cached indefinitely.
+        registry.addResourceHandler("/static/dist/**")
+                .addResourceLocations(resourceLocation + "dist/")
+                .setCacheControl(CacheControl.maxAge(Duration.ofDays(365)).cachePublic().immutable());
+
         for (String filename : List.of(resourceLocation + "**", "/robots.txt", "/favicon.ico", "/apple-touch-icon.png",
                 "/apple-touch-icon-precomposed.png", "/apple-touch-icon-120x120-precomposed.png",
                 "/apple-touch-icon-152x152-precomposed.png", "/.well-known/gpc.json")) {

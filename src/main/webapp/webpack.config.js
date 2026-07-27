@@ -5,7 +5,9 @@ module.exports = {
   entry: './WEB-INF/app/index.js',
   output: {
     path: path.resolve(__dirname, 'static/dist'),
-    filename: 'index_bundle.js',
+    filename: '[name].[contenthash:8].js',
+    chunkFilename: '[name].[contenthash:8].js',
+    clean: true,
     publicPath: process.env.NODE_ENV === 'production' ? '/static/dist/' : '/'
   },
   resolve: {
