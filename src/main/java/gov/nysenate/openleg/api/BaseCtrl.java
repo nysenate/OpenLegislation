@@ -205,19 +205,6 @@ public abstract class BaseCtrl {
     }
 
     /**
-     * Attempts to parse a version string, returning an empty optional if it does not parse
-     * @param version String - version input string
-     * @return Optional<Version>
-     */
-    protected static Optional<Version> parseVersion(String version) {
-        try {
-            return Optional.of(Version.of(version));
-        } catch (IllegalArgumentException ex) {
-            return Optional.empty();
-        }
-    }
-
-    /**
      * Attempts to parse a version request parameter, throwing an InvalidRequestParamEx if parsing fails
      * @param version String - version parameter value
      * @param versionParamName String - version parameter name
@@ -225,12 +212,12 @@ public abstract class BaseCtrl {
      * @throws InvalidRequestParamEx if the version input string cannot be parsed into a version
      */
     protected static Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
-        Optional<Version> optVersion = parseVersion(version);
-        if (optVersion.isEmpty()) {
+        try {
+            return Version.of(version);
+        } catch (IllegalArgumentException ex) {
             throw new InvalidRequestParamEx(version, versionParamName, "String",
                     Version.ORIGINAL.name() + "|[A-Z]");
         }
-        return optVersion.get();
     }
 
     /**
