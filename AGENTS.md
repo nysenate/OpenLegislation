@@ -4,7 +4,7 @@ This file provides guidance to coding agents when working with code in this repo
 
 ## Project Overview
 
-OpenLegislation is the NY Senate's legislative data platform. It ingests raw legislative data (SOBI/XML from LBDC), processes it into structured domain models (bills, laws, agendas, calendars, committees, transcripts), stores it in PostgreSQL, indexes it in Elasticsearch, and serves it via a REST API and React frontend.
+OpenLegislation is the NY Senate's legislative data platform. It ingests raw legislative data (mostly SOBI/XML from LBDC), processes it into structured domain models (bills, laws, agendas, calendars, committees, transcripts), stores it in PostgreSQL, indexes it in Elasticsearch, and serves it via a REST API and React frontend.
 
 ## Build & Run Commands
 
