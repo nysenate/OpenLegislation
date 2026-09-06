@@ -152,7 +152,7 @@
     <javax-cache.version>1.1.1</javax-cache.version>
     <jaxb.version>4.0.5</jaxb.version>
     <jbcrypt.version>0.4</jbcrypt.version>
-    <jsoup.version>1.22.2</jsoup.version>
+    <jsoup.version>1.23.1</jsoup.version>
     <junit.version>4.13.2</junit.version>
     <log4j.version>2.26.0</log4j.version>
     <mockito.version>4.6.1</mockito.version>
