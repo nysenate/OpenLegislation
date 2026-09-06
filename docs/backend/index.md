@@ -60,7 +60,7 @@ Clone the Open Legislation codebase to your computer.
     * Automatically download
         * Sources
         * Documentation
-5. Be sure to use Java 17 on this project
+5. Be sure to use Java 21 on this project
 
 ## Database Setup
 
