@@ -158,7 +158,7 @@
     <mockito.version>4.6.1</mockito.version>
     <pdfbox.version>2.0.26</pdfbox.version>
     <postgres-jdbc.version>42.7.11</postgres-jdbc.version>
-    <shiro.version>2.1.0</shiro.version>
+    <shiro.version>2.2.1</shiro.version>
     <slf4j.version>2.0.18</slf4j.version>
     <spring.version>6.2.18</spring.version>
     <tomcat.version>11.0.22</tomcat.version>
