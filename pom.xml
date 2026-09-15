@@ -133,19 +133,21 @@
 
   <properties>
     <nysenate-java-client.version>2.3</nysenate-java-client.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
     <c3p0.version>0.14.2</c3p0.version>
     <commons-cli.version>1.6.0</commons-cli.version>
+    <commons-codec.version>1.22.1</commons-codec.version>
     <commons-csv.version>1.10.0</commons-csv.version>
     <commons-io.version>2.22.0</commons-io.version>
-    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <commons-text.version>1.11.0</commons-text.version>
-    <commons-validator.version>1.8.0</commons-validator.version>
+    <commons-validator.version>1.10.1</commons-validator.version>
     <ehcache.version>3.9.9</ehcache.version>
     <elasticsearch.version>8.14.3</elasticsearch.version>
     <flying-saucer.version>9.1.22</flying-saucer.version>
     <flyway.version>12.5.0</flyway.version>
     <gson.version>2.14.0</gson.version>
-    <guava.version>31.1-jre</guava.version>
+    <guava.version>33.7.1-jre</guava.version>
     <httpclient.version>4.5.14</httpclient.version>
     <jackson.version>2.21.3</jackson.version>
     <jakarta.mail.version>2.0.5</jakarta.mail.version>
@@ -180,6 +182,17 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- Overrides for vulnerable versions that other dependencies pull in transitively. -->
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -203,7 +216,7 @@
       </exclusions>
     </dependency>
 
-    <!-- Spring MVC | REST Apis and JSP rendering. -->
+    <!-- Spring MVC | REST APIs and JSP rendering. -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
@@ -314,7 +327,7 @@
       <version>${guava.version}</version>
     </dependency>
 
-    <!-- Elastic Search -->
+    <!-- Elasticsearch -->
 
     <dependency>
       <groupId>co.elastic.clients</groupId>
@@ -513,14 +526,6 @@
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>${jsoup.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xmlrpc</groupId>
-      <artifactId>xmlrpc-client</artifactId>
-      <version>3.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
