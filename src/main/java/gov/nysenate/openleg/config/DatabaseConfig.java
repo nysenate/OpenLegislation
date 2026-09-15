@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.config;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.beans.PropertyVetoException;
+import java.time.Duration;
 
 @EnableTransactionManagement
 @Configuration
@@ -44,9 +47,9 @@ public class DatabaseConfig {
      * @return DataSource
      */
     @Bean(destroyMethod = "close")
-    public OpenLegComboPooledDataSource postgresDataSource() {
+    public ComboPooledDataSource postgresDataSource() {
         final String jdbcUrlTemplate = "jdbc:%s//%s/%s";
-        var pool = new OpenLegComboPooledDataSource();
+        var pool = new ComboPooledDataSource();
         try {
             pool.setDriverClass(dbDriver);
         }
@@ -64,13 +67,31 @@ public class DatabaseConfig {
         pool.setMaxIdleTimeExcessConnections(180);
         pool.setAcquireIncrement(4);
 
-        // Test each connection every 60 sec after first check-in
+        // Connections are tested when returned to the pool and periodically while idle, but not when checked out.
         pool.setTestConnectionOnCheckout(false);
         pool.setTestConnectionOnCheckin(true);
         pool.setIdleConnectionTestPeriod(60);
-        // Fast query to execute when testing connections
-        pool.setPreferredTestQuery("SELECT 1");
         return pool;
+    }
+
+    /**
+     * Closing the pool returns before its connections are closed, which happens on a separate thread.
+     * This method prevents a related Tomcat warning.
+     */
+    @PreDestroy
+    public void awaitPoolClose() {
+        Thread.getAllStackTraces().keySet().stream()
+                .filter(thread -> thread.getName().equals("Resource Destroyer in BasicResourcePool.close()"))
+                .forEach(thread -> {
+                    try {
+                        if (!thread.join(Duration.ofSeconds(10))) {
+                            logger.warn("Timed out waiting for database connections to close.");
+                        }
+                    }
+                    catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
     }
 
     /**

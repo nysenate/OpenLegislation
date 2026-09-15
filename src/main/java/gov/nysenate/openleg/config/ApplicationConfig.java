@@ -32,44 +32,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.PreDestroy;
 import java.io.IOException;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
-import java.util.Enumeration;
 
 import static gov.nysenate.openleg.notifications.model.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
 public class ApplicationConfig implements SchedulingConfigurer, AsyncConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
-
-    /**
-     * Used to prevent Tomcat having to forcibly unregister the JDBC driver.
-     * Code taken from <a href="https://stackoverflow.com/a/23912257">here</a>
-     */
-    @PreDestroy
-    private void destroyContext() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Enumeration<Driver> drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            Driver driver = drivers.nextElement();
-            if (driver.getClass().getClassLoader() == cl) {
-                // This driver was registered by the webapp's ClassLoader, so deregister it:
-                try {
-                    logger.info("De-registering JDBC driver {}", driver);
-                    DriverManager.deregisterDriver(driver);
-                }
-                catch (SQLException ex) {
-                    logger.error("Error de-registering JDBC driver {}", driver, ex);
-                }
-            } else
-                logger.trace("JDBC driver {} as it does not belong to this webapp's ClassLoader", driver);
-        }
-    }
 
     /** --- Guava Event Bus Configuration --- */
 
