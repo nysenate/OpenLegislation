@@ -4,7 +4,7 @@ This file provides guidance to coding agents when working with code in this repo
 
 ## Project Overview
 
-OpenLegislation is the NY Senate's legislative data platform. It ingests raw legislative data (mostly SOBI/XML from LBDC), processes it into structured domain models (bills, laws, agendas, calendars, committees, transcripts), stores it in PostgreSQL, indexes it in Elasticsearch, and serves it via a REST API and React frontend.
+OpenLegislation is the NY Senate's legislative data platform. It continuously ingests raw legislative data as LBDC publishes it (mostly SOBI/XML), processes it into structured domain models (bills, laws, agendas, calendars, committees, transcripts), stores it in PostgreSQL, indexes it in Elasticsearch, and serves it via a REST API and React frontend.
 
 ## Build & Run Commands
 
@@ -28,7 +28,7 @@ mvn integration-test
 mvn -Dit.test=DatabaseConfigIT integration-test
 
 # Frontend (from src/main/webapp/)
-npm ci          # install deps (also runs automatically during mvn compile)
+npm ci          # install deps, then a production build via postinstall
 npm run build   # production webpack build
 npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080)
 ```
@@ -36,6 +36,9 @@ npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080)
 The `integration-test` phase runs Flyway twice beforehand: once against the main database
 (`flyway.conf`) and once against the test database (`flyway.conf` overlaid with
 `test.flyway.conf`).
+
+Every Maven build, including `mvn test`, runs `npm ci` in `generate-sources`, and so also
+a full production webpack build.
 
 ## Architecture
 
