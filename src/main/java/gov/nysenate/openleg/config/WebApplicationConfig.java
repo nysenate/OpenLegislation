@@ -35,7 +35,7 @@ import java.util.List;
 @EnableAsync
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
-@Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class, WebSocketsConfig.class})
+@Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class})
 public class WebApplicationConfig implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
     private static final String resourceLocation = "/static/";
