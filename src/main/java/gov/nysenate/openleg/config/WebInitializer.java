@@ -9,7 +9,6 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.SessionTrackingMode;
 import java.util.EnumSet;
@@ -24,18 +23,20 @@ public class WebInitializer implements WebApplicationInitializer {
 
     /**
      * Bootstraps the web application. Automatically invoked by Spring during startup.
-     * @param servletContext
-     * @throws ServletException
      */
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         /* Create the root Spring application context. */
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+
+        /* Listeners are destroyed in reverse order, so the JDBC driver is deregistered only after
+         * the root context, and the connection pool in it, has shut down. */
+        servletContext.addListener(new JdbcDriverDeregistrationListener());
 
         /* Manage the lifecycle of the root application context. */
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        /* The dispatcher servlet has it's own application context in which it can override
+        /* The dispatcher servlet has its own application context in which it can override
          * beans from the parent root context. */
         AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
         dispatcherContext.setServletContext(servletContext);

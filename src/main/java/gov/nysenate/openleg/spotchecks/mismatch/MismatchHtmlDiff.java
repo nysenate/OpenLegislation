@@ -2,7 +2,6 @@ package gov.nysenate.openleg.spotchecks.mismatch;
 
 import gov.nysenate.openleg.spotchecks.model.DeNormSpotCheckMismatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
-import org.springframework.web.socket.sockjs.transport.handler.HtmlFileTransportHandler;
 
 import java.util.LinkedList;
 import java.util.Set;

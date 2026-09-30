@@ -63,8 +63,9 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token instanceof ApiKeyLoginToken apiToken) {
-            logger.debug("Attempting login with API Realm from {} with key {}",
-                    apiToken.getHost(), apiToken.getApiKey());
+            int beginIndex = Math.max(0, apiToken.getApiKey().length() - 4);
+            logger.debug("Attempting login with API Realm from {} with key ending in {}",
+                    apiToken.getHost(), apiToken.getApiKey().substring(beginIndex));
             if (apiUserService.validateKey(apiToken.getApiKey())) {
                 return new SimpleAuthenticationInfo(apiToken.getApiKey(), apiToken.getApiKey(),
                         this.getName());
@@ -85,13 +86,11 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
         if (!principalCollection.isEmpty()) {
             SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
             String apiKey = principalCollection.iterator().next().toString();
-            logger.info("Assigning API_USER role to {}", apiKey);
             authInfo.addRole(OpenLegRole.API_USER.name());
 
             // Add any explicitly defined roles
             apiUserService.getRoles(apiKey).stream()
                     .map(OpenLegRole::name)
-                    .peek(role -> logger.info("Assigning role {} to api user: {}", role, apiKey))
                     .forEach(authInfo::addRole);
 
             return authInfo;

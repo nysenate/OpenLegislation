@@ -5,7 +5,9 @@ module.exports = {
   entry: './WEB-INF/app/index.js',
   output: {
     path: path.resolve(__dirname, 'static/dist'),
-    filename: 'index_bundle.js',
+    filename: '[name].[contenthash:8].js',
+    chunkFilename: '[name].[contenthash:8].js',
+    clean: true,
     publicPath: process.env.NODE_ENV === 'production' ? '/static/dist/' : '/'
   },
   resolve: {
@@ -38,7 +40,7 @@ module.exports = {
     // Send api requests for these paths to the target base url while in dev mode.
     proxy: [
       {
-        context: ['/api', '/loginapikey', '/admin/login', '/register/signup', '/pdf', '/globals', '/sock', '/static', '/register/token'],
+        context: ['/api', '/loginapikey', '/admin/login', '/register/signup', '/pdf', '/globals', '/static', '/register/token'],
         target: 'http://localhost:8080',
         secure: false,
         changeOrigin: true,

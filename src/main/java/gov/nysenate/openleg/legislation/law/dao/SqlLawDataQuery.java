@@ -85,12 +85,6 @@ public enum SqlLawDataQuery implements BasicSqlQuery
             "    FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
             "    WHERE law_id = :lawId\n" +
             "      AND published_date <= :endPublishedDate\n" +
-            "),\n" +
-            "all_dates AS (\n" +
-            "    SELECT document_id,\n" +
-            "           array_agg(published_date ORDER BY published_date) AS all_published_dates\n" +
-            "    FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
-            "    GROUP BY document_id\n" +
             ")\n" +
             "SELECT t.law_id,\n" +
             "       t.published_date AS tree_published_date,\n" +
@@ -104,7 +98,11 @@ public enum SqlLawDataQuery implements BasicSqlQuery
             "       d1.title,\n" +
             "       d1.document_type_id,\n" +
             "       d1.dummy,\n" +
-            "       ad.all_published_dates,\n" +
+            // A correlated primary key lookup. As a join to a grouped subquery, the planner underestimates
+            // tree sizes and re-aggregates the document table for every tree row.
+            "       (SELECT array_agg(d2.published_date ORDER BY d2.published_date)\n" +
+            "        FROM ${schema}." + SqlTable.LAW_DOCUMENT + " d2\n" +
+            "        WHERE d2.document_id = d1.document_id) AS all_published_dates,\n" +
             "       t.parent_doc_id\n" +
             "FROM max_date\n" +
             "JOIN ${schema}." + SqlTable.LAW_TREE + " t\n" +
@@ -112,8 +110,6 @@ public enum SqlLawDataQuery implements BasicSqlQuery
             "LEFT JOIN ${schema}." + SqlTable.LAW_DOCUMENT + " d1\n" +
             "  ON t.doc_id = d1.document_id\n" +
             " AND t.doc_published_date = d1.published_date\n" +
-            "LEFT JOIN all_dates ad\n" +
-            "  ON ad.document_id = d1.document_id\n" +
             "WHERE t.law_id = :lawId"
     ),
 

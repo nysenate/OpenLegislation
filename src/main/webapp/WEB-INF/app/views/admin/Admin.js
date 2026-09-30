@@ -12,7 +12,6 @@ import ContentContainer from "app/shared/ContentContainer";
 import Caches from "app/views/admin/caches/Caches";
 import Indices from "app/views/admin/indices/Indices";
 import Reports from "app/views/admin/reports/Reports"
-import ApiMonitor from "app/views/admin/logs/ApiMonitor";
 import DataProcessLog from "app/views/admin/logs/DataProcessLog";
 import ApiLogSearch from "app/views/admin/logs/ApiLogSearch";
 import ChangePassword from "app/views/admin/accounts/ChangePassword";
@@ -40,9 +39,6 @@ export default function Admin({ setHeaderText }) {
         </PrivateRoute>
         <PrivateRoute path="/admin/reports">
           <Reports setHeaderText={setHeaderText} />
-        </PrivateRoute>
-        <PrivateRoute path="/admin/logs/monitor">
-          <ApiMonitor setHeaderText={setHeaderText} />
         </PrivateRoute>
         <PrivateRoute path="/admin/logs/dataprocess">
           <DataProcessLog setHeaderText={setHeaderText} />
@@ -113,7 +109,6 @@ function AdminDashboard({ setHeaderText }) {
           <h3 className="h4">Logs</h3>
           <hr className="mb-3" />
           <ul className="list">
-            <li><Link to="/admin/logs/monitor" className="link">API Monitor</Link></li>
             <li><Link to="/admin/logs/search" className="link">API Log Search</Link></li>
             <li><Link to="/admin/logs/dataprocess" className="link">Data Process Logs</Link></li>
           </ul>

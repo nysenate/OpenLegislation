@@ -70,7 +70,8 @@ public class ReactAppCtrl {
             SecurityUtils.getSubject().login(new ApiKeyLoginToken(apiKey, ipAddr));
             return new ViewObjectResponse<>(new AuthedUser(true, false));
         } catch (AuthenticationException ex) {
-            logger.info("Invalid API Key attempt with key: {}", apiKey);
+            int beginIndex = Math.max(0, apiKey.length() - 4);
+            logger.debug("Invalid API Key attempt with key ending in: {}", apiKey.substring(beginIndex));
         }
         return new ErrorResponse(ErrorCode.API_KEY_INVALID);
     }
