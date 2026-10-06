@@ -80,11 +80,12 @@ public class BillGetCtrl extends BaseCtrl {
      * Retrieve bills for session year: (GET) /api/3/bills/{session}
      * Request Parameters: sort - Lucene syntax for sorting by any field from the bill response.
      *                     full - If true, the full bill view should be returned. Otherwise just the info.
+     *                     idsOnly - If true, return only bill IDs (false by default; overrides full).
      *                     limit - Limit the number of results.
      *                     offset - Start results from an offset.
      *                     fullTextFormat - String[] - default PLAIN - desired formats for bill text
      *
-     * Expected Output: List of BillInfoView or BillView
+     * Expected Output: List of BaseBillIdView, BillInfoView or BillView
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,

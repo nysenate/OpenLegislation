@@ -342,7 +342,7 @@ List bills within a session year::
 | full           | boolean                      | Set to true to see the full bill responses.            |
 +----------------+------------------------------+--------------------------------------------------------+
 | idsOnly        | boolean                      | Set to true to see only the printNo and session        |
-|                |                              | for each bill.  (overrides 'full' parameter)           |
+|                |                              | for each bill. Defaults to false; overrides full.      |
 +----------------+------------------------------+--------------------------------------------------------+
 | sort           | string                       | Sort by any field from the response.                   |
 +----------------+------------------------------+--------------------------------------------------------+
@@ -360,6 +360,10 @@ the results will be in ascending order by the bill's published date time (sort=p
 List 100 bills from 2013::
 
     /api/3/bills/2013?limit=100
+
+List only bill IDs from 2013::
+
+    /api/3/bills/2013?idsOnly=true
 
 List 100 complete bills starting from 101::
 
@@ -422,7 +426,9 @@ Search within a session year::
 
 **Optional Params**
 
-Same as the `bill listing params`_.
+Same as the `bill listing params`_. With ``idsOnly=true``, each search result
+contains a bill ID instead of bill information; rank and highlights are retained.
+As with listing, ``idsOnly=true`` takes precedence over ``full=true``.
 
 **Examples**
 
@@ -431,6 +437,14 @@ Same as the `bill listing params`_.
 Search for a general term (matches against any data field)::
 
     (GET) /api/3/bills/search?term=Gun Control
+
+Search for only the IDs of matching bills in 2013::
+
+    (GET) /api/3/bills/2013/search?term=education&idsOnly=true
+
+Search for only the IDs of matching bills across all sessions::
+
+    (GET) /api/3/bills/search?term=education&idsOnly=true
 
 Search for 2013 'resolutions'::
 

@@ -47,6 +47,7 @@ public class BillSearchCtrl extends BaseCtrl {
      * Request Parameters:  term - The lucene query string
      *                      sort - The lucene sort string (blank by default)
      *                      full - Set to true to retrieve full bill responses (false by default)
+     *                      idsOnly - Set to true to retrieve only bill IDs (false by default; overrides full)
      *                      fullTextFormat - Which texts will be included in responses if full is true.
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
@@ -55,11 +56,11 @@ public class BillSearchCtrl extends BaseCtrl {
     public BaseResponse globalSearch(@RequestParam(required = true) String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
-                                     @RequestParam(defaultValue = "false") boolean idOnly,
+                                     @RequestParam(defaultValue = "false") boolean idsOnly,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
-        return getBillSearchResponse(results, full, idOnly, limOff, webRequest);
+        return getBillSearchResponse(results, full, idsOnly, limOff, webRequest);
     }
 
     /**
@@ -74,27 +75,27 @@ public class BillSearchCtrl extends BaseCtrl {
                                       @RequestParam(required = true) String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
-                                      @RequestParam(defaultValue = "false") boolean idOnly,
+                                      @RequestParam(defaultValue = "false") boolean idsOnly,
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SessionYear session = SessionYear.of(sessionYear);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, session, sort, limOff);
-        return getBillSearchResponse(results, full, idOnly, limOff, webRequest);
+        return getBillSearchResponse(results, full, idsOnly, limOff, webRequest);
     }
 
     /** --- Internal --- */
 
     private BaseResponse getBillSearchResponse(SearchResults<BaseBillId> results,
-                                               boolean full, boolean idOnly,
+                                               boolean full, boolean idsOnly,
                                                LimitOffset limOff,
                                                WebRequest request) {
         Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         return ListViewResponse.of(
             results.resultList().stream()
-                .map(r -> new SearchResultView((full)
-                        ? new BillView(billData.getBill(r.result()), fullTextFormats)
-                        : (idOnly)
-                            ? new BillIdView(r.result())
+                .map(r -> new SearchResultView((idsOnly)
+                        ? new BillIdView(r.result())
+                        : (full)
+                            ? new BillView(billData.getBill(r.result()), fullTextFormats)
                             : new BillInfoView(billData.getBillInfo(r.result())), r.rank(), r.highlights()))
                 .toList(), results.totalResults(), limOff);
     }
