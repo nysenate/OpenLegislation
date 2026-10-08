@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  # Java dependencies (pom.xml)
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      # Group Spring Framework updates together
+      spring:
+        patterns:
+          - "org.springframework*"
+      # Group Apache Commons libraries
+      apache-commons:
+        patterns:
+          - "org.apache.commons*"
+          - "commons-*"
+      # Group Elasticsearch client updates
+      elasticsearch:
+        patterns:
+          - "co.elastic.clients*"
+      # Group Jackson updates
+      jackson:
+        patterns:
+          - "com.fasterxml.jackson*"
+
+  # JavaScript dependencies (src/main/webapp/package.json)
+  - package-ecosystem: npm
+    directory: "/src/main/webapp"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      # Group React ecosystem updates
+      react:
+        patterns:
+          - "react"
+          - "react-*"
+          - "@types/react*"
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
