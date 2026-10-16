@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -337,7 +339,11 @@ public abstract class BaseCtrl {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParamEx ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
-        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
+        ErrorResponse response = new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
+        if (ex.getResponseMessage() != null) {
+            response.setMessage(ex.getResponseMessage());
+        }
+        return response;
     }
 
     @ExceptionHandler(TypeMismatchException.class)
@@ -401,11 +407,15 @@ public abstract class BaseCtrl {
 
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex) {
+    protected ErrorResponse handleHttpMediaTypeNotAcceptableExceptionException(HttpMediaTypeNotAcceptableException ex,
+                                                                                WebRequest request) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
+        String supportedTypes = ex.getSupportedMediaTypes().isEmpty()
+                ? "a supported media type"
+                : "one of: " + MediaType.toString(ex.getSupportedMediaTypes());
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
-                new InvalidParameterView("Invalid Media Request Type", "required type is application/pdf",
-                        "", Objects.toString(ex)));
+                new InvalidParameterView("Accept", "media type", "Must accept " + supportedTypes,
+                        request.getHeader(HttpHeaders.ACCEPT)));
     }
 
     @ExceptionHandler(SessionTypeParseException.class)

@@ -4,6 +4,10 @@ api.auth.enable = true
 # Ignore these IP Addresses when checking for an API key
 api.auth.ip.whitelist = 127.0.0.1
 
+# Retired full-content expansion on collection endpoints, such as full=true on bill search and listing.
+# off (default) keeps the existing behavior; enforce rejects these options with a 400 for every caller.
+# api.collection_full.mode = off
+
 # --- Admin Auth --------------------------------------------------------------
 
 # The default admin user name.

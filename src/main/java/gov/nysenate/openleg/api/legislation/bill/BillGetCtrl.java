@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.bill.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -43,11 +44,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class BillGetCtrl extends BaseCtrl {
     private final BillDataService billData;
     private final BillSearchService billSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public BillGetCtrl(BillDataService billData, BillSearchService billSearch) {
+    public BillGetCtrl(BillDataService billData, BillSearchService billSearch,
+                       CollectionFullPolicy collectionFullPolicy) {
         this.billData = billData;
         this.billSearch = billSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     private enum BillViewLevel {
@@ -80,7 +84,9 @@ public class BillGetCtrl extends BaseCtrl {
      * Retrieve bills for session year: (GET) /api/3/bills/{session}
      * Request Parameters: sort - Lucene syntax for sorting by any field from the bill response.
      *                     full - If true, the full bill view should be returned. Otherwise just the info.
-     *                     idsOnly - If true, return only bill IDs (false by default; overrides full).
+     *                            Retired: rejected when api.collection_full.mode is enforce.
+     *                     idsOnly - If true, return only bill IDs (false by default; overrides full when
+     *                               full is accepted).
      *                     limit - Limit the number of results.
      *                     offset - Start results from an offset.
      *                     fullTextFormat - String[] - default PLAIN - desired formats for bill text
@@ -93,6 +99,7 @@ public class BillGetCtrl extends BaseCtrl {
                                  @RequestParam(defaultValue = "false") boolean full,
                                  @RequestParam(defaultValue = "false") boolean idsOnly,
                                  WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.BILL_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<BaseBillId> results =
             billSearch.searchBills(SessionYear.of(sessionYear), sort, limOff);

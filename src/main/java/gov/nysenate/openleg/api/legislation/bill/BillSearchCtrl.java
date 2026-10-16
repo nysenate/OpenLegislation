@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.legislation.bill.view.BillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillInfoView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
@@ -32,11 +33,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class BillSearchCtrl extends BaseCtrl {
     private final BillDataService billData;
     private final BillSearchService billSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public BillSearchCtrl(BillDataService billData, BillSearchService billSearch) {
+    public BillSearchCtrl(BillDataService billData, BillSearchService billSearch,
+                          CollectionFullPolicy collectionFullPolicy) {
         this.billData = billData;
         this.billSearch = billSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -46,8 +50,10 @@ public class BillSearchCtrl extends BaseCtrl {
      * Search all bills:    (GET) /api/3/bills/search
      * Request Parameters:  term - The lucene query string
      *                      sort - The lucene sort string (blank by default)
-     *                      full - Set to true to retrieve full bill responses (false by default)
-     *                      idsOnly - Set to true to retrieve only bill IDs (false by default; overrides full)
+     *                      full - Set to true to retrieve full bill responses (false by default).
+     *                             Retired: rejected when api.collection_full.mode is enforce.
+     *                      idsOnly - Set to true to retrieve only bill IDs (false by default; overrides full
+     *                                when full is accepted)
      *                      fullTextFormat - Which texts will be included in responses if full is true.
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
@@ -58,6 +64,7 @@ public class BillSearchCtrl extends BaseCtrl {
                                      @RequestParam(defaultValue = "false") boolean full,
                                      @RequestParam(defaultValue = "false") boolean idsOnly,
                                      WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.BILL_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
         return getBillSearchResponse(results, full, idsOnly, limOff, webRequest);
@@ -77,6 +84,7 @@ public class BillSearchCtrl extends BaseCtrl {
                                       @RequestParam(defaultValue = "false") boolean full,
                                       @RequestParam(defaultValue = "false") boolean idsOnly,
                                       WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.BILL_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SessionYear session = SessionYear.of(sessionYear);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, session, sort, limOff);
