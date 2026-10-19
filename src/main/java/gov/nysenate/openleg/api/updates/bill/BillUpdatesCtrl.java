@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.updates.bill;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.legislation.bill.view.BaseBillIdView;
 import gov.nysenate.openleg.api.legislation.bill.view.BillView;
@@ -48,11 +49,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class BillUpdatesCtrl extends BaseCtrl {
     private final BillUpdatesDao billUpdatesDao;
     private final BillDataService billData;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public BillUpdatesCtrl(BillUpdatesDao billUpdatesDao, BillDataService billData) {
+    public BillUpdatesCtrl(BillUpdatesDao billUpdatesDao, BillDataService billData,
+                           CollectionFullPolicy collectionFullPolicy) {
         this.billUpdatesDao = billUpdatesDao;
         this.billData = billData;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -70,6 +74,7 @@ public class BillUpdatesCtrl extends BaseCtrl {
      * Request Params: detail (boolean) - Show update digests within each token.
      *                 summary (boolean) - Return bill infos instead of just the bill id.
      *                 fullBill(boolean) - Return a full bill response instead of bill id. (overrides summary, unavailable for detailed updates)
+     *                                     Retired: rejected when api.collection_full.mode is enforce, even with detail or summary.
      *                 fullTextFormat(string) - specifies which full text formats will be returned if fullBill = true.
      *                 type (string) - Update type (processed, published) Default: processed
      *                 filter (string) - Filter updates by a BillUpdateField value
@@ -81,11 +86,13 @@ public class BillUpdatesCtrl extends BaseCtrl {
 
     @RequestMapping(value = "/updates")
     public BaseResponse getRecentUpdates(WebRequest request) {
+        checkFullBill(request);
         return getUpdatesDuring(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesFrom(@PathVariable String from, WebRequest request) {
+        checkFullBill(request);
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = LocalDateTime.now();
         return getUpdatesDuring(fromDateTime, toDateTime, request);
@@ -93,6 +100,7 @@ public class BillUpdatesCtrl extends BaseCtrl {
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to, WebRequest request) {
+        checkFullBill(request);
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         return getUpdatesDuring(fromDateTime, toDateTime, request);
@@ -139,6 +147,12 @@ public class BillUpdatesCtrl extends BaseCtrl {
     }
 
     /** --- Internal --- */
+
+    /** Rejects a retired fullBill before any other parameter is parsed or any update is read. */
+    private void checkFullBill(WebRequest request) {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.BILL_UPDATES_FULL_BILL,
+                getBooleanParam(request, "fullBill", false), request);
+    }
 
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         // Fetch params

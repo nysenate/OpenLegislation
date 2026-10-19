@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -18,15 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import static gov.nysenate.openleg.api.legislation.bill.BillCollectionFullTestSupport.*;
+import static gov.nysenate.openleg.api.CollectionFullPolicy.Option.BILL_FULL;
+import static gov.nysenate.openleg.api.CollectionFullTestSupport.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @Category(UnitTest.class)
 public class BillGetCtrlTest {
@@ -67,7 +65,7 @@ public class BillGetCtrlTest {
 
     @Test
     public void offExpandsEveryTrueValue() throws Exception {
-        for (String value : TRUE_VALUES) {
+        for (String value : BOUND_TRUE_VALUES) {
             list("full", value);
             verify(billData).getBill(billId);
             verifyNoMoreInteractions(billData);
@@ -87,7 +85,7 @@ public class BillGetCtrlTest {
 
     @Test
     public void enforceRejectsTrueValuesWithoutLoadingBills() throws Exception {
-        for (String value : TRUE_VALUES) {
+        for (String value : BOUND_TRUE_VALUES) {
             assertRejected(decoded(value), "full", value);
             assertRejected(decoded(value), "full", value, "idsOnly", "true");
         }
@@ -106,7 +104,7 @@ public class BillGetCtrlTest {
     public void enforceKeepsFalseAndOmittedResponses() throws Exception {
         assertSameInBothModes();
         assertSameInBothModes("idsOnly", "true");
-        for (String value : FALSE_VALUES) {
+        for (String value : BOUND_FALSE_VALUES) {
             assertSameInBothModes("full", value);
             assertSameInBothModes("full", value, "idsOnly", "true");
         }
@@ -153,7 +151,7 @@ public class BillGetCtrlTest {
     private void assertRejected(String receivedValue, String... params) throws Exception {
         MvcResult result = perform(enforceMvc, LISTING, params);
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals(expectedRejection(receivedValue), json(result));
+        assertEquals(expectedRejection(BILL_FULL, receivedValue), json(result));
     }
 
     private void assertSameInBothModes(String... params) throws Exception {
@@ -168,13 +166,5 @@ public class BillGetCtrlTest {
         MvcResult result = perform(offMvc, LISTING, params);
         assertEquals(200, result.getResponse().getStatus());
         return json(result);
-    }
-
-    private static MvcResult perform(MockMvc mvc, String path, String... params) throws Exception {
-        return mvc.perform(get(URI.create(path + query(params)))).andReturn();
-    }
-
-    private static JsonNode json(MvcResult result) throws Exception {
-        return new ObjectMapper().readTree(result.getResponse().getContentAsString());
     }
 }
