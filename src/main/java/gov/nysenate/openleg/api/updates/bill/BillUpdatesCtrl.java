@@ -148,7 +148,7 @@ public class BillUpdatesCtrl extends BaseCtrl {
 
     /** --- Internal --- */
 
-    /** Rejects a retired fullBill before any other parameter is parsed or any update is read. */
+    /** Rejects a retired fullBill. */
     private void checkFullBill(WebRequest request) {
         collectionFullPolicy.check(CollectionFullPolicy.Option.BILL_UPDATES_FULL_BILL,
                 getBooleanParam(request, "fullBill", false), request);

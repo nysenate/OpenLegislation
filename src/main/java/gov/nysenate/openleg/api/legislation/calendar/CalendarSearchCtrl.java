@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.calendar;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.InvalidRequestParamEx;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.api.legislation.calendar.view.SimpleCalendarView;
@@ -25,14 +26,17 @@ public class CalendarSearchCtrl extends BaseCtrl {
     private final CalendarSearchService calendarSearchService;
     private final CalendarDataService calendarDataService;
     private final CalendarViewFactory calendarViewFactory;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
     public CalendarSearchCtrl(CalendarSearchService calendarSearchService,
                               CalendarDataService calendarDataService,
-                              CalendarViewFactory calendarViewFactory) {
+                              CalendarViewFactory calendarViewFactory,
+                              CollectionFullPolicy collectionFullPolicy) {
         this.calendarSearchService = calendarSearchService;
         this.calendarDataService = calendarDataService;
         this.calendarViewFactory = calendarViewFactory;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /** --- Request Handlers --- */
@@ -45,6 +49,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
      *                          sort - The lucene sort string (blank by default)
      *                          detail - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
+     *                                  Retired: rejected when api.collection_full.mode is enforce.
      *                          limit - Limit the number of results (default 100)
      *                          offset - Start results from offset (default 1)
      */
@@ -53,6 +58,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
                                         @RequestParam(defaultValue = "") String sort,
                                         @RequestParam(defaultValue = "false") boolean detail,
                                         WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.CALENDAR_SEARCH_DETAIL, detail, webRequest);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, limitOffset, null, detail);
     }
@@ -60,11 +66,12 @@ public class CalendarSearchCtrl extends BaseCtrl {
     /**
      * Calendar Search API
      *
-     * Performs a search across all calendars: (GET) /api/3/calendars/{year}/search
+     * Performs a search across all calendars in a year: (GET) /api/3/calendars/{year}/search
      * Request Parameters:      term - The lucene query string
      *                          sort - The lucene sort string (blank by default)
-     *                          full - If true, full calendars will be returned including
+     *                          detail - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
+     *                                  Retired: rejected when api.collection_full.mode is enforce.
      *                          limit - Limit the number of results (default 100)
      *                          offset - Start results from offset (default 1)
      */
@@ -74,6 +81,7 @@ public class CalendarSearchCtrl extends BaseCtrl {
                                               @RequestParam(defaultValue = "") String sort,
                                               @RequestParam(defaultValue = "false") boolean detail,
                                               WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.CALENDAR_SEARCH_DETAIL, detail, webRequest);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, limitOffset, year, detail);
     }

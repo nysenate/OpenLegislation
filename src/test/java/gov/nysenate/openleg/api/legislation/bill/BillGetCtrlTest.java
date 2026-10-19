@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.bill;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.SessionYear;
@@ -149,22 +150,14 @@ public class BillGetCtrlTest {
     /* --- Internal --- */
 
     private void assertRejected(String receivedValue, String... params) throws Exception {
-        MvcResult result = perform(enforceMvc, LISTING, params);
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals(expectedRejection(BILL_FULL, receivedValue), json(result));
+        CollectionFullTestSupport.assertRejected(enforceMvc, LISTING, BILL_FULL, receivedValue, params);
     }
 
     private void assertSameInBothModes(String... params) throws Exception {
-        MvcResult off = perform(offMvc, LISTING, params);
-        MvcResult enforce = perform(enforceMvc, LISTING, params);
-        assertEquals(200, off.getResponse().getStatus());
-        assertEquals(200, enforce.getResponse().getStatus());
-        assertEquals(json(off), json(enforce));
+        CollectionFullTestSupport.assertSameInBothModes(offMvc, enforceMvc, LISTING, params);
     }
 
     private JsonNode list(String... params) throws Exception {
-        MvcResult result = perform(offMvc, LISTING, params);
-        assertEquals(200, result.getResponse().getStatus());
-        return json(result);
+        return ok(offMvc, LISTING, params);
     }
 }

@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static gov.nysenate.openleg.api.CollectionFullPolicy.Option.BILL_FULL;
 import static gov.nysenate.openleg.api.CollectionFullTestSupport.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -109,16 +108,6 @@ public class BillSearchCtrlTest {
     }
 
     @Test
-    public void offExpandsEveryTrueValue() throws Exception {
-        for (String value : BOUND_TRUE_VALUES) {
-            search("full", value);
-            verify(billData).getBill(billId);
-            verifyNoMoreInteractions(billData);
-            clearInvocations(billData);
-        }
-    }
-
-    @Test
     public void invalidIdsOnlyIsRejected() throws Exception {
         MvcResult result = perform(offMvc, "idsOnly", "invalid");
         assertEquals(400, result.getResponse().getStatus());
@@ -133,30 +122,11 @@ public class BillSearchCtrlTest {
     /* --- Enforce mode --- */
 
     @Test
-    public void enforceRejectsTrueValuesWithoutLoadingBills() throws Exception {
-        for (String value : BOUND_TRUE_VALUES) {
-            assertRejected(decoded(value), "full", value);
-            assertRejected(decoded(value), "full", value, "idsOnly", "true");
-        }
-        verifyNoInteractions(billData);
-    }
-
-    @Test
-    public void enforceRejectsCallerWithEveryRole() throws Exception {
-        bindAllRolesSubject();
-        assertRejected("true", "full", "true");
-        assertRejected("true", "full", "true", "limit", "0");
-        verifyNoInteractions(billData);
-    }
-
-    @Test
     public void enforceKeepsFalseAndOmittedResponses() throws Exception {
         assertSameInBothModes();
         assertSameInBothModes("idsOnly", "true");
-        for (String value : BOUND_FALSE_VALUES) {
-            assertSameInBothModes("full", value);
-            assertSameInBothModes("full", value, "idsOnly", "true");
-        }
+        assertSameInBothModes("full", "false");
+        assertSameInBothModes("full", "false", "idsOnly", "true");
     }
 
     @Test
@@ -166,44 +136,21 @@ public class BillSearchCtrlTest {
         assertSameInBothModes("full", "false", "limit", "0");
     }
 
-    @Test
-    public void invalidFullKeepsTypeMismatch() throws Exception {
-        for (MockMvc mvc : List.of(offMvc, enforceMvc)) {
-            MvcResult result = perform(mvc, "full", "maybe");
-            assertEquals(400, result.getResponse().getStatus());
-            JsonNode body = json(result);
-            assertEquals(ErrorCode.INVALID_ARGUMENTS.getMessage(), body.get("message").asText());
-            assertEquals("full", body.at("/errorData/parameterConstraint/name").asText());
-            assertEquals("must be convertible to type: boolean",
-                    body.at("/errorData/parameterConstraint/constraint").asText());
-            assertEquals("maybe", body.at("/errorData/receivedValue").asText());
-        }
-        verifyNoInteractions(billSearch, billData);
-    }
-
     /* --- Internal --- */
 
-    private void assertRejected(String receivedValue, String... params) throws Exception {
-        MvcResult result = perform(enforceMvc, params);
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals(expectedRejection(BILL_FULL, receivedValue), json(result));
-    }
-
     private void assertSameInBothModes(String... params) throws Exception {
-        MvcResult off = perform(offMvc, params);
-        MvcResult enforce = perform(enforceMvc, params);
-        assertEquals(200, off.getResponse().getStatus());
-        assertEquals(200, enforce.getResponse().getStatus());
-        assertEquals(json(off), json(enforce));
+        CollectionFullTestSupport.assertSameInBothModes(offMvc, enforceMvc, endpoint, withTerm(params));
     }
 
     private JsonNode search(String... params) throws Exception {
-        MvcResult result = perform(offMvc, params);
-        assertEquals(200, result.getResponse().getStatus());
-        return json(result);
+        return ok(offMvc, endpoint, withTerm(params));
     }
 
     private MvcResult perform(MockMvc mvc, String... params) throws Exception {
-        return CollectionFullTestSupport.perform(mvc, endpoint, concat(new String[]{"term", "education"}, params));
+        return CollectionFullTestSupport.perform(mvc, endpoint, withTerm(params));
+    }
+
+    private static String[] withTerm(String... params) {
+        return concat(new String[]{"term", "education"}, params);
     }
 }

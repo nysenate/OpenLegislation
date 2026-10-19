@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.calendar;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.calendar.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -25,12 +26,15 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 public class CalendarGetCtrl extends BaseCtrl {
     private final CalendarDataService calendarDataService;
     private final CalendarViewFactory calendarViewFactory;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
     public CalendarGetCtrl(CalendarDataService calendarDataService,
-                           CalendarViewFactory calendarViewFactory) {
+                           CalendarViewFactory calendarViewFactory,
+                           CollectionFullPolicy collectionFullPolicy) {
         this.calendarDataService = calendarDataService;
         this.calendarViewFactory = calendarViewFactory;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
 
@@ -42,6 +46,7 @@ public class CalendarGetCtrl extends BaseCtrl {
      * Get all calendars for one year:  (GET) /api/3/calendars/{year}
      * Request Parameters:  full - If true, full calendars will be returned including
      *                              active list and supplemental entries (default false)
+     *                              Retired: rejected when api.collection_full.mode is enforce.
      *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
      *                              order (default ASC)
      *                      limit - Limit the number of results (default 100)
@@ -51,6 +56,7 @@ public class CalendarGetCtrl extends BaseCtrl {
     public BaseResponse getCalendars(@PathVariable int year,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.CALENDAR_FULL, full, webRequest);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
@@ -65,6 +71,7 @@ public class CalendarGetCtrl extends BaseCtrl {
      *
      * Get all active list calendars for one year:  (GET) /api/3/calendars/{year}/activelist
      * Request Parameters:  full - If true, full active lists will be returned including all entries (default false)
+     *                              Retired: rejected when api.collection_full.mode is enforce.
      *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
      *                              order (default ASC)
      *                      limit - Limit the number of results (default 100)
@@ -74,6 +81,7 @@ public class CalendarGetCtrl extends BaseCtrl {
     public BaseResponse getActiveLists(@PathVariable int year,
                                        @RequestParam(defaultValue = "false") boolean full,
                                        WebRequest webRequest) {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.ACTIVE_LIST_FULL, full, webRequest);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
@@ -86,10 +94,12 @@ public class CalendarGetCtrl extends BaseCtrl {
     }
 
     /**
-     * Active List Year API
+     * Supplemental Calendar Year API
      *
      * Get all supplemental calendars for one year:  (GET) /api/3/calendars/{year}/supplemental
-     * Request Parameters:  full - If true, full active lists will be returned including all entries (default false)
+     * Request Parameters:  full - If true, full supplemental calendars will be returned including all entries
+     *                              (default false)
+     *                              Retired: rejected when api.collection_full.mode is enforce.
      *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
      *                              order (default ASC)
      *                      limit - Limit the number of results (default 100)
@@ -99,6 +109,7 @@ public class CalendarGetCtrl extends BaseCtrl {
     public BaseResponse getCalendarSupplementals(@PathVariable int year,
                                                  @RequestParam(defaultValue = "false") boolean full,
                                                  WebRequest webRequest) {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.SUPPLEMENTAL_FULL, full, webRequest);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(

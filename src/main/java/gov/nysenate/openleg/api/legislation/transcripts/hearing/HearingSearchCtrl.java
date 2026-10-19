@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingInfoView;
@@ -29,11 +30,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class HearingSearchCtrl extends BaseCtrl {
     private final HearingDataService hearingData;
     private final HearingSearchService hearingSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public HearingSearchCtrl(HearingDataService hearingData, HearingSearchService hearingSearch) {
+    public HearingSearchCtrl(HearingDataService hearingData, HearingSearchService hearingSearch,
+                             CollectionFullPolicy collectionFullPolicy) {
         this.hearingData = hearingData;
         this.hearingSearch = hearingSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -43,7 +47,9 @@ public class HearingSearchCtrl extends BaseCtrl {
      * Search all hearings:  (GET) /api/3/hearings/search
      * Request Parameters:  term - The lucene query string.
      * sort - The lucene sort string (blank by default)
-     * full - Set to true to retrieve full hearing responses (false by default)
+     * summary - Set to false to retrieve only hearing ids (true by default)
+     * full - Set to true to retrieve full hearing responses (false by default; overrides summary).
+     *        Retired: rejected when api.collection_full.mode is enforce, even with summary.
      * limit - Limit the number of resultList (default 25)
      * offset - Start resultList from offset
      */
@@ -53,6 +59,7 @@ public class HearingSearchCtrl extends BaseCtrl {
                                      @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<HearingId> results = hearingSearch.searchHearings(term, sort, limOff);
         return getSearchResponse(full, summary, limOff, results);
@@ -73,6 +80,7 @@ public class HearingSearchCtrl extends BaseCtrl {
                                    @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
                                    WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<HearingId> results = hearingSearch.searchHearings(term, year, sort, limOff);
         return getSearchResponse(full, summary, limOff, results);

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
@@ -41,11 +42,14 @@ public class TranscriptGetCtrl extends BaseCtrl {
     private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
     private final TranscriptDataService transcriptData;
     private final TranscriptSearchService transcriptSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public TranscriptGetCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
+    public TranscriptGetCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch,
+                             CollectionFullPolicy collectionFullPolicy) {
         this.transcriptData = transcriptData;
         this.transcriptSearch = transcriptSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -54,10 +58,12 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * Retrieve all transcripts: (GET) /api/3/transcripts/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
-     *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
+     *                      full - If true, the full transcript view is returned (overrides summary). Otherwise,
+     *                             just its filename.
+     *                             Retired: rejected when api.collection_full.mode is enforce, even with summary.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
-     * Expected Output: List of TranscriptView or TranscriptIdView.
+     * Expected Output: List of TranscriptIdView, TranscriptInfoView or TranscriptView.
      */
     @RequestMapping(value = "")
     public BaseResponse getAllTranscripts(@RequestParam(defaultValue = "dateTime:desc") String sort,
@@ -65,6 +71,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
                                           @RequestParam(defaultValue = "false") boolean full,
                                           @RequestParam(defaultValue = "true") boolean sessionOnly,
                                           WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.TRANSCRIPT_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff, sessionOnly);
         return getTranscriptResponse(summary, full, limOff, results);
@@ -76,10 +83,12 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
      *                      summary - If true, the transcript info is returned.
-     *                      full - If true, the full transcript view is returned. Otherwise, just its filename.
+     *                      full - If true, the full transcript view is returned (overrides summary). Otherwise,
+     *                             just its filename.
+     *                             Retired: rejected when api.collection_full.mode is enforce, even with summary.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
-     * Expected Output: List of TranscriptIdView or TranscriptView
+     * Expected Output: List of TranscriptIdView, TranscriptInfoView or TranscriptView.
      */
     @RequestMapping("/{year:\\d{4}}")
     public BaseResponse getTranscriptsByYear(@PathVariable int year,
@@ -88,6 +97,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
                                              @RequestParam(defaultValue = "false") boolean full,
                                              @RequestParam(defaultValue = "true") boolean sessionOnly,
                                              WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.TRANSCRIPT_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff, sessionOnly);
         return getTranscriptResponse(summary, full, limOff, results);

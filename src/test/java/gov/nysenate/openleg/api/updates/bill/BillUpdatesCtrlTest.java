@@ -3,6 +3,7 @@ package gov.nysenate.openleg.api.updates.bill;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
@@ -191,9 +192,7 @@ public class BillUpdatesCtrlTest {
     /* --- Internal --- */
 
     private void assertRejected(String path, String receivedValue, String... params) throws Exception {
-        MvcResult result = perform(enforceMvc, path, params);
-        assertEquals(path + query(params), 400, result.getResponse().getStatus());
-        assertEquals(path + query(params), expectedRejection(BILL_UPDATES_FULL_BILL, receivedValue), json(result));
+        CollectionFullTestSupport.assertRejected(enforceMvc, path, BILL_UPDATES_FULL_BILL, receivedValue, params);
     }
 
     private void assertSameInBothModes(String path, String... params) throws Exception {

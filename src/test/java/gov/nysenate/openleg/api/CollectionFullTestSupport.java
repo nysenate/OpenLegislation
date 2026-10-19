@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -35,12 +36,21 @@ public final class CollectionFullTestSupport {
     public static final List<String> PARSED_FALSE_VALUES = List.of("false", "0", "", "no", "f", "maybe");
 
     private static final String DOMAIN_URL = "http://example.test/legislation";
-    private static final CollectionFullPolicy ENFORCE_POLICY = new CollectionFullPolicy("enforce", DOMAIN_URL);
+    private static final CollectionFullPolicy ENFORCE_POLICY = policy("enforce");
 
     private CollectionFullTestSupport() {}
 
+    public static CollectionFullPolicy policy(String mode) {
+        return new CollectionFullPolicy(mode, DOMAIN_URL);
+    }
+
     public static MockMvc mockMvc(Function<CollectionFullPolicy, BaseCtrl> controller, String mode) {
-        return standaloneSetup(controller.apply(new CollectionFullPolicy(mode, DOMAIN_URL)))
+        return mockMvc(controller.apply(policy(mode)));
+    }
+
+    /** A MockMvc for the controllers, with the production JSON mapper. */
+    public static MockMvc mockMvc(Object... controllers) {
+        return standaloneSetup(controllers)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter(OutputUtils.failOnUnknownMapper))
                 .build();
     }
@@ -73,6 +83,29 @@ public final class CollectionFullTestSupport {
                 .put("constraint", ENFORCE_POLICY.getConstraint(option));
         errorData.put("receivedValue", receivedValue);
         return body;
+    }
+
+    /** Asserts that the request returns the documented 400 for a rejected option. */
+    public static void assertRejected(MockMvc mvc, String path, CollectionFullPolicy.Option option,
+                                      String receivedValue, String... params) throws Exception {
+        MvcResult result = perform(mvc, path, params);
+        assertEquals(path + query(params), 400, result.getResponse().getStatus());
+        assertEquals(path + query(params), expectedRejection(option, receivedValue), json(result));
+    }
+
+    /** Asserts that off and enforce return the same 200 body for the request, and returns it. */
+    public static JsonNode assertSameInBothModes(MockMvc offMvc, MockMvc enforceMvc, String path, String... params)
+            throws Exception {
+        JsonNode off = ok(offMvc, path, params);
+        assertEquals(path + query(params), off, ok(enforceMvc, path, params));
+        return off;
+    }
+
+    /** Asserts that the request returns 200, and returns its body. */
+    public static JsonNode ok(MockMvc mvc, String path, String... params) throws Exception {
+        MvcResult result = perform(mvc, path, params);
+        assertEquals(path + query(params), 200, result.getResponse().getStatus());
+        return json(result);
     }
 
     /** The decoded value the server receives for a raw query value. */
