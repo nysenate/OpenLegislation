@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -161,10 +160,8 @@ public class TranscriptGetCtrl extends BaseCtrl {
     /** --- Internal --- */
 
     private BaseResponse getTranscriptResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
-        return ListViewResponse.of(results.resultList().stream().map(r ->
-            (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
-                    : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
-                    : new TranscriptIdView(r.result()))
+        return ListViewResponse.of(results.resultList().stream()
+            .map(r -> TranscriptViews.of(transcriptData, r.result(), summary, full))
             .toList(), results.totalResults(), limOff);
     }
 

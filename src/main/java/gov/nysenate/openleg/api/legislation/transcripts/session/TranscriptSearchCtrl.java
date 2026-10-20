@@ -2,9 +2,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.CollectionFullPolicy;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
@@ -88,9 +85,7 @@ public class TranscriptSearchCtrl extends BaseCtrl {
 
     private BaseResponse getSearchResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
         return ListViewResponse.of(results.resultList().stream().map(r -> new SearchResultView(
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
-                        : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
-                        : new TranscriptIdView(r.result()), r.rank(), r.highlights()))
+                TranscriptViews.of(transcriptData, r.result(), summary, full), r.rank(), r.highlights()))
                 .toList(), results.totalResults(), limOff);
     }
 }

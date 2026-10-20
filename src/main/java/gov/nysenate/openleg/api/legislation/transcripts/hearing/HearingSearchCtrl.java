@@ -2,10 +2,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.CollectionFullPolicy;
-import gov.nysenate.openleg.api.ViewObject;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
@@ -62,7 +58,7 @@ public class HearingSearchCtrl extends BaseCtrl {
         collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<HearingId> results = hearingSearch.searchHearings(term, sort, limOff);
-        return getSearchResponse(full, summary, limOff, results);
+        return getSearchResponse(summary, full, limOff, results);
     }
 
     /**
@@ -83,20 +79,12 @@ public class HearingSearchCtrl extends BaseCtrl {
         collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<HearingId> results = hearingSearch.searchHearings(term, year, sort, limOff);
-        return getSearchResponse(full, summary, limOff, results);
+        return getSearchResponse(summary, full, limOff, results);
     }
 
-    private BaseResponse getSearchResponse(boolean full, boolean summary, LimitOffset limOff, SearchResults<HearingId> results) {
+    private BaseResponse getSearchResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<HearingId> results) {
         return ListViewResponse.of(results.resultList().stream().map(r -> new SearchResultView(
-                        getHearingViewObject(r.result(), full, summary), r.rank(), r.highlights()))
+                        HearingViews.of(hearingData, r.result(), summary, full), r.rank(), r.highlights()))
                 .toList(), results.totalResults(), limOff);
-    }
-
-    private ViewObject getHearingViewObject(HearingId id, boolean full, boolean summary) {
-        if (full)
-            return new HearingView(hearingData.getHearing(id));
-        if (summary)
-            return new HearingInfoView(hearingData.getHearing(id));
-        return new HearingIdView(id, hearingData.getFilename(id));
     }
 }

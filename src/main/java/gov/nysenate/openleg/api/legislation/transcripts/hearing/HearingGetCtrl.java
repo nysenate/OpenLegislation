@@ -4,7 +4,6 @@ import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -19,6 +18,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingNotFoundEx;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
 import gov.nysenate.openleg.search.SearchException;
+import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.HearingSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -88,10 +88,10 @@ public class HearingGetCtrl extends BaseCtrl {
                                      WebRequest webRequest) throws SearchException {
         collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        List<ViewObject> results = hearingSearch.searchHearings(year, sort, limOff).resultList().stream()
-                .map(searchResult -> hearingData.getHearing(searchResult.result()))
-                .map(hearing -> getHearingViewObject(hearing, summary, full)).toList();
-        return ListViewResponse.of(results, results.size(), limOff);
+        SearchResults<HearingId> results = hearingSearch.searchHearings(year, sort, limOff);
+        List<ViewObject> views = results.resultList().stream()
+                .map(searchResult -> HearingViews.of(hearingData, searchResult.result(), summary, full)).toList();
+        return ListViewResponse.of(views, results.totalResults(), limOff);
     }
 
     /**
@@ -143,15 +143,5 @@ public class HearingGetCtrl extends BaseCtrl {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handlePubHearingNotFoundEx(HearingNotFoundEx ex) {
         return new ViewObjectErrorResponse(ErrorCode.HEARING_NOT_FOUND, new HearingIdView(ex.getId(), ex.getFilename()));
-    }
-
-    private static ViewObject getHearingViewObject(Hearing hearing, boolean summary, boolean full) {
-        if (full) {
-            return new HearingView(hearing);
-        }
-        if (summary) {
-            return new HearingInfoView(hearing);
-        }
-        return new HearingIdView(hearing.getId(), hearing.getFilename());
     }
 }

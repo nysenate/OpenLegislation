@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gov.nysenate.openleg.api.CollectionFullTestSupport.*;
+import static gov.nysenate.openleg.api.CtrlTestSupport.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;

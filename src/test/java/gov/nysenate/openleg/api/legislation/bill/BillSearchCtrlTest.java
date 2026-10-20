@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.bill;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.CollectionFullTestSupport;
+import gov.nysenate.openleg.api.CtrlTestSupport;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.annotation.UnitTest;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gov.nysenate.openleg.api.CollectionFullTestSupport.*;
+import static gov.nysenate.openleg.api.CtrlTestSupport.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -147,7 +149,7 @@ public class BillSearchCtrlTest {
     }
 
     private MvcResult perform(MockMvc mvc, String... params) throws Exception {
-        return CollectionFullTestSupport.perform(mvc, endpoint, withTerm(params));
+        return CtrlTestSupport.perform(mvc, endpoint, withTerm(params));
     }
 
     private static String[] withTerm(String... params) {

@@ -7,7 +7,6 @@ import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -17,9 +16,10 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 
+import static gov.nysenate.openleg.api.CtrlTestSupport.json;
+import static gov.nysenate.openleg.api.CtrlTestSupport.mockMvc;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @Category(UnitTest.class)
 public class BaseCtrlTest {
@@ -35,13 +35,11 @@ public class BaseCtrlTest {
 
     @Test
     public void notAcceptableHandlerResolvesThroughSpring() throws Exception {
-        MvcResult result = standaloneSetup(new NotAcceptableCtrl())
-                .setMessageConverters(new MappingJackson2HttpMessageConverter(OutputUtils.failOnUnknownMapper))
-                .build()
+        MvcResult result = mockMvc(new NotAcceptableCtrl())
                 .perform(get("/not-acceptable").header("Accept", "application/json"))
                 .andReturn();
         assertEquals(400, result.getResponse().getStatus());
-        JsonNode body = OutputUtils.failOnUnknownMapper.readTree(result.getResponse().getContentAsString());
+        JsonNode body = json(result);
         assertEquals("Accept", body.at("/errorData/parameterConstraint/name").asText());
         assertEquals("application/json", body.at("/errorData/receivedValue").asText());
     }
