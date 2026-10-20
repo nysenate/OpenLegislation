@@ -116,12 +116,65 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <section id="get-a-list-of-agendas-for-a-single-year">
 <h2>Get a list of agendas for a single year<a class="headerlink" href="#get-a-list-of-agendas-for-a-single-year" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>Returns a list of agenda ids in ascending order that occur in the given year:</p>
+<p>List the weekly agendas in a year, in ascending order of agenda number:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
+<p>Each item is an agenda summary: its id, week, publish date and time, the number of addenda and committees, and the
+number of bills considered and voted on. Request a single agenda for its committees and bills.</p>
+<p><strong>Optional Params</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return (default 25)</p></td>
+</tr>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from</p></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span>
+<p>List the agendas of 2025:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2025</span>
+</pre></div>
+</div>
+<p>List 2025’s agendas 10 at a time, starting from the 11th:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/2025?limit=10&amp;offset=11
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"agenda-summary list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">21</span><span class="p">,</span><span class="w">                                   </span><span class="c1">// Total agendas in the year</span>
+<span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w">                              </span><span class="c1">// Offset value</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">21</span><span class="p">,</span><span class="w">                               </span><span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
+<span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">25</span><span class="p">,</span><span class="w">                                   </span><span class="c1">// Max number of results to show</span>
+<span class="w">  </span><span class="s2">"result"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"items"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">"id"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"number"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"year"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2025</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="s2">"weekOf"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"publishedDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13T15:21:28.027862"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"totalAddendum"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"totalBillsConsidered"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">98</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"totalBillsVotedOn"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"totalCommittees"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">"size"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">21</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

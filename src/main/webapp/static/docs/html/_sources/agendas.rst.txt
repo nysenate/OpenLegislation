@@ -31,15 +31,61 @@ Get a list of agendas for a single year
 
 **Usage**
 
-Returns a list of agenda ids in ascending order that occur in the given year::
+List the weekly agendas in a year, in ascending order of agenda number::
 
     (GET) /api/3/agendas/{year}
 
+Each item is an agenda summary: its id, week, publish date and time, the number of addenda and committees, and the
+number of bills considered and voted on. Request a single agenda for its committees and bills.
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| limit     | 1 - 1000           | Number of results to return (default 25)               |
++-----------+--------------------+--------------------------------------------------------+
+| offset    | >= 1               | Result number to start from                            |
++-----------+--------------------+--------------------------------------------------------+
+
 **Examples**
 
-::
+List the agendas of 2025::
 
-   /api/3/agendas/2017
+   /api/3/agendas/2025
+
+List 2025's agendas 10 at a time, starting from the 11th::
+
+   /api/3/agendas/2025?limit=10&offset=11
+
+**Response**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "agenda-summary list",
+      "total" : 21,                                   // Total agendas in the year
+      "offsetStart" : 1,                              // Offset value
+      "offsetEnd" : 21,                               // To paginate, set query param offset = {offsetEnd + 1}
+      "limit" : 25,                                   // Max number of results to show
+      "result" : {
+        "items" : [ {
+          "id" : {
+            "number" : 1,
+            "year" : 2025
+          },
+          "weekOf" : "2025-01-13",
+          "publishedDateTime" : "2025-01-13T15:21:28.027862",
+          "totalAddendum" : 1,
+          "totalBillsConsidered" : 98,
+          "totalBillsVotedOn" : 0,
+          "totalCommittees" : 1
+        }, ... ],
+        "size" : 21
+      }
+    }
 
 
 

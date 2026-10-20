@@ -188,11 +188,11 @@
 </pre></div>
 </div>
 <p>List 50 complete hearings starting from 51:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50&amp;offset=51&amp;full=true
 </pre></div>
 </div>
 <p>List 10 complete hearings sorted by increasing date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=date:ASC
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -202,7 +202,7 @@
 <span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"hearing-id list"</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">451</span><span class="p">,</span><span class="w">                                  </span><span class="c1">// Total hearings in the listing</span>
 <span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w">                              </span><span class="c1">// Offset value</span>
-<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w">                                </span><span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w">                               </span><span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
 <span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w">                                   </span><span class="c1">// Max number of results to show</span>
 <span class="w">  </span><span class="s2">"result"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}],</span><span class="w">                           </span><span class="c1">// Array of hearing responses</span>

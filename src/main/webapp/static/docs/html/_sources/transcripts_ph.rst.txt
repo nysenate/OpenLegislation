@@ -101,11 +101,11 @@ List 50 hearings from 2014::
 
 List 50 complete hearings starting from 51::
 
-    /api/3/hearings/2014?limit=50%offset=51&full=true
+    /api/3/hearings/2014?limit=50&offset=51&full=true
 
 List 10 complete hearings sorted by increasing date::
 
-    /api/3/hearings/2014?limit=10&full=true&sort=dateTime:ASC
+    /api/3/hearings/2014?limit=10&full=true&sort=date:ASC
 
 **Response**
 
@@ -117,7 +117,7 @@ List 10 complete hearings sorted by increasing date::
       "responseType" : "hearing-id list",
       "total" : 451,                                  // Total hearings in the listing
       "offsetStart" : 1,                              // Offset value
-      "offsetEnd" : 0,                                // To paginate, set query param offset = {offsetEnd + 1}
+      "offsetEnd" : 10,                               // To paginate, set query param offset = {offsetEnd + 1}
       "limit" : 10,                                   // Max number of results to show
       "result" : {
         "items": [{ ... }],                           // Array of hearing responses
