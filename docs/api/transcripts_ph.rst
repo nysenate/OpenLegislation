@@ -10,18 +10,18 @@ Get a single Hearing
 
 Retrieve hearing by id or filename::
 
-    (GET) /api/3/hearings/{id}
-    (GET) /api/3/hearings/{filename}
+    GET /api/3/hearings/{id}
+    GET /api/3/hearings/{filename}
 
 **Examples**
 
 Request hearing 5::
 
-    /api/3/hearings/5
+    GET /api/3/hearings/5
 
 Request hearing "10-29-13 NYsenate_Flanagan_Education_FINAL.txt"::
 
-    /api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
+    GET /api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
 
 
 **Response**
@@ -58,14 +58,14 @@ Get a hearing pdf
 
 Retrieve hearing pdf by id or filename::
 
-    (GET) /api/3/hearings/{id}.pdf
-    (GET) /api/3/hearings/{filename}.pdf
+    GET /api/3/hearings/{id}.pdf
+    GET /api/3/hearings/{filename}.pdf
 
 **Examples**
 
 Request hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt::
 
-    /api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf
+    GET /api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf
 
 
 -----
@@ -77,7 +77,7 @@ Get a list of hearings
 
 List hearings within a year::
 
-    (GET) /api/3/hearings/{year}
+    GET /api/3/hearings/{year}
 
 **Optional Params**
 
@@ -89,23 +89,31 @@ List hearings within a year::
 | offset    | > 1                | Result number to start from                            |
 +-----------+--------------------+--------------------------------------------------------+
 | full      | boolean            | Set to true to see the full hearing responses.         |
+|           |                    |                                                        |
+|           |                    | **Deprecated:** Scheduled for removal December 1,      |
+|           |                    | 2026. See the :ref:`API migration notes                |
+|           |                    | <hearing-collection-full-migration>`.                  |
++-----------+--------------------+--------------------------------------------------------+
+| summary   | boolean            | Set to true to see each hearing's details, without its |
+|           |                    | text. Defaults to false, which returns only the id and |
+|           |                    | filename of each hearing.                              |
 +-----------+--------------------+--------------------------------------------------------+
 | sort      | string             | Sort by any field from the response.                   |
 +-----------+--------------------+--------------------------------------------------------+
 
 **Examples**
 
-List 50 hearings from 2014::
+List hearings from 2014::
 
-    /api/3/hearings/2014?limit=50
+    GET /api/3/hearings/2014
 
-List 50 complete hearings starting from 51::
+List the details of hearings from 2014, starting from result 26::
 
-    /api/3/hearings/2014?limit=50&offset=51&full=true
+    GET /api/3/hearings/2014?summary=true&offset=26
 
-List 10 complete hearings sorted by increasing date::
+List the details of hearings from 2014 sorted by increasing date::
 
-    /api/3/hearings/2014?limit=10&full=true&sort=date:ASC
+    GET /api/3/hearings/2014?summary=true&sort=date:ASC
 
 **Response**
 
@@ -117,10 +125,10 @@ List 10 complete hearings sorted by increasing date::
       "responseType" : "hearing-id list",
       "total" : 451,                                  // Total hearings in the listing
       "offsetStart" : 1,                              // Offset value
-      "offsetEnd" : 10,                               // To paginate, set query param offset = {offsetEnd + 1}
-      "limit" : 10,                                   // Max number of results to show
+      "offsetEnd" : 25,                               // To paginate, set query param offset = {offsetEnd + 1}
+      "limit" : 25,                                   // Max number of results to show
       "result" : {
-        "items": [{ ... }],                           // Array of hearing responses
-        "size": 10
+        "items": [{ ... }],                           // Hearing ids, or hearing details if summary=true
+        "size": 25
       }
     }
