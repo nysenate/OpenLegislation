@@ -23,45 +23,45 @@ public class CollectionFullPolicy {
      * which is resolved against {@code domain.url}.
      */
     public enum Option {
-        BILL_FULL("full", "/static/docs/html/bills.html#bill-collection-full-migration",
+        BILL_FULL("full", "/static/docs/html/migration.html#bill-collection-full-migration",
                 "Bill search and listing no longer return full bills. Omit full for bill summaries, " +
                 "or use idsOnly=true for bill IDs, then request each bill from " +
                 "/api/3/bills/{sessionYear}/{printNo}.",
                 "Must be false or omitted on bill search and listing."),
-        BILL_UPDATES_FULL_BILL("fullBill", "/static/docs/html/bills.html#bill-updates-fullbill-migration",
+        BILL_UPDATES_FULL_BILL("fullBill", "/static/docs/html/migration.html#bill-updates-fullbill-migration",
                 "Bill update feeds no longer return full bills. Use summary=true for bill summaries, " +
                 "or use the bill IDs in the update tokens to request each bill from " +
                 "/api/3/bills/{sessionYear}/{printNo}.",
                 "Must be false or omitted on bill update feeds."),
-        HEARING_FULL("full", "/static/docs/html/transcripts_ph.html#hearing-collection-full-migration",
+        HEARING_FULL("full", "/static/docs/html/migration.html#hearing-collection-full-migration",
                 "Hearing search and listing no longer return full hearings. Omit full and use summary=true " +
                 "for hearing details without the text, or summary=false for IDs only, then request each " +
                 "hearing from /api/3/hearings/{id}.",
                 "Must be false or omitted on hearing search and listing."),
-        TRANSCRIPT_FULL("full", "/static/docs/html/transcripts_floor.html#transcript-collection-full-migration",
+        TRANSCRIPT_FULL("full", "/static/docs/html/migration.html#transcript-collection-full-migration",
                 "Transcript search and listing no longer return full transcripts. Omit full and use " +
                 "summary=true for transcript details without the text, or summary=false for IDs only, then " +
                 "request each transcript from /api/3/transcripts/{dateTime}/{sessionType}.",
                 "Must be false or omitted on transcript search and listing."),
-        CALENDAR_FULL("full", "/static/docs/html/calendars.html#calendar-collection-full-migration",
+        CALENDAR_FULL("full", "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Calendar listings no longer return full calendars. Omit full for calendar summaries, " +
                 "then request each calendar from /api/3/calendars/{year}/{calendarNumber}.",
                 "Must be false or omitted on calendar listings."),
-        ACTIVE_LIST_FULL("full", "/static/docs/html/calendars.html#calendar-collection-full-migration",
+        ACTIVE_LIST_FULL("full", "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Active list listings no longer return full active lists. Omit full for active list " +
                 "summaries, then request each active list from " +
                 "/api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}.",
                 "Must be false or omitted on active list listings."),
-        SUPPLEMENTAL_FULL("full", "/static/docs/html/calendars.html#calendar-collection-full-migration",
+        SUPPLEMENTAL_FULL("full", "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Supplemental calendar listings no longer return full supplementals. Omit full for " +
                 "supplemental summaries, then request each one from " +
                 "/api/3/calendars/{year}/{calendarNumber}/{version}.",
                 "Must be false or omitted on supplemental calendar listings."),
-        CALENDAR_SEARCH_DETAIL("detail", "/static/docs/html/calendars.html#calendar-collection-full-migration",
+        CALENDAR_SEARCH_DETAIL("detail", "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Calendar search no longer returns full calendars. Omit detail for calendar summaries, " +
                 "then request each calendar from /api/3/calendars/{year}/{calendarNumber}.",
                 "Must be false or omitted on calendar search."),
-        AGENDA_SEARCH_FULL("full", "/static/docs/html/agendas.html#agenda-search-full-migration",
+        AGENDA_SEARCH_FULL("full", "/static/docs/html/migration.html#agenda-search-full-migration",
                 "Agenda search no longer returns full committee agendas. Omit full for committee agenda " +
                 "summaries, then request each one from /api/3/agendas/{year}/{agendaNo}/{committeeName}.",
                 "Must be false or omitted on agenda search.");

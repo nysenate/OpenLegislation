@@ -78,7 +78,7 @@ public class CollectionFullPolicyTest {
         assertEquals("True", ex.getParameterValue());
         assertEquals(policy.getConstraint(BILL_FULL), ex.getParameterConstraint());
         assertEquals(policy.getMessage(BILL_FULL), ex.getResponseMessage());
-        String guide = DOMAIN_URL + "/static/docs/html/bills.html#bill-collection-full-migration";
+        String guide = DOMAIN_URL + "/static/docs/html/migration.html#bill-collection-full-migration";
         assertTrue(ex.getResponseMessage(), ex.getResponseMessage().endsWith("Migration guide: " + guide));
         assertTrue(ex.getParameterConstraint(), ex.getParameterConstraint().endsWith("Migration guide: " + guide));
     }
@@ -95,39 +95,39 @@ public class CollectionFullPolicyTest {
     public void nonBillOptionsCarryDocumentedTextsAndGuides() {
         CollectionFullPolicy policy = new CollectionFullPolicy("enforce", DOMAIN_URL);
         assertDocumented(policy, HEARING_FULL, "full",
-                "/static/docs/html/transcripts_ph.html#hearing-collection-full-migration",
+                "/static/docs/html/migration.html#hearing-collection-full-migration",
                 "Hearing search and listing no longer return full hearings. Omit full and use summary=true for " +
                 "hearing details without the text, or summary=false for IDs only, then request each hearing from " +
                 "/api/3/hearings/{id}.",
                 "Must be false or omitted on hearing search and listing.");
         assertDocumented(policy, TRANSCRIPT_FULL, "full",
-                "/static/docs/html/transcripts_floor.html#transcript-collection-full-migration",
+                "/static/docs/html/migration.html#transcript-collection-full-migration",
                 "Transcript search and listing no longer return full transcripts. Omit full and use summary=true " +
                 "for transcript details without the text, or summary=false for IDs only, then request each " +
                 "transcript from /api/3/transcripts/{dateTime}/{sessionType}.",
                 "Must be false or omitted on transcript search and listing.");
         assertDocumented(policy, CALENDAR_FULL, "full",
-                "/static/docs/html/calendars.html#calendar-collection-full-migration",
+                "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Calendar listings no longer return full calendars. Omit full for calendar summaries, then request " +
                 "each calendar from /api/3/calendars/{year}/{calendarNumber}.",
                 "Must be false or omitted on calendar listings.");
         assertDocumented(policy, ACTIVE_LIST_FULL, "full",
-                "/static/docs/html/calendars.html#calendar-collection-full-migration",
+                "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Active list listings no longer return full active lists. Omit full for active list summaries, " +
                 "then request each active list from /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}.",
                 "Must be false or omitted on active list listings.");
         assertDocumented(policy, SUPPLEMENTAL_FULL, "full",
-                "/static/docs/html/calendars.html#calendar-collection-full-migration",
+                "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Supplemental calendar listings no longer return full supplementals. Omit full for supplemental " +
                 "summaries, then request each one from /api/3/calendars/{year}/{calendarNumber}/{version}.",
                 "Must be false or omitted on supplemental calendar listings.");
         assertDocumented(policy, CALENDAR_SEARCH_DETAIL, "detail",
-                "/static/docs/html/calendars.html#calendar-collection-full-migration",
+                "/static/docs/html/migration.html#calendar-collection-full-migration",
                 "Calendar search no longer returns full calendars. Omit detail for calendar summaries, then request " +
                 "each calendar from /api/3/calendars/{year}/{calendarNumber}.",
                 "Must be false or omitted on calendar search.");
         assertDocumented(policy, AGENDA_SEARCH_FULL, "full",
-                "/static/docs/html/agendas.html#agenda-search-full-migration",
+                "/static/docs/html/migration.html#agenda-search-full-migration",
                 "Agenda search no longer returns full committee agendas. Omit full for committee agenda summaries, " +
                 "then request each one from /api/3/agendas/{year}/{agendaNo}/{committeeName}.",
                 "Must be false or omitted on agenda search.");
