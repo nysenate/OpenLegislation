@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Migration Notes &mdash; Open Legislation 2.0-alpha documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
+    <link rel="prev" title="Open Legislation v2.0 API Docs" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="reference.html" class="icon icon-home">
+            Open Legislation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API Migration Notes</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-a-removed-option-is-rejected">How a removed option is rejected</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bill-listing-and-search">Bill listing and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bill-update-feeds">Bill update feeds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calendar-listings-and-search">Calendar listings and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agenda-search">Agenda search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hearing-listing-and-search">Hearing listing and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#floor-transcript-listing-and-search">Floor transcript listing and search</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Hearing Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="reference.html">Open Legislation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>API Migration Notes</strong></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/migration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-migration-notes">
+<span id="api-migration"></span><h1><strong>API Migration Notes</strong><a class="headerlink" href="#api-migration-notes" title="Link to this heading">¶</a></h1>
+<p>Some listing, search and update endpoints will stop returning full items on December 1, 2026. The options that
+request full items from them are deprecated now and will be removed then. Until then they keep working as before.</p>
+<p>Deprecated options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> and <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code> on <a class="reference internal" href="#bill-collection-full-migration"><span class="std std-ref">bill listing and search</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fullBill</span></code> and <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code> on <a class="reference internal" href="#bill-updates-fullbill-migration"><span class="std std-ref">bill update feeds</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> on <a class="reference internal" href="#calendar-collection-full-migration"><span class="std std-ref">calendar listings</span></a>, and <code class="docutils literal notranslate"><span class="pre">detail</span></code> on calendar search</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> on <a class="reference internal" href="#agenda-search-full-migration"><span class="std std-ref">agenda search</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> on <a class="reference internal" href="#hearing-collection-full-migration"><span class="std std-ref">hearing listing and search</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> on <a class="reference internal" href="#transcript-collection-full-migration"><span class="std std-ref">floor transcript listing and search</span></a></p></li>
+</ul>
+<p>To migrate, list or search for summaries or IDs instead, then request each item you need individually. Requests for
+a single item still return the full item, and the <code class="docutils literal notranslate"><span class="pre">/api/3</span></code> base URL and API keys stay the same. Each of those
+requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the items you need.</p>
+<section id="how-a-removed-option-is-rejected">
+<span id="removed-option-errors"></span><h2>How a removed option is rejected<a class="headerlink" href="#how-a-removed-option-is-rejected" title="Link to this heading">¶</a></h2>
+<p>Starting December 1, 2026, a request that sets <code class="docutils literal notranslate"><span class="pre">full</span></code>, <code class="docutils literal notranslate"><span class="pre">fullBill</span></code> or <code class="docutils literal notranslate"><span class="pre">detail</span></code> to true on these endpoints is
+rejected with HTTP 400, for every caller. Omitting the option, or setting it to false, is still accepted.
+<code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code> is not rejected, but it has no effect without full bills.</p>
+<p>The rejection is an error response with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 1 that names the parameter, and its message links to the
+section of this page for that option:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Bill search and listing no longer return full bills. Omit full for bill summaries, ..."</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorData"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"parameterConstraint"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"full"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"boolean"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"constraint"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Must be false or omitted on bill search and listing. Migration guide: ..."</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="s2">"receivedValue"</span><span class="o">:</span><span class="w"> </span><span class="s2">"true"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="s2">"errorDataType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"invalid-parameter"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="bill-listing-and-search">
+<span id="bill-collection-full-migration"></span><h2>Bill listing and search<a class="headerlink" href="#bill-listing-and-search" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints, along with <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code>, which only applies to full bills:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/search</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}/search</span></code></p></li>
+</ul>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">full=true</span></code> with HTTP 400, even when <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code> is also set.</p>
+<p><strong>How to migrate</strong></p>
+<p>Listing and search return a bill summary for each bill. A summary is not a full bill: it has the bill’s
+identifiers, title, sponsor, status, milestones and actions, but not its amendments (with their full text, memos,
+cosponsors and law sections), votes, or veto and approval messages. If your client reads any of those from
+listing or search results, change it to:</p>
+<ol class="arabic simple">
+<li><p>List or search for bills without <code class="docutils literal notranslate"><span class="pre">full</span></code>. Use the summaries, or add <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code> if you only need
+bill IDs.</p></li>
+<li><p>Request each bill you need from <code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}/{printNo}</span></code>, which returns the
+<a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">full bill</span></a> by default. Add <code class="docutils literal notranslate"><span class="pre">view=info</span></code> there if the summary is enough.</p></li>
+</ol>
+<p>Each of those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the bills you need.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code>, the listing items are the bill IDs themselves:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?idsOnly=true
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">"basePrintNo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1"</span><span class="p">,</span><span class="w">           </span><span class="c1">// Base print no; use it with session to request the bill</span>
+<span class="w">      </span><span class="s2">"session"</span><span class="o">:</span><span class="w"> </span><span class="mf">2013</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"basePrintNoStr"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1-2013"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In search results, each bill ID is nested under <code class="docutils literal notranslate"><span class="pre">result</span></code>, next to the result’s <code class="docutils literal notranslate"><span class="pre">rank</span></code> and <code class="docutils literal notranslate"><span class="pre">highlights</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/search?term=education&amp;idsOnly=true
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"basePrintNo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1234"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"session"</span><span class="o">:</span><span class="w"> </span><span class="mf">2013</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"basePrintNoStr"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1234-2013"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"printNo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1234"</span><span class="p">,</span><span class="w">          </span><span class="c1">// Also the base print no, without an amendment letter</span>
+<span class="w">        </span><span class="s2">"version"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="s2">"rank"</span><span class="o">:</span><span class="w"> </span><span class="mf">1.23</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"highlights"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">25</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In both cases, request the full bill with its base print no and session, e.g. <code class="docutils literal notranslate"><span class="pre">/api/3/bills/2013/S1234</span></code>.</p>
+</section>
+<section id="bill-update-feeds">
+<span id="bill-updates-fullbill-migration"></span><h2>Bill update feeds<a class="headerlink" href="#bill-update-feeds" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">fullBill</span></code> is deprecated on these endpoints, along with <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code>, which only applies to full bills:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/updates</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/updates/{fromDateTime}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/updates/{fromDateTime}/{toDateTime}</span></code></p></li>
+</ul>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">fullBill</span></code> with HTTP 400 whenever it is true, even when <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> or
+<code class="docutils literal notranslate"><span class="pre">summary=true</span></code> is also set. <code class="docutils literal notranslate"><span class="pre">fullBill</span></code> counts as true when its value is <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">yes</span></code>, <code class="docutils literal notranslate"><span class="pre">on</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>
+or <code class="docutils literal notranslate"><span class="pre">t</span></code>, in any case.</p>
+<p><strong>How to migrate</strong></p>
+<p>Each update token already identifies its bill in <code class="docutils literal notranslate"><span class="pre">id</span></code>. Choose one of these instead of <code class="docutils literal notranslate"><span class="pre">fullBill</span></code>:</p>
+<ul class="simple">
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">summary=true</span></code> to include a bill summary with each update token, under <code class="docutils literal notranslate"><span class="pre">item</span></code>. A summary has the bill’s
+identifiers, title, sponsor and type, but not its status, actions, amendments or votes.</p></li>
+<li><p>Request each updated bill you need from <code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}/{printNo}</span></code>, using <code class="docutils literal notranslate"><span class="pre">session</span></code> and
+<code class="docutils literal notranslate"><span class="pre">basePrintNo</span></code> from the token’s <code class="docutils literal notranslate"><span class="pre">id</span></code>. It returns the <a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">full bill</span></a> by default.</p></li>
+</ul>
+<p>Each of those bill requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+<p>Bills updated during a time range, with a summary of each bill:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48?summary=true
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">summary=true</span></code> and <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> (with any <code class="docutils literal notranslate"><span class="pre">filter</span></code>) keep working as before.</p>
+</section>
+<section id="calendar-listings-and-search">
+<span id="calendar-collection-full-migration"></span><h2>Calendar listings and search<a class="headerlink" href="#calendar-listings-and-search" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on calendar listings:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/activelist</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/supplemental</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">detail</span></code> is deprecated on calendar search (<code class="docutils literal notranslate"><span class="pre">/api/3/calendars/search</span></code> and <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/search</span></code>).</p>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">full=true</span></code> and <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> with HTTP 400. The <code class="docutils literal notranslate"><span class="pre">full</span></code> parameter of a
+single calendar request is not affected.</p>
+<p><strong>How to migrate</strong></p>
+<p>List calendars without <code class="docutils literal notranslate"><span class="pre">full</span></code> to get a summary of each one, then request each calendar you need in full:</p>
+<ul class="simple">
+<li><p>A calendar: <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/{calendarNumber}</span></code></p></li>
+<li><p>An active list: <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}</span></code></p></li>
+<li><p>A supplemental or floor calendar: <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/{calendarNumber}/{versionCharacter}</span></code></p></li>
+</ul>
+<p>Calendar search without <code class="docutils literal notranslate"><span class="pre">detail</span></code> returns summaries too; request each calendar you need the same way. Each of
+those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+</section>
+<section id="agenda-search">
+<span id="agenda-search-full-migration"></span><h2>Agenda search<a class="headerlink" href="#agenda-search" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on agenda search:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/agendas/search</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/agendas/{year}/search</span></code></p></li>
+</ul>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">full=true</span></code> with HTTP 400.</p>
+<p><strong>How to migrate</strong></p>
+<p>Search without <code class="docutils literal notranslate"><span class="pre">full</span></code>. Each result is a committee agenda summary: the agenda and committee it belongs to, the
+week, the number of addenda, and the number of bills considered and voted on. Then request each committee agenda
+you need, with its meetings and bills, from <code class="docutils literal notranslate"><span class="pre">/api/3/agendas/{year}/{agendaNo}/{committeeName}</span></code>. Each of those
+requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+</section>
+<section id="hearing-listing-and-search">
+<span id="hearing-collection-full-migration"></span><h2>Hearing listing and search<a class="headerlink" href="#hearing-listing-and-search" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{year}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings/search</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{year}/search</span></code></p></li>
+</ul>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">full=true</span></code> with HTTP 400, even when <code class="docutils literal notranslate"><span class="pre">summary=true</span></code> is also set.</p>
+<p><strong>How to migrate</strong></p>
+<p>List or search for hearings without <code class="docutils literal notranslate"><span class="pre">full</span></code>:</p>
+<ul class="simple">
+<li><p>With <code class="docutils literal notranslate"><span class="pre">summary=true</span></code>, each hearing has its id, filename, title, date, address, start and end times, and the
+committees that held it, but not its text.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">summary=false</span></code>, each hearing has only its id and filename.</p></li>
+</ul>
+<p>Then request each hearing you need, with its text, from <code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{id}</span></code>. Each of those requests counts
+against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+</section>
+<section id="floor-transcript-listing-and-search">
+<span id="transcript-collection-full-migration"></span><h2>Floor transcript listing and search<a class="headerlink" href="#floor-transcript-listing-and-search" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{year}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/search</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{year}/search</span></code></p></li>
+</ul>
+<p>Starting December 1, 2026, they reject <code class="docutils literal notranslate"><span class="pre">full=true</span></code> with HTTP 400, even when <code class="docutils literal notranslate"><span class="pre">summary=true</span></code> is also set.</p>
+<p><strong>How to migrate</strong></p>
+<p>List or search for transcripts without <code class="docutils literal notranslate"><span class="pre">full</span></code>:</p>
+<ul class="simple">
+<li><p>With <code class="docutils literal notranslate"><span class="pre">summary=true</span></code>, each transcript has its dateTime, sessionType, location and dayType, but not its text.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">summary=false</span></code>, each transcript has only its dateTime and sessionType.</p></li>
+</ul>
+<p>Then request each transcript you need, with its text, from <code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{dateTime}/{sessionType}</span></code>. Each of
+those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation v2.0 API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bills.html" class="btn btn-neutral float-right" title="Bills and Resolutions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014, NY State Senate Technology Services.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

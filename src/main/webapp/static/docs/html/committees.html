@@ -9,6 +9,7 @@
   <title>Senate Committee API &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -44,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -100,11 +102,11 @@ information on where and when the committee meets, and the dates when the commit
 <p>Assembly committee data is currently not sent to us at this time. chamber must be ‘senate’.</p>
 </div>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Cultural</span><span class="o">%</span><span class="mi">20</span><span class="n">Affairs</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Tourism</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Parks</span><span class="o">%</span><span class="mi">20</span><span class="ow">and</span><span class="o">%</span><span class="mi">20</span><span class="n">Recreation</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Cultural</span><span class="o">%</span><span class="mi">20</span><span class="n">Affairs</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Tourism</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Parks</span><span class="o">%</span><span class="mi">20</span><span class="ow">and</span><span class="o">%</span><span class="mi">20</span><span class="n">Recreation</span>
 <span class="p">(</span><span class="n">Get</span> <span class="n">the</span> <span class="n">current</span> <span class="n">version</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Cultural</span> <span class="n">Affairs</span><span class="p">,</span> <span class="n">Tourism</span><span class="p">,</span> <span class="n">Parks</span> <span class="ow">and</span> <span class="n">Recreation</span> <span class="n">committee</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -116,11 +118,11 @@ information on where and when the committee meets, and the dates when the commit
 <p>This request will return a committee version (if one exists) corresponding to the given committee that was created
 before or on the given time and reformed after the given time.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ISODateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ISODateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Finance</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">01</span><span class="n">T09</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Finance</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">01</span><span class="n">T09</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>
 <span class="p">(</span><span class="n">Get</span> <span class="n">the</span> <span class="n">codes</span> <span class="n">committee</span> <span class="n">at</span> <span class="mi">9</span><span class="p">:</span><span class="mi">30</span> <span class="n">AM</span> <span class="n">on</span> <span class="n">March</span> <span class="mi">1</span><span class="n">st</span><span class="p">,</span> <span class="mi">2014</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -169,7 +171,7 @@ before or on the given time and reformed after the given time.</p>
 <section id="get-committee-history">
 <h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="n">history</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="n">history</span>
 </pre></div>
 </div>
 <p id="comm-history-params"><strong>Optional Params</strong></p>
@@ -200,8 +202,8 @@ before or on the given time and reformed after the given time.</p>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
-/api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
+GET /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
 (Get the first version of the Aging committee from 2013)
 </pre></div>
 </div>
@@ -209,7 +211,7 @@ before or on the given time and reformed after the given time.</p>
 <section id="get-all-current-committees">
 <h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -228,7 +230,7 @@ before or on the given time and reformed after the given time.</p>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/committees/2013/senate?&amp;full=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/committees/2013/senate?&amp;full=true
 (Get full responses for all current senate committees for session 2013)
 </pre></div>
 </div>
@@ -241,11 +243,11 @@ The committee search index is comprised of full committee responses
 so query and sort strings will be based on that response structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/committees/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/committees/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p>Search within a session year:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/committees/{sessionYear}/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/committees/{sessionYear}/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>

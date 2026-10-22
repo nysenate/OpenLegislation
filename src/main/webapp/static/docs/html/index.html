@@ -9,6 +9,7 @@
   <title>Open Legislation v2.0 API Docs &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -19,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
+    <link rel="next" title="API Migration Notes" href="migration.html" />
     <link rel="prev" title="&lt;no title&gt;" href="reference.html" /> 
 </head>
 
@@ -46,10 +47,12 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#api-usage">API Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rate-limits">Rate limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#legislative-content-types">Legislative Content Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#terminology">Terminology</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -88,6 +91,18 @@
              
   <section id="open-legislation-v2-0-api-docs">
 <h1><strong>Open Legislation v2.0 API Docs</strong><a class="headerlink" href="#open-legislation-v2-0-api-docs" title="Link to this heading">¶</a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>API changes starting December 1, 2026</strong></p>
+<ul class="simple">
+<li><p>Requests made with an API key are limited to 10 requests per second and 4 concurrent requests per key.
+See <a class="reference internal" href="#rate-limits"><span class="std std-ref">Rate limits</span></a>.</p></li>
+<li><p>The deprecated options that return full items from some listing, search and update endpoints, such as <code class="docutils literal notranslate"><span class="pre">full</span></code>
+on bill listing and search, are removed. Requests that set them to true are rejected with HTTP 400. See the
+<a class="reference internal" href="migration.html#api-migration"><span class="std std-ref">API migration notes</span></a>.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">/api/3</span></code> base URL and API keys stay the same, and requests for a single item still return the full item.</p>
+</div>
 <section id="what-is-this">
 <h2>What is this?<a class="headerlink" href="#what-is-this" title="Link to this heading">¶</a></h2>
 <p><a class="reference external" href="http://legislation.nysenate.gov">Open Legislation</a> is a web service that delivers legislative information from the New York State Senate and Assembly
@@ -109,9 +124,93 @@ You will need to sign up for a free API key from the Open Legislation homepage i
 </div>
 <p>To make an API request using your key, set the key string as the value of the ‘key’ request parameter in the request URL.</p>
 <p>For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
 </pre></div>
 </div>
+<p>Because your key is part of each request URL, error messages and logs that include the URL also include your
+key. Remove it before you share them.</p>
+</section>
+<section id="rate-limits">
+<span id="id1"></span><h2>Rate limits<a class="headerlink" href="#rate-limits" title="Link to this heading">¶</a></h2>
+<p>Starting December 1, 2026, requests made with an API key are limited per key:</p>
+<ul class="simple">
+<li><p><strong>Rate:</strong> 10 requests per second. Short bursts above this rate are tolerated, but plan your use around 10
+requests per second.</p></li>
+<li><p><strong>Concurrency:</strong> at most 4 requests in progress at the same time.</p></li>
+</ul>
+<p>There is no daily quota. All requests made with the same key share its limits, whatever IP address or session they
+come from.</p>
+<p>The limits apply to every request under <code class="docutils literal notranslate"><span class="pre">/api/3</span></code>, except for <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> requests (such as CORS preflight
+requests).</p>
+<p>A request counts against the concurrency limit until the server finishes it, even if your client has stopped
+waiting for it. Timing out and resending a slow request only adds to your requests in progress, so instead send at
+most 4 requests at a time.</p>
+<p>If your use needs more capacity than these limits allow, contact us at <a class="reference external" href="mailto:openlegislation&#37;&#52;&#48;nysenate&#46;gov">openlegislation<span>&#64;</span>nysenate<span>&#46;</span>gov</a>.</p>
+<p><strong>When a limit is exceeded</strong></p>
+<p>A request over either limit is rejected with HTTP status 429 (Too Many Requests). The response has a
+<code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header with the number of seconds to wait before retrying (a whole number, at least 1), and an error
+body with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 703:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">              </span><span class="c1">// Human-readable explanation</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">703</span><span class="w">               </span><span class="c1">// Rate limit exceeded</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Base your client’s handling on the status code, the <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> and the <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is
+meant for people: it may say which limit was exceeded, and its wording may change.</p>
+<p><strong>Example client</strong></p>
+<p>This Python example, using the <a class="reference external" href="https://requests.readthedocs.io">requests</a> library, stays within the limits. It
+sends one request at a time and starts each at least 0.1 seconds after the previous one, so it never sends more than
+10 requests per second. It retries GET requests that were rate limited or that failed because the service was
+temporarily unavailable (HTTP 503). Before each retry it waits at least as long as <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> asks: after a
+429 it adds random jitter to that wait, and after a 503 it backs off exponentially with random jitter. It gives up
+after a few attempts. It never retries other errors, such as a 400, because sending the same request again won’t fix
+them. It waits up to 5 minutes for a response, and doesn’t resend a request that timed out.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">API_ROOT</span> <span class="o">=</span> <span class="s2">"https://legislation.nysenate.gov/api/3"</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s2">"YOUR_API_KEY"</span>
+<span class="n">MAX_ATTEMPTS</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">MIN_INTERVAL</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># Seconds between requests, to stay at 10 requests per second</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">last_request</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""GET an API path, pacing requests and retrying when rate limited or temporarily unavailable."""</span>
+    <span class="k">global</span> <span class="n">last_request</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">"key"</span><span class="p">]</span> <span class="o">=</span> <span class="n">API_KEY</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">MAX_ATTEMPTS</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">last_request</span> <span class="o">+</span> <span class="n">MIN_INTERVAL</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()))</span>
+        <span class="n">last_request</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_ROOT</span> <span class="o">+</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">429</span><span class="p">,</span> <span class="mi">503</span><span class="p">)</span> <span class="ow">or</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">MAX_ATTEMPTS</span><span class="p">:</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Never retry other errors, such as 400</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">retry_after</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Retry-After"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">429</span><span class="p">:</span>
+            <span class="c1"># Wait at least as long as the server asks</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">retry_after</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Back off exponentially, with jitter, and at least as long as any Retry-After</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">retry_after</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">delay</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">retry_after</span><span class="p">))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+
+
+<span class="n">bill</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="s2">"/bills/2025/S100"</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s2">"info"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bill</span><span class="p">[</span><span class="s2">"result"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>If you change your client to send requests in parallel, keep at most 4 in progress at a time and keep their combined
+rate at or below 10 requests per second.</p>
 </section>
 <section id="legislative-content-types">
 <h2>Legislative Content Types<a class="headerlink" href="#legislative-content-types" title="Link to this heading">¶</a></h2>
@@ -169,7 +268,7 @@ in order to be reported to the senate floor.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="reference.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="bills.html" class="btn btn-neutral float-right" title="Bills and Resolutions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="migration.html" class="btn btn-neutral float-right" title="API Migration Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

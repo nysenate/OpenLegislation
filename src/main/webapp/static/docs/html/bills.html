@@ -9,6 +9,7 @@
   <title>Bills and Resolutions API &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -20,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Senate Calendar API" href="calendars.html" />
-    <link rel="prev" title="Open Legislation v2.0 API Docs" href="index.html" /> 
+    <link rel="prev" title="API Migration Notes" href="migration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Bills and Resolutions API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-single-bill">Get a single bill</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-pdf-of-bill-text">Get PDF of bill text</a></li>
@@ -98,7 +100,7 @@
 <h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve bill by session year and print no:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -156,11 +158,11 @@ the base print no (e.g. S1234).</p>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request bill S2180 of session year 2013:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S2180</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S2180</span>
 </pre></div>
 </div>
 <p>Request summary of bill A450 of session year 2013:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013/A450?view=info
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/A450?view=info
 </pre></div>
 </div>
 <p id="bill-response"><strong>Response</strong></p>
@@ -408,7 +410,7 @@ the base print no (e.g. S1234).</p>
 <section id="get-pdf-of-bill-text">
 <h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Link to this heading">¶</a></h2>
 <p>If you just need a pdf of the latest full text of the bill, you can make the following request:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p>If the bill is found, a PDF will be generated with the full text of the bill.</p>
@@ -418,7 +420,7 @@ the base print no (e.g. S1234).</p>
 <h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List bills within a session year:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
 </pre></div>
 </div>
 <p id="bill-listing-params"><strong>Optional Params</strong></p>
@@ -432,54 +434,63 @@ the base print no (e.g. S1234).</p>
 <tbody>
 <tr class="row-even"><td><p>limit</p></td>
 <td><p>1 - 1000</p></td>
-<td><p>Number of results to return</p></td>
+<td><p>Number of results to return. Defaults to 50.</p></td>
 </tr>
 <tr class="row-odd"><td><p>offset</p></td>
 <td><p>&gt;= 1</p></td>
-<td><p>Result number to start from</p></td>
+<td><p>Result number to start from. Defaults to 1.</p></td>
 </tr>
 <tr class="row-even"><td><p>full</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true to see the full bill responses.</p></td>
+<td><p>Set to true to see the full bill responses.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-collection-full-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>idsOnly</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true to see only the printNo and session
-for each bill. Defaults to false; overrides full.</p></td>
+<td><p>Set to true to see only the bill ID (base print no and
+session) of each bill instead of its summary.
+Defaults to false.</p></td>
 </tr>
 <tr class="row-even"><td><p>sort</p></td>
 <td><p>string</p></td>
-<td><p>Sort by any field from the response.</p></td>
+<td><p>Sort by any field from the response.
+Defaults to <code class="docutils literal notranslate"><span class="pre">publishedDateTime:ASC</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>fullTextFormat</p></td>
 <td><p>(PLAIN, HTML or TEMPLATE)</p></td>
-<td><p>Which bill text formats will be included.
-Multiple formats can be requested.</p></td>
+<td><p>Which bill text formats will be included in full
+bills. Multiple formats can be requested.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-collection-full-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Default Sort Order</strong></p>
-<p>By default, (i.e. no sort param was included in the request)
-the results will be in ascending order by the bill’s published date time (sort=publishedDateTime:DESC)</p>
 <p><strong>Examples</strong></p>
-<p>List 100 bills from 2013:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100
+<p>List bills from 2013:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span>
+</pre></div>
+</div>
+<p>List the first 50 bills from 2013:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?limit=50
+</pre></div>
+</div>
+<p>List the next 50 bills from 2013, starting from result 51:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?limit=50&amp;offset=51
 </pre></div>
 </div>
 <p>List only bill IDs from 2013:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?idsOnly=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?idsOnly=true
 </pre></div>
 </div>
-<p>List 100 complete bills starting from 101:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true
+<p>Sort by decreasing published date:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?sort=publishedDateTime:DESC
 </pre></div>
 </div>
-<p>Sort by increasing published date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=publishedDateTime:ASC
-</pre></div>
-</div>
-<p>Sort by increasing status action date, (default):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013?sort=status.actionDate:ASC
+<p>Sort by increasing status action date:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?sort=status.actionDate:ASC
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -492,7 +503,7 @@ the results will be in ascending order by the bill’s published date time (sort
 <span class="w">   </span><span class="s2">"offsetEnd"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w">                     </span><span class="c1">// To paginate, set query param offset={offsetEnd + 1}</span>
 <span class="w">   </span><span class="s2">"limit"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w">                         </span><span class="c1">// Max number of results shown</span>
 <span class="w">   </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}],</span><span class="w">                </span><span class="c1">// Array of bill responses (either summary or full view)</span>
+<span class="w">     </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}],</span><span class="w">                </span><span class="c1">// Array of bill summaries, or bill IDs if idsOnly=true</span>
 <span class="w">     </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span>
 <span class="w">   </span><span class="p">}</span>
 <span class="p">}</span>
@@ -507,11 +518,11 @@ the results will be in ascending order by the bill’s published date time (sort
 structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p>Search within a session year:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/{sessionYear}/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
@@ -530,40 +541,81 @@ structure.</p>
 </tbody>
 </table>
 <p><strong>Optional Params</strong></p>
-<p>Same as the <a class="reference internal" href="#bill-listing-params">bill listing params</a>. With <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code>, each search result
-contains a bill ID instead of bill information; rank and highlights are retained.
-As with listing, <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code> takes precedence over <code class="docutils literal notranslate"><span class="pre">full=true</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return. Defaults to 25.</p></td>
+</tr>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from. Defaults to 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>full</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true to see the full bill responses.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-collection-full-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>idsOnly</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true to see only the bill ID (base print no and
+session) of each result instead of its summary. Rank
+and highlights are retained. Defaults to false.</p></td>
+</tr>
+<tr class="row-even"><td><p>sort</p></td>
+<td><p>string</p></td>
+<td><p><a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">ElasticSearch sort string</span></a>.
+Defaults to sorting by relevance (rank).</p></td>
+</tr>
+<tr class="row-odd"><td><p>fullTextFormat</p></td>
+<td><p>(PLAIN, HTML or TEMPLATE)</p></td>
+<td><p>Which bill text formats will be included in full
+bills. Multiple formats can be requested.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-collection-full-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \*. This is a wildcard expression. E.g   ?term=\*memo:’Some phrase’</p>
 </div>
 <p>Search for a general term (matches against any data field):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=Gun Control
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/search?term=Gun Control
 </pre></div>
 </div>
 <p>Search for only the IDs of matching bills in 2013:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=education&amp;idsOnly=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/search?term=education&amp;idsOnly=true
 </pre></div>
 </div>
 <p>Search for only the IDs of matching bills across all sessions:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=education&amp;idsOnly=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/search?term=education&amp;idsOnly=true
 </pre></div>
 </div>
 <p>Search for 2013 ‘resolutions’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=billType.resolution:true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/search?term=billType.resolution:true
 </pre></div>
 </div>
 <p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC
 </pre></div>
 </div>
 <p>Search for full text containing the phrase ‘Marriage Equality’. Note the use of the \* prefix to match full texts regardless of amendment version:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/search?term=\*.fullText:"Marriage Equality"
 </pre></div>
 </div>
 <p>Search for bills that were published between a certain date range, ordered by increasing published date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC
 </pre></div>
 </div>
 <div class="admonition note">
@@ -585,11 +637,11 @@ By default the type is set to ‘processed’.</p>
 </div>
 <p><strong>Usage</strong></p>
 <p>List of bills updated during the given date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>List of bills updated since the given date/time:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -625,17 +677,25 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 </tr>
 <tr class="row-even"><td><p>summary</p></td>
 <td><p>boolean</p></td>
-<td><p>Include a bill info response per item</p></td>
+<td><p>Include basic bill details (title, sponsor and type)
+with each item</p></td>
 </tr>
 <tr class="row-odd"><td><p>fullBill</p></td>
 <td><p>boolean</p></td>
-<td><p>Include a bill info response per item</p></td>
+<td><p>Include the full bill with each item. Not available
+with detail=true.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-updates-fullbill-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>fullTextFormat</p></td>
 <td><p>(PLAIN, HTML or TEMPLATE)</p></td>
 <td><p>Which bill text formats will be included
 if full bills are requested.
-Multiple formats can be requested.</p></td>
+Multiple formats can be requested.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#bill-updates-fullbill-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -645,7 +705,7 @@ Multiple formats can be requested.</p></td>
 </div>
 <p><strong>Examples</strong></p>
 <p>Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T10</span><span class="p">:</span><span class="mi">55</span><span class="p">:</span><span class="mi">48</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2019</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">13</span><span class="n">T10</span><span class="p">:</span><span class="mi">55</span><span class="p">:</span><span class="mi">48</span>
 </pre></div>
 </div>
 <p id="bill-update-token-response"><strong>Response (detail = false)</strong></p>
@@ -740,26 +800,26 @@ may only want to know which bills have had status updates, or which bills had fu
 </table>
 <p><strong>Examples</strong></p>
 <p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc
 </pre></div>
 </div>
 <p id="detailed-update-digests">To view the actual updates that have occurred on a bill use the following API</p>
 <p><strong>Usage</strong></p>
 <p>All updates on a specific bill:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p>Updates on a specific bill from a given date/time.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Updates on a specific bill during a given date/time range.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example</strong></p>
 <p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S1234</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">02</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">S1234</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">02</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 <p id="bill-update-digest-response"><strong>Response</strong></p>
@@ -817,7 +877,7 @@ may only want to know which bills have had status updates, or which bills had fu
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation v2.0 API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="migration.html" class="btn btn-neutral float-left" title="API Migration Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

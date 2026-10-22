@@ -10,13 +10,13 @@ Get a single calendar
 ::
 
    Full calendar:
-      /api/3/calendars/{year}/{calendarNumber}
+      GET /api/3/calendars/{year}/{calendarNumber}
    Floor calendar:
-      /api/3/calendars/{year}/{calendarNumber}/floor
+      GET /api/3/calendars/{year}/{calendarNumber}/floor
    Supplemental calendar:
-      /api/3/calendars/{year}/{calendarNumber}/{versionCharacter}
+      GET /api/3/calendars/{year}/{calendarNumber}/{versionCharacter}
    Active list:
-      /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
+      GET /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
 
 **Optional Params**
 
@@ -29,11 +29,11 @@ Get a single calendar
 **Examples**
 ::
 
-   /api/3/calendars/2014/54               (Get calendar 54 of 2014)
-   /api/3/calendars/2014/54?&full=false   (Get a summary of calendar 54)
-   /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
-   /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
-   /api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
+   GET /api/3/calendars/2014/54               (Get calendar 54 of 2014)
+   GET /api/3/calendars/2014/54?&full=false   (Get a summary of calendar 54)
+   GET /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
+   GET /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
+   GET /api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
 
 **Sample Responses**
 
@@ -216,12 +216,12 @@ Get a listing of calendars
 **Usage**
 ::
 
-   Full calendars:
-      /api/3/calendars/{year}
+   Calendars:
+      GET /api/3/calendars/{year}
    Supplemental/Floor calendars:
-      /api/3/calendars/{year}/supplemental
+      GET /api/3/calendars/{year}/supplemental
    Active lists:
-      /api/3/calendars/{year}/activelist
+      GET /api/3/calendars/{year}/activelist
 
 .. _cal-list-params:
 
@@ -231,6 +231,9 @@ Get a listing of calendars
 | Parameter | Values  | Description                                                                                 |
 +===========+=========+=============================================================================================+
 | full      | boolean | (default false) Set to true to see the full calendar responses instead of the summaries.    |
+|           |         |                                                                                             |
+|           |         | **Deprecated:** Scheduled for removal December 1, 2026. See the :ref:`API migration notes   |
+|           |         | <calendar-collection-full-migration>`.                                                      |
 +-----------+---------+---------------------------------------------------------------------------------------------+
 | limit     | string  | (default 100) Limit the number of results                                                   |
 +-----------+---------+---------------------------------------------------------------------------------------------+
@@ -244,10 +247,10 @@ Get a listing of calendars
 **Examples**
 ::
 
-   /api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
-   /api/3/calendars/2014?limit=1&order=DESC              (Get the latest calendar from 2014)
-   /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
-   /api/3/calendars/2014/supplemental?limit=5&offset=5   (Get the second 5 supplementals of 2014)
+   GET /api/3/calendars/2014                                 (Get summaries of the calendars from 2014)
+   GET /api/3/calendars/2014?limit=1&order=DESC              (Get the latest calendar from 2014)
+   GET /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
+   GET /api/3/calendars/2014/supplemental?limit=5&offset=6   (Get the second 5 supplementals of 2014)
 
 Search for calendars
 --------------------
@@ -261,11 +264,11 @@ structure.
 
 Search across all session years::
 
-   (GET) /api/3/calendars/search?term=YOUR_TERM
+   GET /api/3/calendars/search?term=YOUR_TERM
 
 Search within a year::
 
-   (GET) /api/3/calendars/{year}/search?term=YOUR_TERM
+   GET /api/3/calendars/{year}/search?term=YOUR_TERM
 
 
 **Required Params**
@@ -283,8 +286,14 @@ Search within a year::
 +==============+====================+=================================================================================+
 | sort         | string             | :ref:`ElasticSearch sort string<search-sort>`                                   |
 +--------------+--------------------+---------------------------------------------------------------------------------+
+| detail       | boolean            | (default false) Set to true to see the full calendar responses instead of the   |
+|              |                    | summaries.                                                                      |
+|              |                    |                                                                                 |
+|              |                    | **Deprecated:** Scheduled for removal December 1, 2026. See the :ref:`API       |
+|              |                    | migration notes <calendar-collection-full-migration>`.                          |
++--------------+--------------------+---------------------------------------------------------------------------------+
 
-Also takes all :ref:`calendar listing optional params<cal-list-params>` with the exception of order
+Also takes the ``limit`` and ``offset`` :ref:`calendar listing optional params<cal-list-params>`.
 
 Get calendar updates
 --------------------
@@ -295,15 +304,15 @@ To identify which calendars have received updates within a given time period you
 
 List of calendars updated within the past seven days::
 
-    (GET) /api/3/calendars/updates
+    GET /api/3/calendars/updates
 
 List of calendars updated after the given date/time::
 
-    (GET) /api/3/calendars/updates/{fromDateTime}
+    GET /api/3/calendars/updates/{fromDateTime}
 
 List of calendars updated during the given date/time range::
 
-    (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
    For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
@@ -323,7 +332,7 @@ List of calendars updated during the given date/time range::
 
 Calendars that were updated between January 1st and January 20th of 2019::
 
-    (GET) /api/3/calendars/updates/2019-01-01T00:00:00/2019-01-20T00:00:00
+    GET /api/3/calendars/updates/2019-01-01T00:00:00/2019-01-20T00:00:00
 
 .. _calendar-update-token-response:
 
@@ -366,11 +375,11 @@ Get specific calendar updates
 
 Get updates for a calendar within a datetime range::
 
-    (GET) /api/3/calendars/{year}/{calendarNumber}/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/calendars/{year}/{calendarNumber}/updates/{fromDateTime}/{toDateTime}
 
 Get all updates for a calendar::
 
-    (GET) /api/3/calendars/{year}/{calendarNumber}/updates
+    GET /api/3/calendars/{year}/{calendarNumber}/updates
 
 **Optional Params**
 
@@ -390,7 +399,7 @@ Get all updates for a calendar::
 
 Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014::
 
-    (GET) /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
+    GET /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
 
 .. _calendar-update-digest-response:
 

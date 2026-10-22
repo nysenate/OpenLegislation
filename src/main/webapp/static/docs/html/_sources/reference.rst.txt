@@ -3,6 +3,7 @@
     :maxdepth: 0
 
     index
+    migration
     bills
     calendars
     agendas

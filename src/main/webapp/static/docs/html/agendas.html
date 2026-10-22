@@ -9,6 +9,7 @@
   <title>Senate Agenda API &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -44,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Senate Agenda API</strong></a><ul>
@@ -100,12 +102,12 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get a single agenda<a class="headerlink" href="#get-a-single-agenda" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve an agenda by year and agenda no:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request agenda 2 of session year 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -117,7 +119,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get a list of agendas for a single year<a class="headerlink" href="#get-a-list-of-agendas-for-a-single-year" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List the weekly agendas in a year, in ascending order of agenda number:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Each item is an agenda summary: its id, week, publish date and time, the number of addenda and committees, and the
@@ -143,11 +145,11 @@ number of bills considered and voted on. Request a single agenda for its committ
 </table>
 <p><strong>Examples</strong></p>
 <p>List the agendas of 2025:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2025</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2025</span>
 </pre></div>
 </div>
 <p>List 2025’s agendas 10 at a time, starting from the 11th:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/2025?limit=10&amp;offset=11
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2025?limit=10&amp;offset=11
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -182,12 +184,12 @@ number of bills considered and voted on. Request a single agenda for its committ
 <h2>Get a specific committee with an agenda<a class="headerlink" href="#get-a-specific-committee-with-an-agenda" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a specific committee within an agenda:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request the Rules committee agenda 2 of session year 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Rules</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Rules</span>
 </pre></div>
 </div>
 </section>
@@ -195,12 +197,12 @@ number of bills considered and voted on. Request a single agenda for its committ
 <h2>Get a list of committee meeting times in a time range<a class="headerlink" href="#get-a-list-of-committee-meeting-times-in-a-time-range" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a list of committee meetings between from and to date/time, ordered by earliest first:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="p">{</span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span> <span class="n">datetime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="p">{</span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span> <span class="n">datetime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Retrieve a list of committee meetings between Jan 1st, 2017 to Feb 1st, 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
 </section>
@@ -208,7 +210,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 <h2>Search an Agenda for a term<a class="headerlink" href="#search-an-agenda-for-a-term" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">search</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">search</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -224,7 +226,10 @@ number of bills considered and voted on. Request a single agenda for its committ
 </thead>
 <tbody>
 <tr class="row-even"><td><p>full</p></td>
-<td><p>‘true’, ‘false’</p></td>
+<td><p>‘true’, ‘false’</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1, 2026. See the <a class="reference internal" href="migration.html#agenda-search-full-migration"><span class="std std-ref">API migration
+notes</span></a>.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>limit</p></td>
 <td><p>Limit the number of results</p></td>
@@ -239,7 +244,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </table>
 <p><strong>Examples</strong></p>
 <p>Search agendas for the term crime:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/search?term=crime&amp;full=false
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/search?term=crime
 </pre></div>
 </div>
 </section>
@@ -247,7 +252,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 <h2>Search all agendas in a calendar year for a term<a class="headerlink" href="#search-all-agendas-in-a-calendar-year-for-a-term" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -263,7 +268,10 @@ number of bills considered and voted on. Request a single agenda for its committ
 </thead>
 <tbody>
 <tr class="row-even"><td><p>full</p></td>
-<td><p>‘true’, ‘false’</p></td>
+<td><p>‘true’, ‘false’</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1, 2026. See the <a class="reference internal" href="migration.html#agenda-search-full-migration"><span class="std std-ref">API migration
+notes</span></a>.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>limit</p></td>
 <td><p>Limit the number of results</p></td>
@@ -277,8 +285,8 @@ number of bills considered and voted on. Request a single agenda for its committ
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Search agendas for a specific term:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/2017/search?term=crime&amp;full=false&amp;limit=10&amp;offset=5
+<p>Search 2017’s agendas for a specific term, 10 results at a time, starting from the 11th:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2017/search?term=crime&amp;limit=10&amp;offset=11
 </pre></div>
 </div>
 </section>
@@ -290,7 +298,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 <p><strong>Usage</strong></p>
 <p>Return a list of agenda ids that have changed during a specified date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -299,22 +307,22 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 <p><strong>Usage</strong></p>
 <p>Get updates from the time specified to now:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for all of the 2017 session:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
 <p>Get updates for a specified time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for all of January 2018:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">31</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">31</span>
 </pre></div>
 </div>
 </section>
@@ -322,17 +330,17 @@ number of bills considered and voted on. Request a single agenda for its committ
 <h2>Get updated agenda digests<a class="headerlink" href="#get-updated-agenda-digests" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>This api call gets all digests for an agenda in a calendar year:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Get all updates for agenda 15 in 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
 <p>Get a list of agenda digests in a specific time range of the calendar year to now:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -341,12 +349,12 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for agenda 12 in 2017 from Feb 1st, 2017 to now:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
 <p>Return agenda digests that have changed during a specified date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -355,7 +363,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
 </pre></div>
 </div>
 </section>

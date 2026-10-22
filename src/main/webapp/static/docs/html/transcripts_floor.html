@@ -9,6 +9,7 @@
   <title>Senate Floor Transcripts API &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -44,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -95,13 +97,13 @@
 <h2>Get a single Transcript<a class="headerlink" href="#get-a-single-transcript" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span>
-<span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">sessionType</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">sessionType</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request transcript 2014-09-03T09:00:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -120,7 +122,7 @@
 </pre></div>
 </div>
 <p>Request the extraordinary session 3 transcript on 2010-12-31T10:00:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2010</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span><span class="n">T10</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="n">EXTRAORDINARY</span> <span class="n">SESSION</span> <span class="n">III</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2010</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span><span class="n">T10</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="n">EXTRAORDINARY</span> <span class="n">SESSION</span> <span class="n">III</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -143,13 +145,13 @@
 <h2>Get a transcript pdf<a class="headerlink" href="#get-a-transcript-pdf" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
-<span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">sessionType</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">sessionType</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request transcript 2014-09-03T09:00:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">03</span><span class="n">T09</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 </section>
@@ -157,7 +159,7 @@
 <h2>Get a list of transcripts<a class="headerlink" href="#get-a-list-of-transcripts" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List transcripts within a year:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -179,39 +181,48 @@
 </tr>
 <tr class="row-even"><td><p>full</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true to see the full transcript responses.</p></td>
+<td><p>Set to true to see the full transcript responses.</p>
+<p><strong>Deprecated:</strong> Scheduled for removal December 1,
+2026. See the <a class="reference internal" href="migration.html#transcript-collection-full-migration"><span class="std std-ref">API migration notes</span></a>.</p>
+</td>
 </tr>
-<tr class="row-odd"><td><p>sort</p></td>
+<tr class="row-odd"><td><p>summary</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true to see each transcript’s details, without
+its text. Defaults to false, which returns only the
+dateTime and sessionType of each transcript.</p></td>
+</tr>
+<tr class="row-even"><td><p>sort</p></td>
 <td><p>string</p></td>
 <td><p>Sort by any field from the response.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>List 50 transcripts from 2014:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/transcripts/2014?limit=50
+<p>List transcripts from 2014:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="mi">2014</span>
 </pre></div>
 </div>
-<p>List 50 complete transcripts starting from 51:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/transcripts/2014?limit=50&amp;offset=51&amp;full=true
+<p>List the details of transcripts from 2014, starting from result 26:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/transcripts/2014?summary=true&amp;offset=26
 </pre></div>
 </div>
-<p>List 10 complete transcripts sorted by increasing date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/transcripts/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+<p>List the details of transcripts from 2014 sorted by increasing date:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/transcripts/2014?summary=true&amp;sort=dateTime:ASC
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">                               </span><span class="c1">// True if request was fine.</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"transcript list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"transcript-id list"</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">167</span><span class="p">,</span><span class="w">                                  </span><span class="c1">// Total transcripts in the listing</span>
 <span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w">                              </span><span class="c1">// Offset value</span>
-<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w">                               </span><span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
-<span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w">                                   </span><span class="c1">// Max number of results to show</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">25</span><span class="p">,</span><span class="w">                               </span><span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
+<span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">25</span><span class="p">,</span><span class="w">                                   </span><span class="c1">// Max number of results to show</span>
 <span class="w">  </span><span class="s2">"result"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}],</span><span class="w">                           </span><span class="c1">// Array of transcript responses</span>
-<span class="w">    </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">10</span>
+<span class="w">    </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}],</span><span class="w">                           </span><span class="c1">// Transcript ids, or transcript details if summary=true</span>
+<span class="w">    </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">25</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

@@ -9,6 +9,7 @@
   <title>NYS Laws API &mdash; Open Legislation 2.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -44,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -113,7 +115,7 @@ It’s possible to retrieve law documents roughly as they were represented durin
 <section id="get-a-list-of-law-ids">
 <h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -168,7 +170,7 @@ It’s possible to retrieve law documents roughly as they were represented durin
 <p>Laws are represented as a collection of sub documents, each of which is structured within a hierarchy.
 The following call will provide the structure of the law.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -191,9 +193,9 @@ The following call will provide the structure of the law.</p>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/ABC                  // Get latest law structure for ABC law
-/api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
-/api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/ABC                  // Get latest law structure for ABC law
+GET /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
+GET /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -268,15 +270,15 @@ the text body. Note that response can be rather large (several MB) for certain l
 <section id="get-a-law-sub-document">
 <h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
 You can discover the locationId when you make an API request for the law structure (see above section). See the
 ‘locationId’ field for that response.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">TAX</span><span class="o">/</span><span class="mi">8</span>     <span class="o">//</span> <span class="n">Get</span> <span class="n">section</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">Tax</span> <span class="n">law</span>
-<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">EDN</span><span class="o">/</span><span class="n">A2</span>    <span class="o">//</span> <span class="n">Get</span> <span class="n">article</span> <span class="mi">2</span> <span class="n">of</span> <span class="n">Education</span> <span class="n">law</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">TAX</span><span class="o">/</span><span class="mi">8</span>     <span class="o">//</span> <span class="n">Get</span> <span class="n">section</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">Tax</span> <span class="n">law</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">EDN</span><span class="o">/</span><span class="n">A2</span>    <span class="o">//</span> <span class="n">Get</span> <span class="n">article</span> <span class="mi">2</span> <span class="n">of</span> <span class="n">Education</span> <span class="n">law</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
@@ -352,8 +354,8 @@ You can discover the locationId when you make an API request for the law structu
 <section id="search-for-law-documents">
 <h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(GET) /api/3/laws/search?term=           // Search across all law volumes
-(GET) /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/search?term=           // Search across all law volumes
+GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
@@ -395,7 +397,7 @@ You can discover the locationId when you make an API request for the law structu
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
 </pre></div>
 </div>
 </section>
@@ -409,7 +411,7 @@ You can discover the locationId when you make an API request for the law structu
 </div>
 <p><strong>Usage</strong></p>
 <p>List of laws updated during the given date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -417,14 +419,14 @@ You can discover the locationId when you make an API request for the law structu
 <p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
 </div>
 <p>All updates made on a specific body of law:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 
-<span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">updates</span>
-     <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">VAT</span><span class="o">/</span><span class="n">updates</span>
+<span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">updates</span>
+     <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">VAT</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p>All updates made on a specific body of law during a date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -460,7 +462,7 @@ You can discover the locationId when you make an API request for the law structu
 </table>
 <p><strong>Response</strong></p>
 <p>Global law updates:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. GET /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate" id="law-update-token-response"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -486,8 +488,8 @@ You can discover the locationId when you make an API request for the law structu
 </pre></div>
 </div>
 <p>Detailed law doc updates:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&amp;type=published
-     /api/3/laws/ABC/updates
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. GET /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&amp;type=published
+     GET /api/3/laws/ABC/updates
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate" id="law-update-digest-response"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -524,9 +526,9 @@ You can discover the locationId when you make an API request for the law structu
 <p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws with tree updates during the given date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/tree/updates
-/api/3/laws/tree/updates/{fromDateTime}?type=published
-/api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/tree/updates
+GET /api/3/laws/tree/updates/{fromDateTime}?type=published
+GET /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
 </pre></div>
 </div>
 <p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
@@ -562,7 +564,7 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 </table>
 <p><strong>Response</strong></p>
 <p>Get law tree updates by published date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>e.g. GET /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -595,7 +597,7 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 The date/time range applies to the processed date of the law document, not the official repeal date.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws repealed during the given date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -623,7 +625,7 @@ The date/time range applies to the processed date of the law document, not the o
 <p><strong>Usage</strong></p>
 <p>Retrieve law pdf by document id.
 Inputting only the law ID will get you the root node for that chapter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">docId</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">docId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -643,7 +645,7 @@ Inputting only the law ID will get you the root node for that chapter:</p>
 </table>
 <p><strong>Examples</strong></p>
 <p>Request law document CC0A1 and its children:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/laws/CCOA1?full=true
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/CCOA1?full=true
 </pre></div>
 </div>
 </section>

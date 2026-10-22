@@ -9,8 +9,8 @@ Get aggregate updates
 
 List of content that was updated during the given date/time range::
 
-    /api/3/updates/{fromDateTime}
-    /api/3/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/updates/{fromDateTime}
+    GET /api/3/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
 
@@ -43,9 +43,9 @@ reprocess it's data to fix issues. By default the type is set to published.
 
 Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015::
 
-    /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
-                    &content-type=AGENDA&content-type=BILL&content-type=CALENDAR
-                    &detail=true&fields=true&limit=50
+    GET /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
+                        &content-type=AGENDA&content-type=BILL&content-type=CALENDAR
+                        &detail=true&fields=true
 
 **Response**
 

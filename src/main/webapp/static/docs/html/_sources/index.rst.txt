@@ -1,6 +1,16 @@
 **Open Legislation v2.0 API Docs**
 ==================================
 
+.. important:: **API changes starting December 1, 2026**
+
+   - Requests made with an API key are limited to 10 requests per second and 4 concurrent requests per key.
+     See :ref:`rate-limits`.
+   - The deprecated options that return full items from some listing, search and update endpoints, such as ``full``
+     on bill listing and search, are removed. Requests that set them to true are rejected with HTTP 400. See the
+     :ref:`API migration notes<api-migration>`.
+
+   The ``/api/3`` base URL and API keys stay the same, and requests for a single item still return the full item.
+
 What is this?
 -------------
 
@@ -36,7 +46,106 @@ To make an API request using your key, set the key string as the value of the 'k
 
 For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this::
 
-    legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+    GET legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+
+Because your key is part of each request URL, error messages and logs that include the URL also include your
+key. Remove it before you share them.
+
+.. _rate-limits:
+
+Rate limits
+-----------
+
+Starting December 1, 2026, requests made with an API key are limited per key:
+
+- **Rate:** 10 requests per second. Short bursts above this rate are tolerated, but plan your use around 10
+  requests per second.
+- **Concurrency:** at most 4 requests in progress at the same time.
+
+There is no daily quota. All requests made with the same key share its limits, whatever IP address or session they
+come from.
+
+The limits apply to every request under ``/api/3``, except for ``OPTIONS`` requests (such as CORS preflight
+requests).
+
+A request counts against the concurrency limit until the server finishes it, even if your client has stopped
+waiting for it. Timing out and resending a slow request only adds to your requests in progress, so instead send at
+most 4 requests at a time.
+
+If your use needs more capacity than these limits allow, contact us at openlegislation@nysenate.gov.
+
+**When a limit is exceeded**
+
+A request over either limit is rejected with HTTP status 429 (Too Many Requests). The response has a
+``Retry-After`` header with the number of seconds to wait before retrying (a whole number, at least 1), and an error
+body with ``errorCode`` 703:
+
+.. code-block:: javascript
+
+    {
+      "success": false,
+      "message": "...",              // Human-readable explanation
+      "responseType": "error",
+      "errorCode": 703               // Rate limit exceeded
+    }
+
+Base your client's handling on the status code, the ``errorCode`` and the ``Retry-After`` header. The ``message`` is
+meant for people: it may say which limit was exceeded, and its wording may change.
+
+**Example client**
+
+This Python example, using the `requests <https://requests.readthedocs.io>`_ library, stays within the limits. It
+sends one request at a time and starts each at least 0.1 seconds after the previous one, so it never sends more than
+10 requests per second. It retries GET requests that were rate limited or that failed because the service was
+temporarily unavailable (HTTP 503). Before each retry it waits at least as long as ``Retry-After`` asks: after a
+429 it adds random jitter to that wait, and after a 503 it backs off exponentially with random jitter. It gives up
+after a few attempts. It never retries other errors, such as a 400, because sending the same request again won't fix
+them. It waits up to 5 minutes for a response, and doesn't resend a request that timed out.
+
+.. code-block:: python
+
+    import random
+    import time
+
+    import requests
+
+    API_ROOT = "https://legislation.nysenate.gov/api/3"
+    API_KEY = "YOUR_API_KEY"
+    MAX_ATTEMPTS = 5
+    MIN_INTERVAL = 0.1  # Seconds between requests, to stay at 10 requests per second
+
+    session = requests.Session()
+    last_request = 0.0
+
+
+    def get(path, **params):
+        """GET an API path, pacing requests and retrying when rate limited or temporarily unavailable."""
+        global last_request
+        params["key"] = API_KEY
+        for attempt in range(1, MAX_ATTEMPTS + 1):
+            time.sleep(max(0, last_request + MIN_INTERVAL - time.monotonic()))
+            last_request = time.monotonic()
+            response = session.get(API_ROOT + path, params=params, timeout=(10, 300))
+            if response.status_code not in (429, 503) or attempt == MAX_ATTEMPTS:
+                response.raise_for_status()  # Never retry other errors, such as 400
+                return response.json()
+            retry_after = response.headers.get("Retry-After", "")
+            if response.status_code == 429:
+                # Wait at least as long as the server asks
+                delay = int(retry_after or 1) + random.random()
+            else:
+                # Back off exponentially, with jitter, and at least as long as any Retry-After
+                delay = random.uniform(1, 2 ** attempt)
+                if retry_after.isdigit():
+                    delay = max(delay, int(retry_after))
+            time.sleep(delay)
+
+
+    bill = get("/bills/2025/S100", view="info")
+    print(bill["result"]["title"])
+
+If you change your client to send requests in parallel, keep at most 4 in progress at a time and keep their combined
+rate at or below 10 requests per second.
 
 Legislative Content Types
 -------------------------
