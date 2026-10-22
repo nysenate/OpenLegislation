@@ -97,25 +97,21 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         return allEmails.size();
     }
 
+    /**
+     * The subscription preferences page, where the user can change or remove all of their subscriptions.
+     * Opening it never changes subscriptions, so link scanners cannot unsubscribe anyone.
+     */
+    private String getSubscriptionUrl(ApiUser user) {
+        return env.getUrl() + "/subscriptions?key=" + user.getApiKey();
+    }
+
     protected String getLink(ApiUser user) {
-        String apiKey = user.getApiKey();
-        String link = env.getUrl();
-        link += "/subscriptions?key=" + apiKey;
-        String unsubLink = link + "&unsub=yes";
-        String clickHere = "<a href=\"" + link + "\">Click Here</a>"+",";
-        clickHere = "To update your subscription preferences, " + clickHere;
-        String unsubAll = "or <a href=\"" + unsubLink + "\">unsubscribe from <strong>ALL</strong> subscriptions.</a>";
-        return clickHere + "<br>" + unsubAll;
+        return "To manage your subscriptions or unsubscribe, " +
+                "<a href=\"" + getSubscriptionUrl(user) + "\">visit your subscription preferences</a>.";
     }
 
     protected String getLinkText(ApiUser user) {
-        String apiKey = user.getApiKey();
-        String link = env.getUrl();
-        link += "/subscriptions?key=" + apiKey;
-        String unsubLink = link + "&unsub=yes";
-        String clickHere = "To update your subscription preferences, use this URL: " + link;
-        String unsubAll = "To unsubscribe from all subscriptions, use this URL: " + unsubLink;
-        return clickHere + "\n" + unsubAll;
+        return "To manage your subscriptions or unsubscribe, visit: " + getSubscriptionUrl(user);
     }
 
     /**
