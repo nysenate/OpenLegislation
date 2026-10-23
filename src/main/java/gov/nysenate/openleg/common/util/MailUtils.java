@@ -44,8 +44,8 @@ public class MailUtils {
                      @Value("${mail.store.protocol:imaps}") String storeProtocol,
                      @Value("${mail.imaps.ssl.protocols:TLSv1.3}") String imapsSSLProtocol,
                      @Value("${mail.smtp.connectiontimeout:5000}") String connTimeout,
-                     @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
-                     @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
+                     @Value("${mail.smtp.timeout:30000}") String smtpTimeout,
+                     @Value("${mail.smtp.writetimeout:30000}") String writeTimeout,
                      OpenLegEnvironment environment) {
         this.smtpHost = host;
         this.smtpAuth = auth;

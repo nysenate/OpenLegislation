@@ -212,8 +212,8 @@ mail.smtp.from = openleg-test-no-reply@nysenate.gov
 mail.smtp.password =
 mail.debug = false
 mail.smtp.connectiontimeout = 5000
-mail.smtp.timeout = 5000
-mail.smtp.writetimeout = 5000
+mail.smtp.timeout = 30000
+mail.smtp.writetimeout = 30000
 
 # Open Legislation's Contact Email Address
 contact.email =
