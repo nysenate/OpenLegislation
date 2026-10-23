@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.mail.*;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,7 +24,8 @@ import java.util.Properties;
 public class MailUtils {
     private static final Logger logger = LoggerFactory.getLogger(MailUtils.class);
 
-    private final String smtpUser, smtpPass;
+    private final String smtpHost, smtpUser, smtpPass;
+    private final boolean smtpAuth;
     private final Properties mailProperties;
     private final OpenLegEnvironment environment;
     private Store store;
@@ -43,6 +47,8 @@ public class MailUtils {
                      @Value("${mail.smtp.timeout:5000}") String smtpTimeout,
                      @Value("${mail.smtp.writetimeout:5000}") String writeTimeout,
                      OpenLegEnvironment environment) {
+        this.smtpHost = host;
+        this.smtpAuth = auth;
         this.smtpUser = smtpUser;
         this.smtpPass = smtpPass;
         this.mailProperties = new Properties();
@@ -129,6 +135,41 @@ public class MailUtils {
             destroy();
             throw ex;
         }
+    }
+
+    /**
+     * Lists the SMTP settings that are missing or invalid for sending mail. They are optional at startup,
+     * since not every environment sends mail, so senders check them before sending anything.
+     * @return List<String> one description per problem, empty if mail can be sent
+     */
+    public List<String> getSmtpSettingProblems() {
+        List<String> problems = new ArrayList<>();
+        if (smtpHost == null || smtpHost.isBlank()) {
+            problems.add("mail.smtp.host is blank");
+        }
+        String from = environment.getEmailFromAddress();
+        if (from.isBlank()) {
+            problems.add("mail.smtp.from is blank");
+        } else {
+            try {
+                InternetAddress[] parsed = InternetAddress.parse(from, true);
+                if (parsed.length != 1 || parsed[0].isGroup()) {
+                    problems.add("mail.smtp.from is not a single address");
+                } else if (!parsed[0].getAddress().contains("@")) {
+                    // Strict parsing still accepts a bare local name.
+                    problems.add("mail.smtp.from is not a valid address");
+                }
+            } catch (AddressException ex) {
+                problems.add("mail.smtp.from is not a valid address");
+            }
+        }
+        if (smtpAuth && smtpUser.isBlank()) {
+            problems.add("mail.smtp.user is blank but mail.smtp.auth is true");
+        }
+        if (smtpAuth && smtpPass.isBlank()) {
+            problems.add("mail.smtp.password is blank but mail.smtp.auth is true");
+        }
+        return problems;
     }
 
     /**

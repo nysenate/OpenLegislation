@@ -20,6 +20,18 @@ export function sendBatchEmail(isTest = true, batchEmailBody) {
   return fetchUrl(url, options)
 }
 
+export function previewBatchEmail(batchEmailBody) {
+  const options = {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(batchEmailBody),
+  }
+  return fetchUrl("/api/3/admin/email/preview", options)
+    .then((data) => data.result.html)
+}
+
 async function fetchUrl(url, options = {}) {
   const response = await fetch(url, options)
   const data = await response.json()

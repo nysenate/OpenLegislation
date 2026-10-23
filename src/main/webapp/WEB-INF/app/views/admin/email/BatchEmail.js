@@ -3,6 +3,7 @@ import Input from "app/shared/Input";
 import Modal from "app/shared/Modal";
 import {
   BatchEmailBody,
+  previewBatchEmail,
   sendBatchEmail,
 } from "app/apis/batchEmailApi";
 import ErrorMessage from "app/shared/ErrorMessage";
@@ -13,7 +14,7 @@ export default function BatchEmail({ setHeaderText }) {
   const [ breakingChanges, setBreakingChanges ] = React.useState(false)
   const [ newFeatures, setNewFeatures ] = React.useState(false)
   const [ subject, setSubject ] = React.useState("")
-  const [ body, setBody ] = React.useState(signature)
+  const [ body, setBody ] = React.useState("")
   const [ isConfirmationDialogOpen, setIsConfirmationDialogOpen ] = React.useState(false)
   const [ isPreviewOpen, setIsPreviewOpen ] = React.useState(false)
   const [ errorMsg, setErrorMsg ] = React.useState("")
@@ -50,6 +51,10 @@ export default function BatchEmail({ setHeaderText }) {
     }
     if (!subject) {
       setErrorMsg("You must enter a subject.")
+      return
+    }
+    if (!body.trim()) {
+      setErrorMsg("You must enter a body.")
       return
     }
     setIsConfirmationDialogOpen(true)
@@ -119,6 +124,10 @@ export default function BatchEmail({ setHeaderText }) {
         <RowLabel>Body:</RowLabel>
         <RowData>
           <textarea className="textarea w-10/12 h-96" value={body} onChange={e => setBody(e.target.value)} />
+          <p className="mt-1 italic">
+            Write plain text. Leave a blank line between paragraphs; links starting with http:// or https://
+            become clickable. The signature and subscription preferences link are added automatically.
+          </p>
         </RowData>
       </Row>
 
@@ -174,9 +183,32 @@ function ConfirmationModal({ isOpen, setIsOpen, onConfirm, testMode }) {
 }
 
 function PreviewDialog({ isOpen, setIsOpen, body }) {
+  const [ html, setHtml ] = React.useState("")
+  const [ errorMsg, setErrorMsg ] = React.useState("")
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    // Ignore a response that arrives after the dialog closed, so it can't replace a newer preview.
+    let isCurrent = true
+    setHtml("")
+    setErrorMsg("")
+    previewBatchEmail(new BatchEmailBody([], "", body))
+      .then((html) => isCurrent && setHtml(html))
+      .catch((err) => isCurrent && setErrorMsg(err.message))
+    return () => isCurrent = false
+  }, [ isOpen, body ])
+
   return (
     <Modal isOpen={isOpen} onDismiss={() => setIsOpen(false)} ariaLabel="Email Preview">
-      <span dangerouslySetInnerHTML={{ __html: body }} />
+      {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+      {/* The sandbox keeps the email's markup and styles isolated from the page.
+          Links open in a new tab, since most sites refuse to load inside a frame. */}
+      <iframe srcDoc={html.replace("<head>", "<head><base target=\"_blank\">")}
+              sandbox="allow-popups allow-popups-to-escape-sandbox"
+              title="Email preview"
+              className="w-full h-[70vh] bg-white" />
     </Modal>
   )
 }
@@ -204,16 +236,3 @@ function RowData({ children }) {
     </div>
   )
 }
-
-const signature = `<!--Signature-->
-<div style="background:lightgrey;text-align:left;display:flex;flex-direction:row;margin-top:16px">
-  <img src="https://legislation.nysenate.gov/static/img/nys_logo224x224.png" alt="NYS Logo" style="padding:5px;width:70px;height:70px;"/>
-  <div style="font-size:12px;padding-top:5px;">
-    <span style="font-size:16px;">Open Legislation</span><br>
-    <span>From the <a href="https://www.nysenate.gov/">New York State Senate</a></span><br>
-    <a href="https://legislation.nysenate.gov/">https://legislation.nysenate.gov/</a><br>
-    <a href="https://github.com/nysenate/OpenLegislation">https://github.com/nysenate/OpenLegislation</a>
-  </div>
-</div>
-<!--SignatureEnd-->
-`

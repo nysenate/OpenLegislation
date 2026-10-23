@@ -45,6 +45,7 @@ public enum ErrorCode {
     SAME_PASSWORD(193, "The new password cannot match the existing password"),
     CANNOT_DELETE_ADMIN(194, "The default administrator cannot be deleted"),
     EMAIL_IN_USE(200, "This email is already in use"),
+    MAIL_NOT_CONFIGURED(201, "Mail can't be sent because the server's mail settings are missing or invalid"),
 
     /** --- General --- */
 
