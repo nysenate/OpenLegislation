@@ -11,15 +11,19 @@ public interface ApiUserBatchEmailService {
      * the admin.
      * @param email String
      * @param message ApiUserMessage
+     * @return BatchEmailResult, whether the admin's copy was sent, or why not
      */
-    void sendTestMessage(String email, ApiUserMessage message) throws MailException;
+    BatchEmailResult sendTestMessage(String email, ApiUserMessage message) throws MailException;
 
     /**
      * Sends zero or more email messages regarding specific email-subscription
      * categories. Emails are only sent to those Api Users whom are subscribed to
-     * the given subscriptions (message.subscriptionTypes)
+     * the given subscriptions (message.subscriptionTypes), and to every admin.
+     * Each recipient's copy is sent separately, so an unusable address or a rejected copy
+     * doesn't affect the other recipients.
      * @param message ApiUserMessage
-     * @return int, the number of emails that were sent
+     * @return BatchEmailResult, the number of emails that were sent and each recipient that wasn't sent one
+     * @throws MailException if the mail settings can't send any message; nothing is sent
      */
-    int sendMessage(ApiUserMessage message) throws MailException;
+    BatchEmailResult sendMessage(ApiUserMessage message) throws MailException;
 }

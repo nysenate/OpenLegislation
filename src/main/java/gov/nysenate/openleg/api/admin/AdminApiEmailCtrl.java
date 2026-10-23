@@ -2,13 +2,13 @@ package gov.nysenate.openleg.api.admin;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
-import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserBatchEmailServiceImpl;
+import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserEmailRequest;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserMessage;
 import org.apache.shiro.SecurityUtils;
@@ -49,13 +49,15 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *  Request params: request (ApiUserEmailRequest) An object containing the subject and
      *                  plain-text body of the email, as well as a list of subscription types that the
      *                  email will be sent out to.
+     *
+     *  Each recipient's copy is sent separately. The response (BatchEmailResultView) has the number
+     *  sent and each recipient that was skipped, failed, unconfirmed or not sent, with the reason.
      */
     @RequiresPermissions("admin:email:post")
     @PostMapping(value = "/batchEmail")
     public BaseResponse sendEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
-        apiUserBatchEmailService.sendMessage(message);
-        return new SimpleResponse(true, "Emails have been sent", "Batch Email");
+        return resultResponse(apiUserBatchEmailService.sendMessage(message));
     }
 
     /**
@@ -69,14 +71,25 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *  Request params: request (ApiUserEmailRequest) An object containing the subject and
      *                  plain-text body of the email, as well as a list of subscription types that the
      *                  email would be sent out to if it were not a test email.
+     *
+     *  The response is a BatchEmailResultView for the one recipient.
      */
     @RequiresPermissions("admin:email:post")
     @PostMapping(value = "/testModeEmail")
     public BaseResponse sendTestEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
         String email = (String)SecurityUtils.getSubject().getPrincipal();
-        apiUserBatchEmailService.sendTestMessage(email, message);
-        return new SimpleResponse(true, "Emails have been sent", "Batch Email");
+        return resultResponse(apiUserBatchEmailService.sendTestMessage(email, message));
+    }
+
+    /**
+     * A partial result is still a successful request: the admin follows up on the listed recipients.
+     */
+    private static BaseResponse resultResponse(BatchEmailResult result) {
+        int total = result.total();
+        String message = "Sent " + (result.unsent().isEmpty() ? "" : result.sent() + " of ") + total
+                + (total == 1 ? " email" : " emails");
+        return new ViewObjectResponse<>(new BatchEmailResultView(result), message);
     }
 
     /**

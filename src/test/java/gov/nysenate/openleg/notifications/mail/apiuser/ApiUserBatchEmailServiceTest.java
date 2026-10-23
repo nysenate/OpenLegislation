@@ -32,7 +32,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("No emails should have been sent.", numAdmins, numEmailsSent);
     }
@@ -46,7 +46,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("One email should have been sent.", 1+numAdmins, numEmailsSent);
     }
@@ -60,7 +60,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("No Emails should have been sent.", numAdmins, numEmailsSent);
     }
@@ -74,7 +74,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("One Email should have been sent.", 1+numAdmins, numEmailsSent);
     }
@@ -92,7 +92,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(subscriptions, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("No emails should have been sent.", numAdmins, numEmailsSent);
 
@@ -111,7 +111,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         ApiUserMessage message = new ApiUserMessage(subscriptions, subject, body);
 
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("Only one email should have been sent.", 1+numAdmins, numEmailsSent);
     }
@@ -125,7 +125,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numAdmins = adminUserService.getAdminUsers().size();
         int numSubscribers = 1;//apiUserService.getUsersWithSubscription(sub).size();
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message);
+        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
         assertEquals("The number of emails sent out was incorrect.",
                 numAdmins+numSubscribers, numEmailsSent);

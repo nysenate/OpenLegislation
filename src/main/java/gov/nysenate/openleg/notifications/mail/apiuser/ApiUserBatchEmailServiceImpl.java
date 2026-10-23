@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.notifications.mail.apiuser;
 
-import gov.nysenate.openleg.auth.admin.AdminUser;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
@@ -10,8 +10,17 @@ import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.MailException;
 import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
+import gov.nysenate.openleg.notifications.mail.SendResult;
+import gov.nysenate.openleg.notifications.mail.SendResult.Outcome;
+import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status;
+import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.UnsentRecipient;
+import gov.nysenate.openleg.notifications.model.Notification;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -23,12 +32,16 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static gov.nysenate.openleg.notifications.model.NotificationType.REQUEST_EXCEPTION;
 
 @Service
 public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
@@ -38,29 +51,29 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private final OpenLegEnvironment env;
     private final ApiUserService apiUserService;
     private final AdminUserService adminUserService;
+    private final EventBus eventBus;
     private final EmailValidator validator = EmailValidator.getInstance();
 
     @Autowired
     public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env,
                                         ApiUserService apiUserService,
-                                        AdminUserService adminUserService) {
+                                        AdminUserService adminUserService,
+                                        @Qualifier("eventBus") EventBus eventBus) {
         this.mailUtils = mailUtils;
         this.mimeSender = new MimeSendMailService(mailUtils, env);
         this.apiUserService = apiUserService;
         this.env = env;
         this.adminUserService = adminUserService;
+        this.eventBus = eventBus;
     }
 
-    public void sendTestMessage(String email, ApiUserMessage message) throws MailException {
+    public BatchEmailResult sendTestMessage(String email, ApiUserMessage message) throws MailException {
         checkMailSettings();
-        MimeMessage mimeMessage =  getMimeMessage(message, email, null);
-        List<MimeMessage> mimeMessageList = new ArrayList<>();
-        mimeMessageList.add(mimeMessage);
-        mimeSender.sendMessages(mimeMessageList);
+        // The admin's own address isn't held to the stored-address check, which rejects local ones like admin@localhost.
+        return send(message, List.of(new Recipient(email, null)), false);
     }
 
-    //rethrow a runtime exception in catch
-    public int sendMessage(ApiUserMessage message) throws MailException {
+    public BatchEmailResult sendMessage(ApiUserMessage message) throws MailException {
         checkMailSettings();
         //get all the users who are subscribed to one or more of the subscriptions
         Set<ApiUserSubscriptionType> subscriptions = message.getSubscriptionTypes();
@@ -69,38 +82,114 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
             users.addAll(apiUserService.getUsersWithSubscription(sub));
         }
 
-        //create a set with all the admins
-        Set<AdminUser> admins = new HashSet<>(adminUserService.getAdminUsers());
+        // Sorted by address, so that reports are reproducible. All admins receive all batch emails.
+        List<Recipient> recipients = new ArrayList<>();
+        users.stream().map(user -> new Recipient(user.getEmail(), user))
+                .sorted(BY_EMAIL).forEach(recipients::add);
+        adminUserService.getAdminUsers().stream().map(admin -> new Recipient(admin.getUsername(), null))
+                .sorted(BY_EMAIL).forEach(recipients::add);
+        return send(message, recipients, true);
+    }
 
-        Set<MimeMessage> allEmails = new HashSet<>();
-        MimeMessage mimeMessage;
-        String email;
-
-        //go through set of users
-        for (ApiUser user : users) {
-            email = user.getEmail();
-            mimeMessage = getMimeMessage(message, email, user);
-
-            //add the email to a list of mimeMessages if email address is valid
-            if (validator.isValid(email)) {
-                allEmails.add(mimeMessage);
+    /**
+     * Builds and sends each recipient's copy separately. An address that can't be used is skipped,
+     * and a copy the mail server refuses is recorded as failed; neither affects the other recipients.
+     * If the mail server rejects the credentials, can't be reached at first, or fails several copies in a row
+     * for reasons that aren't about their recipients, the rest are not sent.
+     * @param checkAddresses whether to skip addresses that fail {@link EmailValidator}; unparseable ones
+     *                       are always skipped
+     */
+    private BatchEmailResult send(ApiUserMessage message, List<Recipient> recipients, boolean checkAddresses) {
+        int sent = 0;
+        List<UnsentRecipient> unsent = new ArrayList<>();
+        boolean connected = false;
+        int serverFailuresInARow = 0;
+        String stopReason = null;
+        for (Recipient recipient : recipients) {
+            String email = recipient.email();
+            if (checkAddresses && !validator.isValid(email)) {
+                unsent.add(new UnsentRecipient(email, Status.SKIPPED, "Not a valid email address"));
+                continue;
             }
+            MimeMessage mimeMessage;
+            try {
+                mimeMessage = getMimeMessage(message, email, recipient.user());
+            } catch (MailException ex) {
+                unsent.add(new UnsentRecipient(email, Status.SKIPPED,
+                        describe(ex.getCause() == null ? ex : ex.getCause())));
+                continue;
+            }
+            if (stopReason != null) {
+                unsent.add(new UnsentRecipient(email, Status.NOT_SENT, stopReason));
+                continue;
+            }
+
+            SendResult sendResult = mimeSender.trySend(mimeMessage);
+            Outcome outcome = sendResult.outcome();
+            Status status = switch (outcome) {
+                case SENT -> null;
+                case REFUSED, SERVER_FAILED -> Status.FAILED;
+                case UNCONFIRMED -> Status.UNCONFIRMED;
+                case NOT_CONNECTED, LOGIN_REJECTED -> Status.NOT_SENT;
+            };
+            if (status == null) {
+                sent++;
+            } else {
+                unsent.add(new UnsentRecipient(email, status, describe(sendResult.cause())));
+            }
+
+            if (outcome == Outcome.LOGIN_REJECTED || outcome == Outcome.NOT_CONNECTED && !connected) {
+                // Rejected credentials or a server that was never reachable won't work for anyone. A failed
+                // connection mid-batch, such as a reset handshake, only counts toward the failures in a row.
+                stopReason = describe(sendResult.cause());
+            } else if (outcome == Outcome.SENT || outcome == Outcome.REFUSED) {
+                serverFailuresInARow = 0;
+            } else if (++serverFailuresInARow == MAX_SERVER_FAILURES_IN_A_ROW) {
+                // Such as a server that stopped answering or refuses every sender; the rest would fail the same way.
+                stopReason = "Stopped after " + MAX_SERVER_FAILURES_IN_A_ROW
+                        + " copies in a row failed at the mail server: " + describe(sendResult.cause());
+            }
+            connected |= outcome != Outcome.NOT_CONNECTED;
         }
 
-        //repeat the process for admins (all admins will receive all batch emails
-        for (AdminUser admin : admins) {
-            email = admin.getUsername();
-            mimeMessage = getMimeMessage(message, email, null);
+        var result = new BatchEmailResult(sent, unsent);
+        log(message, result);
+        return result;
+    }
 
-            //add the email to a list of mimeMessages if email address is valid
-            if (validator.isValid(email)) {
-                allEmails.add(mimeMessage);
+    private void log(ApiUserMessage message, BatchEmailResult result) {
+        for (UnsentRecipient recipient : result.unsent()) {
+            logger.warn("Batch email {} for {}: {}", recipient.status(), recipient.email(), recipient.reason());
+        }
+        List<UnsentRecipient> notSent = result.unsent(Status.NOT_SENT);
+        if (!notSent.isEmpty()) {
+            // The mail server is down or misconfigured, which the response alone wouldn't bring to anyone's attention.
+            String summary = "Batch email \"" + message.getSubject() + "\" not sent to " + notSent.size()
+                    + " of " + result.total() + " recipients";
+            String reason = notSent.get(0).reason();
+            logger.error("{}: {}", summary, reason);
+            eventBus.post(new Notification(REQUEST_EXCEPTION, LocalDateTime.now(), summary,
+                    summary + ", because the mail server couldn't be used: " + reason));
+        }
+        logger.info("Batch email \"{}\": {} sent, {} skipped, {} failed, {} unconfirmed, {} not sent",
+                message.getSubject(), result.sent(), result.unsent(Status.SKIPPED).size(),
+                result.unsent(Status.FAILED).size(), result.unsent(Status.UNCONFIRMED).size(), notSent.size());
+    }
+
+    /**
+     * Describes why a message couldn't be built or sent, from the most general to the most specific
+     * cause, such as "Invalid Addresses: 451 Rejected" for a recipient the mail server refused.
+     */
+    private static String describe(Throwable ex) {
+        List<String> reasons = new ArrayList<>();
+        // The list stops at a loop, which MessagingException allows by being its own next exception.
+        for (Throwable cause : ExceptionUtils.getThrowableList(ex)) {
+            String reason = cause.getMessage() == null ? "" : cause.getMessage().strip();
+            if (!reason.isEmpty() && (reasons.isEmpty() || !reasons.get(reasons.size() - 1).contains(reason))) {
+                reasons.add(reason);
             }
         }
-
-        //send the emails and return the number sent
-        mimeSender.sendMessages(allEmails);
-        return allEmails.size();
+        return reasons.isEmpty() ? ex.getClass().getSimpleName() : String.join(": ", reasons);
     }
 
     /**
@@ -208,7 +297,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
             multipart.addBodyPart(textPart);
             multipart.addBodyPart(htmlPart);
         } catch (MessagingException ex) {
-            throw new MailException(ex.toString());
+            throw new MailException(ex.toString(), ex);
         }
         return multipart;
     }
@@ -237,9 +326,12 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
             mimeMessage.setContent(getMultiPart(message, user));
             return mimeMessage;
         } catch (MessagingException ex) {
-            throw new MailException(ex.toString());
+            throw new MailException(ex.toString(), ex);
         }
     }
+
+    /** One copy of the message; only API users get a subscription preferences link. */
+    private record Recipient(String email, @Nullable ApiUser user) {}
 
     /** Unifies line endings and drops leading and trailing blank space. */
     private static String normalize(@Nullable String body) {
@@ -286,6 +378,14 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private static String escape(String text) {
         return HtmlUtils.htmlEscape(text, CHARSET);
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiUserBatchEmailServiceImpl.class);
+
+    /** Copies in a row that may fail because of the mail server before the rest of a batch is given up. */
+    static final int MAX_SERVER_FAILURES_IN_A_ROW = 3;
+
+    private static final Comparator<Recipient> BY_EMAIL =
+            Comparator.comparing(Recipient::email, Comparator.nullsFirst(Comparator.naturalOrder()));
 
     private static final String CHARSET = StandardCharsets.UTF_8.name();
 
