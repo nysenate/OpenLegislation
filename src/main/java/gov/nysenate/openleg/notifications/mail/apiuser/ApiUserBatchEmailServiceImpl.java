@@ -6,6 +6,7 @@ import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.common.util.MailUtils;
+import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.MailException;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
 import jakarta.annotation.Nullable;
+import jakarta.annotation.PreDestroy;
 import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
@@ -38,6 +40,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,29 +57,87 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private final ApiUserService apiUserService;
     private final AdminUserService adminUserService;
     private final EventBus eventBus;
+    private final Executor executor;
     private final EmailValidator validator = EmailValidator.getInstance();
+
+    /** The batch email being sent, or the last one sent since startup; null before the first. */
+    private volatile Batch current;
 
     @Autowired
     public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env,
                                         ApiUserService apiUserService,
                                         AdminUserService adminUserService,
                                         @Qualifier("eventBus") EventBus eventBus) {
+        // A thread of its own, so a batch never waits behind other background work.
+        this(mailUtils, env, apiUserService, adminUserService, eventBus,
+                Executors.newSingleThreadExecutor(new OpenlegThreadFactory("batch-email")));
+    }
+
+    /**
+     * @param executor runs the batch emails sent in the background
+     */
+    ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, ApiUserService apiUserService,
+                                 AdminUserService adminUserService, EventBus eventBus, Executor executor) {
         this.mailUtils = mailUtils;
         this.mimeSender = new MimeSendMailService(mailUtils, env);
         this.apiUserService = apiUserService;
         this.env = env;
         this.adminUserService = adminUserService;
         this.eventBus = eventBus;
+        this.executor = executor;
+    }
+
+    /**
+     * Interrupts a batch being sent, which then stops after the copy in progress and reports the rest as not sent.
+     */
+    @PreDestroy
+    public void destroy() {
+        if (executor instanceof ExecutorService executorService) {
+            executorService.shutdownNow();
+        }
     }
 
     public BatchEmailResult sendTestMessage(String email, ApiUserMessage message) throws MailException {
         checkMailSettings();
         // The admin's own address isn't held to the stored-address check, which rejects local ones like admin@localhost.
-        return send(message, List.of(new Recipient(email, null)), false);
+        var batch = new Batch(message, List.of(new Recipient(email, null)));
+        send(batch, false);
+        return batch.status().result();
     }
 
     public BatchEmailResult sendMessage(ApiUserMessage message) throws MailException {
+        Batch batch = begin(message);
+        send(batch, true);
+        return batch.status().result();
+    }
+
+    public BatchEmailStatus startMessage(ApiUserMessage message) throws MailException {
+        Batch batch = begin(message);
+        executor.execute(() -> {
+            try {
+                send(batch, true);
+            } catch (RuntimeException ex) {
+                logger.error("Batch email \"{}\" stopped unexpectedly", message.getSubject(), ex);
+            }
+        });
+        return batch.status();
+    }
+
+    @Nullable
+    public BatchEmailStatus getStatus() {
+        Batch batch = current;
+        return batch == null ? null : batch.status();
+    }
+
+    /**
+     * Gathers the recipients and makes the message the current batch, unless another is still being sent.
+     */
+    private synchronized Batch begin(ApiUserMessage message) {
         checkMailSettings();
+        Batch previous = current;
+        if (previous != null && previous.running()) {
+            throw new BatchEmailInProgressException(previous.message.getSubject());
+        }
         //get all the users who are subscribed to one or more of the subscriptions
         Set<ApiUserSubscriptionType> subscriptions = message.getSubscriptionTypes();
         Set<ApiUser> users = new HashSet<>();
@@ -88,92 +151,102 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
                 .sorted(BY_EMAIL).forEach(recipients::add);
         adminUserService.getAdminUsers().stream().map(admin -> new Recipient(admin.getUsername(), null))
                 .sorted(BY_EMAIL).forEach(recipients::add);
-        return send(message, recipients, true);
+        current = new Batch(message, recipients);
+        logger.info("Batch email \"{}\" started for {} recipients", message.getSubject(), recipients.size());
+        return current;
     }
 
     /**
-     * Builds and sends each recipient's copy separately. An address that can't be used is skipped,
-     * and a copy the mail server refuses is recorded as failed; neither affects the other recipients.
-     * If the mail server rejects the credentials, can't be reached at first, or fails several copies in a row
-     * for reasons that aren't about their recipients, the rest are not sent.
+     * Builds and sends each recipient's copy separately, recording each outcome in the batch as it happens.
+     * An address that can't be used is skipped, and a copy the mail server refuses is recorded as failed; neither
+     * affects the other recipients. If the mail server rejects the credentials, can't be reached at first, or fails
+     * several copies in a row for reasons that aren't about their recipients, the rest are not sent; nor are they
+     * if the thread is interrupted, as when the server shuts down.
      * @param checkAddresses whether to skip addresses that fail {@link EmailValidator}; unparseable ones
      *                       are always skipped
      */
-    private BatchEmailResult send(ApiUserMessage message, List<Recipient> recipients, boolean checkAddresses) {
-        int sent = 0;
-        List<UnsentRecipient> unsent = new ArrayList<>();
+    private void send(Batch batch, boolean checkAddresses) {
+        ApiUserMessage message = batch.message;
         boolean connected = false;
         int serverFailuresInARow = 0;
         String stopReason = null;
-        for (Recipient recipient : recipients) {
-            String email = recipient.email();
-            if (checkAddresses && !validator.isValid(email)) {
-                unsent.add(new UnsentRecipient(email, Status.SKIPPED, "Not a valid email address"));
-                continue;
-            }
-            MimeMessage mimeMessage;
-            try {
-                mimeMessage = getMimeMessage(message, email, recipient.user());
-            } catch (MailException ex) {
-                unsent.add(new UnsentRecipient(email, Status.SKIPPED,
-                        describe(ex.getCause() == null ? ex : ex.getCause())));
-                continue;
-            }
-            if (stopReason != null) {
-                unsent.add(new UnsentRecipient(email, Status.NOT_SENT, stopReason));
-                continue;
-            }
+        try {
+            for (Recipient recipient : batch.recipients) {
+                String email = recipient.email();
+                if (checkAddresses && !validator.isValid(email)) {
+                    unsent(batch, email, Status.SKIPPED, "Not a valid email address");
+                    continue;
+                }
+                MimeMessage mimeMessage;
+                try {
+                    mimeMessage = getMimeMessage(message, email, recipient.user());
+                } catch (MailException ex) {
+                    unsent(batch, email, Status.SKIPPED, describe(ex.getCause() == null ? ex : ex.getCause()));
+                    continue;
+                }
+                if (stopReason == null && Thread.currentThread().isInterrupted()) {
+                    stopReason = "Stopped because the server is shutting down";
+                }
+                if (stopReason != null) {
+                    unsent(batch, email, Status.NOT_SENT, stopReason);
+                    continue;
+                }
 
-            SendResult sendResult = mimeSender.trySend(mimeMessage);
-            Outcome outcome = sendResult.outcome();
-            Status status = switch (outcome) {
-                case SENT -> null;
-                case REFUSED, SERVER_FAILED -> Status.FAILED;
-                case UNCONFIRMED -> Status.UNCONFIRMED;
-                case NOT_CONNECTED, LOGIN_REJECTED -> Status.NOT_SENT;
-            };
-            if (status == null) {
-                sent++;
-            } else {
-                unsent.add(new UnsentRecipient(email, status, describe(sendResult.cause())));
-            }
+                SendResult sendResult = mimeSender.trySend(mimeMessage);
+                Outcome outcome = sendResult.outcome();
+                Status status = switch (outcome) {
+                    case SENT -> null;
+                    case REFUSED, SERVER_FAILED -> Status.FAILED;
+                    case UNCONFIRMED -> Status.UNCONFIRMED;
+                    case NOT_CONNECTED, LOGIN_REJECTED -> Status.NOT_SENT;
+                };
+                if (status == null) {
+                    batch.recordSent();
+                } else {
+                    unsent(batch, email, status, describe(sendResult.cause()));
+                }
 
-            if (outcome == Outcome.LOGIN_REJECTED || outcome == Outcome.NOT_CONNECTED && !connected) {
-                // Rejected credentials or a server that was never reachable won't work for anyone. A failed
-                // connection mid-batch, such as a reset handshake, only counts toward the failures in a row.
-                stopReason = describe(sendResult.cause());
-            } else if (outcome == Outcome.SENT || outcome == Outcome.REFUSED) {
-                serverFailuresInARow = 0;
-            } else if (++serverFailuresInARow == MAX_SERVER_FAILURES_IN_A_ROW) {
-                // Such as a server that stopped answering or refuses every sender; the rest would fail the same way.
-                stopReason = "Stopped after " + MAX_SERVER_FAILURES_IN_A_ROW
-                        + " copies in a row failed at the mail server: " + describe(sendResult.cause());
+                if (outcome == Outcome.LOGIN_REJECTED || outcome == Outcome.NOT_CONNECTED && !connected) {
+                    // Rejected credentials or a server that was never reachable won't work for anyone. A failed
+                    // connection mid-batch, such as a reset handshake, only counts toward the failures in a row.
+                    stopReason = describe(sendResult.cause());
+                } else if (outcome == Outcome.SENT || outcome == Outcome.REFUSED) {
+                    serverFailuresInARow = 0;
+                } else if (++serverFailuresInARow == MAX_SERVER_FAILURES_IN_A_ROW) {
+                    // Such as a server that stopped answering or refuses every sender; the rest would fail
+                    // the same way.
+                    stopReason = "Stopped after " + MAX_SERVER_FAILURES_IN_A_ROW
+                            + " copies in a row failed at the mail server: " + describe(sendResult.cause());
+                }
+                connected |= outcome != Outcome.NOT_CONNECTED;
             }
-            connected |= outcome != Outcome.NOT_CONNECTED;
+        } finally {
+            // Even if sending failed unexpectedly, so that another batch can be sent.
+            batch.finish();
         }
+        log(message, batch.status().result());
+    }
 
-        var result = new BatchEmailResult(sent, unsent);
-        log(message, result);
-        return result;
+    /** Records a recipient who may not have got a copy, and logs it at once in case the server stops mid-batch. */
+    private static void unsent(Batch batch, String email, Status status, String reason) {
+        batch.recordUnsent(new UnsentRecipient(email, status, reason));
+        logger.warn("Batch email {} for {}: {}", status, email, reason);
     }
 
     private void log(ApiUserMessage message, BatchEmailResult result) {
-        for (UnsentRecipient recipient : result.unsent()) {
-            logger.warn("Batch email {} for {}: {}", recipient.status(), recipient.email(), recipient.reason());
-        }
         List<UnsentRecipient> notSent = result.unsent(Status.NOT_SENT);
+        logger.info("Batch email \"{}\": {} sent, {} skipped, {} failed, {} unconfirmed, {} not sent",
+                message.getSubject(), result.sent(), result.unsent(Status.SKIPPED).size(),
+                result.unsent(Status.FAILED).size(), result.unsent(Status.UNCONFIRMED).size(), notSent.size());
         if (!notSent.isEmpty()) {
-            // The mail server is down or misconfigured, which the response alone wouldn't bring to anyone's attention.
+            // Such as a mail server that is down or misconfigured, which the page alone wouldn't bring to anyone's
+            // attention.
             String summary = "Batch email \"" + message.getSubject() + "\" not sent to " + notSent.size()
                     + " of " + result.total() + " recipients";
             String reason = notSent.get(0).reason();
             logger.error("{}: {}", summary, reason);
-            eventBus.post(new Notification(REQUEST_EXCEPTION, LocalDateTime.now(), summary,
-                    summary + ", because the mail server couldn't be used: " + reason));
+            eventBus.post(new Notification(REQUEST_EXCEPTION, LocalDateTime.now(), summary, summary + ": " + reason));
         }
-        logger.info("Batch email \"{}\": {} sent, {} skipped, {} failed, {} unconfirmed, {} not sent",
-                message.getSubject(), result.sent(), result.unsent(Status.SKIPPED).size(),
-                result.unsent(Status.FAILED).size(), result.unsent(Status.UNCONFIRMED).size(), notSent.size());
     }
 
     /**
@@ -332,6 +405,42 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
     /** One copy of the message; only API users get a subscription preferences link. */
     private record Recipient(String email, @Nullable ApiUser user) {}
+
+    /** One sending of a message, whose progress can be read while it is being sent. */
+    private static final class Batch {
+        private final ApiUserMessage message;
+        private final List<Recipient> recipients;
+        private final LocalDateTime started = LocalDateTime.now();
+        private int sent;
+        private final List<UnsentRecipient> unsent = new ArrayList<>();
+        private LocalDateTime finished;
+
+        Batch(ApiUserMessage message, List<Recipient> recipients) {
+            this.message = message;
+            this.recipients = recipients;
+        }
+
+        synchronized void recordSent() {
+            sent++;
+        }
+
+        synchronized void recordUnsent(UnsentRecipient recipient) {
+            unsent.add(recipient);
+        }
+
+        synchronized void finish() {
+            finished = LocalDateTime.now();
+        }
+
+        synchronized boolean running() {
+            return finished == null;
+        }
+
+        synchronized BatchEmailStatus status() {
+            return new BatchEmailStatus(message.getSubject(), recipients.size(),
+                    new BatchEmailResult(sent, List.copyOf(unsent)), started, finished);
+        }
+    }
 
     /** Unifies line endings and drops leading and trailing blank space. */
     private static String normalize(@Nullable String body) {

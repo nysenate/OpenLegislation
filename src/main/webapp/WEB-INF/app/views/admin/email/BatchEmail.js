@@ -3,11 +3,14 @@ import Input from "app/shared/Input";
 import Modal from "app/shared/Modal";
 import {
   BatchEmailBody,
+  getBatchEmailStatus,
   previewBatchEmail,
-  sendBatchEmail,
+  sendTestEmail,
+  startBatchEmail,
 } from "app/apis/batchEmailApi";
 import ErrorMessage from "app/shared/ErrorMessage";
 
+const POLL_INTERVAL_MS = 2000
 
 export default function BatchEmail({ setHeaderText }) {
   const [ testMode, setTestMode ] = React.useState(true)
@@ -18,25 +21,50 @@ export default function BatchEmail({ setHeaderText }) {
   const [ isConfirmationDialogOpen, setIsConfirmationDialogOpen ] = React.useState(false)
   const [ isPreviewOpen, setIsPreviewOpen ] = React.useState(false)
   const [ errorMsg, setErrorMsg ] = React.useState("")
-  const [ result, setResult ] = React.useState(null)
+  // The last test email's result or batch email's status. It stays until a new one replaces it, so a failed
+  // request doesn't lose the list of recipients to follow up with.
+  const [ report, setReport ] = React.useState(null)
+  const [ statusError, setStatusError ] = React.useState("")
   const [ isSending, setIsSending ] = React.useState(false)
   const sending = React.useRef(false)
+  const isRunning = report?.running === true
+  const busy = isSending || isRunning
+
+  const refreshStatus = () => {
+    getBatchEmailStatus()
+      .then((status) => {
+        setStatusError("")
+        // None while one was running means the server restarted and lost it.
+        setReport((previous) => status ?? (previous?.running ? { ...previous, running: false } : previous))
+      })
+      .catch((err) => setStatusError(`Couldn't get the batch email's progress: ${err.message}`))
+  }
 
   React.useEffect(() => {
     setHeaderText("Batch Email")
+    // A batch email may be being sent, or may have finished, since the page was last open.
+    refreshStatus()
   }, [])
 
-  // The last report stays until another send completes, so a failed request doesn't lose the list
-  // of recipients to follow up with.
+  // Follows a batch email until it has been sent.
+  React.useEffect(() => {
+    if (!isRunning) {
+      return
+    }
+    const timer = setInterval(refreshStatus, POLL_INTERVAL_MS)
+    return () => clearInterval(timer)
+  }, [ isRunning ])
+
   const sendEmail = () => {
-    // A batch can take minutes; a second click must not send it again. The ref also covers clicks
-    // that arrive before the disabled buttons are rendered.
+    // A second click must not send the email again. The ref also covers clicks that arrive before the
+    // disabled buttons are rendered.
     if (sending.current) {
       return
     }
     sending.current = true
     setIsSending(true)
     setErrorMsg("")
+    setStatusError("")
 
     const groups = []
     if (breakingChanges) {
@@ -46,13 +74,19 @@ export default function BatchEmail({ setHeaderText }) {
       groups.push("NEW_FEATURES")
     }
     const requestBody = new BatchEmailBody(groups, subject, body)
-    sendBatchEmail(testMode, requestBody)
-      .then((data) => setResult({ ...data.result, message: data.message, testMode }))
-      .catch((err) => setErrorMsg(err.errorCode === undefined
-        // No reply from the server, such as a proxy timeout or a dropped connection: it may still be sending.
-        ? `${err.message}. The server may still be sending this email; check the server log for the batch `
-          + "totals before sending again, or recipients may get it twice."
-        : err.message))
+    const request = testMode
+      ? sendTestEmail(requestBody)
+        .then((result) => ({ ...result, test: true, recipients: result.sent + result.unsent.length }))
+      : startBatchEmail(requestBody)
+    request
+      .then(setReport)
+      .catch((err) => {
+        setErrorMsg(err.message)
+        if (!testMode) {
+          // Shows the batch email being sent, if another is, or this one, if only the reply was lost.
+          refreshStatus()
+        }
+      })
       .finally(() => {
         sending.current = false
         setIsSending(false)
@@ -85,13 +119,19 @@ export default function BatchEmail({ setHeaderText }) {
           <ErrorMessage>{errorMsg}</ErrorMessage>
         </div>
       }
-      {result &&
+      {statusError &&
         <div className="my-3">
-          {/* Shown beside a new error, the report must not read as the outcome of the new attempt. */}
-          {(errorMsg || isSending) &&
-            <p className="mb-1 italic">Previous send ({result.testMode ? "test email" : "to API users"}):</p>
-          }
-          <SendResult result={result} />
+          <ErrorMessage>{statusError}</ErrorMessage>
+        </div>
+      }
+      {report &&
+        <div className="my-3">
+          <p className="mb-1 italic">
+            {/* Shown beside a new error, the report must not read as the outcome of the new attempt. */}
+            {(errorMsg || isSending) && !isRunning && "Previous send: "}
+            {report.test ? "Test email" : `Batch email “${report.subject}”`}
+          </p>
+          <SendReport report={report} />
         </div>
       }
 
@@ -158,8 +198,8 @@ export default function BatchEmail({ setHeaderText }) {
           <button onClick={() => setIsPreviewOpen(true)} className="btn btn--secondary w-36 mr-3">
             Preview Email
           </button>
-          <button onClick={() => validate()} disabled={isSending} className="btn btn--primary w-36">
-            {isSending ? "Sending…" : "Send Email"}
+          <button onClick={() => validate()} disabled={busy} className="btn btn--primary w-36">
+            {busy ? "Sending…" : "Send Email"}
           </button>
         </RowData>
       </Row>
@@ -167,7 +207,7 @@ export default function BatchEmail({ setHeaderText }) {
       <ConfirmationModal isOpen={isConfirmationDialogOpen}
                          setIsOpen={setIsConfirmationDialogOpen}
                          onConfirm={() => sendEmail()}
-                         isSending={isSending}
+                         isSending={busy}
                          testMode={testMode} />
 
       <PreviewDialog isOpen={isPreviewOpen}
@@ -215,27 +255,43 @@ const UNSENT_TITLES = {
   NOT_SENT: "Not sent: the mail server couldn't be reached, rejected the login or stopped replying",
 }
 
-function SendResult({ result }) {
-  const unsent = result.unsent
-  if (unsent.length === 0) {
-    return <span className="text text-green-700 font-bold">{result.message}.</span>
-  }
+function SendReport({ report }) {
+  const { sent, unsent, recipients } = report
   const withStatus = (status) => unsent.filter((recipient) => recipient.status === status)
+  const unsentLists = Object.entries(UNSENT_TITLES).map(([status, title]) =>
+    <UnsentList key={status} title={title} recipients={withStatus(status)} />
+  )
+  if (report.running) {
+    return (
+      <div>
+        <p className="font-bold">
+          Sending: {sent + unsent.length} of {plural(recipients, "recipient")} done so far, {sent} sent.
+        </p>
+        <p className="italic">Sending continues on the server if you leave this page.</p>
+        {unsentLists}
+      </div>
+    )
+  }
+  const message = `Sent ${sent === recipients ? "" : `${sent} of `}${plural(recipients, "email")}`
+  if (sent === recipients) {
+    return <span className="text text-green-700 font-bold">{message}.</span>
+  }
+  // Only if sending stopped unexpectedly, such as when the server restarted.
+  const untried = recipients - sent - unsent.length
   const unconfirmed = withStatus("UNCONFIRMED").length
   const duplicates = [
-    result.sent > 0 && `the ${plural(result.sent, "recipient")} who got it`,
+    sent > 0 && `the ${plural(sent, "recipient")} who got it`,
     unconfirmed > 0 && `possibly the ${unconfirmed} unconfirmed`,
   ].filter(Boolean)
   return (
     <div>
       <ErrorMessage>
-        {result.message}. {plural(unsent.length, "recipient")} may not
+        {message}. {plural(recipients - sent, "recipient")} may not
         have got this email, and nothing is retried automatically.
+        {untried > 0 && ` Sending stopped before ${plural(untried, "recipient")} could be tried; check the server log.`}
         {duplicates.length > 0 && ` Sending again would also send it again to ${duplicates.join(" and ")}.`}
       </ErrorMessage>
-      {Object.entries(UNSENT_TITLES).map(([status, title]) =>
-        <UnsentList key={status} title={title} recipients={withStatus(status)} />
-      )}
+      {unsentLists}
     </div>
   )
 }

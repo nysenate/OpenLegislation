@@ -2,13 +2,16 @@ package gov.nysenate.openleg.api.admin;
 
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ErrorResponse;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserBatchEmailServiceImpl;
+import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailInProgressException;
 import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult;
+import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailStatus;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserEmailRequest;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserMessage;
 import org.apache.shiro.SecurityUtils;
@@ -16,6 +19,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,14 +54,38 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *                  plain-text body of the email, as well as a list of subscription types that the
      *                  email will be sent out to.
      *
-     *  Each recipient's copy is sent separately. The response (BatchEmailResultView) has the number
-     *  sent and each recipient that was skipped, failed, unconfirmed or not sent, with the reason.
+     *  Sending continues in the background; the response is the batch's status as it begins
+     *  (BatchEmailStatusView), and GET on the same path follows its progress. Each recipient's copy is sent
+     *  separately. Only one batch email is sent at a time: while another is being sent, the response is
+     *  409 Conflict and nothing is sent.
      */
     @RequiresPermissions("admin:email:post")
     @PostMapping(value = "/batchEmail")
     public BaseResponse sendEmail(@RequestBody ApiUserEmailRequest request) {
         ApiUserMessage message = getMessage(request);
-        return resultResponse(apiUserBatchEmailService.sendMessage(message));
+        return new ViewObjectResponse<>(new BatchEmailStatusView(apiUserBatchEmailService.startMessage(message)));
+    }
+
+    /**
+     *  Get The Batch Email Status
+     *  --------------------------
+     *
+     *  The batch email being sent, or the last one sent since the server started (BatchEmailStatusView): the
+     *  number of recipients, the number of copies sent so far, and each recipient so far that was skipped, failed,
+     *  unconfirmed or not sent, with the reason. Test emails aren't included. There is no result if no batch email
+     *  has been sent since the server started. Must be called by an admin.
+     *
+     *  (GET) /api/3/admin/email/batchEmail
+     */
+    @RequiresPermissions("admin:email:post")
+    @GetMapping(value = "/batchEmail")
+    public BaseResponse getBatchEmailStatus() {
+        BatchEmailStatus status = apiUserBatchEmailService.getStatus();
+        if (status == null) {
+            return new SimpleResponse(true, "No batch email has been sent since the server started",
+                    "batch-email-status");
+        }
+        return new ViewObjectResponse<>(new BatchEmailStatusView(status));
     }
 
     /**
@@ -119,6 +147,17 @@ public class AdminApiEmailCtrl extends BaseCtrl {
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorResponse handleMailConfigurationException(MailConfigurationException ex) {
         ErrorResponse response = new ErrorResponse(ErrorCode.MAIL_NOT_CONFIGURED);
+        response.setMessage(ex.getMessage());
+        return response;
+    }
+
+    /**
+     * Tells the admin that another batch email is still being sent; nothing was sent.
+     */
+    @ExceptionHandler(BatchEmailInProgressException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ErrorResponse handleBatchEmailInProgressException(BatchEmailInProgressException ex) {
+        ErrorResponse response = new ErrorResponse(ErrorCode.BATCH_EMAIL_IN_PROGRESS);
         response.setMessage(ex.getMessage());
         return response;
     }

@@ -417,6 +417,54 @@ public class ApiUserBatchEmailServiceImplTest {
 
         assertEquals(1, result.sent());
         assertEquals(List.of("admin@localhost"), FakeTransport.delivered);
+        assertNull("A test email isn't a batch", service.getStatus());
+    }
+
+    @Test
+    public void batchStartedInTheBackgroundIsSentAloneAndReportsItsProgress() {
+        List<Runnable> tasks = new ArrayList<>();
+        var background = new ApiUserBatchEmailServiceImpl(mailUtils, env, apiUserService, adminUserService, eventBus,
+                tasks::add);
+        subscribers("a@example.com", "b@example.com");
+        FakeTransport.rejected.add("b@example.com");
+
+        BatchEmailStatus started = background.startMessage(MESSAGE);
+
+        assertTrue(started.running());
+        assertEquals("Subject", started.subject());
+        assertEquals(2, started.recipients());
+        assertEquals(new BatchEmailResult(0, List.of()), started.result());
+        assertThrows(BatchEmailInProgressException.class, () -> background.startMessage(MESSAGE));
+        assertThrows(BatchEmailInProgressException.class, () -> background.sendMessage(MESSAGE));
+        assertEquals(List.of(), FakeTransport.delivered);
+
+        tasks.forEach(Runnable::run);
+
+        BatchEmailStatus finished = background.getStatus();
+        assertFalse(finished.running());
+        assertEquals(1, finished.result().sent());
+        assertEquals(List.of("b@example.com"), emails(finished.result().unsent(FAILED)));
+        background.startMessage(MESSAGE);
+        assertEquals("Another batch can start once it has finished", 2, tasks.size());
+    }
+
+    @Test
+    public void interruptedBatchReportsTheRestAsNotSent() {
+        subscribers("a@example.com", "b@example.com");
+
+        BatchEmailResult result;
+        // As when the server shuts down.
+        Thread.currentThread().interrupt();
+        try {
+            result = service.sendMessage(MESSAGE);
+        } finally {
+            Thread.interrupted();
+        }
+
+        assertEquals(List.of(), FakeTransport.delivered);
+        assertEquals(List.of("a@example.com", "b@example.com"), emails(result.unsent(NOT_SENT)));
+        assertEquals("Stopped because the server is shutting down", result.unsent().get(0).reason());
+        assertFalse(service.getStatus().running());
     }
 
     @Test
