@@ -10,7 +10,7 @@ import gov.nysenate.openleg.common.util.OpenlegThreadFactory;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.MailException;
-import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
+import gov.nysenate.openleg.notifications.mail.SendMailService;
 import gov.nysenate.openleg.notifications.mail.SendResult;
 import gov.nysenate.openleg.notifications.mail.SendResult.Outcome;
 import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status;
@@ -27,9 +27,9 @@ import org.springframework.web.util.HtmlUtils;
 
 import jakarta.annotation.Nullable;
 import jakarta.annotation.PreDestroy;
-import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
@@ -52,7 +52,7 @@ import static gov.nysenate.openleg.notifications.model.NotificationType.REQUEST_
 public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
     private final MailUtils mailUtils;
-    private final MimeSendMailService mimeSender;
+    private final SendMailService mimeSender;
     private final OpenLegEnvironment env;
     private final ApiUserService apiUserService;
     private final AdminUserService adminUserService;
@@ -64,22 +64,23 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private volatile Batch current;
 
     @Autowired
-    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env,
+    public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, SendMailService mimeSender,
                                         ApiUserService apiUserService,
                                         AdminUserService adminUserService,
                                         @Qualifier("eventBus") EventBus eventBus) {
         // A thread of its own, so a batch never waits behind other background work.
-        this(mailUtils, env, apiUserService, adminUserService, eventBus,
+        this(mailUtils, env, mimeSender, apiUserService, adminUserService, eventBus,
                 Executors.newSingleThreadExecutor(new OpenlegThreadFactory("batch-email")));
     }
 
     /**
      * @param executor runs the batch emails sent in the background
      */
-    ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, ApiUserService apiUserService,
-                                 AdminUserService adminUserService, EventBus eventBus, Executor executor) {
+    ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, SendMailService mimeSender,
+                                 ApiUserService apiUserService, AdminUserService adminUserService,
+                                 EventBus eventBus, Executor executor) {
         this.mailUtils = mailUtils;
-        this.mimeSender = new MimeSendMailService(mailUtils, env);
+        this.mimeSender = mimeSender;
         this.apiUserService = apiUserService;
         this.env = env;
         this.adminUserService = adminUserService;
@@ -100,14 +101,14 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     public BatchEmailResult sendTestMessage(String email, ApiUserMessage message) throws MailException {
         checkMailSettings();
         // The admin's own address isn't held to the stored-address check, which rejects local ones like admin@localhost.
-        var batch = new Batch(message, List.of(new Recipient(email, null)));
-        send(batch, false);
+        var batch = new Batch(message, List.of(parsed(email, null)));
+        send(batch);
         return batch.status().result();
     }
 
     public BatchEmailResult sendMessage(ApiUserMessage message) throws MailException {
         Batch batch = begin(message);
-        send(batch, true);
+        send(batch);
         return batch.status().result();
     }
 
@@ -115,7 +116,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         Batch batch = begin(message);
         executor.execute(() -> {
             try {
-                send(batch, true);
+                send(batch);
             } catch (RuntimeException ex) {
                 logger.error("Batch email \"{}\" stopped unexpectedly", message.getSubject(), ex);
             }
@@ -147,47 +148,61 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
         // Sorted by address, so that reports are reproducible. All admins receive all batch emails.
         List<Recipient> recipients = new ArrayList<>();
-        users.stream().map(user -> new Recipient(user.getEmail(), user))
+        users.stream().map(user -> stored(user.getEmail(), user))
                 .sorted(BY_EMAIL).forEach(recipients::add);
-        adminUserService.getAdminUsers().stream().map(admin -> new Recipient(admin.getUsername(), null))
+        adminUserService.getAdminUsers().stream().map(admin -> stored(admin.getUsername(), null))
                 .sorted(BY_EMAIL).forEach(recipients::add);
         current = new Batch(message, recipients);
         logger.info("Batch email \"{}\" started for {} recipients", message.getSubject(), recipients.size());
         return current;
     }
 
+    /** The recipient for a stored address, which must pass {@link EmailValidator} as well as parse. */
+    private Recipient stored(String email, @Nullable ApiUser user) {
+        return validator.isValid(email) ? parsed(email, user) : new Skipped(email, "Not a valid email address");
+    }
+
+    /** The recipient for an address, which is skipped if it can't be parsed. */
+    private static Recipient parsed(String email, @Nullable ApiUser user) {
+        try {
+            return new Addressee(email, new InternetAddress(email), user);
+        } catch (AddressException ex) {
+            return new Skipped(email, describe(ex));
+        }
+    }
+
     /**
      * Builds and sends each recipient's copy separately, recording each outcome in the batch as it happens.
-     * An address that can't be used is skipped, and a copy the mail server refuses is recorded as failed; neither
-     * affects the other recipients. If the mail server rejects the credentials, or fails several copies in a row for
-     * reasons that aren't about their recipients, such as failed connections, the rest are not sent; nor are they
-     * if the thread is interrupted, as when the server shuts down.
-     * @param checkAddresses whether to skip addresses that fail {@link EmailValidator}; unparseable ones
-     *                       are always skipped
+     * A recipient whose address can't be used is skipped, and a copy the mail server refuses is recorded as failed;
+     * neither affects the other recipients. If the mail server rejects the credentials, or fails several copies in a
+     * row for reasons that aren't about their recipients, such as failed connections, the rest are not sent; nor are
+     * they if the thread is interrupted, as when the server shuts down.
      */
-    private void send(Batch batch, boolean checkAddresses) {
+    private void send(Batch batch) {
         ApiUserMessage message = batch.message;
         int serverFailuresInARow = 0;
         String stopReason = null;
         try {
             for (Recipient recipient : batch.recipients) {
-                String email = recipient.email();
-                if (checkAddresses && !validator.isValid(email)) {
-                    unsent(batch, email, Status.SKIPPED, "Not a valid email address");
+                if (recipient instanceof Skipped skipped) {
+                    unsent(batch, skipped.email(), Status.SKIPPED, skipped.reason());
                     continue;
                 }
-                MimeMessage mimeMessage;
-                try {
-                    mimeMessage = getMimeMessage(message, email, recipient.user());
-                } catch (MailException ex) {
-                    unsent(batch, email, Status.SKIPPED, describe(ex.getCause() == null ? ex : ex.getCause()));
-                    continue;
-                }
+                var addressee = (Addressee) recipient;
+                String email = addressee.email();
                 if (stopReason == null && Thread.currentThread().isInterrupted()) {
                     stopReason = "Stopped because the server is shutting down";
                 }
                 if (stopReason != null) {
                     unsent(batch, email, Status.NOT_SENT, stopReason);
+                    continue;
+                }
+                MimeMessage mimeMessage;
+                try {
+                    mimeMessage = getMimeMessage(message, addressee.address(), addressee.user());
+                } catch (MailException ex) {
+                    // Not the address, which was checked when the recipients were gathered.
+                    unsent(batch, email, Status.FAILED, describe(ex.getCause() == null ? ex : ex.getCause()));
                     continue;
                 }
 
@@ -372,7 +387,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     }
 
     /**
-     * This method takes in an ApiUserMessage, an email address (String) and an optional ApiUser. It
+     * This method takes in an ApiUserMessage, an email address and an optional ApiUser. It
      * creates a MimeMessage from the configured sender address, with the recipient being the email
      * address passed in, and the subject and content being based on the message passed in.
      * The content is set by making a call to getMultiPart()
@@ -380,18 +395,18 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * If ApiUser is not null, there will be a subscription preferences link generated in their message.
      *
      * @param message
-     * @param email
+     * @param address
      * @param user
      * @return MimeMessage
      * @throws MailException
      */
-    protected MimeMessage getMimeMessage(ApiUserMessage message, String email, @Nullable ApiUser user) throws MailException {
+    protected MimeMessage getMimeMessage(ApiUserMessage message, InternetAddress address, @Nullable ApiUser user)
+            throws MailException {
         try {
             MimeMessage mimeMessage = mimeSender.createMessage();
             mimeMessage.setFrom(new InternetAddress(env.getEmailFromAddress()));
             mimeMessage.setSubject(message.getSubject(), CHARSET);
-            Address emailAddress = new InternetAddress(email);
-            mimeMessage.setRecipient(MimeMessage.RecipientType.TO, emailAddress);
+            mimeMessage.setRecipient(MimeMessage.RecipientType.TO, address);
             mimeMessage.setContent(getMultiPart(message, user));
             return mimeMessage;
         } catch (MessagingException ex) {
@@ -399,8 +414,16 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         }
     }
 
-    /** One copy of the message; only API users get a subscription preferences link. */
-    private record Recipient(String email, @Nullable ApiUser user) {}
+    /** Someone a batch email is for, whose address was checked once, when the recipients were gathered. */
+    private sealed interface Recipient permits Addressee, Skipped {
+        String email();
+    }
+
+    /** A recipient to send a copy to; only API users get a subscription preferences link. */
+    private record Addressee(String email, InternetAddress address, @Nullable ApiUser user) implements Recipient {}
+
+    /** A recipient whose address can't be used, so no copy is sent. */
+    private record Skipped(String email, String reason) implements Recipient {}
 
     /** One sending of a message, whose progress can be read while it is being sent. */
     private static final class Batch {

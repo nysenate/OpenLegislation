@@ -9,14 +9,22 @@ import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.common.util.MailUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.config.annotation.UnitTest;
-import gov.nysenate.openleg.notifications.mail.FakeTransport;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
+import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
+import gov.nysenate.openleg.notifications.mail.SendResult;
+import gov.nysenate.openleg.notifications.mail.SendResult.Outcome;
 import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.UnsentRecipient;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
+import org.eclipse.angus.mail.smtp.SMTPAddressFailedException;
+import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
 import org.mockito.ArgumentCaptor;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.SendFailedException;
 import jakarta.mail.Session;
+import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.Before;
@@ -25,8 +33,12 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.FAILED;
@@ -57,12 +69,11 @@ public class ApiUserBatchEmailServiceImplTest {
     private OpenLegEnvironment env;
     private ApiUser user;
     private EventBus eventBus;
+    private ScriptedSender sender;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         session = Session.getInstance(new Properties());
-        FakeTransport.install(session);
-        FakeTransport.reset();
         mailUtils = mock(MailUtils.class);
         when(mailUtils.getSmtpSession()).thenReturn(session);
         env = mock(OpenLegEnvironment.class);
@@ -71,7 +82,9 @@ public class ApiUserBatchEmailServiceImplTest {
         apiUserService = mock(ApiUserService.class);
         adminUserService = mock(AdminUserService.class);
         eventBus = mock(EventBus.class);
-        service = new ApiUserBatchEmailServiceImpl(mailUtils, env, apiUserService, adminUserService, eventBus);
+        sender = new ScriptedSender(mailUtils, env);
+        service = new ApiUserBatchEmailServiceImpl(mailUtils, env, sender, apiUserService, adminUserService,
+                eventBus);
         user = new ApiUser("user@example.com");
         user.setApiKey(KEY);
     }
@@ -79,7 +92,8 @@ public class ApiUserBatchEmailServiceImplTest {
     @Test
     public void everyCopyIsFromTheConfiguredSender() throws Exception {
         for (ApiUser recipient : new ApiUser[] {user, null}) {
-            MimeMessage received = receive(service.getMimeMessage(MESSAGE, "user@example.com", recipient));
+            MimeMessage received =
+                    receive(service.getMimeMessage(MESSAGE, new InternetAddress("user@example.com"), recipient));
             assertArrayEquals(new InternetAddress[] {new InternetAddress(FROM)}, received.getFrom());
         }
     }
@@ -99,7 +113,7 @@ public class ApiUserBatchEmailServiceImplTest {
     public void nonAsciiTextAndAmpersandsArriveIntactInBothParts() throws Exception {
         String text = "“Quoted” café & co.";
         var message = new ApiUserMessage(ApiUserSubscriptionType.BREAKING_CHANGES, text, text);
-        MimeMessage received = receive(service.getMimeMessage(message, "user@example.com", user));
+        MimeMessage received = receive(service.getMimeMessage(message, new InternetAddress("user@example.com"), user));
 
         assertEquals(text, received.getSubject());
         Multipart parts = parts(received);
@@ -118,7 +132,8 @@ public class ApiUserBatchEmailServiceImplTest {
     public void paragraphsAndLineBreaksAreKeptAndHtmlIsShownLiterally() throws Exception {
         String body = "First line\r\nsecond line\r\n\r\n\r\nNext <b>x</b>\n  \nLast";
         var message = new ApiUserMessage(ApiUserSubscriptionType.BREAKING_CHANGES, "Subject", body);
-        Multipart parts = parts(receive(service.getMimeMessage(message, "user@example.com", null)));
+        Multipart parts =
+                parts(receive(service.getMimeMessage(message, new InternetAddress("user@example.com"), null)));
 
         String plain = content(parts, 0);
         assertTrue(plain, plain.startsWith("First line\nsecond line\n\n\nNext <b>x</b>\n  \nLast\n\n"));
@@ -151,7 +166,8 @@ public class ApiUserBatchEmailServiceImplTest {
 
     @Test
     public void userCopyEndsWithSignatureThenOnePreferencesLink() throws Exception {
-        Multipart parts = parts(receive(service.getMimeMessage(MESSAGE, user.getEmail(), user)));
+        Multipart parts =
+                parts(receive(service.getMimeMessage(MESSAGE, new InternetAddress(user.getEmail()), user)));
         String text = content(parts, 0);
         String html = content(parts, 1);
         for (String part : new String[] {text, html}) {
@@ -170,7 +186,8 @@ public class ApiUserBatchEmailServiceImplTest {
 
     @Test
     public void adminAndTestCopiesHaveTheSignatureButNoSubscriptionLinks() throws Exception {
-        Multipart parts = parts(receive(service.getMimeMessage(MESSAGE, "admin@example.com", null)));
+        Multipart parts =
+                parts(receive(service.getMimeMessage(MESSAGE, new InternetAddress("admin@example.com"), null)));
         for (int i = 0; i < parts.getCount(); i++) {
             String part = content(parts, i);
             assertTrue(part, part.contains(SIGNATURE));
@@ -195,7 +212,7 @@ public class ApiUserBatchEmailServiceImplTest {
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "c@example.com", "admin@example.com"), FakeTransport.delivered);
+        assertEquals(List.of("a@example.com", "c@example.com", "admin@example.com"), sender.offered);
         assertEquals(3, result.sent());
         assertEquals(List.of(new UnsentRecipient(null, SKIPPED, "Not a valid email address"),
                 new UnsentRecipient("bad address@example.com", SKIPPED, "Not a valid email address")),
@@ -203,33 +220,32 @@ public class ApiUserBatchEmailServiceImplTest {
     }
 
     @Test
-    public void rejectedRecipientsAreReportedAndTheRestAreSentOnce() {
+    public void rejectedRecipientsAreReportedAndTheRestAreSentOnce() throws Exception {
         subscribers("e@example.com", "d@example.com", "c@example.com", "b@example.com", "a@example.com");
         admins("admin@example.com");
-        FakeTransport.rejected.addAll(List.of("b@example.com", "d@example.com"));
+        refuse("b@example.com", "d@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "c@example.com", "e@example.com", "admin@example.com"),
-                FakeTransport.delivered);
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com", "d@example.com", "e@example.com",
+                "admin@example.com"), sender.offered);
         assertEquals(4, result.sent());
         String reason = "Invalid Addresses: 451 4.3.0 Mailbox temporarily unavailable";
         assertEquals(List.of(new UnsentRecipient("b@example.com", FAILED, reason),
                 new UnsentRecipient("d@example.com", FAILED, reason)), result.unsent());
-        assertEquals("Each copy has its own connection", 6, FakeTransport.connections);
     }
 
     @Test
     public void copyTheServerNeverConfirmedIsReportedAsFailedWithTheReason() {
         subscribers("a@example.com", "b@example.com");
-        FakeTransport.unacknowledged.add("a@example.com");
+        timeOut("a@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
         // The reason, unlike a refusal's, tells the admin it may still have been delivered.
         assertEquals(List.of(new UnsentRecipient("a@example.com", FAILED,
                 "Exception reading response: Read timed out")), result.unsent());
-        assertEquals(List.of("a@example.com", "b@example.com"), FakeTransport.delivered);
+        assertEquals(List.of("a@example.com", "b@example.com"), sender.offered);
         assertEquals(1, result.sent());
     }
 
@@ -237,7 +253,7 @@ public class ApiUserBatchEmailServiceImplTest {
     public void unreachableServerReportsEveryRecipientAsNotSent() {
         subscribers("a@example.com", "b@example.com", "c@example.com");
         admins("admin@example.com");
-        FakeTransport.connectionsAllowed = 0;
+        refuseConnections("a@example.com", "b@example.com", "c@example.com", "admin@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
@@ -254,9 +270,9 @@ public class ApiUserBatchEmailServiceImplTest {
     }
 
     @Test
-    public void refusedRecipientsDoNotRaiseANotification() {
+    public void refusedRecipientsDoNotRaiseANotification() throws Exception {
         subscribers("a@example.com", "b@example.com");
-        FakeTransport.rejected.add("a@example.com");
+        refuse("a@example.com");
 
         service.sendMessage(MESSAGE);
 
@@ -267,33 +283,22 @@ public class ApiUserBatchEmailServiceImplTest {
     public void rejectedCredentialsStopTheBatch() {
         subscribers("a@example.com");
         admins("admin@example.com");
-        FakeTransport.rejectCredentials = true;
+        sender.answer(Outcome.LOGIN_REJECTED, new AuthenticationFailedException("535 Authentication failed"),
+                "a@example.com", "admin@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
         assertEquals(0, result.sent());
         assertEquals(List.of("a@example.com", "admin@example.com"), emails(result.unsent(NOT_SENT)));
         assertEquals("535 Authentication failed", result.unsent().get(0).reason());
-    }
-
-    @Test
-    public void serverLimitOnMessagesPerConnectionDoesNotRefuseTheRest() {
-        subscribers("a@example.com", "b@example.com", "c@example.com");
-        FakeTransport.messagesPerConnection = 1;
-
-        BatchEmailResult result = service.sendMessage(MESSAGE);
-
-        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), FakeTransport.delivered);
-        assertEquals(3, result.sent());
-        assertEquals(List.of(), result.unsent());
+        assertEquals("No further login is tried", List.of("a@example.com"), sender.offered);
     }
 
     @Test
     public void serverThatStopsReplyingStopsTheBatch() {
         subscribers("a@example.com", "b@example.com", "c@example.com", "d@example.com");
         admins("admin@example.com");
-        FakeTransport.unacknowledged.addAll(List.of("a@example.com", "b@example.com", "c@example.com",
-                "d@example.com", "admin@example.com"));
+        timeOut("a@example.com", "b@example.com", "c@example.com", "d@example.com", "admin@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
@@ -301,15 +306,14 @@ public class ApiUserBatchEmailServiceImplTest {
         assertEquals(List.of("d@example.com", "admin@example.com"), emails(result.unsent(NOT_SENT)));
         assertEquals("Stopped after 3 copies in a row failed at the mail server: "
                 + "Exception reading response: Read timed out", result.unsent(NOT_SENT).get(0).reason());
-        assertEquals(3, FakeTransport.connections);
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), sender.offered);
     }
 
     @Test
-    public void replyBetweenUnansweredCopiesKeepsTheBatchGoing() {
+    public void replyBetweenUnansweredCopiesKeepsTheBatchGoing() throws Exception {
         subscribers("a@example.com", "b@example.com", "c@example.com", "d@example.com", "e@example.com");
-        FakeTransport.unacknowledged.addAll(List.of("a@example.com", "b@example.com", "d@example.com",
-                "e@example.com"));
-        FakeTransport.rejected.add("c@example.com");
+        timeOut("a@example.com", "b@example.com", "d@example.com", "e@example.com");
+        refuse("c@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
@@ -322,11 +326,12 @@ public class ApiUserBatchEmailServiceImplTest {
     public void serverLostMidBatchLeavesTheRestNotSent() {
         subscribers("a@example.com", "b@example.com", "c@example.com", "d@example.com", "e@example.com");
         admins("admin@example.com");
-        FakeTransport.connectionsAllowed = 2;
+        refuseConnections("c@example.com", "d@example.com", "e@example.com", "admin@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "b@example.com"), FakeTransport.delivered);
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com", "d@example.com", "e@example.com"),
+                sender.offered);
         assertEquals(2, result.sent());
         assertEquals(List.of("c@example.com", "d@example.com", "e@example.com", "admin@example.com"),
                 emails(result.unsent(NOT_SENT)));
@@ -337,9 +342,9 @@ public class ApiUserBatchEmailServiceImplTest {
     @Test(timeout = 5_000)
     public void causeChainThatLoopsIsDescribedOnce() {
         // MessagingException.getCause() returns the next exception, which may be the exception itself.
-        var looped = new jakarta.mail.MessagingException("Exception reading response");
+        var looped = new MessagingException("Exception reading response");
         looped.setNextException(looped);
-        FakeTransport.thrown.put("admin@example.com", looped);
+        sender.answer(Outcome.SERVER_FAILED, looped, "admin@example.com");
 
         BatchEmailResult result = service.sendTestMessage("admin@example.com", MESSAGE);
 
@@ -351,25 +356,27 @@ public class ApiUserBatchEmailServiceImplTest {
     public void serverRefusingEverySenderStopsTheBatchAndRaisesANotification() {
         subscribers("a@example.com", "b@example.com", "c@example.com", "d@example.com");
         admins("admin@example.com");
-        FakeTransport.refuseSender = true;
+        sender.answer(Outcome.SERVER_FAILED, new SMTPSendFailedException("MAIL FROM:<openleg@example.org>", 530,
+                        "530 5.7.0 Authentication required", null, null, null, null),
+                "a@example.com", "b@example.com", "c@example.com", "d@example.com", "admin@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
         assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), emails(result.unsent(FAILED)));
         assertEquals("530 5.7.0 Authentication required", result.unsent().get(0).reason());
         assertEquals(List.of("d@example.com", "admin@example.com"), emails(result.unsent(NOT_SENT)));
-        assertEquals(3, FakeTransport.connections);
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), sender.offered);
         verify(eventBus).post(any(Notification.class));
     }
 
     @Test
     public void oneFailedConnectionMidBatchDoesNotStopTheRest() {
         subscribers("a@example.com", "b@example.com", "c@example.com");
-        FakeTransport.failedConnectionAttempts.add(2);
+        refuseConnections("b@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "c@example.com"), FakeTransport.delivered);
+        assertEquals(2, result.sent());
         assertEquals(List.of(new UnsentRecipient("b@example.com", NOT_SENT,
                 "Couldn't connect to host: Connection refused")), result.unsent());
     }
@@ -377,13 +384,36 @@ public class ApiUserBatchEmailServiceImplTest {
     @Test
     public void firstFailedConnectionDoesNotStopTheBatch() {
         subscribers("a@example.com", "b@example.com", "c@example.com");
-        FakeTransport.failedConnectionAttempts.add(1);
+        refuseConnections("a@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("b@example.com", "c@example.com"), FakeTransport.delivered);
+        assertEquals(2, result.sent());
         assertEquals(List.of(new UnsentRecipient("a@example.com", NOT_SENT,
                 "Couldn't connect to host: Connection refused")), result.unsent());
+    }
+
+    @Test
+    public void testEmailToAnAddressThatCantBeParsedIsSkippedWithTheReason() {
+        BatchEmailResult result = service.sendTestMessage("not an address", MESSAGE);
+
+        assertEquals(0, result.sent());
+        assertEquals(List.of(new UnsentRecipient("not an address", SKIPPED,
+                "Local address contains control or whitespace")), result.unsent());
+        assertEquals(List.of(), sender.offered);
+    }
+
+    @Test
+    public void copyThatCantBeBuiltIsReportedAsFailedNotAsAnUnusableAddress() {
+        subscribers("a@example.com");
+        // The mail settings are checked before sending, so an unusable sender only stands in for a copy that
+        // can't be built.
+        when(env.getEmailFromAddress()).thenReturn("not an address");
+
+        BatchEmailResult result = service.sendMessage(MESSAGE);
+
+        assertEquals(List.of("a@example.com"), emails(result.unsent(FAILED)));
+        assertEquals(List.of(), sender.offered);
     }
 
     @Test
@@ -391,17 +421,17 @@ public class ApiUserBatchEmailServiceImplTest {
         BatchEmailResult result = service.sendTestMessage("admin@localhost", MESSAGE);
 
         assertEquals(1, result.sent());
-        assertEquals(List.of("admin@localhost"), FakeTransport.delivered);
+        assertEquals(List.of("admin@localhost"), sender.offered);
         assertNull("A test email isn't a batch", service.getStatus());
     }
 
     @Test
-    public void batchStartedInTheBackgroundIsSentAloneAndReportsItsProgress() {
+    public void batchStartedInTheBackgroundIsSentAloneAndReportsItsProgress() throws Exception {
         List<Runnable> tasks = new ArrayList<>();
-        var background = new ApiUserBatchEmailServiceImpl(mailUtils, env, apiUserService, adminUserService, eventBus,
-                tasks::add);
+        var background = new ApiUserBatchEmailServiceImpl(mailUtils, env, sender, apiUserService, adminUserService,
+                eventBus, tasks::add);
         subscribers("a@example.com", "b@example.com");
-        FakeTransport.rejected.add("b@example.com");
+        refuse("b@example.com");
 
         BatchEmailStatus started = background.startMessage(MESSAGE);
 
@@ -411,7 +441,7 @@ public class ApiUserBatchEmailServiceImplTest {
         assertEquals(new BatchEmailResult(0, List.of()), started.result());
         assertThrows(BatchEmailInProgressException.class, () -> background.startMessage(MESSAGE));
         assertThrows(BatchEmailInProgressException.class, () -> background.sendMessage(MESSAGE));
-        assertEquals(List.of(), FakeTransport.delivered);
+        assertEquals(List.of(), sender.offered);
 
         tasks.forEach(Runnable::run);
 
@@ -436,15 +466,15 @@ public class ApiUserBatchEmailServiceImplTest {
             Thread.interrupted();
         }
 
-        assertEquals(List.of(), FakeTransport.delivered);
+        assertEquals(List.of(), sender.offered);
         assertEquals(List.of("a@example.com", "b@example.com"), emails(result.unsent(NOT_SENT)));
         assertEquals("Stopped because the server is shutting down", result.unsent().get(0).reason());
         assertFalse(service.getStatus().running());
     }
 
     @Test
-    public void testMessageFailureGivesTheReason() {
-        FakeTransport.rejected.add("admin@example.com");
+    public void testMessageFailureGivesTheReason() throws Exception {
+        refuse("admin@example.com");
 
         BatchEmailResult result = service.sendTestMessage("admin@example.com", MESSAGE);
 
@@ -454,30 +484,25 @@ public class ApiUserBatchEmailServiceImplTest {
         assertEquals(1, service.sendTestMessage("other@example.com", MESSAGE).sent());
     }
 
-    @Test(timeout = 10_000)
-    public void realSmtpServerThatRefusesConnectionsFinishesPromptly() throws Exception {
-        int port;
-        try (var socket = new java.net.ServerSocket(0, 1, java.net.InetAddress.getLoopbackAddress())) {
-            port = socket.getLocalPort();
+    /** The mail server refuses copies to these recipients, as it would an unknown mailbox. */
+    private void refuse(String... recipients) throws AddressException {
+        for (String recipient : recipients) {
+            sender.answer(Outcome.REFUSED, new SendFailedException("Invalid Addresses",
+                    new SMTPAddressFailedException(new InternetAddress(recipient), "RCPT TO:<" + recipient + ">", 451,
+                            "451 4.3.0 Mailbox temporarily unavailable")), recipient);
         }
-        var properties = new Properties();
-        properties.put("mail.smtp.host", "127.0.0.1");
-        properties.put("mail.smtp.port", String.valueOf(port));
-        // Bounded even if another process takes the freed port and never answers.
-        properties.put("mail.smtp.connectiontimeout", "2000");
-        properties.put("mail.smtp.timeout", "2000");
-        when(mailUtils.getSmtpSession()).thenReturn(Session.getInstance(properties));
-        var unreachable = new ApiUserBatchEmailServiceImpl(mailUtils, env, apiUserService, adminUserService, eventBus);
-        subscribers("a@example.com", "b@example.com");
+    }
 
-        long start = System.nanoTime();
-        BatchEmailResult result = unreachable.sendMessage(MESSAGE);
+    /** The mail server doesn't reply in time to copies to these recipients. */
+    private void timeOut(String... recipients) {
+        sender.answer(Outcome.SERVER_FAILED, new MessagingException("Exception reading response",
+                new SocketTimeoutException("Read timed out")), recipients);
+    }
 
-        assertTrue(java.time.Duration.ofNanos(System.nanoTime() - start).toSeconds() < 5);
-        assertEquals(0, result.sent());
-        assertEquals(List.of("a@example.com", "b@example.com"), emails(result.unsent(NOT_SENT)));
-        String reason = result.unsent().get(0).reason();
-        assertTrue(reason, reason.startsWith("Couldn't connect to host, port: 127.0.0.1, " + port));
+    /** Connections for copies to these recipients are refused. */
+    private void refuseConnections(String... recipients) {
+        sender.answer(Outcome.NOT_CONNECTED, new MessagingException("Couldn't connect to host",
+                new ConnectException("Connection refused")), recipients);
     }
 
     private void subscribers(String... emails) {
@@ -529,5 +554,36 @@ public class ApiUserBatchEmailServiceImplTest {
 
     private static int occurrences(String text, String target) {
         return text.split(java.util.regex.Pattern.quote(target), -1).length - 1;
+    }
+
+    /**
+     * Builds messages as the real sender does but sends none: each copy gets the answer set for its recipient,
+     * or is accepted. How the real sender answers is tested against an SMTP server in MimeSendMailServiceSmtpTest.
+     */
+    private static class ScriptedSender extends MimeSendMailService {
+        private final Map<String, SendResult> answers = new HashMap<>();
+        /** The recipient of each copy offered to the mail server, in order. */
+        final List<String> offered = new ArrayList<>();
+
+        ScriptedSender(MailUtils mailUtils, OpenLegEnvironment env) {
+            super(mailUtils, env);
+        }
+
+        void answer(Outcome outcome, Exception cause, String... recipients) {
+            for (String recipient : recipients) {
+                answers.put(recipient, new SendResult(outcome, cause));
+            }
+        }
+
+        @Override
+        public SendResult trySend(MimeMessage message) {
+            try {
+                String recipient = message.getAllRecipients()[0].toString();
+                offered.add(recipient);
+                return answers.getOrDefault(recipient, SendResult.SENT);
+            } catch (MessagingException ex) {
+                throw new AssertionError(ex);
+            }
+        }
     }
 }

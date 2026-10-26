@@ -26,7 +26,6 @@ export default function BatchEmail({ setHeaderText }) {
   const [ report, setReport ] = React.useState(null)
   const [ statusError, setStatusError ] = React.useState("")
   const [ isSending, setIsSending ] = React.useState(false)
-  const sending = React.useRef(false)
   const isRunning = report?.running === true
   const busy = isSending || isRunning
 
@@ -56,12 +55,7 @@ export default function BatchEmail({ setHeaderText }) {
   }, [ isRunning ])
 
   const sendEmail = () => {
-    // A second click must not send the email again. The ref also covers clicks that arrive before the
-    // disabled buttons are rendered.
-    if (sending.current) {
-      return
-    }
-    sending.current = true
+    // The send buttons are disabled until the request finishes, so a second click can't send the email again.
     setIsSending(true)
     setErrorMsg("")
     setStatusError("")
@@ -88,7 +82,6 @@ export default function BatchEmail({ setHeaderText }) {
         }
       })
       .finally(() => {
-        sending.current = false
         setIsSending(false)
         setIsConfirmationDialogOpen(false)
       })
