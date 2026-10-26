@@ -159,15 +159,14 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     /**
      * Builds and sends each recipient's copy separately, recording each outcome in the batch as it happens.
      * An address that can't be used is skipped, and a copy the mail server refuses is recorded as failed; neither
-     * affects the other recipients. If the mail server rejects the credentials, can't be reached at first, or fails
-     * several copies in a row for reasons that aren't about their recipients, the rest are not sent; nor are they
+     * affects the other recipients. If the mail server rejects the credentials, or fails several copies in a row for
+     * reasons that aren't about their recipients, such as failed connections, the rest are not sent; nor are they
      * if the thread is interrupted, as when the server shuts down.
      * @param checkAddresses whether to skip addresses that fail {@link EmailValidator}; unparseable ones
      *                       are always skipped
      */
     private void send(Batch batch, boolean checkAddresses) {
         ApiUserMessage message = batch.message;
-        boolean connected = false;
         int serverFailuresInARow = 0;
         String stopReason = null;
         try {
@@ -206,19 +205,17 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
                     unsent(batch, email, status, describe(sendResult.cause()));
                 }
 
-                if (outcome == Outcome.LOGIN_REJECTED || outcome == Outcome.NOT_CONNECTED && !connected) {
-                    // Rejected credentials or a server that was never reachable won't work for anyone. A failed
-                    // connection mid-batch, such as a reset handshake, only counts toward the failures in a row.
+                if (outcome == Outcome.LOGIN_REJECTED) {
+                    // Rejected credentials won't work for anyone, and every further try is another failed login.
                     stopReason = describe(sendResult.cause());
                 } else if (outcome == Outcome.SENT || outcome == Outcome.REFUSED) {
                     serverFailuresInARow = 0;
                 } else if (++serverFailuresInARow == MAX_SERVER_FAILURES_IN_A_ROW) {
-                    // Such as a server that stopped answering or refuses every sender; the rest would fail
-                    // the same way.
+                    // Such as a server that can't be reached, stopped answering or refuses every sender; the rest
+                    // would fail the same way. A single failure, such as a reset connection, doesn't stop the batch.
                     stopReason = "Stopped after " + MAX_SERVER_FAILURES_IN_A_ROW
                             + " copies in a row failed at the mail server: " + describe(sendResult.cause());
                 }
-                connected |= outcome != Outcome.NOT_CONNECTED;
             }
         } finally {
             // Even if sending failed unexpectedly, so that another batch can be sent.

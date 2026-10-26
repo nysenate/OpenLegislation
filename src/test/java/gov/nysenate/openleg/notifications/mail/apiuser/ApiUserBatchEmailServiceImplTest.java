@@ -236,19 +236,22 @@ public class ApiUserBatchEmailServiceImplTest {
 
     @Test
     public void unreachableServerReportsEveryRecipientAsNotSent() {
-        subscribers("a@example.com", "b@example.com");
+        subscribers("a@example.com", "b@example.com", "c@example.com");
         admins("admin@example.com");
         FakeTransport.connectionsAllowed = 0;
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
         assertEquals(0, result.sent());
-        assertEquals(List.of("a@example.com", "b@example.com", "admin@example.com"), emails(result.unsent(NOT_SENT)));
-        assertEquals("Couldn't connect to host: Connection refused", result.unsent().get(0).reason());
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com", "admin@example.com"),
+                emails(result.unsent(NOT_SENT)));
+        String refused = "Couldn't connect to host: Connection refused";
+        assertEquals(List.of(refused, refused, refused,
+                "Stopped after 3 copies in a row failed at the mail server: " + refused), reasons(result.unsent()));
         var notification = ArgumentCaptor.forClass(Notification.class);
         verify(eventBus).post(notification.capture());
         assertEquals(NotificationType.REQUEST_EXCEPTION, notification.getValue().getNotificationType());
-        assertEquals("Batch email \"Subject\" not sent to 3 of 3 recipients", notification.getValue().getSummary());
+        assertEquals("Batch email \"Subject\" not sent to 4 of 4 recipients", notification.getValue().getSummary());
     }
 
     @Test
@@ -400,15 +403,15 @@ public class ApiUserBatchEmailServiceImplTest {
     }
 
     @Test
-    public void firstFailedConnectionStopsTheBatch() {
+    public void firstFailedConnectionDoesNotStopTheBatch() {
         subscribers("a@example.com", "b@example.com", "c@example.com");
         FakeTransport.failedConnectionAttempts.add(1);
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of(), FakeTransport.delivered);
-        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), emails(result.unsent(NOT_SENT)));
-        assertEquals(0, FakeTransport.connections);
+        assertEquals(List.of("b@example.com", "c@example.com"), FakeTransport.delivered);
+        assertEquals(List.of(new UnsentRecipient("a@example.com", NOT_SENT,
+                "Couldn't connect to host: Connection refused")), result.unsent());
     }
 
     @Test
@@ -525,6 +528,10 @@ public class ApiUserBatchEmailServiceImplTest {
 
     private static List<String> emails(List<UnsentRecipient> recipients) {
         return recipients.stream().map(UnsentRecipient::email).toList();
+    }
+
+    private static List<String> reasons(List<UnsentRecipient> recipients) {
+        return recipients.stream().map(UnsentRecipient::reason).toList();
     }
 
     /** Serializes and re-parses the message, as a recipient would receive it. */
