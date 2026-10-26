@@ -179,7 +179,8 @@ export default function BatchEmail({ setHeaderText }) {
         <RowData>
           <textarea className="textarea w-10/12 h-96" value={body} onChange={e => setBody(e.target.value)} />
           <p className="mt-1 italic">
-            Write plain text. Leave a blank line between paragraphs; links starting with http:// or https://
+            Write plain text. Leave a blank line between paragraphs. Wrap text in <code>**double asterisks**</code> to
+            make it bold, or in <code>`backticks`</code> to show it verbatim. Links starting with http:// or https://
             become clickable. The signature and subscription preferences link are added automatically.
           </p>
         </RowData>
