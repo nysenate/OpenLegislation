@@ -71,9 +71,9 @@ public class AdminApiEmailCtrl extends BaseCtrl {
      *  --------------------------
      *
      *  The batch email being sent, or the last one sent since the server started (BatchEmailStatusView): the
-     *  number of recipients, the number of copies sent so far, and each recipient so far that was skipped, failed,
-     *  unconfirmed or not sent, with the reason. Test emails aren't included. There is no result if no batch email
-     *  has been sent since the server started. Must be called by an admin.
+     *  number of recipients, the number of copies sent so far, and each recipient so far that was skipped, failed
+     *  or not sent, with the reason. Test emails aren't included. There is no result if no batch email has been
+     *  sent since the server started. Must be called by an admin.
      *
      *  (GET) /api/3/admin/email/batchEmail
      */

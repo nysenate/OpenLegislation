@@ -32,7 +32,6 @@ import java.util.Properties;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.FAILED;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.NOT_SENT;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.SKIPPED;
-import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.UNCONFIRMED;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -221,14 +220,14 @@ public class ApiUserBatchEmailServiceImplTest {
     }
 
     @Test
-    public void unacknowledgedCopyIsNotReportedAsRejected() {
+    public void copyTheServerNeverConfirmedIsReportedAsFailedWithTheReason() {
         subscribers("a@example.com", "b@example.com");
         FakeTransport.unacknowledged.add("a@example.com");
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        // The server may have delivered it, so the admin must not be told it was rejected.
-        assertEquals(List.of(new UnsentRecipient("a@example.com", UNCONFIRMED,
+        // The reason, unlike a refusal's, tells the admin it may still have been delivered.
+        assertEquals(List.of(new UnsentRecipient("a@example.com", FAILED,
                 "Exception reading response: Read timed out")), result.unsent());
         assertEquals(List.of("a@example.com", "b@example.com"), FakeTransport.delivered);
         assertEquals(1, result.sent());
@@ -298,7 +297,7 @@ public class ApiUserBatchEmailServiceImplTest {
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), emails(result.unsent(UNCONFIRMED)));
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com"), emails(result.unsent(FAILED)));
         assertEquals(List.of("d@example.com", "admin@example.com"), emails(result.unsent(NOT_SENT)));
         assertEquals("Stopped after 3 copies in a row failed at the mail server: "
                 + "Exception reading response: Read timed out", result.unsent(NOT_SENT).get(0).reason());
@@ -314,9 +313,8 @@ public class ApiUserBatchEmailServiceImplTest {
 
         BatchEmailResult result = service.sendMessage(MESSAGE);
 
-        assertEquals(List.of("a@example.com", "b@example.com", "d@example.com", "e@example.com"),
-                emails(result.unsent(UNCONFIRMED)));
-        assertEquals(List.of("c@example.com"), emails(result.unsent(FAILED)));
+        assertEquals(List.of("a@example.com", "b@example.com", "c@example.com", "d@example.com", "e@example.com"),
+                emails(result.unsent(FAILED)));
         assertEquals(List.of(), result.unsent(NOT_SENT));
     }
 
@@ -347,32 +345,6 @@ public class ApiUserBatchEmailServiceImplTest {
 
         assertEquals(List.of(new UnsentRecipient("admin@example.com", FAILED, "Exception reading response")),
                 result.unsent());
-    }
-
-    @Test
-    public void connectionClosedAfterTheWholeMessageIsUnconfirmed() {
-        subscribers("a@example.com", "b@example.com");
-        FakeTransport.closedAfterData.add("a@example.com");
-
-        BatchEmailResult result = service.sendMessage(MESSAGE);
-
-        // The server may have queued it before closing, so resending could duplicate it.
-        assertEquals(List.of(new UnsentRecipient("a@example.com", UNCONFIRMED, "[EOF]")), result.unsent());
-        assertEquals(1, result.sent());
-    }
-
-    @Test
-    public void noReplyBeforeTheMessageWasSentIsNotDelivered() {
-        subscribers("a@example.com", "b@example.com");
-        FakeTransport.thrown.put("a@example.com", new jakarta.mail.MessagingException("Exception reading response",
-                new java.net.SocketTimeoutException("Read timed out")));
-
-        BatchEmailResult result = service.sendMessage(MESSAGE);
-
-        // Such as a timeout waiting for the RCPT TO reply: the server can't have the message.
-        assertEquals(List.of(new UnsentRecipient("a@example.com", FAILED,
-                "Exception reading response: Read timed out")), result.unsent());
-        assertEquals(1, result.sent());
     }
 
     @Test

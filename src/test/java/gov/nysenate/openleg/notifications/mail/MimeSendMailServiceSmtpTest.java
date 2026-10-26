@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Sends through the real Angus SMTP transport to a scripted server on the loopback interface,
- * since whether a failure is unconfirmed depends on how far the transport got.
+ * since each outcome depends on the exception the transport throws at that point of the conversation.
  */
 @Category(UnitTest.class)
 public class MimeSendMailServiceSmtpTest {
@@ -73,10 +73,10 @@ public class MimeSendMailServiceSmtpTest {
     }
 
     @Test(timeout = 10_000)
-    public void connectionClosedAfterTheWholeMessageIsUnconfirmed() throws Exception {
+    public void connectionClosedAfterTheWholeMessageIsAServerFailure() throws Exception {
         SendResult result = send(Script.CLOSE_AFTER_DATA);
 
-        assertEquals(Outcome.UNCONFIRMED, result.outcome());
+        assertEquals(Outcome.SERVER_FAILED, result.outcome());
         assertEquals("[EOF]", result.cause().getMessage().strip());
     }
 

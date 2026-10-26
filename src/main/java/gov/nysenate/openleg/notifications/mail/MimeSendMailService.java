@@ -20,8 +20,6 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.Set;
 
@@ -78,12 +76,11 @@ public class MimeSendMailService implements SendMailService {
 
     /**
      * {@inheritDoc}
-     * The message is prepared as Spring's send prepares it. Spring's send isn't used because its exceptions don't
-     * say how far the message got.
+     * The message is prepared as Spring's send prepares it. Spring's send isn't used because it reports a connection
+     * that fails to close as a failed send, even after the mail server accepted the message.
      */
     @Override
     public SendResult trySend(MimeMessage message) {
-        TrackedCopy copy;
         Address[] recipients;
         try {
             if (message.getSentDate() == null) {
@@ -95,7 +92,6 @@ public class MimeSendMailService implements SendMailService {
                 // saveChanges replaces it; keep one the caller set, as Spring does.
                 message.setHeader("Message-ID", messageId);
             }
-            copy = new TrackedCopy(message);
             recipients = message.getAllRecipients();
         } catch (Exception ex) {
             return new SendResult(Outcome.REFUSED, ex);
@@ -109,17 +105,13 @@ public class MimeSendMailService implements SendMailService {
                 return new SendResult(ex instanceof AuthenticationFailedException
                         ? Outcome.LOGIN_REJECTED : Outcome.NOT_CONNECTED, ex);
             }
-            transport.sendMessage(copy, recipients == null ? new Address[0] : recipients);
+            transport.sendMessage(message, recipients == null ? new Address[0] : recipients);
             return SendResult.SENT;
         } catch (Exception ex) {
             int reply = replyCode(ex);
-            if (reply <= 0) {
-                // Without a reply to a message sent in full, the server may have queued it.
-                return new SendResult(copy.written ? Outcome.UNCONFIRMED : Outcome.SERVER_FAILED, ex);
-            }
-            boolean serverWide = SERVER_WIDE_REPLIES.contains(reply)
+            boolean serverFailed = reply <= 0 || SERVER_WIDE_REPLIES.contains(reply)
                     || ex instanceof SMTPSendFailedException sfe && String.valueOf(sfe.getCommand()).startsWith("MAIL");
-            return new SendResult(serverWide ? Outcome.SERVER_FAILED : Outcome.REFUSED, ex);
+            return new SendResult(serverFailed ? Outcome.SERVER_FAILED : Outcome.REFUSED, ex);
         } finally {
             close(transport);
         }
@@ -136,24 +128,6 @@ public class MimeSendMailService implements SendMailService {
             }
         }
         return 0;
-    }
-
-    /**
-     * A copy of a message that records whether the transport wrote it out in full. Only then can the server
-     * have received the end of the message, so a failure before that means it wasn't delivered.
-     */
-    private static final class TrackedCopy extends MimeMessage {
-        private boolean written;
-
-        TrackedCopy(MimeMessage source) throws MessagingException {
-            super(source);
-        }
-
-        @Override
-        public void writeTo(OutputStream os, String[] ignoreList) throws IOException, MessagingException {
-            super.writeTo(os, ignoreList);
-            written = true;
-        }
     }
 
     private static void close(Transport transport) {

@@ -250,8 +250,7 @@ function ConfirmationModal({ isOpen, setIsOpen, onConfirm, isSending, testMode }
 
 const UNSENT_TITLES = {
   SKIPPED: "Skipped: the stored address can't be used",
-  FAILED: "Failed: not delivered",
-  UNCONFIRMED: "Unconfirmed: the mail server didn't confirm it, so it may have been delivered",
+  FAILED: "Failed: not confirmed as delivered",
   NOT_SENT: "Not sent: the mail server couldn't be reached, rejected the login or stopped replying",
 }
 
@@ -278,18 +277,13 @@ function SendReport({ report }) {
   }
   // Only if sending stopped unexpectedly, such as when the server restarted.
   const untried = recipients - sent - unsent.length
-  const unconfirmed = withStatus("UNCONFIRMED").length
-  const duplicates = [
-    sent > 0 && `the ${plural(sent, "recipient")} who got it`,
-    unconfirmed > 0 && `possibly the ${unconfirmed} unconfirmed`,
-  ].filter(Boolean)
   return (
     <div>
       <ErrorMessage>
         {message}. {plural(recipients - sent, "recipient")} may not
         have got this email, and nothing is retried automatically.
         {untried > 0 && ` Sending stopped before ${plural(untried, "recipient")} could be tried; check the server log.`}
-        {duplicates.length > 0 && ` Sending again would also send it again to ${duplicates.join(" and ")}.`}
+        {sent > 0 && ` Sending again would also send it again to the ${plural(sent, "recipient")} who got it.`}
       </ErrorMessage>
       {unsentLists}
     </div>

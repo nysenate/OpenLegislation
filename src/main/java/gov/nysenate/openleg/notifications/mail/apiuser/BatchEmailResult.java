@@ -12,11 +12,10 @@ public record BatchEmailResult(int sent, List<UnsentRecipient> unsent) {
     public enum Status {
         /** The stored address can't be used, so no copy was attempted. */
         SKIPPED,
-        /** The mail server refused the copy or stopped replying before it was sent in full, or it could not be
-         *  prepared; not delivered. */
+        /** The mail server refused the copy or didn't confirm it, or it could not be prepared. A copy the server
+         *  didn't confirm may still have been delivered; its reason is a timeout or a closed connection rather
+         *  than the server's reply. */
         FAILED,
-        /** Sent in full but never confirmed by the mail server, so it may have been delivered. */
-        UNCONFIRMED,
         /** Never attempted, because the mail server could not be reached, rejected the credentials
          *  or had failed several copies in a row. */
         NOT_SENT

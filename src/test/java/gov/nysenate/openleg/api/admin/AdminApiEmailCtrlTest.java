@@ -26,7 +26,6 @@ import static gov.nysenate.openleg.api.CtrlTestSupport.json;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.FAILED;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.NOT_SENT;
 import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.SKIPPED;
-import static gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status.UNCONFIRMED;
 import static gov.nysenate.openleg.api.CtrlTestSupport.mockMvc;
 import static gov.nysenate.openleg.api.CtrlTestSupport.ok;
 import static org.junit.Assert.assertEquals;
@@ -82,7 +81,7 @@ public class AdminApiEmailCtrlTest {
         when(service.getStatus()).thenReturn(new BatchEmailStatus("Subject", 6, new BatchEmailResult(2, List.of(
                 new UnsentRecipient("bad address@example.com", SKIPPED, "Not a valid email address"),
                 new UnsentRecipient("b@example.com", FAILED, "451 Rejected"),
-                new UnsentRecipient("c@example.com", UNCONFIRMED, "Read timed out"),
+                new UnsentRecipient("c@example.com", FAILED, "Read timed out"),
                 new UnsentRecipient(null, NOT_SENT, "Connection refused"))), STARTED, STARTED.plusMinutes(9)));
 
         JsonNode body = ok(mvc, "/api/3/admin/email/batchEmail");
@@ -96,7 +95,7 @@ public class AdminApiEmailCtrlTest {
         assertEquals("SKIPPED", result.at("/unsent/0/status").asText());
         assertEquals("Not a valid email address", result.at("/unsent/0/reason").asText());
         assertEquals("FAILED", result.at("/unsent/1/status").asText());
-        assertEquals("UNCONFIRMED", result.at("/unsent/2/status").asText());
+        assertEquals("FAILED", result.at("/unsent/2/status").asText());
         assertTrue(result.at("/unsent/3/email").isNull());
         assertEquals("NOT_SENT", result.at("/unsent/3/status").asText());
         assertEquals("Connection refused", result.at("/unsent/3/reason").asText());

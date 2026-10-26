@@ -196,7 +196,6 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
                 Status status = switch (outcome) {
                     case SENT -> null;
                     case REFUSED, SERVER_FAILED -> Status.FAILED;
-                    case UNCONFIRMED -> Status.UNCONFIRMED;
                     case NOT_CONNECTED, LOGIN_REJECTED -> Status.NOT_SENT;
                 };
                 if (status == null) {
@@ -232,9 +231,9 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
     private void log(ApiUserMessage message, BatchEmailResult result) {
         List<UnsentRecipient> notSent = result.unsent(Status.NOT_SENT);
-        logger.info("Batch email \"{}\": {} sent, {} skipped, {} failed, {} unconfirmed, {} not sent",
+        logger.info("Batch email \"{}\": {} sent, {} skipped, {} failed, {} not sent",
                 message.getSubject(), result.sent(), result.unsent(Status.SKIPPED).size(),
-                result.unsent(Status.FAILED).size(), result.unsent(Status.UNCONFIRMED).size(), notSent.size());
+                result.unsent(Status.FAILED).size(), notSent.size());
         if (!notSent.isEmpty()) {
             // Such as a mail server that is down or misconfigured, which the page alone wouldn't bring to anyone's
             // attention.
