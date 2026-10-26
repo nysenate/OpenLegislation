@@ -124,3 +124,10 @@ those are missing.
 - Processors: `Xml*Processor.java` for XML data handlers
 - Search: `Elastic*SearchService.java`
 - Unit tests: `*Test.java`; integration tests: `*IT.java`
+
+## Git Commit Messages
+
+- Subject: imperative mood ("Add", "Fix"), at most 50 characters, capitalized, no trailing period
+- Blank line, then a body wrapped at 72 characters
+- The body explains what changed and why: the problem, the motivation, the user-visible effect. Leave out how: the diff shows the implementation, so don't narrate code, functions or steps taken
+- Skip the body only for trivial changes where the subject says it all
