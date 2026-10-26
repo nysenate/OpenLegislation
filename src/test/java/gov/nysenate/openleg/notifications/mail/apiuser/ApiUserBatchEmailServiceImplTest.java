@@ -156,12 +156,76 @@ public class ApiUserBatchEmailServiceImplTest {
     }
 
     @Test
+    public void linkStopsBeforeBoldMarkersThatDontPairUp() {
+        // Markers pair up within a line, so these are shown as typed and must stay out of the link.
+        String html = service.renderHtml("**Read the guide:\nhttps://example.org/guide**", null);
+        assertTrue(html, html.contains("<a href=\"https://example.org/guide\">https://example.org/guide</a>**</p>"));
+    }
+
+    @Test
     public void closingParenthesisIsKeptWhenTheUrlOpenedIt() {
         String html = service.renderHtml("See https://en.wikipedia.org/wiki/Bill_(law). Or "
                 + "(https://en.wikipedia.org/wiki/Bill_(law)).", null);
         String link = "<a href=\"https://en.wikipedia.org/wiki/Bill_(law)\">https://en.wikipedia.org/wiki/Bill_(law)</a>";
         assertTrue(html, html.contains("See " + link + ". "));
         assertTrue(html, html.contains("(" + link + ")."));
+    }
+
+    @Test
+    public void doubleAsterisksMakeTextBoldAndBackticksShowItVerbatim() throws Exception {
+        String body = "**Retired:** the `full` option. Use `summary=true` instead.";
+        var message = new ApiUserMessage(ApiUserSubscriptionType.BREAKING_CHANGES, "Subject", body);
+        Multipart parts =
+                parts(receive(service.getMimeMessage(message, new InternetAddress("user@example.com"), null)));
+
+        String plain = content(parts, 0);
+        assertTrue(plain, plain.startsWith(body + "\n\n"));
+        String html = withoutStyles(content(parts, 1));
+        assertTrue(html, html.contains("<p><strong>Retired:</strong> the <code>full</code> option. "
+                + "Use <code>summary=true</code> instead.</p>"));
+    }
+
+    @Test
+    public void verbatimTextIsShownExactlyAsTyped() {
+        String html = withoutStyles(service.renderHtml("`<b>**not bold** https://example.org & co</b>`", null));
+        assertTrue(html, html.contains(
+                "<p><code>&lt;b&gt;**not bold** https://example.org &amp; co&lt;/b&gt;</code></p>"));
+    }
+
+    @Test
+    public void verbatimTextKeepsRunsOfSpaces() {
+        // The spaces are in the HTML either way; a mail client only shows them if the element keeps white space.
+        String html = service.renderHtml("Aligned: `a  b`", null);
+        assertTrue(html, html.matches("(?s).*<code style=\"[^\"]*white-space:pre-wrap;[^\"]*\">a  b</code>.*"));
+    }
+
+    @Test
+    public void boldTextCanHoldVerbatimTextAndLinks() {
+        String html = withoutStyles(service.renderHtml(
+                "**Use `summary=true` & <b>, see https://example.org/a.** Then **`a**b` and more**", null));
+        assertTrue(html, html.contains("<p><strong>Use <code>summary=true</code> &amp; &lt;b&gt;, see "
+                + "<a href=\"https://example.org/a\">https://example.org/a</a>.</strong> Then "
+                + "<strong><code>a**b</code> and more</strong></p>"));
+    }
+
+    @Test
+    public void nonBreakingSpacesCountAsSpacesNextToBoldMarkers() {
+        String html = withoutStyles(service.renderHtml("A ** spaced ** pair", null));
+        assertTrue(html, html.contains("<p>A ** spaced ** pair</p>"));
+    }
+
+    @Test
+    public void asterisksInVerbatimTextCantEndBoldText() {
+        String html = withoutStyles(service.renderHtml("**Opened `a**b` but never closed", null));
+        assertTrue(html, html.contains("<p>**Opened <code>a**b</code> but never closed</p>"));
+    }
+
+    @Test
+    public void markersWithoutAPartnerOnTheSameLineAreShownAsTyped() {
+        String html = withoutStyles(service.renderHtml(
+                "Opened **here\nclosed** there, `unclosed, and ** spaced **\nA stray **marker before **bold**", null));
+        assertTrue(html, html.contains("<p>Opened **here<br>\nclosed** there, `unclosed, and ** spaced **<br>\n"
+                + "A stray **marker before <strong>bold</strong></p>"));
     }
 
     @Test
@@ -550,6 +614,11 @@ public class ApiUserBatchEmailServiceImplTest {
     private static String content(Multipart parts, int index) throws Exception {
         // Line breaks travel as CRLF.
         return ((String) parts.getBodyPart(index).getContent()).replace("\r\n", "\n");
+    }
+
+    /** Drops inline styles, so a test can check the structure of the HTML without its look. */
+    private static String withoutStyles(String html) {
+        return html.replaceAll(" style=\"[^\"]*\"", "");
     }
 
     private static int occurrences(String text, String target) {

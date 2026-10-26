@@ -308,7 +308,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     /**
      * Renders the plain-text body as an HTML document followed by the footer.
      * The text is escaped, blank lines separate paragraphs, single newlines become line breaks,
-     * and http(s) URLs become links.
+     * and each line gets its bold text, verbatim text and links (see {@link #formatLine}).
      * @param body String
      * @param subscriptionUrl String @Nullable, the recipient's preferences page; omitted for admin copies
      * @return String
@@ -325,7 +325,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
                     if (i > 0) {
                         html.append("<br>\n");
                     }
-                    html.append(linkify(lines[i]));
+                    html.append(formatLine(lines[i]));
                 }
                 html.append("</p>\n");
             }
@@ -466,20 +466,42 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         return body == null ? "" : body.replace("\r\n", "\n").replace('\r', '\n').strip();
     }
 
-    /** Escapes one line of text and turns the http(s) URLs in it into links. */
-    private static String linkify(String line) {
+    /**
+     * Escapes one line of text and formats it as in Markdown: text between backticks is shown verbatim,
+     * in a monospace font, text between double asterisks is bold, and http(s) URLs elsewhere become links.
+     * Bold text may hold verbatim text and links, but no more bold text. Markers pair up within the line,
+     * and one without a partner is shown as typed, as are double asterisks next to a space on the inside.
+     */
+    private static String formatLine(String line) {
         StringBuilder html = new StringBuilder();
-        Matcher matcher = URL.matcher(line);
+        Matcher matcher = VERBATIM_OR_BOLD.matcher(line);
+        int last = 0;
+        while (matcher.find()) {
+            html.append(linkify(line.substring(last, matcher.start())));
+            if (matcher.group("verbatim") != null) {
+                html.append(VERBATIM_TAG).append(escape(matcher.group("verbatim"))).append("</code>");
+            } else {
+                html.append("<strong>").append(formatLine(matcher.group("bold"))).append("</strong>");
+            }
+            last = matcher.end();
+        }
+        return html.append(linkify(line.substring(last))).toString();
+    }
+
+    /** Escapes text and turns the http(s) URLs in it into links. */
+    private static String linkify(String text) {
+        StringBuilder html = new StringBuilder();
+        Matcher matcher = URL.matcher(text);
         int last = 0;
         while (matcher.find()) {
             String url = trimTrailingPunctuation(matcher.group());
             int end = matcher.start() + url.length();
-            html.append(escape(line.substring(last, matcher.start())))
+            html.append(escape(text.substring(last, matcher.start())))
                     .append("<a href=\"").append(escape(url)).append("\">")
                     .append(escape(url)).append("</a>");
             last = end;
         }
-        return html.append(escape(line.substring(last))).toString();
+        return html.append(escape(text.substring(last))).toString();
     }
 
     /**
@@ -523,7 +545,26 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
 
     private static final Pattern URL = Pattern.compile("https?://[^\\s<>\"]+");
 
-    private static final String TRAILING_PUNCTUATION = ".,;:!?]'";
+    /** Also asterisks: after a URL, they are bold markers that didn't pair up. */
+    private static final String TRAILING_PUNCTUATION = ".,;:!?]'*";
+
+    /**
+     * Text between backticks, or text between double asterisks that neither starts nor ends with a space,
+     * which includes Unicode spaces such as the non-breaking space. Bold text takes text between backticks
+     * whole, so asterisks in it can't end the bold text, and it ends before any double asterisks that could
+     * start bold text, so a closing marker pairs with the nearest opening one. That also keeps matching a line
+     * linear in its length.
+     */
+    private static final Pattern VERBATIM_OR_BOLD = Pattern.compile(
+            "`(?<verbatim>[^`]+)`|\\*\\*(?=\\S)(?<bold>(?>`[^`]+`|(?!\\*\\*\\S).)+?)(?<=\\S)\\*\\*",
+            Pattern.UNICODE_CHARACTER_CLASS);
+
+    /**
+     * Keeps runs of spaces, and sets a text colour along with the background, so that a mail client
+     * recolouring text for dark mode can't leave light text on the light background.
+     */
+    private static final String VERBATIM_TAG = "<code style=\"font-family:Consolas,'Courier New',monospace;"
+            + "color:#222222;background:#f2f2f2;padding:0 2px;white-space:pre-wrap;\">";
 
     /** Uses a table rather than flexbox, which many email clients don't support. */
     private static final String SIGNATURE_HTML = """
