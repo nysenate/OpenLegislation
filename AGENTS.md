@@ -30,7 +30,7 @@ mvn -Dit.test=DatabaseConfigIT integration-test
 # Frontend (from src/main/webapp/)
 npm ci          # install deps, then a production build via postinstall
 npm run build   # production webpack build
-npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080)
+npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080; set OL_IP to use another address)
 ```
 
 The `integration-test` phase runs Flyway twice beforehand: once against the main database
