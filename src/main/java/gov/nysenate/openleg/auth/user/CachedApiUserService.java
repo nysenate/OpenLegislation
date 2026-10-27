@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,10 +56,7 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
     /** {@inheritDoc} */
     @Override
     public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions) {
-        Pattern emailRegex = Pattern.compile("^[a-zA-Z\\d-._]+@[a-zA-Z\\d-._]+.[a-zA-Z]{2,4}$");
-        Matcher patternMatcher = emailRegex.matcher(email);
-
-        if (!patternMatcher.find())
+        if (!ApiUserEmailRules.isValid(email))
             throw new IllegalArgumentException("Invalid email address format used used in registration attempt!");
 
         try {

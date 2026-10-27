@@ -2,6 +2,7 @@ package gov.nysenate.openleg.notifications.mail.apiuser;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.auth.model.ApiUser;
+import gov.nysenate.openleg.auth.user.ApiUserEmailRules;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.common.util.MailUtils;
@@ -16,7 +17,6 @@ import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.Status;
 import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailResult.UnsentRecipient;
 import gov.nysenate.openleg.notifications.model.Notification;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,6 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private final ApiUserService apiUserService;
     private final EventBus eventBus;
     private final Executor executor;
-    private final EmailValidator validator = EmailValidator.getInstance();
 
     /** The batch email being sent, or the last one sent since startup; null before the first. */
     private volatile Batch current;
@@ -142,17 +141,17 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         }
 
         // Sorted by address, so that reports are reproducible.
-        List<Recipient> recipients = users.stream().map(this::stored)
+        List<Recipient> recipients = users.stream().map(ApiUserBatchEmailServiceImpl::stored)
                 .sorted(BY_EMAIL).toList();
         current = new Batch(message, recipients);
         logger.info("Batch email \"{}\" started for {} recipients", message.getSubject(), recipients.size());
         return current;
     }
 
-    /** The recipient for a subscriber, whose stored address must pass {@link EmailValidator} as well as parse. */
-    private Recipient stored(ApiUser user) {
+    /** The recipient for a subscriber, whose stored address must be valid as well as parse. */
+    private static Recipient stored(ApiUser user) {
         String email = user.getEmail();
-        return validator.isValid(email) ? parsed(email, user) : new Skipped(email, "Not a valid email address");
+        return ApiUserEmailRules.isValid(email) ? parsed(email, user) : new Skipped(email, "Not a valid email address");
     }
 
     /** The recipient for an address, which is skipped if it can't be parsed. */
