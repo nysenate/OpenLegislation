@@ -8,9 +8,9 @@
         <param-value>dev</param-value>
     </context-param>
 
-	<mime-mapping>
-		<extension>ico</extension>
-		<mime-type>image/x-icon</mime-type>
-	</mime-mapping>
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/x-icon</mime-type>
+    </mime-mapping>
 
 </web-app>
