@@ -231,7 +231,10 @@ function ConfirmationModal({ isOpen, setIsOpen, onConfirm, isSending, testMode }
       <Modal isOpen={isOpen} onDismiss={() => setIsOpen(false)} ariaLabel="Send email confirmation">
         <div>
           <h4 className="h4 mb-3">Send this email to API users?</h4>
-          <p className="mb-3">This email will be sent to all API users who are subscribed to the selected groups.</p>
+          <p className="mb-3">
+            This email will be sent to all API users who are subscribed to the selected groups and have confirmed
+            their email address.
+          </p>
           <button onClick={() => setIsOpen(false)} className="btn btn--secondary w-28 mr-3">Cancel</button>
           <button onClick={() => onConfirm()} disabled={isSending} className="btn btn--primary px-3">
             {isSending ? "Sending…" : "Email API Users"}

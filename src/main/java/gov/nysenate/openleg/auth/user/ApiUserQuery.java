@@ -55,7 +55,7 @@ enum ApiUserQuery implements BasicSqlQuery {
                     "WHERE apikey = :apiKey"
     ),
 
-    SELECT_API_USERS_BY_SUBSCRIPTION(
+    SELECT_VERIFIED_API_USERS_BY_SUBSCRIPTION(
             "SELECT a.apikey, a.authenticated, a.num_requests, a.email_addr, a.org_name, a.users_name, a.reg_token, " +
                     "array(SELECT r.role FROM public." + SqlTable.API_USER_ROLE + " r WHERE r.apikey = a.apikey) AS roles," +
                     "array(SELECT s.subscription_type FROM public." + SqlTable.API_USER_SUBSCRIPTION +
@@ -63,7 +63,8 @@ enum ApiUserQuery implements BasicSqlQuery {
                     "FROM (SELECT *" + "\n" + "FROM public." + SqlTable.API_USER + " u NATURAL JOIN public." +
                     SqlTable.API_USER_SUBSCRIPTION + " s" + "\n" +
                     "WHERE u.apikey = s.apikey ) as a" + "\n" +
-                    "WHERE a.subscription_type = :subscription_type::public.apiuser_subscription_type"
+                    "WHERE a.subscription_type = :subscription_type::public.apiuser_subscription_type " +
+                    "AND a.authenticated"
     );
 
     private final String sql;

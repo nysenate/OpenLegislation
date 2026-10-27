@@ -2,7 +2,6 @@ package gov.nysenate.openleg.notifications.mail.apiuser;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.annotation.SillyTest;
-import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.notifications.mail.MailException;
@@ -20,12 +19,9 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
     ApiUserService apiUserService;
     @Autowired
     ApiUserBatchEmailServiceImpl apiUserBatchEmailService;
-    @Autowired
-    AdminUserService adminUserService;
 
     @Test
     public void breakingChangesNoSubscriptionsTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes.";
         ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
@@ -34,12 +30,11 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("No emails should have been sent.", numAdmins, numEmailsSent);
+        assertEquals("No emails should have been sent.", 0, numEmailsSent);
     }
 
     @Test
     public void breakingChangesOneSubscriberTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes.";
         ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
@@ -48,12 +43,11 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("One email should have been sent.", 1+numAdmins, numEmailsSent);
+        assertEquals("One email should have been sent.", 1, numEmailsSent);
     }
 
     @Test
     public void newFeaturesNoSubscriptionsTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to new features.";
         ApiUserSubscriptionType sub = ApiUserSubscriptionType.NEW_FEATURES;
@@ -62,12 +56,11 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("No Emails should have been sent.", numAdmins, numEmailsSent);
+        assertEquals("No Emails should have been sent.", 0, numEmailsSent);
     }
 
     @Test
     public void newFeaturesOneSubscriberTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to new features.";
         ApiUserSubscriptionType sub = ApiUserSubscriptionType.NEW_FEATURES;
@@ -76,12 +69,11 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("One Email should have been sent.", 1+numAdmins, numEmailsSent);
+        assertEquals("One Email should have been sent.", 1, numEmailsSent);
     }
 
     @Test
     public void bothNoSubscribersTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes and new features.";
         ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
@@ -94,13 +86,12 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("No emails should have been sent.", numAdmins, numEmailsSent);
+        assertEquals("No emails should have been sent.", 0, numEmailsSent);
 
     }
 
     @Test
     public void bothOneSubscriberTest() throws MailException {
-        int numAdmins = adminUserService.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes and new features.";
         ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
@@ -113,24 +104,8 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
 
-        assertEquals("Only one email should have been sent.", 1+numAdmins, numEmailsSent);
+        assertEquals("Only one email should have been sent.", 1, numEmailsSent);
     }
-
-    @Test
-    public void adminsReceiveBatchEmailTest() {
-        String subject = "Test Email";
-        String body = "This is a test email to verify that all admins will receive any batch email that is send out.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
-        ApiUserMessage message = new ApiUserMessage(sub, subject, body);
-
-        int numAdmins = adminUserService.getAdminUsers().size();
-        int numSubscribers = 1;//apiUserService.getUsersWithSubscription(sub).size();
-        int numEmailsSent = apiUserBatchEmailService.sendMessage(message).sent();
-
-        assertEquals("The number of emails sent out was incorrect.",
-                numAdmins+numSubscribers, numEmailsSent);
-    }
-
 
     @Test
     public void sendTestMessageTest() throws MailException {

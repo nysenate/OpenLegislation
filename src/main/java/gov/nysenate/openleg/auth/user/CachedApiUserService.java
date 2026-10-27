@@ -212,8 +212,8 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
         return Optional.of(user);
     }
 
-    public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
-        return apiUserDao.getUsersWithSubscription(subscriptionType);
+    public List<ApiUser> getVerifiedUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
+        return apiUserDao.getVerifiedUsersWithSubscription(subscriptionType);
     }
 
     /**

@@ -24,11 +24,12 @@ public interface ApiUserService {
     Optional<ApiUser> getUserByKey(String apiKey);
 
     /**
-     * Gets all users with the given subscription
+     * Gets the users with the given subscription who have confirmed their email address. An unconfirmed
+     * user's key can't open the subscription preferences page, and their address may be mistyped or someone else's.
      * @param subscriptionType ApiUserSubscriptionType
      * @return A list of ApiUsers
      */
-    List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType);
+    List<ApiUser> getVerifiedUsersWithSubscription(ApiUserSubscriptionType subscriptionType);
 
     /**
      * This method will be called whenever there is an attempt to register a new user.

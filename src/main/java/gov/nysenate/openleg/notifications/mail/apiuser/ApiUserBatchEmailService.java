@@ -18,8 +18,9 @@ public interface ApiUserBatchEmailService {
 
     /**
      * Sends zero or more email messages regarding specific email-subscription
-     * categories. Emails are only sent to those Api Users whom are subscribed to
-     * the given subscriptions (message.subscriptionTypes), and to every admin.
+     * categories. Emails are only sent to verified Api Users who are subscribed to
+     * one or more of the given subscriptions (message.subscriptionTypes), one copy each.
+     * Admins get a copy only as such users; test mode is the way to preview a message.
      * Each recipient's copy is sent separately, so an unusable address or a rejected copy
      * doesn't affect the other recipients.
      * Returns once every copy has been sent or given up on.

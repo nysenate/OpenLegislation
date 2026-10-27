@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.notifications.mail.apiuser;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
@@ -55,7 +54,6 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     private final SendMailService mimeSender;
     private final OpenLegEnvironment env;
     private final ApiUserService apiUserService;
-    private final AdminUserService adminUserService;
     private final EventBus eventBus;
     private final Executor executor;
     private final EmailValidator validator = EmailValidator.getInstance();
@@ -66,10 +64,9 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     @Autowired
     public ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, SendMailService mimeSender,
                                         ApiUserService apiUserService,
-                                        AdminUserService adminUserService,
                                         @Qualifier("eventBus") EventBus eventBus) {
         // A thread of its own, so a batch never waits behind other background work.
-        this(mailUtils, env, mimeSender, apiUserService, adminUserService, eventBus,
+        this(mailUtils, env, mimeSender, apiUserService, eventBus,
                 Executors.newSingleThreadExecutor(new OpenlegThreadFactory("batch-email")));
     }
 
@@ -77,13 +74,11 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * @param executor runs the batch emails sent in the background
      */
     ApiUserBatchEmailServiceImpl(MailUtils mailUtils, OpenLegEnvironment env, SendMailService mimeSender,
-                                 ApiUserService apiUserService, AdminUserService adminUserService,
-                                 EventBus eventBus, Executor executor) {
+                                 ApiUserService apiUserService, EventBus eventBus, Executor executor) {
         this.mailUtils = mailUtils;
         this.mimeSender = mimeSender;
         this.apiUserService = apiUserService;
         this.env = env;
-        this.adminUserService = adminUserService;
         this.eventBus = eventBus;
         this.executor = executor;
     }
@@ -143,22 +138,20 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         Set<ApiUserSubscriptionType> subscriptions = message.getSubscriptionTypes();
         Set<ApiUser> users = new HashSet<>();
         for (ApiUserSubscriptionType sub : subscriptions) {
-            users.addAll(apiUserService.getUsersWithSubscription(sub));
+            users.addAll(apiUserService.getVerifiedUsersWithSubscription(sub));
         }
 
-        // Sorted by address, so that reports are reproducible. All admins receive all batch emails.
-        List<Recipient> recipients = new ArrayList<>();
-        users.stream().map(user -> stored(user.getEmail(), user))
-                .sorted(BY_EMAIL).forEach(recipients::add);
-        adminUserService.getAdminUsers().stream().map(admin -> stored(admin.getUsername(), null))
-                .sorted(BY_EMAIL).forEach(recipients::add);
+        // Sorted by address, so that reports are reproducible.
+        List<Recipient> recipients = users.stream().map(this::stored)
+                .sorted(BY_EMAIL).toList();
         current = new Batch(message, recipients);
         logger.info("Batch email \"{}\" started for {} recipients", message.getSubject(), recipients.size());
         return current;
     }
 
-    /** The recipient for a stored address, which must pass {@link EmailValidator} as well as parse. */
-    private Recipient stored(String email, @Nullable ApiUser user) {
+    /** The recipient for a subscriber, whose stored address must pass {@link EmailValidator} as well as parse. */
+    private Recipient stored(ApiUser user) {
+        String email = user.getEmail();
         return validator.isValid(email) ? parsed(email, user) : new Skipped(email, "Not a valid email address");
     }
 
@@ -310,7 +303,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * The text is escaped, blank lines separate paragraphs, single newlines become line breaks,
      * and each line gets its bold text, verbatim text and links (see {@link #formatLine}).
      * @param body String
-     * @param subscriptionUrl String @Nullable, the recipient's preferences page; omitted for admin copies
+     * @param subscriptionUrl String @Nullable, the recipient's preferences page; omitted for test emails
      * @return String
      */
     protected String renderHtml(String body, @Nullable String subscriptionUrl) {
@@ -343,7 +336,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
     /**
      * Renders the body as typed, followed by a plain-text equivalent of the footer.
      * @param body String
-     * @param subscriptionUrl String @Nullable, the recipient's preferences page; omitted for admin copies
+     * @param subscriptionUrl String @Nullable, the recipient's preferences page; omitted for test emails
      * @return String
      */
     protected String renderText(String body, @Nullable String subscriptionUrl) {
@@ -364,7 +357,7 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
      * and returns a Multipart object; one part contains the message in HTML, and a second part
      * contains the message in plain text. Both are rendered from the same plain-text body.
      * NOTE: The ApiUser parameter is optional because only ApiUsers will have a link in their
-     * email to their subscription preferences. That link will not be added for admins.
+     * email to their subscription preferences. That link will not be added for test emails.
      * @param message ApiUserMessage
      * @param user ApiUser @Nullable
      * @return Multipart
