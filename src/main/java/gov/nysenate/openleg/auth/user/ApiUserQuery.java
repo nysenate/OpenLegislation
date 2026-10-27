@@ -23,7 +23,7 @@ enum ApiUserQuery implements BasicSqlQuery {
                     "FROM public." + SqlTable.API_USER + " u\n"
     ),
     SELECT_BY_EMAIL(
-            SELECT_API_USERS.getSql() + "WHERE u.email_addr ILIKE :email"
+            SELECT_API_USERS.getSql() + "WHERE lower(u.email_addr) = lower(:email)"
     ),
     SELECT_BY_KEY(
             SELECT_API_USERS.getSql() + "WHERE u.apikey = :apikey"

@@ -90,6 +90,9 @@ public class CachedApiUserService extends CachingService<String, ApiUser> implem
 
     @Override
     public void updateEmail(String apiKey, String email) {
+        if (!ApiUserEmailRules.isValid(email)) {
+            throw new IllegalArgumentException("Invalid email address: " + email);
+        }
         ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
         user.setEmail(email);
         apiUserDao.updateUser(user);

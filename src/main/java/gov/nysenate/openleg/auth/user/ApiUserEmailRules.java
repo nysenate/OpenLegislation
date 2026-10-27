@@ -4,8 +4,8 @@ import jakarta.annotation.Nullable;
 import org.apache.commons.validator.routines.EmailValidator;
 
 /**
- * Which email addresses API users can have. Signup and batch email hold addresses to this one rule, so an
- * address signup accepts can be sent batch email.
+ * Which email addresses API users can have. Signup, changing an address and batch email all hold addresses to
+ * this one rule, so an address that can be stored can be sent batch email.
  */
 public final class ApiUserEmailRules {
     private ApiUserEmailRules() {}

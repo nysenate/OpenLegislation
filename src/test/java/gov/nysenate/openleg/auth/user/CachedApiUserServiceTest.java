@@ -34,7 +34,7 @@ public class CachedApiUserServiceTest {
         service = new CachedApiUserService(apiUserDao, sendMailService, environment);
     }
 
-    /** Addresses batch email would skip, so signup doesn't accept them. */
+    /** Addresses batch email would skip, so neither signup nor changing an address accepts them. */
     private static final String[] INVALID = {"still bad@example.com", "not-an-address", "a..b@x.com", ".a@x.com",
             "a@localhost.lan", "a@-x.com", "a@x_y.com"};
 
@@ -56,5 +56,13 @@ public class CachedApiUserServiceTest {
             verify(sendMailService).sendMessage(eq(email), any(), any());
             verify(apiUserDao).insertUser(user);
         }
+    }
+
+    @Test
+    public void changingToAnInvalidAddressStoresNothing() {
+        for (String email : INVALID) {
+            assertThrows(email, IllegalArgumentException.class, () -> service.updateEmail("abc123", email));
+        }
+        verifyNoInteractions(apiUserDao);
     }
 }

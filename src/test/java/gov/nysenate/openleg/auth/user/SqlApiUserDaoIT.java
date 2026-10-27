@@ -6,17 +6,31 @@ import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.auth.user.ApiUserSubscriptionType.BREAKING_CHANGES;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class SqlApiUserDaoIT extends BaseTests {
     @Autowired private SqlApiUserDao apiUserDao;
+
+    @Test
+    public void addressIsFoundIgnoringCaseButOnlyAsTyped() {
+        ApiUser user = insert("john.smith@daoit.example.com", true);
+
+        assertEquals(user.getApiKey(), apiUserDao.getApiUserFromEmail("John.Smith@DaoIT.example.com").getApiKey());
+        // An _ or % is a character of the address, not a wildcard.
+        for (String other : new String[] {"john_smith@daoit.example.com", "john%@daoit.example.com"}) {
+            assertThrows(other, EmptyResultDataAccessException.class, () -> apiUserDao.getApiUserFromEmail(other));
+        }
+    }
 
     @Test
     public void onlyVerifiedSubscribersAreListed() {

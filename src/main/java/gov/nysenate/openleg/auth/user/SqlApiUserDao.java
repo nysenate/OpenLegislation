@@ -54,7 +54,7 @@ public class SqlApiUserDao extends SqlBaseDao {
     }
 
     /**
-     * Finds the user with the specified email address
+     * Finds the user with the specified email address, ignoring case
      * @param email The email address of the user you are looking for
      * @return The ApiUser
      * @throws org.springframework.dao.DataAccessException

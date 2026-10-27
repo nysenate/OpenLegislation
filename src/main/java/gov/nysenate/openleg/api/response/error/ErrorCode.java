@@ -47,6 +47,7 @@ public enum ErrorCode {
     EMAIL_IN_USE(200, "This email is already in use"),
     MAIL_NOT_CONFIGURED(201, "Mail can't be sent because the server's mail settings are missing or invalid"),
     BATCH_EMAIL_IN_PROGRESS(202, "Another batch email is still being sent"),
+    INVALID_EMAIL(203, "This isn't a valid email address. Check it for typos."),
 
     /** --- General --- */
 

@@ -23,7 +23,7 @@ public final class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
     private final ApiUserService apiUserService;
 
     @Autowired
-    private ApiUserEmailSubscriptionCtrl(ApiUserService apiUserService) {
+    ApiUserEmailSubscriptionCtrl(ApiUserService apiUserService) {
         this.apiUserService = apiUserService;
     }
 
@@ -86,18 +86,23 @@ public final class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
      *
      *  Request params: key (string) - The apiKey of the user whose email is being updated
      *
-     *  Request body: body (string) - The new email the user would like to use
+     *  Request body: body (string) - The new email the user would like to use. Nothing is stored if it isn't
+     *                                a valid address, or another user has it.
      */
     @PostMapping(value = "/updateEmail")
     public BaseResponse updateEmail(@RequestParam String key, @RequestBody String email) {
         try {
             apiUserService.getUser(email);
+            return new ErrorResponse(ErrorCode.EMAIL_IN_USE);
         } catch (EmptyResultDataAccessException ex) {
-            // The new email should not already be in use.
-            apiUserService.updateEmail(key, email);
-            return new SimpleResponse(true, "Successfully update email", "updateEmail");
+            // The new email is not in use.
         }
-        return new ErrorResponse(ErrorCode.EMAIL_IN_USE);
+        try {
+            apiUserService.updateEmail(key, email);
+        } catch (IllegalArgumentException ex) {
+            return new ErrorResponse(ErrorCode.INVALID_EMAIL);
+        }
+        return new SimpleResponse(true, "Successfully update email", "updateEmail");
     }
 
     @GetMapping(value = "/getEmail")

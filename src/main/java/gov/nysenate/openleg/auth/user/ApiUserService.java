@@ -10,9 +10,10 @@ import java.util.Set;
 
 public interface ApiUserService {
     /**
-     * Get an API User from a given email address
+     * Get an API User from a given email address, ignoring case
      * @param email The email address of the user being search for.
      * @return An APIUser if the email is valid
+     * @throws org.springframework.dao.EmptyResultDataAccessException if no user has the address
      */
     ApiUser getUser(String email);
 
@@ -48,6 +49,7 @@ public interface ApiUserService {
      * @param apiKey String, The apiKey of the user whose email is being
      *               updated
      * @param email String, The new email
+     * @throws IllegalArgumentException if {@link ApiUserEmailRules#isValid} refuses the new email; nothing is stored
      */
     void updateEmail(String apiKey, String email);
 
