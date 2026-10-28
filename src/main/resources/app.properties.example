@@ -4,11 +4,9 @@ api.auth.enable = true
 # Ignore these IP Addresses when checking for an API key
 api.auth.ip.whitelist = 127.0.0.1
 
-# Retired full-content expansion on collection endpoints: full=true on bill, hearing and transcript
-# search and listing, on calendar, active list and supplemental listings and on agenda search;
-# detail=true on calendar search; and fullBill=true on bill update feeds.
-# off (default) keeps the existing behavior; enforce rejects these options with a 400 for every caller.
-# api.collection_full.mode = off
+# Retired options that expand collection responses into full content (full, detail, fullBill).
+# off (default) still honors them; enforce rejects them with a 400.
+api.collection_full.mode = off
 
 # --- Admin Auth --------------------------------------------------------------
 
