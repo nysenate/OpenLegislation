@@ -335,7 +335,7 @@ the earliest update, and without ``toDateTime`` they have no end::
          GET /api/3/laws/VAT/updates
          GET /api/3/laws/ABC/A1/updates
 
-Updates for a specific law or document are always update digests, one per law document.
+Updates for a specific law or document are always update digests, one for each change to a law document.
 
 **Optional Params**
 

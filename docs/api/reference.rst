@@ -4,6 +4,7 @@
 
     index
     migration
+    keeping_up
     bills
     calendars
     agendas

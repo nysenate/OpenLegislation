@@ -144,6 +144,7 @@ Get transcript updates
 ----------------------
 
 To identify which transcripts have been added or changed within a given time period you can use the transcript updates api.
+To keep a copy of transcripts current with it, see :ref:`Keeping Up with Changes<keeping-up>`.
 
 **Usage**
 

@@ -5,6 +5,8 @@
 Get aggregate updates
 ---------------------
 
+To keep a copy of Open Legislation data current with this API, see :ref:`Keeping Up with Changes<keeping-up>`.
+
 **Usage**
 
 List of content that was updated during the given date/time range::
@@ -67,7 +69,7 @@ Get a detailed view of the 50 most recent agenda, bill, and calendar updates pro
 
 With ``detail=true`` the items are update digests and the responseType is ``update-digest list``.
 Without it, they are update tokens, with only the fields above the dashed comment below, and the
-responseType is ``update-token list``.
+responseType is ``update-token list``. A page with no items has the responseType ``empty list``.
 
 .. code-block:: javascript
 

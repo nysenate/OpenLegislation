@@ -139,6 +139,7 @@ Get hearing updates
 -------------------
 
 To identify which hearings have been added or changed within a given time period you can use the hearing updates api.
+To keep a copy of hearings current with it, see :ref:`Keeping Up with Changes<keeping-up>`.
 
 **Usage**
 
