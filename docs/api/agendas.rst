@@ -200,77 +200,183 @@ Get updated agenda Id's
 
 **Usage**
 
-Return a list of agenda ids that have changed during a specified date/time range::
+List of agendas updated since the start of the day seven days ago::
 
     GET /api/3/agendas/updates
 
-.. note:: This api call gets updates in the last 7 days
-
-**Usage**
-
-Get updates from the time specified to now::
+List of agendas updated since the given date/time::
 
     GET /api/3/agendas/updates/{from}
 
-**Examples**
-
-Get updates for all of the 2017 session::
-
-    GET /api/3/agendas/updates/2017-01-01
-
-**Usage**
-
-Get updates for a specified time range::
+List of agendas updated during the given date/time range::
 
     GET /api/3/agendas/updates/{from}/{to}
 
+.. note:: Give ``from`` and ``to`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``from`` and excludes ``to``. The response reports the range it used, with ``toDateTime`` set to the last
+   microsecond included, e.g. ``2014-12-10T13:30:01.999999``. When the range runs to now, it can carry up to nine
+   fractional digits. With no ``to``, the range runs to now.
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| Which update date to filter and order by: the date     |
+|           |                      | OpenLeg processed the data, or the date it was         |
+|           |                      | published. Default processed.                          |
++-----------+----------------------+--------------------------------------------------------+
+| detail    | boolean              | Set to true to see update digests instead of tokens    |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return. Default 50.               |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from. Default 1.                |
++-----------+----------------------+--------------------------------------------------------+
+
 **Examples**
 
-Get updates for all of January 2018::
+Get the first 50 updates since January 1, 2017::
 
-    GET /api/3/agendas/updates/2018-01-01/2018-01-31
+    GET /api/3/agendas/updates/2017-01-01
 
+Get updates for all of January 2025, 10 at a time::
 
+    GET /api/3/agendas/updates/2025-01-01/2025-02-01?limit=10
+
+.. _agenda-update-token-response:
+
+**Response (detail=false)**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "update-token list",
+      "total" : 4,
+      "offsetStart" : 1,
+      "offsetEnd" : 4,
+      "limit" : 10,
+      "result" : {
+        "items" : [
+          {
+            "id" : {                // The number and year of the updated agenda
+              "number" : 1,
+              "year" : 2025
+            },
+            "contentType" : "AGENDA",
+            // The id of the reference that triggered the update
+            "sourceId" : "2025-01-21-16.34.54.269983_SENAGENV_RULES.XML-1-AGENDA_VOTE",
+            // The publish date time of the reference source
+            "sourceDateTime" : "2025-01-21T16:34:54.269983",
+            // The date and time that the reference was processed
+            "processedDateTime" : "2025-01-21T16:41:08.597759"
+          },
+          ... (truncated)
+        ],
+        "size" : 4
+      },
+      "fromDateTime" : "2025-01-01T00:00:00",       // First instant in the range
+      "toDateTime" : "2025-01-31T23:59:59.999999"   // Last instant in the range
+    }
 
 Get updated agenda digests
 --------------------------
 
 **Usage**
 
-This api call gets all digests for an agenda in a calendar year::
+Get updates for an agenda, from the earliest::
 
     GET /api/3/agendas/{year}/{agendaNo}/updates
 
-**Examples**
-
-Get all updates for agenda 15 in 2017::
-
-    GET /api/3/agendas/2017/15/updates
-
-**Usage**
-
-Get a list of agenda digests in a specific time range of the calendar year to now::
+Get updates for an agenda since the given date/time::
 
     GET /api/3/agendas/{year}/{agendaNo}/updates/{from}
 
-.. note:: Where 'from' is an ISO date time
+Get updates for an agenda during the given date/time range::
+
+    GET /api/3/agendas/{year}/{agendaNo}/updates/{from}/{to}
+
+Dates follow the same rules as the agenda updates API above. Each item is an update digest with its updated fields.
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| Which update date to filter and order by. Default      |
+|           |                      | processed.                                             |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return. Default 50.               |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from. Default 1.                |
++-----------+----------------------+--------------------------------------------------------+
 
 **Examples**
+
+Get the first 50 updates for agenda 15 in 2017::
+
+    GET /api/3/agendas/2017/15/updates
 
 Get updates for agenda 12 in 2017 from Feb 1st, 2017 to now::
 
     GET /api/3/agendas/2017/12/updates/2017-02-01
 
-**Usage**
-
-Return agenda digests that have changed during a specified date/time range::
-
-    GET /api/3/agendas/{year}/{agendaNo}/updates/{from}/{to}
-
-.. note:: Where 'from' and 'to' are ISO date times
-
-**Examples**
-
-Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017::
+Get updates for agenda 12 in 2017 published from Jan 1st, 2017 up to Dec 1st, 2017::
 
     GET /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
+
+Get updates for agenda 1 in 2025, 10 at a time::
+
+    GET /api/3/agendas/2025/1/updates?limit=10
+
+.. _agenda-update-digest-response:
+
+**Response**
+
+The agenda updates API returns the same items with ``detail=true``.
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "update-digest list",
+      "total" : 9,
+      "offsetStart" : 1,
+      "offsetEnd" : 9,
+      "limit" : 10,
+      "result" : {
+        "items" : [
+          {
+            "id" : {
+              "number" : 1,
+              "year" : 2025
+            },
+            "contentType" : "AGENDA",
+            "sourceId" : "2025-01-13-15.21.28.027862_SENAGEN_00001.XML-1-AGENDA",
+            "sourceDateTime" : "2025-01-13T15:21:28.027862",
+            "processedDateTime" : "2025-01-13T15:26:02.400415",
+            "action" : "Insert",                // The update action that was performed (Insert|Update|Delete)
+            "scope" : "Agenda",                 // Which part of the agenda was updated
+            "fields" : {                        // Updated fields
+              "Created Date Time" : "2025-01-13 15:26:02.400415",
+              "Published Date Time" : "2025-01-13 15:21:28.027862"
+            },
+            "fieldCount" : 2
+          },
+          ... (truncated)
+        ],
+        "size" : 9
+      },
+      "fromDateTime" : "1970-01-01T00:00:00",        // The earliest, with no "from"
+      "toDateTime" : "2026-10-29T12:52:03.683239885"   // Just before now, with no "to"
+    }

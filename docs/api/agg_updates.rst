@@ -12,50 +12,70 @@ List of content that was updated during the given date/time range::
     GET /api/3/updates/{fromDateTime}
     GET /api/3/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``fromDateTime`` and excludes ``toDateTime``. The response reports the range it used, with ``toDateTime`` set to the last
+   microsecond included, e.g. ``2014-12-10T13:30:01.999999``. When the range runs to now, it can carry up to nine
+   fractional digits. With no ``toDateTime``, the range runs to now.
+   A ``fromDateTime`` is required: ``/api/3/updates`` on its own is not an API route.
 
 **Optional Params**
 
 +--------------+----------------------+--------------------------------------------------------+
 | Parameter    | Values               | Description                                            |
 +==============+======================+========================================================+
-| type         | (processed|published)| The type of bill update (see below for explanation)    |
+| type         | (processed|published)| Which update date to filter and order by (see below).  |
+|              |                      | Default processed.                                     |
 +--------------+----------------------+--------------------------------------------------------+
 | detail       | boolean              | Set to true to see detailed update digests             |
 +--------------+----------------------+--------------------------------------------------------+
-| fields       | boolean              | Set to true to get updated fields with detailed digests|
+| fields       | boolean              | Set to true to get updated fields with detailed        |
+|              |                      | digests. Without it, ``fields`` is empty and           |
+|              |                      | ``fieldCount`` is 0.                                   |
 +--------------+----------------------+--------------------------------------------------------+
-| content-type | string[]             | Filter by content type (AGENDA, BILL, CALENDAR, LAW)   |
+| content-type | string[]             | Filter by content type (AGENDA, BILL, CALENDAR, LAW).  |
+|              |                      | Repeat to request several. Unrecognized values are     |
+|              |                      | ignored; if none are recognized, all types are         |
+|              |                      | returned.                                              |
 +--------------+----------------------+--------------------------------------------------------+
-| order        | string (asc|desc)    | Order the results by update date/time                  |
+| order        | string (asc|desc)    | Order the results by update date/time. Default desc,   |
+|              |                      | newest first.                                          |
 +--------------+----------------------+--------------------------------------------------------+
-| limit        | integer              | Number of results to return                            |
+| limit        | 1 - 1000             | Number of results to return. Default 50.               |
 +--------------+----------------------+--------------------------------------------------------+
-| offset       | integer              | Result number to start from                            |
+| offset       | >= 1                 | Result number to start from. Default 1.                |
 +--------------+----------------------+--------------------------------------------------------+
 
 There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
 the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
 which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
-reprocess it's data to fix issues. By default the type is set to published.
+reprocess its data to fix issues. By default the type is set to processed.
+
+.. note:: Unlike the content-specific update APIs, this one returns the newest updates first by default.
+   To read a range from oldest to newest, set ``order=asc``.
 
 **Example**
 
-Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015::
+Get a detailed view of the 50 most recent agenda, bill, and calendar updates processed on March 4, 2025::
 
-    GET /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
+    GET /api/3/updates/2025-03-04T00:00:00/2025-03-05T00:00:00?type=processed
                         &content-type=AGENDA&content-type=BILL&content-type=CALENDAR
                         &detail=true&fields=true
 
 **Response**
+
+With ``detail=true`` the items are update digests and the responseType is ``update-digest list``.
+Without it, they are update tokens, with only the fields above the dashed comment below, and the
+responseType is ``update-token list``.
 
 .. code-block:: javascript
 
     {
       "success" : true,
       "message" : "",
-      "responseType" : "update-token list",
-      "total" : 11836,
+      "responseType" : "update-digest list",
+      "total" : 5673,
       "offsetStart" : 1,
       "offsetEnd" : 50,
       "limit" : 50,
@@ -63,28 +83,30 @@ Get a detailed view of the first 50 agenda, bill, and calendar updates processed
         "items" : [
           {
             "id" : {                        // Content identifier
-              "basePrintNo": "S1948",         // See content-specific updates pages
-                "session": 2019,
-                "basePrintNoStr": "S1948-2019"
+              "basePrintNo" : "S6031",        // See content-specific updates pages
+              "session" : 2025,
+              "basePrintNoStr" : "S6031-2025"
             },
             "contentType" : "BILL",
-            "sourceId": "2019-01-17-20.22.35.839069_SENMEMO_S01948.XML-1-SENMEMO",,   // Id of the source that triggered the update
-            "sourceDateTime" : "2019-01-17T20:22:35.839069",  // Published date of the source document
-            "processedDateTime" : "2019-01-17T20:26:24.673778", // Time when the update occurred
+            "sourceId" : "2025-03-04-19.06.06.864349_SENMEMO_S06031.XML-1-SENMEMO",   // Id of the source that triggered the update
+            "sourceDateTime" : "2025-03-04T19:06:06.864349",  // Published date of the source document
+            "processedDateTime" : "2025-03-04T19:11:04.603729", // Time when the update occurred
 
             // --- The following fields are returned only for update digests -------------------
             "action" : "Update",    // Update action (Insert|Update|Delete)
             "scope" : "Bill Amendment",   // Designates which part of the content was updated
-            "fields" : { }  // The updated fields, returned only if fields parameter is true
-            "fieldCount": 1
+            "fields" : {            // The updated fields, returned only if fields parameter is true
+              "Sponsor Memo" : " \nBILL NUMBER: S6031\n\nSPONSOR: PARKER\n..."
+            },
+            "fieldCount" : 1        // Number of updated fields, 0 unless fields parameter is true
             // ---------------------------------------------------------------------------------
           },
           ...
         ],
         "size" : 50
       },
-      "fromDateTime" : "2014-01-10T00:00",
-      "toDateTime" : "2015-03-18T13:16:17.383999999"
+      "fromDateTime" : "2025-03-04T00:00:00",       // First instant in the range
+      "toDateTime" : "2025-03-04T23:59:59.999999"   // Last instant in the range
     }
 
 See the following pages for info on the unique update responses for each content type:
@@ -97,6 +119,9 @@ See the following pages for info on the unique update responses for each content
 * :ref:`calendar update digest response<calendar-update-digest-response>`
 * :ref:`law update token response<law-update-token-response>`
 * :ref:`law update digest response<law-update-digest-response>`
+
+Hearings and floor transcripts are not part of this API. They have their own update APIs:
+:ref:`hearing updates<hearing-updates>` and :ref:`transcript updates<transcript-updates>`.
 
 
 .. warning:: This example uses processed date time. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

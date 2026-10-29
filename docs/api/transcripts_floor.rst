@@ -137,3 +137,76 @@ List the details of transcripts from 2014 sorted by increasing date::
         "size": 25
       }
     }
+
+.. _transcript-updates:
+
+Get transcript updates
+----------------------
+
+To identify which transcripts have been added or changed within a given time period you can use the transcript updates api.
+
+**Usage**
+
+List of transcripts updated within the past seven days::
+
+    GET /api/3/transcripts/updates
+
+List of transcripts updated since the given date/time::
+
+    GET /api/3/transcripts/updates/{fromDateTime}
+
+List of transcripts updated during the given date/time range::
+
+    GET /api/3/transcripts/updates/{fromDateTime}/{toDateTime}
+
+.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``fromDateTime`` and excludes ``toDateTime``. With no ``toDateTime``, the range has no end.
+
+Results are always ordered by the date/time OpenLeg last added or changed each transcript, oldest first.
+Unlike the other update APIs, this one does not take ``type``, ``order`` or ``detail``, and the response
+does not include ``fromDateTime`` or ``toDateTime``.
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| limit     | 1 - 1000           | Number of results to return. Default 25.               |
++-----------+--------------------+--------------------------------------------------------+
+| offset    | >= 1               | Result number to start from. Default 1.                |
++-----------+--------------------+--------------------------------------------------------+
+
+**Examples**
+
+Transcripts updated since January 1, 2025, 10 at a time::
+
+    GET /api/3/transcripts/updates/2025-01-01?limit=10
+
+**Response**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "transcript-update-token list",
+      "total" : 134,
+      "offsetStart" : 1,
+      "offsetEnd" : 10,
+      "limit" : 10,
+      "result" : {
+        "items" : [
+          {
+            "transcriptId" : {                  // The id of the transcript
+              "dateTime" : "2025-01-08T12:14",
+              "sessionType" : "Regular Session"   // Session types can contain spaces
+            },
+            "updateDateTime" : "2025-01-13T08:51:04.087967"   // When OpenLeg last added or changed the transcript
+          },
+          ... (truncated)
+        ],
+        "size" : 10
+      }
+    }

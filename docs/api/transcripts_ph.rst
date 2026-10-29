@@ -132,3 +132,76 @@ List the details of hearings from 2014 sorted by increasing date::
         "size": 25
       }
     }
+
+.. _hearing-updates:
+
+Get hearing updates
+-------------------
+
+To identify which hearings have been added or changed within a given time period you can use the hearing updates api.
+
+**Usage**
+
+List of hearings updated within the past seven days::
+
+    GET /api/3/hearings/updates
+
+List of hearings updated since the given date/time::
+
+    GET /api/3/hearings/updates/{fromDateTime}
+
+List of hearings updated during the given date/time range::
+
+    GET /api/3/hearings/updates/{fromDateTime}/{toDateTime}
+
+.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``fromDateTime`` and excludes ``toDateTime``. With no ``toDateTime``, the range has no end.
+
+Results are always ordered by the date/time OpenLeg last added or changed each hearing, oldest first.
+Unlike the other update APIs, this one does not take ``type``, ``order`` or ``detail``, and the response
+does not include ``fromDateTime`` or ``toDateTime``.
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| limit     | 1 - 1000           | Number of results to return. Default 25.               |
++-----------+--------------------+--------------------------------------------------------+
+| offset    | >= 1               | Result number to start from. Default 1.                |
++-----------+--------------------+--------------------------------------------------------+
+
+**Examples**
+
+Hearings updated since January 1, 2025, 10 at a time::
+
+    GET /api/3/hearings/updates/2025-01-01?limit=10
+
+**Response**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "hearing-update-token list",
+      "total" : 16,
+      "offsetStart" : 1,
+      "offsetEnd" : 10,
+      "limit" : 10,
+      "result" : {
+        "items" : [
+          {
+            "hearingId" : {                     // The id and filename of the hearing
+              "id" : 305,
+              "filename" : "Agriculture2025.txt"
+            },
+            "dateTime" : "2025-03-04T12:36:02.276462"   // When OpenLeg last added or changed the hearing
+          },
+          ... (truncated)
+        ],
+        "size" : 10
+      }
+    }
