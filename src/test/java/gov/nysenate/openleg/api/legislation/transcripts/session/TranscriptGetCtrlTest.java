@@ -1,11 +1,14 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptDataService;
+import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResults;
@@ -13,7 +16,9 @@ import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +28,7 @@ import java.util.Map;
 import static gov.nysenate.openleg.api.CollectionFullTestSupport.*;
 import static gov.nysenate.openleg.api.CtrlTestSupport.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -85,5 +91,34 @@ public class TranscriptGetCtrlTest {
             }
         }
         verifyNoInteractions(transcriptSearch);
+    }
+
+    @Test
+    public void missingTranscriptReturnsNotFound() throws Exception {
+        // The real data service, so the test covers the id it reports for a lookup by date time alone
+        TranscriptDao transcriptDao = mock(TranscriptDao.class);
+        when(transcriptDao.getTranscript(any(TranscriptId.class))).thenThrow(new EmptyResultDataAccessException(1));
+        MockMvc mvc = mockMvc(policy -> new TranscriptGetCtrl(
+                new SqlTranscriptDataService(new EventBus(), transcriptDao), transcriptSearch, policy), "off");
+        for (String path : List.of("/api/3/transcripts/2025-01-09T11:00", "/api/3/transcripts/2025-01-09T11:00.pdf")) {
+            JsonNode body = notFound(mvc, path);
+            assertEquals("2025-01-09T11:00", body.at("/errorData/dateTime").asText());
+            assertTrue(path, body.at("/errorData/sessionType").isNull());
+        }
+        for (String path : List.of("/api/3/transcripts/2025-01-09T11:00/Regular%20Session",
+                "/api/3/transcripts/2025-01-09T11:00/Regular%20Session.pdf")) {
+            assertEquals("Regular Session", notFound(mvc, path).at("/errorData/sessionType").asText());
+        }
+    }
+
+    /* --- Internal --- */
+
+    /** Asserts that the request returns a transcript-not-found error, and returns its body. */
+    private static JsonNode notFound(MockMvc mvc, String path) throws Exception {
+        MvcResult result = perform(mvc, path);
+        assertEquals(path, 404, result.getResponse().getStatus());
+        JsonNode body = json(result);
+        assertEquals(path, 141, body.get("errorCode").asInt());
+        return body;
     }
 }
