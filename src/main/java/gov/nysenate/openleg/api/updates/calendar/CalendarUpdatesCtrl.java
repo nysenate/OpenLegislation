@@ -113,7 +113,8 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
      *
      * Where 'from' and 'to' are ISO date times.
      *
-     * Request parameters:  order - The sort order of the update response (orderd by published date) (default DESC)
+     * Request parameters:  type - Which date to filter and sort by: processed or published (default processed)
+     *                      order - Sort direction by the date chosen by type: asc or desc (default ASC)
      *                      limit, offset - Paginate
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calendarNo:\\d+}/updates")
@@ -145,7 +146,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
             updateDigests.results().stream()
                 .map(digest -> new UpdateDigestView(digest, new CalendarIdView(digest.getId())))
                     .toList(),
-            updateDigests.total(), LimitOffset.ALL
+            updateRange, updateDigests.total(), updateDigests.limOff()
         );
     }
 }
