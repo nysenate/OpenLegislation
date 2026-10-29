@@ -35,13 +35,24 @@ For a full enumeration of query features see the `elasticsearch query string`_ s
 sort
 ----
 
-Searches can be sorted by any number valid response fields.  This is accomplished using the sort request parameter,
-which takes a comma separated string of response fields, each designated with a sort order ("ASC" or "DESC") separated
+Searches can be sorted by any number of fields.  This is accomplished using the sort request parameter,
+which takes a comma separated string of fields, each designated with a sort order ("ASC" or "DESC") separated
 from the field with a colon.
 
-.. note:: When sorting using a text field, you must suffix the field name with ``.keyword``
-    e.g. ``...&sort=printNo.keyword:ASC...``
-    This does not apply to date and time fields, which are indexed in a different manner.
+**Default order.** Without ``sort``, results are not sorted by relevance: they come back in index order, and every
+result has a ``rank`` of 1.0. To sort by relevance, most relevant first, use ``sort=_score:DESC``.
+
+**Text fields.** To sort on a text field, use its ``.keyword`` subfield, for example
+``sort=status.statusType.keyword:ASC``. Without it, the request fails with HTTP 400 and ``errorCode`` 100. Date,
+time, number and boolean fields don't need it. For the following field names, written exactly like this with no
+parent field, ``.keyword`` is added for you:
+
+    ``printNo``, ``basePrintNo``, ``basePrintNoStr``, ``version``, ``activeVersion``, ``chamber``, ``location``,
+    ``name``, ``docLevelId``, ``docType``, ``lawId``, ``lawName``, ``locationId``, ``email``, ``shortName``,
+    ``fullName``, ``prefix``, ``firstName``, ``middleName``, ``lastName``, ``suffix``, ``imgName``,
+    ``notificationType``, ``filename``, ``sessionType``
+
+So ``sort=printNo:ASC`` works, but a nested field such as ``billType.chamber`` needs ``billType.chamber.keyword``.
 
 For example, to get the 2013 governor's program bills in canonical order::
 
@@ -53,8 +64,39 @@ Or, you may want to order them by their status and action date::
     GET /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                                 &sort=status.statusType.keyword:ASC,status.actionDate:DESC
 
+Agenda search fields
+--------------------
+
+The agenda search index isn't structured like the agenda search response. In ``term`` and ``sort``, use these
+index paths instead of the response field names:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Field
+     - Contents
+   * - ``agenda.id.number``, ``agenda.id.year``
+     - Agenda number and year
+   * - ``agenda.weekOf``
+     - The week of the agenda, e.g. ``agenda.weekOf:2025-01-13``
+   * - ``agenda.publishedDateTime``
+     - When the agenda was published
+   * - ``agenda.totalAddendum``, ``agenda.totalBillsConsidered``, ``agenda.totalBillsVotedOn``,
+       ``agenda.totalCommittees``
+     - Totals for the whole agenda
+   * - ``committee.committeeId.name``, ``committee.committeeId.chamber``
+     - The committee, e.g. ``committee.committeeId.name:Finance``
+   * - ``committee.addenda``
+     - The committee's addenda, with their meetings and bills
+
+For example, ``committeeId.name:Finance`` matches nothing, while ``committee.committeeId.name:Finance`` matches
+the Finance committee's agendas.
+
 Search Response
 ---------------
+
+Search results are paged like other lists. See :ref:`api-paging`, including the limit on how far into the results a
+search can page.
 
 .. code-block:: javascript
 
@@ -70,10 +112,18 @@ Search Response
         "items": [
           {
             "result": { ... },            // A search result
-            "rank": 0.3587615191936493    // The ranking of the search result
+            "rank": 13.046083,            // Relevance score; 1.0 for every result unless sorted by _score
+            "highlights": {               // Matching text, by field, with matches wrapped in <em>
+              "printNo": [ "<em>S11</em>" ]
+            }
           },
           ...                           // More search results
         ],
         "size": 7
       }
     }
+
+Only some fields are highlighted, so ``highlights`` is often empty (``{}``).
+
+Member search is the exception: its items are member views, the same as the member listing returns, without
+``result``, ``rank`` or ``highlights``. Its ``responseType`` is ``"member-session list"``.

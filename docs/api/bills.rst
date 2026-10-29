@@ -453,7 +453,8 @@ Search within a session year::
 |                |                              | and highlights are retained. Defaults to false.        |
 +----------------+------------------------------+--------------------------------------------------------+
 | sort           | string                       | :ref:`ElasticSearch sort string<search-sort>`.         |
-|                |                              | Defaults to sorting by relevance (rank).               |
+|                |                              | Without it, results aren't sorted by relevance. Use    |
+|                |                              | ``_score:DESC`` to sort by relevance.                  |
 +----------------+------------------------------+--------------------------------------------------------+
 | fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included in full       |
 |                |                              | bills. Multiple formats can be requested.              |

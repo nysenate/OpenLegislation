@@ -1,5 +1,24 @@
-**Open Legislation v2.0 API Docs**
-==================================
+**Open Legislation API**
+========================
+
+.. toctree::
+    :hidden:
+    :maxdepth: 0
+
+    self
+    conventions
+    migration
+    keeping_up
+    bills
+    calendars
+    agendas
+    committees
+    laws
+    transcripts_floor
+    transcripts_ph
+    members
+    agg_updates
+    search_api
 
 .. important:: **API changes starting December 1, 2026**
 
@@ -25,31 +44,31 @@ You will need to sign up for a free API key from the Open Legislation homepage i
 
 The code is open source and available on `Github`_.
 
-.. _Open Legislation: http://legislation.nysenate.gov
-.. _nysenate.gov:    http://www.nysenate.gov
-.. _Github: http://github.com/nysenate/OpenLegislation
+.. _Open Legislation: https://legislation.nysenate.gov
+.. _nysenate.gov:    https://www.nysenate.gov
+.. _Github: https://github.com/nysenate/OpenLegislation
 
 API Usage
 ---------
 
 **Obtaining a key**
 
-To register and obtain an API key, visit our main page `here <http://legislation.nysenate.gov>`_.
+To register and obtain an API key, visit our main page `here <https://legislation.nysenate.gov>`_.
 
 **Making requests**
 
-All URIs listed in these docs are relative to the Open Legislation subdomain::
-
-    legislation.nysenate.gov
-
-To make an API request using your key, set the key string as the value of the 'key' request parameter in the request URL.
+All endpoints are under ``https://legislation.nysenate.gov/api/3``. To make an API request using your key, set the
+key string as the value of the ``key`` request parameter in the request URL.
 
 For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this::
 
-    GET legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+    GET https://legislation.nysenate.gov/api/3/bills/2015/S1?key=YOUR_API_KEY
 
 Because your key is part of each request URL, error messages and logs that include the URL also include your
 key. Remove it before you share them.
+
+Every endpoint follows the same rules for responses, errors, paging, dates and parameters. See
+:doc:`conventions`.
 
 .. _rate-limits:
 
