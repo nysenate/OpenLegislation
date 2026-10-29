@@ -297,73 +297,202 @@ notes</span></a>.</p>
 <p>The following api calls work (by default) on the process date time. If we reprocess our data, the timestamps listed may not produce the same results. You can use the published date time to get updates from an earlier time</p>
 </div>
 <p><strong>Usage</strong></p>
-<p>Return a list of agenda ids that have changed during a specified date/time range:</p>
+<p>List of agendas updated since the start of the day seven days ago:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span>
+</pre></div>
+</div>
+<p>List of agendas updated since the given date/time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>List of agendas updated during the given date/time range:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This api call gets updates in the last 7 days</p>
+<p>Give <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> as ISO 8601 date-times in New York local time, without an offset.
+For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
+means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
+The range includes <code class="docutils literal notranslate"><span class="pre">from</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">to</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
+microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
+fractional digits. With no <code class="docutils literal notranslate"><span class="pre">to</span></code>, the range runs to now.</p>
 </div>
-<p><strong>Usage</strong></p>
-<p>Get updates from the time specified to now:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
-</pre></div>
-</div>
+<p><strong>Optional Params</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>(processed|published)</p></td>
+<td><p>Which update date to filter and order by: the date
+OpenLeg processed the data, or the date it was
+published. Default processed.</p></td>
+</tr>
+<tr class="row-odd"><td><p>detail</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true to see update digests instead of tokens</p></td>
+</tr>
+<tr class="row-even"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time. Default asc,
+oldest first.</p></td>
+</tr>
+<tr class="row-odd"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return. Default 50.</p></td>
+</tr>
+<tr class="row-even"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from. Default 1.</p></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
-<p>Get updates for all of the 2017 session:</p>
+<p>Get the first 50 updates since January 1, 2017:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
-<p><strong>Usage</strong></p>
-<p>Get updates for a specified time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+<p>Get updates for all of January 2025, 10 at a time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/updates/2025-01-01/2025-02-01?limit=10
 </pre></div>
 </div>
-<p><strong>Examples</strong></p>
-<p>Get updates for all of January 2018:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">31</span>
+<p id="agenda-update-token-response"><strong>Response (detail=false)</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"result"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"items"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"id"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">                </span><span class="c1">// The number and year of the updated agenda</span>
+<span class="w">          </span><span class="s2">"number"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">"year"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2025</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"contentType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"AGENDA"</span><span class="p">,</span>
+<span class="w">        </span><span class="c1">// The id of the reference that triggered the update</span>
+<span class="w">        </span><span class="s2">"sourceId"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-21-16.34.54.269983_SENAGENV_RULES.XML-1-AGENDA_VOTE"</span><span class="p">,</span>
+<span class="w">        </span><span class="c1">// The publish date time of the reference source</span>
+<span class="w">        </span><span class="s2">"sourceDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-21T16:34:54.269983"</span><span class="p">,</span>
+<span class="w">        </span><span class="c1">// The date and time that the reference was processed</span>
+<span class="w">        </span><span class="s2">"processedDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-21T16:41:08.597759"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">...</span><span class="w"> </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">"size"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">4</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="s2">"fromDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-01T00:00:00"</span><span class="p">,</span><span class="w">       </span><span class="c1">// First instant in the range</span>
+<span class="w">  </span><span class="s2">"toDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-31T23:59:59.999999"</span><span class="w">   </span><span class="c1">// Last instant in the range</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="get-updated-agenda-digests">
 <h2>Get updated agenda digests<a class="headerlink" href="#get-updated-agenda-digests" title="Link to this heading">¶</a></h2>
 <p><strong>Usage</strong></p>
-<p>This api call gets all digests for an agenda in a calendar year:</p>
+<p>Get updates for an agenda, from the earliest:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
-<p><strong>Examples</strong></p>
-<p>Get all updates for agenda 15 in 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
-</pre></div>
-</div>
-<p><strong>Usage</strong></p>
-<p>Get a list of agenda digests in a specific time range of the calendar year to now:</p>
+<p>Get updates for an agenda since the given date/time:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Where ‘from’ is an ISO date time</p>
+<p>Get updates for an agenda during the given date/time range:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+</pre></div>
 </div>
+<p>Dates follow the same rules as the agenda updates API above. Each item is an update digest with its updated fields.</p>
+<p><strong>Optional Params</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>(processed|published)</p></td>
+<td><p>Which update date to filter and order by. Default
+processed.</p></td>
+</tr>
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>string (asc|desc)</p></td>
+<td><p>Order the results by update date/time. Default asc,
+oldest first.</p></td>
+</tr>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return. Default 50.</p></td>
+</tr>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from. Default 1.</p></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
+<p>Get the first 50 updates for agenda 15 in 2017:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
+</pre></div>
+</div>
 <p>Get updates for agenda 12 in 2017 from Feb 1st, 2017 to now:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
-<p><strong>Usage</strong></p>
-<p>Return agenda digests that have changed during a specified date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+<p>Get updates for agenda 12 in 2017 published from Jan 1st, 2017 up to Dec 1st, 2017:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Where ‘from’ and ‘to’ are ISO date times</p>
+<p>Get updates for agenda 1 in 2025, 10 at a time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2025/1/updates?limit=10
+</pre></div>
 </div>
-<p><strong>Examples</strong></p>
-<p>Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
+<p id="agenda-update-digest-response"><strong>Response</strong></p>
+<p>The agenda updates API returns the same items with <code class="docutils literal notranslate"><span class="pre">detail=true</span></code>.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"update-digest list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">9</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">9</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"result"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"items"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"id"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="s2">"number"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">"year"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2025</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"contentType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"AGENDA"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"sourceId"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13-15.21.28.027862_SENAGEN_00001.XML-1-AGENDA"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"sourceDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13T15:21:28.027862"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"processedDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13T15:26:02.400415"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"action"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"Insert"</span><span class="p">,</span><span class="w">                </span><span class="c1">// The update action that was performed (Insert|Update|Delete)</span>
+<span class="w">        </span><span class="s2">"scope"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"Agenda"</span><span class="p">,</span><span class="w">                 </span><span class="c1">// Which part of the agenda was updated</span>
+<span class="w">        </span><span class="s2">"fields"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">                        </span><span class="c1">// Updated fields</span>
+<span class="w">          </span><span class="s2">"Created Date Time"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13 15:26:02.400415"</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">"Published Date Time"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-01-13 15:21:28.027862"</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"fieldCount"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">...</span><span class="w"> </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">"size"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">9</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="s2">"fromDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"1970-01-01T00:00:00"</span><span class="p">,</span><span class="w">        </span><span class="c1">// The earliest, with no "from"</span>
+<span class="w">  </span><span class="s2">"toDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2026-10-29T12:52:03.683239885"</span><span class="w">   </span><span class="c1">// Just before now, with no "to"</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

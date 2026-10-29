@@ -97,7 +97,13 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
+<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
+For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
+means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
+The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
+microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
+fractional digits. With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>, the range runs to now.
+A <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> is required: <code class="docutils literal notranslate"><span class="pre">/api/3/updates</span></code> on its own is not an API route.</p>
 </div>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
@@ -110,7 +116,8 @@
 <tbody>
 <tr class="row-even"><td><p>type</p></td>
 <td><p>(processed|published)</p></td>
-<td><p>The type of bill update (see below for explanation)</p></td>
+<td><p>Which update date to filter and order by (see below).
+Default processed.</p></td>
 </tr>
 <tr class="row-odd"><td><p>detail</p></td>
 <td><p>boolean</p></td>
@@ -118,43 +125,57 @@
 </tr>
 <tr class="row-even"><td><p>fields</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true to get updated fields with detailed digests</p></td>
+<td><p>Set to true to get updated fields with detailed
+digests. Without it, <code class="docutils literal notranslate"><span class="pre">fields</span></code> is empty and
+<code class="docutils literal notranslate"><span class="pre">fieldCount</span></code> is 0.</p></td>
 </tr>
 <tr class="row-odd"><td><p>content-type</p></td>
 <td><p>string[]</p></td>
-<td><p>Filter by content type (AGENDA, BILL, CALENDAR, LAW)</p></td>
+<td><p>Filter by content type (AGENDA, BILL, CALENDAR, LAW).
+Repeat to request several. Unrecognized values are
+ignored; if none are recognized, all types are
+returned.</p></td>
 </tr>
 <tr class="row-even"><td><p>order</p></td>
 <td><p>string (asc|desc)</p></td>
-<td><p>Order the results by update date/time</p></td>
+<td><p>Order the results by update date/time. Default desc,
+newest first.</p></td>
 </tr>
 <tr class="row-odd"><td><p>limit</p></td>
-<td><p>integer</p></td>
-<td><p>Number of results to return</p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of results to return. Default 50.</p></td>
 </tr>
 <tr class="row-even"><td><p>offset</p></td>
-<td><p>integer</p></td>
-<td><p>Result number to start from</p></td>
+<td><p>&gt;= 1</p></td>
+<td><p>Result number to start from. Default 1.</p></td>
 </tr>
 </tbody>
 </table>
 <p>There are two types of updates, ‘processed’ and ‘published’. Processed refers to the date that OpenLeg processed
 the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
 which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
-reprocess it’s data to fix issues. By default the type is set to published.</p>
+reprocess its data to fix issues. By default the type is set to processed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike the content-specific update APIs, this one returns the newest updates first by default.
+To read a range from oldest to newest, set <code class="docutils literal notranslate"><span class="pre">order=asc</span></code>.</p>
+</div>
 <p><strong>Example</strong></p>
-<p>Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
+<p>Get a detailed view of the 50 most recent agenda, bill, and calendar updates processed on March 4, 2025:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/updates/2025-03-04T00:00:00/2025-03-05T00:00:00?type=processed
                     &amp;content-type=AGENDA&amp;content-type=BILL&amp;content-type=CALENDAR
                     &amp;detail=true&amp;fields=true
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
+<p>With <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> the items are update digests and the responseType is <code class="docutils literal notranslate"><span class="pre">update-digest</span> <span class="pre">list</span></code>.
+Without it, they are update tokens, with only the fields above the dashed comment below, and the
+responseType is <code class="docutils literal notranslate"><span class="pre">update-token</span> <span class="pre">list</span></code>.</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">11836</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"update-digest list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"total"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">5673</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"offsetStart"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"offsetEnd"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"limit"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
@@ -162,35 +183,37 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 <span class="w">    </span><span class="s2">"items"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">      </span><span class="p">{</span>
 <span class="w">        </span><span class="s2">"id"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">                        </span><span class="c1">// Content identifier</span>
-<span class="w">          </span><span class="s2">"basePrintNo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1948"</span><span class="p">,</span><span class="w">         </span><span class="c1">// See content-specific updates pages</span>
-<span class="w">            </span><span class="s2">"session"</span><span class="o">:</span><span class="w"> </span><span class="mf">2019</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">"basePrintNoStr"</span><span class="o">:</span><span class="w"> </span><span class="s2">"S1948-2019"</span>
+<span class="w">          </span><span class="s2">"basePrintNo"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"S6031"</span><span class="p">,</span><span class="w">        </span><span class="c1">// See content-specific updates pages</span>
+<span class="w">          </span><span class="s2">"session"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">2025</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">"basePrintNoStr"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"S6031-2025"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="s2">"contentType"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"BILL"</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">"sourceId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2019-01-17-20.22.35.839069_SENMEMO_S01948.XML-1-SENMEMO"</span><span class="p">,,</span><span class="w">   </span><span class="c1">// Id of the source that triggered the update</span>
-<span class="w">        </span><span class="s2">"sourceDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2019-01-17T20:22:35.839069"</span><span class="p">,</span><span class="w">  </span><span class="c1">// Published date of the source document</span>
-<span class="w">        </span><span class="s2">"processedDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2019-01-17T20:26:24.673778"</span><span class="p">,</span><span class="w"> </span><span class="c1">// Time when the update occurred</span>
+<span class="w">        </span><span class="s2">"sourceId"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-03-04-19.06.06.864349_SENMEMO_S06031.XML-1-SENMEMO"</span><span class="p">,</span><span class="w">   </span><span class="c1">// Id of the source that triggered the update</span>
+<span class="w">        </span><span class="s2">"sourceDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-03-04T19:06:06.864349"</span><span class="p">,</span><span class="w">  </span><span class="c1">// Published date of the source document</span>
+<span class="w">        </span><span class="s2">"processedDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-03-04T19:11:04.603729"</span><span class="p">,</span><span class="w"> </span><span class="c1">// Time when the update occurred</span>
 
 <span class="w">        </span><span class="c1">// --- The following fields are returned only for update digests -------------------</span>
 <span class="w">        </span><span class="s2">"action"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"Update"</span><span class="p">,</span><span class="w">    </span><span class="c1">// Update action (Insert|Update|Delete)</span>
 <span class="w">        </span><span class="s2">"scope"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"Bill Amendment"</span><span class="p">,</span><span class="w">   </span><span class="c1">// Designates which part of the content was updated</span>
-<span class="w">        </span><span class="s2">"fields"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="c1">// The updated fields, returned only if fields parameter is true</span>
-<span class="w">        </span><span class="s2">"fieldCount"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span>
+<span class="w">        </span><span class="s2">"fields"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">            </span><span class="c1">// The updated fields, returned only if fields parameter is true</span>
+<span class="w">          </span><span class="s2">"Sponsor Memo"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">" \nBILL NUMBER: S6031\n\nSPONSOR: PARKER\n..."</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"fieldCount"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="w">        </span><span class="c1">// Number of updated fields, 0 unless fields parameter is true</span>
 <span class="w">        </span><span class="c1">// ---------------------------------------------------------------------------------</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="p">...</span>
 <span class="w">    </span><span class="p">],</span>
 <span class="w">    </span><span class="s2">"size"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">50</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="s2">"fromDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2014-01-10T00:00"</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"toDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-03-18T13:16:17.383999999"</span>
+<span class="w">  </span><span class="s2">"fromDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-03-04T00:00:00"</span><span class="p">,</span><span class="w">       </span><span class="c1">// First instant in the range</span>
+<span class="w">  </span><span class="s2">"toDateTime"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">"2025-03-04T23:59:59.999999"</span><span class="w">   </span><span class="c1">// Last instant in the range</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>See the following pages for info on the unique update responses for each content type:</p>
 <ul class="simple">
-<li><p><span class="xref std std-ref">agenda update token response</span></p></li>
-<li><p><span class="xref std std-ref">agenda update digest response</span></p></li>
+<li><p><a class="reference internal" href="agendas.html#agenda-update-token-response"><span class="std std-ref">agenda update token response</span></a></p></li>
+<li><p><a class="reference internal" href="agendas.html#agenda-update-digest-response"><span class="std std-ref">agenda update digest response</span></a></p></li>
 <li><p><a class="reference internal" href="bills.html#bill-update-token-response"><span class="std std-ref">bill update token response</span></a></p></li>
 <li><p><a class="reference internal" href="bills.html#bill-update-digest-response"><span class="std std-ref">bill update digest response</span></a></p></li>
 <li><p><a class="reference internal" href="calendars.html#calendar-update-token-response"><span class="std std-ref">calendar update token response</span></a></p></li>
@@ -198,6 +221,8 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 <li><p><a class="reference internal" href="laws.html#law-update-token-response"><span class="std std-ref">law update token response</span></a></p></li>
 <li><p><a class="reference internal" href="laws.html#law-update-digest-response"><span class="std std-ref">law update digest response</span></a></p></li>
 </ul>
+<p>Hearings and floor transcripts are not part of this API. They have their own update APIs:
+<a class="reference internal" href="transcripts_ph.html#hearing-updates"><span class="std std-ref">hearing updates</span></a> and <a class="reference internal" href="transcripts_floor.html#transcript-updates"><span class="std std-ref">transcript updates</span></a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This example uses processed date time. As we reprocess our data periodically, it’s possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example</p>

@@ -514,33 +514,48 @@ To identify which bills have received updates within a given time period you can
 
 **Usage**
 
-List of bills updated during the given date/time range::
+List of bills updated within the past seven days::
 
-    GET /api/3/bills/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/bills/updates
 
 List of bills updated since the given date/time::
 
     GET /api/3/bills/updates/{fromDateTime}
 
-.. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
-   For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
-   The fromDateTime and toDateTime range is exclusive/inclusive respectively.
+List of bills updated during the given date/time range::
+
+    GET /api/3/bills/updates/{fromDateTime}/{toDateTime}
+
+.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``fromDateTime`` and excludes ``toDateTime``. The response reports the range it used, with ``toDateTime`` set to the last
+   microsecond included, e.g. ``2014-12-10T13:30:01.999999``. When the range runs to now, it can carry up to nine
+   fractional digits. With no ``toDateTime``, the range runs to now.
 
 **Optional Params**
 
 +----------------+---------------------------+--------------------------------------------------------+
 | Parameter      | Values                    | Description                                            |
 +================+===========================+========================================================+
-| type           | (processed|published)     | The type of bill update (see below for explanation)    |
+| type           | (processed|published)     | Which update date to filter and order by (see above).  |
+|                |                           | Default processed.                                     |
 +----------------+---------------------------+--------------------------------------------------------+
 | detail         | boolean                   | Set to true to see `detailed update digests`_          |
 +----------------+---------------------------+--------------------------------------------------------+
 | filter         | string                    | Filter by update type. See `update filters`_           |
 +----------------+---------------------------+--------------------------------------------------------+
-| order          | string (asc|desc)         | Order the results by update date/time                  |
+| order          | string (asc|desc)         | Order the results by update date/time. Default asc,    |
+|                |                           | oldest first.                                          |
++----------------+---------------------------+--------------------------------------------------------+
+| limit          | 1 - 1000                  | Number of results to return. Default 50.               |
++----------------+---------------------------+--------------------------------------------------------+
+| offset         | >= 1                      | Result number to start from. Default 1.                |
 +----------------+---------------------------+--------------------------------------------------------+
 | summary        | boolean                   | Include basic bill details (title, sponsor and type)   |
-|                |                           | with each item                                         |
+|                |                           | with each item, under ``item``. The responseType       |
+|                |                           | becomes ``update-token-with-item list``, or            |
+|                |                           | ``update-digestwith-item list`` with detail=true.      |
 +----------------+---------------------------+--------------------------------------------------------+
 | fullBill       | boolean                   | Include the full bill with each item. Not available    |
 |                |                           | with detail=true.                                      |
@@ -573,27 +588,32 @@ Bills that were updated between February 13, 2019 8:00:00AM and February 13, 201
 .. code-block:: javascript
 
     {
-        success: true,
-        message: "",
-        responseType: "update-token list",
-        total: 74,
-        offsetStart: 1,
-        offsetEnd: 50,
-        limit: 50,
+        "success": true,
+        "message": "",
+        "responseType": "update-token list",
+        "total": 74,
+        "offsetStart": 1,
+        "offsetEnd": 50,
+        "limit": 50,
         "result": {
             "items": [
                 {
-                   id: {
-                        basePrintNo: "S1826",
-                        session: 2019,
-                        basePrintNoStr: "S1826-2019"
+                    "id": {
+                        "basePrintNo": "S1826",
+                        "session": 2019,
+                        "basePrintNoStr": "S1826-2019"
                     },
-                    contentType: "BILL",
-                    sourceId: "2019-02-13-09.01.14.643609_LDSPON_S01826.XML-1-LDSPON",
-                    sourceDateTime: "2019-02-13T09:01:14.643609",
-                    processedDateTime: "2019-02-13T09:06:09.796845"
+                    "contentType": "BILL",
+                    "sourceId": "2019-02-13-09.01.14.643609_LDSPON_S01826.XML-1-LDSPON",
+                    "sourceDateTime": "2019-02-13T09:01:14.643609",
+                    "processedDateTime": "2019-02-13T09:06:09.796845"
                 },
                 ... (truncated)
+            ],
+            "size": 50
+        },
+        "fromDateTime": "2019-02-13T08:00:00",          // First instant in the range
+        "toDateTime": "2019-02-13T10:55:47.999999"      // Last instant in the range
     }
 
 
@@ -609,6 +629,9 @@ Update Filters:
 +-----------------+----------------------------------+
 | Field           |  Description                     |
 +=================+==================================+
+| PUBLISHED_BILL  | Bill publication (the bill's     |
+|                 | published date/time)             |
++-----------------+----------------------------------+
 | ACT_CLAUSE      | The enacting clause              |
 +-----------------+----------------------------------+
 | ACTION          | Bill Actions                     |
@@ -654,7 +677,7 @@ To view the actual updates that have occurred on a bill use the following API
 
 **Usage**
 
-All updates on a specific bill::
+Updates on a specific bill, from the earliest::
 
     GET /api/3/bills/{sessionYear}/{printNo}/updates
 
@@ -666,11 +689,31 @@ Updates on a specific bill during a given date/time range.::
 
     GET /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
 
+Dates follow the same rules as the bill updates API above. Each item is an update digest with its updated fields.
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| Which update date to filter and order by. Default      |
+|           |                      | processed.                                             |
++-----------+----------------------+--------------------------------------------------------+
+| filter    | string               | Filter by update type. See `update filters`_           |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return. Default 50.               |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from. Default 1.                |
++-----------+----------------------+--------------------------------------------------------+
+
 **Example**
 
-Updates for S1234-2013 between December 1, 2014 and December 2, 2014::
+Updates for S1234-2013 processed on December 13, 2014::
 
-    GET /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+    GET /api/3/bills/2013/S1234/updates/2014-12-13T00:00:00/2014-12-14T00:00:00
 
 .. _bill-update-digest-response:
 
@@ -693,7 +736,8 @@ Sample response:
             {
             "id": {
                 "basePrintNo": "S1234",
-                "session": 2013
+                "session": 2013,
+                "basePrintNoStr": "S1234-2013"
             },
             "contentType" : "BILL",
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
@@ -716,9 +760,15 @@ Sample response:
                 "Committee Name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
                 "Active Version": " ",
                 "Status": "IN_SENATE_COMM"
-            }
-            "fieldCount" : 14
+            },
+            "fieldCount": 14
         },
         ... (truncated)
+        ],
+        "size": 23
+        },
+        "fromDateTime": "2014-12-13T00:00:00",
+        "toDateTime": "2014-12-13T23:59:59.999999"
+    }
 
 .. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

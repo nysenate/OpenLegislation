@@ -314,19 +314,31 @@ List of calendars updated during the given date/time range::
 
     GET /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
-   For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
-   The fromDateTime and toDateTime range is exclusive/inclusive respectively.
+.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
+   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
+   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
+   The range includes ``fromDateTime`` and excludes ``toDateTime``. The response reports the range it used, with ``toDateTime`` set to the last
+   microsecond included, e.g. ``2014-12-10T13:30:01.999999``. When the range runs to now, it can carry up to nine
+   fractional digits. With no ``toDateTime``, the range runs to now.
 
 **Optional Params**
 
-+-----------+--------------------+--------------------------------------------------------+
-| Parameter | Values             | Description                                            |
-+===========+====================+========================================================+
-| detail    | boolean            | Set to true to see `detailed update digests`_          |
-+-----------+--------------------+--------------------------------------------------------+
-| order     | string (asc|desc)  | Order the results by update date/time                  |
-+-----------+--------------------+--------------------------------------------------------+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| Which update date to filter and order by: the date     |
+|           |                      | OpenLeg processed the data, or the date it was         |
+|           |                      | published. Default processed.                          |
++-----------+----------------------+--------------------------------------------------------+
+| detail    | boolean              | Set to true to see `detailed update digests`_          |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return. Default 100.              |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from. Default 1.                |
++-----------+----------------------+--------------------------------------------------------+
 
 **Examples**
 
@@ -355,6 +367,7 @@ Calendars that were updated between January 1st and January 20th of 2019::
               "year" : 2019,
               "calendarNumber" : 1
             },
+            "contentType" : "CALENDAR",
             // The id of the reference that triggered the update
             "sourceId" : "2019-01-14-15.55.39.563595_SENCAL_00001.XML-1-CALENDAR",
             // The publish date time of the reference source
@@ -364,8 +377,10 @@ Calendars that were updated between January 1st and January 20th of 2019::
           },
           ... (truncated)
         ],
-        "size" : 2
-      }
+        "size" : 4
+      },
+      "fromDateTime" : "2019-01-01T00:00:00",       // First instant in the range
+      "toDateTime" : "2019-01-19T23:59:59.999999"   // Last instant in the range
     }
 
 Get specific calendar updates
@@ -373,33 +388,40 @@ Get specific calendar updates
 
 **Usage**
 
+Get updates for a calendar, from the earliest::
+
+    GET /api/3/calendars/{year}/{calendarNumber}/updates
+
+Get updates for a calendar since the given date/time::
+
+    GET /api/3/calendars/{year}/{calendarNumber}/updates/{fromDateTime}
+
 Get updates for a calendar within a datetime range::
 
     GET /api/3/calendars/{year}/{calendarNumber}/updates/{fromDateTime}/{toDateTime}
 
-Get all updates for a calendar::
-
-    GET /api/3/calendars/{year}/{calendarNumber}/updates
+Dates follow the same rules as the calendar updates API above. Each item is an update digest with its updated fields.
 
 **Optional Params**
 
 +-----------+----------------------+---------------------------------------------------------------+
 | Parameter | Values               | Description                                                   |
 +===========+======================+===============================================================+
-| type      |(processed|published) | The type of bill update (see below for explanation)           |
+| type      |(processed|published) | Which update date to filter and order by. Default processed.  |
 +-----------+----------------------+---------------------------------------------------------------+
-| order     | string (asc|desc)    | Order the results by update date/time                         |
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc, oldest    |
+|           |                      | first.                                                        |
 +-----------+----------------------+---------------------------------------------------------------+
-| limit     | string               | (default 100) Limit the number of results                     |
+| limit     | 1 - 1000             | Number of results to return. Default 100.                     |
 +-----------+----------------------+---------------------------------------------------------------+
-| offset    | number               | (default 1) Start results from offset                         |
+| offset    | >= 1                 | Result number to start from. Default 1.                       |
 +-----------+----------------------+---------------------------------------------------------------+
 
 **Examples**
 
-Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014::
+Get updates for calendar 54 of 2014 published between 9 AM and 5 PM on June 20th, 2014::
 
-    GET /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
+    GET /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00?type=published
 
 .. _calendar-update-digest-response:
 
@@ -424,20 +446,22 @@ Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 
               "year" : 2014,
               "calendarNumber" : 54
             },
+            "contentType" : "CALENDAR",
             "sourceId" : "SOBI.D140620.T153915.TXT-1-CALENDAR",
             "sourceDateTime" : "2014-06-20T15:39:15",
             "processedDateTime" : "2014-12-15T15:21:34.786472",
-            "action" : "INSERT",                // The update action that was performed
+            "action" : "Insert",                // The update action that was performed (Insert|Update|Delete)
             "scope" : "Calendar Active List",   // The type of sub calendar that was updated
             "fields" : {                        // Updated fields
-              "publishedDateTime" : "2014-06-20 05:28:51",
-              "notes" : "",
-              "sequenceNo" : "0",
-              "createdDateTime" : "2014-12-15 15:21:34.786472",
-              "id" : "302",
-              "calendarDate" : "2014-06-20",
-              "releaseDateTime" : "2014-06-20 04:28:48"
-            }
+              "Created Date Time" : "2014-12-15 15:21:34.786472",
+              "Calendar Date" : "2014-06-20",
+              "Published Date Time" : "2014-06-20 05:28:51",
+              "Sequence No" : "0",
+              "Id" : "302",
+              "Notes" : "",
+              "Release Date Time" : "2014-06-20 04:28:48"
+            },
+            "fieldCount" : 7
           },
           ... (truncated)
         ],

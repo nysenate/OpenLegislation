@@ -410,25 +410,43 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 <p>Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.</p>
 </div>
 <p><strong>Usage</strong></p>
+<p>List of laws updated within the past seven days:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span>
+</pre></div>
+</div>
+<p>List of laws updated since the given date/time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
 <p>List of laws updated during the given date/time range:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
+<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
+For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
+means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
+The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
+microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
+fractional digits. On <code class="docutils literal notranslate"><span class="pre">/api/3/laws/updates</span></code>, with no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range runs to now.</p>
 </div>
-<p>All updates made on a specific body of law:</p>
+<p>Updates made on a specific body of law, or on one document in it. Without <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> these start from
+the earliest update, and without <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> they have no end:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 
 <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">updates</span>
      <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">VAT</span><span class="o">/</span><span class="n">updates</span>
+     <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">A1</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
-<p>All updates made on a specific body of law during a date/time range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>Updates for a specific law or document are always update digests, one per law document.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -440,23 +458,28 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 <tbody>
 <tr class="row-even"><td><p>type</p></td>
 <td><p>(processed|published)</p></td>
-<td><p>The type of law update</p></td>
+<td><p>Which update date to filter and order by: the date
+OpenLeg processed the data, or the date it was
+published. Default processed.</p></td>
 </tr>
 <tr class="row-odd"><td><p>detail</p></td>
 <td><p>boolean</p></td>
-<td><p>Set to true for updates to individual law documents.</p></td>
+<td><p>Set to true for updates to individual law documents.
+Only on <code class="docutils literal notranslate"><span class="pre">/api/3/laws/updates</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p>order</p></td>
 <td><p>string (asc|desc)</p></td>
-<td><p>Order the results by update date/time</p></td>
+<td><p>Order the results by update date/time. Default asc,
+oldest first.</p></td>
 </tr>
 <tr class="row-odd"><td><p>limit</p></td>
 <td><p>1 - 1000</p></td>
-<td><p>Number of results to return (high limits take longer)</p></td>
+<td><p>Number of results to return (high limits take longer).
+Default 50.</p></td>
 </tr>
 <tr class="row-even"><td><p>offset</p></td>
 <td><p>&gt;= 1</p></td>
-<td><p>Result number to start from</p></td>
+<td><p>Result number to start from. Default 1.</p></td>
 </tr>
 </tbody>
 </table>
@@ -466,25 +489,32 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate" id="law-update-token-response"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">responseType</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">total</span><span class="o">:</span><span class="w"> </span><span class="mf">33</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetStart</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetEnd</span><span class="o">:</span><span class="w"> </span><span class="mf">33</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">limit</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nx">items</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">lawId</span><span class="o">:</span><span class="w"> </span><span class="s2">"RSS"</span><span class="p">,</span><span class="w">                </span><span class="c1">// Which body of law was updated</span>
-<span class="w">                </span><span class="nx">activeDate</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-08-07"</span><span class="w">     </span><span class="c1">// The active published date</span>
+<span class="w">    </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"total"</span><span class="o">:</span><span class="w"> </span><span class="mf">33</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetStart"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetEnd"</span><span class="o">:</span><span class="w"> </span><span class="mf">33</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"limit"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="s2">"id"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">"lawId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"RSS"</span><span class="p">,</span><span class="w">                </span><span class="c1">// Which body of law was updated</span>
+<span class="w">                    </span><span class="s2">"activeDate"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-08-07"</span><span class="w">     </span><span class="c1">// The active published date</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="s2">"contentType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"20150807.UPDATE"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-08-07T00:00:00"</span><span class="p">,</span><span class="w">   </span><span class="c1">// Date of the source data</span>
+<span class="w">                </span><span class="s2">"processedDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-10T15:00:14.551822"</span><span class="w">  </span><span class="c1">// Date we processed this update</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nx">contentType</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">sourceId</span><span class="o">:</span><span class="w"> </span><span class="s2">"20150807.UPDATE"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">sourceDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-08-07T00:00"</span><span class="p">,</span><span class="w">   </span><span class="c1">// Date of the source data</span>
-<span class="w">            </span><span class="nx">processedDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-10T15:00:14.551822"</span><span class="w">  </span><span class="c1">// Date we processed this update</span>
-<span class="w">        </span><span class="p">},</span><span class="w">  </span><span class="p">(</span><span class="nx">truncated</span><span class="p">..)</span>
+<span class="w">            </span><span class="p">...</span><span class="w"> </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">33</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="s2">"fromDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-01T00:00:00"</span><span class="p">,</span><span class="w">          </span><span class="c1">// First instant in the range</span>
+<span class="w">    </span><span class="s2">"toDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-30T23:59:59.999999"</span><span class="w">      </span><span class="c1">// Last instant in the range</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Detailed law doc updates:</p>
@@ -493,30 +523,37 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate" id="law-update-digest-response"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">responseType</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-digest list"</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">total</span><span class="o">:</span><span class="w"> </span><span class="mf">431</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetStart</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetEnd</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">limit</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nx">items</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">lawId</span><span class="o">:</span><span class="w"> </span><span class="s2">"ABC"</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">locationId</span><span class="o">:</span><span class="w"> </span><span class="s2">"120"</span><span class="p">,</span><span class="w">                        </span><span class="c1">// Location id of doc that was updated</span>
-<span class="w">                </span><span class="nx">publishedDate</span><span class="o">:</span><span class="w"> </span><span class="s2">"2014-09-22"</span><span class="w">               </span><span class="c1">// Published date of this doc</span>
+<span class="w">    </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-digest list"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"total"</span><span class="o">:</span><span class="w"> </span><span class="mf">431</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetStart"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetEnd"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"limit"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="s2">"id"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">"lawId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"ABC"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"locationId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"120"</span><span class="p">,</span><span class="w">                    </span><span class="c1">// Location id of doc that was updated</span>
+<span class="w">                    </span><span class="s2">"publishedDate"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2014-09-22"</span><span class="w">           </span><span class="c1">// Published date of this doc</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="s2">"contentType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"DATABASE.LAW3"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2014-09-22T00:00:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"processedDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-06-04T14:36:01.426676"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"action"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Insert"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"scope"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Law Document"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fields"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w">                              </span><span class="c1">// Law updates do not list fields</span>
+<span class="w">                </span><span class="s2">"fieldCount"</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nx">contentType</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">sourceId</span><span class="o">:</span><span class="w"> </span><span class="s2">"DATABASE.LAW3"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">sourceDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2014-09-22T00:00"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">processedDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-06-04T14:36:01.426676"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="s2">"Insert"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">scope</span><span class="o">:</span><span class="w"> </span><span class="s2">"Law Document"</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">fields</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span>
-<span class="w">            </span><span class="nx">fieldCount</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span>
-<span class="w">        </span><span class="p">},</span>
+<span class="w">            </span><span class="p">...</span><span class="w"> </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="s2">"fromDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-01T00:00:00"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"toDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2015-09-30T23:59:59.999999"</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
@@ -526,15 +563,13 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 <p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws with tree updates during the given date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/tree/updates
-GET /api/3/laws/tree/updates/{fromDateTime}?type=published
-GET /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
-For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
-The fromDateTime and toDateTime range is exclusive.
-If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime</p>
+<p>Dates follow the same rules as <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>. The range includes fromDateTime and excludes
+toDateTime. If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -546,19 +581,22 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 <tbody>
 <tr class="row-even"><td><p>type</p></td>
 <td><p>(processed|published)</p></td>
-<td><p>The type of law update</p></td>
+<td><p>Which update date to filter and order by. Default
+processed.</p></td>
 </tr>
 <tr class="row-odd"><td><p>order</p></td>
 <td><p>string (asc|desc)</p></td>
-<td><p>Order the results by update date/time</p></td>
+<td><p>Order the results by update date/time. Default asc,
+oldest first.</p></td>
 </tr>
 <tr class="row-even"><td><p>limit</p></td>
 <td><p>1 - 1000</p></td>
-<td><p>Number of results to return (high limits take longer)</p></td>
+<td><p>Number of results to return (high limits take longer).
+Default 50.</p></td>
 </tr>
 <tr class="row-odd"><td><p>offset</p></td>
 <td><p>&gt;= 1</p></td>
-<td><p>Result number to start from</p></td>
+<td><p>Result number to start from. Default 1.</p></td>
 </tr>
 </tbody>
 </table>
@@ -568,26 +606,32 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 </pre></div>
 </div>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">responseType</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">total</span><span class="o">:</span><span class="w"> </span><span class="mf">23</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetStart</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">offsetEnd</span><span class="o">:</span><span class="w"> </span><span class="mf">23</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">limit</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">items</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"update-token list"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"total"</span><span class="o">:</span><span class="w"> </span><span class="mf">23</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetStart"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"offsetEnd"</span><span class="o">:</span><span class="w"> </span><span class="mf">23</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"limit"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">            </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nx">lawId</span><span class="o">:</span><span class="w"> </span><span class="s2">"PAR"</span><span class="p">,</span><span class="w">                   </span><span class="c1">// Location id of doc that was updated</span>
-<span class="w">                    </span><span class="nx">activeDate</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-07"</span><span class="w">        </span><span class="c1">// Published date of this doc</span>
+<span class="w">                </span><span class="s2">"id"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">"lawId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"PAR"</span><span class="p">,</span><span class="w">                 </span><span class="c1">// Which body of law had a tree update</span>
+<span class="w">                    </span><span class="s2">"activeDate"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-07"</span><span class="w">      </span><span class="c1">// The active published date of the new tree</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nx">contentType</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">sourceId</span><span class="o">:</span><span class="w"> </span><span class="s2">"20161007.UPDATE"</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">sourceDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-07T00:00"</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">processedDateTime</span><span class="o">:</span><span class="w"> </span><span class="s2">"2017-08-15T12:40:02.271155"</span>
+<span class="w">                </span><span class="s2">"contentType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"LAW"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceId"</span><span class="o">:</span><span class="w"> </span><span class="s2">"20161007.UPDATE"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"sourceDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-07T00:00:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"processedDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2017-08-15T12:40:02.271155"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">            </span><span class="p">...</span><span class="w"> </span><span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">23</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="s2">"fromDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-06T00:00:00"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"toDateTime"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2016-10-07T23:59:59.999999"</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
