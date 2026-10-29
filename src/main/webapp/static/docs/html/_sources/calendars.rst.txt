@@ -416,7 +416,7 @@ Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 
       "total" : 3,
       "offsetStart" : 1,
       "offsetEnd" : 3,
-      "limit" : 0,
+      "limit" : 100,
       "result" : {
         "items" : [
           {
@@ -442,7 +442,9 @@ Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 
           ... (truncated)
         ],
         "size" : 3
-      }
+      },
+      "fromDateTime" : "2014-06-20T09:00:00",
+      "toDateTime" : "2014-06-20T16:59:59.999999"
     }
 
 .. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example
