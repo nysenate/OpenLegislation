@@ -160,6 +160,36 @@ Set `flyway.password` to the database user password.
 
 Run `mvn compile flyway:migrate` to generate a build that is deployable by Tomcat.
 
+## API Documentation
+
+The public API docs are built with Sphinx from the `.rst` files in `docs/api/`. The generated HTML is
+committed under `src/main/webapp/static/docs/html/` and served by the webapp at `/static/docs/html/`.
+
+### Install Sphinx
+
+The committed HTML was built with Sphinx 9.1, sphinx_rtd_theme 3.1 and sphinxcontrib-jquery. Other
+versions change every page, so install exactly these in a virtual environment. Sphinx 9.1 needs
+Python 3.12 or newer.
+
+1. Create a virtual environment for Sphinx: `python3 -m venv ~/sphinx-venv`
+2. Install the pinned versions into it:
+   `~/sphinx-venv/bin/pip install 'sphinx==9.1.*' 'sphinx_rtd_theme==3.1.*' sphinxcontrib-jquery`
+3. Check the version: `~/sphinx-venv/bin/sphinx-build --version` should print `sphinx-build 9.1.x`.
+
+### Build the Docs
+
+From the repository root:
+
+1. `source ~/sphinx-venv/bin/activate` puts the virtual environment's `sphinx-build` on your `PATH`
+   for this terminal.
+2. `make -C docs/api html` writes the HTML to `src/main/webapp/static/docs/html/`.
+3. Check `git status`. Only the pages whose `.rst` source you changed should differ. If other pages
+   change too, your Sphinx or theme version doesn't match.
+4. Commit the `.rst` changes and the regenerated HTML separately.
+
+Sphinx keeps a cache in `docs/api/_build/`, which git ignores. To force a full rebuild, run
+`make -C docs/api clean html`. `clean` deletes only the cache, never the committed HTML.
+
 ## Running Open Legislation
 
 We typically run Open Legislation in Tomcat through IntelliJ.

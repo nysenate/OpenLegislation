@@ -31,6 +31,10 @@ mvn -Dit.test=DatabaseConfigIT integration-test
 npm ci          # install deps, then a production build via postinstall
 npm run build   # production webpack build
 npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080; set OL_IP to use another address)
+
+# Regenerate the public API docs (needs Sphinx; see docs/backend/index.md)
+make -C docs/api html    # writes src/main/webapp/static/docs/html
+make -C docs/api clean   # deletes only the Sphinx cache in docs/api/_build
 ```
 
 The `integration-test` phase runs Flyway twice beforehand: once against the main database
@@ -114,7 +118,8 @@ those are missing.
 ## Documentation
 
 - `docs/api/` - Sphinx (`.rst`) source for the public JSON API docs; update it alongside changes to public API endpoints or response shapes
-- `docs/backend/index.md` - local development environment setup
+- `src/main/webapp/static/docs/html/` - the generated HTML, tracked in git and served at `/static/docs/html/`. Regenerate it with `make -C docs/api html` after changing `docs/api/`, and commit the source and the regenerated HTML separately. A rebuild of unchanged source changes nothing, so a diff outside the pages you edited usually means a different Sphinx or theme version
+- `docs/backend/index.md` - local development environment setup, including the docs build; not published
 
 ## Naming Conventions
 
