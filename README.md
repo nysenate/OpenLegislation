@@ -3,9 +3,9 @@ OpenLegislation
 
 `From the New York State Senate`
 
-Dual BSD/GPL License. See the NYSenate licensing page http://www.nysenate.gov/Open-Source-Software-Licenses.
+Dual BSD/GPL License. See the NYSenate licensing page https://www.nysenate.gov/Open-Source-Software-Licenses.
 
-Open Legislation is an open source web service developed in-house by the New York State Senate to provide access to NYS legislative data including bills, resolutions, and laws. Developers can request a free key for the JSON API at http://legislation.nysenate.gov/. The JSON API is documented at http://legislation.nysenate.gov/static/docs/html/.
+Open Legislation is an open source web service developed in-house by the New York State Senate to provide access to NYS legislative data including bills, resolutions, and laws. Developers can request a free key for the JSON API at https://legislation.nysenate.gov/. The JSON API is documented at https://legislation.nysenate.gov/static/docs/html/index.html.
 
 Updates to legislative data are distributed by the Legislative Bill drafting Commission (LBDC) in a raw, plain text format. Open Legislation parses the updates in real time and redistributes the data through the JSON API for integration with various web applications. It is developed and run using several open-source technologies and frameworks including: 
 
