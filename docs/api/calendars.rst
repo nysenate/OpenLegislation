@@ -314,12 +314,7 @@ List of calendars updated during the given date/time range::
 
     GET /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
-.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
-   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
-   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
-   The range includes ``fromDateTime`` and excludes ``toDateTime``. The response reports the range it used, with ``toDateTime`` set to the last
-   microsecond included, e.g. ``2014-12-10T13:30:01.999999``. When the range runs to now, it can carry up to nine
-   fractional digits. With no ``toDateTime``, the range runs to now.
+With no ``toDateTime`` the range runs to now.
 
 **Optional Params**
 

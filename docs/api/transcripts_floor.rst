@@ -160,10 +160,7 @@ List of transcripts updated during the given date/time range::
 
     GET /api/3/transcripts/updates/{fromDateTime}/{toDateTime}
 
-.. note:: Give ``fromDateTime`` and ``toDateTime`` as ISO 8601 date-times in New York local time, without an offset.
-   For example December 10, 2014, 1:30:02 PM is ``2014-12-10T13:30:02``. A date alone, such as ``2014-12-10``,
-   means midnight. An offset such as ``Z`` or ``-05:00`` is ignored, not converted.
-   The range includes ``fromDateTime`` and excludes ``toDateTime``. With no ``toDateTime``, the range has no end.
+With no ``toDateTime`` the range has no end.
 
 Results are always ordered by the date/time OpenLeg last added or changed each transcript, oldest first.
 Unlike the other update APIs, this one does not take ``type``, ``order`` or ``detail``, and the response

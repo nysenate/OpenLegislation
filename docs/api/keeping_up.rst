@@ -55,11 +55,10 @@ next poll can start exactly there.
 **The range includes** ``from`` **and excludes** ``to``. A change at exactly ``to`` belongs to the next range. So
 when each poll's ``from`` is the previous poll's ``to``, consecutive polls meet with no gap and no overlap.
 
-**Times are New York local time, without an offset.** Write them as ``2026-10-20T14:30:00``. An offset such as
-``Z`` or ``-04:00`` is ignored, not converted, so ``2026-10-20T18:30:00Z`` means 6:30 p.m. in New York. A client
-that sends the current UTC time as ``to`` asks for a range that ends hours in the future. Changes that OpenLeg
-processes during those hours fall inside a range the client has already polled, so it misses them all. Times in
-responses are New York local time too.
+**Times are New York local time, without an offset** (see :ref:`api-dates`). An offset is ignored, not
+converted, so a client that sends the current UTC time as ``to`` asks for a range that ends hours in the future.
+Changes that OpenLeg processes during those hours fall inside a range the client has already polled, so it misses
+them all.
 
 **End each range a couple of minutes in the past.** Use New York now minus 2 minutes as ``to``. OpenLeg records
 each change when it saves it, and the margin leaves time for changes being saved as you poll to show up in your
@@ -74,19 +73,7 @@ process or reprocess data well after that, so a published-time range you already
 done only once you have read every page and fetched every changed item.
 
 **Remember** ``to``, **not the time of the last change.** Save the ``to`` you sent, and send it as the next
-``from``. The aggregate API reports the range it used in ``fromDateTime`` and ``toDateTime``, but its
-``toDateTime`` is the last microsecond included, such as ``2026-10-20T14:29:59.999999``, so don't use it as the
-next ``from``. The hearing and transcript APIs don't report the range at all.
-
-Hearing and transcript ranges can change while you read them
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The aggregate API lists each item that changed in a range once, however many times it changed there, so a range
-in the past always gives the same results. The hearing and transcript APIs list each item once too, but at the time
-it last changed. If a hearing changes again while you page through a range, it leaves that range for a later one,
-and the items after it shift down a place, so a page boundary can skip one. When ``total`` changes between pages,
-read the range again from the start. Hearings and transcripts change rarely, and with ``limit=100`` a range almost
-always fits on one page.
+``from``.
 
 Fetching the changed items
 --------------------------

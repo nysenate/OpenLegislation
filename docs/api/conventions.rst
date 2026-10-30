@@ -57,131 +57,6 @@ When a list has no items, ``responseType`` is ``"empty list"``, not the usual ty
 ``result.items`` is empty. Check ``total`` or ``result.size`` rather than ``responseType`` to tell whether there are
 results.
 
-.. _api-errors:
-
-Errors
-------
-
-An error response has ``success`` set to ``false``, ``responseType`` set to ``"error"``, and an ``errorCode``. Many
-errors also say what was wrong in ``errorData``, with ``errorDataType`` naming its type:
-
-.. code-block:: javascript
-
-    {
-      "success": false,
-      "message": "One or more of the provided request parameters was not valid",
-      "responseType": "error",
-      "errorCode": 1,
-      "errorData": {
-        "parameterConstraint": {
-          "name": "limit",
-          "type": "int",
-          "constraint": "Must be > 0 and <= 1000"
-        },
-        "receivedValue": "0"
-      },
-      "errorDataType": "invalid-parameter"
-    }
-
-Base your client's handling on the HTTP status and the ``errorCode``. The ``message`` is meant for people, and its
-wording may change.
-
-**HTTP statuses**
-
-.. list-table::
-   :header-rows: 1
-
-   * - Status
-     - Meaning
-   * - 200
-     - Success, with one exception below.
-   * - 400
-     - The request isn't valid: a parameter is malformed or out of range, a required parameter is missing, or a
-       search query can't be run.
-   * - 401
-     - The API key is missing or invalid, or doesn't allow this request.
-   * - 404
-     - The requested item doesn't exist.
-   * - 429
-     - Starting December 1, 2026: a rate limit was exceeded. See :ref:`rate-limits`.
-   * - 500
-     - An unexpected error on our side.
-
-**Error codes**
-
-.. list-table::
-   :header-rows: 1
-
-   * - ``errorCode``
-     - Status
-     - Meaning
-   * - -1
-     - 500
-     - Unexpected error
-   * - 1
-     - 400
-     - A request parameter isn't valid
-   * - 2
-     - 400
-     - A required request parameter is missing
-   * - 11
-     - 404
-     - Bill not found
-   * - 12
-     - 404
-     - Bill amendment not found
-   * - 21
-     - 404
-     - Law document not found
-   * - 22
-     - 404
-     - Law not found
-   * - 41
-     - 404
-     - Committee not found
-   * - 42
-     - 404
-     - Committee version not found
-   * - 51
-     - 404
-     - Calendar not found
-   * - 61
-     - 404
-     - Agenda not found
-   * - 100
-     - 400
-     - The search couldn't be run, for example because of a malformed query, a sort on an unknown field, or a page
-       past the end of the search window (see :ref:`search result window<search-result-window>`)
-   * - 141
-     - 404
-     - Floor transcript not found
-   * - 142
-     - 404
-     - More than one floor transcript matches the date and time; give the session type as well
-   * - 151
-     - 404
-     - Member not found
-   * - 171
-     - 404
-     - Hearing not found
-   * - 401
-     - 401
-     - Not authorized to make this request
-   * - 701
-     - 401
-     - The API key is missing or invalid
-   * - 703
-     - 429
-     - Starting December 1, 2026: rate limit exceeded
-
-**Exceptions**
-
-- ``/api/3/agendas/{year}/{agendaNo}/{committee}`` with a committee that isn't in the agenda returns status 200, but
-  with ``success`` set to ``false`` and ``errorCode`` 1. Check ``success`` as well as the status.
-- A path under ``/api/3`` that doesn't match any endpoint returns status 404 with an HTML page, not a JSON error.
-  The same happens for a path whose parts don't have the expected form, such as a session year that isn't four
-  digits.
-
 .. _api-paging:
 
 Paging
@@ -197,7 +72,7 @@ Endpoints that return lists take two paging parameters:
      - Description
    * - ``limit``
      - 1 - 1000
-     - Number of items to return. Each endpoint has its own default (see :ref:`default page sizes<default-page-sizes>`).
+     - Number of items to return. The default depends on the endpoint, so always set it.
    * - ``offset``
      - 1 or more
      - Position of the first item to return, starting at 1. Defaults to 1.
@@ -212,13 +87,13 @@ more than 1000 returns status 400 with ``errorCode`` 1. There is no way to get e
 Start with ``offset=1`` and request the next page at ``offsetEnd + 1``. Stop when ``offsetEnd`` is greater than or
 equal to ``total``. An ``offset`` past the end isn't an error: it returns an ``"empty list"``.
 
-This loop uses ``get`` from the :ref:`example client<rate-limits>`:
+For example, in Python:
 
 .. code-block:: python
 
     offset = 1
     while True:
-        page = get("/bills/2025", limit=1000, offset=offset)
+        page = get("/bills/2025", limit=100, offset=offset)
         for item in page["result"]["items"]:
             ...
         if page["offsetEnd"] >= page["total"]:
@@ -226,64 +101,6 @@ This loop uses ``get`` from the :ref:`example client<rate-limits>`:
         offset = page["offsetEnd"] + 1
 
 Lists can change while you page through them. To keep a copy of the data current, see :ref:`keeping-up`.
-
-.. _search-result-window:
-
-**Search result window**
-
-Search endpoints, and listings that are answered from the search index, can only reach the first 10,000 results
-of a query (the first 500,000 for bills). A request where ``offset + limit - 1`` is past that returns status 400 with
-``errorCode`` 100. To get more, narrow the query, for example by session year or date.
-
-.. _default-page-sizes:
-
-**Default page sizes**
-
-.. list-table::
-   :header-rows: 1
-
-   * - Endpoints
-     - Default ``limit``
-   * - ``/bills/{sessionYear}``
-     - 50
-   * - ``/bills/search``, ``/bills/{sessionYear}/search``
-     - 25
-   * - ``/bills/updates/...``, ``/bills/{sessionYear}/{printNo}/updates/...``
-     - 50
-   * - ``/agendas/{year}``, ``/agendas/meetings/{from}/{to}``
-     - 25
-   * - ``/agendas/search``, ``/agendas/{year}/search``
-     - 25
-   * - ``/agendas/updates/...``, ``/agendas/{year}/{agendaNo}/updates/...``
-     - 50
-   * - ``/calendars/{year}``, ``/calendars/{year}/activelist``, ``/calendars/{year}/supplemental``
-     - 100
-   * - ``/calendars/search``, ``/calendars/{year}/search``
-     - 100
-   * - ``/calendars/updates/...``, ``/calendars/{year}/{calendarNo}/updates/...``
-     - 100
-   * - ``/committees/{sessionYear}/{chamber}``, ``/committees/{sessionYear}/{chamber}/{name}/history``
-     - 50
-   * - ``/committees/search``, ``/committees/{sessionYear}/search``
-     - 50
-   * - ``/laws``
-     - 1000
-   * - ``/laws/search``, ``/laws/{lawId}/search``
-     - 25
-   * - ``/laws/updates/...`` and the other law update endpoints
-     - 50
-   * - ``/members``, ``/members/{sessionYear}``, ``/members/{sessionYear}/{chamber}``
-     - 50
-   * - ``/members/search``, ``/members/{sessionYear}/search``
-     - 50
-   * - ``/hearings``, ``/hearings/{year}``, ``/hearings/search``, ``/hearings/{year}/search``,
-       ``/hearings/updates/...``
-     - 25
-   * - ``/transcripts``, ``/transcripts/{year}``, ``/transcripts/search``, ``/transcripts/{year}/search``,
-       ``/transcripts/updates/...``
-     - 25
-   * - ``/updates/...``
-     - 50
 
 .. _api-dates:
 
@@ -320,35 +137,99 @@ Requests for a bill return the whole bill, with all its amendments, whatever ame
 ``S100A`` and ``S100`` return the same response. The amendment letter matters only for a bill's PDF
 (``/bills/{sessionYear}/{printNo}.pdf``) and for ``view=only_fulltext``, which return that amendment's text.
 
-.. _api-booleans:
-
-Booleans
---------
-
-Boolean request parameters accept ``true``, ``1``, ``yes`` and ``on`` for true, and ``false``, ``0``, ``no`` and
-``off`` for false, in any letter case. Use ``true`` and ``false``: depending on the parameter, other values either
-return status 400 or are read as true or false without an error.
-
 .. _api-sorting:
 
 Sorting
 -------
 
-Two different parameters set the order of results, depending on the endpoint.
+Endpoints that sort their results take one of two parameters. Each endpoint's page says which.
 
-**sort**
+- ``sort``, on search endpoints and some listings: a comma-separated list of ``field:ASC`` or ``field:DESC``, most
+  significant first, such as ``sort=status.statusType.keyword:ASC,status.actionDate:DESC``. See :ref:`search-sort`
+  for which fields can be sorted.
+- ``order``, on update endpoints and some listings: ``ASC`` or ``DESC``.
 
-Search endpoints, and the bill, member, hearing and floor transcript listings, take ``sort``: a comma-separated list
-of ``field:ASC`` or ``field:DESC``, most significant first::
+.. _api-booleans:
 
-    sort=status.statusType.keyword:ASC,status.actionDate:DESC
+Booleans
+--------
 
-See :ref:`search-sort` for which fields can be sorted and how. An unknown field or a malformed value returns status
-400 with ``errorCode`` 100.
+Boolean request parameters take ``true`` or ``false``.
 
-**order**
+.. _api-errors:
 
-Update endpoints, the calendar listings and committee history take ``order``, either ``ASC`` or ``DESC``, in any letter
-case. ``sortOrder`` is an alias for it. A value other than ``ASC`` or ``DESC`` is ignored and the
-endpoint's default order is used, without an error. The hearing and floor transcript update endpoints always return
-the oldest change first, and ignore ``order``.
+Errors
+------
+
+An error response has ``success`` set to ``false``, ``responseType`` set to ``"error"``, and an ``errorCode``. Many
+errors also say what was wrong in ``errorData``, with ``errorDataType`` naming its type:
+
+.. code-block:: javascript
+
+    {
+      "success": false,
+      "message": "One or more of the provided request parameters was not valid",
+      "responseType": "error",
+      "errorCode": 1,
+      "errorData": {
+        "parameterConstraint": {
+          "name": "limit",
+          "type": "int",
+          "constraint": "Must be > 0 and <= 1000"
+        },
+        "receivedValue": "0"
+      },
+      "errorDataType": "invalid-parameter"
+    }
+
+Base your client's handling on the HTTP status. The ``errorCode`` and ``errorData`` say more about what went
+wrong. The ``message`` is meant for people, and its wording may change.
+
+**HTTP statuses**
+
+.. list-table::
+   :header-rows: 1
+
+   * - Status
+     - Meaning
+   * - 200
+     - Success.
+   * - 400
+     - The request isn't valid: a parameter is malformed or out of range, a required parameter is missing, or a
+       search query can't be run.
+   * - 401
+     - The API key is missing or invalid, or doesn't allow this request.
+   * - 404
+     - The requested item doesn't exist.
+   * - 429
+     - Starting December 1, 2026: a rate limit was exceeded. See :ref:`rate-limits`.
+   * - 500
+     - An unexpected error on our side.
+
+**Error codes**
+
+These error codes apply across the API:
+
+.. list-table::
+   :header-rows: 1
+
+   * - ``errorCode``
+     - Status
+     - Meaning
+   * - 1
+     - 400
+     - A request parameter isn't valid; ``errorData`` says which
+   * - 2
+     - 400
+     - A required request parameter is missing
+   * - 100
+     - 400
+     - The search couldn't be run
+   * - 701
+     - 401
+     - The API key is missing or invalid
+   * - 703
+     - 429
+     - Starting December 1, 2026: rate limit exceeded
+
+A 404 has an ``errorCode`` for the kind of item that wasn't found. Handle it by status.
