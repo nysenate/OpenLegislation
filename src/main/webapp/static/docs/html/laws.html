@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NYS Laws API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>NYS Laws API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -74,14 +77,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>NYS Laws API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/laws.rst.txt" rel="nofollow"> View page source</a>
@@ -93,7 +96,7 @@
            <div itemprop="articleBody">
              
   <section id="nys-laws-api">
-<h1><strong>NYS Laws API</strong><a class="headerlink" href="#nys-laws-api" title="Link to this heading">¶</a></h1>
+<h1><strong>NYS Laws API</strong><a class="headerlink" href="#nys-laws-api" title="Link to this heading"></a></h1>
 <p>In order to utilize the Laws API we’ll go over some quick terminology:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Law Id<span class="colon">:</span></dt>
@@ -113,7 +116,7 @@ It’s possible to retrieve law documents roughly as they were represented durin
 </dl>
 <hr class="docutils" />
 <section id="get-a-list-of-law-ids">
-<h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Link to this heading">¶</a></h2>
+<h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
 </pre></div>
@@ -166,7 +169,7 @@ It’s possible to retrieve law documents roughly as they were represented durin
 <p>The <em>lawId</em> in the response is the three letter id for the law.</p>
 </section>
 <section id="get-the-law-structure">
-<h2>Get the law structure<a class="headerlink" href="#get-the-law-structure" title="Link to this heading">¶</a></h2>
+<h2>Get the law structure<a class="headerlink" href="#get-the-law-structure" title="Link to this heading"></a></h2>
 <p>Laws are represented as a collection of sub documents, each of which is structured within a hierarchy.
 The following call will provide the structure of the law.</p>
 <p><strong>Usage</strong></p>
@@ -268,7 +271,7 @@ the text body. Note that response can be rather large (several MB) for certain l
 <p>If you want to retrieve a specific law document use the following API call:</p>
 </section>
 <section id="get-a-law-sub-document">
-<h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Link to this heading">¶</a></h2>
+<h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
 </pre></div>
@@ -352,7 +355,7 @@ You can discover the locationId when you make an API request for the law structu
 </div>
 </section>
 <section id="search-for-law-documents">
-<h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Link to this heading">¶</a></h2>
+<h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/search?term=           // Search across all law volumes
 GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
@@ -402,7 +405,7 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 </div>
 </section>
 <section id="get-law-document-updates">
-<h2>Get law document updates<a class="headerlink" href="#get-law-document-updates" title="Link to this heading">¶</a></h2>
+<h2>Get law document updates<a class="headerlink" href="#get-law-document-updates" title="Link to this heading"></a></h2>
 <p>To identify which documents have been modified or added to a body of law, use the law updates API.</p>
 <p>To detect updates to the structure of the law document tree, see <a class="reference internal" href="#get-law-tree-updates">Get law tree updates</a>.</p>
 <div class="admonition note">
@@ -422,15 +425,7 @@ GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
-For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
-means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
-The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
-microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
-fractional digits. On <code class="docutils literal notranslate"><span class="pre">/api/3/laws/updates</span></code>, with no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range runs to now.</p>
-</div>
+<p>On <code class="docutils literal notranslate"><span class="pre">/api/3/laws/updates</span></code>, with no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range runs to now.</p>
 <p>Updates made on a specific body of law, or on one document in it. Without <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> these start from
 the earliest update, and without <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> they have no end:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
@@ -446,7 +441,7 @@ the earliest update, and without <code class="docutils literal notranslate"><spa
      <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">A1</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
-<p>Updates for a specific law or document are always update digests, one per law document.</p>
+<p>Updates for a specific law or document are always update digests, one for each change to a law document.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -558,7 +553,7 @@ Default 50.</p></td>
 </div>
 </section>
 <section id="get-law-tree-updates">
-<h2>Get law tree updates<a class="headerlink" href="#get-law-tree-updates" title="Link to this heading">¶</a></h2>
+<h2>Get law tree updates<a class="headerlink" href="#get-law-tree-updates" title="Link to this heading"></a></h2>
 <p>Gets a list of laws which have had structural changes over a specified date/time range.</p>
 <p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
 <p><strong>Usage</strong></p>
@@ -636,7 +631,7 @@ Default 50.</p></td>
 </div>
 </section>
 <section id="get-repealed-laws">
-<h2>Get repealed laws<a class="headerlink" href="#get-repealed-laws" title="Link to this heading">¶</a></h2>
+<h2>Get repealed laws<a class="headerlink" href="#get-repealed-laws" title="Link to this heading"></a></h2>
 <p>Gets a list of law documents that have been repealed with the option of restricting to a specified date/time range.
 The date/time range applies to the processed date of the law document, not the official repeal date.</p>
 <p><strong>Usage</strong></p>
@@ -665,7 +660,7 @@ The date/time range applies to the processed date of the law document, not the o
 </table>
 </section>
 <section id="get-a-law-pdf">
-<h2>Get a law pdf<a class="headerlink" href="#get-a-law-pdf" title="Link to this heading">¶</a></h2>
+<h2>Get a law pdf<a class="headerlink" href="#get-a-law-pdf" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve law pdf by document id.
 Inputting only the law ID will get you the root node for that chapter:</p>

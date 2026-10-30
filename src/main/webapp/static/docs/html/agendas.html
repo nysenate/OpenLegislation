@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Senate Agenda API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Senate Agenda API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Senate Agenda API</strong></a><ul>
@@ -74,14 +77,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Senate Agenda API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agendas.rst.txt" rel="nofollow"> View page source</a>
@@ -93,13 +96,13 @@
            <div itemprop="articleBody">
              
   <section id="senate-agenda-api">
-<h1><strong>Senate Agenda API</strong><a class="headerlink" href="#senate-agenda-api" title="Link to this heading">¶</a></h1>
+<h1><strong>Senate Agenda API</strong><a class="headerlink" href="#senate-agenda-api" title="Link to this heading"></a></h1>
 <p>Committee Agendas are a collection of legislative meetings that take place to discuss bills and ultimately pass them to the floor.</p>
 <p>The committee agendas for a given week are contained within a collection known as the <em>weekly agenda</em>. The weekly agenda
 starts at 1 for the first week, and increments by 1 for every subsequent week. The numbering of the agendas resets at the
 start of every year. Therefore a weekly agenda can be uniquely identified using the <em>Agenda No</em> and a <em>Year</em>.</p>
 <section id="get-a-single-agenda">
-<h2>Get a single agenda<a class="headerlink" href="#get-a-single-agenda" title="Link to this heading">¶</a></h2>
+<h2>Get a single agenda<a class="headerlink" href="#get-a-single-agenda" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve an agenda by year and agenda no:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span>
@@ -116,7 +119,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </div>
 </section>
 <section id="get-a-list-of-agendas-for-a-single-year">
-<h2>Get a list of agendas for a single year<a class="headerlink" href="#get-a-list-of-agendas-for-a-single-year" title="Link to this heading">¶</a></h2>
+<h2>Get a list of agendas for a single year<a class="headerlink" href="#get-a-list-of-agendas-for-a-single-year" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>List the weekly agendas in a year, in ascending order of agenda number:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
@@ -181,7 +184,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 </section>
 <section id="get-a-specific-committee-with-an-agenda">
-<h2>Get a specific committee with an agenda<a class="headerlink" href="#get-a-specific-committee-with-an-agenda" title="Link to this heading">¶</a></h2>
+<h2>Get a specific committee with an agenda<a class="headerlink" href="#get-a-specific-committee-with-an-agenda" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a specific committee within an agenda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
@@ -194,7 +197,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 </section>
 <section id="get-a-list-of-committee-meeting-times-in-a-time-range">
-<h2>Get a list of committee meeting times in a time range<a class="headerlink" href="#get-a-list-of-committee-meeting-times-in-a-time-range" title="Link to this heading">¶</a></h2>
+<h2>Get a list of committee meeting times in a time range<a class="headerlink" href="#get-a-list-of-committee-meeting-times-in-a-time-range" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a list of committee meetings between from and to date/time, ordered by earliest first:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="p">{</span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span> <span class="n">datetime</span><span class="p">}</span>
@@ -207,7 +210,7 @@ number of bills considered and voted on. Request a single agenda for its committ
 </div>
 </section>
 <section id="search-an-agenda-for-a-term">
-<h2>Search an Agenda for a term<a class="headerlink" href="#search-an-agenda-for-a-term" title="Link to this heading">¶</a></h2>
+<h2>Search an Agenda for a term<a class="headerlink" href="#search-an-agenda-for-a-term" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">search</span>
@@ -249,7 +252,7 @@ notes</span></a>.</p>
 </div>
 </section>
 <section id="search-all-agendas-in-a-calendar-year-for-a-term">
-<h2>Search all agendas in a calendar year for a term<a class="headerlink" href="#search-all-agendas-in-a-calendar-year-for-a-term" title="Link to this heading">¶</a></h2>
+<h2>Search all agendas in a calendar year for a term<a class="headerlink" href="#search-all-agendas-in-a-calendar-year-for-a-term" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>
@@ -291,7 +294,7 @@ notes</span></a>.</p>
 </div>
 </section>
 <section id="get-updated-agenda-id-s">
-<h2>Get updated agenda Id’s<a class="headerlink" href="#get-updated-agenda-id-s" title="Link to this heading">¶</a></h2>
+<h2>Get updated agenda Id’s<a class="headerlink" href="#get-updated-agenda-id-s" title="Link to this heading"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The following api calls work (by default) on the process date time. If we reprocess our data, the timestamps listed may not produce the same results. You can use the published date time to get updates from an earlier time</p>
@@ -309,15 +312,7 @@ notes</span></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Give <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> as ISO 8601 date-times in New York local time, without an offset.
-For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
-means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
-The range includes <code class="docutils literal notranslate"><span class="pre">from</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">to</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
-microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
-fractional digits. With no <code class="docutils literal notranslate"><span class="pre">to</span></code>, the range runs to now.</p>
-</div>
+<p>With no <code class="docutils literal notranslate"><span class="pre">to</span></code> the range runs to now.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -396,7 +391,7 @@ oldest first.</p></td>
 </div>
 </section>
 <section id="get-updated-agenda-digests">
-<h2>Get updated agenda digests<a class="headerlink" href="#get-updated-agenda-digests" title="Link to this heading">¶</a></h2>
+<h2>Get updated agenda digests<a class="headerlink" href="#get-updated-agenda-digests" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Get updates for an agenda, from the earliest:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search APIs &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Search APIs &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -31,7 +31,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -43,8 +43,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -68,14 +71,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Search APIs</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/search_api.rst.txt" rel="nofollow"> View page source</a>
@@ -87,12 +90,12 @@
            <div itemprop="articleBody">
              
   <section id="search-apis">
-<h1><strong>Search APIs</strong><a class="headerlink" href="#search-apis" title="Link to this heading">¶</a></h1>
+<h1><strong>Search APIs</strong><a class="headerlink" href="#search-apis" title="Link to this heading"></a></h1>
 <p>Most of the Open Legislation data APIs include search functionality.  We built our search layer using elasticsearch
 and we aim to provide as much elasticsearch functionality as possible through the APIs.</p>
 <p>Every search layer API will have a required request parameter “term” and an optional request param “sort”.</p>
 <section id="term">
-<span id="search-term"></span><h2>term<a class="headerlink" href="#term" title="Link to this heading">¶</a></h2>
+<span id="search-term"></span><h2>term<a class="headerlink" href="#term" title="Link to this heading"></a></h2>
 <p>The term parameter takes in an <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job:</p>
@@ -110,16 +113,13 @@ In order to filter resolutions out of the search results, a field query can be c
 <p>For a full enumeration of query features see the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a> syntax.</p>
 </section>
 <section id="sort">
-<span id="search-sort"></span><h2>sort<a class="headerlink" href="#sort" title="Link to this heading">¶</a></h2>
-<p>Searches can be sorted by any number valid response fields.  This is accomplished using the sort request parameter,
-which takes a comma separated string of response fields, each designated with a sort order (“ASC” or “DESC”) separated
+<span id="search-sort"></span><h2>sort<a class="headerlink" href="#sort" title="Link to this heading"></a></h2>
+<p>Searches can be sorted by any number of fields.  This is accomplished using the sort request parameter,
+which takes a comma separated string of fields, each designated with a sort order (“ASC” or “DESC”) separated
 from the field with a colon.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When sorting using a text field, you must suffix the field name with <code class="docutils literal notranslate"><span class="pre">.keyword</span></code>
-e.g. <code class="docutils literal notranslate"><span class="pre">...&amp;sort=printNo.keyword:ASC...</span></code>
-This does not apply to date and time fields, which are indexed in a different manner.</p>
-</div>
+<p><strong>Relevance.</strong> To sort by relevance, most relevant first, use <code class="docutils literal notranslate"><span class="pre">sort=_score:DESC</span></code>.</p>
+<p><strong>Text fields.</strong> To sort on a text field, use its <code class="docutils literal notranslate"><span class="pre">.keyword</span></code> subfield, for example
+<code class="docutils literal notranslate"><span class="pre">sort=status.statusType.keyword:ASC</span></code>.</p>
 <p>For example, to get the 2013 governor’s program bills in canonical order:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                             &amp;sort=programInfo.sequenceNo:ASC
@@ -132,7 +132,8 @@ This does not apply to date and time fields, which are indexed in a different ma
 </div>
 </section>
 <section id="search-response">
-<h2>Search Response<a class="headerlink" href="#search-response" title="Link to this heading">¶</a></h2>
+<h2>Search Response<a class="headerlink" href="#search-response" title="Link to this heading"></a></h2>
+<p>Search results are paged like other lists. See <a class="reference internal" href="conventions.html#api-paging"><span class="std std-ref">Paging</span></a>.</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
@@ -145,7 +146,10 @@ This does not apply to date and time fields, which are indexed in a different ma
 <span class="w">    </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">      </span><span class="p">{</span>
 <span class="w">        </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">},</span><span class="w">            </span><span class="c1">// A search result</span>
-<span class="w">        </span><span class="s2">"rank"</span><span class="o">:</span><span class="w"> </span><span class="mf">0.3587615191936493</span><span class="w">    </span><span class="c1">// The ranking of the search result</span>
+<span class="w">        </span><span class="s2">"rank"</span><span class="o">:</span><span class="w"> </span><span class="mf">13.046083</span><span class="p">,</span><span class="w">            </span><span class="c1">// Relevance score, when sorted by relevance</span>
+<span class="w">        </span><span class="s2">"highlights"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">               </span><span class="c1">// Matching text, by field, with matches wrapped in &lt;em&gt;</span>
+<span class="w">          </span><span class="s2">"printNo"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"&lt;em&gt;S11&lt;/em&gt;"</span><span class="w"> </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="p">...</span><span class="w">                           </span><span class="c1">// More search results</span>
 <span class="w">    </span><span class="p">],</span>
@@ -154,6 +158,7 @@ This does not apply to date and time fields, which are indexed in a different ma
 <span class="p">}</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">highlights</span></code> can be empty.</p>
 </section>
 </section>
 

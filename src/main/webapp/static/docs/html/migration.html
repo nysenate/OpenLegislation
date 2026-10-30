@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Migration Notes &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>API Migration Notes &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,14 +14,14 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
-    <link rel="prev" title="Open Legislation v2.0 API Docs" href="index.html" /> 
+    <link rel="next" title="Keeping Up with Changes" href="keeping_up.html" />
+    <link rel="prev" title="API Conventions" href="conventions.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,7 +44,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API Migration Notes</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-a-removed-option-is-rejected">How a removed option is rejected</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-listing-and-search">Bill listing and search</a></li>
@@ -55,6 +57,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#floor-transcript-listing-and-search">Floor transcript listing and search</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -73,14 +76,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>API Migration Notes</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/migration.rst.txt" rel="nofollow"> View page source</a>
@@ -92,7 +95,7 @@
            <div itemprop="articleBody">
              
   <section id="api-migration-notes">
-<span id="api-migration"></span><h1><strong>API Migration Notes</strong><a class="headerlink" href="#api-migration-notes" title="Link to this heading">¶</a></h1>
+<span id="api-migration"></span><h1><strong>API Migration Notes</strong><a class="headerlink" href="#api-migration-notes" title="Link to this heading"></a></h1>
 <p>Some listing, search and update endpoints will stop returning full items on December 1, 2026. The options that
 request full items from them are deprecated now and will be removed then. Until then they keep working as before.</p>
 <p>Deprecated options:</p>
@@ -106,9 +109,9 @@ request full items from them are deprecated now and will be removed then. Until 
 </ul>
 <p>To migrate, list or search for summaries or IDs instead, then request each item you need individually. Requests for
 a single item still return the full item, and the <code class="docutils literal notranslate"><span class="pre">/api/3</span></code> base URL and API keys stay the same. Each of those
-requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the items you need.</p>
+requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the items you need.</p>
 <section id="how-a-removed-option-is-rejected">
-<span id="removed-option-errors"></span><h2>How a removed option is rejected<a class="headerlink" href="#how-a-removed-option-is-rejected" title="Link to this heading">¶</a></h2>
+<span id="removed-option-errors"></span><h2>How a removed option is rejected<a class="headerlink" href="#how-a-removed-option-is-rejected" title="Link to this heading"></a></h2>
 <p>Starting December 1, 2026, a request that sets <code class="docutils literal notranslate"><span class="pre">full</span></code>, <code class="docutils literal notranslate"><span class="pre">fullBill</span></code> or <code class="docutils literal notranslate"><span class="pre">detail</span></code> to true on these endpoints is
 rejected with HTTP 400, for every caller. Omitting the option, or setting it to false, is still accepted.
 <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code> is not rejected, but it has no effect without full bills.</p>
@@ -133,7 +136,7 @@ section of this page for that option:</p>
 </div>
 </section>
 <section id="bill-listing-and-search">
-<span id="bill-collection-full-migration"></span><h2>Bill listing and search<a class="headerlink" href="#bill-listing-and-search" title="Link to this heading">¶</a></h2>
+<span id="bill-collection-full-migration"></span><h2>Bill listing and search<a class="headerlink" href="#bill-listing-and-search" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints, along with <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code>, which only applies to full bills:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}</span></code></p></li>
@@ -152,7 +155,7 @@ bill IDs.</p></li>
 <li><p>Request each bill you need from <code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}/{printNo}</span></code>, which returns the
 <a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">full bill</span></a> by default. Add <code class="docutils literal notranslate"><span class="pre">view=info</span></code> there if the summary is enough.</p></li>
 </ol>
-<p>Each of those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the bills you need.</p>
+<p>Each of those requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so request only the bills you need.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">idsOnly=true</span></code>, the listing items are the bill IDs themselves:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/2013?idsOnly=true
 </pre></div>
@@ -196,7 +199,7 @@ bill IDs.</p></li>
 <p>In both cases, request the full bill with its base print no and session, e.g. <code class="docutils literal notranslate"><span class="pre">/api/3/bills/2013/S1234</span></code>.</p>
 </section>
 <section id="bill-update-feeds">
-<span id="bill-updates-fullbill-migration"></span><h2>Bill update feeds<a class="headerlink" href="#bill-update-feeds" title="Link to this heading">¶</a></h2>
+<span id="bill-updates-fullbill-migration"></span><h2>Bill update feeds<a class="headerlink" href="#bill-update-feeds" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">fullBill</span></code> is deprecated on these endpoints, along with <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code>, which only applies to full bills:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/updates</span></code></p></li>
@@ -214,7 +217,7 @@ identifiers, title, sponsor and type, but not its status, actions, amendments or
 <li><p>Request each updated bill you need from <code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}/{printNo}</span></code>, using <code class="docutils literal notranslate"><span class="pre">session</span></code> and
 <code class="docutils literal notranslate"><span class="pre">basePrintNo</span></code> from the token’s <code class="docutils literal notranslate"><span class="pre">id</span></code>. It returns the <a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">full bill</span></a> by default.</p></li>
 </ul>
-<p>Each of those bill requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+<p>Each of those bill requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
 <p>Bills updated during a time range, with a summary of each bill:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48?summary=true
 </pre></div>
@@ -222,7 +225,7 @@ identifiers, title, sponsor and type, but not its status, actions, amendments or
 <p><code class="docutils literal notranslate"><span class="pre">summary=true</span></code> and <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> (with any <code class="docutils literal notranslate"><span class="pre">filter</span></code>) keep working as before.</p>
 </section>
 <section id="calendar-listings-and-search">
-<span id="calendar-collection-full-migration"></span><h2>Calendar listings and search<a class="headerlink" href="#calendar-listings-and-search" title="Link to this heading">¶</a></h2>
+<span id="calendar-collection-full-migration"></span><h2>Calendar listings and search<a class="headerlink" href="#calendar-listings-and-search" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on calendar listings:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}</span></code></p></li>
@@ -240,10 +243,10 @@ single calendar request is not affected.</p>
 <li><p>A supplemental or floor calendar: <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/{calendarNumber}/{versionCharacter}</span></code></p></li>
 </ul>
 <p>Calendar search without <code class="docutils literal notranslate"><span class="pre">detail</span></code> returns summaries too; request each calendar you need the same way. Each of
-those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+those requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
 </section>
 <section id="agenda-search">
-<span id="agenda-search-full-migration"></span><h2>Agenda search<a class="headerlink" href="#agenda-search" title="Link to this heading">¶</a></h2>
+<span id="agenda-search-full-migration"></span><h2>Agenda search<a class="headerlink" href="#agenda-search" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on agenda search:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/agendas/search</span></code></p></li>
@@ -254,10 +257,10 @@ those requests counts against your <a class="reference internal" href="index.htm
 <p>Search without <code class="docutils literal notranslate"><span class="pre">full</span></code>. Each result is a committee agenda summary: the agenda and committee it belongs to, the
 week, the number of addenda, and the number of bills considered and voted on. Then request each committee agenda
 you need, with its meetings and bills, from <code class="docutils literal notranslate"><span class="pre">/api/3/agendas/{year}/{agendaNo}/{committeeName}</span></code>. Each of those
-requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
 </section>
 <section id="hearing-listing-and-search">
-<span id="hearing-collection-full-migration"></span><h2>Hearing listing and search<a class="headerlink" href="#hearing-listing-and-search" title="Link to this heading">¶</a></h2>
+<span id="hearing-collection-full-migration"></span><h2>Hearing listing and search<a class="headerlink" href="#hearing-listing-and-search" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings</span></code></p></li>
@@ -274,10 +277,10 @@ committees that held it, but not its text.</p></li>
 <li><p>With <code class="docutils literal notranslate"><span class="pre">summary=false</span></code>, each hearing has only its id and filename.</p></li>
 </ul>
 <p>Then request each hearing you need, with its text, from <code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{id}</span></code>. Each of those requests counts
-against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
 </section>
 <section id="floor-transcript-listing-and-search">
-<span id="transcript-collection-full-migration"></span><h2>Floor transcript listing and search<a class="headerlink" href="#floor-transcript-listing-and-search" title="Link to this heading">¶</a></h2>
+<span id="transcript-collection-full-migration"></span><h2>Floor transcript listing and search<a class="headerlink" href="#floor-transcript-listing-and-search" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">full</span></code> is deprecated on these endpoints:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts</span></code></p></li>
@@ -293,7 +296,7 @@ against your <a class="reference internal" href="index.html#rate-limits"><span c
 <li><p>With <code class="docutils literal notranslate"><span class="pre">summary=false</span></code>, each transcript has only its dateTime and sessionType.</p></li>
 </ul>
 <p>Then request each transcript you need, with its text, from <code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{dateTime}/{sessionType}</span></code>. Each of
-those requests counts against your <a class="reference internal" href="index.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
+those requests counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>.</p>
 </section>
 </section>
 
@@ -301,8 +304,8 @@ those requests counts against your <a class="reference internal" href="index.htm
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation v2.0 API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="bills.html" class="btn btn-neutral float-right" title="Bills and Resolutions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="conventions.html" class="btn btn-neutral float-left" title="API Conventions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="keeping_up.html" class="btn btn-neutral float-right" title="Keeping Up with Changes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Senate Committee API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Senate Committee API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -71,14 +74,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Senate Committee API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/committees.rst.txt" rel="nofollow"> View page source</a>
@@ -90,13 +93,13 @@
            <div itemprop="articleBody">
              
   <section id="senate-committee-api">
-<h1><strong>Senate Committee API</strong><a class="headerlink" href="#senate-committee-api" title="Link to this heading">¶</a></h1>
+<h1><strong>Senate Committee API</strong><a class="headerlink" href="#senate-committee-api" title="Link to this heading"></a></h1>
 <p>In OpenLegislation, committee data is processed in a way that tracks the membership of each committee over time.
 Committees are stored as committee versions, each of which represent a time period where there were no changes in
 committee membership for a specific committee.  Committee versions contain a list of members in the committee,
 information on where and when the committee meets, and the dates when the committee version began and was reformed.</p>
 <section id="get-a-current-committee-version">
-<h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Link to this heading">¶</a></h2>
+<h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Assembly committee data is currently not sent to us at this time. chamber must be ‘senate’.</p>
@@ -114,7 +117,7 @@ information on where and when the committee meets, and the dates when the commit
 <p>See <a class="reference internal" href="#committee-version-response">committee version response</a></p>
 </section>
 <section id="get-a-committee-version-at-specific-time">
-<h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Link to this heading">¶</a></h2>
+<h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Link to this heading"></a></h2>
 <p>This request will return a committee version (if one exists) corresponding to the given committee that was created
 before or on the given time and reformed after the given time.</p>
 <p><strong>Usage</strong></p>
@@ -169,7 +172,7 @@ before or on the given time and reformed after the given time.</p>
 </div>
 </section>
 <section id="get-committee-history">
-<h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Link to this heading">¶</a></h2>
+<h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="n">history</span>
 </pre></div>
@@ -209,7 +212,7 @@ GET /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=t
 </div>
 </section>
 <section id="get-all-current-committees">
-<h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Link to this heading">¶</a></h2>
+<h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
 </pre></div>
@@ -236,7 +239,7 @@ GET /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=t
 </div>
 </section>
 <section id="search-for-committees">
-<h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Link to this heading">¶</a></h2>
+<h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Link to this heading"></a></h2>
 <p>Read our <a class="reference internal" href="search_api.html"><span class="doc">search API docs</span></a> for info on how to construct search terms.
 The committee search index is comprised of full committee responses
 (i.e. the json response returned when requesting a single committee)

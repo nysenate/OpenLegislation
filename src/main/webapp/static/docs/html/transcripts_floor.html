@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Senate Floor Transcripts API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Senate Floor Transcripts API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -70,14 +73,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Senate Floor Transcripts API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/transcripts_floor.rst.txt" rel="nofollow"> View page source</a>
@@ -89,13 +92,13 @@
            <div itemprop="articleBody">
              
   <section id="senate-floor-transcripts-api">
-<h1><strong>Senate Floor Transcripts API</strong><a class="headerlink" href="#senate-floor-transcripts-api" title="Link to this heading">¶</a></h1>
+<h1><strong>Senate Floor Transcripts API</strong><a class="headerlink" href="#senate-floor-transcripts-api" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Assembly transcripts are not available at this time.</p>
 </div>
 <section id="get-a-single-transcript">
-<h2>Get a single Transcript<a class="headerlink" href="#get-a-single-transcript" title="Link to this heading">¶</a></h2>
+<h2>Get a single Transcript<a class="headerlink" href="#get-a-single-transcript" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span>
@@ -143,7 +146,7 @@
 </div>
 </section>
 <section id="get-a-transcript-pdf">
-<h2>Get a transcript pdf<a class="headerlink" href="#get-a-transcript-pdf" title="Link to this heading">¶</a></h2>
+<h2>Get a transcript pdf<a class="headerlink" href="#get-a-transcript-pdf" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">dateTime</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
@@ -157,7 +160,7 @@
 </div>
 </section>
 <section id="get-a-list-of-transcripts">
-<h2>Get a list of transcripts<a class="headerlink" href="#get-a-list-of-transcripts" title="Link to this heading">¶</a></h2>
+<h2>Get a list of transcripts<a class="headerlink" href="#get-a-list-of-transcripts" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>List transcripts within a year:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
@@ -230,8 +233,9 @@ dateTime and sessionType of each transcript.</p></td>
 </div>
 </section>
 <section id="get-transcript-updates">
-<span id="transcript-updates"></span><h2>Get transcript updates<a class="headerlink" href="#get-transcript-updates" title="Link to this heading">¶</a></h2>
-<p>To identify which transcripts have been added or changed within a given time period you can use the transcript updates api.</p>
+<span id="transcript-updates"></span><h2>Get transcript updates<a class="headerlink" href="#get-transcript-updates" title="Link to this heading"></a></h2>
+<p>To identify which transcripts have been added or changed within a given time period you can use the transcript updates api.
+To keep a copy of transcripts current with it, see <a class="reference internal" href="keeping_up.html#keeping-up"><span class="std std-ref">Keeping Up with Changes</span></a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of transcripts updated within the past seven days:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="n">updates</span>
@@ -245,13 +249,7 @@ dateTime and sessionType of each transcript.</p></td>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
-For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
-means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
-The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>, the range has no end.</p>
-</div>
+<p>With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range has no end.</p>
 <p>Results are always ordered by the date/time OpenLeg last added or changed each transcript, oldest first.
 Unlike the other update APIs, this one does not take <code class="docutils literal notranslate"><span class="pre">type</span></code>, <code class="docutils literal notranslate"><span class="pre">order</span></code> or <code class="docutils literal notranslate"><span class="pre">detail</span></code>, and the response
 does not include <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> or <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>.</p>

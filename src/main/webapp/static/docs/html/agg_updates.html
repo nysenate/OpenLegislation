@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aggregate Updates API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Aggregate Updates API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
@@ -67,14 +70,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Aggregate Updates API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agg_updates.rst.txt" rel="nofollow"> View page source</a>
@@ -86,25 +89,17 @@
            <div itemprop="articleBody">
              
   <section id="aggregate-updates-api">
-<h1><strong>Aggregate Updates API</strong><a class="headerlink" href="#aggregate-updates-api" title="Link to this heading">¶</a></h1>
+<h1><strong>Aggregate Updates API</strong><a class="headerlink" href="#aggregate-updates-api" title="Link to this heading"></a></h1>
 <section id="get-aggregate-updates">
-<h2>Get aggregate updates<a class="headerlink" href="#get-aggregate-updates" title="Link to this heading">¶</a></h2>
+<h2>Get aggregate updates<a class="headerlink" href="#get-aggregate-updates" title="Link to this heading"></a></h2>
+<p>To keep a copy of Open Legislation data current with this API, see <a class="reference internal" href="keeping_up.html#keeping-up"><span class="std std-ref">Keeping Up with Changes</span></a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of content that was updated during the given date/time range:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
 <span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
-For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
-means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
-The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
-microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
-fractional digits. With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>, the range runs to now.
-A <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> is required: <code class="docutils literal notranslate"><span class="pre">/api/3/updates</span></code> on its own is not an API route.</p>
-</div>
+<p>With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range runs to now. A <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> is required: <code class="docutils literal notranslate"><span class="pre">/api/3/updates</span></code> on its own is not an API route.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -170,7 +165,7 @@ To read a range from oldest to newest, set <code class="docutils literal notrans
 <p><strong>Response</strong></p>
 <p>With <code class="docutils literal notranslate"><span class="pre">detail=true</span></code> the items are update digests and the responseType is <code class="docutils literal notranslate"><span class="pre">update-digest</span> <span class="pre">list</span></code>.
 Without it, they are update tokens, with only the fields above the dashed comment below, and the
-responseType is <code class="docutils literal notranslate"><span class="pre">update-token</span> <span class="pre">list</span></code>.</p>
+responseType is <code class="docutils literal notranslate"><span class="pre">update-token</span> <span class="pre">list</span></code>. A page with no items has the responseType <code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">list</span></code>.</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>

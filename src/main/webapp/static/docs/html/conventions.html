@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Conventions &mdash; Open Legislation API</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Migration Notes" href="migration.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Open Legislation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API Conventions</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#base-url-and-api-key">Base URL and API key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#response-envelope">Response envelope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#paging">Paging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dates-and-times">Dates and times</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#session-years">Session years</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bill-print-numbers">Bill print numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sorting">Sorting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#booleans">Booleans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#errors">Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Hearing Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Open Legislation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>API Conventions</strong></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/conventions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-conventions">
+<span id="id1"></span><h1><strong>API Conventions</strong><a class="headerlink" href="#api-conventions" title="Link to this heading"></a></h1>
+<p>These rules apply to every endpoint in the API. The page for each content type documents only what is specific to it.</p>
+<section id="base-url-and-api-key">
+<h2>Base URL and API key<a class="headerlink" href="#base-url-and-api-key" title="Link to this heading"></a></h2>
+<p>Every endpoint is under this base URL:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">legislation</span><span class="o">.</span><span class="n">nysenate</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span>
+</pre></div>
+</div>
+<p>Pass your API key as the <code class="docutils literal notranslate"><span class="pre">key</span></code> request parameter on every request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET https://legislation.nysenate.gov/api/3/bills/2025/S100?view=info&amp;key=YOUR_API_KEY
+</pre></div>
+</div>
+<p>A request with a missing or invalid key returns HTTP status 401 with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 701. The API doesn’t distinguish
+between a missing key and an invalid one.</p>
+</section>
+<section id="response-envelope">
+<span id="id2"></span><h2>Response envelope<a class="headerlink" href="#response-envelope" title="Link to this heading"></a></h2>
+<p>Every JSON response has the same top-level fields:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">             </span><span class="c1">// false for errors</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">               </span><span class="c1">// Human-readable; don't parse it</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"bill"</span><span class="p">,</span><span class="w">      </span><span class="c1">// What "result" holds</span>
+<span class="w">  </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">            </span><span class="c1">// The data</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A response that returns a list adds paging fields, and its <code class="docutils literal notranslate"><span class="pre">result</span></code> holds the items:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"bill-info list"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"total"</span><span class="o">:</span><span class="w"> </span><span class="mf">25520</span><span class="p">,</span><span class="w">              </span><span class="c1">// Matching items across all pages</span>
+<span class="w">  </span><span class="s2">"offsetStart"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w">            </span><span class="c1">// Position of the first item on this page, starting at 1</span>
+<span class="w">  </span><span class="s2">"offsetEnd"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w">             </span><span class="c1">// Position of the last item on this page</span>
+<span class="w">  </span><span class="s2">"limit"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w">                 </span><span class="c1">// Page size used for this request</span>
+<span class="w">  </span><span class="s2">"result"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"items"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">],</span><span class="w">          </span><span class="c1">// The items on this page</span>
+<span class="w">    </span><span class="s2">"size"</span><span class="o">:</span><span class="w"> </span><span class="mf">50</span><span class="w">                 </span><span class="c1">// Number of items on this page</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When a list has no items, <code class="docutils literal notranslate"><span class="pre">responseType</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;empty</span> <span class="pre">list&quot;</span></code>, not the usual type such as <code class="docutils literal notranslate"><span class="pre">&quot;bill-info</span> <span class="pre">list&quot;</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">result.items</span></code> is empty. Check <code class="docutils literal notranslate"><span class="pre">total</span></code> or <code class="docutils literal notranslate"><span class="pre">result.size</span></code> rather than <code class="docutils literal notranslate"><span class="pre">responseType</span></code> to tell whether there are
+results.</p>
+</section>
+<section id="paging">
+<span id="api-paging"></span><h2>Paging<a class="headerlink" href="#paging" title="Link to this heading"></a></h2>
+<p>Endpoints that return lists take two paging parameters:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">limit</span></code></p></td>
+<td><p>1 - 1000</p></td>
+<td><p>Number of items to return. The default depends on the endpoint, so always set it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">offset</span></code></p></td>
+<td><p>1 or more</p></td>
+<td><p>Position of the first item to return, starting at 1. Defaults to 1.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">offset</span></code> starts at 1, not 0. A value below 1, or one that isn’t a number, is treated as 1.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">limit</span></code> that isn’t a number is ignored, and the endpoint’s default is used instead. A <code class="docutils literal notranslate"><span class="pre">limit</span></code> of 0, <code class="docutils literal notranslate"><span class="pre">all</span></code>, or
+more than 1000 returns status 400 with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 1. There is no way to get every item in one request.</p>
+<p><strong>Reading every page</strong></p>
+<p>Start with <code class="docutils literal notranslate"><span class="pre">offset=1</span></code> and request the next page at <code class="docutils literal notranslate"><span class="pre">offsetEnd</span> <span class="pre">+</span> <span class="pre">1</span></code>. Stop when <code class="docutils literal notranslate"><span class="pre">offsetEnd</span></code> is greater than or
+equal to <code class="docutils literal notranslate"><span class="pre">total</span></code>. An <code class="docutils literal notranslate"><span class="pre">offset</span></code> past the end isn’t an error: it returns an <code class="docutils literal notranslate"><span class="pre">&quot;empty</span> <span class="pre">list&quot;</span></code>.</p>
+<p>For example, in Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="s2">"/bills/2025"</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">page</span><span class="p">[</span><span class="s2">"result"</span><span class="p">][</span><span class="s2">"items"</span><span class="p">]:</span>
+        <span class="o">...</span>
+    <span class="k">if</span> <span class="n">page</span><span class="p">[</span><span class="s2">"offsetEnd"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">page</span><span class="p">[</span><span class="s2">"total"</span><span class="p">]:</span>
+        <span class="k">break</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">page</span><span class="p">[</span><span class="s2">"offsetEnd"</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Lists can change while you page through them. To keep a copy of the data current, see <a class="reference internal" href="keeping_up.html#keeping-up"><span class="std std-ref">Keeping Up with Changes</span></a>.</p>
+</section>
+<section id="dates-and-times">
+<span id="api-dates"></span><h2>Dates and times<a class="headerlink" href="#dates-and-times" title="Link to this heading"></a></h2>
+<p>Dates and times use ISO 8601 and are New York local time. Responses write them without an offset, for example
+<code class="docutils literal notranslate"><span class="pre">2026-10-20T14:30:00</span></code> or <code class="docutils literal notranslate"><span class="pre">2026-10-20T14:30:00.285395</span></code>.</p>
+<p>In requests:</p>
+<ul class="simple">
+<li><p>Write a date and time as <code class="docutils literal notranslate"><span class="pre">2026-10-20T14:30:00</span></code>. Fractional seconds are allowed.</p></li>
+<li><p>An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-04:00</span></code> is ignored, not converted. <code class="docutils literal notranslate"><span class="pre">2026-10-20T18:30:00Z</span></code> means 6:30 p.m. in New
+York, not 2:30 p.m. Convert times to New York local time before sending them.</p></li>
+<li><p>Where a date and time is expected, a date alone, such as <code class="docutils literal notranslate"><span class="pre">2026-10-20</span></code>, means midnight at the start of that day.</p></li>
+<li><p>A range given by <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> includes <code class="docutils literal notranslate"><span class="pre">from</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">to</span></code>. A range whose <code class="docutils literal notranslate"><span class="pre">from</span></code> is after its
+<code class="docutils literal notranslate"><span class="pre">to</span></code> returns status 400.</p></li>
+</ul>
+</section>
+<section id="session-years">
+<span id="api-session-years"></span><h2>Session years<a class="headerlink" href="#session-years" title="Link to this heading"></a></h2>
+<p>A legislative session lasts two years and is named by its first year, which is always odd: the 2025 session covers
+2025 and 2026. Wherever a session year is expected, an even year means the session it falls in, so <code class="docutils literal notranslate"><span class="pre">2026</span></code> means
+<code class="docutils literal notranslate"><span class="pre">2025</span></code>. Responses always give the odd year.</p>
+</section>
+<section id="bill-print-numbers">
+<h2>Bill print numbers<a class="headerlink" href="#bill-print-numbers" title="Link to this heading"></a></h2>
+<p>Bill print numbers, such as <code class="docutils literal notranslate"><span class="pre">S100</span></code> or <code class="docutils literal notranslate"><span class="pre">A2345B</span></code>, are case-insensitive: <code class="docutils literal notranslate"><span class="pre">s100</span></code> and <code class="docutils literal notranslate"><span class="pre">S100</span></code> are the same bill.</p>
+<p>Requests for a bill return the whole bill, with all its amendments, whatever amendment letter the print number has.
+<code class="docutils literal notranslate"><span class="pre">S100A</span></code> and <code class="docutils literal notranslate"><span class="pre">S100</span></code> return the same response. The amendment letter matters only for a bill’s PDF
+(<code class="docutils literal notranslate"><span class="pre">/bills/{sessionYear}/{printNo}.pdf</span></code>) and for <code class="docutils literal notranslate"><span class="pre">view=only_fulltext</span></code>, which return that amendment’s text.</p>
+</section>
+<section id="sorting">
+<span id="api-sorting"></span><h2>Sorting<a class="headerlink" href="#sorting" title="Link to this heading"></a></h2>
+<p>Endpoints that sort their results take one of two parameters. Each endpoint’s page says which.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sort</span></code>, on search endpoints and some listings: a comma-separated list of <code class="docutils literal notranslate"><span class="pre">field:ASC</span></code> or <code class="docutils literal notranslate"><span class="pre">field:DESC</span></code>, most
+significant first, such as <code class="docutils literal notranslate"><span class="pre">sort=status.statusType.keyword:ASC,status.actionDate:DESC</span></code>. See <a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">sort</span></a>
+for which fields can be sorted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>, on update endpoints and some listings: <code class="docutils literal notranslate"><span class="pre">ASC</span></code> or <code class="docutils literal notranslate"><span class="pre">DESC</span></code>.</p></li>
+</ul>
+</section>
+<section id="booleans">
+<span id="api-booleans"></span><h2>Booleans<a class="headerlink" href="#booleans" title="Link to this heading"></a></h2>
+<p>Boolean request parameters take <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+<section id="errors">
+<span id="api-errors"></span><h2>Errors<a class="headerlink" href="#errors" title="Link to this heading"></a></h2>
+<p>An error response has <code class="docutils literal notranslate"><span class="pre">success</span></code> set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">responseType</span></code> set to <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>, and an <code class="docutils literal notranslate"><span class="pre">errorCode</span></code>. Many
+errors also say what was wrong in <code class="docutils literal notranslate"><span class="pre">errorData</span></code>, with <code class="docutils literal notranslate"><span class="pre">errorDataType</span></code> naming its type:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"One or more of the provided request parameters was not valid"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorData"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"parameterConstraint"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"limit"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"int"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"constraint"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Must be &gt; 0 and &lt;= 1000"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="s2">"receivedValue"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="s2">"errorDataType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"invalid-parameter"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Base your client’s handling on the HTTP status. The <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> and <code class="docutils literal notranslate"><span class="pre">errorData</span></code> say more about what went
+wrong. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is meant for people, and its wording may change.</p>
+<p><strong>HTTP statuses</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Status</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>200</p></td>
+<td><p>Success.</p></td>
+</tr>
+<tr class="row-odd"><td><p>400</p></td>
+<td><p>The request isn’t valid: a parameter is malformed or out of range, a required parameter is missing, or a
+search query can’t be run.</p></td>
+</tr>
+<tr class="row-even"><td><p>401</p></td>
+<td><p>The API key is missing or invalid, or doesn’t allow this request.</p></td>
+</tr>
+<tr class="row-odd"><td><p>404</p></td>
+<td><p>The requested item doesn’t exist.</p></td>
+</tr>
+<tr class="row-even"><td><p>429</p></td>
+<td><p>Starting December 1, 2026: a rate limit was exceeded. See <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">Rate limits</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>500</p></td>
+<td><p>An unexpected error on our side.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Error codes</strong></p>
+<p>These error codes apply across the API:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">errorCode</span></code></p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>400</p></td>
+<td><p>A request parameter isn’t valid; <code class="docutils literal notranslate"><span class="pre">errorData</span></code> says which</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>400</p></td>
+<td><p>A required request parameter is missing</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>400</p></td>
+<td><p>The search couldn’t be run</p></td>
+</tr>
+<tr class="row-odd"><td><p>701</p></td>
+<td><p>401</p></td>
+<td><p>The API key is missing or invalid</p></td>
+</tr>
+<tr class="row-even"><td><p>703</p></td>
+<td><p>429</p></td>
+<td><p>Starting December 1, 2026: rate limit exceeded</p></td>
+</tr>
+</tbody>
+</table>
+<p>A 404 has an <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> for the kind of item that wasn’t found. Handle it by status.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="migration.html" class="btn btn-neutral float-right" title="API Migration Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014, NY State Senate Technology Services.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

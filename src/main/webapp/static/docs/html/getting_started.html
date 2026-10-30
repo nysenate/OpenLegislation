@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; Open Legislation API</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Conventions" href="conventions.html" />
+    <link rel="prev" title="Open Legislation API" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Open Legislation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Getting Started</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-usage">API Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rate-limits">Rate limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#legislative-content-types">Legislative Content Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#terminology">Terminology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Hearing Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Open Legislation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>Getting Started</strong></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<span id="id1"></span><h1><strong>Getting Started</strong><a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="api-usage">
+<h2>API Usage<a class="headerlink" href="#api-usage" title="Link to this heading"></a></h2>
+<p><strong>Obtaining a key</strong></p>
+<p>To register and obtain an API key, visit our main page <a class="reference external" href="https://legislation.nysenate.gov">here</a>.</p>
+<p><strong>Making requests</strong></p>
+<p>All endpoints are under <code class="docutils literal notranslate"><span class="pre">https://legislation.nysenate.gov/api/3</span></code>. To make an API request using your key, set the
+key string as the value of the <code class="docutils literal notranslate"><span class="pre">key</span></code> request parameter in the request URL.</p>
+<p>For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET https://legislation.nysenate.gov/api/3/bills/2015/S1?key=YOUR_API_KEY
+</pre></div>
+</div>
+<p>Because your key is part of each request URL, error messages and logs that include the URL also include your
+key. Remove it before you share them.</p>
+<p>Every endpoint follows the same rules for responses, errors, paging, dates and parameters. See
+<a class="reference internal" href="conventions.html"><span class="doc">API Conventions</span></a>.</p>
+</section>
+<section id="rate-limits">
+<span id="id2"></span><h2>Rate limits<a class="headerlink" href="#rate-limits" title="Link to this heading"></a></h2>
+<p>Starting December 1, 2026, requests made with an API key are limited per key:</p>
+<ul class="simple">
+<li><p><strong>Rate:</strong> 10 requests per second. Short bursts above this rate are tolerated, but plan your use around 10
+requests per second.</p></li>
+<li><p><strong>Concurrency:</strong> at most 4 requests in progress at the same time.</p></li>
+</ul>
+<p>There is no daily quota. All requests made with the same key share its limits, whatever IP address or session they
+come from.</p>
+<p>The limits apply to every request under <code class="docutils literal notranslate"><span class="pre">/api/3</span></code>, except for <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> requests (such as CORS preflight
+requests).</p>
+<p>A request counts against the concurrency limit until the server finishes it, even if your client has stopped
+waiting for it. Timing out and resending a slow request only adds to your requests in progress, so give slow requests
+time to finish instead.</p>
+<p>If your use needs more capacity than these limits allow, contact us at <a class="reference external" href="mailto:openlegislation&#37;&#52;&#48;nysenate&#46;gov">openlegislation<span>&#64;</span>nysenate<span>&#46;</span>gov</a>.</p>
+<p><strong>When a limit is exceeded</strong></p>
+<p>A request over either limit is rejected with HTTP status 429 (Too Many Requests). The response has a
+<code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header with the number of seconds to wait before retrying (a whole number, at least 1), and an error
+body with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 703:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">              </span><span class="c1">// Human-readable explanation</span>
+<span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">703</span><span class="w">               </span><span class="c1">// Rate limit exceeded</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Base your client’s handling on the status code, the <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> and the <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is
+meant for people: it may say which limit was exceeded, and its wording may change.</p>
+<p><strong>Staying within the limits</strong></p>
+<ul class="simple">
+<li><p>Send your requests one at a time, each started at least 0.1 seconds after the previous one. This keeps you
+within both limits. If you do send requests in parallel, stay within the current concurrency limit and keep
+their combined rate at or below 10 requests per second.</p></li>
+<li><p>After a 429, wait at least as long as <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> asks before retrying, and add a little random jitter so
+that retries don’t all arrive at once.</p></li>
+<li><p>After a 503 (the service is temporarily unavailable), back off exponentially with random jitter, waiting at
+least as long as any <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code>.</p></li>
+<li><p>Give up after a few attempts.</p></li>
+<li><p>Don’t retry other errors, such as a 400. Sending the same request again won’t fix them.</p></li>
+</ul>
+</section>
+<section id="legislative-content-types">
+<h2>Legislative Content Types<a class="headerlink" href="#legislative-content-types" title="Link to this heading"></a></h2>
+<p>We currently offer the following types of data:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Bills and Resolutions</p></li>
+<li><p>Committee Agendas</p></li>
+<li><p>Senate Calendars</p></li>
+<li><p>NYS Laws</p></li>
+<li><p>Senate Floor and Hearing Transcripts</p></li>
+<li><p>Committees</p></li>
+<li><p>Members</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="terminology">
+<h2>Terminology<a class="headerlink" href="#terminology" title="Link to this heading"></a></h2>
+<p>First let’s define some common legislative terminology</p>
+<dl class="field-list simple">
+<dt class="field-odd">Session Year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A legislative session year in New York State comprises of two years, with the first year being an odd numbered year.</p>
+</dd>
+<dt class="field-even">Bill<span class="colon">:</span></dt>
+<dd class="field-even"><p>A bill is passed with the intention of amending or creating a specific portion of NYS Law.</p>
+</dd>
+<dt class="field-odd">Resolution<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A resolution does not necessarily impact law and are often introduced to provide honorable mentions.</p>
+</dd>
+<dt class="field-even">Calendar<span class="colon">:</span></dt>
+<dd class="field-even"><p>A legislative calendar is a snapshot of the status of bills that are under discussion at a particular time.
+A calendar will typically contain a floor calendar and an active list, along with supplemental floor calendars and active lists.</p>
+</dd>
+<dt class="field-odd">Floor Calendar<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The floor calendar is a listing of all bills that are under discussion (on the floor).  A bill must be read on the
+senate floor a minimum of three times to be eligible for a vote, and the floor calendar will indicate the number of
+readings for each bill at its time of publication.</p>
+</dd>
+<dt class="field-even">Active List<span class="colon">:</span></dt>
+<dd class="field-even"><p>An active list is a listing of bills that are scheduled for discussion during a single senate session.</p>
+</dd>
+<dt class="field-odd">Committee<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Committees are groups of senators that are focused on particular areas of law.  Bills must be approved by a committee
+in order to be reported to the senate floor.</p>
+</dd>
+<dt class="field-even">Uni-Bill<span class="colon">:</span></dt>
+<dd class="field-even"><p>A uni bill is a bill that is sent through both chambers concurrently</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Open Legislation API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="conventions.html" class="btn btn-neutral float-right" title="API Conventions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014, NY State Senate Technology Services.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bills and Resolutions API &mdash; Open Legislation 2.0-alpha documentation</title>
+  <title>Bills and Resolutions API &mdash; Open Legislation API</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
@@ -14,14 +14,14 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=99c28e39"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Senate Calendar API" href="calendars.html" />
-    <link rel="prev" title="API Migration Notes" href="migration.html" /> 
+    <link rel="prev" title="Keeping Up with Changes" href="keeping_up.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +32,7 @@
 
           
           
-          <a href="reference.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Open Legislation
           </a>
 <div role="search">
@@ -44,8 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="keeping_up.html"><strong>Keeping Up with Changes</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Bills and Resolutions API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-single-bill">Get a single bill</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-pdf-of-bill-text">Get PDF of bill text</a></li>
@@ -71,14 +74,14 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="reference.html">Open Legislation</a>
+          <a href="index.html">Open Legislation</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="reference.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><strong>Bills and Resolutions API</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/bills.rst.txt" rel="nofollow"> View page source</a>
@@ -90,14 +93,14 @@
            <div itemprop="articleBody">
              
   <section id="bills-and-resolutions-api">
-<h1><strong>Bills and Resolutions API</strong><a class="headerlink" href="#bills-and-resolutions-api" title="Link to this heading">¶</a></h1>
+<h1><strong>Bills and Resolutions API</strong><a class="headerlink" href="#bills-and-resolutions-api" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>While bills and resolutions serve different purposes, in the context of these docs, the term ‘bill’ will include resolutions as well since the API request/response structure for both are identical.</p>
 </div>
 <hr class="docutils" />
 <section id="get-a-single-bill">
-<h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Link to this heading">¶</a></h2>
+<h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve bill by session year and print no:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span>
@@ -408,7 +411,7 @@ the base print no (e.g. S1234).</p>
 </section>
 <hr class="docutils" />
 <section id="get-pdf-of-bill-text">
-<h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Link to this heading">¶</a></h2>
+<h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Link to this heading"></a></h2>
 <p>If you just need a pdf of the latest full text of the bill, you can make the following request:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
@@ -417,7 +420,7 @@ the base print no (e.g. S1234).</p>
 </section>
 <hr class="docutils" />
 <section id="get-a-list-of-bills">
-<h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Link to this heading">¶</a></h2>
+<h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Link to this heading"></a></h2>
 <p><strong>Usage</strong></p>
 <p>List bills within a session year:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span>
@@ -512,7 +515,7 @@ bills. Multiple formats can be requested.</p>
 </section>
 <hr class="docutils" />
 <section id="search-for-bills">
-<h2>Search for bills<a class="headerlink" href="#search-for-bills" title="Link to this heading">¶</a></h2>
+<h2>Search for bills<a class="headerlink" href="#search-for-bills" title="Link to this heading"></a></h2>
 <p>Read our <a class="reference internal" href="search_api.html"><span class="doc">search API docs</span></a> for info on how to construct search terms. The bill search index is comprised of full bill responses
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.</p>
@@ -573,7 +576,7 @@ and highlights are retained. Defaults to false.</p></td>
 <tr class="row-even"><td><p>sort</p></td>
 <td><p>string</p></td>
 <td><p><a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">ElasticSearch sort string</span></a>.
-Defaults to sorting by relevance (rank).</p></td>
+Use <code class="docutils literal notranslate"><span class="pre">_score:DESC</span></code> to sort by relevance.</p></td>
 </tr>
 <tr class="row-odd"><td><p>fullTextFormat</p></td>
 <td><p>(PLAIN, HTML or TEMPLATE)</p></td>
@@ -625,7 +628,7 @@ bills. Multiple formats can be requested.</p>
 </section>
 <hr class="docutils" />
 <section id="get-bill-updates">
-<h2>Get bill updates<a class="headerlink" href="#get-bill-updates" title="Link to this heading">¶</a></h2>
+<h2>Get bill updates<a class="headerlink" href="#get-bill-updates" title="Link to this heading"></a></h2>
 <p>To identify which bills have received updates within a given time period you can use the bill updates api.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -648,15 +651,7 @@ By default the type is set to ‘processed’.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Give <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> as ISO 8601 date-times in New York local time, without an offset.
-For example December 10, 2014, 1:30:02 PM is <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:02</span></code>. A date alone, such as <code class="docutils literal notranslate"><span class="pre">2014-12-10</span></code>,
-means midnight. An offset such as <code class="docutils literal notranslate"><span class="pre">Z</span></code> or <code class="docutils literal notranslate"><span class="pre">-05:00</span></code> is ignored, not converted.
-The range includes <code class="docutils literal notranslate"><span class="pre">fromDateTime</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>. The response reports the range it used, with <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> set to the last
-microsecond included, e.g. <code class="docutils literal notranslate"><span class="pre">2014-12-10T13:30:01.999999</span></code>. When the range runs to now, it can carry up to nine
-fractional digits. With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code>, the range runs to now.</p>
-</div>
+<p>With no <code class="docutils literal notranslate"><span class="pre">toDateTime</span></code> the range runs to now.</p>
 <p><strong>Optional Params</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -946,7 +941,7 @@ oldest first.</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="migration.html" class="btn btn-neutral float-left" title="API Migration Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="keeping_up.html" class="btn btn-neutral float-left" title="Keeping Up with Changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
