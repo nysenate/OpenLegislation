@@ -140,7 +140,8 @@ html_sidebars = {
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
-#html_additional_pages = {}
+# reference.html was the root document; keep its URL working for old links.
+html_additional_pages = {'reference': 'redirect.html'}
 
 # If false, no module index is generated.
 #html_domain_indices = True

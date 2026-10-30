@@ -1,0 +1,7 @@
+{%- extends "!layout.html" %}
+{#- The home page's heading is the docs title, so don't repeat it as a suffix. #}
+{%- block htmltitle %}
+  {%- if pagename == master_doc %}
+  <title>{{ docstitle|e }}</title>
+  {%- else %}{{ super() }}{% endif %}
+{%- endblock %}
