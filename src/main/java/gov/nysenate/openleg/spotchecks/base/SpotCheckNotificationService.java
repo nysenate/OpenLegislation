@@ -121,7 +121,7 @@ public class SpotCheckNotificationService {
     /* --- Internal Methods --- */
 
     private String getReportUrl(SpotCheckReport<?> report) {
-        return UriComponentsBuilder.fromHttpUrl(env.getUrl() + spotcheckReportPath)
+        return UriComponentsBuilder.fromUriString(env.getUrl() + spotcheckReportPath)
                 .queryParam("date", report.getReportDateTime().toLocalDate())
                 .queryParam("source", report.getReferenceType().getDataSource())
                 .queryParam("content", report.getReferenceType().getContentType())

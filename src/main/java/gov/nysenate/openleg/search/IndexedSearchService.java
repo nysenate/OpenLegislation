@@ -52,9 +52,9 @@ public abstract class IndexedSearchService<T> {
         if (year == null) {
             return null;
         }
-        return RangeQuery.of(b -> b.field(yearFieldName)
-                .from(LocalDate.of(year, 1, 1).toString())
-                .to(LocalDate.of(year, 12, 31).toString()));
+        return RangeQuery.of(b -> b.date(d -> d.field(yearFieldName)
+                .gte(LocalDate.of(year, 1, 1).toString())
+                .lte(LocalDate.of(year, 12, 31).toString())));
     }
 
     /**

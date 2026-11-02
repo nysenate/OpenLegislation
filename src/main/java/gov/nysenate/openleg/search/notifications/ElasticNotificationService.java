@@ -54,14 +54,14 @@ public class ElasticNotificationService extends IndexedSearchService<RegisteredN
         }
 
         if (from != null || to != null) {
-            var rangeQuery = new RangeQuery.Builder().field("occurred");
+            var rangeQuery = new DateRangeQuery.Builder().field("occurred");
             if (from != null) {
-                rangeQuery.from(from.toString());
+                rangeQuery.gte(from.toString());
             }
             if (to != null) {
-                rangeQuery.to(to.toString());
+                rangeQuery.lte(to.toString());
             }
-            filterQuery.filter(rangeQuery.build()._toQuery());
+            filterQuery.filter(RangeQuery.of(b -> b.date(rangeQuery.build()))._toQuery());
         }
 
         String sortString = (order == null || order == SortOrder.NONE)
