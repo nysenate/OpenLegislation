@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingInfoView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingPdfView;
 import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.api.response.BaseResponse;
@@ -18,6 +18,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingNotFoundEx;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
 import gov.nysenate.openleg.search.SearchException;
+import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.HearingSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,15 +37,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class HearingGetCtrl extends BaseCtrl {
     private final HearingDataService hearingData;
     private final HearingSearchService hearingSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public HearingGetCtrl(HearingDataService hearingData, HearingSearchService hearingSearch) {
+    public HearingGetCtrl(HearingDataService hearingData, HearingSearchService hearingSearch,
+                          CollectionFullPolicy collectionFullPolicy) {
         this.hearingData = hearingData;
         this.hearingSearch = hearingSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
      * Retrieve all hearings: (GET) /api/3/hearings/
+     *
+     * @see #getHearingsByYear see getHearingsByYear for request params.
      */
     @RequestMapping(value = "")
     public BaseResponse getHearings(@RequestParam(defaultValue = "date:desc") String sort,
@@ -61,11 +67,13 @@ public class HearingGetCtrl extends BaseCtrl {
      * Retrieve hearings for a year: (GET) /api/3/hearings/{year}
      * <p>
      * Request Parameters : sort - Lucene syntax for sorting by any field of a hearing response.
-     * full - If true, the full hearing view is returned. Otherwise, just its id.
+     * summary - If true, the hearing info is returned. Otherwise, just its id.
+     * full - If true, the full hearing view is returned (overrides summary).
+     *        Retired: rejected when api.collection_full.mode is enforce, even with summary.
      * limit - Limit the number of results
      * offset - Start results from an offset.
      * <p>
-     * Expected Output: List of HearingIdView or HearingView.
+     * Expected Output: List of HearingIdView, HearingInfoView or HearingView.
      */
     @RequestMapping(value = "/{strYear:\\d{4}}")
     public BaseResponse getHearingsByYear(@PathVariable String strYear,
@@ -78,11 +86,12 @@ public class HearingGetCtrl extends BaseCtrl {
 
     private BaseResponse getHearings(Integer year, String sort, boolean summary, boolean full,
                                      WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.HEARING_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        List<ViewObject> results = hearingSearch.searchHearings(year, sort, limOff).resultList().stream()
-                .map(searchResult -> hearingData.getHearing(searchResult.result()))
-                .map(hearing -> getHearingViewObject(hearing, summary, full)).toList();
-        return ListViewResponse.of(results, results.size(), limOff);
+        SearchResults<HearingId> results = hearingSearch.searchHearings(year, sort, limOff);
+        List<ViewObject> views = results.resultList().stream()
+                .map(searchResult -> HearingViews.of(hearingData, searchResult.result(), summary, full)).toList();
+        return ListViewResponse.of(views, results.totalResults(), limOff);
     }
 
     /**
@@ -134,15 +143,5 @@ public class HearingGetCtrl extends BaseCtrl {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handlePubHearingNotFoundEx(HearingNotFoundEx ex) {
         return new ViewObjectErrorResponse(ErrorCode.HEARING_NOT_FOUND, new HearingIdView(ex.getId(), ex.getFilename()));
-    }
-
-    private static ViewObject getHearingViewObject(Hearing hearing, boolean summary, boolean full) {
-        if (full) {
-            return new HearingView(hearing);
-        }
-        if (summary) {
-            return new HearingInfoView(hearing);
-        }
-        return new HearingIdView(hearing.getId(), hearing.getFilename());
     }
 }

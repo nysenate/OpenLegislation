@@ -9,7 +9,7 @@ Get a single Member
 Retrieve member by session year and member id
 ::
 
-    (GET) /api/3/members/{sessionYear}/{memberId}
+    GET /api/3/members/{sessionYear}/{memberId}
 
 **Optional Params**
 
@@ -24,7 +24,7 @@ Retrieve member by session year and member id
 Get member with member id 371 during 2013 session year.
 ::
 
-    /api/3/members/2013/371
+    GET /api/3/members/2013/371
 
 **Sample Response**
 
@@ -95,12 +95,12 @@ Get a list of members
 List members for a session year.
 ::
 
-    (GET) /api/3/members/{sessionYear}
+    GET /api/3/members/{sessionYear}
 
 List members in a chamber for a session year
 ::
 
-    (GET) /api/3/members/{sessionYear}/{chamber}
+    GET /api/3/members/{sessionYear}/{chamber}
 
 **Optional Params**
 
@@ -121,12 +121,12 @@ List members in a chamber for a session year
 List all members from session year 2013
 ::
 
-    /api/3/members/2013
+    GET /api/3/members/2013
 
 List full member info for session members during session year 2011. Limit to 5 results.
 ::
 
-    /api/3/members/2011/senate?full=true&limit=5
+    GET /api/3/members/2011/senate?full=true&limit=5
 
 Search for members
 ------------------
@@ -138,17 +138,17 @@ Read our :doc:`search API docs<search_api>` for info on how to construct search 
 Search across all session years
 ::
 
-  (GET) /api/3/members/search?term=YOUR_TERM
+  GET /api/3/members/search?term=YOUR_TERM
 
 Search within a session year
 ::
 
-  (GET) /api/3/members/{sessionYear}/search?term=YOUR_TERM
+  GET /api/3/members/{sessionYear}/search?term=YOUR_TERM
 
 Note: given a sessionMemberId = #### in a session year yyyy, you can get the member that sessionMemberId is used by with:
 ::
 
-  (GET) /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####
+  GET /api/3/members/search?term=sessionShortNameMap.yyyy.sessionMemberId=####
 
 **Required Params**
 
@@ -177,9 +177,9 @@ Note: given a sessionMemberId = #### in a session year yyyy, you can get the mem
 List all members who have served district code 20
 ::
 
-    /api/3/members/search?term=districtCode:20
+    GET /api/3/members/search?term=districtCode:20
 
 List all currently serving members for session year 2025
 ::
 
-    /api/3/members/2025/search?term=incumbent:true
+    GET /api/3/members/2025/search?term=incumbent:true

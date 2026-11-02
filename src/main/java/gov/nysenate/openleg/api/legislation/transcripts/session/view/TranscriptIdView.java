@@ -9,7 +9,8 @@ public class TranscriptIdView implements ViewObject {
 
     public TranscriptIdView(TranscriptId transcriptId) {
         this.dateTime = transcriptId.dateTime().toString();
-        this.sessionType = transcriptId.sessionType().toString();
+        // Null when a transcript is looked up by date time alone
+        this.sessionType = transcriptId.sessionType() == null ? null : transcriptId.sessionType().toString();
     }
 
     public String getDateTime() {

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api.legislation.agenda;
 
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.api.legislation.agenda.view.AgendaCommFlatView;
 import gov.nysenate.openleg.api.legislation.agenda.view.CommAgendaSummaryView;
@@ -25,13 +26,15 @@ public class AgendaSearchCtrl extends BaseCtrl {
     private final AgendaDataService agendaData;
     private final AgendaSearchService agendaSearch;
     private final AgendaBillUtils agendaBillUtils;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
     public AgendaSearchCtrl(AgendaDataService agendaData, AgendaSearchService agendaSearch,
-                         AgendaBillUtils agendaBillUtils) {
+                         AgendaBillUtils agendaBillUtils, CollectionFullPolicy collectionFullPolicy) {
         this.agendaData = agendaData;
         this.agendaSearch = agendaSearch;
         this.agendaBillUtils = agendaBillUtils;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -47,6 +50,7 @@ public class AgendaSearchCtrl extends BaseCtrl {
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.AGENDA_SEARCH_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(term, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);
@@ -60,6 +64,7 @@ public class AgendaSearchCtrl extends BaseCtrl {
      * Request Parameters:              term - The lucene query string
      *                                  sort - The lucene sort string
      *                                  full - Receive full agenda committee views
+     *                                         Retired: rejected when api.collection_full.mode is enforce.
      *                                  limit - Limit the number of results
      *                                  offset - Start the results from offset
      */
@@ -69,6 +74,7 @@ public class AgendaSearchCtrl extends BaseCtrl {
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.AGENDA_SEARCH_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(term, year, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);

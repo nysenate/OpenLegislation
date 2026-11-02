@@ -24,6 +24,16 @@ export default function Subscriptions({ apiKey, subscriptions }) {
       .catch(() => setMessage("Error updating subscriptions."))
   }
 
+  const onUnsubscribeAll = () => {
+    updateSubscriptions(apiKey, [])
+      .then(() => {
+        setSubToBreakingChanges(false)
+        setSubToNewFeatures(false)
+        setMessage("You have been unsubscribed from all emails.")
+      })
+      .catch(() => setMessage("Error unsubscribing."))
+  }
+
   return (
     <form className="flex justify-center text--large my-3" onSubmit={onSubmit}>
       <div>
@@ -36,7 +46,12 @@ export default function Subscriptions({ apiKey, subscriptions }) {
                   value={subToNewFeatures}
                   onChange={e => setSubToNewFeatures(e.target.checked)}
                   name="newFeatures" />
-        <button className="btn btn--primary my-3 w-55" type="submit">Update subscriptions</button>
+        <div className="flex justify-center gap-3">
+          <button className="btn btn--primary my-3 w-55" type="submit">Update subscriptions</button>
+          <button className="btn btn--secondary my-3 w-55" type="button" onClick={onUnsubscribeAll}>
+            Unsubscribe from all
+          </button>
+        </div>
         <div>{message}</div>
       </div>
     </form>

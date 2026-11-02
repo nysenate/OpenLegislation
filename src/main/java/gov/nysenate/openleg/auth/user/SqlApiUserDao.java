@@ -54,7 +54,7 @@ public class SqlApiUserDao extends SqlBaseDao {
     }
 
     /**
-     * Finds the user with the specified email address
+     * Finds the user with the specified email address, ignoring case
      * @param email The email address of the user you are looking for
      * @return The ApiUser
      * @throws org.springframework.dao.DataAccessException
@@ -85,12 +85,12 @@ public class SqlApiUserDao extends SqlBaseDao {
     }
 
     /**
-     * Gets all users with the given subscription
+     * Gets the users with the given subscription who have confirmed their email address
      * @param subscriptionType ApiUserSubscriptionType
      * @return A list of ApiUsers
      */
-    List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
-        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS_BY_SUBSCRIPTION.getSql(schema()),
+    List<ApiUser> getVerifiedUsersWithSubscription(ApiUserSubscriptionType subscriptionType) {
+        return jdbcNamed.query(ApiUserQuery.SELECT_VERIFIED_API_USERS_BY_SUBSCRIPTION.getSql(schema()),
                 new MapSqlParameterSource().addValue("subscription_type", subscriptionType.name()), new ApiUserRowMapper());
     }
 

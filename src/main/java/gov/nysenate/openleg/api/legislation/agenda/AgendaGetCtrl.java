@@ -50,15 +50,16 @@ public class AgendaGetCtrl extends BaseCtrl {
      * Agenda List Retrieval API
      *
      * Get agenda list by year: (GET) /api/3/agendas/{year}
-     * Returns a list of agenda ids in ascending order that occur in the given 'year'.
+     * Request Parameters: limit - Limit the number of results (default 25)
+     *                     offset - Start results from an offset.
+     * Returns a list of agenda summaries, in ascending agenda number order, for the given 'year'.
      */
     @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getAgendas(@PathVariable int year, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         List<AgendaId> agendaIds = agendaData.getAgendaIds(year, SortOrder.ASC);
-        agendaIds = LimitOffset.limitList(agendaIds, limOff);
         return ListViewResponse.of(
-                agendaIds.stream()
+                LimitOffset.limitList(agendaIds, limOff).stream()
                         .map(aid -> new AgendaSummaryView(agendaData.getAgenda(aid)))
                         .toList(), agendaIds.size(), limOff);
     }

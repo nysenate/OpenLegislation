@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session;
 
 import gov.nysenate.openleg.api.BaseCtrl;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptIdView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptInfoView;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
+import gov.nysenate.openleg.api.CollectionFullPolicy;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.search.view.SearchResultView;
@@ -29,11 +27,14 @@ public class TranscriptSearchCtrl extends BaseCtrl {
     private static final int TRANSCRIPT_DEFAULT_LIMIT = 25;
     private final TranscriptDataService transcriptData;
     private final TranscriptSearchService transcriptSearch;
+    private final CollectionFullPolicy collectionFullPolicy;
 
     @Autowired
-    public TranscriptSearchCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch) {
+    public TranscriptSearchCtrl(TranscriptDataService transcriptData, TranscriptSearchService transcriptSearch,
+                                CollectionFullPolicy collectionFullPolicy) {
         this.transcriptData = transcriptData;
         this.transcriptSearch = transcriptSearch;
+        this.collectionFullPolicy = collectionFullPolicy;
     }
 
     /**
@@ -43,7 +44,9 @@ public class TranscriptSearchCtrl extends BaseCtrl {
      * Request Parameters:  term - The lucene query string.
      *                      sort - The lucene sort string (blank by default)
      *                      summary - If true, the transcript info is returned. (true by default)
-     *                      full - Set to true to retrieve full transcript responses (false by default)
+     *                      full - Set to true to retrieve full transcript responses (false by default;
+     *                             overrides summary).
+     *                             Retired: rejected when api.collection_full.mode is enforce, even with summary.
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
      */
@@ -54,6 +57,7 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                      @RequestParam(defaultValue = "false") boolean full,
                                      @RequestParam(defaultValue = "true") boolean sessionOnly,
                                      WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.TRANSCRIPT_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff, sessionOnly);
         return getSearchResponse(summary, full, limOff, results);
@@ -73,6 +77,7 @@ public class TranscriptSearchCtrl extends BaseCtrl {
                                    @RequestParam(defaultValue = "false") boolean full,
                                    @RequestParam(defaultValue = "true") boolean sessionOnly,
                                    WebRequest webRequest) throws SearchException {
+        collectionFullPolicy.check(CollectionFullPolicy.Option.TRANSCRIPT_FULL, full, webRequest);
         LimitOffset limOff = getLimitOffset(webRequest, TRANSCRIPT_DEFAULT_LIMIT);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff, sessionOnly);
         return getSearchResponse(summary, full, limOff, results);
@@ -80,9 +85,7 @@ public class TranscriptSearchCtrl extends BaseCtrl {
 
     private BaseResponse getSearchResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
         return ListViewResponse.of(results.resultList().stream().map(r -> new SearchResultView(
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.result()))
-                        : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.result()))
-                        : new TranscriptIdView(r.result()), r.rank(), r.highlights()))
+                TranscriptViews.of(transcriptData, r.result(), summary, full), r.rank(), r.highlights()))
                 .toList(), results.totalResults(), limOff);
     }
 }

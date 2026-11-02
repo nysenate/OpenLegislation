@@ -5,7 +5,6 @@ import jakarta.mail.internet.MimeMultipart;
 import org.springframework.mail.SimpleMailMessage;
 
 import jakarta.mail.internet.MimeMessage;
-import java.util.Collection;
 
 public interface SendMailService {
 
@@ -35,10 +34,12 @@ public interface SendMailService {
     void sendMessage(SimpleMailMessage... messages);
 
     /**
-     * Sends each of the given MIME Messages
-     * @param messages {@link Collection<MimeMessage>} - the messages to send
+     * Sends a MIME message on a connection of its own, reporting what is known about its delivery instead of
+     * throwing, so a caller sending many messages can decide whether to go on.
+     * @param message the message to send
+     * @return {@link SendResult} - the outcome, with the cause unless it was sent
      */
-    void sendMessages(Collection<MimeMessage> messages);
+    SendResult trySend(MimeMessage message);
 
     /**
      * Creates and returns a MIME message

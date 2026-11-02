@@ -34,7 +34,8 @@ export default function Email({ apiKey }) {
                onChange={(e) => setEmail(e.target.value)}
                className="input block w-72" />
         <button className="btn btn--primary my-3 w-55" type="submit">Update email</button>
-        <div>{errorMsg ? <ErrorMessage>{errorMsg}</ErrorMessage> : message}</div>
+        {/* Wraps a long message at the form's width, rather than widening the form away from the field. */}
+        <div className="w-0 min-w-full">{errorMsg ? <ErrorMessage>{errorMsg}</ErrorMessage> : message}</div>
       </div>
     </form>
   )

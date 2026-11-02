@@ -22,7 +22,7 @@ Get a list of law ids
 **Usage**
 ::
 
-   (GET) /api/3/laws
+   GET /api/3/laws
 
 **Optional Params**
 
@@ -73,7 +73,7 @@ The following call will provide the structure of the law.
 **Usage**
 ::
 
-    (GET) /api/3/laws/{lawId}
+    GET /api/3/laws/{lawId}
 
 **Optional Params**
 
@@ -88,9 +88,9 @@ The following call will provide the structure of the law.
 **Examples**
 ::
 
-    /api/3/laws/ABC                  // Get latest law structure for ABC law
-    /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
-    /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
+    GET /api/3/laws/ABC                  // Get latest law structure for ABC law
+    GET /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
+    GET /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
 
 **Response**
 
@@ -170,7 +170,7 @@ Get a law sub document
 **Usage**
 ::
 
-    (GET) /api/3/laws/{lawId}/{locationId}
+    GET /api/3/laws/{lawId}/{locationId}
 
 The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
 You can discover the locationId when you make an API request for the law structure (see above section). See the
@@ -179,8 +179,8 @@ You can discover the locationId when you make an API request for the law structu
 **Examples**
 ::
 
-    /api/3/laws/TAX/8     // Get section 8 of Tax law
-    /api/3/laws/EDN/A2    // Get article 2 of Education law
+    GET /api/3/laws/TAX/8     // Get section 8 of Tax law
+    GET /api/3/laws/EDN/A2    // Get article 2 of Education law
 
 **Response**
 
@@ -262,8 +262,8 @@ Search for law documents
 **Usage**
 ::
 
-    (GET) /api/3/laws/search?term=           // Search across all law volumes
-    (GET) /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
+    GET /api/3/laws/search?term=           // Search across all law volumes
+    GET /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 
 **Required Params**
 
@@ -288,7 +288,7 @@ Search for law documents
 **Examples**
 ::
 
-    /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
+    GET /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
 
 Get law document updates
 ------------------------
@@ -301,105 +301,137 @@ To detect updates to the structure of the law document tree, see `Get law tree u
 
 **Usage**
 
+List of laws updated within the past seven days::
+
+    GET /api/3/laws/updates
+
+List of laws updated since the given date/time::
+
+    GET /api/3/laws/updates/{fromDateTime}
+
 List of laws updated during the given date/time range::
 
-    /api/3/laws/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/laws/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+On ``/api/3/laws/updates``, with no ``toDateTime`` the range runs to now.
 
-All updates made on a specific body of law::
+Updates made on a specific body of law, or on one document in it. Without ``fromDateTime`` these start from
+the earliest update, and without ``toDateTime`` they have no end::
 
-    /api/3/laws/{lawId}/updates
+    GET /api/3/laws/{lawId}/updates
+    GET /api/3/laws/{lawId}/updates/{fromDateTime}
+    GET /api/3/laws/{lawId}/updates/{fromDateTime}/{toDateTime}
 
-    e.g. /api/3/laws/ABC/updates
-         /api/3/laws/VAT/updates
+    GET /api/3/laws/{lawId}/{locationId}/updates
+    GET /api/3/laws/{lawId}/{locationId}/updates/{fromDateTime}
+    GET /api/3/laws/{lawId}/{locationId}/updates/{fromDateTime}/{toDateTime}
 
-All updates made on a specific body of law during a date/time range::
+    e.g. GET /api/3/laws/ABC/updates
+         GET /api/3/laws/VAT/updates
+         GET /api/3/laws/ABC/A1/updates
 
-    /api/3/laws/{lawId}/updates/{fromDateTime}/{toDateTime}
-
+Updates for a specific law or document are always update digests, one for each change to a law document.
 
 **Optional Params**
 
 +-----------+----------------------+--------------------------------------------------------+
 | Parameter | Values               | Description                                            |
 +===========+======================+========================================================+
-| type      | (processed|published)| The type of law update                                 |
+| type      | (processed|published)| Which update date to filter and order by: the date     |
+|           |                      | OpenLeg processed the data, or the date it was         |
+|           |                      | published. Default processed.                          |
 +-----------+----------------------+--------------------------------------------------------+
 | detail    | boolean              | Set to true for updates to individual law documents.   |
+|           |                      | Only on ``/api/3/laws/updates``.                       |
 +-----------+----------------------+--------------------------------------------------------+
-| order     | string (asc|desc)    | Order the results by update date/time                  |
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
 +-----------+----------------------+--------------------------------------------------------+
-| limit     | 1 - 1000             | Number of results to return (high limits take longer)  |
+| limit     | 1 - 1000             | Number of results to return (high limits take longer). |
+|           |                      | Default 50.                                            |
 +-----------+----------------------+--------------------------------------------------------+
-| offset    | >= 1                 | Result number to start from                            |
+| offset    | >= 1                 | Result number to start from. Default 1.                |
 +-----------+----------------------+--------------------------------------------------------+
 
 **Response**
 
 Global law updates::
 
-    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
+    e.g. GET /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
 
 .. _law-update-token-response:
 
 .. code-block:: javascript
 
     {
-        success: true,
-        message: "",
-        responseType: "update-token list",
-        total: 33,
-        offsetStart: 1,
-        offsetEnd: 33,
-        limit: 50,
-        result: {
-        items: [
-            {
-                id: {
-                    lawId: "RSS",                // Which body of law was updated
-                    activeDate: "2015-08-07"     // The active published date
+        "success": true,
+        "message": "",
+        "responseType": "update-token list",
+        "total": 33,
+        "offsetStart": 1,
+        "offsetEnd": 33,
+        "limit": 50,
+        "result": {
+            "items": [
+                {
+                    "id": {
+                        "lawId": "RSS",                // Which body of law was updated
+                        "activeDate": "2015-08-07"     // The active published date
+                    },
+                    "contentType": "LAW",
+                    "sourceId": "20150807.UPDATE",
+                    "sourceDateTime": "2015-08-07T00:00:00",   // Date of the source data
+                    "processedDateTime": "2015-09-10T15:00:14.551822"  // Date we processed this update
                 },
-                contentType: "LAW",
-                sourceId: "20150807.UPDATE",
-                sourceDateTime: "2015-08-07T00:00",   // Date of the source data
-                processedDateTime: "2015-09-10T15:00:14.551822"  // Date we processed this update
-            },  (truncated..)
+                ... (truncated)
+            ],
+            "size": 33
+        },
+        "fromDateTime": "2015-09-01T00:00:00",          // First instant in the range
+        "toDateTime": "2015-09-30T23:59:59.999999"      // Last instant in the range
+    }
 
 Detailed law doc updates::
 
-    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&type=published
-         /api/3/laws/ABC/updates
+    e.g. GET /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&type=published
+         GET /api/3/laws/ABC/updates
 
 .. _law-update-digest-response:
 
 .. code-block:: javascript
 
     {
-        success: true,
-        message: "",
-        responseType: "update-digest list",
-        total: 431,
-        offsetStart: 1,
-        offsetEnd: 50,
-        limit: 50,
-        result: {
-        items: [
-            {
-                id: {
-                    lawId: "ABC",
-                    locationId: "120",                        // Location id of doc that was updated
-                    publishedDate: "2014-09-22"               // Published date of this doc
+        "success": true,
+        "message": "",
+        "responseType": "update-digest list",
+        "total": 431,
+        "offsetStart": 1,
+        "offsetEnd": 50,
+        "limit": 50,
+        "result": {
+            "items": [
+                {
+                    "id": {
+                        "lawId": "ABC",
+                        "locationId": "120",                    // Location id of doc that was updated
+                        "publishedDate": "2014-09-22"           // Published date of this doc
+                    },
+                    "contentType": "LAW",
+                    "sourceId": "DATABASE.LAW3",
+                    "sourceDateTime": "2014-09-22T00:00:00",
+                    "processedDateTime": "2015-06-04T14:36:01.426676",
+                    "action": "Insert",
+                    "scope": "Law Document",
+                    "fields": { },                              // Law updates do not list fields
+                    "fieldCount": 0
                 },
-                contentType: "LAW",
-                sourceId: "DATABASE.LAW3",
-                sourceDateTime: "2014-09-22T00:00",
-                processedDateTime: "2015-06-04T14:36:01.426676",
-                action: "Insert",
-                scope: "Law Document",
-                fields: { },
-                fieldCount: 0
-            },
+                ... (truncated)
+            ],
+            "size": 50
+        },
+        "fromDateTime": "2015-09-01T00:00:00",
+        "toDateTime": "2015-09-30T23:59:59.999999"
+    }
 
 Get law tree updates
 --------------------
@@ -413,14 +445,12 @@ To see updates to the content of law documents, see `Get law document updates`_.
 List of laws with tree updates during the given date/time range
 ::
 
-    /api/3/laws/tree/updates
-    /api/3/laws/tree/updates/{fromDateTime}?type=published
-    /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
+    GET /api/3/laws/tree/updates
+    GET /api/3/laws/tree/updates/{fromDateTime}
+    GET /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}
 
-The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
-For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
-The fromDateTime and toDateTime range is exclusive.
-If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime
+Dates follow the same rules as `Get law document updates`_. The range includes fromDateTime and excludes
+toDateTime. If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime.
 
 
 **Optional Params**
@@ -428,44 +458,53 @@ If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the 
 +-----------+----------------------+--------------------------------------------------------+
 | Parameter | Values               | Description                                            |
 +===========+======================+========================================================+
-| type      | (processed|published)| The type of law update                                 |
+| type      | (processed|published)| Which update date to filter and order by. Default      |
+|           |                      | processed.                                             |
 +-----------+----------------------+--------------------------------------------------------+
-| order     | string (asc|desc)    | Order the results by update date/time                  |
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
 +-----------+----------------------+--------------------------------------------------------+
-| limit     | 1 - 1000             | Number of results to return (high limits take longer)  |
+| limit     | 1 - 1000             | Number of results to return (high limits take longer). |
+|           |                      | Default 50.                                            |
 +-----------+----------------------+--------------------------------------------------------+
-| offset    | >= 1                 | Result number to start from                            |
+| offset    | >= 1                 | Result number to start from. Default 1.                |
 +-----------+----------------------+--------------------------------------------------------+
 
 **Response**
 
 Get law tree updates by published date::
 
-    e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
+    e.g. GET /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
 
 .. code-block:: javascript
 
     {
-        success: true,
-        message: "",
-        responseType: "update-token list",
-        total: 23,
-        offsetStart: 1,
-        offsetEnd: 23,
-        limit: 50,
-        result: {
-            items: [
+        "success": true,
+        "message": "",
+        "responseType": "update-token list",
+        "total": 23,
+        "offsetStart": 1,
+        "offsetEnd": 23,
+        "limit": 50,
+        "result": {
+            "items": [
                 {
-                    id: {
-                        lawId: "PAR",                   // Location id of doc that was updated
-                        activeDate: "2016-10-07"        // Published date of this doc
+                    "id": {
+                        "lawId": "PAR",                 // Which body of law had a tree update
+                        "activeDate": "2016-10-07"      // The active published date of the new tree
                     },
-                    contentType: "LAW",
-                    sourceId: "20161007.UPDATE",
-                    sourceDateTime: "2016-10-07T00:00",
-                    processedDateTime: "2017-08-15T12:40:02.271155"
+                    "contentType": "LAW",
+                    "sourceId": "20161007.UPDATE",
+                    "sourceDateTime": "2016-10-07T00:00:00",
+                    "processedDateTime": "2017-08-15T12:40:02.271155"
                 },
-                (truncated)
+                ... (truncated)
+            ],
+            "size": 23
+        },
+        "fromDateTime": "2016-10-06T00:00:00",
+        "toDateTime": "2016-10-07T23:59:59.999999"
+    }
 
 Get repealed laws
 -----------------
@@ -477,7 +516,7 @@ The date/time range applies to the processed date of the law document, not the o
 
 List of laws repealed during the given date/time range::
 
-    /api/3/laws/repealed
+    GET /api/3/laws/repealed
 
 **Optional Params**
 
@@ -497,7 +536,7 @@ Get a law pdf
 Retrieve law pdf by document id.
 Inputting only the law ID will get you the root node for that chapter::
 
-    (GET) /pdf/laws/{docId}
+    GET /pdf/laws/{docId}
 
 **Optional Params**
 
@@ -511,4 +550,4 @@ Inputting only the law ID will get you the root node for that chapter::
 
 Request law document CC0A1 and its children::
 
-    /api/3/laws/CCOA1?full=true
+    GET /api/3/laws/CCOA1?full=true

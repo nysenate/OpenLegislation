@@ -17,6 +17,14 @@ public class InvalidParameterView implements ViewObject {
         this.receivedValue = receivedValue;
     }
 
+    public ConstrainedParameterView getParameterConstraint() {
+        return parameterConstraint;
+    }
+
+    public String getReceivedValue() {
+        return receivedValue;
+    }
+
     @Override
     public String getViewType() {
         return "invalid-parameter";

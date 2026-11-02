@@ -10,9 +10,10 @@ import java.util.Set;
 
 public interface ApiUserService {
     /**
-     * Get an API User from a given email address
+     * Get an API User from a given email address, ignoring case
      * @param email The email address of the user being search for.
      * @return An APIUser if the email is valid
+     * @throws org.springframework.dao.EmptyResultDataAccessException if no user has the address
      */
     ApiUser getUser(String email);
 
@@ -24,11 +25,12 @@ public interface ApiUserService {
     Optional<ApiUser> getUserByKey(String apiKey);
 
     /**
-     * Gets all users with the given subscription
+     * Gets the users with the given subscription who have confirmed their email address. An unconfirmed
+     * user's key can't open the subscription preferences page, and their address may be mistyped or someone else's.
      * @param subscriptionType ApiUserSubscriptionType
      * @return A list of ApiUsers
      */
-    List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscriptionType);
+    List<ApiUser> getVerifiedUsersWithSubscription(ApiUserSubscriptionType subscriptionType);
 
     /**
      * This method will be called whenever there is an attempt to register a new user.
@@ -47,6 +49,7 @@ public interface ApiUserService {
      * @param apiKey String, The apiKey of the user whose email is being
      *               updated
      * @param email String, The new email
+     * @throws IllegalArgumentException if {@link ApiUserEmailRules#isValid} refuses the new email; nothing is stored
      */
     void updateEmail(String apiKey, String email);
 

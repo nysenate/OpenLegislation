@@ -7,6 +7,7 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawInfo;
+import gov.nysenate.openleg.legislation.law.LawTree;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import gov.nysenate.openleg.search.*;
@@ -21,6 +22,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticLawSearchService extends IndexedSearchService<LawDocument> implements LawSearchService {
@@ -78,11 +83,21 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
         indexLawChapter(lawId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indexes the documents that are in their chapter's current law tree.
+     * Each chapter's tree is loaded once for the whole collection: it can be large,
+     * and loading it for every document makes indexing a chapter quadratic.
+     */
     @Override
     public void updateIndex(Collection<LawDocument> content) {
+        Map<String, Optional<LawTree>> currentTrees = content.stream()
+                .map(LawDocument::getLawId)
+                .distinct()
+                .collect(Collectors.toMap(Function.identity(), this::getCurrentLawTree));
         super.updateIndex(content.stream()
-                .filter(this::isLawDocIndexable)
+                .filter(doc -> currentTrees.get(doc.getLawId())
+                        .flatMap(tree -> tree.find(doc.getDocumentId()))
+                        .isPresent())
                 .toList());
     }
 
@@ -107,16 +122,15 @@ public class ElasticLawSearchService extends IndexedSearchService<LawDocument> i
     }
 
     /**
-     * Determines if a law document can be indexed.
-     * The document must be present in the current law tree.
+     * Gets the current law tree of a chapter, or empty if the chapter has none.
+     * Documents can only be indexed if they are present in this tree.
      */
-    private boolean isLawDocIndexable(LawDocument doc) {
+    private Optional<LawTree> getCurrentLawTree(String lawId) {
         try {
-            return lawDataService.getLawTree(doc.getLawId())
-                    .find(doc.getDocumentId()).isPresent();
+            return Optional.of(lawDataService.getLawTree(lawId));
         }
         catch (LawTreeNotFoundEx e) {
-            return false;
+            return Optional.empty();
         }
     }
 }

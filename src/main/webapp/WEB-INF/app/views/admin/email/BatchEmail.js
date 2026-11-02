@@ -3,29 +3,62 @@ import Input from "app/shared/Input";
 import Modal from "app/shared/Modal";
 import {
   BatchEmailBody,
-  sendBatchEmail,
+  getBatchEmailStatus,
+  previewBatchEmail,
+  sendTestEmail,
+  startBatchEmail,
 } from "app/apis/batchEmailApi";
 import ErrorMessage from "app/shared/ErrorMessage";
 
+const POLL_INTERVAL_MS = 2000
 
 export default function BatchEmail({ setHeaderText }) {
   const [ testMode, setTestMode ] = React.useState(true)
   const [ breakingChanges, setBreakingChanges ] = React.useState(false)
   const [ newFeatures, setNewFeatures ] = React.useState(false)
   const [ subject, setSubject ] = React.useState("")
-  const [ body, setBody ] = React.useState(signature)
+  const [ body, setBody ] = React.useState("")
   const [ isConfirmationDialogOpen, setIsConfirmationDialogOpen ] = React.useState(false)
   const [ isPreviewOpen, setIsPreviewOpen ] = React.useState(false)
   const [ errorMsg, setErrorMsg ] = React.useState("")
-  const [ successMsg, setSuccessMsg ] = React.useState("")
+  // The last test email's result or batch email's status. It stays until a new one replaces it, so a failed
+  // request doesn't lose the list of recipients to follow up with.
+  const [ report, setReport ] = React.useState(null)
+  const [ statusError, setStatusError ] = React.useState("")
+  const [ isSending, setIsSending ] = React.useState(false)
+  const isRunning = report?.running === true
+  const busy = isSending || isRunning
+
+  const refreshStatus = () => {
+    getBatchEmailStatus()
+      .then((status) => {
+        setStatusError("")
+        // None while one was running means the server restarted and lost it.
+        setReport((previous) => status ?? (previous?.running ? { ...previous, running: false } : previous))
+      })
+      .catch((err) => setStatusError(`Couldn't get the batch email's progress: ${err.message}`))
+  }
 
   React.useEffect(() => {
     setHeaderText("Batch Email")
+    // A batch email may be being sent, or may have finished, since the page was last open.
+    refreshStatus()
   }, [])
 
+  // Follows a batch email until it has been sent.
+  React.useEffect(() => {
+    if (!isRunning) {
+      return
+    }
+    const timer = setInterval(refreshStatus, POLL_INTERVAL_MS)
+    return () => clearInterval(timer)
+  }, [ isRunning ])
+
   const sendEmail = () => {
+    // The send buttons are disabled until the request finishes, so a second click can't send the email again.
+    setIsSending(true)
     setErrorMsg("")
-    setSuccessMsg("")
+    setStatusError("")
 
     const groups = []
     if (breakingChanges) {
@@ -35,21 +68,37 @@ export default function BatchEmail({ setHeaderText }) {
       groups.push("NEW_FEATURES")
     }
     const requestBody = new BatchEmailBody(groups, subject, body)
-    sendBatchEmail(testMode, requestBody)
-      .then(() => setSuccessMsg("Successfully sent emails"))
-      .catch((err) => setErrorMsg(err.message))
-      .finally(() => setIsConfirmationDialogOpen(false))
+    const request = testMode
+      ? sendTestEmail(requestBody)
+        .then((result) => ({ ...result, test: true, recipients: result.sent + result.unsent.length }))
+      : startBatchEmail(requestBody)
+    request
+      .then(setReport)
+      .catch((err) => {
+        setErrorMsg(err.message)
+        if (!testMode) {
+          // Shows the batch email being sent, if another is, or this one, if only the reply was lost.
+          refreshStatus()
+        }
+      })
+      .finally(() => {
+        setIsSending(false)
+        setIsConfirmationDialogOpen(false)
+      })
   }
 
   const validate = () => {
     setErrorMsg("")
-    setSuccessMsg("")
     if (!breakingChanges && !newFeatures) {
       setErrorMsg("You must select at least one group.")
       return
     }
     if (!subject) {
       setErrorMsg("You must enter a subject.")
+      return
+    }
+    if (!body.trim()) {
+      setErrorMsg("You must enter a body.")
       return
     }
     setIsConfirmationDialogOpen(true)
@@ -63,9 +112,19 @@ export default function BatchEmail({ setHeaderText }) {
           <ErrorMessage>{errorMsg}</ErrorMessage>
         </div>
       }
-      {successMsg &&
+      {statusError &&
         <div className="my-3">
-          <span className="text text-green-700 font-bold">{successMsg}</span>
+          <ErrorMessage>{statusError}</ErrorMessage>
+        </div>
+      }
+      {report &&
+        <div className="my-3">
+          <p className="mb-1 italic">
+            {/* Shown beside a new error, the report must not read as the outcome of the new attempt. */}
+            {(errorMsg || isSending) && !isRunning && "Previous send: "}
+            {report.test ? "Test email" : `Batch email “${report.subject}”`}
+          </p>
+          <SendReport report={report} />
         </div>
       }
 
@@ -119,6 +178,11 @@ export default function BatchEmail({ setHeaderText }) {
         <RowLabel>Body:</RowLabel>
         <RowData>
           <textarea className="textarea w-10/12 h-96" value={body} onChange={e => setBody(e.target.value)} />
+          <p className="mt-1 italic">
+            Write plain text. Leave a blank line between paragraphs. Wrap text in <code>**double asterisks**</code> to
+            make it bold, or in <code>`backticks`</code> to show it verbatim. Links starting with http:// or https://
+            become clickable. The signature and subscription preferences link are added automatically.
+          </p>
         </RowData>
       </Row>
 
@@ -128,8 +192,8 @@ export default function BatchEmail({ setHeaderText }) {
           <button onClick={() => setIsPreviewOpen(true)} className="btn btn--secondary w-36 mr-3">
             Preview Email
           </button>
-          <button onClick={() => validate()} className="btn btn--primary w-36">
-            Send Email
+          <button onClick={() => validate()} disabled={busy} className="btn btn--primary w-36">
+            {busy ? "Sending…" : "Send Email"}
           </button>
         </RowData>
       </Row>
@@ -137,6 +201,7 @@ export default function BatchEmail({ setHeaderText }) {
       <ConfirmationModal isOpen={isConfirmationDialogOpen}
                          setIsOpen={setIsConfirmationDialogOpen}
                          onConfirm={() => sendEmail()}
+                         isSending={busy}
                          testMode={testMode} />
 
       <PreviewDialog isOpen={isPreviewOpen}
@@ -147,7 +212,7 @@ export default function BatchEmail({ setHeaderText }) {
   )
 }
 
-function ConfirmationModal({ isOpen, setIsOpen, onConfirm, testMode }) {
+function ConfirmationModal({ isOpen, setIsOpen, onConfirm, isSending, testMode }) {
   if (testMode) {
     return (
       <Modal isOpen={isOpen} onDismiss={() => setIsOpen(false)} ariaLabel="Send email confirmation">
@@ -155,7 +220,9 @@ function ConfirmationModal({ isOpen, setIsOpen, onConfirm, testMode }) {
           <h4 className="h4 mb-3">Send a test email to yourself?</h4>
           <p className="mb-3">You are currently in test mode. This email will only be sent to you.</p>
           <button onClick={() => setIsOpen(false)} className="btn btn--secondary w-28 mr-3">Cancel</button>
-          <button onClick={() => onConfirm()} className="btn btn--primary px-3">Send Test Email</button>
+          <button onClick={() => onConfirm()} disabled={isSending} className="btn btn--primary px-3">
+            {isSending ? "Sending…" : "Send Test Email"}
+          </button>
         </div>
       </Modal>
     )
@@ -164,19 +231,111 @@ function ConfirmationModal({ isOpen, setIsOpen, onConfirm, testMode }) {
       <Modal isOpen={isOpen} onDismiss={() => setIsOpen(false)} ariaLabel="Send email confirmation">
         <div>
           <h4 className="h4 mb-3">Send this email to API users?</h4>
-          <p className="mb-3">This email will be sent to all API users who are subscribed to the selected groups.</p>
+          <p className="mb-3">
+            This email will be sent to all API users who are subscribed to the selected groups and have confirmed
+            their email address.
+          </p>
           <button onClick={() => setIsOpen(false)} className="btn btn--secondary w-28 mr-3">Cancel</button>
-          <button onClick={() => onConfirm()} className="btn btn--primary px-3">Email API Users</button>
+          <button onClick={() => onConfirm()} disabled={isSending} className="btn btn--primary px-3">
+            {isSending ? "Sending…" : "Email API Users"}
+          </button>
         </div>
       </Modal>
     )
   }
 }
 
+const UNSENT_TITLES = {
+  SKIPPED: "Skipped: the stored address can't be used",
+  FAILED: "Failed: not confirmed as delivered",
+  NOT_SENT: "Not sent: the mail server couldn't be reached, rejected the login or stopped replying",
+}
+
+function SendReport({ report }) {
+  const { sent, unsent, recipients } = report
+  const withStatus = (status) => unsent.filter((recipient) => recipient.status === status)
+  const unsentLists = Object.entries(UNSENT_TITLES).map(([status, title]) =>
+    <UnsentList key={status} title={title} recipients={withStatus(status)} />
+  )
+  if (report.running) {
+    return (
+      <div>
+        <p className="font-bold">
+          Sending: {sent + unsent.length} of {plural(recipients, "recipient")} done so far, {sent} sent.
+        </p>
+        <p className="italic">Sending continues on the server if you leave this page.</p>
+        {unsentLists}
+      </div>
+    )
+  }
+  const message = `Sent ${sent === recipients ? "" : `${sent} of `}${plural(recipients, "email")}`
+  if (sent === recipients) {
+    return <span className="text text-green-700 font-bold">{message}.</span>
+  }
+  // Only if sending stopped unexpectedly, such as when the server restarted.
+  const untried = recipients - sent - unsent.length
+  return (
+    <div>
+      <ErrorMessage>
+        {message}. {plural(recipients - sent, "recipient")} may not
+        have got this email, and nothing is retried automatically.
+        {untried > 0 && ` Sending stopped before ${plural(untried, "recipient")} could be tried; check the server log.`}
+        {sent > 0 && ` Sending again would also send it again to the ${plural(sent, "recipient")} who got it.`}
+      </ErrorMessage>
+      {unsentLists}
+    </div>
+  )
+}
+
+function UnsentList({ title, recipients }) {
+  if (recipients.length === 0) {
+    return null
+  }
+  return (
+    <div className="mt-3">
+      <h4 className="font-bold">{title} ({recipients.length})</h4>
+      <ul className="list-disc ml-6">
+        {recipients.map((recipient, i) =>
+          <li key={i}>
+            <span className="font-mono">{recipient.email ?? "(no address)"}</span>: {recipient.reason}
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+}
+
+function plural(count, noun) {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`
+}
+
 function PreviewDialog({ isOpen, setIsOpen, body }) {
+  const [ html, setHtml ] = React.useState("")
+  const [ errorMsg, setErrorMsg ] = React.useState("")
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    // Ignore a response that arrives after the dialog closed, so it can't replace a newer preview.
+    let isCurrent = true
+    setHtml("")
+    setErrorMsg("")
+    previewBatchEmail(new BatchEmailBody([], "", body))
+      .then((html) => isCurrent && setHtml(html))
+      .catch((err) => isCurrent && setErrorMsg(err.message))
+    return () => isCurrent = false
+  }, [ isOpen, body ])
+
   return (
     <Modal isOpen={isOpen} onDismiss={() => setIsOpen(false)} ariaLabel="Email Preview">
-      <span dangerouslySetInnerHTML={{ __html: body }} />
+      {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+      {/* The sandbox keeps the email's markup and styles isolated from the page.
+          Links open in a new tab, since most sites refuse to load inside a frame. */}
+      <iframe srcDoc={html.replace("<head>", "<head><base target=\"_blank\">")}
+              sandbox="allow-popups allow-popups-to-escape-sandbox"
+              title="Email preview"
+              className="w-full h-[70vh] bg-white" />
     </Modal>
   )
 }
@@ -204,16 +363,3 @@ function RowData({ children }) {
     </div>
   )
 }
-
-const signature = `<!--Signature-->
-<div style="background:lightgrey;text-align:left;display:flex;flex-direction:row;margin-top:16px">
-  <img src="https://legislation.nysenate.gov/static/img/nys_logo224x224.png" alt="NYS Logo" style="padding:5px;width:70px;height:70px;"/>
-  <div style="font-size:12px;padding-top:5px;">
-    <span style="font-size:16px;">Open Legislation</span><br>
-    <span>From the <a href="https://www.nysenate.gov/">New York State Senate</a></span><br>
-    <a href="https://legislation.nysenate.gov/">https://legislation.nysenate.gov/</a><br>
-    <a href="https://github.com/nysenate/OpenLegislation">https://github.com/nysenate/OpenLegislation</a>
-  </div>
-</div>
-<!--SignatureEnd-->
-`

@@ -33,6 +33,9 @@ src/main/webapp/node_modules/**
 src/main/webapp/static/css/**
 src/main/webapp/static/js/dest/**
 src/main/webapp/static/dist
+src/main/webapp/static/docs/doctrees/
+src/main/webapp/static/docs/html/.buildinfo*
+docs/api/_build/
 node_modules/**
 
 src/test/java/gov/nysenate/openleg/SillyTests.java

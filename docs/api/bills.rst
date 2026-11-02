@@ -12,7 +12,7 @@ Get a single bill
 
 Retrieve bill by session year and print no::
 
-    (GET) /api/3/bills/{sessionYear}/{printNo}
+    GET /api/3/bills/{sessionYear}/{printNo}
 
 **Optional Params**
 
@@ -52,11 +52,11 @@ View options
 
 Request bill S2180 of session year 2013::
 
-    /api/3/bills/2013/S2180
+    GET /api/3/bills/2013/S2180
 
 Request summary of bill A450 of session year 2013::
 
-    /api/3/bills/2013/A450?view=info
+    GET /api/3/bills/2013/A450?view=info
 
 .. _bill-response:
 
@@ -313,7 +313,7 @@ Get PDF of bill text
 
 If you just need a pdf of the latest full text of the bill, you can make the following request::
 
-    (GET) /api/3/bills/{sessionYear}/{printNo}.pdf
+    GET /api/3/bills/{sessionYear}/{printNo}.pdf
 
 If the bill is found, a PDF will be generated with the full text of the bill.
 
@@ -326,7 +326,7 @@ Get a list of bills
 
 List bills within a session year::
 
-    (GET) /api/3/bills/{sessionYear}
+    GET /api/3/bills/{sessionYear}
 
 .. _`bill listing params`:
 
@@ -335,43 +335,56 @@ List bills within a session year::
 +----------------+------------------------------+--------------------------------------------------------+
 | Parameter      | Values                       | Description                                            |
 +================+==============================+========================================================+
-| limit          | 1 - 1000                     | Number of results to return                            |
+| limit          | 1 - 1000                     | Number of results to return. Defaults to 50.           |
 +----------------+------------------------------+--------------------------------------------------------+
-| offset         | >= 1                         | Result number to start from                            |
+| offset         | >= 1                         | Result number to start from. Defaults to 1.            |
 +----------------+------------------------------+--------------------------------------------------------+
 | full           | boolean                      | Set to true to see the full bill responses.            |
+|                |                              |                                                        |
+|                |                              | **Deprecated:** Scheduled for removal December 1,      |
+|                |                              | 2026. See the :ref:`API migration notes                |
+|                |                              | <bill-collection-full-migration>`.                     |
 +----------------+------------------------------+--------------------------------------------------------+
-| idsOnly        | boolean                      | Set to true to see only the printNo and session        |
-|                |                              | for each bill.  (overrides 'full' parameter)           |
+| idsOnly        | boolean                      | Set to true to see only the bill ID (base print no and |
+|                |                              | session) of each bill instead of its summary.          |
+|                |                              | Defaults to false.                                     |
 +----------------+------------------------------+--------------------------------------------------------+
 | sort           | string                       | Sort by any field from the response.                   |
+|                |                              | Defaults to ``publishedDateTime:ASC``.                 |
 +----------------+------------------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included.              |
-|                |                              | Multiple formats can be requested.                     |
+| fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included in full       |
+|                |                              | bills. Multiple formats can be requested.              |
+|                |                              |                                                        |
+|                |                              | **Deprecated:** Scheduled for removal December 1,      |
+|                |                              | 2026. See the :ref:`API migration notes                |
+|                |                              | <bill-collection-full-migration>`.                     |
 +----------------+------------------------------+--------------------------------------------------------+
-
-**Default Sort Order**
-
-By default, (i.e. no sort param was included in the request)
-the results will be in ascending order by the bill's published date time (sort=publishedDateTime:DESC)
 
 **Examples**
 
-List 100 bills from 2013::
+List bills from 2013::
 
-    /api/3/bills/2013?limit=100
+    GET /api/3/bills/2013
 
-List 100 complete bills starting from 101::
+List the first 50 bills from 2013::
 
-    /api/3/bills/2013?limit=100&offset=101&full=true
+    GET /api/3/bills/2013?limit=50
 
-Sort by increasing published date::
+List the next 50 bills from 2013, starting from result 51::
 
-    /api/3/bills/2013?sort=publishedDateTime:ASC
+    GET /api/3/bills/2013?limit=50&offset=51
 
-Sort by increasing status action date, (default)::
+List only bill IDs from 2013::
 
-    /api/3/bills/2013?sort=status.actionDate:ASC
+    GET /api/3/bills/2013?idsOnly=true
+
+Sort by decreasing published date::
+
+    GET /api/3/bills/2013?sort=publishedDateTime:DESC
+
+Sort by increasing status action date::
+
+    GET /api/3/bills/2013?sort=status.actionDate:ASC
 
 **Response**
 
@@ -386,7 +399,7 @@ Sort by increasing status action date, (default)::
       "offsetEnd": 50,                     // To paginate, set query param offset={offsetEnd + 1}
       "limit": 50,                         // Max number of results shown
       "result": {
-        "items": [{ ... }],                // Array of bill responses (either summary or full view)
+        "items": [{ ... }],                // Array of bill summaries, or bill IDs if idsOnly=true
         "size": 50
       }
    }
@@ -405,11 +418,11 @@ structure.
 
 Search across all session years::
 
-    (GET) /api/3/bills/search?term=YOUR_TERM
+    GET /api/3/bills/search?term=YOUR_TERM
 
 Search within a session year::
 
-    (GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
+    GET /api/3/bills/{sessionYear}/search?term=YOUR_TERM
 
 
 **Required Params**
@@ -422,7 +435,33 @@ Search within a session year::
 
 **Optional Params**
 
-Same as the `bill listing params`_.
++----------------+------------------------------+--------------------------------------------------------+
+| Parameter      | Values                       | Description                                            |
++================+==============================+========================================================+
+| limit          | 1 - 1000                     | Number of results to return. Defaults to 25.           |
++----------------+------------------------------+--------------------------------------------------------+
+| offset         | >= 1                         | Result number to start from. Defaults to 1.            |
++----------------+------------------------------+--------------------------------------------------------+
+| full           | boolean                      | Set to true to see the full bill responses.            |
+|                |                              |                                                        |
+|                |                              | **Deprecated:** Scheduled for removal December 1,      |
+|                |                              | 2026. See the :ref:`API migration notes                |
+|                |                              | <bill-collection-full-migration>`.                     |
++----------------+------------------------------+--------------------------------------------------------+
+| idsOnly        | boolean                      | Set to true to see only the bill ID (base print no and |
+|                |                              | session) of each result instead of its summary. Rank   |
+|                |                              | and highlights are retained. Defaults to false.        |
++----------------+------------------------------+--------------------------------------------------------+
+| sort           | string                       | :ref:`ElasticSearch sort string<search-sort>`.         |
+|                |                              | Use ``_score:DESC`` to sort by relevance.              |
++----------------+------------------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN, HTML or TEMPLATE)    | Which bill text formats will be included in full       |
+|                |                              | bills. Multiple formats can be requested.              |
+|                |                              |                                                        |
+|                |                              | **Deprecated:** Scheduled for removal December 1,      |
+|                |                              | 2026. See the :ref:`API migration notes                |
+|                |                              | <bill-collection-full-migration>`.                     |
++----------------+------------------------------+--------------------------------------------------------+
 
 **Examples**
 
@@ -430,23 +469,31 @@ Same as the `bill listing params`_.
 
 Search for a general term (matches against any data field)::
 
-    (GET) /api/3/bills/search?term=Gun Control
+    GET /api/3/bills/search?term=Gun Control
+
+Search for only the IDs of matching bills in 2013::
+
+    GET /api/3/bills/2013/search?term=education&idsOnly=true
+
+Search for only the IDs of matching bills across all sessions::
+
+    GET /api/3/bills/search?term=education&idsOnly=true
 
 Search for 2013 'resolutions'::
 
-    (GET) /api/3/bills/2013/search?term=billType.resolution:true
+    GET /api/3/bills/2013/search?term=billType.resolution:true
 
 Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update::
 
-    (GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
+    GET /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
 
 Search for full text containing the phrase 'Marriage Equality'. Note the use of the \\* prefix to match full texts regardless of amendment version::
 
-    (GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
+    GET /api/3/bills/search?term=\*.fullText:"Marriage Equality"
 
 Search for bills that were published between a certain date range, ordered by increasing published date::
 
-    (GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
+    GET /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
 
 .. note:: The `[` and `]` characters in the previous example must be url encoded to `%5B` and `%5D` respectively.
 
@@ -467,38 +514,58 @@ To identify which bills have received updates within a given time period you can
 
 **Usage**
 
-List of bills updated during the given date/time range::
+List of bills updated within the past seven days::
 
-    /api/3/bills/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/bills/updates
 
 List of bills updated since the given date/time::
 
-    /api/3/bills/updates/{fromDateTime}
+    GET /api/3/bills/updates/{fromDateTime}
 
-.. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
-   For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
-   The fromDateTime and toDateTime range is exclusive/inclusive respectively.
+List of bills updated during the given date/time range::
+
+    GET /api/3/bills/updates/{fromDateTime}/{toDateTime}
+
+With no ``toDateTime`` the range runs to now.
 
 **Optional Params**
 
 +----------------+---------------------------+--------------------------------------------------------+
 | Parameter      | Values                    | Description                                            |
 +================+===========================+========================================================+
-| type           | (processed|published)     | The type of bill update (see below for explanation)    |
+| type           | (processed|published)     | Which update date to filter and order by (see above).  |
+|                |                           | Default processed.                                     |
 +----------------+---------------------------+--------------------------------------------------------+
 | detail         | boolean                   | Set to true to see `detailed update digests`_          |
 +----------------+---------------------------+--------------------------------------------------------+
 | filter         | string                    | Filter by update type. See `update filters`_           |
 +----------------+---------------------------+--------------------------------------------------------+
-| order          | string (asc|desc)         | Order the results by update date/time                  |
+| order          | string (asc|desc)         | Order the results by update date/time. Default asc,    |
+|                |                           | oldest first.                                          |
 +----------------+---------------------------+--------------------------------------------------------+
-| summary        | boolean                   | Include a bill info response per item                  |
+| limit          | 1 - 1000                  | Number of results to return. Default 50.               |
 +----------------+---------------------------+--------------------------------------------------------+
-| fullBill       | boolean                   | Include a bill info response per item                  |
+| offset         | >= 1                      | Result number to start from. Default 1.                |
++----------------+---------------------------+--------------------------------------------------------+
+| summary        | boolean                   | Include basic bill details (title, sponsor and type)   |
+|                |                           | with each item, under ``item``. The responseType       |
+|                |                           | becomes ``update-token-with-item list``, or            |
+|                |                           | ``update-digestwith-item list`` with detail=true.      |
++----------------+---------------------------+--------------------------------------------------------+
+| fullBill       | boolean                   | Include the full bill with each item. Not available    |
+|                |                           | with detail=true.                                      |
+|                |                           |                                                        |
+|                |                           | **Deprecated:** Scheduled for removal December 1,      |
+|                |                           | 2026. See the :ref:`API migration notes                |
+|                |                           | <bill-updates-fullbill-migration>`.                    |
 +----------------+---------------------------+--------------------------------------------------------+
 | fullTextFormat | (PLAIN, HTML or TEMPLATE) | Which bill text formats will be included               |
 |                |                           | if full bills are requested.                           |
 |                |                           | Multiple formats can be requested.                     |
+|                |                           |                                                        |
+|                |                           | **Deprecated:** Scheduled for removal December 1,      |
+|                |                           | 2026. See the :ref:`API migration notes                |
+|                |                           | <bill-updates-fullbill-migration>`.                    |
 +----------------+---------------------------+--------------------------------------------------------+
 
 .. warning:: By default the type is set to 'processed'. Ensure you have the right type in the api request so you receive the results you are looking for
@@ -507,7 +574,7 @@ List of bills updated since the given date/time::
 
 Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM::
 
-    /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
+    GET /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
 
 .. _bill-update-token-response:
 
@@ -516,27 +583,32 @@ Bills that were updated between February 13, 2019 8:00:00AM and February 13, 201
 .. code-block:: javascript
 
     {
-        success: true,
-        message: "",
-        responseType: "update-token list",
-        total: 74,
-        offsetStart: 1,
-        offsetEnd: 50,
-        limit: 50,
+        "success": true,
+        "message": "",
+        "responseType": "update-token list",
+        "total": 74,
+        "offsetStart": 1,
+        "offsetEnd": 50,
+        "limit": 50,
         "result": {
             "items": [
                 {
-                   id: {
-                        basePrintNo: "S1826",
-                        session: 2019,
-                        basePrintNoStr: "S1826-2019"
+                    "id": {
+                        "basePrintNo": "S1826",
+                        "session": 2019,
+                        "basePrintNoStr": "S1826-2019"
                     },
-                    contentType: "BILL",
-                    sourceId: "2019-02-13-09.01.14.643609_LDSPON_S01826.XML-1-LDSPON",
-                    sourceDateTime: "2019-02-13T09:01:14.643609",
-                    processedDateTime: "2019-02-13T09:06:09.796845"
+                    "contentType": "BILL",
+                    "sourceId": "2019-02-13-09.01.14.643609_LDSPON_S01826.XML-1-LDSPON",
+                    "sourceDateTime": "2019-02-13T09:01:14.643609",
+                    "processedDateTime": "2019-02-13T09:06:09.796845"
                 },
                 ... (truncated)
+            ],
+            "size": 50
+        },
+        "fromDateTime": "2019-02-13T08:00:00",          // First instant in the range
+        "toDateTime": "2019-02-13T10:55:47.999999"      // Last instant in the range
     }
 
 
@@ -552,6 +624,9 @@ Update Filters:
 +-----------------+----------------------------------+
 | Field           |  Description                     |
 +=================+==================================+
+| PUBLISHED_BILL  | Bill publication (the bill's     |
+|                 | published date/time)             |
++-----------------+----------------------------------+
 | ACT_CLAUSE      | The enacting clause              |
 +-----------------+----------------------------------+
 | ACTION          | Bill Actions                     |
@@ -589,7 +664,7 @@ Update Filters:
 
 Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM::
 
-    (GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
+    GET /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
 
 .. _`detailed update digests`:
 
@@ -597,23 +672,43 @@ To view the actual updates that have occurred on a bill use the following API
 
 **Usage**
 
-All updates on a specific bill::
+Updates on a specific bill, from the earliest::
 
-    /api/3/bills/{sessionYear}/{printNo}/updates
+    GET /api/3/bills/{sessionYear}/{printNo}/updates
 
 Updates on a specific bill from a given date/time.::
 
-    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}
+    GET /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}
 
 Updates on a specific bill during a given date/time range.::
 
-    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
+    GET /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
+
+Dates follow the same rules as the bill updates API above. Each item is an update digest with its updated fields.
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| Which update date to filter and order by. Default      |
+|           |                      | processed.                                             |
++-----------+----------------------+--------------------------------------------------------+
+| filter    | string               | Filter by update type. See `update filters`_           |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time. Default asc,    |
+|           |                      | oldest first.                                          |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return. Default 50.               |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from. Default 1.                |
++-----------+----------------------+--------------------------------------------------------+
 
 **Example**
 
-Updates for S1234-2013 between December 1, 2014 and December 2, 2014::
+Updates for S1234-2013 processed on December 13, 2014::
 
-    /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+    GET /api/3/bills/2013/S1234/updates/2014-12-13T00:00:00/2014-12-14T00:00:00
 
 .. _bill-update-digest-response:
 
@@ -636,7 +731,8 @@ Sample response:
             {
             "id": {
                 "basePrintNo": "S1234",
-                "session": 2013
+                "session": 2013,
+                "basePrintNoStr": "S1234-2013"
             },
             "contentType" : "BILL",
             "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
@@ -659,9 +755,15 @@ Sample response:
                 "Committee Name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
                 "Active Version": " ",
                 "Status": "IN_SENATE_COMM"
-            }
-            "fieldCount" : 14
+            },
+            "fieldCount": 14
         },
         ... (truncated)
+        ],
+        "size": 23
+        },
+        "fromDateTime": "2014-12-13T00:00:00",
+        "toDateTime": "2014-12-13T23:59:59.999999"
+    }
 
 .. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

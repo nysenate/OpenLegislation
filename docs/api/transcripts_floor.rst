@@ -10,14 +10,14 @@ Get a single Transcript
 
 Retrieve transcript by dateTime and sessionType. The sessionType is only required if two transcripts have the same dateTime::
 
-    (GET) /api/3/transcripts/{dateTime}
-    (GET) /api/3/transcripts/{dateTime}/{sessionType}
+    GET /api/3/transcripts/{dateTime}
+    GET /api/3/transcripts/{dateTime}/{sessionType}
 
 **Examples**
 
 Request transcript 2014-09-03T09:00::
 
-    /api/3/transcripts/2014-09-03T09:00
+    GET /api/3/transcripts/2014-09-03T09:00
 
 **Response**
 
@@ -39,7 +39,7 @@ Full Transcript Response
 
 Request the extraordinary session 3 transcript on 2010-12-31T10:00::
 
-    /api/3/transcripts/2010-12-31T10:00/EXTRAORDINARY SESSION III
+    GET /api/3/transcripts/2010-12-31T10:00/EXTRAORDINARY SESSION III
 
 **Response**
 
@@ -66,14 +66,14 @@ Get a transcript pdf
 
 Retrieve transcript pdf by dateTime. The sessionType is only required if two transcripts have the same dateTime::
 
-    (GET) /api/3/transcripts/{dateTime}.pdf
-    (GET) /api/3/transcripts/{dateTime}/{sessionType}.pdf
+    GET /api/3/transcripts/{dateTime}.pdf
+    GET /api/3/transcripts/{dateTime}/{sessionType}.pdf
 
 **Examples**
 
 Request transcript 2014-09-03T09:00::
 
-    /api/3/transcripts/2014-09-03T09:00
+    GET /api/3/transcripts/2014-09-03T09:00
 
 Get a list of transcripts
 -------------------------
@@ -82,7 +82,7 @@ Get a list of transcripts
 
 List transcripts within a year::
 
-    (GET) /api/3/transcripts/{year}
+    GET /api/3/transcripts/{year}
 
 **Optional Params**
 
@@ -94,23 +94,31 @@ List transcripts within a year::
 | offset    | > 1                | Result number to start from                            |
 +-----------+--------------------+--------------------------------------------------------+
 | full      | boolean            | Set to true to see the full transcript responses.      |
+|           |                    |                                                        |
+|           |                    | **Deprecated:** Scheduled for removal December 1,      |
+|           |                    | 2026. See the :ref:`API migration notes                |
+|           |                    | <transcript-collection-full-migration>`.               |
++-----------+--------------------+--------------------------------------------------------+
+| summary   | boolean            | Set to true to see each transcript's details, without  |
+|           |                    | its text. Defaults to false, which returns only the    |
+|           |                    | dateTime and sessionType of each transcript.           |
 +-----------+--------------------+--------------------------------------------------------+
 | sort      | string             | Sort by any field from the response.                   |
 +-----------+--------------------+--------------------------------------------------------+
 
 **Examples**
 
-List 50 transcripts from 2014::
+List transcripts from 2014::
 
-    /api/3/transcripts/2014?limit=50
+    GET /api/3/transcripts/2014
 
-List 50 complete transcripts starting from 51::
+List the details of transcripts from 2014, starting from result 26::
 
-    /api/3/transcripts/2014?limit=50%offset=51&full=true
+    GET /api/3/transcripts/2014?summary=true&offset=26
 
-List 10 complete transcripts sorted by increasing date::
+List the details of transcripts from 2014 sorted by increasing date::
 
-    /api/3/transcripts/2014?limit=10&full=true
+    GET /api/3/transcripts/2014?summary=true&sort=dateTime:ASC
 
 **Response**
 
@@ -119,13 +127,84 @@ List 10 complete transcripts sorted by increasing date::
     {
       "success" : true,                               // True if request was fine.
       "message" : "",
-      "responseType" : "transcript list",
+      "responseType" : "transcript-id list",
       "total" : 167,                                  // Total transcripts in the listing
       "offsetStart" : 1,                              // Offset value
-      "offsetEnd" : 0,                                // To paginate, set query param offset = {offsetEnd + 1}
-      "limit" : 10,                                   // Max number of results to show
+      "offsetEnd" : 25,                               // To paginate, set query param offset = {offsetEnd + 1}
+      "limit" : 25,                                   // Max number of results to show
       "result" : {
-        "items": [{ ... }],                           // Array of transcript responses
-        "size": 10
+        "items": [{ ... }],                           // Transcript ids, or transcript details if summary=true
+        "size": 25
+      }
+    }
+
+.. _transcript-updates:
+
+Get transcript updates
+----------------------
+
+To identify which transcripts have been added or changed within a given time period you can use the transcript updates api.
+To keep a copy of transcripts current with it, see :ref:`Keeping Up with Changes<keeping-up>`.
+
+**Usage**
+
+List of transcripts updated within the past seven days::
+
+    GET /api/3/transcripts/updates
+
+List of transcripts updated since the given date/time::
+
+    GET /api/3/transcripts/updates/{fromDateTime}
+
+List of transcripts updated during the given date/time range::
+
+    GET /api/3/transcripts/updates/{fromDateTime}/{toDateTime}
+
+With no ``toDateTime`` the range has no end.
+
+Results are always ordered by the date/time OpenLeg last added or changed each transcript, oldest first.
+Unlike the other update APIs, this one does not take ``type``, ``order`` or ``detail``, and the response
+does not include ``fromDateTime`` or ``toDateTime``.
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| limit     | 1 - 1000           | Number of results to return. Default 25.               |
++-----------+--------------------+--------------------------------------------------------+
+| offset    | >= 1               | Result number to start from. Default 1.                |
++-----------+--------------------+--------------------------------------------------------+
+
+**Examples**
+
+Transcripts updated since January 1, 2025, 10 at a time::
+
+    GET /api/3/transcripts/updates/2025-01-01?limit=10
+
+**Response**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "transcript-update-token list",
+      "total" : 134,
+      "offsetStart" : 1,
+      "offsetEnd" : 10,
+      "limit" : 10,
+      "result" : {
+        "items" : [
+          {
+            "transcriptId" : {                  // The id of the transcript
+              "dateTime" : "2025-01-08T12:14",
+              "sessionType" : "Regular Session"   // Session types can contain spaces
+            },
+            "updateDateTime" : "2025-01-13T08:51:04.087967"   // When OpenLeg last added or changed the transcript
+          },
+          ... (truncated)
+        ],
+        "size" : 10
       }
     }

@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keeping Up with Changes &mdash; Open Legislation API</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e3775b34" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
+    <link rel="prev" title="API Migration Notes" href="migration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Open Legislation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Legislation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html"><strong>Getting Started</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html"><strong>API Conventions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html"><strong>API Migration Notes</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Keeping Up with Changes</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#which-update-apis-to-poll">Which update APIs to poll</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-update-ranges-work">How update ranges work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fetching-the-changed-items">Fetching the changed items</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-initial-load">The initial load</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#committees-and-members">Committees and members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#two-polls-in-a-row">Two polls in a row</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Hearing Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Open Legislation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>Keeping Up with Changes</strong></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/keeping_up.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="keeping-up-with-changes">
+<span id="keeping-up"></span><h1><strong>Keeping Up with Changes</strong><a class="headerlink" href="#keeping-up-with-changes" title="Link to this heading"></a></h1>
+<p>To keep your own copy of Open Legislation data current, poll the update APIs. Each poll asks which items changed
+since the previous poll ended, then fetches each of those items in full. This page explains how to do that without
+missing changes.</p>
+<p>The approach in brief:</p>
+<ol class="arabic simple">
+<li><p>Note where your first poll will start, then load everything you need (see <a class="reference internal" href="#the-initial-load">The initial load</a>).</p></li>
+<li><p>Every few minutes, ask the update APIs which items changed between the end of the previous poll and now.</p></li>
+<li><p>Fetch each changed item in full and save it.</p></li>
+<li><p>Remember where this poll ended, and use it as the start of the next one.</p></li>
+</ol>
+<section id="which-update-apis-to-poll">
+<h2>Which update APIs to poll<a class="headerlink" href="#which-update-apis-to-poll" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Content</p></th>
+<th class="head"><p>Update API</p></th>
+<th class="head"><p>Reference</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Bills, agendas, calendars, laws</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/updates/{from}/{to}</span></code></p></td>
+<td><p><a class="reference internal" href="agg_updates.html"><span class="doc">Aggregate Updates API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Hearings</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings/updates/{from}/{to}</span></code></p></td>
+<td><p><a class="reference internal" href="transcripts_ph.html#hearing-updates"><span class="std std-ref">hearing updates</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Floor transcripts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/updates/{from}/{to}</span></code></p></td>
+<td><p><a class="reference internal" href="transcripts_floor.html#transcript-updates"><span class="std std-ref">transcript updates</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Committees, members</p></td>
+<td><p>None</p></td>
+<td><p><a class="reference internal" href="committees.html"><span class="doc">Senate Committee API</span></a>, <a class="reference internal" href="members.html"><span class="doc">Senate Members API</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>The aggregate update API, <code class="docutils literal notranslate"><span class="pre">/api/3/updates</span></code>, covers bills, agendas, calendars and laws in one feed, so you don’t need
+the bill, agenda, calendar or law update APIs as well. It doesn’t cover hearings or floor transcripts, which have
+update APIs of their own.</p>
+<p>Committees and members have no update API, so list them again periodically and compare. See
+<a class="reference internal" href="#committees-and-members">Committees and members</a>.</p>
+</section>
+<section id="how-update-ranges-work">
+<h2>How update ranges work<a class="headerlink" href="#how-update-ranges-work" title="Link to this heading"></a></h2>
+<p>Getting these rules wrong is the usual way to miss changes.</p>
+<p><strong>Give both ends of the range.</strong> Always request <code class="docutils literal notranslate"><span class="pre">{from}/{to}</span></code>. With <code class="docutils literal notranslate"><span class="pre">from</span></code> alone, the aggregate API’s range ends
+now, but the hearing and transcript ranges have no end. Either way, you need to choose where a range ends so the
+next poll can start exactly there.</p>
+<p><strong>The range includes</strong> <code class="docutils literal notranslate"><span class="pre">from</span></code> <strong>and excludes</strong> <code class="docutils literal notranslate"><span class="pre">to</span></code>. A change at exactly <code class="docutils literal notranslate"><span class="pre">to</span></code> belongs to the next range. So
+when each poll’s <code class="docutils literal notranslate"><span class="pre">from</span></code> is the previous poll’s <code class="docutils literal notranslate"><span class="pre">to</span></code>, consecutive polls meet with no gap and no overlap.</p>
+<p><strong>Times are New York local time, without an offset</strong> (see <a class="reference internal" href="conventions.html#api-dates"><span class="std std-ref">Dates and times</span></a>). An offset is ignored, not
+converted, so a client that sends the current UTC time as <code class="docutils literal notranslate"><span class="pre">to</span></code> asks for a range that ends hours in the future.
+Changes that OpenLeg processes during those hours fall inside a range the client has already polled, so it misses
+them all.</p>
+<p><strong>End each range a couple of minutes in the past.</strong> Use New York now minus 2 minutes as <code class="docutils literal notranslate"><span class="pre">to</span></code>. OpenLeg records
+each change when it saves it, and the margin leaves time for changes being saved as you poll to show up in your
+range rather than slip in behind it.</p>
+<p><strong>Use processed times.</strong> The aggregate API’s default <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">processed</span></code>: when OpenLeg processed the change.
+Leave it there. The <code class="docutils literal notranslate"><span class="pre">published</span></code> type orders changes by when LBDC published the source data, and OpenLeg can
+process or reprocess data well after that, so a published-time range you already polled can gain changes later.</p>
+<p><strong>Read the whole range.</strong> A range can hold more changes than fit in one page. Page through it with <code class="docutils literal notranslate"><span class="pre">offset</span></code> until
+<code class="docutils literal notranslate"><span class="pre">offsetEnd</span></code> reaches <code class="docutils literal notranslate"><span class="pre">total</span></code>, using <code class="docutils literal notranslate"><span class="pre">limit=100</span></code> to keep the number of requests down. Treat the range as
+done only once you have read every page and fetched every changed item.</p>
+<p><strong>Remember</strong> <code class="docutils literal notranslate"><span class="pre">to</span></code>, <strong>not the time of the last change.</strong> Save the <code class="docutils literal notranslate"><span class="pre">to</span></code> you sent, and send it as the next
+<code class="docutils literal notranslate"><span class="pre">from</span></code>.</p>
+</section>
+<section id="fetching-the-changed-items">
+<h2>Fetching the changed items<a class="headerlink" href="#fetching-the-changed-items" title="Link to this heading"></a></h2>
+<p>Each update names an item that changed in the range, not the change itself. An item appears once per range,
+however many times it changed there, so request each item once. Fetching an item you already have is harmless.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Update</p></th>
+<th class="head"><p>Id fields</p></th>
+<th class="head"><p>Request for the full item</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BILL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id.basePrintNo</span></code>, <code class="docutils literal notranslate"><span class="pre">id.session</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/bills/{session}/{basePrintNo}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AGENDA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id.number</span></code>, <code class="docutils literal notranslate"><span class="pre">id.year</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/agendas/{year}/{number}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CALENDAR</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id.year</span></code>, <code class="docutils literal notranslate"><span class="pre">id.calendarNumber</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}/{calendarNumber}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LAW</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id.lawId</span></code>, <code class="docutils literal notranslate"><span class="pre">id.activeDate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/laws/{lawId}?full=true</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Hearing update</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hearingId.id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{id}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Transcript update</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">transcriptId.dateTime</span></code>,
+<code class="docutils literal notranslate"><span class="pre">transcriptId.sessionType</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{dateTime}/{sessionType}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Bill, agenda, calendar and law updates come from the aggregate API, where <code class="docutils literal notranslate"><span class="pre">contentType</span></code> says which kind each one
+is. Transcript session types can contain spaces, such as <code class="docutils literal notranslate"><span class="pre">Regular</span> <span class="pre">Session</span></code>, so URL-encode them.</p>
+<p>Laws are updated weekly, in one batch that can change thousands of law documents. <code class="docutils literal notranslate"><span class="pre">/api/3/laws/{lawId}</span></code> with
+<code class="docutils literal notranslate"><span class="pre">full=true</span></code> returns a law’s whole structure and text, so one request per changed law covers all of its changed
+documents.</p>
+<p>If a request for a changed item returns HTTP 404, the item was removed. Delete your copy.</p>
+</section>
+<section id="the-initial-load">
+<h2>The initial load<a class="headerlink" href="#the-initial-load" title="Link to this heading"></a></h2>
+<p>Before your first poll, load everything you need:</p>
+<ol class="arabic simple">
+<li><p>Note New York now minus 2 minutes. This is the <code class="docutils literal notranslate"><span class="pre">from</span></code> of your first poll.</p></li>
+<li><p>Load the items. List the ids of each kind of item, reading every page of each listing, then request each item
+in full:</p>
+<ul class="simple">
+<li><p>Bills: <code class="docutils literal notranslate"><span class="pre">/api/3/bills/{sessionYear}</span></code></p></li>
+<li><p>Agendas: <code class="docutils literal notranslate"><span class="pre">/api/3/agendas/{year}</span></code></p></li>
+<li><p>Calendars: <code class="docutils literal notranslate"><span class="pre">/api/3/calendars/{year}</span></code></p></li>
+<li><p>Laws: <code class="docutils literal notranslate"><span class="pre">/api/3/laws</span></code></p></li>
+<li><p>Hearings: <code class="docutils literal notranslate"><span class="pre">/api/3/hearings/{year}</span></code></p></li>
+<li><p>Floor transcripts: <code class="docutils literal notranslate"><span class="pre">/api/3/transcripts/{year}</span></code></p></li>
+<li><p>Committees and members, as described below</p></li>
+</ul>
+</li>
+<li><p>Start polling from the time you noted in step 1.</p></li>
+</ol>
+<p>Noting the time first matters. A load takes a while, and items can change during it. Polling from the start of the
+load fetches those items again, possibly after you loaded them, so you end up with their latest version.</p>
+<p>Each item is a request, and every request counts against your <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">rate limits</span></a>, so the initial load
+takes a while. Once it’s done, staying current is quick: each poll fetches only the items that changed.</p>
+</section>
+<section id="committees-and-members">
+<h2>Committees and members<a class="headerlink" href="#committees-and-members" title="Link to this heading"></a></h2>
+<p>These have no update API. Once a day, list them again for the session years you keep, and save what changed. Set
+<code class="docutils literal notranslate"><span class="pre">full=true</span></code>: without it, the listings return summaries, and committee summaries leave out the members. Read every
+page, as the listings are paged:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/committees/{sessionYear}/{chamber}?full=true</span></code> for each chamber</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/api/3/members/{sessionYear}?full=true</span></code></p></li>
+</ul>
+</section>
+<section id="two-polls-in-a-row">
+<h2>Two polls in a row<a class="headerlink" href="#two-polls-in-a-row" title="Link to this heading"></a></h2>
+<p>This is what two consecutive polls look like when you poll every 15 minutes, using real updates from June 2, 2026.
+The previous poll ran at 3:17 p.m. New York time. Its range ended 2 minutes earlier, at 3:15 p.m., so
+<code class="docutils literal notranslate"><span class="pre">2026-06-02T15:15:00</span></code> is saved as the start of the next one.</p>
+<p><strong>First poll, at 3:32 p.m.</strong> Its range ends 2 minutes earlier, at <code class="docutils literal notranslate"><span class="pre">2026-06-02T15:30:00</span></code>. Read the aggregate
+updates in that range. The first page has 100 of 117, so read a second page:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/updates/2026-06-02T15:15:00/2026-06-02T15:30:00?limit=100
+GET /api/3/updates/2026-06-02T15:15:00/2026-06-02T15:30:00?limit=100&amp;offset=101
+</pre></div>
+</div>
+<p>The second page ends at 117, which is the <code class="docutils literal notranslate"><span class="pre">total</span></code>, so the range is complete. Read the same range from the
+hearing and transcript update APIs. No hearings or transcripts changed in this range, so both return a <code class="docutils literal notranslate"><span class="pre">total</span></code>
+of 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/hearings/updates/2026-06-02T15:15:00/2026-06-02T15:30:00?limit=100
+GET /api/3/transcripts/updates/2026-06-02T15:15:00/2026-06-02T15:30:00?limit=100
+</pre></div>
+</div>
+<p>All 117 updates are bill updates. Request each bill, and save it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2025</span><span class="o">/</span><span class="n">A10243</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2025</span><span class="o">/</span><span class="n">A6559</span>
+<span class="o">...</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="mi">2025</span><span class="o">/</span><span class="n">S9267</span>
+</pre></div>
+</div>
+<p>Once every bill is saved, save <code class="docutils literal notranslate"><span class="pre">2026-06-02T15:30:00</span></code> as the start of the next poll.</p>
+<p><strong>Second poll, at 3:47 p.m.</strong> Its range starts where the first one ended, and ends at <code class="docutils literal notranslate"><span class="pre">2026-06-02T15:45:00</span></code>. It
+has 101 aggregate updates, so it takes two pages too:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/updates/2026-06-02T15:30:00/2026-06-02T15:45:00?limit=100
+GET /api/3/updates/2026-06-02T15:30:00/2026-06-02T15:45:00?limit=100&amp;offset=101
+GET /api/3/hearings/updates/2026-06-02T15:30:00/2026-06-02T15:45:00?limit=100
+GET /api/3/transcripts/updates/2026-06-02T15:30:00/2026-06-02T15:45:00?limit=100
+</pre></div>
+</div>
+<p>A change at exactly 3:30:00 p.m. is in this range, not the first one, so the two ranges meet with no gap and no
+overlap. Then fetch the changed items and save <code class="docutils literal notranslate"><span class="pre">2026-06-02T15:45:00</span></code>, as before.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you try these requests, the totals you get may differ from the ones shown here. The steps are the
+same.</p>
+</div>
+<p>If a poll fails partway, don’t save its end. The next poll starts from the same place and reads the whole range
+again, which is harmless.</p>
+<p>How often to poll is up to you, but there’s no need to poll more than once every 5 minutes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="migration.html" class="btn btn-neutral float-left" title="API Migration Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bills.html" class="btn btn-neutral float-right" title="Bills and Resolutions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014, NY State Senate Technology Services.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
