@@ -18,8 +18,7 @@ public enum SearchIndex {
     HEARING("hearings", LimitOffset.TEN),
     LAW("laws", LimitOffset.TWENTY_FIVE),
     MEMBER("members", LimitOffset.TWENTY_FIVE),
-    NOTIFICATION("notifications", true, LimitOffset.ALL),
-    API_LOG("apilogs", true, LimitOffset.FIFTY);
+    NOTIFICATION("notifications", true, LimitOffset.ALL);
 
     private final String indexName;
     private final boolean primaryStore;
