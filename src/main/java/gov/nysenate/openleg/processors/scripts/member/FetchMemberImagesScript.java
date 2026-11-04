@@ -6,8 +6,8 @@ import gov.nysenate.openleg.common.util.FileIOUtils;
 import gov.nysenate.openleg.common.util.HttpUtils;
 import gov.nysenate.openleg.legislation.member.FullMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
-import gov.nysenate.services.NYSenateClientService;
-import gov.nysenate.services.model.Senator;
+import gov.nysenate.NYSenateJSONClient;
+import gov.nysenate.Senator;
 import org.apache.commons.cli.CommandLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,17 +46,17 @@ public class FetchMemberImagesScript extends BaseScript {
     private final MemberService memberService;
     private final ObjectMapper objectMapper;
     private final String sourceCodeDir;
-    private final NYSenateClientService nySenateClientService;
+    private final NYSenateJSONClient nySenateClient;
     private final String memberImgDir;
 
     @Autowired
     public FetchMemberImagesScript(MemberService memberService, ObjectMapper objectMapper,
-                                   NYSenateClientService nySenateClientService,
+                                   NYSenateJSONClient nySenateClient,
                                    @Value("${source.code.directory:/tmp}") String sourceCodeDir) {
         this.memberService = memberService;
         this.objectMapper = objectMapper;
         this.sourceCodeDir = sourceCodeDir.endsWith("/") ? sourceCodeDir : sourceCodeDir + "/";
-        this.nySenateClientService = nySenateClientService;
+        this.nySenateClient = nySenateClient;
         this.memberImgDir = this.sourceCodeDir + "src/main/webapp/static/img/business_assets/members/mini/";
     }
 
@@ -75,7 +75,7 @@ public class FetchMemberImagesScript extends BaseScript {
         List<FullMember> membersMissingImages = memberService.getAllFullMembers().stream()
                 .filter(m -> m.getPerson().imgName().equals("no_image.jpg")).toList();
 
-        Map<Integer, Senator> senatorsByOpenLegId = nySenateClientService.getSenators().stream()
+        Map<Integer, Senator> senatorsByOpenLegId = nySenateClient.getSenators().stream()
                 .collect(Collectors.toMap(Senator::getOpenLegId, Function.identity()));
 
         // Save member images locally.
