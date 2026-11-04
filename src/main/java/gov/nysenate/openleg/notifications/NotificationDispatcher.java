@@ -7,9 +7,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
+import gov.nysenate.openleg.notifications.history.NotificationDao;
 import gov.nysenate.openleg.notifications.model.*;
 import gov.nysenate.openleg.notifications.subscription.NotificationSubscriptionDataService;
-import gov.nysenate.openleg.search.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class NotificationDispatcher {
     private static final Logger logger = LoggerFactory.getLogger(NotificationDispatcher.class);
 
     private final OpenLegEnvironment environment;
-    private final NotificationService notificationService;
+    private final NotificationDao notificationDao;
     private final NotificationSubscriptionDataService subDataService;
 
     private final ImmutableMap<NotificationMedium, NotificationSender> senderMap;
@@ -44,14 +44,14 @@ public class NotificationDispatcher {
     @Autowired
     public NotificationDispatcher(@Qualifier("eventBus") EventBus eventBus,
                                   OpenLegEnvironment environment,
-                                  NotificationService notificationService,
+                                  NotificationDao notificationDao,
                                   NotificationSubscriptionDataService subDataService,
                                   List<NotificationSender> notificationSenders) {
 
         eventBus.register(this);
         this.senderMap = Maps.uniqueIndex(notificationSenders, NotificationSender::getTargetType);
         this.environment = environment;
-        this.notificationService = notificationService;
+        this.notificationDao = notificationDao;
         this.subDataService = subDataService;
         this.notificationGroups = new NotificationGroups(
                 EnumSet.allOf(NotificationType.class).stream()
@@ -96,7 +96,7 @@ public class NotificationDispatcher {
     @Subscribe
     public void handleNotificationEvent(Notification notification) {
         try {
-            RegisteredNotification registeredNotification = notificationService.registerNotification(notification);
+            RegisteredNotification registeredNotification = notificationDao.registerNotification(notification);
             notificationGroups.registerNotification(notification);
             if (notificationGroups.shouldDispatch(notification.getNotificationType())) {
                 dispatchNotification(registeredNotification);
