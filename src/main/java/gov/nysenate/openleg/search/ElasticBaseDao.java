@@ -83,9 +83,6 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     @Override
     public void deleteIndex() {
-        if (!envUtils.isTest() && indexType().isPrimaryStore()) {
-            throw new UnsupportedOperationException("Cannot delete a primary index.");
-        }
         try {
             if (indexExists()) {
                 logger.info("Deleting search index {}", indexName());
