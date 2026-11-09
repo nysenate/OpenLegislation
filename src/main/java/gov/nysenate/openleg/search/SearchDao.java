@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Manages an index that maps an IdType to a ViewType, and indexes ContentType documents.
  */
-public interface SearchDao<IdType, ViewType, ContentType> {
+public interface SearchDao<IdType, ContentType> {
     SearchIndex indexType();
 
     String indexName();

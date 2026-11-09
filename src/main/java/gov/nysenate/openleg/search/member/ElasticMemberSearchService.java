@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.search.member;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
-import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
@@ -13,11 +12,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ElasticMemberSearchService extends IndexedSearchService<FullMember> implements MemberSearchService {
-    protected final SearchDao<Integer, FullMemberView, FullMember> memberSearchDao;
+    protected final SearchDao<Integer, FullMember> memberSearchDao;
     protected final MemberService memberDataService;
 
     @Autowired
-    public ElasticMemberSearchService(SearchDao<Integer, FullMemberView, FullMember> memberSearchDao,
+    public ElasticMemberSearchService(SearchDao<Integer, FullMember> memberSearchDao,
                                       MemberService memberDataService) {
         super(memberSearchDao);
         this.memberSearchDao = memberSearchDao;

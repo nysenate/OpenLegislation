@@ -17,13 +17,13 @@ import java.util.Collection;
 public abstract class IndexedSearchService<T> {
     private static final Logger logger = LoggerFactory.getLogger(IndexedSearchService.class);
 
-    private final SearchDao<?, ?, T> searchDao;
+    private final SearchDao<?, T> searchDao;
     @Autowired
     private EnvironmentUtils envUtils;
     @Autowired
     private OpenLegEnvironment env;
 
-    protected IndexedSearchService(SearchDao<?, ?, T> searchDao) {
+    protected IndexedSearchService(SearchDao<?, T> searchDao) {
         this.searchDao = searchDao;
     }
 

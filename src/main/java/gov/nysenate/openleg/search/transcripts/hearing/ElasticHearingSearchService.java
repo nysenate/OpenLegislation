@@ -2,7 +2,6 @@ package gov.nysenate.openleg.search.transcripts.hearing;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.api.legislation.transcripts.hearing.view.HearingView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
@@ -16,11 +15,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ElasticHearingSearchService extends IndexedSearchService<Hearing> implements HearingSearchService {
-    private final SearchDao<HearingId, HearingView, Hearing> hearingSearchDao;
+    private final SearchDao<HearingId, Hearing> hearingSearchDao;
     private final HearingDataService hearingDataService;
 
     @Autowired
-    public ElasticHearingSearchService(SearchDao<HearingId, HearingView, Hearing> hearingSearchDao,
+    public ElasticHearingSearchService(SearchDao<HearingId, Hearing> hearingSearchDao,
                                        HearingDataService hearingDataService,@Qualifier("eventBus") EventBus eventBus) {
         super(hearingSearchDao);
         this.hearingSearchDao = hearingSearchDao;

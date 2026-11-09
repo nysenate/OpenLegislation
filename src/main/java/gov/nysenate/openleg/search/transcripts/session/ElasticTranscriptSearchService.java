@@ -4,10 +4,8 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.api.legislation.transcripts.session.view.TranscriptView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.OpenLegEnvironment;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -23,11 +21,11 @@ import java.util.*;
 @Service
 public class ElasticTranscriptSearchService extends IndexedSearchService<Transcript>
         implements TranscriptSearchService {
-    private final SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao;
+    private final SearchDao<TranscriptId, Transcript> transcriptSearchDao;
     private final TranscriptDataService transcriptDataService;
 
     @Autowired
-    public ElasticTranscriptSearchService(SearchDao<TranscriptId, TranscriptView, Transcript> transcriptSearchDao,
+    public ElasticTranscriptSearchService(SearchDao<TranscriptId, Transcript> transcriptSearchDao,
                                           TranscriptDataService transcriptDataService, @Qualifier("eventBus") EventBus eventBus) {
         super(transcriptSearchDao);
         this.transcriptSearchDao = transcriptSearchDao;

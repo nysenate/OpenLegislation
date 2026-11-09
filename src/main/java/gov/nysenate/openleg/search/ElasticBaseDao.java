@@ -35,7 +35,7 @@ import java.util.*;
  * Base class for Elasticsearch layer classes to inherit common functionality from.
  */
 public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, ContentType>
-        implements SearchDao<IdType, DocType, ContentType> {
+        implements SearchDao<IdType, ContentType> {
     protected static final Property basicTimeMapping =
             DateProperty.of(b -> b.format("hour_minute"))._toProperty();
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
