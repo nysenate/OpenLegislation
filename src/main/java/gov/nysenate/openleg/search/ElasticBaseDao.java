@@ -10,7 +10,6 @@ import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
-import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.TrackHits;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
@@ -31,7 +30,6 @@ import jakarta.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Base class for Elasticsearch layer classes to inherit common functionality from.
@@ -49,6 +47,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     private EnvironmentUtils envUtils;
     @Autowired
     private ElasticsearchClient searchClient;
+    private volatile boolean rebuilding = false;
 
     @PostConstruct
     private void init() {
@@ -103,18 +102,32 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
 
     protected abstract DocType getDoc(ContentType data);
 
+    @Nonnull
     protected Map<String, HighlightField> highlightedFields() {
         return Map.of();
     }
 
     @Override
     public SearchResults<IdType> searchForIds(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException {
-        return search(query, sortStr, limOff, highlightedFields(), false, hit -> toId(hit.id()));
-    }
-
-    @Override
-    public SearchResults<DocType> searchForDocs(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException {
-        return search(query, sortStr, limOff, highlightedFields(), true, Hit::source);
+        if (rebuilding) {
+            throw new SearchIndexRebuildingException(indexType());
+        }
+        limOff = adjustLimitOffset(limOff);
+        SearchRequest request = getSearchRequest(query._toQuery(), highlightedFields(), sortStr, limOff);
+        try {
+            SearchResponse<DocType> response = searchClient.search(request, getDocTypeClass());
+            return getSearchResults(response, limOff);
+        } catch (IOException | ElasticsearchException ex1) {
+            try {
+                // An error may be thrown if documents have never been indexed into an index.
+                if (getDocCount() == 0) {
+                    return new SearchResults<>(0, List.of(), limOff);
+                }
+                throw ex1;
+            } catch (IOException ex2) {
+                throw new ElasticsearchProcessException("IOException occurred during search request.", ex2);
+            }
+        }
     }
 
     @Override
@@ -162,54 +175,16 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
         }
     }
 
+    @Override
+    public void setRebuilding(boolean rebuilding) {
+        this.rebuilding = rebuilding;
+    }
+
     protected IdType toId(String idStr) {
         throw new UnsupportedOperationException("No implementation to convert Strings to IDs.");
     }
 
-    /* --- Common Elastic Search methods --- */
-
-    private <T> SearchResults<T> search(@Nonnull QueryVariant query, String sortStr, LimitOffset limitOffset,
-                                          Map<String, HighlightField> highlightedFields, boolean fetchSource,
-                                          Function<Hit<DocType>, T> hitMapper) throws SearchException {
-        if (highlightedFields == null) {
-            highlightedFields = Map.of();
-        }
-        limitOffset = adjustLimitOffset(limitOffset);
-        SearchRequest request = getSearchRequest(query._toQuery(), highlightedFields, sortStr, limitOffset, fetchSource);
-        try {
-            SearchResponse<DocType> response = searchClient.search(request, getDocTypeClass());
-            return getSearchResults(response, limitOffset, hitMapper);
-        } catch (IOException | ElasticsearchException ex1) {
-            try {
-                // An error may be thrown if documents have never been indexed into an index.
-                if (getDocCount() == 0) {
-                    return new SearchResults<>(0, List.of(), limitOffset);
-                }
-                throw ex1;
-            } catch (IOException ex2) {
-                throw new ElasticsearchProcessException("IOException occurred during search request.", ex2);
-            }
-        }
-    }
-
-    /**
-     * Performs a get request on the given index for the document designated by the given type and id
-     * returns an optional that is empty if a document does not exist for the given request parameters
-     * @param id String - the id of the desired document
-     */
-    protected Optional<DocType> getRequest(String id) {
-        var getRequest = GetRequest.of(b -> b.index(indexName()).id(id));
-        try {
-            GetResponse<DocType> getResponse = searchClient.get(getRequest, getDocTypeClass());
-            if (getResponse.found()) {
-                return Optional.ofNullable(getResponse.source());
-            }
-        }
-        catch (IOException ex) {
-            throw new ElasticsearchProcessException("Get request failed.", ex);
-        }
-        return Optional.empty();
-    }
+    /* --- Common Elasticsearch methods --- */
 
     /**
      * Performs a bulk request execution while making sure that the bulk request is actually valid to
@@ -278,7 +253,7 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
      * @return boolean
      */
     @SuppressWarnings("all")
-    public boolean isIndexRefreshDefault() {
+    protected boolean isIndexRefreshDefault() {
         var request = GetIndicesSettingsRequest.of(b -> b.index(indexName()).includeDefaults(true));
         try {
             IndexState data = searchClient.indices().getSettings(request).get(indexName());
@@ -328,20 +303,17 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     }
 
     /**
-     * Extracts search results from a search response
-     * template <R> is the desired return type
+     * Extracts the IDs of the hits from a search response
      *
      * @param response a SearchResponse generated by a SearchRequest
      * @param limitOffset the LimitOffset used in the SearchRequest
-     * @return SearchResults<R>
+     * @return SearchResults<IdType>
      */
-    private <T> SearchResults<T> getSearchResults(SearchResponse<DocType> response, LimitOffset limitOffset,
-                                                  Function<Hit<DocType>, T> hitMapper) {
-        List<SearchResult<T>> results = response.hits().hits().stream().map(hit -> {
+    private SearchResults<IdType> getSearchResults(SearchResponse<DocType> response, LimitOffset limitOffset) {
+        List<SearchResult<IdType>> results = response.hits().hits().stream().map(hit -> {
             double score = hit.score() != null && !Double.isNaN(hit.score()) ? hit.score() : 1;
-            T hitValue = hitMapper.apply(hit);
             return new SearchResult<>(
-                    hitValue, BigDecimal.valueOf(score), hit.highlight());
+                    toId(hit.id()), BigDecimal.valueOf(score), hit.highlight());
         }).toList();
         if (response.hits().total() == null) {
             throw new ElasticsearchProcessException("Problem checking total hits.");
@@ -352,23 +324,22 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     /**
      * Generates a SearchRequest with support for various functions.
      *
-     * @param query - The QueryBuilder instance to perform the search with.
-     * @param highlightedFields - Optional list of field names to return as highlighted fields.
-     * @param sortStr - String to convert to sorted fields.
-     * @param limitOffset - Restrict the number of results returned as well as paginate.
-     * @param fetchSource - Will return the indexed source fields when set to true.
+     * @param query             - The QueryBuilder instance to perform the search with.
+     * @param highlightedFields - List of field names to return as highlighted fields.
+     * @param sortStr           - String to convert to sorted fields.
+     * @param limitOffset       - Restrict the number of results returned as well as paginate.
      * @return SearchRequest
      */
     private SearchRequest getSearchRequest(Query query,
                                            Map<String, HighlightField> highlightedFields,
                                            String sortStr,
-                                           LimitOffset limitOffset, boolean fetchSource)
+                                           LimitOffset limitOffset)
             throws ElasticsearchException, SearchException {
         List<SortOptions> sorts = ElasticSearchServiceUtils.extractSortBuilders(sortStr);
         var searchRequest = SearchRequest.of(b -> b.query(query).from(limitOffset.offsetStart() - 1)
                 .size(limitOffset.limit())
                 .minScore(0.05d).trackTotalHits(TrackHits.of(trackBuilder -> trackBuilder.enabled(true)))
-                .source(fetchBuilder -> fetchBuilder.fetch(fetchSource))
+                .source(fetchBuilder -> fetchBuilder.fetch(false))
                 .highlight(highlightBuilder -> highlightBuilder.fields(highlightedFields))
                 .sort(sorts)
                 .index(indexName())

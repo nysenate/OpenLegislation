@@ -9,6 +9,7 @@ import gov.nysenate.openleg.legislation.law.LawDocId;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
+import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -47,7 +48,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao<LawDocId, LawDocView, La
     }
 
     @Override
-    protected Map<String, HighlightField> highlightedFields() {
+    protected @Nonnull Map<String, HighlightField> highlightedFields() {
         return Map.of(
                 "text", HighlightField.of(b -> b.numberOfFragments(5)),
                 "title", HighlightField.of(b -> b.numberOfFragments(0))

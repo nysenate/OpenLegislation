@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     /** --- Other --- */
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
+    SEARCH_INDEX_REBUILDING(101, "The search index is being rebuilt. Try again later."),
     IMMUTABLE_ENV_VARIABLE(110, "Attempt to change an immutable environment variable"),
     NO_SUCH_ENV_VARIABLE(111, "The requested environment variable does not exist"),
     PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),

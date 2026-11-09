@@ -24,6 +24,11 @@ public interface SearchDao<IdType, ViewType, ContentType> {
 
     long getDocCount();
 
+    /**
+     * While set, searches on this index throw a {@link SearchIndexRebuildingException}.
+     */
+    void setRebuilding(boolean rebuilding);
+
     SearchResults<IdType> searchForIds(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException;
 
     default SearchResults<IdType> searchForIds(String queryStr, String sortStr, LimitOffset limOff,
@@ -34,8 +39,6 @@ public interface SearchDao<IdType, ViewType, ContentType> {
         QueryVariant finalQuery = BoolQuery.of(b -> b.must(queryList.stream().map(QueryVariant::_toQuery).toList()));
         return searchForIds(finalQuery, sortStr, limOff);
     }
-
-    SearchResults<ViewType> searchForDocs(QueryVariant query, String sortStr, LimitOffset limOff) throws SearchException;
 
     void updateIndex(ContentType data);
 

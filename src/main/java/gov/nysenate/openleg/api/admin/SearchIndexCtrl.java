@@ -63,8 +63,7 @@ public class SearchIndexCtrl extends BaseCtrl {
                 if (searchService == null) {
                     continue;
                 }
-                searchService.clearIndex();
-                searchService.rebuildIndex();
+                searchService.clearAndRebuildIndex();
                 logger.info("Cleared {}{} index", "and rebuilt ", index.getName());
             }
             return new SimpleResponse(true, "Search index rebuild request completed", "index-clear");
