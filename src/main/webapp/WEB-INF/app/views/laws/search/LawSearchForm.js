@@ -4,7 +4,7 @@ import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string"
+import queryString from "query-string"
 
 
 export default function LawSearchForm({ term = "", filter = "" }) {

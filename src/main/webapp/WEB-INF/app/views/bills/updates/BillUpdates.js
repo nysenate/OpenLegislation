@@ -8,7 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { fetchAllBillUpdates } from "app/apis/billGetApi";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import Pagination from "app/shared/Pagination";
 import BillUpdateResults from "app/views/bills/updates/BillUpdateResults";
 import ErrorMessage from "app/shared/ErrorMessage";

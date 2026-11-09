@@ -6,7 +6,7 @@ import {
   sessionOptions,
   sortOptions
 } from "app/views/bills/search/billSearchUtils";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import Accordion from "app/shared/Accordion";
 import {
   useHistory,

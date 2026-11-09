@@ -5,7 +5,7 @@ import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import BillUpdate from "app/shared/BillUpdate";
 import Select, {
   SelectOption,
