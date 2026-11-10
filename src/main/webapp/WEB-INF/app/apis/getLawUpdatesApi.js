@@ -1,5 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 import queryString from "query-string";
 
 export default async function lawSearchApi(detail, from, to, withSelect, sortSelect, limit = 6, offset = 1) {

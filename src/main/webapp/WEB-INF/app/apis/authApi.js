@@ -1,7 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
-
 export function loginWithApiKey(apiKey) {
   const url = "/loginapikey"
   const options = {

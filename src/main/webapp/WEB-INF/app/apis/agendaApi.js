@@ -1,5 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 import queryString from "query-string";
 import { PageParams } from "app/shared/Pagination";
 

@@ -1,5 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 import queryString from "query-string";
 
 // TODO add more search options for this endpoint

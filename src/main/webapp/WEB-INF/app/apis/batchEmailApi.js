@@ -1,7 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
-
 export function BatchEmailBody(subscriptions, subject, body) {
   this.subscriptions = subscriptions
   this.subject = subject

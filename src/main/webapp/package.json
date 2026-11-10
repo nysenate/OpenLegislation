@@ -23,7 +23,6 @@
     "react-dom": "^17.0.2",
     "react-paginate": "^7.1.5",
     "react-router-dom": "^5.3.4",
-    "regenerator-runtime": "^0.13.11",
     "use-debounce": "^8.0.4"
   },
   "devDependencies": {
@@ -49,8 +48,15 @@
     }
   },
   "babel": {
+    "sourceType": "unambiguous",
     "presets": [
-      "@babel/preset-env",
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3.49"
+        }
+      ],
       "@babel/preset-react"
     ]
   },
