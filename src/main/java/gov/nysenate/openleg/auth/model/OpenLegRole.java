@@ -15,7 +15,9 @@ public enum OpenLegRole {
     READONLY_ADMIN("admin:view", "ui:view"),
     INTERNAL_USER("ui:view"),
     API_USER("ui:view"),
-    SEN_SITE_API_USER("senatesite:*:*");
+    SEN_SITE_API_USER("senatesite:*:*"),
+    /** Exempts an API key from the API rate limits. Grants no permissions. */
+    API_RATE_LIMIT_EXEMPT;
 
     private final List<Permission> wildcardPermissions;
 

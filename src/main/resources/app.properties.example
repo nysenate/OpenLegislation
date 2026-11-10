@@ -8,6 +8,21 @@ api.auth.ip.whitelist = 127.0.0.1
 # off (default) still honors them; enforce rejects them with a 400.
 api.collection_full.mode = off
 
+# Per-key limits on /api/3 requests made with an API key, except admin paths and OPTIONS.
+# Keys with the API_RATE_LIMIT_EXEMPT role are never limited.
+# `off` (default) changes nothing; `observe` logs what enforce would reject but sends every
+# response unchanged; `enforce` rejects requests over a limit with a 429.
+api.rate_limit.mode = off
+
+# How fast each key's token bucket refills, in requests per second (default 10)
+api.rate_limit.requests_per_second = 10
+
+# The most tokens a key's bucket holds: the requests a key can send at once (default 50)
+api.rate_limit.burst = 50
+
+# The most requests a key may have in flight (default 4)
+api.rate_limit.max_concurrent = 4
+
 # --- Admin Auth --------------------------------------------------------------
 
 # The default admin user name.

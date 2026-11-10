@@ -88,6 +88,11 @@ public class WebInitializer implements WebApplicationInitializer {
         servletContext.addFilter("apiAuthFilter", apiAuthFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
+        /* Api Key Rate Limiting, which needs the key that apiAuthFilter logged in */
+        DelegatingFilterProxy apiRateLimitFilter = new DelegatingFilterProxy("apiRateLimitFilter", dispatcherContext);
+        servletContext.addFilter("apiRateLimitFilter", apiRateLimitFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
+
         /**
          * Configure Shiro to track sessions in cookies instead of urls.
          * This fixes an issue where trying to navigate to an admin api endpoint when not authenticated would
