@@ -60,5 +60,7 @@
       "@babel/preset-react"
     ]
   },
-  "browserslist": "defaults"
+  "browserslist": [
+    "defaults"
+  ]
 }
