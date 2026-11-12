@@ -19,7 +19,7 @@ mvn clean verify
 # Build the same WAR running only the unit tests (no database needed)
 mvn clean package
 
-# Run unit tests only (uses @UnitTest category)
+# Run unit tests only (*Test and *Tests classes)
 mvn test
 
 # Run a single unit test class
@@ -93,16 +93,15 @@ those are missing.
 - **PostgreSQL** with C3P0 connection pooling, **Flyway 12** migrations
 - **Elasticsearch 8.19** for search (`elasticsearch-java` client)
 - **Apache Shiro 3** for auth (not Spring Security)
-- **JUnit 4** with `@Category(UnitTest.class)` / `@Category(IntegrationTest.class)`
+- **JUnit 4**; the filename decides whether a test is a unit or an integration test
 - **React 17** + Webpack 5 + TailwindCSS 3 frontend in `src/main/webapp/`
 
 ## Testing Conventions
 
-- Tests are categorized via JUnit `@Category` annotations from `gov.nysenate.openleg.config.annotation`
-- `@Category(UnitTest.class)` - runs with `mvn test` (surefire); classes are named `*Test.java`
-- `@Category(IntegrationTest.class)` - runs with `mvn integration-test` (failsafe), requires DB and ES; classes must be named `*IT.java` to be picked up
-- `@Category(SillyTest.class)` - matches neither plugin's `groups`, so these classes never run in a build
-- Integration tests extend `BaseTests` which provides Spring context, `@Transactional` rollback, and the `test` profile
+- The filename alone decides how a test runs: `*Test.java` and `*Tests.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn integration-test` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
+- Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that extends `BaseTests` must be named `*IT`
+- `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes are exempt
+- `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both the Surefire and Failsafe test runners, regardless of its filename
 - Test config loads `test.app.properties` which overrides DB name to `openleg_test`
 
 ## Configuration

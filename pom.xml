@@ -39,7 +39,12 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <groups>gov.nysenate.openleg.config.annotation.UnitTest</groups>
+          <!-- The filename alone decides: *Test and *Tests are unit tests, *IT are integration tests. -->
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+          </includes>
+          <excludedGroups>gov.nysenate.openleg.config.annotation.SillyTest</excludedGroups>
         </configuration>
       </plugin>
       <!-- Failsafe Plugin -->
@@ -49,7 +54,10 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <groups>gov.nysenate.openleg.config.annotation.IntegrationTest</groups>
+          <includes>
+            <include>**/*IT.java</include>
+          </includes>
+          <excludedGroups>gov.nysenate.openleg.config.annotation.SillyTest</excludedGroups>
         </configuration>
         <executions>
           <execution>
