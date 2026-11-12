@@ -12,7 +12,11 @@ OpenLegislation is the NY Senate's legislative data platform. It continuously in
 # Compile and run database migrations
 mvn compile flyway:migrate
 
-# Build WAR for deployment (target/legislation##<version>.war)
+# Build WAR for deployment (target/legislation##<version>.war): frontend, unit and
+# integration tests, and migrations (needs PostgreSQL + Elasticsearch)
+mvn clean verify
+
+# Build the same WAR running only the unit tests (no database needed)
 mvn clean package
 
 # Run unit tests only (uses @UnitTest category)
@@ -28,8 +32,8 @@ mvn integration-test
 mvn -Dit.test=DatabaseConfigIT integration-test
 
 # Frontend (from src/main/webapp/)
-npm ci          # install deps, then a production build via postinstall
-npm run build   # production webpack build
+npm ci          # install deps
+npm run build   # production webpack build; Maven runs it only when building the WAR
 npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080; set OL_IP to use another address)
 
 # Regenerate the public API docs (needs Sphinx; see docs/backend/index.md)
@@ -40,9 +44,6 @@ make -C docs/api clean   # deletes only the Sphinx cache in docs/api/_build
 The `integration-test` phase runs Flyway twice beforehand: once against the main database
 (`flyway.conf`) and once against the test database (`flyway.conf` overlaid with
 `test.flyway.conf`).
-
-Every Maven build, including `mvn test`, runs `npm ci` in `generate-sources`, and so also
-a full production webpack build.
 
 ## Architecture
 

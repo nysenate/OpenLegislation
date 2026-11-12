@@ -39,7 +39,6 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <skipTests>false</skipTests>
           <groups>gov.nysenate.openleg.config.annotation.UnitTest</groups>
         </configuration>
       </plugin>
@@ -66,24 +65,50 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.5.1</version>
+        <configuration>
+          <!-- Frontend sources and build tooling; the WAR serves only the webpack
+               output in static/dist. -->
+          <warSourceExcludes>node_modules/**,WEB-INF/app/**,package.json,package-lock.json,*.config.js</warSourceExcludes>
+          <!-- Delete anything in the exploded webapp directory that this build did
+               not write, such as classes deleted from the source. -->
+          <outdatedCheckPath>/</outdatedCheckPath>
+        </configuration>
       </plugin>
+      <!-- Frontend build: runs for goals that build the WAR (package, verify), not
+           for compile or test. With -Dexec.skip=true, the WAR gets whatever is
+           already in static/dist. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <version>3.6.3</version>
         <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <executable>npm</executable>
+          <workingDirectory>src/main/webapp</workingDirectory>
+        </configuration>
         <executions>
           <execution>
-            <id>exec-npm-install</id>
-            <phase>generate-sources</phase>
+            <id>npm-ci</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>npm</executable>
               <arguments>
                 <argument>ci</argument>
               </arguments>
-              <workingDirectory>src/main/webapp</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm-build</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
@@ -423,6 +448,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Spring Test | Spring based test runners. -->

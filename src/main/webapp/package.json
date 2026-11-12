@@ -8,8 +8,7 @@
   },
   "scripts": {
     "build": "NODE_ENV='production' webpack",
-    "start": "webpack serve",
-    "postinstall": "npm run build"
+    "start": "webpack serve"
   },
   "dependencies": {
     "@reach/dialog": "^0.17.0",

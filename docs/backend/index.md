@@ -158,7 +158,9 @@ Set `flyway.password` to the database user password.
 
 ## Building
 
-Run `mvn compile flyway:migrate` to generate a build that is deployable by Tomcat.
+Run `mvn compile flyway:migrate` to compile the code and apply the database migrations.
+
+Run `mvn clean verify` to build a WAR for deployment.
 
 ## API Documentation
 
