@@ -12,6 +12,7 @@ import gov.nysenate.openleg.legislation.law.dao.LawDataDao;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDao;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@SillyTest
+@Category(SillyTest.class)
 public class PdfTest extends ApiTest {
     @Autowired
     private LawPdfCtrl lawPdfCtrl;
