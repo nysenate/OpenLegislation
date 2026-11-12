@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.dao.HearingDataService;
@@ -12,7 +11,6 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.HearingSearchService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,7 +28,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 @RunWith(Parameterized.class)
 public class HearingSearchCtrlTest {
     @Parameterized.Parameters(name = "{0}")

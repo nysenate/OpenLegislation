@@ -5,9 +5,7 @@ import gov.nysenate.openleg.api.ratelimit.ApiRateLimiter.Admitted;
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimiter.Limit;
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimiter.Slot;
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimiter.Rejected;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class ApiRateLimiterTest {
     private static final String KEY = "key-a";
     private static final String OTHER_KEY = "key-b";

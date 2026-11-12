@@ -2,7 +2,6 @@ package gov.nysenate.openleg.notifications.mail;
 
 import gov.nysenate.openleg.common.util.MailUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.notifications.mail.SendResult.Outcome;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
@@ -11,7 +10,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +32,6 @@ import static org.mockito.Mockito.when;
  * Sends through the real Angus SMTP transport to a scripted server on the loopback interface,
  * since each outcome depends on the exception the transport throws at that point of the conversation.
  */
-@Category(UnitTest.class)
 public class MimeSendMailServiceSmtpTest {
 
     private enum Script {

@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.LawTestUtils;
 
 import java.io.File;
@@ -17,7 +15,6 @@ import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class RulesLawBuilderTest {
     private static final String[] ASSEMBLY_RULE_LOC_IDS = {"ASSEMBLYRULES", "R1", "R1S1", "R1S2", "R1S3", "R1S4", "R1S5", "R1S6", "R1S7", "R1S8", "R2", "R2S1", "R2S2", "R2S3", "R2S4"};
     private static final String[] SENATE_RULE_LOC_IDS = {"SENATERULES", "R1", "R1S1", "R2", "R2S1"};

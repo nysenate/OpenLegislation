@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.common.util.OutputUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Category(IntegrationTest.class)
 public class SqlMemberDaoIT extends BaseTests
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlMemberDaoIT.class);

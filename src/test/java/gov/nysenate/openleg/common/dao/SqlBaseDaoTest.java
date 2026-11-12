@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.common.dao;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +9,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class SqlBaseDaoTest
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlBaseDaoTest.class);

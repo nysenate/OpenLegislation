@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.legislation.member.dao;
 
 import gov.nysenate.openleg.common.util.Tuple;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Category(IntegrationTest.class)
 public class SessionMemberIdCacheIT extends AbstractMemberCacheIT<Integer, SessionMember> {
     @Autowired
     private SessionMemberIdCache sessionMemberIdCache;

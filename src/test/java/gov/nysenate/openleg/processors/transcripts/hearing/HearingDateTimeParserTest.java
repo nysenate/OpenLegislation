@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,7 +9,6 @@ import java.time.LocalTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-@Category(UnitTest.class)
 public class HearingDateTimeParserTest {
     @Test
     public void singleDigitHoursParse() {

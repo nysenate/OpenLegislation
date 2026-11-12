@@ -5,10 +5,8 @@ import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.common.util.OutputUtils;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -31,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /** Changing an API user's address, as the subscription preferences page does. */
-@Category(UnitTest.class)
 public class ApiUserEmailSubscriptionCtrlTest {
     private static final String KEY = "abc123";
 

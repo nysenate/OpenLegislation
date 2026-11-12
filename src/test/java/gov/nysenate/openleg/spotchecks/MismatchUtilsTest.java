@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.spotchecks;
 
 import com.google.common.collect.Lists;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.base.MismatchUtils;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -19,7 +17,6 @@ import static gov.nysenate.openleg.spotchecks.model.SpotCheckMismatchType.BILL_A
 import static gov.nysenate.openleg.spotchecks.model.SpotCheckRefType.LBDC_DAYBREAK;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class MismatchUtilsTest {
 
     private static final String printNo = "S100";

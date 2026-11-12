@@ -1,18 +1,15 @@
 package gov.nysenate.openleg.auth.user;
 
 import com.google.common.collect.ImmutableSet;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
 
-@Category(UnitTest.class)
 public class ApiUserTest {
 
     String sub1 = "BREAKING_CHANGES";

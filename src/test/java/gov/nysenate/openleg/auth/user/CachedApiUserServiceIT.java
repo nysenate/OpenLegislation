@@ -3,9 +3,7 @@ package gov.nysenate.openleg.auth.user;
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.auth.model.ApiUser;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -14,7 +12,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(IntegrationTest.class)
 public class CachedApiUserServiceIT extends BaseTests {
 
     @Autowired protected ApiUserService apiUserService;

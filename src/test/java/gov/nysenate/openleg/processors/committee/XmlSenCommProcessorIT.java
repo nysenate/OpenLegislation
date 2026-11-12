@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.committee;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
@@ -11,7 +10,6 @@ import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.DayOfWeek;
@@ -26,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Chenguang He on 5/8/2017.
  */
-@Category(IntegrationTest.class)
 public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private CommitteeDataService committeeDataService;

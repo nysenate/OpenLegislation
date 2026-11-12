@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class TranscriptLineTest {
     private String[] lineTexts;
     private Object[] expected;

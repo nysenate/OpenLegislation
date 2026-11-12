@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,7 +9,6 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class DayTypeTest {
     private static final String TEST_DIR = "src/test/resources/transcriptFiles/";
 

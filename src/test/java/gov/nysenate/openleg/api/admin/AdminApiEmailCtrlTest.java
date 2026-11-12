@@ -2,7 +2,6 @@ package gov.nysenate.openleg.api.admin;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.apiuser.ApiUserBatchEmailServiceImpl;
 import gov.nysenate.openleg.notifications.mail.apiuser.BatchEmailInProgressException;
@@ -14,7 +13,6 @@ import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,7 +35,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /** The JSON the admin batch email page reads from the send and status endpoints. */
-@Category(UnitTest.class)
 public class AdminApiEmailCtrlTest {
     private static final String REQUEST =
             "{\"subscriptions\":[\"BREAKING_CHANGES\"],\"subject\":\"Subject\",\"body\":\"Body\"}";

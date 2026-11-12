@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BillText;
 import gov.nysenate.openleg.legislation.bill.TextDiff;
 import gov.nysenate.openleg.legislation.bill.TextDiffType;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +13,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class BillTextDiffProcessorTest {
 
     private BillTextDiffProcessor textProcessor;

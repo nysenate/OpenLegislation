@@ -3,13 +3,11 @@ package gov.nysenate.openleg.spotchecks.scrape.bill;
 import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BillVoteCode;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeVote;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeVoteMismatchService;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -18,7 +16,6 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class BillScrapeVoteMismatchServiceTest {
 
     private static BillScrapeVoteMismatchService mmService;

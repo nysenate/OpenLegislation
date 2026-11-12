@@ -6,7 +6,6 @@ import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserSubscriptionType;
 import gov.nysenate.openleg.common.util.MailUtils;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.notifications.mail.MailConfigurationException;
 import gov.nysenate.openleg.notifications.mail.MimeSendMailService;
 import gov.nysenate.openleg.notifications.mail.SendResult;
@@ -27,7 +26,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,7 +49,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-@Category(UnitTest.class)
 public class ApiUserBatchEmailServiceImplTest {
     private static final String FROM = "openleg@example.org";
     private static final String KEY = "abc123";

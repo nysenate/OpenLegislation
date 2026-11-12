@@ -2,14 +2,12 @@ package gov.nysenate.openleg.spotchecks.alert.calendar;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.calendar.CalendarType;
 import gov.nysenate.openleg.spotchecks.model.SpotCheckObservation;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -21,7 +19,6 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Created by senateuser on 5/24/2017.
  */
-@Category(IntegrationTest.class)
 public class CalendarCheckServiceIT extends BaseTests {
     private final File activeAlertFile = FileIOUtils.getResourceFile("calendarAlerts/active_list_alert-2015-10-20150224T193238.html");
     private final File suppAlertFile = FileIOUtils.getResourceFile("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html");

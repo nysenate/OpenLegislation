@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillStatus;
@@ -10,7 +9,6 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,6 @@ import static org.junit.Assert.*;
 /**
  * Created by Robert Bebber on 3/20/17.
  */
-@Category(IntegrationTest.class)
 public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired BillDataService billDataService;

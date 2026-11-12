@@ -5,12 +5,10 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.notifications.model.NotificationType;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -21,7 +19,6 @@ import java.util.Set;
 import static gov.nysenate.openleg.notifications.model.NotificationType.*;
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class)
 public class SqlNotificationDaoIT extends BaseTests {
 
     @Autowired private NotificationDao notificationDao;

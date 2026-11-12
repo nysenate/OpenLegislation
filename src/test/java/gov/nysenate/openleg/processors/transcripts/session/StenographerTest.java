@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +8,6 @@ import java.time.LocalDateTime;
 import static gov.nysenate.openleg.processors.transcripts.session.Stenographer.*;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class StenographerTest {
     @Test
     public void dateTest() {

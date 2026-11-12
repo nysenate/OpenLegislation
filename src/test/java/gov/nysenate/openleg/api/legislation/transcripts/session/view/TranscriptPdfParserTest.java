@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.api.legislation.transcripts.session.view;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.processors.transcripts.session.TranscriptParser;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +11,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class TranscriptPdfParserTest {
     private static final String TEST_FILE_DIR = "src/test/resources/transcriptFiles/forPdfParser/",
             NORMAL_LINE_NUM = "2020-01-01T11:00", BLANK_LINE_BEFORE_PAGE_NUM = "1993-03-10T12:10",

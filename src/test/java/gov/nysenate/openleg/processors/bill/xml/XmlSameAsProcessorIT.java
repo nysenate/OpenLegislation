@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by uros on 2/16/17.
  */
-@Category(IntegrationTest.class)
 public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;

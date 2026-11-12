@@ -8,12 +8,10 @@ import gov.nysenate.openleg.api.response.ListViewResponse;
 import gov.nysenate.openleg.api.response.ViewObjectResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.api.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
 import gov.nysenate.openleg.legislation.law.dao.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -24,7 +22,6 @@ import java.util.Optional;
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class)
 public class LawGetCtrlIT extends LawCtrlBaseIT {
 
     @Autowired

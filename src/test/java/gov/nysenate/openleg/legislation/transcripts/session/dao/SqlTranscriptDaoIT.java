@@ -5,12 +5,10 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import gov.nysenate.openleg.updates.transcripts.session.TranscriptUpdateToken;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -23,7 +21,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
 public class SqlTranscriptDaoIT extends BaseTests {
     private static final int NUM_TRANSCRIPTS = 3;
     private static final String FILEPATH = "src/test/resources/transcriptFiles/";

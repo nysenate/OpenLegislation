@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.spotchecks.daybreak.process;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBill;
 import gov.nysenate.openleg.spotchecks.daybreak.bill.DaybreakBillId;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -13,7 +11,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class DaybreakFragmentSponsorParserTest {
     private final DaybreakBill senateBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("S100", 2017), LocalDate.now()));
     private final DaybreakBill assemblyBill = new DaybreakBill(new DaybreakBillId(new BaseBillId("A100", 2017), LocalDate.now()));

@@ -3,9 +3,7 @@ package gov.nysenate.openleg.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.common.util.OutputUtils;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,7 +19,6 @@ import static gov.nysenate.openleg.api.CtrlTestSupport.mockMvc;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@Category(UnitTest.class)
 public class BaseCtrlTest {
     private final BaseCtrl ctrl = new BaseCtrl() {};
 

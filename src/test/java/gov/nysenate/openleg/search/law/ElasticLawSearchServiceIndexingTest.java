@@ -2,14 +2,12 @@ package gov.nysenate.openleg.search.law;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import gov.nysenate.openleg.updates.law.BulkLawUpdateEvent;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.mockito.InOrder;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class ElasticLawSearchServiceIndexingTest {
     private static final LocalDate PUBLISHED = LocalDate.of(2025, 1, 3);
 

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.Bill;
@@ -8,7 +7,6 @@ import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -18,7 +16,6 @@ import static org.junit.Assert.*;
 /**
  * Created by senateuser on 2017/2/28.
  */
-@Category(IntegrationTest.class)
 public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired

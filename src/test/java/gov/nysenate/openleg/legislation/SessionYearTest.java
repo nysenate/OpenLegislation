@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.legislation;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class SessionYearTest {
     @Test
     public void basicTest() {

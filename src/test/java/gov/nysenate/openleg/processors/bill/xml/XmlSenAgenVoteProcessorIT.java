@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.common.util.DateUtils;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.agenda.*;
 import gov.nysenate.openleg.legislation.agenda.dao.AgendaDao;
@@ -15,7 +14,6 @@ import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processors.bill.LegDataFragment;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -31,7 +29,6 @@ import static org.junit.Assert.assertEquals;
  * Created by uros on 4/12/17.
  *
  */
-@Category(IntegrationTest.class)
 public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private AgendaDao agendaDao;

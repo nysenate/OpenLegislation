@@ -2,14 +2,12 @@ package gov.nysenate.openleg.spotchecks.scrape.bill;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BillVoteCode;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeReferenceHtmlParser;
 import gov.nysenate.openleg.spotchecks.scraping.lrs.bill.BillScrapeVote;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.TestUtils;
 
 import java.io.File;
@@ -22,7 +20,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@Category(UnitTest.class)
 public class BillScrapeReferenceHtmlParserTest {
 
     private BillScrapeReferenceHtmlParser parser = new BillScrapeReferenceHtmlParser();

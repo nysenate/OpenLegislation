@@ -2,11 +2,9 @@ package gov.nysenate.openleg.processors.bill;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawActionType;
 import gov.nysenate.openleg.processors.bill.BillLawCodeParser;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.*;
 
@@ -14,7 +12,6 @@ import static org.junit.Assert.*;
 import static gov.nysenate.openleg.legislation.law.LawActionType.*;
 
 
-@Category(UnitTest.class)
 public class BillLawCodeParserTest {
     private Map<LawActionType, TreeSet<String>> mapping = new EnumMap<>(LawActionType.class);
 

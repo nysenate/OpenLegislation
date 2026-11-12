@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.notifications.model;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -11,7 +9,6 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class NotificationGroupTest {
 
     private static final Duration SIXTY_MIN = Duration.ofMinutes(60);

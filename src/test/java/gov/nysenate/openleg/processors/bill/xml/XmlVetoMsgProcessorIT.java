@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -13,7 +11,6 @@ import java.time.LocalDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-@Category(IntegrationTest.class)
 public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
     private static final String dataDir = "processor/bill/vetomessage";
     // This is before any of our bill data, preventing conflicts.

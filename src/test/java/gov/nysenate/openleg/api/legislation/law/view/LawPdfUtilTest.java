@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.api.legislation.law.view;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import gov.nysenate.openleg.legislation.law.LawDocument;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.LawTestUtils;
 
 import java.util.List;
@@ -18,7 +16,6 @@ import static gov.nysenate.openleg.legislation.law.LawDocumentType.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class LawPdfUtilTest {
     @Test
     public void dummyGetBlocksTest() {

@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.legislation.bill.utils;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.utils.BillTextUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class BillTextUtilsTest {
     final String bill = "\n<STYLE><!--U  {color: Green}S  {color: RED} I  {color: DARKBLUE; background-color:yellow}\n" +
             "        P.brk {page-break-before:always}--></STYLE>\n" +

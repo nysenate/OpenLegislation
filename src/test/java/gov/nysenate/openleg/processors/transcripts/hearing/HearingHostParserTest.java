@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingHost;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Set;
 
@@ -13,7 +11,6 @@ import static gov.nysenate.openleg.legislation.transcripts.hearing.HearingHostTy
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class HearingHostParserTest {
 
     @Test

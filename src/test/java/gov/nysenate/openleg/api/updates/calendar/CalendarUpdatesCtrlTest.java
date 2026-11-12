@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.updates.UpdateContentType;
 import gov.nysenate.openleg.updates.UpdateDigest;
@@ -12,7 +11,6 @@ import gov.nysenate.openleg.updates.UpdateType;
 import gov.nysenate.openleg.updates.calendar.CalendarUpdatesDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -26,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class CalendarUpdatesCtrlTest {
     private static final int TOTAL = 18;
     private static final String CALENDAR_DIGESTS = "/api/3/calendars/2025/67/updates";

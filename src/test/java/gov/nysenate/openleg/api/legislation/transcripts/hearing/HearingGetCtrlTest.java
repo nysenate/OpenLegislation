@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.hearing;
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingNotFoundEx;
@@ -13,7 +12,6 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.hearing.HearingSearchService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -31,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class HearingGetCtrlTest {
     private static final List<String> LISTINGS = List.of("/api/3/hearings", "/api/3/hearings/2025");
     private static final List<String> SINGLE_HEARINGS = List.of("/api/3/hearings/1", "/api/3/hearings/hearing-file");

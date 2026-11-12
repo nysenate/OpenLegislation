@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.legislation.transcripts.session;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.TestUtils;
 
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-@Category(UnitTest.class)
 public class SessionTypeTest {
     private static final SessionType regSess = new SessionType("Regular Session"),
             regSessCaps = new SessionType("REGULAR SESSION"),

@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.processors.bill;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BillAction;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.processors.ParseError;
 import gov.nysenate.openleg.processors.bill.BillActionParser;
 import gov.nysenate.openleg.common.util.XmlHelper;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Node;
 
@@ -19,7 +17,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-@Category(UnitTest.class)
 public class BillActionParserTest
 {
     // @Autowired BillDataService billDataService;

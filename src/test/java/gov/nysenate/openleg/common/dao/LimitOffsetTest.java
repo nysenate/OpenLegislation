@@ -2,16 +2,13 @@ package gov.nysenate.openleg.common.dao;
 
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class LimitOffsetTest {
     @Test
     public void testHasLimit() {
