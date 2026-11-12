@@ -40,6 +40,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     @Autowired private SourceFileRefDao sourceFileRefDao;
     @Autowired private LegDataFragmentDao legDataFragmentDao;
     @Autowired private OpenLegEnvironment env;
+    @Autowired private OpenLegCacheManager cacheManager;
     @Autowired private List<LegDataProcessor> processors;
 
     private Map<LegDataFragmentType, LegDataProcessor> processorMap;
@@ -77,7 +78,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         env.setElasticIndexing(originalIndexingSetting);
         env.setBillScrapeQueueEnabled(originalScrapeQueueSetting);
         env.setNotificationsEnabled(originalNotificationSetting);
-        OpenLegCacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
+        cacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
     }
 
     /**
@@ -117,7 +118,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         processor.process(fragment);
         processor.postProcess();
         // Clear caches to ensure proper saves
-        OpenLegCacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
+        cacheManager.clearCaches(EnumSet.allOf(CacheType.class), false);
     }
 
     /**

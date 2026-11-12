@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.legislation;
 
 import gov.nysenate.openleg.common.util.TypeUtils;
+import jakarta.annotation.PreDestroy;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -10,6 +11,7 @@ import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.ehcache.expiry.ExpiryPolicy;
+import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -18,45 +20,47 @@ import java.util.Set;
 /**
  * Contains various methods to manage caches and get statistics about them.
  */
-public final class OpenLegCacheManager {
-    private static final StatisticsService statisticsService = new DefaultStatisticsService();
-    private static final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+@Component
+public class OpenLegCacheManager {
+    private final StatisticsService statisticsService = new DefaultStatisticsService();
+    private final CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
             .using(statisticsService).build(true);
-    private static final EnumMap<CacheType, CachingService<?, ?>> cacheTypeMap =
+    private final EnumMap<CacheType, CachingService<?, ?>> cacheTypeMap =
             new EnumMap<>(CacheType.class);
-    private static final EnumMap<CacheType, Integer> cacheCapacityMap = new EnumMap<>(CacheType.class);
-
-    private OpenLegCacheManager() {}
+    private final EnumMap<CacheType, Integer> cacheCapacityMap = new EnumMap<>(CacheType.class);
 
     @SuppressWarnings("unchecked")
-    static <K, V> Cache<K, V> createCache(CachingService<K, V> service, int size) {
+    synchronized <K, V> Cache<K, V> createCache(CachingService<K, V> service, int size) {
         var classes = TypeUtils.getGenericTypes(service);
         var keyClass = (Class<K>) classes[0];
         var valueClass = (Class<V>) classes[1];
         var type = service.cacheType();
 
-        cacheCapacityMap.put(type, size);
         var config = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(size))
                 .withSizeOfMaxObjectGraph(100000).withExpiry(ExpiryPolicy.NO_EXPIRY)
                 .withEvictionAdvisor(service.evictionAdvisor());
+        Cache<K, V> cache = cacheManager.createCache(type.name(), config);
+        cacheCapacityMap.put(type, size);
         cacheTypeMap.put(type, service);
-        return cacheManager.createCache(type.name(), config);
+        return cache;
     }
 
-    static void removeCache(CacheType type) {
+    synchronized void removeCache(CacheType type) {
         cacheManager.removeCache(type.name());
+        cacheTypeMap.remove(type);
+        cacheCapacityMap.remove(type);
     }
 
-    public static CacheStatistics getCacheStats(CacheType type) {
+    public CacheStatistics getCacheStats(CacheType type) {
         return statisticsService.getCacheStatistics(type.name());
     }
 
-    public static int getCapacity(CacheType type) {
+    public int getCapacity(CacheType type) {
         return cacheCapacityMap.get(type);
     }
 
-    public static synchronized void clearCaches(Set<CacheType> types, boolean warmCaches) {
+    public synchronized void clearCaches(Set<CacheType> types, boolean warmCaches) {
         if (types.contains(CacheType.BILL) || types.contains(CacheType.BILL_INFO)) {
             // Ensures the Set is mutable.
             types = new HashSet<>(types);
@@ -66,5 +70,10 @@ public final class OpenLegCacheManager {
         for (var cachingService : types.stream().map(cacheTypeMap::get).toList()) {
             cachingService.clearCache(warmCaches);
         }
+    }
+
+    @PreDestroy
+    private void close() {
+        cacheManager.close();
     }
 }

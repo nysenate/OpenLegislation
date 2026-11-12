@@ -19,6 +19,8 @@ public abstract class CachingService<Key, Value> {
     private Environment environment;
     @Autowired
     protected EventBus eventBus;
+    @Autowired
+    private OpenLegCacheManager cacheManager;
     protected Cache<Key, Value> cache;
 
     protected abstract CacheType cacheType();
@@ -31,7 +33,7 @@ public abstract class CachingService<Key, Value> {
     private synchronized void init() {
         Map<Key, Value> initialEntries = initialEntries();
         int size = getCacheSize(initialEntries.size());
-        this.cache = OpenLegCacheManager.createCache(this, size);
+        this.cache = cacheManager.createCache(this, size);
         initialEntries.forEach((k, v) -> cache.put(k, v));
     }
 
@@ -60,7 +62,7 @@ public abstract class CachingService<Key, Value> {
     @PreDestroy
     private void cleanUp() {
         cache.clear();
-        OpenLegCacheManager.removeCache(cacheType());
+        cacheManager.removeCache(cacheType());
     }
 
     protected Map<Key, Value> initialEntries() {
