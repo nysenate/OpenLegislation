@@ -88,10 +88,10 @@ those are missing.
 
 ## Tech Stack
 
-- **Java 21**, **Spring 6.2** (not Spring Boot), **Tomcat 11**
+- **Java 21**, **Spring 7.0** (not Spring Boot), **Tomcat 11**
 - **PostgreSQL** with C3P0 connection pooling, **Flyway 12** migrations
-- **Elasticsearch 8.14** for search (`elasticsearch-java` client)
-- **Apache Shiro 2** for auth (not Spring Security)
+- **Elasticsearch 8.19** for search (`elasticsearch-java` client)
+- **Apache Shiro 3** for auth (not Spring Security)
 - **JUnit 4** with `@Category(UnitTest.class)` / `@Category(IntegrationTest.class)`
 - **React 17** + Webpack 5 + TailwindCSS 3 frontend in `src/main/webapp/`
 
