@@ -138,6 +138,7 @@
           </configFiles>
         </configuration>
         <executions>
+          <!-- Migrates the main database (flyway.conf). -->
           <execution>
             <id>flyway-migrate</id>
             <phase>pre-integration-test</phase>
@@ -145,6 +146,7 @@
               <goal>migrate</goal>
             </goals>
           </execution>
+          <!-- Migrates the test database that the integration tests use. -->
           <execution>
             <id>flyway-migrate-test</id>
             <phase>pre-integration-test</phase>

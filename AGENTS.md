@@ -31,6 +31,13 @@ mvn integration-test
 # Run a single integration test class
 mvn -Dit.test=DatabaseConfigIT integration-test
 
+# Run one integration test without npm, the unit tests, the WAR or Flyway (the test
+# database must be running and migrated)
+mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=LawGetCtrlIT
+
+# Migrate only the test database
+mvn compile flyway:migrate@flyway-migrate-test
+
 # Frontend (from src/main/webapp/)
 npm ci          # install deps
 npm run build   # production webpack build; Maven runs it only when building the WAR
