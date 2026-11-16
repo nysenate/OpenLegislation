@@ -200,6 +200,10 @@
     <slf4j.version>2.0.18</slf4j.version>
     <spring.version>7.0.10</spring.version>
     <tomcat.version>11.0.27</tomcat.version>
+
+    <!-- Surefire and failsafe write each test class's output to <package>.<Class>-output.txt
+         in their reports folder, not the console. -->
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>
 
   <dependencyManagement>

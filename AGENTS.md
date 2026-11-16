@@ -109,6 +109,7 @@ those are missing.
 - Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that extends `BaseTests` must be named `*IT`
 - `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes are exempt
 - `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both the Surefire and Failsafe test runners, regardless of its filename
+- Test output (logging, stdout, stderr) goes to `<package>.<Class>-output.txt` in `target/surefire-reports/` or `target/failsafe-reports/`, not the console. Add `-Dmaven.test.redirectTestOutputToFile=false` to see it on the console
 - Test config loads `test.app.properties` which overrides DB name to `openleg_test`
 
 ## Configuration
