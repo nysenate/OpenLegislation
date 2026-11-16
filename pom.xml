@@ -39,7 +39,9 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <!-- The filename alone decides: *Test and *Tests are unit tests, *IT are integration tests. -->
+          <!-- Tests are picked by filename: *Test and *Tests are unit tests here, *IT are
+               integration tests in failsafe; both skip @Category(SillyTest.class) classes.
+               TestClassNamesTest checks the names and repeats these patterns: keep in sync. -->
           <includes>
             <include>**/*Test.java</include>
             <include>**/*Tests.java</include>
@@ -54,6 +56,7 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
+          <!-- See the surefire comment above. -->
           <includes>
             <include>**/*IT.java</include>
           </includes>
@@ -74,17 +77,17 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
-          <!-- Frontend sources and build tooling; the WAR serves only the webpack
-               output in static/dist. -->
+          <!-- Frontend sources and build tooling; of the frontend files, the app
+               needs only the webpack output in static/dist. -->
           <warSourceExcludes>node_modules/**,WEB-INF/app/**,package.json,package-lock.json,*.config.js</warSourceExcludes>
           <!-- Delete anything in the exploded webapp directory that this build did
                not write, such as classes deleted from the source. -->
           <outdatedCheckPath>/</outdatedCheckPath>
         </configuration>
       </plugin>
-      <!-- Frontend build: runs for goals that build the WAR (package, verify), not
-           for compile or test. With -Dexec.skip=true, the WAR gets whatever is
-           already in static/dist. -->
+      <!-- Frontend build: bound to prepare-package, so it runs for package and every
+           later phase (integration-test, verify, install), not for compile or test.
+           With -Dexec.skip=true, the WAR gets whatever is already in static/dist. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <version>3.6.3</version>

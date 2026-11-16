@@ -3,6 +3,7 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -17,8 +18,10 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Surefire runs classes named *Test or *Tests as unit tests, and failsafe runs classes named *IT
- * as integration tests. A test class named any other way never runs, and one that needs the
- * database but isn't named *IT fails in a plain unit test run. This catches both.
+ * as integration tests. A test class named any other way never runs, and one that loads the
+ * Spring test context ({@code @ContextConfiguration}, e.g. via BaseTests), and so needs the
+ * database, fails in a plain unit test run unless it is named *IT. This catches both.
+ * The suffixes here must stay in sync with the surefire and failsafe includes in pom.xml.
  */
 public class TestClassNamesTest {
 
@@ -36,7 +39,7 @@ public class TestClassNamesTest {
                 problem(cls).ifPresent(problems::add);
             }
         }
-        assertTrue("Found no test classes under " + root, checked > 0);
+        assertTrue("Found no class files under " + root, checked > 0);
         assertTrue("Misnamed test classes:\n" + String.join("\n", problems), problems.isEmpty());
     }
 
@@ -52,10 +55,12 @@ public class TestClassNamesTest {
         String name = cls.getSimpleName();
         boolean integrationName = name.endsWith("IT");
         boolean unitName = name.endsWith("Test") || name.endsWith("Tests");
-        if (BaseTests.class.isAssignableFrom(cls) && !integrationName) {
-            return Optional.of(cls.getName() + " extends BaseTests, so it needs the database: name it *IT");
-        }
         boolean hasTests = Arrays.stream(cls.getMethods()).anyMatch(m -> m.isAnnotationPresent(Test.class));
+        // @ContextConfiguration is @Inherited, so this also finds it on BaseTests subclasses.
+        if (cls.isAnnotationPresent(ContextConfiguration.class) && !integrationName) {
+            return Optional.of(cls.getName() + " loads the Spring test context, so it needs the database: "
+                    + (hasTests ? "name it *IT" : "it has no @Test methods, so make it abstract if it is a base class"));
+        }
         if (hasTests && !integrationName && !unitName) {
             return Optional.of(cls.getName() + " has @Test methods but no plugin runs it: name it *Test or *IT");
         }
