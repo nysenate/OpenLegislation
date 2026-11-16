@@ -160,7 +160,13 @@ Set `flyway.password` to the database user password.
 
 Run `mvn compile flyway:migrate` to compile the code and apply the database migrations.
 
-Run `mvn clean verify` to build a WAR for deployment.
+Run `npm ci && npm run build` in `src/main/webapp` to build the frontend into `src/main/webapp/static/dist`,
+which the app serves its UI from. Do this once before running the app and again after frontend changes;
+`mvn package -DskipTests` builds it too. For live frontend work, `npm start` serves the UI at
+http://localhost:3000 and sends API requests to Tomcat on port 8080.
+
+Run `mvn clean verify` to build a WAR for deployment. It runs the unit and integration tests and migrates
+the databases, so PostgreSQL and Elasticsearch must be running.
 
 ## API Documentation
 
@@ -205,6 +211,8 @@ We typically run Open Legislation in Tomcat through IntelliJ.
 
 Now you can run Tomcat by selecting it and pressing the green play button towards the top right of the Intellij UI.
 Once running you should be able to view the application at: http://localhost:8080
+
+The UI shows only after you have built the frontend (see Building).
 
 ## Legislative Data
 

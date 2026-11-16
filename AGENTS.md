@@ -9,7 +9,7 @@ OpenLegislation is the NY Senate's legislative data platform. It continuously in
 ## Build & Run Commands
 
 ```bash
-# Compile and run database migrations
+# Compile and migrate the main database (flyway.conf)
 mvn compile flyway:migrate
 
 # Build WAR for deployment (target/legislation##<version>.war): frontend, unit and
@@ -25,14 +25,12 @@ mvn test
 # Run a single unit test class
 mvn test -Dtest=LawTitleParserTest
 
-# Run integration tests (requires running PostgreSQL + Elasticsearch)
-mvn integration-test
+# Run a single integration test class, after the unit tests, the WAR build and
+# migrations
+mvn verify -Dit.test=DatabaseConfigIT
 
-# Run a single integration test class
-mvn -Dit.test=DatabaseConfigIT integration-test
-
-# Run one integration test without npm, the unit tests, the WAR or Flyway (the test
-# database must be running and migrated)
+# Run one integration test without npm, the unit tests, the WAR or Flyway (PostgreSQL
+# and Elasticsearch must be running and the test database migrated)
 mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=LawGetCtrlIT
 
 # Migrate only the test database
@@ -105,10 +103,10 @@ those are missing.
 
 ## Testing Conventions
 
-- The filename alone decides how a test runs: `*Test.java` and `*Tests.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn integration-test` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
-- Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that extends `BaseTests` must be named `*IT`
-- `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes are exempt
-- `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both the Surefire and Failsafe test runners, regardless of its filename
+- The filename alone decides how a test runs: `*Test.java` and `*Tests.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn verify` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
+- Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that loads the Spring test context, as every `BaseTests` subclass does, must be named `*IT`
+- `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes and `SillyTest` classes are exempt
+- `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both surefire and failsafe, regardless of its filename
 - Test output (logging, stdout, stderr) goes to `<package>.<Class>-output.txt` in `target/surefire-reports/` or `target/failsafe-reports/`, not the console. Add `-Dmaven.test.redirectTestOutputToFile=false` to see it on the console
 - Test config loads `test.app.properties` which overrides DB name to `openleg_test`
 
@@ -136,7 +134,7 @@ those are missing.
 - Data access: `Sql*Dao.java` (concrete), `*Dao.java` (interface)
 - Processors: `Xml*Processor.java` for XML data handlers
 - Search: `Elastic*SearchService.java`
-- Unit tests: `*Test.java`; integration tests: `*IT.java`
+- Unit tests: `*Test.java` or `*Tests.java`; integration tests: `*IT.java`
 
 ## Git Commit Messages
 
