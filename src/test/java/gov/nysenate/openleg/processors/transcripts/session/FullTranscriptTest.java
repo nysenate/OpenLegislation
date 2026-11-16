@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Maant to be run on a full database of transcripts.
  */
 @Category(SillyTest.class)
-public class FullTranscriptTests extends BaseTests {
+public class FullTranscriptTest extends BaseTests {
     private static final String validChars = "[\\p{Graph} ½¾àãáçèëéÍíîïòõöôóÑñšÚúüý¡{}’ª\t]*";
     @Autowired
     private TranscriptDataService transcriptService;

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 
-public class DiffMatchPatchTests {
+public class DiffMatchPatchTest {
 
     private static final DiffMatchPatch dmp = new DiffMatchPatch();
 

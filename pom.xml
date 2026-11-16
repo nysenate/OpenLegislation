@@ -39,12 +39,11 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <!-- Tests are picked by filename: *Test and *Tests are unit tests here, *IT are
-               integration tests in failsafe; both skip @Category(SillyTest.class) classes.
+          <!-- Tests are picked by filename: *Test are unit tests here, *IT are integration
+               tests in failsafe; both skip @Category(SillyTest.class) classes.
                TestClassNamesTest checks the names and repeats these patterns: keep in sync. -->
           <includes>
             <include>**/*Test.java</include>
-            <include>**/*Tests.java</include>
           </includes>
           <excludedGroups>gov.nysenate.openleg.config.annotation.SillyTest</excludedGroups>
         </configuration>

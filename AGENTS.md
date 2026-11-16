@@ -19,7 +19,7 @@ mvn clean verify
 # Build the same WAR running only the unit tests (no database needed)
 mvn clean package
 
-# Run unit tests only (*Test and *Tests classes)
+# Run unit tests only (*Test classes)
 mvn test
 
 # Run a single unit test class
@@ -103,7 +103,7 @@ those are missing.
 
 ## Testing Conventions
 
-- The filename alone decides how a test runs: `*Test.java` and `*Tests.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn verify` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
+- The filename alone decides how a test runs: `*Test.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn verify` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
 - Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that loads the Spring test context, as every `BaseTests` subclass does, must be named `*IT`
 - `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes and `SillyTest` classes are exempt
 - `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both surefire and failsafe, regardless of its filename
@@ -134,7 +134,7 @@ those are missing.
 - Data access: `Sql*Dao.java` (concrete), `*Dao.java` (interface)
 - Processors: `Xml*Processor.java` for XML data handlers
 - Search: `Elastic*SearchService.java`
-- Unit tests: `*Test.java` or `*Tests.java`; integration tests: `*IT.java`
+- Unit tests: `*Test.java`; integration tests: `*IT.java`
 
 ## Git Commit Messages
 

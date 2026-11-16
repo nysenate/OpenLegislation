@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Surefire runs classes named *Test or *Tests as unit tests, and failsafe runs classes named *IT
- * as integration tests. A test class named any other way never runs, and one that loads the
+ * Surefire runs classes named *Test as unit tests, and failsafe runs classes named *IT as
+ * integration tests. A test class named any other way never runs, and one that loads the
  * Spring test context ({@code @ContextConfiguration}, e.g. via BaseTests), and so needs the
  * database, fails in a plain unit test run unless it is named *IT. This catches both.
  * The suffixes here must stay in sync with the surefire and failsafe includes in pom.xml.
@@ -54,7 +54,7 @@ public class TestClassNamesTest {
         }
         String name = cls.getSimpleName();
         boolean integrationName = name.endsWith("IT");
-        boolean unitName = name.endsWith("Test") || name.endsWith("Tests");
+        boolean unitName = name.endsWith("Test");
         boolean hasTests = Arrays.stream(cls.getMethods()).anyMatch(m -> m.isAnnotationPresent(Test.class));
         // @ContextConfiguration is @Inherited, so this also finds it on BaseTests subclasses.
         if (cls.isAnnotationPresent(ContextConfiguration.class) && !integrationName) {
