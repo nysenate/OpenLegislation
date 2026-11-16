@@ -25,10 +25,6 @@ mvn test
 # Run a single unit test class
 mvn test -Dtest=LawTitleParserTest
 
-# Run a single integration test class, after the unit tests, the WAR build and
-# migrations
-mvn verify -Dit.test=DatabaseConfigIT
-
 # Run one integration test without npm, the unit tests, the WAR or Flyway (PostgreSQL
 # and Elasticsearch must be running and the test database migrated)
 mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=LawGetCtrlIT
