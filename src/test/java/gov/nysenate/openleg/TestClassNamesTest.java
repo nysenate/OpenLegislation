@@ -3,7 +3,9 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.config.annotation.SillyTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -19,7 +21,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Surefire runs classes named *Test as unit tests, and failsafe runs classes named *IT as
  * integration tests. A test class named any other way never runs, and one that loads the
- * Spring test context ({@code @ContextConfiguration}, e.g. via BaseTests), and so needs the
+ * Spring test context ({@code @ContextConfiguration} or {@code @ContextHierarchy}, directly,
+ * through a composed annotation or via a superclass such as BaseTests), and so needs the
  * database, fails in a plain unit test run unless it is named *IT. This catches both.
  * The suffixes here must stay in sync with the surefire and failsafe includes in pom.xml.
  */
@@ -56,8 +59,7 @@ public class TestClassNamesTest {
         boolean integrationName = name.endsWith("IT");
         boolean unitName = name.endsWith("Test");
         boolean hasTests = Arrays.stream(cls.getMethods()).anyMatch(m -> m.isAnnotationPresent(Test.class));
-        // @ContextConfiguration is @Inherited, so this also finds it on BaseTests subclasses.
-        if (cls.isAnnotationPresent(ContextConfiguration.class) && !integrationName) {
+        if (loadsSpringContext(cls) && !integrationName) {
             return Optional.of(cls.getName() + " loads the Spring test context, so it needs the database: "
                     + (hasTests ? "name it *IT" : "it has no @Test methods, so make it abstract if it is a base class"));
         }
@@ -65,6 +67,15 @@ public class TestClassNamesTest {
             return Optional.of(cls.getName() + " has @Test methods but no plugin runs it: name it *Test or *IT");
         }
         return Optional.empty();
+    }
+
+    /**
+     * Finds the Spring test context configuration on the class, its superclasses (e.g. BaseTests)
+     * and its interfaces, including through composed annotations such as @SpringJUnitConfig.
+     */
+    private static boolean loadsSpringContext(Class<?> cls) {
+        return AnnotatedElementUtils.hasAnnotation(cls, ContextConfiguration.class)
+                || AnnotatedElementUtils.hasAnnotation(cls, ContextHierarchy.class);
     }
 
     /** SillyTest classes are excluded from both plugins, whatever their names. */
