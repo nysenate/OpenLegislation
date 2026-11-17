@@ -134,5 +134,6 @@ those are missing.
 
 - Subject: imperative mood ("Add", "Fix"), at most 50 characters, capitalized, no trailing period
 - Blank line, then a body wrapped at 72 characters
-- The body explains what changed and why: the problem, the motivation, the user-visible effect. Leave out how: the diff shows the implementation, so don't narrate code, functions or steps taken
-- Skip the body only for trivial changes where the subject says it all
+- The body says why: the problem, the motivation, the user-visible effect. Write only what a reader can't get from the subject and the diff
+- Leave out how: don't narrate code, steps or testing, and don't describe how the implementation behaves (safeguards, edge cases it handles, how it can be run)
+- Leave out the body when the subject says it all
