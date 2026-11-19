@@ -6,7 +6,6 @@ import gov.nysenate.openleg.legislation.law.dao.LawDataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,9 +28,7 @@ public class LawGetCtrlTest {
     public void setUp() {
         lawData = mock(LawDataService.class);
         when(lawData.getRepealedLawDocs(any())).thenReturn(List.of());
-        LawGetCtrl ctrl = new LawGetCtrl();
-        ReflectionTestUtils.setField(ctrl, "lawDataService", lawData);
-        mvc = mockMvc(ctrl);
+        mvc = mockMvc(new LawGetCtrl(lawData));
     }
 
     @Test

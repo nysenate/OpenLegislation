@@ -31,7 +31,12 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/laws", method = RequestMethod.GET)
 public class LawGetCtrl extends BaseCtrl {
-    @Autowired private LawDataService lawDataService;
+    private final LawDataService lawDataService;
+
+    @Autowired
+    public LawGetCtrl(LawDataService lawDataService) {
+        this.lawDataService = lawDataService;
+    }
 
     /** --- Request Handlers --- */
 
