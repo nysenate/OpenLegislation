@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRouteMatch } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import getLawsApi from "app/apis/getLawsApi";
 import { capitalize } from "app/lib/textUtils";
 import {
@@ -10,17 +10,17 @@ import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 
 
 export default function LawNodeView({ setHeaderText }) {
-  const match = useRouteMatch()
+  const { chapterId, locationId } = useParams()
   const [ nodeTree, setNodeTree ] = React.useState()
   const [ node, setNode ] = React.useState()
 
   React.useEffect(() => {
-    getLawsApi(match.params.chapterId, null, { fromLocation: match.params.locationId })
+    getLawsApi(chapterId, null, { fromLocation: locationId })
       .then(response => setNodeTree(response.documents))
 
-    getLawsApi(match.params.chapterId, match.params.locationId)
+    getLawsApi(chapterId, locationId)
       .then(response => setNode(response))
-  }, [ match ])
+  }, [ chapterId, locationId ])
 
   React.useEffect(() => {
     setHeaderText(node?.lawName || "")

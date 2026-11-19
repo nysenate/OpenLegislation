@@ -1,5 +1,8 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useParams
+} from "react-router-dom";
 import {
   DATETIME_FULL_NO_ZONE,
   formatDateTime
@@ -13,13 +16,14 @@ import { FilePdf } from "phosphor-react";
 /**
  * Top-level method for displaying a single session or hearing transcript.
  */
-export default function TranscriptDisplay({ params, isHearing, setHeaderText }) {
+export default function TranscriptDisplay({ isHearing, setHeaderText }) {
+  const { id, dateTime, sessionType } = useParams()
   const [ loading, setLoading ] = React.useState(true)
   const [ transcript, setTranscript ] = React.useState([])
 
   React.useEffect(() => {
     setLoading(true)
-    getTranscript(isHearing, params)
+    getTranscript(isHearing, { id, dateTime, sessionType })
       .then((res) => {
         setTranscript(res.result)
         setHeaderText(isHearing
@@ -27,7 +31,7 @@ export default function TranscriptDisplay({ params, isHearing, setHeaderText }) 
           : `Session Transcript: ${formatDateTime(res.result.dateTime, DateTime.DATE_FULL)}`)
       })
       .finally(() => setLoading(false))
-  }, [ isHearing, params ]);
+  }, [ isHearing, id, dateTime, sessionType ]);
 
   if (loading)
     return <LoadingIndicator />

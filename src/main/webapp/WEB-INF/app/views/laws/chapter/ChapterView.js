@@ -1,8 +1,6 @@
 import React from 'react';
 import getLawsApi from "app/apis/getLawsApi";
-import {
-  useRouteMatch
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import LawNodeChildrenList from "app/views/laws/chapter/LawNodeChildrenList";
 import {
@@ -12,17 +10,17 @@ import { FilePdf } from "phosphor-react";
 
 
 export default function ChapterView({ setHeaderText }) {
-  const match = useRouteMatch()
+  const { chapterId } = useParams()
   const [ chapter, setChapter ] = React.useState()
   const [ isLoading, setIsLoading ] = React.useState(true)
 
   React.useEffect(() => {
     setIsLoading(true)
-    getLawsApi(match.params.chapterId, null)
+    getLawsApi(chapterId, null)
       .then(response => setChapter(response))
       .catch(error => console.warn(`${error}`))
       .finally(() => setIsLoading(false))
-  }, [ match ])
+  }, [ chapterId ])
 
   React.useEffect(() => {
     setHeaderText(chapter?.info?.name || "")

@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Link,
-  useRouteMatch
+  useParams
 } from "react-router-dom";
 import getLawsApi from "app/apis/getLawsApi";
 import { capitalize } from "app/lib/textUtils";
@@ -17,16 +17,16 @@ import {
  * Displays the text for a leaf node of a law document tree.
  */
 export default function LawLeafNodeView({ setHeaderText }) {
-  const match = useRouteMatch()
+  const { chapterId, locationId } = useParams()
   const [ leafNode, setLeafNode ] = React.useState()
 
   React.useEffect(() => {
-    getLawsApi(match.params.chapterId, match.params.locationId)
+    getLawsApi(chapterId, locationId)
       .then(response => {
         response.text = response.text.replaceAll("\\n", "\n")
         setLeafNode(response)
       })
-  }, [ match ])
+  }, [ chapterId, locationId ])
 
   React.useEffect(() => {
     setHeaderText(leafNode?.lawName || "")
@@ -50,7 +50,7 @@ export default function LawLeafNodeView({ setHeaderText }) {
         <div>
           <div className="flex items-center">
             <FilePdf className="inline mr-1 text-blue-500" size="1.5rem" />
-            <Link to={`/pdf/laws/${match.params.chapterId}${match.params.locationId}?full=true`} target="_blank" className="link">
+            <Link to={`/pdf/laws/${chapterId}${locationId}?full=true`} target="_blank" className="link">
               View as PDF
             </Link>
           </div>

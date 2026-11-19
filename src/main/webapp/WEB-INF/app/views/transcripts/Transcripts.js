@@ -4,8 +4,7 @@ import {
   Route,
   Switch,
   useHistory,
-  useLocation,
-  useRouteMatch
+  useLocation
 } from "react-router-dom";
 import ContentContainer from "app/shared/ContentContainer";
 import transcriptApi from "app/apis/transcriptApi";
@@ -43,10 +42,10 @@ export default function Transcripts({ setHeaderText }) {
           <HearingListing setHeaderText={setHeaderText} />
         </Route>
         <Route path="/transcripts/session/:dateTime/:sessionType">
-          <Transcript isHearing={false} setHeaderText={setHeaderText} />
+          <TranscriptDisplay key="session" isHearing={false} setHeaderText={setHeaderText} />
         </Route>
         <Route path="/transcripts/hearing/:id">
-          <Transcript isHearing={true} setHeaderText={setHeaderText} />
+          <TranscriptDisplay key="hearing" isHearing={true} setHeaderText={setHeaderText} />
         </Route>
       </Switch>
     </ContentContainer>
@@ -58,14 +57,6 @@ export default function Transcripts({ setHeaderText }) {
  */
 function HearingListing({ setHeaderText }) {
   return <TranscriptListing isHearing={true} setHeaderText={setHeaderText} />
-}
-
-/**
- * Gets the JSX for a single transcript.
- * Needed because useRouteMatch() doesn't work if called in default function.
- */
-function Transcript({ isHearing, setHeaderText }) {
-  return <TranscriptDisplay isHearing={isHearing} params={useRouteMatch().params} setHeaderText={setHeaderText} />
 }
 
 /**
