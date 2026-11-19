@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 import static org.junit.Assert.*;
@@ -98,29 +100,38 @@ public class LawGetCtrlIT extends LawCtrlBaseIT {
         loadTestData(true, ABC.name());
         loadTestData(false, TEST_UPDATE_FILES);
 
-        LocalDate startDate = LocalDate.of(2014, 9, 22);
-        LocalDate testDate = startDate.plusDays(2);
-        LocalDate endDate = testDate.plusDays(2);
+        // The update files repeal one ABC section on each of these days.
+        LocalDate first = LocalDate.of(2014, 9, 23);
+        LocalDate second = first.plusDays(1);
+        LocalDate third = first.plusDays(2);
         BiMap<LocalDate, String> dateToLocId = HashBiMap.create();
-        dateToLocId.put(testDate.minusDays(1), "4");
-        dateToLocId.put(testDate, "5");
-        dateToLocId.put(testDate.plusDays(1), "6");
-        testRepealedResult(startDate, endDate, dateToLocId, 3);
-        testRepealedResult(testDate, testDate, dateToLocId, 1);
+        dateToLocId.put(first, "4");
+        dateToLocId.put(second, "5");
+        dateToLocId.put(third, "6");
+
+        testRepealedResult(null, null, dateToLocId, first, second, third);
+        testRepealedResult("", "", dateToLocId, first, second, third);
+        testRepealedResult("2014-09-23", "2014-09-26", dateToLocId, first, second, third);
+        // fromDate is included, toDate is excluded.
+        testRepealedResult("2014-09-24", "2014-09-25", dateToLocId, second);
+        testRepealedResult("2014-09-24", "2014-09-24", dateToLocId);
+        testRepealedResult("2014-09-24", null, dateToLocId, second, third);
+        testRepealedResult(null, "2014-09-24", dateToLocId, first);
     }
 
-    private void testRepealedResult(LocalDate start, LocalDate end, BiMap<LocalDate, String> dateToLocId, int expectedSize) {
-        Optional<LocalDate> expectedPublishDate = dateToLocId.keySet().stream().max(LocalDate::compareTo);
-        assertTrue(expectedPublishDate.isPresent());
-        List<RepealedLawDocIdView> repealedLaws = testCtrl.getRepealedLaws(start.toString(), end.toString()).getResult().getItems();
-        assertEquals(expectedSize, repealedLaws.size());
+    private void testRepealedResult(String from, String to, BiMap<LocalDate, String> dateToLocId,
+                                    LocalDate... expectedDates) {
+        LocalDate expectedPublishDate = Collections.max(dateToLocId.keySet());
+        List<RepealedLawDocIdView> repealedLaws =
+                testCtrl.getRepealedLaws(from, to, testRequest).getResult().getItems();
+        String range = "[" + from + ", " + to + ")";
+        assertEquals(range, Set.of(expectedDates),
+                repealedLaws.stream().map(RepealedLawDocIdView::getRepealedDate).collect(Collectors.toSet()));
+        assertEquals(range, expectedDates.length, repealedLaws.size());
         for (RepealedLawDocIdView curr : repealedLaws) {
             assertEquals(ABC.name(), curr.getLawId());
-            LocalDate currRepealedDate = curr.getRepealedDate();
-            String currLocId = curr.getLocationId();
-            assertEquals(dateToLocId.get(currRepealedDate), currLocId);
-            assertEquals(dateToLocId.inverse().get(currLocId), currRepealedDate);
-            assertEquals(expectedPublishDate.get(), curr.getPublishedDate());
+            assertEquals(dateToLocId.get(curr.getRepealedDate()), curr.getLocationId());
+            assertEquals(expectedPublishDate, curr.getPublishedDate());
         }
     }
 

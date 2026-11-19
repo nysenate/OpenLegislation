@@ -117,7 +117,7 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "SELECT doc_id AS document_id, published_date, repealed_date\n" +
         "FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
         "WHERE repealed_date IS NOT NULL" +
-        "  AND repealed_date BETWEEN :startDateTime AND :endDateTime"
+        "  AND repealed_date BETWEEN :firstDate AND :lastDate"
     ),
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +

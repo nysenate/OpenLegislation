@@ -75,10 +75,10 @@ public interface LawDataService
     Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishedDate);
 
     /**
-     * Get a set of law documents that have been repealed during the given datetime range.
+     * Get the latest version of each law document whose repeal was published on a date in the given range.
      *
-     * @param dateRange Range<LocalDateTime>
-     * @return {@link Set<LawDocId>}
+     * @param dateRange Range<LocalDate> - Range of repeal published dates; either bound may be open or absent
+     * @return {@link List<RepealedLawDocId>}
      */
     List<RepealedLawDocId> getRepealedLawDocs(Range<LocalDate> dateRange);
 

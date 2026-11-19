@@ -45,10 +45,10 @@ public interface LawDataDao
     LawTree getLawTree(String lawId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
-     * Get law documents that were repealed during the given date time range
+     * Get the latest version of each law document whose repeal was published on a date in the given range.
      *
-     * @param dateRange Range<LocalDateTime>
-     * @return {@link List<LawDocId>}
+     * @param dateRange Range<LocalDate> - Range of repeal published dates; either bound may be open or absent
+     * @return {@link List<RepealedLawDocId>}
      */
     List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange);
 

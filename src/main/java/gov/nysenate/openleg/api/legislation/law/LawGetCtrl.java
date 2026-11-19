@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.law;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.api.BaseCtrl;
+import gov.nysenate.openleg.api.RetiredRequestParamEx;
 import gov.nysenate.openleg.api.legislation.law.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
 import gov.nysenate.openleg.api.response.ListViewResponse;
@@ -121,30 +122,54 @@ public class LawGetCtrl extends BaseCtrl {
      * Repealed Law API
      * ----------------
      *
-     * Gets a list of law documents repealed during a specific time period.
+     * Gets the latest version of each law document whose repeal LBDC published on a date in the given range.
      *
      * Usage:
      * (GET) /api/3/laws/repealed
      *
      * Request Params:
-     * @param fromDateTime iso datetime - default 1970-01-01 - The inclusive start time of the specified time period
-     * @param toDateTime iso datetime - default today - The inclusive end time of the specified time period
+     * @param fromDate iso date - optional - The first repeal published date to include
+     * @param toDate iso date - optional - The repeal published date to stop before (exclusive)
      * @return {@link ListViewResponse<RepealedLawDocIdView>}
      */
     @RequestMapping("/repealed")
     public ListViewResponse<RepealedLawDocIdView> getRepealedLaws(
-            @RequestParam(defaultValue = "1970-01-01") String fromDateTime,
-            @RequestParam(required = false) String toDateTime) {
-        LocalDate parsedStartDate = parseISODate(fromDateTime, "fromDateTime");
-        LocalDate parsedEndDate = Optional.ofNullable(toDateTime)
-                .map(date -> parseISODate(date, "toDateTime"))
-                .orElse(LocalDate.now());
-        Range<LocalDate> dateRange = getClosedOpenRange(parsedStartDate, parsedEndDate,
-                "fromDateTime", "toDateTime");
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            WebRequest request) {
+        rejectRetiredRepealedParam("fromDateTime", request);
+        rejectRetiredRepealedParam("toDateTime", request);
+        Optional<LocalDate> from = parseOptionalISODate(fromDate, "fromDate");
+        Optional<LocalDate> to = parseOptionalISODate(toDate, "toDate");
+        Range<LocalDate> dateRange;
+        if (from.isPresent() && to.isPresent()) {
+            dateRange = getClosedOpenRange(from.get(), to.get(), "fromDate", "toDate");
+        } else if (from.isPresent()) {
+            dateRange = Range.atLeast(from.get());
+        } else {
+            dateRange = to.map(Range::lessThan).orElse(Range.all());
+        }
         List<RepealedLawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
         return repealedLawDocs.stream()
                 .map(RepealedLawDocIdView::new)
                 .collect(collectingAndThen(toList(), ListViewResponse::of));
+    }
+
+    /** An empty value counts as omitted. */
+    private static Optional<LocalDate> parseOptionalISODate(String value, String parameter) {
+        return Optional.ofNullable(value).filter(v -> !v.isEmpty()).map(v -> parseISODate(v, parameter));
+    }
+
+    /** fromDateTime and toDateTime (toDate inclusive) were replaced by fromDate and toDate (toDate exclusive). */
+    private static void rejectRetiredRepealedParam(String parameter, WebRequest request) {
+        String[] values = request.getParameterValues(parameter);
+        if (values == null) {
+            return;
+        }
+        throw new RetiredRequestParamEx(String.join(",", values), parameter, "date",
+                "No longer supported. Use fromDate and toDate.",
+                parameter + " is no longer supported on repealed laws. Use fromDate and toDate (ISO dates) " +
+                "instead. toDate is exclusive: repeals published on toDate are not included.");
     }
 
     /** --- Exception Handlers --- */
