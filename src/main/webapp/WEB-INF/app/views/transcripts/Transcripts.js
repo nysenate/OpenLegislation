@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import ContentContainer from "app/shared/ContentContainer";
 import transcriptApi from "app/apis/transcriptApi";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import Select, { yearSortOptions } from "app/shared/Select";
 import Pagination from "app/shared/Pagination";
 import Input from "app/shared/Input";

@@ -4,8 +4,11 @@ import gov.nysenate.openleg.BaseTests;
 import org.ehcache.Cache;
 import org.ehcache.core.statistics.CacheStatistics;
 import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
+    @Autowired
+    private OpenLegCacheManager cacheManager;
     private CachingService<Key, Value> cachingService;
     protected Cache<Key, Value> cache;
     protected CacheStatistics stats;
@@ -16,6 +19,6 @@ public abstract class AbstractCacheTest<Key, Value> extends BaseTests {
     public void setCachingService() {
         this.cachingService = getCachingService();
         this.cache = cachingService.cache;
-        this.stats = OpenLegCacheManager.getCacheStats(cachingService.cacheType());
+        this.stats = cacheManager.getCacheStats(cachingService.cacheType());
     }
 }

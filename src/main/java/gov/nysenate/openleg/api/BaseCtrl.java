@@ -18,7 +18,9 @@ import gov.nysenate.openleg.notifications.model.Notification;
 import gov.nysenate.openleg.search.ElasticsearchProcessException;
 import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
+import gov.nysenate.openleg.search.SearchIndexRebuildingException;
 import gov.nysenate.openleg.updates.UpdateType;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +63,8 @@ public abstract class BaseCtrl {
     private static final int MAX_LIMIT = 1000;
     /** Minimum number of results that can be requested via the query params. Only Senate Site API can use a limit = 0. */
     private static final int MIN_LIMIT = 0;
+    /** How long clients are told to wait before retrying a search on an index that is being rebuilt. */
+    private static final int REBUILD_RETRY_AFTER_SECONDS = 60;
 
     @Autowired
     private EventBus eventBus;
@@ -376,6 +380,15 @@ public abstract class BaseCtrl {
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
         logger.debug("Search Exception!", ex);
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(SearchIndexRebuildingException.class)
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
+    public ViewObjectErrorResponse searchIndexRebuildingHandler(SearchIndexRebuildingException ex,
+                                                                HttpServletResponse response) {
+        logger.debug(ex.getMessage());
+        response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(REBUILD_RETRY_AFTER_SECONDS));
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_INDEX_REBUILDING, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidSearchParamException.class)

@@ -63,8 +63,7 @@ public class SearchIndexCtrl extends BaseCtrl {
                 if (searchService == null) {
                     continue;
                 }
-                searchService.clearIndex();
-                searchService.rebuildIndex();
+                searchService.clearAndRebuildIndex();
                 logger.info("Cleared {}{} index", "and rebuilt ", index.getName());
             }
             return new SimpleResponse(true, "Search index rebuild request completed", "index-clear");
@@ -78,8 +77,7 @@ public class SearchIndexCtrl extends BaseCtrl {
 
     private static Set<SearchIndex> getTargetIndices(String indexType) throws IllegalArgumentException {
         if (indexType.equalsIgnoreCase("all")) {
-            // Exclude principal indices from "all" grouping.
-            return SearchIndex.nonPrimaryIndices;
+            return EnumSet.allOf(SearchIndex.class);
         }
         else {
             return Set.of(SearchIndex.valueOf(indexType.toUpperCase()));

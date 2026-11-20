@@ -1,7 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
-
 /**
  * Fetch cache stats for a single cache or for all caches.
  *

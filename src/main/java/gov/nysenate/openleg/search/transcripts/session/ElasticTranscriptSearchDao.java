@@ -10,6 +10,7 @@ import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
+import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao<TranscriptId, Tra
     }
 
     @Override
-    protected Map<String, HighlightField> highlightedFields() {
+    protected @Nonnull Map<String, HighlightField> highlightedFields() {
         return Map.of("text", HighlightField.of(b -> b.numberOfFragments(3)));
     }
 

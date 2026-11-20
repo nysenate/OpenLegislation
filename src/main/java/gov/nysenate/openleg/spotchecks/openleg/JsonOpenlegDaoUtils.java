@@ -121,7 +121,7 @@ public class JsonOpenlegDaoUtils {
      * @return UriComponentsBuilder
      */
     private UriComponentsBuilder buildUrl(String uriString) {
-        return UriComponentsBuilder.fromHttpUrl(env.getOpenlegRefUrl() + uriString)
+        return UriComponentsBuilder.fromUriString(env.getOpenlegRefUrl() + uriString)
                 .queryParam("key", env.getOpenlegRefApiKey());
     }
 }

@@ -19,6 +19,8 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        // Lets scripts read how long to wait after a 429 from the API rate limit.
+        response.setHeader("Access-Control-Expose-Headers", "Retry-After");
         chain.doFilter(req, res);
     }
 

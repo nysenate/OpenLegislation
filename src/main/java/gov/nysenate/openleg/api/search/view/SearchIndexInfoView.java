@@ -3,10 +3,10 @@ package gov.nysenate.openleg.api.search.view;
 import gov.nysenate.openleg.api.ViewObject;
 import gov.nysenate.openleg.search.SearchIndex;
 
-public record SearchIndexInfoView(String name, String indexName, boolean primaryStore) implements ViewObject {
+public record SearchIndexInfoView(String name, String indexName) implements ViewObject {
 
     public SearchIndexInfoView(SearchIndex searchIndex) {
-        this(searchIndex.name(), searchIndex.getName(), searchIndex.isPrimaryStore());
+        this(searchIndex.name(), searchIndex.getName());
     }
 
     @Override

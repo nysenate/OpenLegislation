@@ -1,4 +1,4 @@
-import * as queryString from "query-string";
+import queryString from "query-string";
 
 export default function transcriptApi(isHearing, year, pageNum, searchTerm, sortBy, sessionOnly) {
   const defaultLimit = 25

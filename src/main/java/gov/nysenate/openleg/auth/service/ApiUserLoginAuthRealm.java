@@ -17,6 +17,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
@@ -82,10 +84,8 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        Collection principalCollection = principals.fromRealm(getName());
-        if (!principalCollection.isEmpty()) {
+        return apiKeyOf(principals).map(apiKey -> {
             SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
-            String apiKey = principalCollection.iterator().next().toString();
             authInfo.addRole(OpenLegRole.API_USER.name());
 
             // Add any explicitly defined roles
@@ -94,8 +94,21 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm {
                     .forEach(authInfo::addRole);
 
             return authInfo;
-        }
-        return null;
+        }).orElse(null);
+    }
+
+    /**
+     * @param subject Subject - the current subject
+     * @return the API key the subject is logged in with, or empty if it didn't log in with one
+     */
+    public Optional<String> getApiKey(Subject subject) {
+        return subject.isAuthenticated() ? apiKeyOf(subject.getPrincipals()) : Optional.empty();
+    }
+
+    /** The API key among principals that this realm authenticated, if any. */
+    private Optional<String> apiKeyOf(PrincipalCollection principals) {
+        Collection<?> apiKeys = principals.fromRealm(getName());
+        return apiKeys.stream().findFirst().map(Object::toString);
     }
 
     @Subscribe

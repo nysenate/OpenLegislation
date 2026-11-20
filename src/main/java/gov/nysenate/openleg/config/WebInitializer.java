@@ -83,14 +83,14 @@ public class WebInitializer implements WebApplicationInitializer {
         servletContext.addFilter("xFrameFilter", xFrameFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
 
-        /* Api Request Logging */
-        DelegatingFilterProxy apiLogFilter = new DelegatingFilterProxy("apiLogFilter", dispatcherContext);
-        servletContext.addFilter("apiLogFilter", apiLogFilter)
-                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
-
         /* Api Key Authentication */
         DelegatingFilterProxy apiAuthFilter = new DelegatingFilterProxy("apiAuthFilter", dispatcherContext);
         servletContext.addFilter("apiAuthFilter", apiAuthFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
+
+        /* Api Key Rate Limiting, which needs the key that apiAuthFilter logged in */
+        DelegatingFilterProxy apiRateLimitFilter = new DelegatingFilterProxy("apiRateLimitFilter", dispatcherContext);
+        servletContext.addFilter("apiRateLimitFilter", apiRateLimitFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
         /**

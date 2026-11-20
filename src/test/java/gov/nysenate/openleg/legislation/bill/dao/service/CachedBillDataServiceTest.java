@@ -27,6 +27,8 @@ public class CachedBillDataServiceTest extends BaseTests
 
     @Autowired EventBus eventBus;
 
+    @Autowired OpenLegCacheManager cacheManager;
+
     @Test
     public void testGetBill() throws Exception {
         billData.getBill(new BaseBillId("S1234", 2013));
@@ -56,7 +58,7 @@ public class CachedBillDataServiceTest extends BaseTests
     public void evictContentTest() {
         StopWatch sw = new StopWatch();
         BaseBillId id = new BaseBillId("S1", 2015);
-        OpenLegCacheManager.clearCaches(Set.of(CacheType.BILL), false);
+        cacheManager.clearCaches(Set.of(CacheType.BILL), false);
         sw.start();
         billData.getBill(id);
         sw.stop();
@@ -76,6 +78,6 @@ public class CachedBillDataServiceTest extends BaseTests
 
     @Test
     public void testEvictEvent() {
-        OpenLegCacheManager.clearCaches(Set.of(CacheType.BILL), false);
+        cacheManager.clearCaches(Set.of(CacheType.BILL), false);
     }
 }

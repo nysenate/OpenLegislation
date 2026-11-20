@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.search.notifications;
+package gov.nysenate.openleg.notifications.history;
 
 public class NotificationNotFoundException extends RuntimeException {
 

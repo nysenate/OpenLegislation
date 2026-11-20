@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import ErrorMessage from "app/shared/ErrorMessage";
 import ContentContainer from "app/shared/ContentContainer";
 import getSubscriptions from "app/apis/subscriptionApi";

@@ -30,7 +30,7 @@ public class NotificationSubscriptionDataServiceIT extends BaseTests {
             .setUserName(fakeName1)
             .setDetail(true)
             .setActive(true)
-            .setMedium(NotificationMedium.EMAIL_SIMPLE)
+            .setMedium(NotificationMedium.EMAIL)
             .setTargetAddress("jebediah@fake.com")
             .setNotificationType(NotificationType.LRS_OUTAGE)
             .build();

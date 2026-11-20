@@ -1,6 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 export default async function apiSignup(name, email, subscriptions) {
   const response = await fetch('/register/signup', {
     method: 'POST',

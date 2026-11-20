@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import Tabs from "app/shared/Tabs";
 import BillSummaryTab from "app/views/bills/info/BillSummaryTab";
 import BillSponsorsTab from "app/views/bills/info/BillSponsorsTab";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import BillMemosTab from "app/views/bills/info/BillMemosTab";
 import BillFullTextTab from "app/views/bills/info/BillFullTextTab";
 import BillVotesTab from "app/views/bills/info/BillVotesTab";

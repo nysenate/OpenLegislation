@@ -1,6 +1,4 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import { PageParams } from "app/shared/Pagination";
 
 

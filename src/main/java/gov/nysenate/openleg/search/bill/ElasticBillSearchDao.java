@@ -9,6 +9,7 @@ import gov.nysenate.openleg.legislation.bill.Bill;
 import gov.nysenate.openleg.legislation.bill.BillTextFormat;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -107,7 +108,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
     }
 
     @Override
-    protected Map<String, HighlightField> highlightedFields() {
+    protected @Nonnull Map<String, HighlightField> highlightedFields() {
         var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
         return Map.of("basePrintNo", highlightField, "printNo", highlightField,
                 "title", highlightField);
@@ -133,6 +134,6 @@ public class ElasticBillSearchDao extends ElasticBaseDao<BaseBillId, BillView, B
     @Override
     protected IndexSettings.Builder getIndexSettings() {
         return super.getIndexSettings().numberOfShards("6")
-                .mapping(b1 -> b1.totalFields(b2 -> b2.limit(1500L)));
+                .mapping(b1 -> b1.totalFields(b2 -> b2.limit("1500")));
     }
 }

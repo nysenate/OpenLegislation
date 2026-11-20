@@ -1,4 +1,4 @@
-import * as queryString from "query-string";
+import queryString from "query-string";
 
 
 export function getDataProcessLogs(from, to, searchParams) {
@@ -6,18 +6,6 @@ export function getDataProcessLogs(from, to, searchParams) {
   if (searchParams) {
     url += "&" + queryString.stringify(searchParams)
   }
-  return fetchUrl(url)
-}
-
-export function searchApiLogs(term, from, to, sort, limit, offset) {
-  let url = `/api/3/admin/apiLogs?`
-  const searchParams = {
-    term: `(${term}) AND requestTime:[${from.toISO()} TO ${to.toISO()}]`,
-    limit: limit,
-    offset: offset,
-    sort: sort
-  }
-  url += queryString.stringify(searchParams)
   return fetchUrl(url)
 }
 

@@ -24,9 +24,11 @@ module.exports = {
         test: /\.css$/i,
         use: ["style-loader", "css-loader", "postcss-loader"],
       },
-      // Transpile js
+      // Transpile js, dependencies included. Babel adds core-js imports wherever a
+      // polyfill is needed, so core-js itself must not go through it.
       {
         test: /\.(js)$/,
+        exclude: /node_modules[\\/]core-js[\\/]/,
         use: 'babel-loader'
       },
     ]

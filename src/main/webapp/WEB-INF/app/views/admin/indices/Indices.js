@@ -9,8 +9,7 @@ import LoadingIndicator from "app/shared/LoadingIndicator";
 
 const ALL_INDICES = {
   name: "ALL",
-  indexName: "all indices",
-  primaryStore: false
+  indexName: "all indices"
 }
 
 export default function Indices({ setHeaderText }) {
@@ -20,14 +19,7 @@ export default function Indices({ setHeaderText }) {
   React.useEffect(() => {
     setHeaderText("Manage Indices")
     fetchIndexNames()
-      .then((res) => {
-        // Filter out indices which are the primary store for their data.
-        // We never want to accidentally clear them since they are the only source of their data.
-        let indices = res.result.items.filter((i) => !i.primaryStore);
-
-        indices.unshift(ALL_INDICES)
-        setIndices(indices)
-      })
+      .then((res) => setIndices([ALL_INDICES, ...res.result.items]))
   }, [])
 
   return (

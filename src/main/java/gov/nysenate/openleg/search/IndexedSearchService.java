@@ -17,27 +17,23 @@ import java.util.Collection;
 public abstract class IndexedSearchService<T> {
     private static final Logger logger = LoggerFactory.getLogger(IndexedSearchService.class);
 
-    private final SearchDao<?, ?, T> searchDao;
+    private final SearchDao<?, T> searchDao;
     @Autowired
     private EnvironmentUtils envUtils;
     @Autowired
     private OpenLegEnvironment env;
 
-    protected IndexedSearchService(SearchDao<?, ?, T> searchDao) {
+    protected IndexedSearchService(SearchDao<?, T> searchDao) {
         this.searchDao = searchDao;
     }
 
     @PostConstruct
     private void init() {
         // Members are normally updated by direct SQL, so force an index rebuild every time.
-        if (searchDao.indexType() == SearchIndex.MEMBER) {
-            searchDao.deleteIndex();
-            searchDao.createIndex();
-            rebuildIndex();
-        }
-        // Ensures indices are filled with data, since even non-search operations uses the data.
-        else if (searchDao.getDocCount() == 0 && !envUtils.isTest()) {
-            rebuildIndex();
+        if (searchDao.indexType() == SearchIndex.MEMBER ||
+                // Ensures indices are filled with data once the application starts.
+                (searchDao.getDocCount() == 0 && !envUtils.isTest())) {
+            clearAndRebuildIndex();
         }
     }
 
@@ -52,9 +48,9 @@ public abstract class IndexedSearchService<T> {
         if (year == null) {
             return null;
         }
-        return RangeQuery.of(b -> b.field(yearFieldName)
-                .from(LocalDate.of(year, 1, 1).toString())
-                .to(LocalDate.of(year, 12, 31).toString()));
+        return RangeQuery.of(b -> b.date(d -> d.field(yearFieldName)
+                .gte(LocalDate.of(year, 1, 1).toString())
+                .lte(LocalDate.of(year, 12, 31).toString())));
     }
 
     /**
@@ -86,15 +82,22 @@ public abstract class IndexedSearchService<T> {
     }
 
     /**
-     * Clears all entries from the search index that is managed by the implementation.
+     * Clears and refills the index, with searches on it failing until the refill finishes.
      */
-    public void clearIndex() {
-        searchDao.deleteIndex();
-        searchDao.createIndex();
+    public final synchronized void clearAndRebuildIndex() {
+        searchDao.setRebuilding(true);
+        try {
+            searchDao.deleteIndex();
+            searchDao.createIndex();
+            rebuildIndex();
+        }
+        finally {
+            searchDao.setRebuilding(false);
+        }
     }
 
     /**
-     * Clears and fully constructs the search index using data from the canonical backing store.
+     * Indexes all documents from the canonical backing store, replacing existing entries with the same IDs.
      */
     public abstract void rebuildIndex();
 }

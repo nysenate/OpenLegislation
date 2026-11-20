@@ -3,7 +3,7 @@ import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import AgendaSearchForm from "app/views/agendas/search/AgendaSearchForm";
 import AgendaSearchResults from "app/views/agendas/search/AgendaSearchResults";
 import { DateTime } from "luxon";

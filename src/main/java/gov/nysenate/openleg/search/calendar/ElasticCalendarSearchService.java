@@ -4,7 +4,6 @@ import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
@@ -22,10 +21,10 @@ import java.util.regex.Pattern;
 @Service
 public class ElasticCalendarSearchService extends IndexedSearchService<Calendar> implements CalendarSearchService {
     private static final Pattern calendarIdPattern = Pattern.compile("(\\d{4})#(\\d+)");
-    private final SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao;
+    private final SearchDao<CalendarId, Calendar> calendarSearchDao;
     private final CalendarDataService calendarDataService;
 
-    public ElasticCalendarSearchService(SearchDao<CalendarId, CalendarView, Calendar> calendarSearchDao,
+    public ElasticCalendarSearchService(SearchDao<CalendarId, Calendar> calendarSearchDao,
                                         CalendarDataService calendarDataService, @Qualifier("eventBus") EventBus eventBus) {
         super(calendarSearchDao);
         this.calendarSearchDao = calendarSearchDao;

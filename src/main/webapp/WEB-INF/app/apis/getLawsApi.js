@@ -1,6 +1,4 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-import * as queryString from "query-string";
+import queryString from "query-string";
 
 export default function getLawsApi(lawId, locationId, searchParams) {
   let url = `/api/3/laws`

@@ -1,6 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 export async function getMembersApi(session) {
   let url = session ? `/api/3/members/${session}` : '/api/3/members'
   url += "?full=true&limit=1000"

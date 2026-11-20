@@ -8,9 +8,8 @@ import org.ehcache.core.statistics.CacheStatistics;
 public record CacheStatsView(String cacheName, long size, int capacity, long putCount, long removeCount,
                              long evictedCount, long expiredCount, long hitCount,
                              long missCount, float hitRatio) implements ViewObject {
-    public CacheStatsView(CacheType type) {
-        this(type.name(), OpenLegCacheManager.getCapacity(type),
-                OpenLegCacheManager.getCacheStats(type));
+    public CacheStatsView(CacheType type, OpenLegCacheManager cacheManager) {
+        this(type.name(), cacheManager.getCapacity(type), cacheManager.getCacheStats(type));
     }
 
     private CacheStatsView(String cacheName, int capacity, CacheStatistics stats) {

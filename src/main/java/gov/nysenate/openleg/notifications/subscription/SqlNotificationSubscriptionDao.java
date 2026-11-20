@@ -12,12 +12,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 import static gov.nysenate.openleg.notifications.subscription.SqlNotificationSubscriptionQuery.*;
-import static gov.nysenate.openleg.common.util.DateUtils.toDate;
 
 @Repository
 public class SqlNotificationSubscriptionDao extends SqlBaseDao implements NotificationSubscriptionDao {
@@ -69,18 +66,6 @@ public class SqlNotificationSubscriptionDao extends SqlBaseDao implements Notifi
     }
 
     /* --- Row Mappers --- */
-
-    private static void mapSubscriptionFields(ResultSet rs, NotificationSubscription.Builder builder) throws SQLException {
-        builder
-                .setId(rs.getInt("id"))
-                .setUserName(rs.getString("user_name"))
-                .setNotificationType(NotificationType.valueOf(rs.getString("notification_type")))
-                .setMedium(NotificationMedium.getValue(rs.getString("medium")))
-                .setTargetAddress(rs.getString("address"))
-                .setDetail(rs.getBoolean("detail"))
-                .setActive(rs.getBoolean("active"))
-        ;
-    }
 
     private static final RowMapper<NotificationSubscription> notificationSubscriptionRowMapper = (rs, rowNum) -> {
         NotificationSubscription sub = new NotificationSubscription.Builder()

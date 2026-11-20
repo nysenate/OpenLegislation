@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     /** --- Other --- */
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
+    SEARCH_INDEX_REBUILDING(101, "The search index is being rebuilt. Try again later."),
     IMMUTABLE_ENV_VARIABLE(110, "Attempt to change an immutable environment variable"),
     NO_SUCH_ENV_VARIABLE(111, "The requested environment variable does not exist"),
     PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),
@@ -54,7 +55,8 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "Not authorized to perform this request."),
     INVALID_DATE_RANGE(601, "The supplied date range is not valid."),
     API_KEY_REQUIRED(701, "A valid API key is needed to fulfill this request."),
-    API_KEY_INVALID(702, "Sorry, the API key you provided is not valid.")
+    API_KEY_INVALID(702, "Sorry, the API key you provided is not valid."),
+    API_RATE_LIMIT_EXCEEDED(703, "Too many requests for this API key. Wait and try again.")
     ;
 
     private final int code;

@@ -1,7 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
-
 export function fetchIndexNames() {
   const url = "/api/3/admin/index"
   return fetchUrl(url)

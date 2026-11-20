@@ -3,7 +3,7 @@ import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import LawUpdatesSearchForm from "app/views/laws/updates/LawUpdatesSearchForm";
 import LawUpdatesSearchResults from "app/views/laws/updates/LawUpdatesSearchResults";

@@ -4,7 +4,7 @@ import {
   useHistory,
   useLocation
 } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import BillSearchResults from "app/views/bills/search/BillSearchResults";
 import LoadingIndicator from "app/shared/LoadingIndicator";
 import BillSearchForm from "app/views/bills/search/BillSearchForm";

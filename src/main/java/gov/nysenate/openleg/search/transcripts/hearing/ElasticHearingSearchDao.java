@@ -8,6 +8,7 @@ import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import gov.nysenate.openleg.legislation.transcripts.hearing.HearingId;
 import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.search.SearchIndex;
+import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -31,7 +32,7 @@ public class ElasticHearingSearchDao extends ElasticBaseDao<HearingId, HearingVi
     }
 
     @Override
-    protected Map<String, HighlightField> highlightedFields() {
+    protected @Nonnull Map<String, HighlightField> highlightedFields() {
         var highlightField = HighlightField.of(b -> b.numberOfFragments(0));
         return Map.of("hosts", highlightField, "title", highlightField,
                 "text", HighlightField.of(b -> b.numberOfFragments(2)));

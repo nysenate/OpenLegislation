@@ -88,10 +88,10 @@ those are missing.
 
 ## Tech Stack
 
-- **Java 21**, **Spring 6.2** (not Spring Boot), **Tomcat 11**
+- **Java 21**, **Spring 7.0** (not Spring Boot), **Tomcat 11**
 - **PostgreSQL** with C3P0 connection pooling, **Flyway 12** migrations
-- **Elasticsearch 8.14** for search (`elasticsearch-java` client)
-- **Apache Shiro 2** for auth (not Spring Security)
+- **Elasticsearch 8.19** for search (`elasticsearch-java` client)
+- **Apache Shiro 3** for auth (not Spring Security)
 - **JUnit 4** with `@Category(UnitTest.class)` / `@Category(IntegrationTest.class)`
 - **React 17** + Webpack 5 + TailwindCSS 3 frontend in `src/main/webapp/`
 
@@ -134,5 +134,6 @@ those are missing.
 
 - Subject: imperative mood ("Add", "Fix"), at most 50 characters, capitalized, no trailing period
 - Blank line, then a body wrapped at 72 characters
-- The body explains what changed and why: the problem, the motivation, the user-visible effect. Leave out how: the diff shows the implementation, so don't narrate code, functions or steps taken
-- Skip the body only for trivial changes where the subject says it all
+- The body says why: the problem, the motivation, the user-visible effect. Write only what a reader can't get from the subject and the diff
+- Leave out how: don't narrate code, steps or testing, and don't describe how the implementation behaves (safeguards, edge cases it handles, how it can be run)
+- Leave out the body when the subject says it all

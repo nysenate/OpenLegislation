@@ -3,7 +3,7 @@ import {
   useLocation,
   useHistory
 } from "react-router-dom";
-import * as queryString from "query-string";
+import queryString from "query-string";
 import { getCalendarUpdates } from "app/apis/calendarApi";
 import { DateTime } from "luxon";
 import CalendarUpdatesForm from "app/views/calendars/updates/CalendarUpdatesForm";

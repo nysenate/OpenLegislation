@@ -24,10 +24,12 @@ import static gov.nysenate.openleg.api.BaseCtrl.BASE_ADMIN_API_PATH;
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class CacheCtrl extends BaseCtrl {
     private final EventBus eventBus;
+    private final OpenLegCacheManager cacheManager;
 
     @Autowired
-    public CacheCtrl(@Qualifier("eventBus") EventBus eventBus) {
+    public CacheCtrl(@Qualifier("eventBus") EventBus eventBus, OpenLegCacheManager cacheManager) {
         this.eventBus = eventBus;
+        this.cacheManager = cacheManager;
     }
 
     @PostConstruct
@@ -46,7 +48,7 @@ public class CacheCtrl extends BaseCtrl {
     public BaseResponse getCacheStats() {
         List<CacheStatsView> views = new ArrayList<>();
         for (var type : CacheType.values()) {
-            views.add(new CacheStatsView(type));
+            views.add(new CacheStatsView(type, cacheManager));
         }
         return ListViewResponse.of(views);
     }
@@ -61,7 +63,7 @@ public class CacheCtrl extends BaseCtrl {
     @GetMapping(value = "/{cacheType}")
     public BaseResponse getSingleCacheStats(@PathVariable String cacheType) {
         var type = CacheType.valueOf(cacheType.toUpperCase());
-        return new ViewObjectResponse<>(new CacheStatsView(type));
+        return new ViewObjectResponse<>(new CacheStatsView(type, cacheManager));
     }
 
     /**
@@ -94,9 +96,9 @@ public class CacheCtrl extends BaseCtrl {
         return clearCache(cacheType, false);
     }
 
-    private static SimpleResponse clearCache(String cacheType, boolean warmCache) {
+    private SimpleResponse clearCache(String cacheType, boolean warmCache) {
         String eventType = warmCache ? "warm" : "evict";
-        OpenLegCacheManager.clearCaches(getTargetCaches(cacheType), warmCache);
+        cacheManager.clearCaches(getTargetCaches(cacheType), warmCache);
         return new SimpleResponse(true, "Cache " + eventType + " request sent for " + cacheType,
                 "cache-" + eventType);
     }

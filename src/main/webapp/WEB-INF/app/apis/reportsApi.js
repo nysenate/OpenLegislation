@@ -1,6 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 export class SpotcheckType {
   static BOTH = new SpotcheckType("Both")
   static AGENDA = new SpotcheckType("Agenda")

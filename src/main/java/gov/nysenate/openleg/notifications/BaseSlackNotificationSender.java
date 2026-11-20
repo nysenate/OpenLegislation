@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.notifications;
 
-import gov.nysenate.openleg.notifications.model.NotificationDigest;
 import gov.nysenate.openleg.notifications.model.RegisteredNotification;
 import gov.nysenate.openleg.notifications.slack.model.SlackAddress;
 import gov.nysenate.openleg.notifications.slack.SlackChatService;
@@ -30,11 +29,6 @@ public abstract class BaseSlackNotificationSender extends BaseNotificationSender
     protected String truncateNotification(RegisteredNotification notification) {
         return trimLines(notification.getMessage(), environment.getSlackLineLimit()) +
                 "\nSee full notification at: " + getDisplayUrl(notification);
-    }
-
-    protected String truncateDigest(NotificationDigest digest, String digestText) {
-        return trimLines(digestText, environment.getSlackLineLimit()) +
-                "\nSee full digest at: " + getDigestUrl(digest);
     }
 
     protected String trimLines(String str, int maxLength) {

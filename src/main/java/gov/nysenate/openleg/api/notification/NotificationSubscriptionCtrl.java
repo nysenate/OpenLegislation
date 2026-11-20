@@ -19,7 +19,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -157,10 +159,10 @@ public class NotificationSubscriptionCtrl extends BaseCtrl {
 
     private static NotificationMedium getNotificationTargetFromString(String text) {
         try {
-            return NotificationMedium.getValue(text);
+            return NotificationMedium.valueOf(text.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidRequestParamEx(text, "target", "String",
-                    NotificationMedium.getAllNotificationMedia().stream()
+                    Arrays.stream(NotificationMedium.values())
                             .map(NotificationMedium::toString)
                             .reduce("", (a, b) -> a + "|" + b));
         }
