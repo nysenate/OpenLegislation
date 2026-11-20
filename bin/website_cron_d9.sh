@@ -8,6 +8,7 @@
 # Date: 2023-06-22
 # Revised: 2023-12-21 - add transcripts (session and hearing) to the import task
 # Revised: 2024-01-29 - add "notify" mode for bill subscription notifications
+# Revised: 2026-11-20 - add --force option to override locks
 #
 
 PATH=$PATH:/usr/local/bin
@@ -17,7 +18,7 @@ DEFAULT_ENV=live
 prog=`basename $0`
 
 usage() {
-  echo "Usage: $prog [--import-all | --import-agendas | --import-bills | --import-calendars | --notify | --maint | --version] [--site SITE_ALIAS] [--arg drush_arg [--arg drush_arg ...]] [--verbose] [--help] [environ]" >&2
+  echo "Usage: $prog [--import-all | --import-agendas | --import-bills | --import-calendars | --import-sessions | --import-hearings | --notify | --maint | --version] [--site SITE_ALIAS] [--arg drush_arg [--arg drush_arg ...]] [--force] [--verbose] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
   echo "    and SITE_ALIAS is a reference for the Pantheon site (see pdrush)" >&2
 }
@@ -54,6 +55,7 @@ while [ $# -gt 0 ]; do
     --version) mode=version ;;
     --site) shift; psite="$1" ;;
     --arg) shift; drush_args="$drush_args $1" ;;
+    --force|-f) drush_args="$drush_args --force" ;;
     --verbose|-v) drush_args="$drush_args --verbose" ;;
     --help|-h) usage; exit 0 ;;
     -*) echo "$prog: $1: Invalid option" >&2; exit 1 ;;
