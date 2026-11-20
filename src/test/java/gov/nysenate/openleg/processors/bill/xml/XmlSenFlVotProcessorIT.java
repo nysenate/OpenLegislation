@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.*;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class)
 public class XmlSenFlVotProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;

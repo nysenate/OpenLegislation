@@ -2,11 +2,9 @@ package gov.nysenate.openleg.auth.user;
 
 import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.notifications.mail.SendMailService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Set;
 
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-@Category(UnitTest.class)
 public class CachedApiUserServiceTest {
     private SqlApiUserDao apiUserDao;
     private SendMailService sendMailService;

@@ -9,27 +9,32 @@ OpenLegislation is the NY Senate's legislative data platform. It continuously in
 ## Build & Run Commands
 
 ```bash
-# Compile and run database migrations
+# Compile and migrate the main database (flyway.conf)
 mvn compile flyway:migrate
 
-# Build WAR for deployment (target/legislation##<version>.war)
+# Build WAR for deployment (target/legislation##<version>.war): frontend, unit and
+# integration tests, and migrations (needs PostgreSQL + Elasticsearch)
+mvn clean verify
+
+# Build the same WAR running only the unit tests (no database needed)
 mvn clean package
 
-# Run unit tests only (uses @UnitTest category)
+# Run unit tests only (*Test classes)
 mvn test
 
 # Run a single unit test class
 mvn test -Dtest=LawTitleParserTest
 
-# Run integration tests (requires running PostgreSQL + Elasticsearch)
-mvn integration-test
+# Run one integration test without npm, the unit tests, the WAR or Flyway (PostgreSQL
+# and Elasticsearch must be running and the test database migrated)
+mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=LawGetCtrlIT
 
-# Run a single integration test class
-mvn -Dit.test=DatabaseConfigIT integration-test
+# Migrate only the test database
+mvn compile flyway:migrate@flyway-migrate-test
 
 # Frontend (from src/main/webapp/)
-npm ci          # install deps, then a production build via postinstall
-npm run build   # production webpack build
+npm ci          # install deps
+npm run build   # production webpack build; Maven runs it only when building the WAR
 npm start       # dev server on :3000 (proxies API/static to Tomcat on :8080; set OL_IP to use another address)
 
 # Regenerate the public API docs (needs Sphinx; see docs/backend/index.md)
@@ -40,9 +45,6 @@ make -C docs/api clean   # deletes only the Sphinx cache in docs/api/_build
 The `integration-test` phase runs Flyway twice beforehand: once against the main database
 (`flyway.conf`) and once against the test database (`flyway.conf` overlaid with
 `test.flyway.conf`).
-
-Every Maven build, including `mvn test`, runs `npm ci` in `generate-sources`, and so also
-a full production webpack build.
 
 ## Architecture
 
@@ -92,16 +94,16 @@ those are missing.
 - **PostgreSQL** with C3P0 connection pooling, **Flyway 12** migrations
 - **Elasticsearch 8.19** for search (`elasticsearch-java` client)
 - **Apache Shiro 3** for auth (not Spring Security)
-- **JUnit 4** with `@Category(UnitTest.class)` / `@Category(IntegrationTest.class)`
+- **JUnit 4**; the filename decides whether a test is a unit or an integration test
 - **React 17** + Webpack 5 + TailwindCSS 3 frontend in `src/main/webapp/`
 
 ## Testing Conventions
 
-- Tests are categorized via JUnit `@Category` annotations from `gov.nysenate.openleg.config.annotation`
-- `@Category(UnitTest.class)` - runs with `mvn test` (surefire); classes are named `*Test.java`
-- `@Category(IntegrationTest.class)` - runs with `mvn integration-test` (failsafe), requires DB and ES; classes must be named `*IT.java` to be picked up
-- `@Category(SillyTest.class)` - matches neither plugin's `groups`, so these classes never run in a build
-- Integration tests extend `BaseTests` which provides Spring context, `@Transactional` rollback, and the `test` profile
+- The filename alone decides how a test runs: `*Test.java` are unit tests, run by `mvn test` (surefire); `*IT.java` are integration tests, run by `mvn verify` (failsafe), and need PostgreSQL and Elasticsearch. A class named any other way never runs
+- Integration tests usually extend `BaseTests`, which provides the Spring context, `@Transactional` rollback and the `test` profile. A class that loads the Spring test context, as every `BaseTests` subclass does, must be named `*IT`
+- `TestClassNamesTest` fails, naming the class, when a test class breaks either rule. Abstract base classes and `SillyTest` classes are exempt
+- `@Category(SillyTest.class)` (from `gov.nysenate.openleg.config.annotation`) excludes a class from both surefire and failsafe, regardless of its filename
+- Test output (logging, stdout, stderr) goes to `<package>.<Class>-output.txt` in `target/surefire-reports/` or `target/failsafe-reports/`, not the console. Add `-Dmaven.test.redirectTestOutputToFile=false` to see it on the console
 - Test config loads `test.app.properties` which overrides DB name to `openleg_test`
 
 ## Configuration

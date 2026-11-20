@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MapPropertySource;
@@ -17,7 +15,6 @@ import static gov.nysenate.openleg.api.CollectionFullPolicy.Mode.OFF;
 import static gov.nysenate.openleg.api.CollectionFullPolicy.Option.*;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class CollectionFullPolicyTest {
     private static final String DOMAIN_URL = "http://example.test/legislation";
 

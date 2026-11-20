@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.Version;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +9,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class VersionTest
 {
     @Test

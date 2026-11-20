@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -13,7 +12,6 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,7 +27,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 @RunWith(Parameterized.class)
 public class TranscriptSearchCtrlTest {
     @Parameterized.Parameters(name = "{0}")

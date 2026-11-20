@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.Version;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
@@ -17,7 +16,6 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.calendar.CalendarSearchService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,7 +31,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 @RunWith(Parameterized.class)
 public class CalendarSearchCtrlTest {
     @Parameterized.Parameters(name = "{0}")

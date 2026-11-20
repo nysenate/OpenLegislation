@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.transcripts.session;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
@@ -15,7 +14,6 @@ import gov.nysenate.openleg.search.SearchResults;
 import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class TranscriptGetCtrlTest {
     private static final List<String> LISTINGS = List.of("/api/3/transcripts", "/api/3/transcripts/2025");
     private static final List<String> SINGLE_TRANSCRIPTS = List.of(

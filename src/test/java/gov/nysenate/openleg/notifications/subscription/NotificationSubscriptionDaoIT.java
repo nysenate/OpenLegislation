@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.notifications.subscription;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.auth.admin.AdminUserService;
 import gov.nysenate.openleg.notifications.model.NotificationMedium;
 import gov.nysenate.openleg.notifications.model.NotificationSubscription;
@@ -10,14 +9,12 @@ import gov.nysenate.openleg.notifications.model.SubscriptionNotFoundEx;
 import gov.nysenate.openleg.notifications.subscription.NotificationSubscriptionDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
 public class NotificationSubscriptionDaoIT extends BaseTests {
 
     @Autowired private NotificationSubscriptionDao subDao;

@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.common.dao;
 
 import com.google.common.collect.ImmutableMap;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static gov.nysenate.openleg.common.dao.SqlQueryUtils.getOrderByClause;
 import static gov.nysenate.openleg.common.dao.SqlQueryUtils.getSqlWithSchema;
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class SqlQueryUtilsTest {
 
     @Test

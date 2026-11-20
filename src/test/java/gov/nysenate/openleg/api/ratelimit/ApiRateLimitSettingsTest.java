@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.api.ratelimit;
 
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimitSettings.Mode;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 
@@ -12,7 +10,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class ApiRateLimitSettingsTest {
 
     @Test

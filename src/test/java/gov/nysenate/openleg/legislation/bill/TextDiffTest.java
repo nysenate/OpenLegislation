@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.TextDiff;
 import gov.nysenate.openleg.legislation.bill.TextDiffType;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class TextDiffTest {
 
     /**

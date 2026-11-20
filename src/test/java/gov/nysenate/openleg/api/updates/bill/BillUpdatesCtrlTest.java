@@ -7,7 +7,6 @@ import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.PaginatedList;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.BillUpdateField;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
@@ -19,7 +18,6 @@ import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -36,7 +34,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class BillUpdatesCtrlTest {
     private static final String FROM = "2026-10-01T00:00:00";
     private static final String TO = "2026-10-08T00:00:00";

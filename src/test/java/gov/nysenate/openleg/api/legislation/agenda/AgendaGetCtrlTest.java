@@ -2,14 +2,12 @@ package gov.nysenate.openleg.api.legislation.agenda;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.agenda.Agenda;
 import gov.nysenate.openleg.legislation.agenda.AgendaId;
 import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -21,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class AgendaGetCtrlTest {
     private static final String LISTING = "/api/3/agendas/2025";
     private static final List<AgendaId> AGENDA_IDS =

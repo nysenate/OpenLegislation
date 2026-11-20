@@ -2,9 +2,7 @@ package gov.nysenate.openleg.auth.user;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.auth.model.ApiUser;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -17,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-@Category(IntegrationTest.class)
 public class SqlApiUserDaoIT extends BaseTests {
     @Autowired private SqlApiUserDao apiUserDao;
 

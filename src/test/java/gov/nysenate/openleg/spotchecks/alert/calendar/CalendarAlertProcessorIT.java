@@ -2,7 +2,6 @@ package gov.nysenate.openleg.spotchecks.alert.calendar;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.util.FileIOUtils;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.legislation.bill.Version;
@@ -10,7 +9,6 @@ import gov.nysenate.openleg.legislation.calendar.*;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileNotFoundException;
@@ -22,7 +20,6 @@ import static gov.nysenate.openleg.legislation.bill.Version.ORIGINAL;
 import static gov.nysenate.openleg.legislation.calendar.CalendarSectionType.*;
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class)
 public class CalendarAlertProcessorIT extends BaseTests {
 
     @Autowired

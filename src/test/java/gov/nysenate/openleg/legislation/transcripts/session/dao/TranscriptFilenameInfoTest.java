@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.legislation.transcripts.session.dao;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.*;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class TranscriptFilenameInfoTest {
     @Test
     public void versionTest() {

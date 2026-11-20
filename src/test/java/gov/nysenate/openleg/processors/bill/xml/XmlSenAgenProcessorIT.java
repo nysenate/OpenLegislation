@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processors.bill.xml;
 
 import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.common.util.OutputUtils;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.agenda.*;
 import gov.nysenate.openleg.legislation.agenda.dao.AgendaDao;
 import gov.nysenate.openleg.legislation.bill.BillId;
@@ -11,7 +10,6 @@ import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.committee.CommitteeId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -23,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by uros on 4/12/17.
  */
-@Category(IntegrationTest.class)
 public class XmlSenAgenProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private AgendaDao agendaDao;

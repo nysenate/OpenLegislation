@@ -3,7 +3,6 @@ package gov.nysenate.openleg.api.legislation.bill;
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
@@ -13,7 +12,6 @@ import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -28,7 +26,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 public class BillGetCtrlTest {
     private static final String LISTING = "/api/3/bills/2025";
     private static final String SINGLE_BILL = "/api/3/bills/2025/S123";

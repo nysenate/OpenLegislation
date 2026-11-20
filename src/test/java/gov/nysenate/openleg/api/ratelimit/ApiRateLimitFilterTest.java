@@ -7,7 +7,6 @@ import gov.nysenate.openleg.auth.model.ApiUser;
 import gov.nysenate.openleg.auth.model.OpenLegRole;
 import gov.nysenate.openleg.auth.service.ApiUserLoginAuthRealm;
 import gov.nysenate.openleg.auth.user.ApiUserService;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +15,6 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -36,7 +34,6 @@ import static org.mockito.Mockito.when;
  * Calls the filter as the servlet container does, after Shiro has bound the request's subject and
  * {@code ApiAuthFilter} has authenticated it.
  */
-@Category(UnitTest.class)
 public class ApiRateLimitFilterTest {
     private static final String KEY = "Abcdefghijklmnopqrstuvwxyz012345";
     private static final String OTHER_KEY = "Zyxwvutsrqponmlkjihgfedcba543210";

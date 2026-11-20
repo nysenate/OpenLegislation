@@ -11,7 +11,7 @@ import java.util.Collections;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 
-public class LawCtrlBaseIT extends ApiTest {
+public abstract class LawCtrlBaseIT extends ApiTest {
     @Autowired
     private ManagedLawProcessService testService;
     @Autowired

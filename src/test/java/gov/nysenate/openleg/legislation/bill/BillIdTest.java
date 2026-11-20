@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class BillIdTest {
     @Test
     public void testBillIdConstructor() {

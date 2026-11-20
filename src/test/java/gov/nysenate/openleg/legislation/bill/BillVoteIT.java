@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.legislation.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.legislation.member.dao.MemberService;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -15,7 +13,6 @@ import java.time.LocalDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-@Category(IntegrationTest.class)
 public class BillVoteIT extends BaseTests
 {
     @Autowired

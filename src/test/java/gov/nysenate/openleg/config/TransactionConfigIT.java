@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@Category(IntegrationTest.class)
 public class TransactionConfigIT extends BaseTests
 {
     private static final String testTableName = "rollback_test_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);

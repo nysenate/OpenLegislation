@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawChapterCode;
 import gov.nysenate.openleg.legislation.law.LawTreeNode;
 import gov.nysenate.openleg.legislation.law.LawVersionId;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.LawTestUtils;
 
 import java.io.File;
@@ -18,7 +16,6 @@ import java.util.Scanner;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.ARTICLE;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class ConstitutionLawBuilderTest {
     private ConstitutionLawBuilder builder;
     private static final LawChapterCode CODE = LawChapterCode.CNS;

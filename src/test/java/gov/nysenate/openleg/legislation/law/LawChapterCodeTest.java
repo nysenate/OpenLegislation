@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.legislation.law;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static gov.nysenate.openleg.legislation.law.LawChapterCode.*;
 import static org.junit.Assert.*;
 
 
-@Category(UnitTest.class)
 public class LawChapterCodeTest {
     /**
      * Tests all unique citations that could not otherwise be identified.

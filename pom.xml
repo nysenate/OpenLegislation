@@ -39,8 +39,13 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <skipTests>false</skipTests>
-          <groups>gov.nysenate.openleg.config.annotation.UnitTest</groups>
+          <!-- Tests are picked by filename: *Test are unit tests here, *IT are integration
+               tests in failsafe; both skip @Category(SillyTest.class) classes.
+               TestClassNamesTest checks the names and repeats these patterns: keep in sync. -->
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <excludedGroups>gov.nysenate.openleg.config.annotation.SillyTest</excludedGroups>
         </configuration>
       </plugin>
       <!-- Failsafe Plugin -->
@@ -50,7 +55,11 @@
         <version>3.5.5</version>
         <configuration>
           <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
-          <groups>gov.nysenate.openleg.config.annotation.IntegrationTest</groups>
+          <!-- See the surefire comment above. -->
+          <includes>
+            <include>**/*IT.java</include>
+          </includes>
+          <excludedGroups>gov.nysenate.openleg.config.annotation.SillyTest</excludedGroups>
         </configuration>
         <executions>
           <execution>
@@ -66,24 +75,50 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.5.1</version>
+        <configuration>
+          <!-- Frontend sources and build tooling; of the frontend files, the app
+               needs only the webpack output in static/dist. -->
+          <warSourceExcludes>node_modules/**,WEB-INF/app/**,package.json,package-lock.json,*.config.js</warSourceExcludes>
+          <!-- Delete anything in the exploded webapp directory that this build did
+               not write, such as classes deleted from the source. -->
+          <outdatedCheckPath>/</outdatedCheckPath>
+        </configuration>
       </plugin>
+      <!-- Frontend build: bound to prepare-package, so it runs for package and every
+           later phase (integration-test, verify, install), not for compile or test.
+           With -Dexec.skip=true, the WAR gets whatever is already in static/dist. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <version>3.6.3</version>
         <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <executable>npm</executable>
+          <workingDirectory>src/main/webapp</workingDirectory>
+        </configuration>
         <executions>
           <execution>
-            <id>exec-npm-install</id>
-            <phase>generate-sources</phase>
+            <id>npm-ci</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>npm</executable>
               <arguments>
                 <argument>ci</argument>
               </arguments>
-              <workingDirectory>src/main/webapp</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm-build</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
@@ -105,6 +140,7 @@
           </configFiles>
         </configuration>
         <executions>
+          <!-- Migrates the main database (flyway.conf). -->
           <execution>
             <id>flyway-migrate</id>
             <phase>pre-integration-test</phase>
@@ -112,6 +148,7 @@
               <goal>migrate</goal>
             </goals>
           </execution>
+          <!-- Migrates the test database that the integration tests use. -->
           <execution>
             <id>flyway-migrate-test</id>
             <phase>pre-integration-test</phase>
@@ -165,6 +202,10 @@
     <slf4j.version>2.0.18</slf4j.version>
     <spring.version>7.0.10</spring.version>
     <tomcat.version>11.0.27</tomcat.version>
+
+    <!-- Surefire and failsafe write each test class's output to <package>.<Class>-output.txt
+         in their reports folder, not the console. -->
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>
 
   <dependencyManagement>
@@ -423,6 +464,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Spring Test | Spring based test runners. -->

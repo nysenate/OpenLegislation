@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.PublishStatus;
 import gov.nysenate.openleg.legislation.bill.*;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
@@ -16,7 +14,6 @@ import java.util.Optional;
 import static gov.nysenate.openleg.legislation.bill.BillStatusType.*;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class XmlBillActionAnalyzerTest {
 
     private final int testYear = 1999;

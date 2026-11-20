@@ -3,11 +3,9 @@ package gov.nysenate.openleg.legislation.transcripts.hearing.dao;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.transcripts.hearing.*;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -18,7 +16,6 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
 public class SqlHearingDaoIT extends BaseTests {
     private static final String DIRECTORY = "src/test/resources/hearingTranscripts/";
 

@@ -1,16 +1,13 @@
 package gov.nysenate.openleg.libs;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
-public class DiffMatchPatchTests {
+public class DiffMatchPatchTest {
 
     private static final DiffMatchPatch dmp = new DiffMatchPatch();
 

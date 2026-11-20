@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.common.dao;
 
 import gov.nysenate.openleg.common.dao.ImmutableParams;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class ImmutableParamsTest
 {
     private static final List<String> keys = Arrays.asList("moose", "cow", "chicken");

@@ -12,7 +12,6 @@ import gov.nysenate.openleg.api.legislation.transcripts.hearing.HearingSearchCtr
 import gov.nysenate.openleg.api.legislation.transcripts.session.TranscriptGetCtrl;
 import gov.nysenate.openleg.api.legislation.transcripts.session.TranscriptSearchCtrl;
 import gov.nysenate.openleg.api.updates.bill.BillUpdatesCtrl;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.agenda.dao.AgendaDataService;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.legislation.calendar.dao.CalendarDataService;
@@ -26,7 +25,6 @@ import gov.nysenate.openleg.search.transcripts.session.TranscriptSearchService;
 import gov.nysenate.openleg.updates.bill.BillUpdatesDao;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -41,7 +39,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
  * Every retired route, with its option, against the real controllers and mocked services. How a
  * value binds is covered once, by the bill listing and bill update feed tests.
  */
-@Category(UnitTest.class)
 public class CollectionFullRoutesTest {
     private record Route(String path, CollectionFullPolicy.Option option, String... params) {}
 

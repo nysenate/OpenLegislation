@@ -1,16 +1,13 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.LawDocInfo;
 import gov.nysenate.openleg.legislation.law.LawDocumentType;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class LawTitleParserTest {
 
     private final LawDocInfo lawInfo = new LawDocInfo();

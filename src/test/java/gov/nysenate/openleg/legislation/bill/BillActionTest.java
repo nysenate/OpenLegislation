@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.legislation.bill;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.processors.bill.BillActionParser;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
-@Category(UnitTest.class)
 public class BillActionTest
 {
     // @Autowired BillDataService billDataService;

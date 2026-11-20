@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.legislation.bill.BillTextFormat.PLAIN;
@@ -16,7 +14,6 @@ import static org.junit.Assert.*;
 /**
  * Created by senateuser on 2017/2/28.
  */
-@Category(IntegrationTest.class)
 public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
 
     private static final String resourceDir = "processor/bill/text";

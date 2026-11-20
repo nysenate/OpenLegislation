@@ -5,7 +5,6 @@ import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.api.CtrlTestSupport;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
@@ -15,7 +14,6 @@ import gov.nysenate.openleg.search.bill.BillSearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,7 +29,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Category(UnitTest.class)
 @RunWith(Parameterized.class)
 public class BillSearchCtrlTest {
     @Parameterized.Parameters(name = "{0}")

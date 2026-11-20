@@ -4,7 +4,6 @@ import gov.nysenate.openleg.api.ApiTest;
 import gov.nysenate.openleg.api.legislation.member.view.FullMemberView;
 import gov.nysenate.openleg.api.legislation.member.view.SessionMemberView;
 import gov.nysenate.openleg.api.response.ListViewResponse;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.committee.Chamber;
 import gov.nysenate.openleg.legislation.member.Member;
@@ -13,7 +12,6 @@ import gov.nysenate.openleg.legislation.member.PersonName;
 import gov.nysenate.openleg.legislation.member.SessionMember;
 import gov.nysenate.openleg.search.SearchException;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import testing_utils.TestData;
 
@@ -21,7 +19,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
 public class MemberSearchCtrlIT extends ApiTest {
 
     @Autowired

@@ -2,9 +2,7 @@ package gov.nysenate.openleg.api.ratelimit;
 
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimitSettings.Mode;
 import gov.nysenate.openleg.api.ratelimit.ApiRateLimiter.Limit;
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -14,7 +12,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class ApiRateLimitTelemetryTest {
     private static final String KEY = "Abcdefghijklmnopqrstuvwxyz012345";
     private static final String SENATE_KEY = "Zyxwvutsrqponmlkjihgfedcba543210";

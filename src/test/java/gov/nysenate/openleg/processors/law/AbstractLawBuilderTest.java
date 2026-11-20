@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.processors.law;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.law.*;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import testing_utils.LawTestUtils;
 
 import java.time.LocalDate;
@@ -12,7 +10,6 @@ import java.util.*;
 import static gov.nysenate.openleg.legislation.law.LawDocumentType.*;
 import static org.junit.Assert.*;
 
-@Category(UnitTest.class)
 public class AbstractLawBuilderTest {
     private AbstractLawBuilder builder;
     private LawChapterCode code;

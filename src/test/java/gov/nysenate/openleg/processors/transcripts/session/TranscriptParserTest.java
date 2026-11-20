@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.processors.transcripts.session;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptFile;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
 import gov.nysenate.openleg.processors.ParseError;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.time.LocalDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-@Category(UnitTest.class)
 public class TranscriptParserTest {
     private static final String TEST_DIR = "src/test/resources/transcriptFiles/forParser/";
 

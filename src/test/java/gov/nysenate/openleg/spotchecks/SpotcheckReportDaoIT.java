@@ -3,13 +3,11 @@ package gov.nysenate.openleg.spotchecks;
 import com.google.common.base.Stopwatch;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
 import gov.nysenate.openleg.spotchecks.model.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class)
 public class SpotcheckReportDaoIT extends BaseTests {
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckReportDaoIT.class);
     // A bill that only exists this test world.

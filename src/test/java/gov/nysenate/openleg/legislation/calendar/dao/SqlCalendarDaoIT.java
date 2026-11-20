@@ -4,14 +4,12 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.common.dao.SortOrder;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
 import gov.nysenate.openleg.legislation.calendar.CalendarActiveList;
 import gov.nysenate.openleg.legislation.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.legislation.calendar.CalendarId;
 import gov.nysenate.openleg.legislation.calendar.dao.search.CalendarUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import testing_utils.TimeUtils;
@@ -22,7 +20,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(IntegrationTest.class)
 public class SqlCalendarDaoIT extends BaseTests {
 
     @Autowired

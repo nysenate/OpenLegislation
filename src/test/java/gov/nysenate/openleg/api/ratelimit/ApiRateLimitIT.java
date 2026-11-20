@@ -8,14 +8,12 @@ import gov.nysenate.openleg.auth.user.ApiUserService;
 import gov.nysenate.openleg.auth.user.ApiUserTestSupport;
 import gov.nysenate.openleg.auth.user.SqlApiUserDao;
 import gov.nysenate.openleg.config.WebInitializer;
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -43,7 +41,6 @@ import static org.junit.Assert.*;
  * embedded Tomcat, with limits of 1 request per second, a burst of 3 and 1 request in flight. The
  * limiter's clock only moves when a test advances it.
  */
-@Category(IntegrationTest.class)
 public class ApiRateLimitIT {
     static final String PROFILE = "api-rate-limit-it";
     private static final String OK = BaseCtrl.BASE_API_PATH + "/rate-limit-it/ok";

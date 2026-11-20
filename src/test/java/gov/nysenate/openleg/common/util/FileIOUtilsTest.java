@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.common.util;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +11,6 @@ import java.util.Random;
 
 import static org.junit.Assert.assertTrue;
 
-@Category(UnitTest.class)
 public class FileIOUtilsTest {
 
     @Test (expected = NullPointerException.class)

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processors.bill.xml;
 
-import gov.nysenate.openleg.config.annotation.IntegrationTest;
 import gov.nysenate.openleg.legislation.bill.BillId;
 import gov.nysenate.openleg.processors.BaseXmlProcessorTest;
 import gov.nysenate.openleg.legislation.bill.exception.BillAmendNotFoundEx;
@@ -8,7 +7,6 @@ import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.common.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
@@ -18,7 +16,6 @@ import static org.junit.Assert.*;
 /**
  * Created by uros on 3/23/17.
  */
-@Category(IntegrationTest.class)
 public class XmlSenMemoProcessorIT extends BaseXmlProcessorTest {
 
     @Test

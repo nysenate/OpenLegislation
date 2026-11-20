@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.processors.transcripts.hearing;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import gov.nysenate.openleg.legislation.transcripts.hearing.Hearing;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
 
-@Category(UnitTest.class)
 public class HearingTitleParserTest {
     @Test
     public void basicTest() {

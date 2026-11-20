@@ -19,9 +19,7 @@
 
 package gov.nysenate.openleg.common.util.stringDiffer;
 
-import gov.nysenate.openleg.config.annotation.UnitTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static gov.nysenate.openleg.common.util.stringDiffer.DiffStringUtils.*;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Split out and modified from the original version.
  */
-@Category(UnitTest.class)
 public class DiffStringUtilsTest {
     @Test
     public void testDiffCommonPrefix() {
