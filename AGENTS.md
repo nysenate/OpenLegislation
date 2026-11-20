@@ -118,6 +118,7 @@ those are missing.
 ## Documentation
 
 - `docs/api/` - Sphinx (`.rst`) source for the public JSON API docs; update it alongside changes to public API endpoints or response shapes
+- `docs/api/conventions.rst` - the rules every public endpoint follows (half-open date ranges, paging, the error envelope). Check any endpoint change against it; an endpoint that disagrees with it is a bug to raise, not behavior to preserve
 - `src/main/webapp/static/docs/html/` - the generated HTML, tracked in git and served at `/static/docs/html/`. Regenerate it with `make -C docs/api html` after changing `docs/api/`, and commit the source and the regenerated HTML separately. A rebuild of unchanged source changes nothing, so a diff outside the pages you edited usually means a different Sphinx or theme version
 - `docs/backend/index.md` - local development environment setup, including the docs build; not published
 
