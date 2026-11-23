@@ -509,24 +509,35 @@ Get law tree updates by published date::
 Get repealed laws
 -----------------
 
-Gets a list of law documents that have been repealed with the option of restricting to a specified date/time range.
-The date/time range applies to the processed date of the law document, not the official repeal date.
+Gets a list of law documents that have been repealed, optionally restricted to a range of dates. The range applies
+to the date LBDC published the repeal, which each result returns as ``repealedDate``. That is not the date OpenLeg
+processed the repeal, and not the official repeal date.
 
 **Usage**
 
-List of laws repealed during the given date/time range::
+List of laws whose repeal was published in the given date range::
 
     GET /api/3/laws/repealed
 
 **Optional Params**
 
-+--------------+----------------------+---------------------------------------------------------------------------+
-| Parameter    | Values               | Description                                                               |
-+==============+======================+===========================================================================+
-| fromDateTime | ISO 8601 datetime    | default 1970-01-01 - The inclusive start time of the specified time range |
-+--------------+----------------------+---------------------------------------------------------------------------+
-| toDateTime   | ISO 8601 datetime    | default now - The inclusive end time of the specified time period         |
-+--------------+----------------------+---------------------------------------------------------------------------+
++-----------+----------------------+-------------------------------------------------------------------------+
+| Parameter | Values               | Description                                                             |
++===========+======================+=========================================================================+
+| fromDate  | ISO 8601 date        | Include repeals published on or after this date. Default: no limit.     |
++-----------+----------------------+-------------------------------------------------------------------------+
+| toDate    | ISO 8601 date        | Include repeals published before this date. Repeals published on toDate |
+|           |                      | are not included. Default: no limit.                                    |
++-----------+----------------------+-------------------------------------------------------------------------+
+
+Both take a date such as ``2026-05-22``, not a date and time. As with every range in the API, the range includes
+``fromDate`` and excludes ``toDate`` (see :ref:`api-dates`).
+
+**Examples**
+
+Laws whose repeal was published in 2025::
+
+    GET /api/3/laws/repealed?fromDate=2025-01-01&toDate=2026-01-01
 
 Get a law pdf
 ------------------------

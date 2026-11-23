@@ -141,4 +141,41 @@ public final class DateUtils {
         }
         throw new IllegalArgumentException("Supplied localDateTimeRange is null.");
     }
+
+    /**
+     * Given the LocalDate range, extract the first date it includes. If the lower bound is not set, the date of
+     * {@link #LONG_AGO} is returned. If the bound is open, the day after it is returned.
+     *
+     * @param dateRange Range<LocalDate>
+     * @return LocalDate - First date in the range
+     */
+    public static LocalDate startOfDateRange(Range<LocalDate> dateRange) {
+        if (dateRange == null) {
+            throw new IllegalArgumentException("Supplied localDateRange is null.");
+        }
+        if (!dateRange.hasLowerBound()) {
+            return LONG_AGO.toLocalDate();
+        }
+        return dateRange.lowerBoundType() == BoundType.CLOSED
+                ? dateRange.lowerEndpoint() : dateRange.lowerEndpoint().plusDays(1);
+    }
+
+    /**
+     * Given the LocalDate range, extract the last date it includes. If the upper bound is not set, the date of
+     * {@link #THE_FUTURE} is returned. If the bound is open, the day before it is returned, so an empty range
+     * such as [D, D) ends the day before it starts.
+     *
+     * @param dateRange Range<LocalDate>
+     * @return LocalDate - Last date in the range
+     */
+    public static LocalDate endOfDateRange(Range<LocalDate> dateRange) {
+        if (dateRange == null) {
+            throw new IllegalArgumentException("Supplied localDateRange is null.");
+        }
+        if (!dateRange.hasUpperBound()) {
+            return THE_FUTURE.toLocalDate();
+        }
+        return dateRange.upperBoundType() == BoundType.CLOSED
+                ? dateRange.upperEndpoint() : dateRange.upperEndpoint().minusDays(1);
+    }
 }

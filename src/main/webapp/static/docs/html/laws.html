@@ -632,10 +632,11 @@ Default 50.</p></td>
 </section>
 <section id="get-repealed-laws">
 <h2>Get repealed laws<a class="headerlink" href="#get-repealed-laws" title="Link to this heading"></a></h2>
-<p>Gets a list of law documents that have been repealed with the option of restricting to a specified date/time range.
-The date/time range applies to the processed date of the law document, not the official repeal date.</p>
+<p>Gets a list of law documents that have been repealed, optionally restricted to a range of dates. The range applies
+to the date LBDC published the repeal, which each result returns as <code class="docutils literal notranslate"><span class="pre">repealedDate</span></code>. That is not the date OpenLeg
+processed the repeal, and not the official repeal date.</p>
 <p><strong>Usage</strong></p>
-<p>List of laws repealed during the given date/time range:</p>
+<p>List of laws whose repeal was published in the given date range:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
 </pre></div>
 </div>
@@ -648,16 +649,24 @@ The date/time range applies to the processed date of the law document, not the o
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>fromDateTime</p></td>
-<td><p>ISO 8601 datetime</p></td>
-<td><p>default 1970-01-01 - The inclusive start time of the specified time range</p></td>
+<tr class="row-even"><td><p>fromDate</p></td>
+<td><p>ISO 8601 date</p></td>
+<td><p>Include repeals published on or after this date. Default: no limit.</p></td>
 </tr>
-<tr class="row-odd"><td><p>toDateTime</p></td>
-<td><p>ISO 8601 datetime</p></td>
-<td><p>default now - The inclusive end time of the specified time period</p></td>
+<tr class="row-odd"><td><p>toDate</p></td>
+<td><p>ISO 8601 date</p></td>
+<td><p>Include repeals published before this date. Repeals published on toDate
+are not included. Default: no limit.</p></td>
 </tr>
 </tbody>
 </table>
+<p>Both take a date such as <code class="docutils literal notranslate"><span class="pre">2026-05-22</span></code>, not a date and time. As with every range in the API, the range includes
+<code class="docutils literal notranslate"><span class="pre">fromDate</span></code> and excludes <code class="docutils literal notranslate"><span class="pre">toDate</span></code> (see <a class="reference internal" href="conventions.html#api-dates"><span class="std std-ref">Dates and times</span></a>).</p>
+<p><strong>Examples</strong></p>
+<p>Laws whose repeal was published in 2025:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /api/3/laws/repealed?fromDate=2025-01-01&amp;toDate=2026-01-01
+</pre></div>
+</div>
 </section>
 <section id="get-a-law-pdf">
 <h2>Get a law pdf<a class="headerlink" href="#get-a-law-pdf" title="Link to this heading"></a></h2>

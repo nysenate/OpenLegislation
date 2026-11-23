@@ -3,6 +3,7 @@ package gov.nysenate.openleg.legislation.law.dao;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
+import gov.nysenate.openleg.common.util.DateUtils;
 import gov.nysenate.openleg.legislation.law.*;
 import gov.nysenate.openleg.processors.law.LawFile;
 import gov.nysenate.openleg.processors.law.LawProcessor;
@@ -65,9 +66,11 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
 
     @Override
     public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
+        LocalDate firstDate = DateUtils.startOfDateRange(dateRange);
+        LocalDate lastDate = DateUtils.endOfDateRange(dateRange);
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("startDateTime", toDate(dateRange.lowerEndpoint()))
-                .addValue("endDateTime", toDate(dateRange.upperEndpoint())));
+                .addValue("firstDate", toDate(firstDate))
+                .addValue("lastDate", toDate(lastDate)));
 
         final String sql = SqlLawDataQuery.SELECT_REPEALED_LAWS.getSql(schema());
         // We only want the results with the maximum publish date.
