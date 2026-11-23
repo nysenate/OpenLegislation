@@ -38,7 +38,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.5</version>
         <configuration>
-          <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
+          <argLine>-Dlog4j.configurationFile=test.log4j2.xml -Dcatalina.base=${project.build.directory}</argLine>
           <!-- Tests are picked by filename: *Test are unit tests here, *IT are integration
                tests in failsafe; both skip @Category(SillyTest.class) classes.
                TestClassNamesTest checks the names and repeats these patterns: keep in sync. -->
@@ -54,7 +54,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.5.5</version>
         <configuration>
-          <argLine>-Dlog4j.configurationFile=test.log4j2.xml</argLine>
+          <argLine>-Dlog4j.configurationFile=test.log4j2.xml -Dcatalina.base=${project.build.directory}</argLine>
           <!-- See the surefire comment above. -->
           <includes>
             <include>**/*IT.java</include>
@@ -584,7 +584,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>@{argLine} -Dlog4j.configurationFile=test.log4j2.xml</argLine>
+              <argLine>@{argLine} -Dlog4j.configurationFile=test.log4j2.xml -Dcatalina.base=${project.build.directory}</argLine>
             </configuration>
           </plugin>
           <plugin>
