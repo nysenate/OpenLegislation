@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.legislation.law.dao;
 
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.common.dao.*;
@@ -67,12 +66,8 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao {
 
     @Override
     public List<RepealedLawDocId> getRepealedLaws(Range<LocalDate> dateRange) {
-        LocalDate firstDate = !dateRange.hasLowerBound() ? DateUtils.LONG_AGO.toLocalDate()
-                : dateRange.lowerBoundType() == BoundType.CLOSED ? dateRange.lowerEndpoint()
-                : dateRange.lowerEndpoint().plusDays(1);
-        LocalDate lastDate = !dateRange.hasUpperBound() ? DateUtils.THE_FUTURE.toLocalDate()
-                : dateRange.upperBoundType() == BoundType.CLOSED ? dateRange.upperEndpoint()
-                : dateRange.upperEndpoint().minusDays(1);
+        LocalDate firstDate = DateUtils.startOfDateRange(dateRange);
+        LocalDate lastDate = DateUtils.endOfDateRange(dateRange);
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("firstDate", toDate(firstDate))
                 .addValue("lastDate", toDate(lastDate)));
