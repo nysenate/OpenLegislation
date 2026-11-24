@@ -151,7 +151,7 @@ public class BillGetCtrlTest {
     }
 
     @Test
-    public void pdfIsServedForEveryAcceptedType() throws Exception {
+    public void pdfIsServedForEveryAccept() throws Exception {
         Bill bill = new Bill(billId);
         BillAmendment amendment = new BillAmendment(billId, Version.ORIGINAL);
         amendment.setBillText(new BillText("Bill text"));
@@ -161,18 +161,25 @@ public class BillGetCtrlTest {
     }
 
     @Test
-    public void pdfErrorsStayJsonWhenPdfIsAccepted() throws Exception {
+    public void pdfErrorsAreJsonForEveryAccept() throws Exception {
         BaseBillId missing = new BaseBillId("S99999", 2025);
         when(billData.getBill(missing)).thenThrow(new BillNotFoundEx(missing));
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/bills/2025/S99999.pdf", 404);
+        assertJsonForEveryAccept(offMvc, "/api/3/bills/2025/S99999.pdf", 404);
     }
 
     @Test
-    public void jsonEndpointsStillRejectPdfAndHtml() throws Exception {
-        for (String path : List.of(LISTING, SINGLE_BILL)) {
-            assertNotAcceptable(offMvc, path, "application/pdf");
-            assertNotAcceptable(offMvc, path, "text/html");
-        }
+    public void jsonEndpointsIgnoreAccept() throws Exception {
+        when(billData.getBill(billId)).thenReturn(new Bill(billId));
+        assertJsonForEveryAccept(offMvc, LISTING, 200);
+        assertJsonForEveryAccept(offMvc, SINGLE_BILL, 200);
+    }
+
+    @Test
+    public void jsonEndpointErrorsIgnoreAccept() throws Exception {
+        BaseBillId missing = new BaseBillId("S99999", 2025);
+        when(billData.getBill(missing)).thenThrow(new BillNotFoundEx(missing));
+        assertJsonForEveryAccept(offMvc, "/api/3/bills/2025/S99999", 404);
+        assertJsonForEveryAccept(offMvc, LISTING + "?limit=5000", 400);
     }
 
     /* --- Internal --- */

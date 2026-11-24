@@ -10,6 +10,9 @@ public enum ErrorCode {
     INVALID_ARGUMENTS(1, "One or more of the provided request parameters was not valid"),
     MISSING_PARAMETERS(2, "A required parameter was missing from the request"),
     INVALID_JSON(3, "The request body contains invalid JSON"),
+    NO_SUCH_ENDPOINT(4, "No API endpoint matches this path"),
+    METHOD_NOT_ALLOWED(5, "This endpoint doesn't support the request's HTTP method"),
+    UNSUPPORTED_MEDIA_TYPE(6, "The request body's Content-Type isn't supported"),
 
     /** --- Missing data --- */
     BILL_NOT_FOUND(11, "The requested bill was not found"),

@@ -179,8 +179,7 @@ public class BillGetCtrl extends BaseCtrl {
      *
      * Request Parameters: None
      *
-     * Expected Output: PDF response, or a JSON error response, for any Accept header that
-     * allows PDF or JSON. Other Accept headers get a 406.
+     * Expected Output: PDF response, or a JSON error response.
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)

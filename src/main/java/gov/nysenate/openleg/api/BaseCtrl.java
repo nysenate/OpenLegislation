@@ -20,6 +20,7 @@ import gov.nysenate.openleg.search.InvalidSearchParamException;
 import gov.nysenate.openleg.search.SearchException;
 import gov.nysenate.openleg.search.SearchIndexRebuildingException;
 import gov.nysenate.openleg.updates.UpdateType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,6 +60,12 @@ public abstract class BaseCtrl {
 
     public static final String BASE_API_PATH = "/api/3";
     public static final String BASE_ADMIN_API_PATH = BASE_API_PATH + "/admin";
+
+    /** Whether the request is for {@link #BASE_API_PATH} or a path under it. */
+    public static boolean isApiPath(HttpServletRequest request) {
+        String path = UrlPathHelper.defaultInstance.getPathWithinApplication(request);
+        return path.equals(BASE_API_PATH) || path.startsWith(BASE_API_PATH + "/");
+    }
 
     /** Maximum number of results that can be requested via the query params. */
     private static final int MAX_LIMIT = 1000;

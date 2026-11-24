@@ -113,7 +113,7 @@ public class TranscriptGetCtrlTest {
     }
 
     @Test
-    public void pdfIsServedForEveryAcceptedType() throws Exception {
+    public void pdfIsServedForEveryAccept() throws Exception {
         String text = Files.readString(Path.of("src/test/resources/transcriptFiles/forPdfParser/2020-01-01T1100"));
         Transcript transcript = new Transcript(transcriptId, DayType.SESSION, "010825.txt", "Albany", text);
         when(transcriptData.getTranscript(transcriptId)).thenReturn(transcript);
@@ -124,21 +124,20 @@ public class TranscriptGetCtrlTest {
     }
 
     @Test
-    public void pdfErrorsStayJsonWhenPdfIsAccepted() throws Exception {
+    public void pdfErrorsAreJsonForEveryAccept() throws Exception {
         TranscriptId missing = TranscriptId.from(LocalDateTime.of(2030, 1, 1, 1, 0), "Regular Session");
         when(transcriptData.getTranscriptByDateTime(missing.dateTime()))
                 .thenThrow(new TranscriptNotFoundEx(missing, null));
         when(transcriptData.getTranscript(missing)).thenThrow(new TranscriptNotFoundEx(missing, null));
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/2030-01-01T01:00.pdf", 404);
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/2030-01-01T01:00/Regular%20Session.pdf", 404);
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/notadate.pdf", 400);
+        assertJsonForEveryAccept(offMvc, "/api/3/transcripts/2030-01-01T01:00.pdf", 404);
+        assertJsonForEveryAccept(offMvc, "/api/3/transcripts/2030-01-01T01:00/Regular%20Session.pdf", 404);
+        assertJsonForEveryAccept(offMvc, "/api/3/transcripts/notadate.pdf", 400);
     }
 
     @Test
-    public void jsonEndpointsStillRejectPdfAndHtml() throws Exception {
+    public void jsonEndpointsIgnoreAccept() throws Exception {
         for (String path : List.of(LISTINGS.get(0), LISTINGS.get(1), SINGLE_TRANSCRIPTS.get(0), SINGLE_TRANSCRIPTS.get(1))) {
-            assertNotAcceptable(offMvc, path, "application/pdf");
-            assertNotAcceptable(offMvc, path, "text/html");
+            assertJsonForEveryAccept(offMvc, path, 200);
         }
     }
 

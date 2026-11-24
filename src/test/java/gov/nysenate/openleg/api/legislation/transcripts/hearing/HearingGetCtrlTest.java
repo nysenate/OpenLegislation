@@ -129,7 +129,7 @@ public class HearingGetCtrlTest {
     }
 
     @Test
-    public void pdfIsServedForEveryAcceptedType() throws Exception {
+    public void pdfIsServedForEveryAccept() throws Exception {
         String text = Files.readString(Path.of("src/test/resources/hearingTranscripts/1-30-20 Human Services Test.txt"));
         Hearing hearing = new Hearing("hearing-file", text, "Hearing title", "Albany",
                 LocalDate.of(2020, 1, 30), LocalTime.of(10, 0), LocalTime.of(12, 0));
@@ -143,19 +143,18 @@ public class HearingGetCtrlTest {
     }
 
     @Test
-    public void pdfErrorsStayJsonWhenPdfIsAccepted() throws Exception {
+    public void pdfErrorsAreJsonForEveryAccept() throws Exception {
         HearingId missing = new HearingId(9);
         when(hearingData.getHearing(missing)).thenThrow(new HearingNotFoundEx(missing, null));
         when(hearingData.getHearing("missing-file")).thenThrow(new HearingNotFoundEx("missing-file", null));
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/hearings/9.pdf", 404);
-        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/hearings/missing-file.pdf", 404);
+        assertJsonForEveryAccept(offMvc, "/api/3/hearings/9.pdf", 404);
+        assertJsonForEveryAccept(offMvc, "/api/3/hearings/missing-file.pdf", 404);
     }
 
     @Test
-    public void jsonEndpointsStillRejectPdfAndHtml() throws Exception {
+    public void jsonEndpointsIgnoreAccept() throws Exception {
         for (String path : List.of(LISTINGS.get(0), LISTINGS.get(1), SINGLE_HEARINGS.get(0), SINGLE_HEARINGS.get(1))) {
-            assertNotAcceptable(offMvc, path, "application/pdf");
-            assertNotAcceptable(offMvc, path, "text/html");
+            assertJsonForEveryAccept(offMvc, path, 200);
         }
     }
 

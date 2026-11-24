@@ -2,22 +2,29 @@ package gov.nysenate.openleg.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.nysenate.openleg.common.util.OutputUtils;
+import gov.nysenate.openleg.config.ApplicationConfig;
+import gov.nysenate.openleg.config.WebApplicationConfig;
+import jakarta.servlet.ServletContext;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,31 +33,53 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /** Shared setup and request helpers for standalone controller unit tests. */
 public final class CtrlTestSupport {
     private CtrlTestSupport() {}
 
-    /** Accept headers (null for none) that a PDF endpoint serves its PDF for. */
-    public static final List<String> PDF_ACCEPTS = Arrays.asList(null, "application/pdf", "*/*", "application/json",
-            "application/pdf, application/json;q=0.5",
+    /** Accept headers (null for none) to send each request with. */
+    public static final List<String> ACCEPTS = Arrays.asList(null, "*/*", "application/json", "text/html",
+            "application/pdf", "application/pdf, application/json;q=0.5",
             "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
     /**
-     * A MockMvc for the controllers, with the production JSON mapper, a converter for PDF bytes, and
-     * the production exception resolvers: {@link PdfErrorResolver} ahead of Spring's defaults.
+     * A MockMvc for the controllers, with a converter for PDF bytes and, from {@link WebApplicationConfig}, the
+     * JSON converter, the content negotiation and the {@link ApiErrorResolver}.
      */
     public static MockMvc mockMvc(Object... controllers) {
+        var config = new WebApplicationConfig(new ApplicationConfig());
         List<HttpMessageConverter<?>> converters = List.of(new ByteArrayHttpMessageConverter(),
-                new MappingJackson2HttpMessageConverter(OutputUtils.failOnUnknownMapper));
-        var exceptionHandlerResolver = new ExceptionHandlerExceptionResolver();
-        exceptionHandlerResolver.setMessageConverters(converters);
-        return standaloneSetup(controllers)
+                config.jackson2Converter());
+        var contentNegotiation = contentNegotiation(config);
+        // The dispatcher finds the resolver among the beans, as it does in the application.
+        var builder = new StandaloneMockMvcBuilder(controllers) {
+            @Override
+            protected Map<String, Object> extendMvcSingletons(ServletContext servletContext) {
+                return Map.of("apiErrorResolver", config.apiErrorResolver());
+            }
+        };
+        return builder
                 .setMessageConverters(converters.toArray(HttpMessageConverter[]::new))
-                .setHandlerExceptionResolvers(new PdfErrorResolver(), exceptionHandlerResolver,
-                        new ResponseStatusExceptionResolver(), new DefaultHandlerExceptionResolver())
+                .setContentNegotiationManager(contentNegotiation)
+                // The standalone builder doesn't pass its manager to the handler mapping.
+                .setCustomHandlerMapping(() -> {
+                    var mapping = new RequestMappingHandlerMapping();
+                    mapping.setContentNegotiationManager(contentNegotiation);
+                    return mapping;
+                })
                 .build();
+    }
+
+    /** The content negotiation manager the configuration sets up for the application. */
+    private static ContentNegotiationManager contentNegotiation(WebApplicationConfig config) {
+        var configurer = new ContentNegotiationConfigurer() {
+            ContentNegotiationManager build() {
+                return buildContentNegotiationManager();
+            }
+        };
+        config.configureContentNegotiation(configurer);
+        return configurer.build();
     }
 
     /** Binds a Shiro subject that holds every role and permission to the current thread. */
@@ -99,9 +128,9 @@ public final class CtrlTestSupport {
         return mvc.perform(request).andReturn();
     }
 
-    /** Asserts that the path returns 200 with a PDF for every Accept header in {@link #PDF_ACCEPTS}. */
+    /** Asserts that the path returns 200 with a PDF for every Accept header in {@link #ACCEPTS}. */
     public static void assertServesPdf(MockMvc mvc, String path) throws Exception {
-        for (String accept : PDF_ACCEPTS) {
+        for (String accept : ACCEPTS) {
             String message = path + " Accept: " + accept;
             MvcResult result = performAccepting(mvc, path, accept);
             assertEquals(message, 200, result.getResponse().getStatus());
@@ -111,21 +140,61 @@ public final class CtrlTestSupport {
     }
 
     /**
-     * Asserts that the path returns the status and JSON error body with Accept: application/pdf
-     * that it returns without an Accept header.
+     * Asserts that the path returns the status and JSON body for every Accept header in {@link #ACCEPTS}
+     * that it returns without one, and returns that body.
      */
-    public static void assertJsonErrorWhenPdfAccepted(MockMvc mvc, String path, int status) throws Exception {
-        MvcResult noAccept = performAccepting(mvc, path, null);
-        MvcResult pdf = performAccepting(mvc, path, MediaType.APPLICATION_PDF_VALUE);
-        assertEquals(path, status, noAccept.getResponse().getStatus());
-        assertEquals(path + " Accept: application/pdf", status, pdf.getResponse().getStatus());
-        assertContentType(path, MediaType.APPLICATION_JSON, pdf);
-        assertEquals(path, json(noAccept), json(pdf));
+    public static JsonNode assertJsonForEveryAccept(MockMvc mvc, String path, int status) throws Exception {
+        JsonNode body = null;
+        for (MvcResult result : assertJsonStatusForEveryAccept(mvc, () -> get(URI.create(path)), status)) {
+            JsonNode json = json(result);
+            if (body == null) {
+                body = json;
+            }
+            assertEquals(message(result), body, json);
+        }
+        return body;
     }
 
-    /** Asserts that the path returns 406 for the Accept header. */
-    public static void assertNotAcceptable(MockMvc mvc, String path, String accept) throws Exception {
-        assertEquals(path + " Accept: " + accept, 406, performAccepting(mvc, path, accept).getResponse().getStatus());
+    /**
+     * Asserts that the request returns the status and an error response with the error code for every Accept
+     * header in {@link #ACCEPTS}, and returns the last response.
+     */
+    public static MockHttpServletResponse assertErrorForEveryAccept(MockMvc mvc,
+            Supplier<MockHttpServletRequestBuilder> request, int status, int errorCode) throws Exception {
+        MockHttpServletResponse response = null;
+        for (MvcResult result : assertJsonStatusForEveryAccept(mvc, request, status)) {
+            assertEquals(message(result), errorCode, json(result).get("errorCode").asInt());
+            response = result.getResponse();
+        }
+        return response;
+    }
+
+    /**
+     * Performs the request with each Accept header in {@link #ACCEPTS}, asserts that each returns the status
+     * with a JSON Content-Type, and returns the results in that order.
+     */
+    private static List<MvcResult> assertJsonStatusForEveryAccept(MockMvc mvc,
+            Supplier<MockHttpServletRequestBuilder> request, int status) throws Exception {
+        List<MvcResult> results = new ArrayList<>();
+        for (String accept : ACCEPTS) {
+            MockHttpServletRequestBuilder builder = request.get();
+            if (accept != null) {
+                builder.header("Accept", accept);
+            }
+            MvcResult result = mvc.perform(builder).andReturn();
+            assertEquals(message(result), status, result.getResponse().getStatus());
+            assertContentType(message(result), MediaType.APPLICATION_JSON, result);
+            results.add(result);
+        }
+        return results;
+    }
+
+    /** The request's method, path, query and Accept header, to identify it in assertion messages. */
+    private static String message(MvcResult result) {
+        var request = result.getRequest();
+        String query = request.getQueryString() == null ? "" : "?" + request.getQueryString();
+        return request.getMethod() + " " + request.getRequestURI() + query
+                + " Accept: " + request.getHeader("Accept");
     }
 
     private static void assertContentType(String message, MediaType expected, MvcResult result) {
@@ -135,7 +204,11 @@ public final class CtrlTestSupport {
     }
 
     public static JsonNode json(MvcResult result) throws Exception {
-        return json(result.getResponse().getContentAsString());
+        return json(result.getResponse());
+    }
+
+    public static JsonNode json(MockHttpServletResponse response) throws Exception {
+        return json(response.getContentAsString());
     }
 
     public static JsonNode json(String content) throws Exception {

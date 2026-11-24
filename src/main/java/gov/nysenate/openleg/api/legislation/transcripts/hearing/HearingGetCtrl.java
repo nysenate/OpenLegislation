@@ -121,8 +121,7 @@ public class HearingGetCtrl extends BaseCtrl {
      * Retrieve a single hearing text pdf:
      * (GET) /api/3/hearings/{id OR filename}.pdf
      * Request Parameters: None.
-     * Expected Output: PDF response, or a JSON error response, for any Accept header that
-     * allows PDF or JSON. Other Accept headers get a 406.
+     * Expected Output: PDF response, or a JSON error response.
      */
 
     @RequestMapping(value = "/{identifier}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})

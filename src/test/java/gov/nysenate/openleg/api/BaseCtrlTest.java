@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 import java.util.List;
 import java.util.Map;
 
+import static gov.nysenate.openleg.api.CtrlTestSupport.assertErrorForEveryAccept;
+import static gov.nysenate.openleg.api.CtrlTestSupport.assertJsonForEveryAccept;
 import static gov.nysenate.openleg.api.CtrlTestSupport.json;
 import static gov.nysenate.openleg.api.CtrlTestSupport.mockMvc;
 import static org.junit.Assert.*;
@@ -27,8 +30,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class BaseCtrlTest {
+    private static final String API = BaseCtrl.BASE_API_PATH;
     private final BaseCtrl ctrl = new BaseCtrl() {};
 
+    /** Each endpoint is mapped both under /api/3 and outside it. */
     @RestController
     static class NotAcceptableCtrl extends BaseCtrl {
         @GetMapping("/not-acceptable")
@@ -37,25 +42,59 @@ public class BaseCtrlTest {
         }
 
         /** Declares no media type, so only writing the response finds that the client accepts no JSON. */
-        @GetMapping("/json-body")
+        @GetMapping({"/json-body", API + "/json-body"})
         public BaseResponse jsonBody() {
             return new SimpleResponse(true, "", "test");
         }
 
-        @PostMapping("/json-request")
+        @PostMapping({"/json-request", API + "/json-request"})
         public BaseResponse jsonRequest(@RequestBody Map<String, String> body) {
             return new SimpleResponse(true, "", "test");
         }
 
-        @GetMapping("/invalid-param")
+        @GetMapping({"/invalid-param", API + "/invalid-param"})
         public BaseResponse invalidParam() {
             throw new InvalidRequestParamEx("x", "param", "string", "valid");
         }
     }
 
-    /** Only the PDF endpoints answer errors in JSON for requests that don't accept it. */
+    /** Deployed, the application runs under the WAR's context path, which MockMvc leaves empty. */
     @Test
-    public void errorsOutsidePdfEndpointsStillHonorAccept() {
+    public void isApiPathUnderContextPath() {
+        assertTrue(isApiPathUnderLegislation("/legislation/api/3"));
+        assertTrue(isApiPathUnderLegislation("/legislation/api/3/bills"));
+        assertFalse(isApiPathUnderLegislation("/legislation/foo"));
+        assertFalse(isApiPathUnderLegislation("/legislation/api/30"));
+    }
+
+    private static boolean isApiPathUnderLegislation(String requestUri) {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", requestUri);
+        request.setContextPath("/legislation");
+        return BaseCtrl.isApiPath(request);
+    }
+
+    @Test
+    public void handlerErrorsUnderApiIgnoreAccept() throws Exception {
+        JsonNode body = assertJsonForEveryAccept(mockMvc(new NotAcceptableCtrl()), API + "/invalid-param", 400);
+        assertEquals(1, body.get("errorCode").asInt());
+    }
+
+    @Test
+    public void bodyWithoutDeclaredTypeUnderApiIgnoresAccept() throws Exception {
+        assertJsonForEveryAccept(mockMvc(new NotAcceptableCtrl()), API + "/json-body", 200);
+    }
+
+    /** The same 415 error response as on an endpoint whose mapping declares what it consumes. */
+    @Test
+    public void unsupportedRequestBodyUnderApiIsUnsupportedMediaType() throws Exception {
+        MockHttpServletResponse response = assertErrorForEveryAccept(mockMvc(new NotAcceptableCtrl()),
+                () -> post(API + "/json-request").contentType(MediaType.TEXT_PLAIN).content("text"), 415, 6);
+        assertFalse(json(response).has("errorData"));
+        assertNotNull(response.getHeader("Accept"));
+    }
+
+    @Test
+    public void handlerErrorsOutsideApiStillHonorAccept() {
         var mvc = mockMvc(new NotAcceptableCtrl());
         ServletException ex = assertThrows(ServletException.class,
                 () -> mvc.perform(get("/invalid-param").header("Accept", "text/html")));
@@ -63,7 +102,7 @@ public class BaseCtrlTest {
     }
 
     @Test
-    public void unsupportedRequestBodyIsNotLabelledJson() throws Exception {
+    public void unsupportedRequestBodyOutsideApiIsNotLabelledJson() throws Exception {
         MvcResult result = mockMvc(new NotAcceptableCtrl())
                 .perform(post("/json-request").contentType(MediaType.TEXT_PLAIN).content("text"))
                 .andReturn();
@@ -72,7 +111,7 @@ public class BaseCtrlTest {
     }
 
     @Test
-    public void unwritableBodyStaysNotAcceptable() throws Exception {
+    public void unwritableBodyOutsideApiStaysNotAcceptable() throws Exception {
         MvcResult result = mockMvc(new NotAcceptableCtrl())
                 .perform(get("/json-body").header("Accept", "text/html"))
                 .andReturn();

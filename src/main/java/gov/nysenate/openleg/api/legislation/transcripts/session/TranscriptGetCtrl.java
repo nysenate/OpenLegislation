@@ -138,8 +138,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * -----------------------------------
      * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}.pdf
      * Request Parameters: None.
-     * Expected Output: PDF response, or a JSON error response, for any Accept header that
-     * allows PDF or JSON. Other Accept headers get a 406.
+     * Expected Output: PDF response, or a JSON error response.
      */
 
     @RequestMapping(value = "/{dateTime}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
@@ -155,8 +154,7 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * -----------------------------------
      * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}/{sessionType}.pdf
      * Request Parameters: None.
-     * Expected Output: PDF response, or a JSON error response, for any Accept header that
-     * allows PDF or JSON. Other Accept headers get a 406.
+     * Expected Output: PDF response, or a JSON error response.
      */
     @RequestMapping(value = "/{dateTime}/{sessionType}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType)

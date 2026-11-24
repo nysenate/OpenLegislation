@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.config;
 
-import gov.nysenate.openleg.api.PdfErrorResolver;
+import gov.nysenate.openleg.api.ApiErrorResolver;
+import gov.nysenate.openleg.api.ApiPathContentNegotiationStrategy;
 import gov.nysenate.openleg.common.util.AsciiArt;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConvert
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -103,8 +104,14 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
-        resolvers.addFirst(new PdfErrorResolver());
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.strategies(List.of(new ApiPathContentNegotiationStrategy()));
+    }
+
+    /** Error responses for /api/3 requests no endpoint can take; see {@link ApiErrorResolver}. */
+    @Bean
+    public ApiErrorResolver apiErrorResolver() {
+        return new ApiErrorResolver(jackson2Converter());
     }
 
     @Bean

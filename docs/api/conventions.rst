@@ -24,6 +24,9 @@ between a missing key and an invalid one.
 Response envelope
 -----------------
 
+Each endpoint returns one format: JSON, or a PDF on the endpoints whose path ends in ``.pdf``. The API ignores the
+``Accept`` header.
+
 Every JSON response has the same top-level fields:
 
 .. code-block:: javascript
@@ -200,7 +203,9 @@ wrong. The ``message`` is meant for people, and its wording may change.
    * - 401
      - The API key is missing or invalid, or doesn't allow this request.
    * - 404
-     - The requested item doesn't exist.
+     - The requested item doesn't exist, or no endpoint matches the path (``errorCode`` 4).
+   * - 405
+     - The endpoint doesn't support this HTTP method; the ``Allow`` header lists the ones it does.
    * - 429
      - Starting December 1, 2026: a rate limit was exceeded. See :ref:`rate-limits`.
    * - 500
@@ -222,6 +227,12 @@ These error codes apply across the API:
    * - 2
      - 400
      - A required request parameter is missing
+   * - 4
+     - 404
+     - No endpoint matches the path
+   * - 5
+     - 405
+     - The endpoint doesn't support the request's HTTP method
    * - 100
      - 400
      - The search couldn't be run
@@ -232,4 +243,4 @@ These error codes apply across the API:
      - 429
      - Starting December 1, 2026: rate limit exceeded
 
-A 404 has an ``errorCode`` for the kind of item that wasn't found. Handle it by status.
+Otherwise a 404's ``errorCode`` names the kind of item that wasn't found. Handle it by status.

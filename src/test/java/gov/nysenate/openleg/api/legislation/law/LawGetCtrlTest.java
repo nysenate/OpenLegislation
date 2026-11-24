@@ -2,6 +2,7 @@ package gov.nysenate.openleg.api.legislation.law;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gov.nysenate.openleg.legislation.law.dao.LawDataService;
+import gov.nysenate.openleg.legislation.law.dao.LawTreeNotFoundEx;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,13 @@ public class LawGetCtrlTest {
         lawData = mock(LawDataService.class);
         when(lawData.getRepealedLawDocs(any())).thenReturn(List.of());
         mvc = mockMvc(new LawGetCtrl(lawData));
+    }
+
+    /** The controller declares no media type, so a text/html client used to get a 500 for this 404. */
+    @Test
+    public void missingLawIsErrorResponseForEveryAccept() throws Exception {
+        when(lawData.getLawTree("ZZZ", null)).thenThrow(new LawTreeNotFoundEx("ZZZ", null, "not found"));
+        assertEquals(22, assertJsonForEveryAccept(mvc, "/api/3/laws/ZZZ", 404).get("errorCode").asInt());
     }
 
     @Test

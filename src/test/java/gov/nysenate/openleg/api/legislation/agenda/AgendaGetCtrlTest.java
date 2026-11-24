@@ -40,6 +40,12 @@ public class AgendaGetCtrlTest {
         unbindSubject();
     }
 
+    /** The controller declares no media type, so only writing the body used to find a text/html client. */
+    @Test
+    public void listingIgnoresAccept() throws Exception {
+        assertJsonForEveryAccept(mvc, LISTING, 200);
+    }
+
     @Test
     public void laterPageReportsYearTotal() throws Exception {
         JsonNode body = ok(mvc, LISTING, "limit", "25", "offset", "26");
