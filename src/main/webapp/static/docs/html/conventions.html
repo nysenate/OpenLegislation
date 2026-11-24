@@ -114,6 +114,8 @@ between a missing key and an invalid one.</p>
 </section>
 <section id="response-envelope">
 <span id="id2"></span><h2>Response envelope<a class="headerlink" href="#response-envelope" title="Link to this heading"></a></h2>
+<p>Each endpoint returns one format: JSON, or a PDF on the endpoints whose path ends in <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>. The API ignores the
+<code class="docutils literal notranslate"><span class="pre">Accept</span></code> header.</p>
 <p>Every JSON response has the same top-level fields:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">             </span><span class="c1">// false for errors</span>
@@ -266,12 +268,15 @@ search query can’t be run.</p></td>
 <td><p>The API key is missing or invalid, or doesn’t allow this request.</p></td>
 </tr>
 <tr class="row-odd"><td><p>404</p></td>
-<td><p>The requested item doesn’t exist.</p></td>
+<td><p>The requested item doesn’t exist, or no endpoint matches the path (<code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 4).</p></td>
 </tr>
-<tr class="row-even"><td><p>429</p></td>
+<tr class="row-even"><td><p>405</p></td>
+<td><p>The endpoint doesn’t support this HTTP method; the <code class="docutils literal notranslate"><span class="pre">Allow</span></code> header lists the ones it does.</p></td>
+</tr>
+<tr class="row-odd"><td><p>429</p></td>
 <td><p>Starting December 1, 2026: a rate limit was exceeded. See <a class="reference internal" href="getting_started.html#rate-limits"><span class="std std-ref">Rate limits</span></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p>500</p></td>
+<tr class="row-even"><td><p>500</p></td>
 <td><p>An unexpected error on our side.</p></td>
 </tr>
 </tbody>
@@ -294,6 +299,14 @@ search query can’t be run.</p></td>
 <td><p>400</p></td>
 <td><p>A required request parameter is missing</p></td>
 </tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>404</p></td>
+<td><p>No endpoint matches the path</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>405</p></td>
+<td><p>The endpoint doesn’t support the request’s HTTP method</p></td>
+</tr>
 <tr class="row-even"><td><p>100</p></td>
 <td><p>400</p></td>
 <td><p>The search couldn’t be run</p></td>
@@ -308,7 +321,7 @@ search query can’t be run.</p></td>
 </tr>
 </tbody>
 </table>
-<p>A 404 has an <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> for the kind of item that wasn’t found. Handle it by status.</p>
+<p>Otherwise a 404’s <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> names the kind of item that wasn’t found. Handle it by status.</p>
 </section>
 </section>
 
