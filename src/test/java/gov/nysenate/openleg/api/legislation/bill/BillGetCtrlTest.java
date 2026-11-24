@@ -5,6 +5,11 @@ import gov.nysenate.openleg.api.CollectionFullTestSupport;
 import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.SessionYear;
 import gov.nysenate.openleg.legislation.bill.BaseBillId;
+import gov.nysenate.openleg.legislation.bill.Bill;
+import gov.nysenate.openleg.legislation.bill.BillAmendment;
+import gov.nysenate.openleg.legislation.bill.BillText;
+import gov.nysenate.openleg.legislation.bill.Version;
+import gov.nysenate.openleg.legislation.bill.exception.BillNotFoundEx;
 import gov.nysenate.openleg.legislation.bill.dao.service.BillDataService;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResults;
@@ -143,6 +148,31 @@ public class BillGetCtrlTest {
         verify(billData).getBillInfo(billId);
         verifyNoMoreInteractions(billData);
         verifyNoInteractions(billSearch);
+    }
+
+    @Test
+    public void pdfIsServedForEveryAcceptedType() throws Exception {
+        Bill bill = new Bill(billId);
+        BillAmendment amendment = new BillAmendment(billId, Version.ORIGINAL);
+        amendment.setBillText(new BillText("Bill text"));
+        bill.addAmendment(amendment);
+        when(billData.getBill(billId)).thenReturn(bill);
+        assertServesPdf(offMvc, SINGLE_BILL + ".pdf");
+    }
+
+    @Test
+    public void pdfErrorsStayJsonWhenPdfIsAccepted() throws Exception {
+        BaseBillId missing = new BaseBillId("S99999", 2025);
+        when(billData.getBill(missing)).thenThrow(new BillNotFoundEx(missing));
+        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/bills/2025/S99999.pdf", 404);
+    }
+
+    @Test
+    public void jsonEndpointsStillRejectPdfAndHtml() throws Exception {
+        for (String path : List.of(LISTING, SINGLE_BILL)) {
+            assertNotAcceptable(offMvc, path, "application/pdf");
+            assertNotAcceptable(offMvc, path, "text/html");
+        }
     }
 
     /* --- Internal --- */

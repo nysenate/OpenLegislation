@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 /**
  * Transcript retrieval APIs.
@@ -137,10 +138,11 @@ public class TranscriptGetCtrl extends BaseCtrl {
      * -----------------------------------
      * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}.pdf
      * Request Parameters: None.
-     * Expected Output: PDF response.
+     * Expected Output: PDF response, or a JSON error response, for any Accept header that
+     * allows PDF or JSON. Other Accept headers get a 406.
      */
 
-    @RequestMapping("/{dateTime}.pdf")
+    @RequestMapping(value = "/{dateTime}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");
@@ -148,7 +150,15 @@ public class TranscriptGetCtrl extends BaseCtrl {
         return new TranscriptPdfView(transcript).writeData();
     }
 
-    @RequestMapping("/{dateTime}/{sessionType}.pdf")
+    /**
+     * Single Transcript PDF retrieval API
+     * -----------------------------------
+     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{dateTime}/{sessionType}.pdf
+     * Request Parameters: None.
+     * Expected Output: PDF response, or a JSON error response, for any Accept header that
+     * allows PDF or JSON. Other Accept headers get a 406.
+     */
+    @RequestMapping(value = "/{dateTime}/{sessionType}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String dateTime, @PathVariable String sessionType)
             throws IOException {
         LocalDateTime localDateTime = parseISODateTime(dateTime, "dateTime");

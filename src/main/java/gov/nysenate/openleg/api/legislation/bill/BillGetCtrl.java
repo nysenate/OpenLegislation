@@ -35,6 +35,7 @@ import java.util.List;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 /**
  * Bill retrieval APIs
@@ -178,9 +179,10 @@ public class BillGetCtrl extends BaseCtrl {
      *
      * Request Parameters: None
      *
-     * Expected Output: PDF response
+     * Expected Output: PDF response, or a JSON error response, for any Accept header that
+     * allows PDF or JSON. Other Accept headers get a 406.
      */
-    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}.pdf")
+    @RequestMapping(value = "/{sessionYear:\\d{4}}/{printNo}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");

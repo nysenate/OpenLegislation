@@ -1,23 +1,30 @@
 package gov.nysenate.openleg.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gov.nysenate.openleg.api.response.BaseResponse;
+import gov.nysenate.openleg.api.response.SimpleResponse;
 import gov.nysenate.openleg.api.response.error.ErrorCode;
 import gov.nysenate.openleg.common.util.OutputUtils;
+import jakarta.servlet.ServletException;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
+import java.util.Map;
 
 import static gov.nysenate.openleg.api.CtrlTestSupport.json;
 import static gov.nysenate.openleg.api.CtrlTestSupport.mockMvc;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class BaseCtrlTest {
     private final BaseCtrl ctrl = new BaseCtrl() {};
@@ -28,6 +35,48 @@ public class BaseCtrlTest {
         public Object notAcceptable() throws HttpMediaTypeNotAcceptableException {
             throw new HttpMediaTypeNotAcceptableException(List.of(MediaType.APPLICATION_PDF));
         }
+
+        /** Declares no media type, so only writing the response finds that the client accepts no JSON. */
+        @GetMapping("/json-body")
+        public BaseResponse jsonBody() {
+            return new SimpleResponse(true, "", "test");
+        }
+
+        @PostMapping("/json-request")
+        public BaseResponse jsonRequest(@RequestBody Map<String, String> body) {
+            return new SimpleResponse(true, "", "test");
+        }
+
+        @GetMapping("/invalid-param")
+        public BaseResponse invalidParam() {
+            throw new InvalidRequestParamEx("x", "param", "string", "valid");
+        }
+    }
+
+    /** Only the PDF endpoints answer errors in JSON for requests that don't accept it. */
+    @Test
+    public void errorsOutsidePdfEndpointsStillHonorAccept() {
+        var mvc = mockMvc(new NotAcceptableCtrl());
+        ServletException ex = assertThrows(ServletException.class,
+                () -> mvc.perform(get("/invalid-param").header("Accept", "text/html")));
+        assertTrue(ex.getCause() instanceof InvalidRequestParamEx);
+    }
+
+    @Test
+    public void unsupportedRequestBodyIsNotLabelledJson() throws Exception {
+        MvcResult result = mockMvc(new NotAcceptableCtrl())
+                .perform(post("/json-request").contentType(MediaType.TEXT_PLAIN).content("text"))
+                .andReturn();
+        assertEquals(406, result.getResponse().getStatus());
+        assertNull(result.getResponse().getContentType());
+    }
+
+    @Test
+    public void unwritableBodyStaysNotAcceptable() throws Exception {
+        MvcResult result = mockMvc(new NotAcceptableCtrl())
+                .perform(get("/json-body").header("Accept", "text/html"))
+                .andReturn();
+        assertEquals(406, result.getResponse().getStatus());
     }
 
     @Test

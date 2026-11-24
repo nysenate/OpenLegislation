@@ -6,6 +6,7 @@ import gov.nysenate.openleg.common.dao.LimitOffset;
 import gov.nysenate.openleg.legislation.transcripts.session.DayType;
 import gov.nysenate.openleg.legislation.transcripts.session.Transcript;
 import gov.nysenate.openleg.legislation.transcripts.session.TranscriptId;
+import gov.nysenate.openleg.legislation.transcripts.session.TranscriptNotFoundEx;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.SqlTranscriptDataService;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDao;
 import gov.nysenate.openleg.legislation.transcripts.session.dao.TranscriptDataService;
@@ -19,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +39,14 @@ public class TranscriptGetCtrlTest {
             "/api/3/transcripts/2025-01-08T15:00", "/api/3/transcripts/2025-01-08T15:00/Regular%20Session");
 
     private final TranscriptId transcriptId = TranscriptId.from(LocalDateTime.of(2025, 1, 8, 15, 0), "Regular Session");
+    private TranscriptDataService transcriptData;
     private TranscriptSearchService transcriptSearch;
     private MockMvc offMvc;
     private MockMvc enforceMvc;
 
     @Before
     public void setUp() throws Exception {
-        TranscriptDataService transcriptData = mock(TranscriptDataService.class);
+        transcriptData = mock(TranscriptDataService.class);
         transcriptSearch = mock(TranscriptSearchService.class);
         Transcript transcript = new Transcript(transcriptId, DayType.SESSION, "010825.txt", "Albany", "Transcript text");
         SearchResults<TranscriptId> results = new SearchResults<>(1,
@@ -105,6 +109,36 @@ public class TranscriptGetCtrlTest {
         for (String path : List.of("/api/3/transcripts/2025-01-09T11:00/Regular%20Session",
                 "/api/3/transcripts/2025-01-09T11:00/Regular%20Session.pdf")) {
             assertEquals("Regular Session", notFound(mvc, path).at("/errorData/sessionType").asText());
+        }
+    }
+
+    @Test
+    public void pdfIsServedForEveryAcceptedType() throws Exception {
+        String text = Files.readString(Path.of("src/test/resources/transcriptFiles/forPdfParser/2020-01-01T1100"));
+        Transcript transcript = new Transcript(transcriptId, DayType.SESSION, "010825.txt", "Albany", text);
+        when(transcriptData.getTranscript(transcriptId)).thenReturn(transcript);
+        when(transcriptData.getTranscriptByDateTime(transcriptId.dateTime())).thenReturn(transcript);
+        for (String path : SINGLE_TRANSCRIPTS) {
+            assertServesPdf(offMvc, path + ".pdf");
+        }
+    }
+
+    @Test
+    public void pdfErrorsStayJsonWhenPdfIsAccepted() throws Exception {
+        TranscriptId missing = TranscriptId.from(LocalDateTime.of(2030, 1, 1, 1, 0), "Regular Session");
+        when(transcriptData.getTranscriptByDateTime(missing.dateTime()))
+                .thenThrow(new TranscriptNotFoundEx(missing, null));
+        when(transcriptData.getTranscript(missing)).thenThrow(new TranscriptNotFoundEx(missing, null));
+        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/2030-01-01T01:00.pdf", 404);
+        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/2030-01-01T01:00/Regular%20Session.pdf", 404);
+        assertJsonErrorWhenPdfAccepted(offMvc, "/api/3/transcripts/notadate.pdf", 400);
+    }
+
+    @Test
+    public void jsonEndpointsStillRejectPdfAndHtml() throws Exception {
+        for (String path : List.of(LISTINGS.get(0), LISTINGS.get(1), SINGLE_TRANSCRIPTS.get(0), SINGLE_TRANSCRIPTS.get(1))) {
+            assertNotAcceptable(offMvc, path, "application/pdf");
+            assertNotAcceptable(offMvc, path, "text/html");
         }
     }
 

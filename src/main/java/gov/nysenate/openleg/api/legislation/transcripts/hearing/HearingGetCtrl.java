@@ -31,6 +31,7 @@ import java.util.List;
 
 import static gov.nysenate.openleg.api.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
@@ -120,10 +121,11 @@ public class HearingGetCtrl extends BaseCtrl {
      * Retrieve a single hearing text pdf:
      * (GET) /api/3/hearings/{id OR filename}.pdf
      * Request Parameters: None.
-     * Expected Output: PDF response.
+     * Expected Output: PDF response, or a JSON error response, for any Accept header that
+     * allows PDF or JSON. Other Accept headers get a 406.
      */
 
-    @RequestMapping(value = "/{identifier}.pdf")
+    @RequestMapping(value = "/{identifier}.pdf", produces = {APPLICATION_PDF_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> getHearingPdf(@PathVariable String identifier) throws IOException {
         Hearing hearing;
         try {
