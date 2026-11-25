@@ -128,17 +128,17 @@ time to finish instead.</p>
 <p><strong>When a limit is exceeded</strong></p>
 <p>A request over either limit is rejected with HTTP status 429 (Too Many Requests). The response has a
 <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header with the number of seconds to wait before retrying (a whole number, at least 1), and an error
-body with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 703:</p>
+body:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">              </span><span class="c1">// Human-readable explanation</span>
 <span class="w">  </span><span class="s2">"responseType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">703</span><span class="w">               </span><span class="c1">// Rate limit exceeded</span>
+<span class="w">  </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="mf">703</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Base your client’s handling on the status code, the <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> and the <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is
-meant for people: it may say which limit was exceeded, and its wording may change.</p>
+<p>Base your client’s handling on the status code and the <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is meant for people:
+it may say which limit was exceeded, and its wording may change.</p>
 <p><strong>Staying within the limits</strong></p>
 <ul class="simple">
 <li><p>Send your requests one at a time, each started at least 0.1 seconds after the previous one. This keeps you

@@ -109,8 +109,8 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET https://legislation.nysenate.gov/api/3/bills/2025/S100?view=info&amp;key=YOUR_API_KEY
 </pre></div>
 </div>
-<p>A request with a missing or invalid key returns HTTP status 401 with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 701. The API doesn’t distinguish
-between a missing key and an invalid one.</p>
+<p>A request with a missing or invalid key returns HTTP status 401. The API doesn’t distinguish between a missing key
+and an invalid one.</p>
 </section>
 <section id="response-envelope">
 <span id="id2"></span><h2>Response envelope<a class="headerlink" href="#response-envelope" title="Link to this heading"></a></h2>
@@ -168,7 +168,7 @@ results.</p>
 </table>
 <p><code class="docutils literal notranslate"><span class="pre">offset</span></code> starts at 1, not 0. A value below 1, or one that isn’t a number, is treated as 1.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">limit</span></code> that isn’t a number is ignored, and the endpoint’s default is used instead. A <code class="docutils literal notranslate"><span class="pre">limit</span></code> of 0, <code class="docutils literal notranslate"><span class="pre">all</span></code>, or
-more than 1000 returns status 400 with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 1. There is no way to get every item in one request.</p>
+more than 1000 returns status 400. There is no way to get every item in one request.</p>
 <p><strong>Reading every page</strong></p>
 <p>Start with <code class="docutils literal notranslate"><span class="pre">offset=1</span></code> and request the next page at <code class="docutils literal notranslate"><span class="pre">offsetEnd</span> <span class="pre">+</span> <span class="pre">1</span></code>. Stop when <code class="docutils literal notranslate"><span class="pre">offsetEnd</span></code> is greater than or
 equal to <code class="docutils literal notranslate"><span class="pre">total</span></code>. An <code class="docutils literal notranslate"><span class="pre">offset</span></code> past the end isn’t an error: it returns an <code class="docutils literal notranslate"><span class="pre">&quot;empty</span> <span class="pre">list&quot;</span></code>.</p>
@@ -228,8 +228,8 @@ for which fields can be sorted.</p></li>
 </section>
 <section id="errors">
 <span id="api-errors"></span><h2>Errors<a class="headerlink" href="#errors" title="Link to this heading"></a></h2>
-<p>An error response has <code class="docutils literal notranslate"><span class="pre">success</span></code> set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">responseType</span></code> set to <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>, and an <code class="docutils literal notranslate"><span class="pre">errorCode</span></code>. Many
-errors also say what was wrong in <code class="docutils literal notranslate"><span class="pre">errorData</span></code>, with <code class="docutils literal notranslate"><span class="pre">errorDataType</span></code> naming its type:</p>
+<p>An error response has <code class="docutils literal notranslate"><span class="pre">success</span></code> set to <code class="docutils literal notranslate"><span class="pre">false</span></code> and <code class="docutils literal notranslate"><span class="pre">responseType</span></code> set to <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>. Many errors also say
+what was wrong in <code class="docutils literal notranslate"><span class="pre">errorData</span></code>, with <code class="docutils literal notranslate"><span class="pre">errorDataType</span></code> naming its type:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"One or more of the provided request parameters was not valid"</span><span class="p">,</span>
@@ -247,8 +247,9 @@ errors also say what was wrong in <code class="docutils literal notranslate"><sp
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Base your client’s handling on the HTTP status. The <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> and <code class="docutils literal notranslate"><span class="pre">errorData</span></code> say more about what went
-wrong. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is meant for people, and its wording may change.</p>
+<p>Base your client’s handling on the HTTP status. When <code class="docutils literal notranslate"><span class="pre">errorDataType</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;invalid-parameter&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">errorData</span></code>
+names the parameter that was wrong and the value received. The <code class="docutils literal notranslate"><span class="pre">message</span></code> is meant for people, and its wording may
+change.</p>
 <p><strong>HTTP statuses</strong></p>
 <table class="docutils align-default">
 <thead>
@@ -268,7 +269,7 @@ search query can’t be run.</p></td>
 <td><p>The API key is missing or invalid, or doesn’t allow this request.</p></td>
 </tr>
 <tr class="row-odd"><td><p>404</p></td>
-<td><p>The requested item doesn’t exist, or no endpoint matches the path (<code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 4).</p></td>
+<td><p>The requested item doesn’t exist, or no endpoint matches the path.</p></td>
 </tr>
 <tr class="row-even"><td><p>405</p></td>
 <td><p>The endpoint doesn’t support this HTTP method; the <code class="docutils literal notranslate"><span class="pre">Allow</span></code> header lists the ones it does.</p></td>
@@ -279,49 +280,17 @@ search query can’t be run.</p></td>
 <tr class="row-even"><td><p>500</p></td>
 <td><p>An unexpected error on our side.</p></td>
 </tr>
-</tbody>
-</table>
-<p><strong>Error codes</strong></p>
-<p>These error codes apply across the API:</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">errorCode</span></code></p></th>
-<th class="head"><p>Status</p></th>
-<th class="head"><p>Meaning</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>1</p></td>
-<td><p>400</p></td>
-<td><p>A request parameter isn’t valid; <code class="docutils literal notranslate"><span class="pre">errorData</span></code> says which</p></td>
-</tr>
-<tr class="row-odd"><td><p>2</p></td>
-<td><p>400</p></td>
-<td><p>A required request parameter is missing</p></td>
-</tr>
-<tr class="row-even"><td><p>4</p></td>
-<td><p>404</p></td>
-<td><p>No endpoint matches the path</p></td>
-</tr>
-<tr class="row-odd"><td><p>5</p></td>
-<td><p>405</p></td>
-<td><p>The endpoint doesn’t support the request’s HTTP method</p></td>
-</tr>
-<tr class="row-even"><td><p>100</p></td>
-<td><p>400</p></td>
-<td><p>The search couldn’t be run</p></td>
-</tr>
-<tr class="row-odd"><td><p>701</p></td>
-<td><p>401</p></td>
-<td><p>The API key is missing or invalid</p></td>
-</tr>
-<tr class="row-even"><td><p>703</p></td>
-<td><p>429</p></td>
-<td><p>Starting December 1, 2026: rate limit exceeded</p></td>
+<tr class="row-odd"><td><p>503</p></td>
+<td><p>The service is temporarily unavailable, for example while a search index is rebuilt. Retry later, waiting
+at least as long as any <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> header asks.</p></td>
 </tr>
 </tbody>
 </table>
-<p>Otherwise a 404’s <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> names the kind of item that wasn’t found. Handle it by status.</p>
+<p><strong>errorCode</strong></p>
+<p>The HTTP status tells you what kind of error occurred. Every error response also has a numeric <code class="docutils literal notranslate"><span class="pre">errorCode</span></code>, which
+adds detail in one case: on a 400, <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 100 means the search query couldn’t be run, usually because the
+<code class="docutils literal notranslate"><span class="pre">term</span></code> isn’t valid search syntax. Any other code on a 400 means a parameter is wrong or missing, and <code class="docutils literal notranslate"><span class="pre">errorData</span></code>
+usually names it.</p>
 </section>
 </section>
 

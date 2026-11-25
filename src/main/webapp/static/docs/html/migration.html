@@ -115,8 +115,8 @@ requests counts against your <a class="reference internal" href="getting_started
 <p>Starting December 1, 2026, a request that sets <code class="docutils literal notranslate"><span class="pre">full</span></code>, <code class="docutils literal notranslate"><span class="pre">fullBill</span></code> or <code class="docutils literal notranslate"><span class="pre">detail</span></code> to true on these endpoints is
 rejected with HTTP 400, for every caller. Omitting the option, or setting it to false, is still accepted.
 <code class="docutils literal notranslate"><span class="pre">fullTextFormat</span></code> is not rejected, but it has no effect without full bills.</p>
-<p>The rejection is an error response with <code class="docutils literal notranslate"><span class="pre">errorCode</span></code> 1 that names the parameter, and its message links to the
-section of this page for that option:</p>
+<p>The rejection is an error response whose <code class="docutils literal notranslate"><span class="pre">errorData</span></code> names the parameter, and its message links to the section
+of this page for that option:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="s2">"success"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"message"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Bill search and listing no longer return full bills. Omit full for bill summaries, ..."</span><span class="p">,</span>

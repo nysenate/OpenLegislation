@@ -16,8 +16,8 @@ Pass your API key as the ``key`` request parameter on every request::
 
     GET https://legislation.nysenate.gov/api/3/bills/2025/S100?view=info&key=YOUR_API_KEY
 
-A request with a missing or invalid key returns HTTP status 401 with ``errorCode`` 701. The API doesn't distinguish
-between a missing key and an invalid one.
+A request with a missing or invalid key returns HTTP status 401. The API doesn't distinguish between a missing key
+and an invalid one.
 
 .. _response-envelope:
 
@@ -83,7 +83,7 @@ Endpoints that return lists take two paging parameters:
 ``offset`` starts at 1, not 0. A value below 1, or one that isn't a number, is treated as 1.
 
 A ``limit`` that isn't a number is ignored, and the endpoint's default is used instead. A ``limit`` of 0, ``all``, or
-more than 1000 returns status 400 with ``errorCode`` 1. There is no way to get every item in one request.
+more than 1000 returns status 400. There is no way to get every item in one request.
 
 **Reading every page**
 
@@ -164,8 +164,8 @@ Boolean request parameters take ``true`` or ``false``.
 Errors
 ------
 
-An error response has ``success`` set to ``false``, ``responseType`` set to ``"error"``, and an ``errorCode``. Many
-errors also say what was wrong in ``errorData``, with ``errorDataType`` naming its type:
+An error response has ``success`` set to ``false`` and ``responseType`` set to ``"error"``. Many errors also say
+what was wrong in ``errorData``, with ``errorDataType`` naming its type:
 
 .. code-block:: javascript
 
@@ -185,8 +185,9 @@ errors also say what was wrong in ``errorData``, with ``errorDataType`` naming i
       "errorDataType": "invalid-parameter"
     }
 
-Base your client's handling on the HTTP status. The ``errorCode`` and ``errorData`` say more about what went
-wrong. The ``message`` is meant for people, and its wording may change.
+Base your client's handling on the HTTP status. When ``errorDataType`` is ``"invalid-parameter"``, ``errorData``
+names the parameter that was wrong and the value received. The ``message`` is meant for people, and its wording may
+change.
 
 **HTTP statuses**
 
@@ -203,44 +204,20 @@ wrong. The ``message`` is meant for people, and its wording may change.
    * - 401
      - The API key is missing or invalid, or doesn't allow this request.
    * - 404
-     - The requested item doesn't exist, or no endpoint matches the path (``errorCode`` 4).
+     - The requested item doesn't exist, or no endpoint matches the path.
    * - 405
      - The endpoint doesn't support this HTTP method; the ``Allow`` header lists the ones it does.
    * - 429
      - Starting December 1, 2026: a rate limit was exceeded. See :ref:`rate-limits`.
    * - 500
      - An unexpected error on our side.
+   * - 503
+     - The service is temporarily unavailable, for example while a search index is rebuilt. Retry later, waiting
+       at least as long as any ``Retry-After`` header asks.
 
-**Error codes**
+**errorCode**
 
-These error codes apply across the API:
-
-.. list-table::
-   :header-rows: 1
-
-   * - ``errorCode``
-     - Status
-     - Meaning
-   * - 1
-     - 400
-     - A request parameter isn't valid; ``errorData`` says which
-   * - 2
-     - 400
-     - A required request parameter is missing
-   * - 4
-     - 404
-     - No endpoint matches the path
-   * - 5
-     - 405
-     - The endpoint doesn't support the request's HTTP method
-   * - 100
-     - 400
-     - The search couldn't be run
-   * - 701
-     - 401
-     - The API key is missing or invalid
-   * - 703
-     - 429
-     - Starting December 1, 2026: rate limit exceeded
-
-Otherwise a 404's ``errorCode`` names the kind of item that wasn't found. Handle it by status.
+The HTTP status tells you what kind of error occurred. Every error response also has a numeric ``errorCode``, which
+adds detail in one case: on a 400, ``errorCode`` 100 means the search query couldn't be run, usually because the
+``term`` isn't valid search syntax. Any other code on a 400 means a parameter is wrong or missing, and ``errorData``
+usually names it.
