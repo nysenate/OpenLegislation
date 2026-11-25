@@ -52,7 +52,7 @@ If your use needs more capacity than these limits allow, contact us at openlegis
 
 A request over either limit is rejected with HTTP status 429 (Too Many Requests). The response has a
 ``Retry-After`` header with the number of seconds to wait before retrying (a whole number, at least 1), and an error
-body with ``errorCode`` 703:
+body:
 
 .. code-block:: javascript
 
@@ -60,11 +60,11 @@ body with ``errorCode`` 703:
       "success": false,
       "message": "...",              // Human-readable explanation
       "responseType": "error",
-      "errorCode": 703               // Rate limit exceeded
+      "errorCode": 703
     }
 
-Base your client's handling on the status code, the ``errorCode`` and the ``Retry-After`` header. The ``message`` is
-meant for people: it may say which limit was exceeded, and its wording may change.
+Base your client's handling on the status code and the ``Retry-After`` header. The ``message`` is meant for people:
+it may say which limit was exceeded, and its wording may change.
 
 **Staying within the limits**
 

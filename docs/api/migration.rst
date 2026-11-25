@@ -28,8 +28,8 @@ Starting December 1, 2026, a request that sets ``full``, ``fullBill`` or ``detai
 rejected with HTTP 400, for every caller. Omitting the option, or setting it to false, is still accepted.
 ``fullTextFormat`` is not rejected, but it has no effect without full bills.
 
-The rejection is an error response with ``errorCode`` 1 that names the parameter, and its message links to the
-section of this page for that option:
+The rejection is an error response whose ``errorData`` names the parameter, and its message links to the section
+of this page for that option:
 
 .. code-block:: javascript
 
