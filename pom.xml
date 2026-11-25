@@ -169,7 +169,7 @@
   </build>
 
   <properties>
-    <nysenate-java-client.version>3.0.1</nysenate-java-client.version>
+    <nysenate-java-client.version>3.1</nysenate-java-client.version>
     <bouncycastle.version>1.87</bouncycastle.version>
     <c3p0.version>0.14.2</c3p0.version>
     <commons-cli.version>1.6.0</commons-cli.version>
