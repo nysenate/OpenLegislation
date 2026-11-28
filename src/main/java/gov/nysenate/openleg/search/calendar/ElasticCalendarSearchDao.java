@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.mapping.FlattenedProperty;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarView;
 import gov.nysenate.openleg.api.legislation.calendar.view.CalendarViewFactory;
 import gov.nysenate.openleg.legislation.calendar.Calendar;
@@ -13,8 +14,16 @@ import gov.nysenate.openleg.search.SearchIndex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Repository
 public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarId, CalendarView, Calendar> {
+    /**
+     * Calendar documents are large, and a year of them in one bulk request can exceed
+     * Elasticsearch's request size limit.
+     */
+    private static final int CALENDARS_PER_BULK_REQUEST = 10;
+
     private final CalendarViewFactory calendarViewFactory;
 
     @Autowired
@@ -28,6 +37,11 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao<CalendarId, Calenda
     @Override
     public SearchIndex indexType() {
         return SearchIndex.CALENDAR;
+    }
+
+    @Override
+    public void updateIndex(Collection<Calendar> calendars) {
+        Iterables.partition(calendars, CALENDARS_PER_BULK_REQUEST).forEach(super::updateIndex);
     }
 
     @Override
