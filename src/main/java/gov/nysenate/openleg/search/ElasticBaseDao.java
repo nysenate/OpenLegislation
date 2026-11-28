@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -49,17 +48,16 @@ public abstract class ElasticBaseDao<IdType, DocType extends ViewObject, Content
     private ElasticsearchClient searchClient;
     private volatile boolean rebuilding = false;
 
+    /**
+     * Test indices start empty in each Spring context, because a test's transaction rollback
+     * doesn't reach Elasticsearch.
+     */
     @PostConstruct
     private void init() {
-        createIndex();
-    }
-
-    // Need a separate method so indices are only destroyed during testing.
-    @PreDestroy
-    private void destroy() {
         if (envUtils.isTest()) {
             deleteIndex();
         }
+        createIndex();
     }
 
     /* --- Public methods --- */

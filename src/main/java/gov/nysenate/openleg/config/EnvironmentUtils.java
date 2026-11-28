@@ -2,6 +2,7 @@ package gov.nysenate.openleg.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,6 @@ public class EnvironmentUtils {
     }
 
     public boolean isTest() {
-        return "test".equals(env.getActiveProfiles()[0]);
+        return env.acceptsProfiles(Profiles.of("test"));
     }
 }
